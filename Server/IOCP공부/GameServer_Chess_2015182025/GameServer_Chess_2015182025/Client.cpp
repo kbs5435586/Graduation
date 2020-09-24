@@ -51,8 +51,10 @@ int main()
 		cout << "wasd 또는 방향키를 입력하세요 : ";
 		char buff[BUF_SIZE + 1];
 
+		buff[0] = NULL;
 		buff[0] = _getch();
 		buff[1] = playerPos;
+		buff[2] = NULL;
 
 		cout << "buff[0],[1] : " << (int)buff[0] << " , " << (int)buff[1] << endl;
 
@@ -83,16 +85,17 @@ int main()
 
 		WSASend(s_socket, &wsabuf, 1, &num_sent, 0, NULL, NULL);
 		cout << "Sent " << wsabuf.len << " Bytes [" << buff[0] << (int)wsabuf.buf[1] << "]" << endl;
+		cout << "size[0],[1] : " << sizeof(buff[0]) << " , " << sizeof(wsabuf.buf[1]) << endl;
 		DWORD num_recv;
 		DWORD flag = 0;
 		wsabuf.len = BUF_SIZE;
 		WSARecv(s_socket, &wsabuf, 1, &num_recv, &flag, NULL, NULL);
-		cout << "Received " << num_recv << " Bytes , 좌표 : [" << (int)wsabuf.buf[1] << "]" << endl;
-		
+
 		playerPos = buff[1];
 		playerPosX = buff[1] / 10;
 		playerPosY = buff[1] % 10;
 
+		cout << "Received " << num_recv << " Bytes , 좌표 : [" << playerPosX << " , " << playerPosY << "]" << endl;
 		cout << "pos x,y : " << playerPosX << " , " << playerPosY << endl;
 
 		DrawMap(playerPosX, playerPosY);

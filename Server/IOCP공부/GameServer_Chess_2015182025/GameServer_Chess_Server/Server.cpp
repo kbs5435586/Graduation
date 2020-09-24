@@ -89,12 +89,12 @@ void PlayerMove(SOCKET* socket)
 			break;
 		case 'a':
 			cout << "왼쪽 입력" << endl;
-			if (playerPos != 0)
+			if ((playerPos % 10) != 0)
 				playerPos -= 1;
 			break;
 		case 'd':
 			cout << "오른쪽 입력" << endl;
-			if (playerPos != 7)
+			if ((playerPos % 10) != 7)
 				playerPos += 1;
 			break;
 		case 's':
@@ -104,10 +104,11 @@ void PlayerMove(SOCKET* socket)
 			break;
 		}
 
-		buff[1]=playerPos;
+		buff[0] = 0;
+		buff[1] = playerPos;
 
 		DWORD num_sent;
-		wsabuf.len = BUF_SIZE + 1;
+		wsabuf.len = num_recv;
 		int ret = WSASend(c_socket, &wsabuf, 1, &num_sent, 0, NULL, NULL);
 		if (SOCKET_ERROR == ret) {
 			err_display("Error Disconnect", WSAGetLastError());
