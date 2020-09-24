@@ -1,0 +1,21 @@
+기존
+CommandList Create-> Close ->CreateBuffer (Err) ->CommandList Reset -> Render -> CommandList Close
+
+
+바꿀 모습
+CommandList Create ->Close -> CommandList Rest ->Create Resource->Close ->Rest ->Render->Close
+OR
+CommandList Create-> CreateBuffer ->Close ->Reset ->Render->Close(이 방법은 초기에 생성만 해놓고 Update 문에서 생성 안할 경우): 됨
+
+
+
+
+Create CommandList -> Create Resource -> CommandList Close -> CommandList Execute -> CommandList Reset -> Rendering -> CommandList Close
+
+Create CommandList -> CommandList Close -> CommandList Reset -> Create Resource -> Command List Close -> CommandList Excute -> Command List Reset -> Rendering ->CommandList Close
+
+
+할일
+Root Parameter rebinding
+Shader Resource View 
+Texturing

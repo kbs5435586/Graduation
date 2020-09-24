@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IOCP 1회차", "IOCP 1회차\IOCP 1회차.vcxproj", "{AA078317-0D88-4A98-931A-36243916014D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA078317-0D88-4A98-931A-36243916014D}.Debug|x64.ActiveCfg = Debug|x64
+		{AA078317-0D88-4A98-931A-36243916014D}.Debug|x64.Build.0 = Debug|x64
+		{AA078317-0D88-4A98-931A-36243916014D}.Debug|x86.ActiveCfg = Debug|Win32
+		{AA078317-0D88-4A98-931A-36243916014D}.Debug|x86.Build.0 = Debug|Win32
+		{AA078317-0D88-4A98-931A-36243916014D}.Release|x64.ActiveCfg = Release|x64
+		{AA078317-0D88-4A98-931A-36243916014D}.Release|x64.Build.0 = Release|x64
+		{AA078317-0D88-4A98-931A-36243916014D}.Release|x86.ActiveCfg = Release|Win32
+		{AA078317-0D88-4A98-931A-36243916014D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7269B2D8-6868-4F5F-8DF3-C86B790DB72F}
+	EndGlobalSection
+EndGlobal
