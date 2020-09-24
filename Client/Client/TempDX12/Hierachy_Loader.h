@@ -11,7 +11,11 @@ public:
 public:
 	static CHierachy_Loader*			Create(ID3D12Device* pGraphic_Device, FbxScene* pFbxScene);
 public:
-	void								Render_Mesh(FbxScene* pFbxScene);
+	void								Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWorld,const _float& fTimeDelta);
+	void								Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, 
+													FbxAMatrix& GeometryOffset, FbxAMatrix matWorld);
+private:
+	FbxAMatrix							Get_GeometricOffset(FbxNode* pFbxNode);
 private:
 	ID3D12Device*						m_pGraphic_Device = nullptr;
 private:

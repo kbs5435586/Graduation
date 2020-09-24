@@ -135,9 +135,52 @@ CHierachy_Loader* CHierachy_Loader::Create(ID3D12Device* pGraphic_Device, FbxSce
 	return nullptr;
 }
 
-void CHierachy_Loader::Render_Mesh(FbxScene* pFbxScene)
+void CHierachy_Loader::Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWorld, const _float& fTimeDelta)
 { 
-	
+	FbxNodeAttribute* pFbxNodeAttribute = pFbxNode->GetNodeAttribute();
+	if (pFbxNodeAttribute && (pFbxNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh))
+	{
+		FbxAMatrix FbxMatNodeToRoot = pFbxNode->EvaluateGlobalTransform(fTimeDelta);
+		FbxAMatrix FbxMatGeoOffset = Get_GeometricOffset(pFbxNode);
+
+		FbxMesh* pFbxMesh = pFbxNode->GetMesh();
+		Render_Mesh(pFbxMesh, FbxMatNodeToRoot, FbxMatGeoOffset, matWorld);
+	}
+	_uint iNumChild = pFbxNode->GetChildCount();
+
+	for (_uint i = 0; i < iNumChild; ++i)
+	{
+		Render_Hierachy_Mesh(pFbxNode->GetChild(i), matWorld, fTimeDelta);
+	}
+}
+
+void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, FbxAMatrix& GeometryOffset, FbxAMatrix matWorld)
+{
+	_uint iNumVertices = pFbxMesh->GetControlPointsCount();
+
+	if (iNumVertices > 0)
+	{
+		FbxAMatrix		FbxMatTransform = matWorld;
+		_uint			iNumSkinDeformer = pFbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+		if (iNumSkinDeformer == 0)
+			FbxMatTransform = matWorld * NodeToRoot * GeometryOffset;
+
+		//Constant Buffer Create
+
+
+		//Render
+
+
+	}
+}
+
+FbxAMatrix CHierachy_Loader::Get_GeometricOffset(FbxNode* pFbxNode)
+{
+	const FbxVector4 T = pFbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	const FbxVector4 R = pFbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	const FbxVector4 S = pFbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
+
+	return(FbxAMatrix(T, R, S));
 }
 
 void CHierachy_Loader::Free()
