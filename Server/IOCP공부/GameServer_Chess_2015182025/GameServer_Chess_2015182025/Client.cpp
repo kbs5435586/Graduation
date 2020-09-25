@@ -1,4 +1,5 @@
 #pragma comment (lib,"Ws2_32.lib")
+
 #include <iostream>
 #include <WS2tcpip.h>
 #include <conio.h>
@@ -19,7 +20,7 @@ void CreateMap();
 int main()
 {
 	WSADATA WSAdata;
-	WSAStartup(MAKEWORD(2, 0), &WSAdata);
+	WSAStartup(MAKEWORD(2, 2), &WSAdata);
 
 	SOCKET s_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
 	SOCKADDR_IN server_a;

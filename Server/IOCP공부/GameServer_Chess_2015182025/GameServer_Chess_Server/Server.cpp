@@ -7,7 +7,12 @@ using namespace std;
 
 constexpr int BUF_SIZE = 1024;
 constexpr short PORT = 3500;
+
 //constexpr char SERVER_ADDR[] = "127.0.0.1";
+
+WSABUF wsabuf;
+SOCKET c_socket;
+char buff[BUF_SIZE];
 
 void PlayerMove(SOCKET* socket);
 void MakeServer(SOCKET* socket);
@@ -28,6 +33,8 @@ void err_display(const char* msg, int err_no)
 	while (true);
 	LocalFree(h_message);
 }
+void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
+void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
 
 int main()
 {
@@ -43,7 +50,7 @@ void MakeServer(SOCKET* socket)
 	WSADATA WSAdata;
 	WSAStartup(MAKEWORD(2, 0), &WSAdata);
 
-	*socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
+	*socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN server_a;
 	memset(&server_a, 0, sizeof(server_a));
 	server_a.sin_family = AF_INET;
@@ -56,27 +63,46 @@ void MakeServer(SOCKET* socket)
 
 void PlayerMove(SOCKET* socket)
 {
+	WSAOVERLAPPED overlapped;
+
 	SOCKADDR_IN client_a;
-	INT a_size = sizeof(client_a);
-	SOCKET c_socket = WSAAccept(*socket, (sockaddr*)&client_a, &a_size, NULL, NULL);
-	cout << "new client accepted\n";
 
 	while (true)
 	{
-		char buff[BUF_SIZE + 1];
+		INT a_size = sizeof(client_a);
+		c_socket = accept(*socket, (sockaddr*)&client_a, &a_size);
+		cout << "new client accepted\n";
+		cout << "Client Addr = " << (sockaddr*)&client_a << endl;
 
-		WSABUF wsabuf;
 		wsabuf.buf = buff;
-		wsabuf.len = BUF_SIZE + 1;
-
-		DWORD num_recv;
+		wsabuf.len = BUF_SIZE;
 		DWORD flag = 0;
-		
-		WSARecv(c_socket, &wsabuf, 1, &num_recv, &flag, NULL, NULL);
-		if (0 == num_recv)
-			break;
-		cout << "Received " << num_recv << " Bytes [" << wsabuf.buf << "]\n";
-		cout << "buff[0],[1] : " << buff[0] << " , " << (int)buff[1] << endl;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+
+		WSARecv(c_socket, &wsabuf, 1, NULL, &flag, &overlapped, recv_complete);
+	}
+}
+
+void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
+{
+	if (bytes > 0)
+		cout << "Sent " << bytes << " Bytes, 좌표 : [" << (int)buff[1] << "]" << endl << endl;
+	else {
+		closesocket(c_socket);
+		return;
+	}
+
+	wsabuf.len = BUF_SIZE;
+	ZeroMemory(over, sizeof(*over));
+	int ret = WSARecv(c_socket, &wsabuf, 1, NULL, &flags, over, recv_complete);
+}
+
+void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
+{
+	if (bytes > 0) {
+		buff[bytes] = 0;
+		cout << "Received " << bytes << " Bytes [" << buff << "]\n";
+		cout << "buff[0],[1] : " << buff[0] << " , " << buff[1] << endl;
 
 		int playerPos = buff[1];
 
@@ -99,24 +125,26 @@ void PlayerMove(SOCKET* socket)
 			break;
 		case 's':
 			cout << "아래 입력" << endl;
-			if (playerPos != 70)
+			if ((playerPos / 10) != 7)
 				playerPos += 10;
 			break;
 		}
 
 		buff[0] = 0;
 		buff[1] = playerPos;
-
-		DWORD num_sent;
-		wsabuf.len = num_recv;
-		int ret = WSASend(c_socket, &wsabuf, 1, &num_sent, 0, NULL, NULL);
-		if (SOCKET_ERROR == ret) {
-			err_display("Error Disconnect", WSAGetLastError());
-		}
-		cout << "Sent " << wsabuf.len << " Bytes, 좌표 : [" << (int)buff[1] << "]\n";
 	}
-	cout << "Client Connection Close" << endl;
-	closesocket(c_socket);
+	else {
+		cout << "Client Connection Close" << endl;
+		closesocket(c_socket);
+		return;
+	}
+
+	wsabuf.len = bytes;
+	ZeroMemory(over, sizeof(*over));   //오버랩트 초기화 해주고 사용하기
+	int ret = WSASend(c_socket, &wsabuf, 1, NULL, NULL, over, send_complete);
+	if (SOCKET_ERROR == ret) {
+		err_display("Error Disconnect", WSAGetLastError()); // 여기서 걸림
+	}
 }
 
 void CloseServer(SOCKET* socket)

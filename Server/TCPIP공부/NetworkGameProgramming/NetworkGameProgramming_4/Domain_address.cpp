@@ -40,7 +40,7 @@ BOOL GetIPAddr(const char *name, IN_ADDR *addr)
 //IPv4 -> 도메인 이름
 BOOL GetDomainName(IN_ADDR addr, char* name, int namelen)
 {
-	HOSTENT* ptr = gethostbyaddr((char*)&addr, sizeof(addr), AF_INET);
+	HOSTENT* ptr = gethostbyaddr((const char*)&addr, sizeof(addr), AF_INET);
 	if (ptr == NULL) {
 		err_display("gethostbyaddr()", WSAGetLastError());
 		return FALSE;
