@@ -156,6 +156,7 @@ void CHierachy_Loader::Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWor
 
 void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, FbxAMatrix& GeometryOffset, FbxAMatrix matWorld)
 {
+	
 	_uint iNumVertices = pFbxMesh->GetControlPointsCount();
 
 	if (iNumVertices > 0)

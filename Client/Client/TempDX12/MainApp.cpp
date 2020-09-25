@@ -17,6 +17,8 @@ HRESULT CMainApp::Ready_MainApp()
 {
 	if (FAILED(Ready_Device()))
 		return E_FAIL;
+	if (FAILED(Create_FbxManager()))
+		return E_FAIL;
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
@@ -25,6 +27,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
+
 
 	srand(unsigned(time(NULL)));
 	return S_OK;
@@ -93,11 +96,12 @@ HRESULT CMainApp::Create_FbxManager()
 {
 	if (nullptr != g_FbxManager && g_FbxIOSetting != nullptr)
 		return E_FAIL;
-
+	FbxIOSettings* pTemp = nullptr;
 	g_FbxManager = FbxManager::Create();
-	g_FbxIOSetting = FbxIOSettings::Create(g_FbxManager, IOSROOT);
+	
+	pTemp = FbxIOSettings::Create(g_FbxManager, IOSROOT);
 
-	g_FbxManager->SetIOSettings(g_FbxIOSetting);
+	g_FbxManager->SetIOSettings(pTemp);
 	FbxString	strFbxPath = FbxGetApplicationDirectory();
 	g_FbxManager->LoadPluginsDirectory(strFbxPath.Buffer());
 

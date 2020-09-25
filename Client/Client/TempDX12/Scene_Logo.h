@@ -26,6 +26,7 @@ private:
 	HRESULT					Add_Prototype_Component_Shader(CManagement* pManagement);
 	HRESULT					Add_Prototype_Component_Buffer(CManagement* pManagement);
 	HRESULT					Add_Prototype_Component_Texture(CManagement* pManagement);
+	HRESULT					Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagemet);
 public:
 	static CScene_Logo*		Create(ID3D12Device* pGraphic_Device);
 protected:

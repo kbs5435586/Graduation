@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>packages\WinPixEventRuntime\Include\WinPixEventRuntime;$(IncludePath);../Lib/include/</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\FBX_SDK\lib\vs2015\x86\debug;../Lib/lib/x86/debug/;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\WinPixEventRuntime\Include\WinPixEventRuntime;$(WindowsSDK_IncludePath);C:\FBX_SDK\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\FBX_SDK\lib\vs2015\x86\debug;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,7 +99,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

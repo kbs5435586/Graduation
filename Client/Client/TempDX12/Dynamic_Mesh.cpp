@@ -18,7 +18,10 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	FbxManager::GetFileFormatVersion(iSDKMajor, iSDKMinor, iSDKRevision);
 	FbxImporter* pFbxImporter = FbxImporter::Create(g_FbxManager, "");
 
-	_bool		IsImportStatus = pFbxImporter->Initialize(strFilePath.c_str(), -1, g_FbxIOSetting);
+	//if (nullptr == pFbxImporter)
+	//	return E_FAIL;
+
+	_bool		IsImportStatus = pFbxImporter->Initialize(strFilePath.c_str(), -1, g_FbxManager->GetIOSettings());
 	_int		iFileFormatMajor, iFileFormatMinor, iFileFormatRevision;
 	pFbxImporter->GetFileVersion(iFileFormatMajor, iFileFormatMinor, iFileFormatRevision);
 
@@ -43,8 +46,8 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 
 void CDynamic_Mesh::Render_Mesh()
 {
-	if (nullptr != m_pLoader && nullptr != m_pFbxScene)
-		m_pLoader->Render_Mesh(m_pFbxScene);
+	//if (nullptr != m_pLoader && nullptr != m_pFbxScene)
+	//	m_pLoader->Render_Mesh(m_pFbxScene);
 }
 
 CDynamic_Mesh* CDynamic_Mesh::Create(ID3D12Device* pGraphic_Device, string strFilePath)

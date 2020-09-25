@@ -86,7 +86,8 @@ HRESULT CScene_Logo::Ready_Prototype_Component()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Component_Texture(pManagement)))
 		return E_FAIL;
-
+	if (FAILED(Add_Prototype_Component_Dynamic_Mesh(pManagement)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -257,6 +258,16 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Test%d.png", 0, TEXTURE_TYPE_ELSE))))
 		return E_FAIL;
 
+
+	
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test",
+		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Angrybot.fbx"))))
+		return E_FAIL;
 	return S_OK;
 }
 
