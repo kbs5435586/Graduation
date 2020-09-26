@@ -72,14 +72,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>packages\WinPixEventRuntime\Include\WinPixEventRuntime;$(WindowsSDK_IncludePath);C:\FBX_SDK\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\FBX_SDK\lib\vs2015\x86\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\WinPixEventRuntime\Include\WinPixEventRuntime;$(WindowsSDK_IncludePath);../lib/include/;$(IncludePath)</IncludePath>
+    <LibraryPath>../lib/lib/x86/debug/;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;C:\Program Files %28x86%29\FBX_SDK\include</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\FBX_SDK\lib\vs2015\x86\release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../lib/include/</IncludePath>
+    <LibraryPath>../lib/lib/x86/release/;$(LibraryPath)</LibraryPath>
     <OutDir>
     </OutDir>
   </PropertyGroup>
@@ -193,6 +193,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TempDX12.h" />
+    <ClInclude Include="TempMesh.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureRect.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="Static_Mesh.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="TempDX12.cpp" />
+    <ClCompile Include="TempMesh.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureRect.cpp" />
@@ -274,6 +276,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ShaderFiles\Shader_Terrain_Texture.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ShaderFiles\Shader_Mesh.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

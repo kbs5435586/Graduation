@@ -175,6 +175,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\01. Transform">
       <UniqueIdentifier>{e3787958-af7a-405b-a83e-3cdddd1931ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Default\05. TempMesh">
+      <UniqueIdentifier>{7b36ec34-6037-49ca-af03-2e4570156048}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -339,6 +342,9 @@
     <ClInclude Include="Hierachy_Loader.h">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Hierachy_Loader</Filter>
     </ClInclude>
+    <ClInclude Include="TempMesh.h">
+      <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="TempDX12.ico">
@@ -489,6 +495,9 @@
     <ClCompile Include="Hierachy_Loader.cpp">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Hierachy_Loader</Filter>
     </ClCompile>
+    <ClCompile Include="TempMesh.cpp">
+      <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ShaderFiles\Shader_Default.hlsl">
@@ -501,6 +510,9 @@
       <Filter>96. ShaderFiles</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain_Texture.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Mesh.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>

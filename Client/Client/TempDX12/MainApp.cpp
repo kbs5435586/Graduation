@@ -96,12 +96,11 @@ HRESULT CMainApp::Create_FbxManager()
 {
 	if (nullptr != g_FbxManager && g_FbxIOSetting != nullptr)
 		return E_FAIL;
-	FbxIOSettings* pTemp = nullptr;
 	g_FbxManager = FbxManager::Create();
 	
-	pTemp = FbxIOSettings::Create(g_FbxManager, IOSROOT);
+	g_FbxIOSetting = FbxIOSettings::Create(g_FbxManager, IOSROOT);
 
-	g_FbxManager->SetIOSettings(pTemp);
+	g_FbxManager->SetIOSettings(g_FbxIOSetting);
 	FbxString	strFbxPath = FbxGetApplicationDirectory();
 	g_FbxManager->LoadPluginsDirectory(strFbxPath.Buffer());
 

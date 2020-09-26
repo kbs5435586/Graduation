@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+class CShader;
 class CMesh :
     public CComponent
 {
@@ -9,7 +10,7 @@ protected:
 	virtual ~CMesh() = default;
 public:
 	HRESULT						Ready_VIBuffer();
-	virtual void				Render_Mesh() = 0;;
+	virtual void				Render_Mesh(_matrix matWorld) = 0;;
 public:
 	virtual CComponent* Clone_Component(void* pArg = nullptr) = 0;
 protected:

@@ -6,7 +6,7 @@ HRESULT CStatic_Mesh::Ready_Component()
 	return S_OK;
 }
 
-void CStatic_Mesh::Render_Mesh()
+void CStatic_Mesh::Render_Mesh(_matrix matWorld)
 {
 }
 

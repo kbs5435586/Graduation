@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+class CShader;
 class CHierachy_Loader
 	: public CBase
 {
@@ -7,13 +8,15 @@ private:
 	CHierachy_Loader(ID3D12Device* pGraphic_Device);
 	~CHierachy_Loader() = default;
 public:
-	HRESULT								Ready_Hierachy_Loader(FbxNode* pFbxNode);
+	void								Ready_Hierachy_Loader(FbxNode* pFbxNode);
 public:
 	static CHierachy_Loader*			Create(ID3D12Device* pGraphic_Device, FbxScene* pFbxScene);
 public:
 	void								Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWorld,const _float& fTimeDelta);
 	void								Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, 
-													FbxAMatrix& GeometryOffset, FbxAMatrix matWorld);
+													FbxAMatrix& GeometryOffset, FbxAMatrix matWorld );
+private:
+	_matrix								ConvertFbxToMatrix(FbxAMatrix matWorld);
 private:
 	FbxAMatrix							Get_GeometricOffset(FbxNode* pFbxNode);
 private:

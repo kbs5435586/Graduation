@@ -9,6 +9,8 @@
 #include "TextureRect.h"
 #include "Terrain.h"
 #include "Texture_Terrain.h"
+#include "TempMesh.h"
+
 CScene_Logo::CScene_Logo(ID3D12Device* pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -25,6 +27,9 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 	if(FAILED(Ready_Layer_Rect(L"Layer_Rect")))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Temp_Mesh(L"Layer_TempMesh")))
+		return E_FAIL;
+
 	//if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
@@ -68,6 +73,9 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain_Texture", CTexture_Terrain::Create(m_pGraphic_Device))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TempMesh", CTempMesh::Create(m_pGraphic_Device))))
+		return E_FAIL;
+
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -203,6 +211,22 @@ HRESULT CScene_Logo::Ready_Layer_Terrain_Texture(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+HRESULT CScene_Logo::Ready_Layer_Temp_Mesh(const _tchar* pLayerTag)
+{
+	CManagement* pManagement = CManagement::GetInstance();
+
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	pManagement->AddRef();
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TempMesh", SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+	Safe_Release(pManagement);
+
+	return S_OK;
+}
+
 HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Default",
@@ -216,6 +240,9 @@ HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Terrain_Texture",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Terrain_Texture.hlsl", "VS_Main", "PS_Main", 0))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Mesh",
+		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Mesh.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
 	return S_OK;
 }
@@ -265,7 +292,7 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 
 HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test",
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
 		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Angrybot.fbx"))))
 		return E_FAIL;
 	return S_OK;

@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Dynamic_Mesh.h"
 #include "Hierachy_Loader.h"
+#include "Animation_Controller.h"
 
 CDynamic_Mesh::CDynamic_Mesh(ID3D12Device* pGraphic_Device)
 	: CMesh(pGraphic_Device)
@@ -18,8 +19,8 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	FbxManager::GetFileFormatVersion(iSDKMajor, iSDKMinor, iSDKRevision);
 	FbxImporter* pFbxImporter = FbxImporter::Create(g_FbxManager, "");
 
-	//if (nullptr == pFbxImporter)
-	//	return E_FAIL;
+	if (nullptr == pFbxImporter)
+		return E_FAIL;
 
 	_bool		IsImportStatus = pFbxImporter->Initialize(strFilePath.c_str(), -1, g_FbxManager->GetIOSettings());
 	_int		iFileFormatMajor, iFileFormatMinor, iFileFormatRevision;
@@ -39,15 +40,38 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	m_pLoader = CHierachy_Loader::Create(m_pGraphic_Device,m_pFbxScene);
 	if (m_pLoader == nullptr)
 		return E_FAIL;
+	m_pController = CAnimation_Controller::Create(m_pFbxScene);
+	if (nullptr == m_pController)
+		return E_FAIL;
 
 
 	return S_OK;
 }
 
-void CDynamic_Mesh::Render_Mesh()
+void CDynamic_Mesh::Play_Animation(const _float& fTimeDelta)
 {
-	//if (nullptr != m_pLoader && nullptr != m_pFbxScene)
-	//	m_pLoader->Render_Mesh(m_pFbxScene);
+	if (nullptr == m_pController)
+		return;
+	m_pController->Play_Animation(fTimeDelta);
+	m_fTime = fTimeDelta;
+}
+
+FbxAMatrix CDynamic_Mesh::ConvertMatrixToFbx(_matrix matWorld)
+{
+	FbxAMatrix fbxmtxResult;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++) fbxmtxResult[i][j] = matWorld.m[i][j];
+	}
+	return(fbxmtxResult);
+}
+
+void CDynamic_Mesh::Render_Mesh(_matrix matWorld)
+{
+	if (nullptr != m_pLoader && nullptr != m_pFbxScene)
+	{
+		m_pLoader->Render_Hierachy_Mesh(m_pFbxScene->GetRootNode(), ConvertMatrixToFbx(matWorld), m_fTime);
+	}
 }
 
 CDynamic_Mesh* CDynamic_Mesh::Create(ID3D12Device* pGraphic_Device, string strFilePath)
@@ -68,5 +92,7 @@ CComponent* CDynamic_Mesh::Clone_Component(void* pArg)
 
 void CDynamic_Mesh::Free()
 {
+	if (m_pLoader)
+		m_pLoader->Release();
 	CMesh::Free();
 }

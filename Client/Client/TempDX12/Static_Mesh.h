@@ -9,7 +9,7 @@ private:
 	virtual ~CStatic_Mesh() = default;
 public:
     HRESULT         Ready_Component();
-    void            Render_Mesh();
+    void            Render_Mesh(_matrix matWorld);
 protected:
     ID3D12Device*   m_pGraphic_Device = nullptr;
     _bool           m_IsClone = false;
