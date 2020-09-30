@@ -97,7 +97,7 @@ HRESULT CMainApp::Create_FbxManager()
 	if (nullptr != g_FbxManager && g_FbxIOSetting != nullptr)
 		return E_FAIL;
 	g_FbxManager = FbxManager::Create();
-	
+
 	g_FbxIOSetting = FbxIOSettings::Create(g_FbxManager, IOSROOT);
 
 	g_FbxManager->SetIOSettings(g_FbxIOSetting);
@@ -177,5 +177,16 @@ void CMainApp::Free()
 	Safe_Release(m_pManagement);
 	Safe_Release(m_pRenderer);
 
+
 	m_pManagement->Release_Engine();
+	if (g_FbxIOSetting)
+	{
+		g_FbxIOSetting->Destroy();
+		g_FbxIOSetting = nullptr;
+	}
+	if (g_FbxManager)
+	{
+		g_FbxManager->Destroy();
+		g_FbxManager = nullptr;
+	}
 }

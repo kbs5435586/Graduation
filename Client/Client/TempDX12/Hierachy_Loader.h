@@ -32,11 +32,8 @@ private:
 	_uint								m_iNumIndices = 0;
 	_uint								m_iNumPolygons = 0;
 private:
-	_uint							m_iMaxIdx = 0;
+	_uint								m_iMaxIdx = 0;
 	static _uint						m_iCurrentIdx;
-private:
-	vector<D3D12_VERTEX_BUFFER_VIEW>	m_vecVertexBufferView;
-	vector<D3D12_INDEX_BUFFER_VIEW>		m_vecIndexBufferView;
 private:
 	vector<ID3D12Resource*>				m_vecVertexBuffer;
 	vector<ID3D12Resource*>				m_vecVertexUploadBuffer;
@@ -48,6 +45,7 @@ private:
 	vector<_vec3>						m_vecPosition;
 	vector<_uint>						m_vecIndecies;
 	vector<_uint>						m_vecNumOfIndices;
+
 private:
 	virtual void						Free();
 };

@@ -16,7 +16,7 @@ public:
 protected:
 	virtual void				Free() = 0;
 protected:
-	FbxScene* m_pFbxScene = nullptr;
+	FbxScene*					m_pFbxScene = nullptr;
 
 };
 

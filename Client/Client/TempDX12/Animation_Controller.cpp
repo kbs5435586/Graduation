@@ -84,10 +84,12 @@ CAnimation_Controller* CAnimation_Controller::Create(FbxScene* pFbxScene)
 
 void CAnimation_Controller::Free()
 {
-	if (m_ppFbxAnimationStacks) delete[] m_ppFbxAnimationStacks;
-	if (m_pFbxStartTime) delete[] m_pFbxStartTime;
-	if (m_pFbxStopTime) delete[] m_pFbxStopTime;
-	if (m_pFbxCurrentTime) delete[] m_pFbxCurrentTime;
+	Safe_Delete_Array(m_ppFbxAnimationStacks);
+	Safe_Delete_Array(m_pFbxStartTime);
+	Safe_Delete_Array(m_pFbxStopTime);
+	//Error
+	Safe_Delete_Array(m_pFbxCurrentTime);
+
 }
 
 void CAnimation_Controller::Set_Position(_uint iAnimationStack, _float fPosition)

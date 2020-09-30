@@ -18,6 +18,7 @@ CTexture::CTexture(const CTexture& rhs)
 	, wicDecoder(rhs.wicDecoder)
 	, wicFrame(rhs.wicFrame)
 {
+	m_IsClone = true;
 	for (auto& iter : m_vecTexture)
 		iter->AddRef();
 	for (auto& iter : m_vecTextureUpload)

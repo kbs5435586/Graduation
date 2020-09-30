@@ -9,7 +9,6 @@ CComponent::CComponent(ID3D12Device* pGraphic_Device)
 
 CComponent::CComponent(const CComponent& rhs)
 	: m_pGraphic_Device(rhs.m_pGraphic_Device)
-	, m_IsClone(true)
 {
 	m_pGraphic_Device->AddRef();
 }

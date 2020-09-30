@@ -25,7 +25,9 @@ public:
 	void					Go_Left(const _float& fTimeDelta);
 	void					Go_Right(const _float& fTimeDelta);
 	void					BackWard(const _float& fTimeDelta);
+	void					SetUp_RotationX(const _float& fRadian);
 	void					SetUp_RotationY(const _float& fRadian);
+	void					SetUp_RotationZ(const _float& fRadian);
 	void					Rotation_X(const _float& fTimeDelta);
 	void					Rotation_Y(const _float& fTimeDelta);
 	void					Rotation_Z(const _float& fTimeDelta);

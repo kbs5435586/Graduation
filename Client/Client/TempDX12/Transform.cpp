@@ -110,6 +110,27 @@ void CTransform::BackWard(const _float& fTimeDelta)
 	vPosition = Vector3::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
+void CTransform::SetUp_RotationX(const _float& fRadian)
+{
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+
+	_matrix		matRot = Matrix::Identity();
+	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationX(fRadian)));
+
+	Vector3::ScalarProduct(vRight, Get_Scale().x, false);
+	Vector3::ScalarProduct(vUp, Get_Scale().y, false);
+	Vector3::ScalarProduct(vLook, Get_Scale().z, false);
+
+	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
+
+	vRight = Vector3::TransformNormal(vRight, mat);
+	vUp = Vector3::TransformNormal(vUp, mat);
+	vLook = Vector3::TransformNormal(vLook, mat);
+
+	Set_StateInfo(STATE_RIGHT, &vRight);
+	Set_StateInfo(STATE_UP, &vUp);
+	Set_StateInfo(STATE_LOOK, &vLook);
+}
 void CTransform::Rotation_Axis(const _float& fTimeDelta, const _vec3* pAxis)
 {
 	_vec3		vDir[3];
@@ -136,6 +157,28 @@ void CTransform::SetUp_RotationY(const _float& fRadian)
 
 	_matrix		matRot = Matrix::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(fRadian)));
+
+	Vector3::ScalarProduct(vRight, Get_Scale().x, false);
+	Vector3::ScalarProduct(vUp, Get_Scale().y, false);
+	Vector3::ScalarProduct(vLook, Get_Scale().z, false);
+
+	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
+
+	vRight = Vector3::TransformNormal(vRight, mat);
+	vUp = Vector3::TransformNormal(vUp, mat);
+	vLook = Vector3::TransformNormal(vLook, mat);
+
+	Set_StateInfo(STATE_RIGHT, &vRight);
+	Set_StateInfo(STATE_UP, &vUp);
+	Set_StateInfo(STATE_LOOK, &vLook);
+}
+
+void CTransform::SetUp_RotationZ(const _float& fRadian)
+{
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+
+	_matrix		matRot = Matrix::Identity();
+	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(fRadian)));
 
 	Vector3::ScalarProduct(vRight, Get_Scale().x, false);
 	Vector3::ScalarProduct(vUp, Get_Scale().y, false);

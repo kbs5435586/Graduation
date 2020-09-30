@@ -13,6 +13,9 @@ CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	, m_pLoader(rhs.m_pLoader)
 	, m_pController(rhs.m_pController)
 {
+	m_pLoader->AddRef();
+	m_pController->AddRef();
+	m_IsClone = true;
 }
 
 HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
@@ -46,6 +49,7 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	if (nullptr == m_pController)
 		return E_FAIL;
 
+	if(m_pController!=nullptr)
 	m_pController->Set_Animation(m_pFbxScene, 0);
 
 	return S_OK;

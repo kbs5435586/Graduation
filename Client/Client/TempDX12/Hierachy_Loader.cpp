@@ -53,9 +53,10 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 			ID3D12Resource*				pTempVertexUploadBuffer;
 			ID3D12Resource*				pTempIndexBuffer;
 			ID3D12Resource*				pTempIndexUploadBuffer;
+
 			D3D12_VERTEX_BUFFER_VIEW	tempVertexBufferView;
 			D3D12_INDEX_BUFFER_VIEW		tempIndexBufferView;
-
+		
 			// BufferView Setting
 			CDevice::GetInstance()->Open();
 			{
@@ -68,7 +69,7 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 					D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeof(_vec3) * m_iNumVertices), D3D12_RESOURCE_STATE_GENERIC_READ,
 					nullptr, IID_PPV_ARGS(&pTempVertexUploadBuffer))))
 					return;
-				m_vecVertexUploadBuffer.push_back(pTempVertexBuffer);
+				m_vecVertexUploadBuffer.push_back(pTempVertexUploadBuffer);
 
 
 				D3D12_SUBRESOURCE_DATA vertexData = {};
@@ -84,7 +85,6 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 					D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices), D3D12_RESOURCE_STATE_COPY_DEST,
 					nullptr, IID_PPV_ARGS(&pTempIndexBuffer))))
 					return;
-
 				m_vecIndexBuffer.push_back(pTempIndexBuffer);
 				if (FAILED(m_pGraphic_Device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 					D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices), D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -102,6 +102,7 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 			}
 			CDevice::GetInstance()->Close();
 
+
 			tempVertexBufferView.BufferLocation = pTempVertexBuffer->GetGPUVirtualAddress();
 			tempVertexBufferView.StrideInBytes = sizeof(_vec3);
 			tempVertexBufferView.SizeInBytes = sizeof(_vec3) * m_iNumVertices;
@@ -116,8 +117,7 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 
 			m_vecDynamic_Mesh_Render.push_back(tMeshRender);
 			m_iMaxIdx = m_vecDynamic_Mesh_Render.size();
-			m_vecVertexBufferView.push_back(tempVertexBufferView);
-			m_vecIndexBufferView.push_back(tempIndexBufferView);
+
 			CDevice::GetInstance()->WaitForGpuComplete();
 
 
@@ -306,22 +306,18 @@ void CHierachy_Loader::Free()
 {
 	for (auto& iter : m_vecVertexBuffer)
 	{
-		if (iter)
-			iter->Release();
+		Safe_Release(iter);
 	}
 	for (auto& iter : m_vecVertexUploadBuffer)
 	{
-		if (iter)
-			iter->Release();
+		Safe_Release(iter);
 	}
 	for (auto& iter : m_vecIndexBuffer)
 	{
-		if (iter)
-			iter->Release();
+		Safe_Release(iter);
 	}
 	for (auto& iter : m_vecIndexUploadBuffer)
 	{
-		if (iter)
-			iter->Release();
+		Safe_Release(iter);
 	}
 }
