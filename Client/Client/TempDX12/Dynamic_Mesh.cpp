@@ -10,6 +10,8 @@ CDynamic_Mesh::CDynamic_Mesh(ID3D12Device* pGraphic_Device)
 
 CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	: CMesh(rhs)
+	, m_pLoader(rhs.m_pLoader)
+	, m_pController(rhs.m_pController)
 {
 }
 
@@ -44,6 +46,7 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	if (nullptr == m_pController)
 		return E_FAIL;
 
+	m_pController->Set_Animation(m_pFbxScene, 0);
 
 	return S_OK;
 }
@@ -74,6 +77,14 @@ void CDynamic_Mesh::Render_Mesh(_matrix matWorld)
 	}
 }
 
+void CDynamic_Mesh::Render_Mesh(_matrix matWorld, ID3D12PipelineState* pPipeLine, ID3D12Resource* pConstantBuffer, CShader* pShader, void* pData, _int iIdx)
+{
+	if (nullptr != m_pLoader && nullptr != m_pFbxScene)
+	{
+		m_pLoader->Render_Hierachy_Mesh(m_pFbxScene->GetRootNode(), ConvertMatrixToFbx(matWorld), m_fTime, pPipeLine, pConstantBuffer, pShader, pData, iIdx);
+	}
+}
+
 CDynamic_Mesh* CDynamic_Mesh::Create(ID3D12Device* pGraphic_Device, string strFilePath)
 {
 	CDynamic_Mesh* pInstance = new CDynamic_Mesh(pGraphic_Device);
@@ -92,7 +103,8 @@ CComponent* CDynamic_Mesh::Clone_Component(void* pArg)
 
 void CDynamic_Mesh::Free()
 {
-	if (m_pLoader)
-		m_pLoader->Release();
+	Safe_Release(m_pLoader);
+	Safe_Release(m_pController);
+
 	CMesh::Free();
 }

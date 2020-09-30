@@ -52,9 +52,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Mananger">
       <UniqueIdentifier>{f21b2e04-6401-43d1-962c-aee6dc9229e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component">
-      <UniqueIdentifier>{e227cf84-64ec-4c49-8eb9-74c7310a53bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\01. GameObject\00. Layer">
       <UniqueIdentifier>{efed9266-200d-440b-a2bc-a421d37e3e64}</UniqueIdentifier>
     </Filter>
@@ -82,15 +79,6 @@
     <Filter Include="02. GameObject\99. Default\00. Rect">
       <UniqueIdentifier>{d9e6a26f-72e7-4253-87b7-872f2c0f3a8c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer">
-      <UniqueIdentifier>{fe0efd13-d3cb-4284-8daa-c4ab6b610f5a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\02. Renderer">
-      <UniqueIdentifier>{421e2682-050a-49b5-82d4-e595382fe737}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\00. Buffer_TriCol">
-      <UniqueIdentifier>{60bbc1d2-7014-4ac7-8cb1-fa2bc8b8dccc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Default">
       <UniqueIdentifier>{d6dc74ad-23bc-420a-9504-ed7a065b595b}</UniqueIdentifier>
     </Filter>
@@ -109,38 +97,17 @@
     <Filter Include="96. ShaderFiles">
       <UniqueIdentifier>{7925c94e-a055-4ee0-86a3-fc47de7ad026}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\03. Shader">
-      <UniqueIdentifier>{9d88ed7d-28da-46f1-acdf-ce5040447a53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\01. Buffer_RectCol">
-      <UniqueIdentifier>{84b43483-5236-46b2-9bcc-5f81174f7747}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\02. Buffer_RectTex">
-      <UniqueIdentifier>{973ab3d8-ec73-4a12-93b0-befec34d9bf9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\03. Buffer_CubeCol">
-      <UniqueIdentifier>{2909c51e-a821-44b7-ac69-51fc9ad222cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Default\01. Cube">
       <UniqueIdentifier>{f93f5cbb-799e-41ac-a89b-3317e260a222}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Default\02. TextureRect">
       <UniqueIdentifier>{c3ef9a8c-64e7-4897-ac27-33bb409744f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\04. Texture">
-      <UniqueIdentifier>{ca30891b-1c2e-4e27-a563-84248b881faa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\04. Buffer_Terrain">
-      <UniqueIdentifier>{6d522831-2e87-45ec-b599-45ef10eda5c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Default\03. Terrain">
       <UniqueIdentifier>{1c4a7a90-f915-4efa-a8ae-9757295bdf48}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Default\04. Texture_Terrain">
       <UniqueIdentifier>{4e208349-b4f9-46a4-8b1e-9e5d4b4efcc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\05. Buffer_Terrain_Texture">
-      <UniqueIdentifier>{3b66ac16-7377-4af5-b32d-0f0305c3074a}</UniqueIdentifier>
     </Filter>
     <Filter Include="99. Default\00. Fbx_Loader">
       <UniqueIdentifier>{fc903f01-554e-42d4-9032-d0147c71fdb7}</UniqueIdentifier>
@@ -156,6 +123,42 @@
     </Filter>
     <Filter Include="02. GameObject\97. Mesh">
       <UniqueIdentifier>{54a23b58-1e97-4292-94b0-ab17d8ffd0b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\05. TempMesh">
+      <UniqueIdentifier>{7b36ec34-6037-49ca-af03-2e4570156048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component">
+      <UniqueIdentifier>{e227cf84-64ec-4c49-8eb9-74c7310a53bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer">
+      <UniqueIdentifier>{fe0efd13-d3cb-4284-8daa-c4ab6b610f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\00. Buffer_TriCol">
+      <UniqueIdentifier>{60bbc1d2-7014-4ac7-8cb1-fa2bc8b8dccc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\01. Buffer_RectCol">
+      <UniqueIdentifier>{84b43483-5236-46b2-9bcc-5f81174f7747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\02. Buffer_RectTex">
+      <UniqueIdentifier>{973ab3d8-ec73-4a12-93b0-befec34d9bf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\03. Buffer_CubeCol">
+      <UniqueIdentifier>{2909c51e-a821-44b7-ac69-51fc9ad222cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\04. Buffer_Terrain">
+      <UniqueIdentifier>{6d522831-2e87-45ec-b599-45ef10eda5c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\05. Buffer_Terrain_Texture">
+      <UniqueIdentifier>{3b66ac16-7377-4af5-b32d-0f0305c3074a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\02. Renderer">
+      <UniqueIdentifier>{421e2682-050a-49b5-82d4-e595382fe737}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\03. Shader">
+      <UniqueIdentifier>{9d88ed7d-28da-46f1-acdf-ce5040447a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\04. Texture">
+      <UniqueIdentifier>{ca30891b-1c2e-4e27-a563-84248b881faa}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh">
       <UniqueIdentifier>{4552e5c5-dcfc-4cc0-9864-9f968bdfffaa}</UniqueIdentifier>
@@ -174,9 +177,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\01. Transform">
       <UniqueIdentifier>{e3787958-af7a-405b-a83e-3cdddd1931ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Default\05. TempMesh">
-      <UniqueIdentifier>{7b36ec34-6037-49ca-af03-2e4570156048}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

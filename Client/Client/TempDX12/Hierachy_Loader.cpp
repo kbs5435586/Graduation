@@ -2,6 +2,7 @@
 #include "Hierachy_Loader.h"
 #include "Shader.h"
 
+_uint CHierachy_Loader::m_iCurrentIdx = 0;
 CHierachy_Loader::CHierachy_Loader(ID3D12Device* pGraphic_Device)
 {
 	m_pGraphic_Device = pGraphic_Device;
@@ -10,7 +11,7 @@ CHierachy_Loader::CHierachy_Loader(ID3D12Device* pGraphic_Device)
 void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 {
 	if (nullptr == pFbxNode)
-		return ;
+		return;
 
 	FbxNodeAttribute* pFbxNodeAttribute = pFbxNode->GetNodeAttribute();
 
@@ -19,7 +20,9 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 		FbxMesh* pFbxMesh = pFbxNode->GetMesh();
 		if (pFbxMesh)
 		{
-			
+			DYNAMIC_MESH_RENDER	tMeshRender;
+			ZeroMemory(&tMeshRender, sizeof(DYNAMIC_MESH_RENDER));
+
 			m_iNumVertices = pFbxMesh->GetControlPointsCount();
 			m_iNumIndices = 0;
 			m_iNumPolygons = pFbxMesh->GetPolygonCount();
@@ -35,13 +38,14 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 			for (_uint i = 0; i < m_iNumPolygons; ++i)
 			{
 				m_iNumIndices += pFbxMesh->GetPolygonSize(i);
+				m_vecNumOfIndices.push_back(m_iNumIndices);
 			}
 			for (_uint i = 0, k = 0; i < m_iNumPolygons; ++i)
 			{
 				int iPolygonSize = pFbxMesh->GetPolygonSize(i);
 				for (int j = 0; j < iPolygonSize; ++j)
 				{
-					m_vecIndecise.push_back(pFbxMesh->GetPolygonVertex(i, j));
+					m_vecIndecies.push_back(pFbxMesh->GetPolygonVertex(i, j));
 				}
 			}
 
@@ -89,7 +93,7 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 				m_vecIndexUploadBuffer.push_back(pTempIndexUploadBuffer);
 
 				D3D12_SUBRESOURCE_DATA indexData = {};
-				indexData.pData = reinterpret_cast<BYTE*>(m_vecIndecise.data());
+				indexData.pData = reinterpret_cast<BYTE*>(m_vecIndecies.data());
 				indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
 				indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
@@ -106,19 +110,23 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 			tempIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 			tempIndexBufferView.SizeInBytes = sizeof(_uint) * m_iNumIndices;
 
+			tMeshRender.tVertexBufferView = tempVertexBufferView;
+			tMeshRender.tIndexBufferView = tempIndexBufferView;
+			tMeshRender.iNumOfIndices = m_iNumIndices;
+
+			m_vecDynamic_Mesh_Render.push_back(tMeshRender);
+			m_iMaxIdx = m_vecDynamic_Mesh_Render.size();
 			m_vecVertexBufferView.push_back(tempVertexBufferView);
 			m_vecIndexBufferView.push_back(tempIndexBufferView);
 			CDevice::GetInstance()->WaitForGpuComplete();
 
 
-			// 각 레이아웃 등 설정
-			// 무슨 쉐이더를 쓸건지 설정
-			// constant buffer 설정
-			// 
-
-
 
 			
+
+			//m_VertexBufferView
+			//m_IndexBufferView
+			//m_iIndices		Number of Index
 		}
 	}
 
@@ -130,7 +138,7 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 	for (_uint i = 0; i < iNumChilds; ++i)
 		Ready_Hierachy_Loader(pFbxNode->GetChild(i));
 
-	return ;
+	return;
 }
 
 
@@ -143,11 +151,11 @@ CHierachy_Loader* CHierachy_Loader::Create(ID3D12Device* pGraphic_Device, FbxSce
 }
 
 void CHierachy_Loader::Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWorld, const _float& fTimeDelta)
-{ 
+{
 	FbxNodeAttribute* pFbxNodeAttribute = pFbxNode->GetNodeAttribute();
 	if (pFbxNodeAttribute && (pFbxNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh))
 	{
-		FbxAMatrix FbxMatNodeToRoot = pFbxNode->EvaluateGlobalTransform(fTimeDelta);
+		FbxAMatrix FbxMatNodeToRoot = pFbxNode->EvaluateGlobalTransform();
 		FbxAMatrix FbxMatGeoOffset = Get_GeometricOffset(pFbxNode);
 
 		FbxMesh* pFbxMesh = pFbxNode->GetMesh();
@@ -161,9 +169,29 @@ void CHierachy_Loader::Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWor
 	}
 }
 
+void CHierachy_Loader::Render_Hierachy_Mesh(FbxNode* pFbxNode, FbxAMatrix matWorld, const _float& fTimeDelta, ID3D12PipelineState* pPipeLine, ID3D12Resource* pConstantBuffer,
+											CShader* pShader, void* pData, _uint iIdx)
+{
+	FbxNodeAttribute* pFbxNodeAttribute = pFbxNode->GetNodeAttribute();
+	if (pFbxNodeAttribute && (pFbxNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh))
+	{
+		FbxAMatrix FbxMatNodeToRoot = pFbxNode->EvaluateGlobalTransform();
+		FbxAMatrix FbxMatGeoOffset = Get_GeometricOffset(pFbxNode);
+
+		FbxMesh* pFbxMesh = pFbxNode->GetMesh();
+		Render_Mesh(pFbxMesh, FbxMatNodeToRoot, FbxMatGeoOffset, matWorld, pPipeLine, pConstantBuffer, pShader, pData, iIdx);
+	}
+	_uint iNumChild = pFbxNode->GetChildCount();
+
+	for (_uint i = 0; i < iNumChild; ++i)
+	{
+		Render_Hierachy_Mesh(pFbxNode->GetChild(i), matWorld, fTimeDelta, pPipeLine, pConstantBuffer, pShader, pData,  iIdx);
+	}
+}
+
 void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, FbxAMatrix& GeometryOffset, FbxAMatrix matWorld)
 {
-	
+
 	_uint iNumVertices = pFbxMesh->GetControlPointsCount();
 
 	if (iNumVertices > 0)
@@ -172,23 +200,97 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 		_uint			iNumSkinDeformer = pFbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 		if (iNumSkinDeformer == 0)
 			FbxMatTransform = matWorld * NodeToRoot * GeometryOffset;
-		// 아웃풋 값
-		_matrix matTemp = ConvertFbxToMatrix(FbxMatTransform);
+
+		//	outMatrix = ConvertFbxToMatrix(FbxMatTransform);
+		//	Set Constant Buffer
+		//	CommantLst->Rendering Function
 
 
 
 	}
 }
 
-_matrix CHierachy_Loader::ConvertFbxToMatrix(FbxAMatrix fbxmat)
+void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, FbxAMatrix& GeometryOffset, FbxAMatrix matWorld, ID3D12PipelineState* pPipeLine,
+									ID3D12Resource* pConstantBuffer, CShader* pShader, void* pData, _uint iIdx)
 {
-	_matrix matTemp;
+	if (nullptr == pShader)
+		return;
+	if (nullptr == pConstantBuffer)
+		return;
+
+
+	_uint iNumVertices = pFbxMesh->GetControlPointsCount();
+
+	if (iNumVertices > 0)
+	{
+		FbxAMatrix		FbxMatTransform = matWorld;
+		_uint			iNumSkinDeformer = pFbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+		if (iNumSkinDeformer == 0)
+			FbxMatTransform = matWorld * NodeToRoot * GeometryOffset;
+
+		//	outMatrix = ConvertFbxToMatrix(FbxMatTransform);
+		//	Set Constant Buffer
+		//	CommantLst->Rendering Function
+
+		MAINPASS tMainPass = {};
+		_matrix matWolrd = ConvertFbxToMatrix(&FbxMatTransform);
+		_matrix matView = CDevice::GetInstance()->GetViewMatrix();
+		_matrix matProj = CDevice::GetInstance()->GetProjectionMatrix();
+
+		pShader->SetUp_OnShader(pPipeLine, pConstantBuffer, matWolrd, matView, matProj, tMainPass, ROOT_TYPE_COLOR);
+		memcpy_s(pData, iIdx, (void*)&tMainPass, sizeof(tMainPass));
+
+		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, pConstantBuffer->GetGPUVirtualAddress());
+
+		// m_veDynamic_Render를 인덱스 접근을 통해 BufferView들과 Num of Indices를 가져와 렌더링 해야함
+
+
+		CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &m_vecDynamic_Mesh_Render[0].tVertexBufferView);
+		CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&m_vecDynamic_Mesh_Render[0].tIndexBufferView);
+		CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(m_vecDynamic_Mesh_Render[0].iNumOfIndices, 1, 0, 0, 0);
+
+		//MainPath
+		//m_VertexBufferView
+		//m_IndexBufferView
+		//m_iIndices
+
+		if (m_iCurrentIdx >= m_iMaxIdx-1)
+		{
+			m_iCurrentIdx = 0;
+		}
+		m_iCurrentIdx++;
+	}
+}
+
+_matrix CHierachy_Loader::ConvertFbxToMatrix(FbxAMatrix* fbxmat)
+{
+	FbxVector4 S = fbxmat->GetS();
+	//	FbxVector4 R = FbxVector4(0.0, 45.0, 0.0, 1.0);
+	FbxVector4 R = fbxmat->GetR();
+	FbxVector4 T = fbxmat->GetT();
+
+	FbxAMatrix fbxmtxTransform = FbxAMatrix(T, R, S);
+
+	XMFLOAT4X4 xmf4x4Result;
 	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < 4; j++)
-			matTemp.m[i][j] = fbxmat.GetColumn(i)[j];
+
+		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)(*fbxmat)[i][j];
 	}
-	return(matTemp);
+
+	XMFLOAT3 xmf3S = XMFLOAT3((float)S.mData[0], (float)S.mData[1], (float)S.mData[2]);
+	XMFLOAT3 xmf3R = XMFLOAT3((float)R.mData[0], (float)R.mData[1], (float)R.mData[2]);
+	XMFLOAT3 xmf3T = XMFLOAT3((float)T.mData[0], (float)T.mData[1], (float)T.mData[2]);
+
+	XMMATRIX Rx = XMMatrixRotationX(XMConvertToRadians(xmf3R.x));
+	XMMATRIX Ry = XMMatrixRotationY(XMConvertToRadians(xmf3R.y));
+	XMMATRIX Rz = XMMatrixRotationZ(XMConvertToRadians(xmf3R.z));
+	XMMATRIX xmR = XMMatrixMultiply(XMMatrixMultiply(Rx, Ry), Rz);
+	XMFLOAT4X4 xmf4x4Multiply;
+	XMStoreFloat4x4(&xmf4x4Multiply, XMMatrixMultiply(XMMatrixMultiply(XMMatrixScaling(xmf3S.x, xmf3S.y, xmf3S.z), xmR), XMMatrixTranslation(xmf3T.x, xmf3T.y, xmf3T.z)));
+
+	return(xmf4x4Result);
 }
 
 FbxAMatrix CHierachy_Loader::Get_GeometricOffset(FbxNode* pFbxNode)

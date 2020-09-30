@@ -12,7 +12,7 @@ public:
 	HRESULT						Ready_VIBuffer();
 	virtual void				Render_Mesh(_matrix matWorld) = 0;;
 public:
-	virtual CComponent* Clone_Component(void* pArg = nullptr) = 0;
+	virtual CComponent*			Clone_Component(void* pArg = nullptr) = 0;
 protected:
 	virtual void				Free() = 0;
 protected:

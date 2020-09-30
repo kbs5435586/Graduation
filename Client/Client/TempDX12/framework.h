@@ -36,7 +36,7 @@ using namespace std;
 #include <dinput.h>
 #include <wincodec.h>
 #include <time.h>
-#include <pix3.h>
+
 #include <wrl.h>
 #include <fstream>
 #include <string>

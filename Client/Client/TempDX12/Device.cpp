@@ -514,7 +514,7 @@ void CDevice::Begin()
 
 void CDevice::End()
 {
-	PIXEndEvent(m_pCommandList);
+	//PIXEndEvent(m_pCommandList);
 	m_pCommandList->ResourceBarrier(1,
 		&CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 

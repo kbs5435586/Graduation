@@ -54,7 +54,12 @@ typedef struct tagMainPass
 
 }MAINPASS;
 
-
+typedef struct tagDynamic_MeshRender
+{
+	D3D12_VERTEX_BUFFER_VIEW	tVertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW		tIndexBufferView;
+	unsigned int				iNumOfIndices;
+}DYNAMIC_MESH_RENDER;
 struct Vertex
 {
 	DirectX::XMFLOAT3 Pos;
@@ -153,3 +158,4 @@ struct CtrlPoint
 		std::sort(mBoneInfo.begin(), mBoneInfo.end());
 	}
 };
+

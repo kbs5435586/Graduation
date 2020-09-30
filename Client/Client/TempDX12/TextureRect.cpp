@@ -73,8 +73,7 @@ void CTextureRect::Render_GameObject()
 
 		m_pTextureCom->SetUp_OnShader(CDevice::GetInstance()->GetCommandList());
 
-		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1,
-			m_pConstBuffer->GetGPUVirtualAddress());
+		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
 
 		m_pBufferCom->Render_VIBuffer();
 	}

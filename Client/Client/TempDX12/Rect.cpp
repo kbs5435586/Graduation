@@ -34,6 +34,7 @@ HRESULT CRect::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(0.f, 0.f, 0.f));
+	m_pTransformCom->Scaling(0.5f, 0.5f, 0.5f);
 
 	return S_OK;
 }

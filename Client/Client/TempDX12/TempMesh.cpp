@@ -34,6 +34,11 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(0.f, 0.f, 0.f));
+
+	if (nullptr != m_pMeshCom)
+	{
+
+	}
 	return S_OK;
 }
 
@@ -63,6 +68,11 @@ void CTempMesh::Render_GameObject()
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CDevice::GetInstance()->GetViewMatrix();
 	_matrix matProj = CDevice::GetInstance()->GetProjectionMatrix();
+
+	// for문으로 Index관리
+	// 1. Hierachy 내부에서 변환된 matrix 값을 밖으로 빼내온 뒤 여기서 렌더링 한다
+	// 2. Hierachy 내부에서 shader와 constantBuffer를 넣어준 뒤 Hierachy 내부에서 렌더링 한다.
+	// 2번으로 할 경우 안에 넣어줄 값: Constant Buffer, Shader Class, void* World Matrix
 	if (nullptr != m_pShaderCom && nullptr != m_pConstBuffer)
 	{
 		m_pShaderCom->SetUp_OnShader(m_pPipeLine, m_pConstBuffer, matWorld, matView, matProj, tMainPass, m_eRootType);
@@ -71,9 +81,8 @@ void CTempMesh::Render_GameObject()
 
 	if (nullptr != m_pMeshCom && nullptr != m_pConstBuffer)
 	{
-		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0,m_pConstBuffer->GetGPUVirtualAddress());
 
-		m_pMeshCom->Render_Mesh();
+		dynamic_cast<CDynamic_Mesh*>(m_pMeshCom)->Render_Mesh(m_pTransformCom->Get_Matrix(), m_pPipeLine, m_pConstBuffer,m_pShaderCom, m_pData,m_iPassSize);
 	}
 
 }
@@ -114,7 +123,7 @@ D3D12_RASTERIZER_DESC CTempMesh::CreateRaterizerState()
 {
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
 	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
 	d3dRasterizerDesc.DepthBias = 0;
@@ -170,10 +179,9 @@ D3D12_BLEND_DESC CTempMesh::CreateBlendState()
 
 D3D12_INPUT_LAYOUT_DESC CTempMesh::CreateInputLayout()
 {
-	UINT nInputElementDescs = 2;
+	UINT nInputElementDescs = 1;
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
