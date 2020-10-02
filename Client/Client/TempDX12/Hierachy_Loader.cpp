@@ -118,21 +118,10 @@ void CHierachy_Loader::Ready_Hierachy_Loader(FbxNode* pFbxNode)
 			m_vecDynamic_Mesh_Render.push_back(tMeshRender);
 			m_iMaxIdx = m_vecDynamic_Mesh_Render.size();
 
+
 			CDevice::GetInstance()->WaitForGpuComplete();
-
-
-
-			
-
-			//m_VertexBufferView
-			//m_IndexBufferView
-			//m_iIndices		Number of Index
 		}
 	}
-
-
-
-
 
 	_uint iNumChilds = pFbxNode->GetChildCount();
 	for (_uint i = 0; i < iNumChilds; ++i)
@@ -201,11 +190,6 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 		if (iNumSkinDeformer == 0)
 			FbxMatTransform = matWorld * NodeToRoot * GeometryOffset;
 
-		//	outMatrix = ConvertFbxToMatrix(FbxMatTransform);
-		//	Set Constant Buffer
-		//	CommantLst->Rendering Function
-
-
 
 	}
 }
@@ -228,10 +212,6 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 		if (iNumSkinDeformer == 0)
 			FbxMatTransform = matWorld * NodeToRoot * GeometryOffset;
 
-		//	outMatrix = ConvertFbxToMatrix(FbxMatTransform);
-		//	Set Constant Buffer
-		//	CommantLst->Rendering Function
-
 		MAINPASS tMainPass = {};
 		_matrix matWolrd = ConvertFbxToMatrix(&FbxMatTransform);
 		_matrix matView = CDevice::GetInstance()->GetViewMatrix();
@@ -242,18 +222,12 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 
 		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, pConstantBuffer->GetGPUVirtualAddress());
 
-		// m_veDynamic_Render를 인덱스 접근을 통해 BufferView들과 Num of Indices를 가져와 렌더링 해야함
-
 
 		CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &m_vecDynamic_Mesh_Render[0].tVertexBufferView);
 		CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&m_vecDynamic_Mesh_Render[0].tIndexBufferView);
 		CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(m_vecDynamic_Mesh_Render[0].iNumOfIndices, 1, 0, 0, 0);
 
-		//MainPath
-		//m_VertexBufferView
-		//m_IndexBufferView
-		//m_iIndices
 
 		if (m_iCurrentIdx >= m_iMaxIdx-1)
 		{
@@ -261,6 +235,329 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 		}
 		m_iCurrentIdx++;
 	}
+}
+
+void CHierachy_Loader::AnimateFbxNodeHierarchy(FbxNode* pfbxNode, FbxTime& fbxCurrentTime)
+{
+	FbxNodeAttribute* pfbxNodeAttribute = pfbxNode->GetNodeAttribute();
+	if (pfbxNodeAttribute && (pfbxNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh))
+	{
+		FbxMesh* pfbxMesh = pfbxNode->GetMesh();
+		AnimateFbxMesh(pfbxMesh, fbxCurrentTime);
+	}
+
+	int nChilds = pfbxNode->GetChildCount();
+	for (int i = 0; i < nChilds; i++)
+		AnimateFbxNodeHierarchy(pfbxNode->GetChild(i), fbxCurrentTime);
+}
+
+void CHierachy_Loader::AnimateFbxMesh(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime)
+{
+	int nVertices = pfbxMesh->GetControlPointsCount();
+	if (nVertices > 0)
+	{
+		FbxVector4* pfbxv4Vertices = new FbxVector4[nVertices];
+		::memcpy(pfbxv4Vertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
+
+		int nSkinDeformers = pfbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+		if (nSkinDeformers > 0) 
+			ComputeSkinDeformation(pfbxMesh, fbxCurrentTime, pfbxv4Vertices, nVertices);
+
+		//TransformCom class의 World Matrix의 Positin 에 접근후 
+		for (int i = 0; i < nVertices; ++i)
+		{
+			m_vecPosition[i]= XMFLOAT3((float)pfbxv4Vertices[i][0], (float)pfbxv4Vertices[i][1], (float)pfbxv4Vertices[i][2]);;
+		}
+
+
+		delete[] pfbxv4Vertices;
+	}
+}
+
+FbxAMatrix CHierachy_Loader::ComputeClusterDeformation(FbxMesh* pfbxMesh, FbxCluster* pfbxCluster, FbxCluster::ELinkMode nClusterMode, FbxTime& fbxCurrentTime)
+{
+	FbxAMatrix fbxmtxVertexTransform;
+
+	if (nClusterMode == FbxCluster::eNormalize)
+	{
+		FbxAMatrix fbxmtxGeometryOffset = GetGeometricOffsetTransform(pfbxMesh->GetNode());
+
+		FbxAMatrix fbxmtxBindPoseMeshToRoot; //Cluster Transform
+		pfbxCluster->GetTransformMatrix(fbxmtxBindPoseMeshToRoot);
+
+		FbxAMatrix fbxmtxBindPoseBoneToRoot; //Cluster Link Transform
+		pfbxCluster->GetTransformLinkMatrix(fbxmtxBindPoseBoneToRoot);
+
+		FbxAMatrix fbxmtxAnimatedBoneToRoot = pfbxCluster->GetLink()->EvaluateGlobalTransform(fbxCurrentTime); //Cluster Link Node Global Transform
+
+		fbxmtxVertexTransform = fbxmtxAnimatedBoneToRoot * fbxmtxBindPoseBoneToRoot.Inverse() * fbxmtxBindPoseMeshToRoot * fbxmtxGeometryOffset;
+	}
+	else
+	{ //FbxCluster::eAdditive
+		if (pfbxCluster->GetAssociateModel())
+		{
+			FbxAMatrix fbxmtxAssociateModel;
+			pfbxCluster->GetTransformAssociateModelMatrix(fbxmtxAssociateModel);
+
+			FbxAMatrix fbxmtxAssociateGeometryOffset = GetGeometricOffsetTransform(pfbxCluster->GetAssociateModel());
+			fbxmtxAssociateModel *= fbxmtxAssociateGeometryOffset;
+
+			FbxAMatrix fbxmtxAssociateModelGlobal = pfbxCluster->GetAssociateModel()->EvaluateGlobalTransform(fbxCurrentTime);
+
+			FbxAMatrix fbxmtxClusterTransform;
+			pfbxCluster->GetTransformMatrix(fbxmtxClusterTransform);
+
+			FbxAMatrix fbxmtxGeometryOffset = GetGeometricOffsetTransform(pfbxMesh->GetNode());
+			fbxmtxClusterTransform *= fbxmtxGeometryOffset;
+
+			FbxAMatrix fbxmtxClusterLinkTransform;
+			pfbxCluster->GetTransformLinkMatrix(fbxmtxClusterLinkTransform);
+
+			FbxAMatrix fbxmtxLinkGeometryOffset = GetGeometricOffsetTransform(pfbxCluster->GetLink());
+			fbxmtxClusterLinkTransform *= fbxmtxLinkGeometryOffset;
+
+			FbxAMatrix fbxmtxClusterLinkToRoot = pfbxCluster->GetLink()->EvaluateGlobalTransform(fbxCurrentTime);
+
+			fbxmtxVertexTransform = fbxmtxClusterTransform.Inverse() * fbxmtxAssociateModel * fbxmtxAssociateModelGlobal.Inverse() * fbxmtxClusterLinkToRoot * fbxmtxClusterLinkTransform.Inverse() * fbxmtxClusterTransform;
+		}
+	}
+	return(fbxmtxVertexTransform);
+}
+
+void CHierachy_Loader::ComputeSkinDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices)
+{
+	FbxSkin* pfbxSkinDeformer = (FbxSkin*)pfbxMesh->GetDeformer(0, FbxDeformer::eSkin);
+	FbxSkin::EType nSkinningType = pfbxSkinDeformer->GetSkinningType();
+
+	if ((nSkinningType == FbxSkin::eLinear) || (nSkinningType == FbxSkin::eRigid))
+	{
+		ComputeLinearDeformation(pfbxMesh, fbxCurrentTime, pfbxv4Vertices, nVertices);
+	}
+	else if (nSkinningType == FbxSkin::eDualQuaternion)
+	{
+		ComputeDualQuaternionDeformation(pfbxMesh, fbxCurrentTime, pfbxv4Vertices, nVertices);
+	}
+	else if (nSkinningType == FbxSkin::eBlend)
+	{
+		FbxVector4* pfbxv4LinearVertices = new FbxVector4[nVertices];
+		memcpy(pfbxv4LinearVertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
+		ComputeLinearDeformation(pfbxMesh, fbxCurrentTime, pfbxv4LinearVertices, nVertices);
+
+		FbxVector4* pfbxv4DQVertices = new FbxVector4[nVertices];
+		memcpy(pfbxv4DQVertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
+		ComputeDualQuaternionDeformation(pfbxMesh, fbxCurrentTime, pfbxv4DQVertices, nVertices);
+
+		int nBlendWeights = pfbxSkinDeformer->GetControlPointIndicesCount();
+		double* pfControlPointBlendWeights = pfbxSkinDeformer->GetControlPointBlendWeights();
+		for (int i = 0; i < nBlendWeights; i++)
+		{
+			pfbxv4Vertices[i] = pfbxv4DQVertices[i] * pfControlPointBlendWeights[i] + pfbxv4LinearVertices[i] * (1 - pfControlPointBlendWeights[i]);
+		}
+
+		delete[] pfbxv4LinearVertices;
+		delete[] pfbxv4DQVertices;
+	}
+}
+
+void CHierachy_Loader::ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices)
+{
+	FbxAMatrix* pfbxmtxClusterDeformations = new FbxAMatrix[nVertices];
+	::memset(pfbxmtxClusterDeformations, 0, nVertices * sizeof(FbxAMatrix));
+
+	double* pfSumOfClusterWeights = new double[nVertices];
+	::memset(pfSumOfClusterWeights, 0, nVertices * sizeof(double));
+
+	FbxCluster::ELinkMode nClusterMode = ((FbxSkin*)pfbxMesh->GetDeformer(0, FbxDeformer::eSkin))->GetCluster(0)->GetLinkMode();
+	if (nClusterMode == FbxCluster::eAdditive)
+	{
+		for (int i = 0; i < nVertices; ++i) pfbxmtxClusterDeformations[i].SetIdentity();
+	}
+
+	int nSkinDeformers = pfbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+	for (int i = 0; i < nSkinDeformers; i++)
+	{
+		FbxSkin* pfbxSkinDeformer = (FbxSkin*)pfbxMesh->GetDeformer(i, FbxDeformer::eSkin);
+		int nClusters = pfbxSkinDeformer->GetClusterCount();
+
+		for (int j = 0; j < nClusters; j++)
+		{
+			FbxCluster* pfbxCluster = pfbxSkinDeformer->GetCluster(j);
+			if (!pfbxCluster->GetLink()) continue;
+
+			FbxAMatrix fbxmtxClusterDeformation = ComputeClusterDeformation(pfbxMesh, pfbxCluster, nClusterMode, fbxCurrentTime);
+
+			int* pnIndices = pfbxCluster->GetControlPointIndices();
+			double* pfWeights = pfbxCluster->GetControlPointWeights();
+
+			int nIndices = pfbxCluster->GetControlPointIndicesCount();
+			for (int k = 0; k < nIndices; k++)
+			{
+				int nIndex = pnIndices[k];
+				double fWeight = pfWeights[k];
+				if ((nIndex >= nVertices) || (fWeight == 0.0)) continue;
+
+				FbxAMatrix fbxmtxInfluence = fbxmtxClusterDeformation;
+				MatrixScale(fbxmtxInfluence, fWeight);
+
+				if (nClusterMode == FbxCluster::eAdditive)
+				{
+					MatrixAddToDiagonal(fbxmtxInfluence, 1.0 - fWeight);
+					pfbxmtxClusterDeformations[nIndex] = fbxmtxInfluence * pfbxmtxClusterDeformations[nIndex];
+					pfSumOfClusterWeights[nIndex] = 1.0;
+				}
+				else
+				{
+					MatrixAdd(pfbxmtxClusterDeformations[nIndex], fbxmtxInfluence);
+					pfSumOfClusterWeights[nIndex] += fWeight;
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < nVertices; i++)
+	{
+		if (pfSumOfClusterWeights[i] != 0.0)
+		{
+			FbxVector4 fbxv4Vertex = pfbxv4Vertices[i];
+			pfbxv4Vertices[i] = pfbxmtxClusterDeformations[i].MultT(fbxv4Vertex);
+			if (nClusterMode == FbxCluster::eNormalize)
+			{
+				pfbxv4Vertices[i] /= pfSumOfClusterWeights[i];
+			}
+			else if (nClusterMode == FbxCluster::eTotalOne)
+			{
+				fbxv4Vertex *= (1.0 - pfSumOfClusterWeights[i]);
+				pfbxv4Vertices[i] += fbxv4Vertex;
+			}
+		}
+	}
+
+	delete[] pfbxmtxClusterDeformations;
+	delete[] pfSumOfClusterWeights;
+}
+
+void CHierachy_Loader::ComputeDualQuaternionDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices)
+{
+	FbxDualQuaternion* pfbxDQClusterDeformations = new FbxDualQuaternion[nVertices];
+	memset(pfbxDQClusterDeformations, 0, nVertices * sizeof(FbxDualQuaternion));
+	double* pfClusterWeights = new double[nVertices];
+	memset(pfClusterWeights, 0, nVertices * sizeof(double));
+
+	FbxCluster::ELinkMode nClusterMode = ((FbxSkin*)pfbxMesh->GetDeformer(0, FbxDeformer::eSkin))->GetCluster(0)->GetLinkMode();
+	int nSkinDeformers = pfbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+	for (int i = 0; i < nSkinDeformers; i++)
+	{
+		FbxSkin* pfbxSkinDeformer = (FbxSkin*)pfbxMesh->GetDeformer(i, FbxDeformer::eSkin);
+		int nClusters = pfbxSkinDeformer->GetClusterCount();
+		for (int j = 0; j < nClusters; j++)
+		{
+			FbxCluster* pfbxCluster = pfbxSkinDeformer->GetCluster(j);
+			if (!pfbxCluster->GetLink()) continue;
+
+			FbxAMatrix fbxmtxCluster = ComputeClusterDeformation(pfbxMesh, pfbxCluster, nClusterMode, fbxCurrentTime);
+
+			FbxQuaternion Q = fbxmtxCluster.GetQ();
+			FbxVector4 T = fbxmtxCluster.GetT();
+			FbxDualQuaternion fbxDualQuaternion(Q, T);
+
+			int nIndices = pfbxCluster->GetControlPointIndicesCount();
+			int* pnControlPointIndices = pfbxCluster->GetControlPointIndices();
+			double* pfControlPointWeights = pfbxCluster->GetControlPointWeights();
+			for (int k = 0; k < nIndices; ++k)
+			{
+				int nIndex = pnControlPointIndices[k];
+				if (nIndex >= nVertices) continue;
+
+				double fWeight = pfControlPointWeights[k];
+				if (fWeight == 0.0) continue;
+
+				FbxDualQuaternion fbxmtxInfluence = fbxDualQuaternion * fWeight;
+				if (nClusterMode == FbxCluster::eAdditive)
+				{
+					pfbxDQClusterDeformations[nIndex] = fbxmtxInfluence;
+					pfClusterWeights[nIndex] = 1.0;
+				}
+				else // FbxCluster::eNormalize || FbxCluster::eTotalOne
+				{
+					if (j == 0)
+					{
+						pfbxDQClusterDeformations[nIndex] = fbxmtxInfluence;
+					}
+					else
+					{
+						double fSign = pfbxDQClusterDeformations[nIndex].GetFirstQuaternion().DotProduct(fbxDualQuaternion.GetFirstQuaternion());
+						if (fSign >= 0.0)
+						{
+							pfbxDQClusterDeformations[nIndex] += fbxmtxInfluence;
+						}
+						else
+						{
+							pfbxDQClusterDeformations[nIndex] -= fbxmtxInfluence;
+						}
+					}
+					pfClusterWeights[nIndex] += fWeight;
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < nVertices; i++)
+	{
+		FbxVector4 fbxv4SrcVertex = pfbxv4Vertices[i];
+		double fWeightSum = pfClusterWeights[i];
+
+		if (fWeightSum != 0.0)
+		{
+			pfbxDQClusterDeformations[i].Normalize();
+			pfbxv4Vertices[i] = pfbxDQClusterDeformations[i].Deform(pfbxv4Vertices[i]);
+
+			if (nClusterMode == FbxCluster::eNormalize)
+			{
+				pfbxv4Vertices[i] /= fWeightSum;
+			}
+			else if (nClusterMode == FbxCluster::eTotalOne)
+			{
+				fbxv4SrcVertex *= (1.0 - fWeightSum);
+				pfbxv4Vertices[i] += fbxv4SrcVertex;
+			}
+		}
+	}
+
+	delete[] pfbxDQClusterDeformations;
+	delete[] pfClusterWeights;
+}
+
+void CHierachy_Loader::MatrixScale(FbxAMatrix& fbxmtxSrcMatrix, double pValue)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++) fbxmtxSrcMatrix[i][j] *= pValue;
+	}
+}
+
+void CHierachy_Loader::MatrixAddToDiagonal(FbxAMatrix& fbxmtxSrcMatrix, double pValue)
+{
+	fbxmtxSrcMatrix[0][0] += pValue;
+	fbxmtxSrcMatrix[1][1] += pValue;
+	fbxmtxSrcMatrix[2][2] += pValue;
+	fbxmtxSrcMatrix[3][3] += pValue;
+}
+
+void CHierachy_Loader::MatrixAdd(FbxAMatrix& fbxmtxDstMatrix, FbxAMatrix& fbxmtxSrcMatrix)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++) fbxmtxDstMatrix[i][j] += fbxmtxSrcMatrix[i][j];
+	}
+}
+
+FbxAMatrix CHierachy_Loader::GetGeometricOffsetTransform(FbxNode* pfbxNode)
+{
+	const FbxVector4 T = pfbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	const FbxVector4 R = pfbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	const FbxVector4 S = pfbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
+
+	return(FbxAMatrix(T, R, S));
 }
 
 _matrix CHierachy_Loader::ConvertFbxToMatrix(FbxAMatrix* fbxmat)

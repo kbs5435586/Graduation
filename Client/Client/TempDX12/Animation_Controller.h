@@ -15,7 +15,7 @@ public:
 private:
 	virtual void				Free();
 public:
-	FbxTime						GetCurrentTime() { return m_pFbxCurrentTime[m_iAnimationStack]; }
+	FbxTime						Get_CurrentTime() { return m_pFbxCurrentTime[m_iAnimationStack]; }
 	void						Set_Position(_uint iAnimationStack, _float fPosition);
 private:
 	_uint						m_iAnimationStack = 0;

@@ -20,6 +20,11 @@ public:
 public:
     static  CDynamic_Mesh*      Create(ID3D12Device* pGraphic_Device, string strFilePath);
     virtual CComponent*         Clone_Component(void* pArg = nullptr);
+public:
+    void						AnimateFbxNodeHierarchy(FbxTime& fbxCurrentTime);
+   
+public:
+    FbxTime                     Get_CurrentTime();
 private:
     virtual void                Free();
 private:

@@ -50,7 +50,7 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 		return E_FAIL;
 
 	if(m_pController!=nullptr)
-	m_pController->Set_Animation(m_pFbxScene, 0);
+		m_pController->Set_Animation(m_pFbxScene, 0);
 
 	return S_OK;
 }
@@ -104,6 +104,23 @@ CComponent* CDynamic_Mesh::Clone_Component(void* pArg)
 {
 	return new CDynamic_Mesh(*this);
 }
+
+void CDynamic_Mesh::AnimateFbxNodeHierarchy(FbxTime& fbxCurrentTime)
+{
+	if (nullptr == m_pLoader)
+		return;
+	return m_pLoader->AnimateFbxNodeHierarchy(m_pFbxScene->GetRootNode(), fbxCurrentTime);
+}
+
+
+FbxTime CDynamic_Mesh::Get_CurrentTime()
+{
+	if (nullptr == m_pController)
+		return -1;
+	return m_pController->Get_CurrentTime();
+}
+
+
 
 void CDynamic_Mesh::Free()
 {
