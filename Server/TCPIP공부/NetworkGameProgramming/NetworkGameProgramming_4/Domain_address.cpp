@@ -1,10 +1,9 @@
 #pragma comment(lib,"ws2_32")
 #include <WinSock2.h>
 #include <iostream>
+#include <string>
 
 using namespace std;
-
-#define TESTNAME "www.naver.com" // 실습 3-6
 
 void err_display(const char* msg, int err_no)
 {
@@ -23,8 +22,9 @@ void err_display(const char* msg, int err_no)
 }
 
 // 도메인 이름-> IPv4 주소
-BOOL GetIPAddr(const char *name, IN_ADDR *addr)
+BOOL GetIPAddr(const char *name)
 {
+	IN_ADDR addr;
 	HOSTENT *ptr = gethostbyname(name);
 	if (ptr == NULL)
 	{
@@ -33,21 +33,48 @@ BOOL GetIPAddr(const char *name, IN_ADDR *addr)
 	}
 	if (ptr->h_addrtype != AF_INET)
 		return FALSE;
-	memcpy(addr, ptr->h_addr_list, ptr->h_length);
+
+	cout << "Official Name : " << ptr->h_name << endl;
+	for (int i = 0; ptr->h_aliases[i] != NULL; i++)
+	{
+		cout << "Other Domain Name " << i + 1 << " : " << ptr->h_aliases[i] << endl;
+	}
+
+	for (int i = 0; ptr->h_addr_list[i] != NULL; i++)
+	{
+		memcpy(&addr, ptr->h_addr_list[i], ptr->h_length);
+		cout << "Other IP " << i + 1 << " : " << inet_ntoa(addr) << endl;
+	}
+	cout << endl;
 	return TRUE;
 }
 
 //IPv4 -> 도메인 이름
-BOOL GetDomainName(IN_ADDR addr, char* name, int namelen)
+BOOL GetDomainName(unsigned long IP, char* name, int namelen)
 {
-	HOSTENT* ptr = gethostbyaddr((const char*)&addr, sizeof(addr), AF_INET);
+	IN_ADDR addr;
+	HOSTENT* ptr = gethostbyaddr((char*)&IP, sizeof(IP), AF_INET);
 	if (ptr == NULL) {
 		err_display("gethostbyaddr()", WSAGetLastError());
 		return FALSE;
 	}
 	if (ptr->h_addrtype != AF_INET)
 		return FALSE;
-	strncpy(name, ptr->h_name, namelen);
+
+	cout << "Official Name " << ptr->h_name << endl;
+	for (int i = 0; ptr->h_aliases[i] != NULL; i++)
+	{
+		cout << "Other Domain Name " << i + 1 << " : " << ptr->h_aliases[i] << endl;
+	}
+
+	for (int i = 0; ptr->h_addr_list[i] != NULL; i++)
+	{
+		memcpy(&addr, ptr->h_addr_list[i], ptr->h_length);
+		cout << "Other IP " << i + 1 << " : " << inet_ntoa(addr) << endl;
+	}
+
+
+	cout << "도메인 이름 (다시 변환 후) = " << ptr->h_name << endl << endl;
 	return TRUE;
 }
 
@@ -57,24 +84,23 @@ int main(int argc, char* argv[])
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
 
-	cout << "도메인 이름(변환 전) = " << TESTNAME << endl;
-
-	// 도메인 이름 -> IP 주소
-	IN_ADDR addr;
-	if (GetIPAddr(TESTNAME, &addr))
+	while (true)
 	{
-		// 성공이면 결과 출력
-		cout << "IP 주소 (변환 후) = " << inet_ntoa(addr) << endl;
+		char TESTNAME[30] = { NULL };
+		cout << "도메인 이름이나 IP 입력하세요 = ";
+		cin >> TESTNAME;
 
-		// IP 주소 -> 도메인 이름
-		char name[256];
-		if (GetDomainName(addr, name, sizeof(name)))
+		// 도메인 이름 -> IP 주소
+		if (TESTNAME[0] >= 65)
 		{
-			// 성공이면 결과 출력
-			cout << "도메인 이름(다시 변환 후)" << name << endl;
+			GetIPAddr(TESTNAME);
+		}
+		else
+		{
+			char name[256];
+			GetDomainName(inet_addr(TESTNAME), name, sizeof(name));
 		}
 	}
-
 	WSACleanup();
 	return 0;
 }

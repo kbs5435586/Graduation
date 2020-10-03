@@ -23,6 +23,7 @@ int main()
 	WSAStartup(MAKEWORD(2, 2), &WSAdata);
 
 	SOCKET s_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
+
 	SOCKADDR_IN server_a;
 	memset(&server_a, 0, sizeof(server_a));
 	server_a.sin_family = AF_INET;
@@ -51,7 +52,6 @@ int main()
 	{
 		cout << "wasd 또는 방향키를 입력하세요 : ";
 		char buff[BUF_SIZE + 1];
-
 		buff[0] = NULL;
 		buff[0] = _getch();
 		buff[1] = playerPos;
@@ -85,8 +85,10 @@ int main()
 		DWORD num_sent;
 
 		WSASend(s_socket, &wsabuf, 1, &num_sent, 0, NULL, NULL);
+
 		cout << "Sent " << wsabuf.len << " Bytes [" << buff[0] << (int)wsabuf.buf[1] << "]" << endl;
 		cout << "size[0],[1] : " << sizeof(buff[0]) << " , " << sizeof(wsabuf.buf[1]) << endl;
+
 		DWORD num_recv;
 		DWORD flag = 0;
 		wsabuf.len = BUF_SIZE;

@@ -1,18 +1,8 @@
 #include <iostream>
-#include <WS2tcpip.h>
 #include <conio.h>
+#include "protocal.h"
 
 using namespace std;
-#pragma comment (lib,"Ws2_32.lib")
-
-constexpr int BUF_SIZE = 1024;
-constexpr short PORT = 3500;
-
-//constexpr char SERVER_ADDR[] = "127.0.0.1";
-
-WSABUF wsabuf;
-SOCKET c_socket;
-char buff[BUF_SIZE];
 
 void PlayerMove(SOCKET* socket);
 void MakeServer(SOCKET* socket);
@@ -58,7 +48,7 @@ void MakeServer(SOCKET* socket)
 	server_a.sin_addr.s_addr = INADDR_ANY;
 
 	::bind(*socket, (sockaddr*)&server_a, sizeof(server_a));
-	listen(*socket, SOMAXCONN);
+	listen(*socket, MAX_PLAYER);
 }
 
 void PlayerMove(SOCKET* socket)
@@ -102,28 +92,28 @@ void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 	if (bytes > 0) {
 		buff[bytes] = 0;
 		cout << "Received " << bytes << " Bytes [" << buff << "]\n";
-		cout << "buff[0],[1] : " << buff[0] << " , " << buff[1] << endl;
+		cout << "buff[0],[1] : " << buff[0] << " , " << (int)buff[1] << endl;
 
 		int playerPos = buff[1];
 
 		switch (buff[0])
 		{
-		case 'w':
+		case '&':
 			cout << "위 입력" << endl;
 			if (playerPos != 0)
 				playerPos -= 10;
 			break;
-		case 'a':
+		case '%':
 			cout << "왼쪽 입력" << endl;
 			if ((playerPos % 10) != 0)
 				playerPos -= 1;
 			break;
-		case 'd':
+		case ' ':
 			cout << "오른쪽 입력" << endl;
 			if ((playerPos % 10) != 7)
 				playerPos += 1;
 			break;
-		case 's':
+		case '(':
 			cout << "아래 입력" << endl;
 			if ((playerPos / 10) != 7)
 				playerPos += 10;
