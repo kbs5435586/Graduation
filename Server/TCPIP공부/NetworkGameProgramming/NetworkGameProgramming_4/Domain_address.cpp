@@ -99,6 +99,10 @@ int main(int argc, char* argv[])
 		{
 			char name[256];
 			GetDomainName(inet_addr(TESTNAME), name, sizeof(name));
+			// <inet_addr>이 함수가 교수님이 강의자료에서 네트워크 바이트 정렬로 바꿔준다
+			// 그래서 이 함수를 이용해서 입력받은 문자열의 IP주소를 네트워크가 읽을 수 있게 빅인디언 방식으로 바꿔주고
+			// ip주소랑 포트번호 둘다 빅인디언으로 바꼈다가
+			// 다시 읽어올때 <inet_ntoa> 함수를 통해서 다시 컴퓨터가 읽을 수 있게 리틀인디언 방식으로 바꿔준다
 		}
 	}
 	WSACleanup();
