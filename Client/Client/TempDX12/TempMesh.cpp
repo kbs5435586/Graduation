@@ -33,15 +33,16 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(0.f, 0.f, 0.f));
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(-0.f, 0.f, 0.f));
 
-	//m_pTransformCom->SetUp_RotationZ(XMConvertToRadians(90.f));
+	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.05f, 0.05f, 0.05f);
 	return S_OK;
 }
 
 _int CTempMesh::Update_GameObject(const _float& fTimeDelta)
 {
+	//m_pTransformCom->Go_Straight(fTimeDelta * 0.1f);
 	if (nullptr != m_pMeshCom)
 	{
 		m_pMeshCom->Play_Animation(fTimeDelta);
