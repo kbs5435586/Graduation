@@ -32,8 +32,8 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	//if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Terrain_Texture(L"Layer_Terrain_Texture")))
 	//	return E_FAIL;
 	return S_OK;
@@ -293,7 +293,7 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
-		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/a.FBX"))))
+		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/TestAnim/Acher_Test.fbx"))))
 		return E_FAIL;
 	return S_OK;
 }
