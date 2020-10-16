@@ -1,7 +1,10 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include <MSWSock.h>
-#include "server.h"
+#include <thread>
+#include <mutex>
+#include <vector>
+#include "protocol.h"
 
 using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
@@ -23,7 +26,7 @@ struct OVER_EX {
 };
 
 struct client_info {
-    int id;
+    mutex c_lock;
     char name[MAX_ID_LEN];
     short x, y;
 
@@ -34,11 +37,27 @@ struct client_info {
     unsigned char* m_recv_start;
 };
 
+mutex id_lock;
 client_info g_clients[MAX_USER];
 HANDLE      h_iocp;
 
 SOCKET g_lSocket;
 OVER_EX g_accept_over;
+
+void error_display(const char* msg, int err_no)
+{
+    WCHAR* lpMsgBuf;
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL, err_no,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR)&lpMsgBuf, 0, NULL);
+    std::cout << msg;
+    std::wcout << L"에러 " << lpMsgBuf << std::endl;
+    while (true);
+    LocalFree(lpMsgBuf);
+}
 
 void send_packet(int id, void* p)
 {
@@ -49,7 +68,10 @@ void send_packet(int id, void* p)
     send_over->wsa_buf.buf = reinterpret_cast<CHAR*>(send_over->iocp_buf);
     send_over->wsa_buf.len = packet[0];
     ZeroMemory(&send_over->wsa_over, sizeof(send_over->wsa_over));
-    WSASend(g_clients[id].m_sock, &send_over->wsa_buf, 1, NULL, 0, &send_over->wsa_over, NULL);
+    g_clients[id].c_lock.lock();
+    if (true == g_clients[id].in_use)
+        WSASend(g_clients[id].m_sock, &send_over->wsa_buf, 1, NULL, 0, &send_over->wsa_over, NULL);
+    g_clients[id].c_lock.unlock();
 }
 
 void send_login_ok(int id)
@@ -66,7 +88,7 @@ void send_login_ok(int id)
     send_packet(id, &p);
 }
 
-void send_move_packet(int id)
+void send_move_packet(int to_client, int id)
 {
     sc_packet_move p;
     p.id = id;
@@ -74,7 +96,31 @@ void send_move_packet(int id)
     p.type = SC_PACKET_MOVE;
     p.x = g_clients[id].x;
     p.y = g_clients[id].y;
-    send_packet(id, &p);
+    send_packet(to_client, &p);
+}
+
+void send_enter_packet(int to_client, int new_id)
+{
+    sc_packet_enter p;
+    p.id = new_id;
+    p.size = sizeof(p);
+    p.type = SC_PACKET_ENTER;
+    p.x = g_clients[new_id].x;
+    p.y = g_clients[new_id].y;
+    g_clients[new_id].c_lock.lock();
+    strcpy_s(p.name, g_clients[new_id].name);
+    g_clients[new_id].c_lock.unlock();
+    p.o_type = 0;
+    send_packet(to_client, &p);
+}
+
+void send_leave_packet(int to_client, int old_id)
+{
+    sc_packet_leave p;
+    p.id = old_id;
+    p.size = sizeof(p);
+    p.type = SC_PACKET_LEAVE;
+    send_packet(to_client, &p);
 }
 
 void process_move(int id, char dir)
@@ -105,7 +151,13 @@ void process_move(int id, char dir)
     g_clients[id].x = x;
     g_clients[id].y = y;
 
-    send_move_packet(id);
+    for (int i = 0; i < MAX_USER; ++i)
+    {
+        if (true == g_clients[i].in_use)
+        {
+            send_move_packet(i, id);
+        }
+    }
 }
 
 void process_packet(int id)
@@ -117,8 +169,19 @@ void process_packet(int id)
     case CS_LOGIN:
     {
         cs_packet_login* p = reinterpret_cast<cs_packet_login*>(g_clients[id].m_packet_start);
+        g_clients[id].c_lock.lock();
         strcpy_s(g_clients[id].name, p->name);
+        g_clients[id].c_lock.unlock();
         send_login_ok(id);
+        for (int i = 0; i < MAX_USER; ++i)
+        {
+            if (true == g_clients[i].in_use) {
+                if (id != i) {
+                    send_enter_packet(i, id);
+                    send_enter_packet(id, i);
+                }
+            }
+        }
     }
     break;
     case CS_MOVE:
@@ -147,25 +210,36 @@ void process_recv(int id, DWORD iosize)
         else break;
     }
 
-    int left_data = next_recv_ptr - g_clients[id].m_packet_start;
+    long long left_data = next_recv_ptr - g_clients[id].m_packet_start;
 
     if ((MAX_BUFFER - (next_recv_ptr - g_clients[id].m_recv_over.iocp_buf))
         < MIN_BUFF_SIZE) {
         memcpy(g_clients[id].m_recv_over.iocp_buf,
             g_clients[id].m_packet_start, left_data);
         g_clients[id].m_packet_start = g_clients[id].m_recv_over.iocp_buf;
-        g_clients[id].m_recv_start = g_clients[id].m_packet_start + left_data;
+        next_recv_ptr = g_clients[id].m_packet_start + left_data;
     }
     DWORD recv_flag = 0;
-    WSARecv(g_clients[id].m_sock, &g_clients[id].m_recv_over.wsa_buf,
-        1, NULL, &recv_flag, &g_clients[id].m_recv_over.wsa_over, NULL);
+    g_clients[id].m_recv_start = next_recv_ptr;
+    g_clients[id].m_recv_over.wsa_buf.buf = reinterpret_cast<CHAR*>(next_recv_ptr);
+    g_clients[id].m_recv_over.wsa_buf.len = MAX_BUFFER -
+        static_cast<int>(next_recv_ptr - g_clients[id].m_recv_over.iocp_buf);
+
+    g_clients[id].c_lock.lock();
+    if (true == g_clients[id].in_use) {
+        WSARecv(g_clients[id].m_sock, &g_clients[id].m_recv_over.wsa_buf,
+            1, NULL, &recv_flag, &g_clients[id].m_recv_over.wsa_over, NULL);
+    }
+    g_clients[id].c_lock.unlock();
 }
 
 void add_new_client(SOCKET ns)
 {
     int i;
+    id_lock.lock();
     for (i = 0; i < MAX_USER; ++i)
         if (false == g_clients[i].in_use) break;
+    id_lock.unlock();
 
     if (MAX_USER == i)
     {
@@ -174,30 +248,110 @@ void add_new_client(SOCKET ns)
     }
     else
     {
-        g_clients[i].id = i;
+        cout << "New Client [" << i << "] Accepted" << endl;
+        g_clients[i].c_lock.lock();
         g_clients[i].in_use = true;
+        g_clients[i].m_sock = ns;
+        g_clients[i].name[0] = 0;
+        g_clients[i].c_lock.unlock();
+
         g_clients[i].m_packet_start = g_clients[i].m_recv_over.iocp_buf;
         g_clients[i].m_recv_over.op_mode = OP_MODE_RECV;
         g_clients[i].m_recv_over.wsa_buf.buf = reinterpret_cast<CHAR*>(g_clients[i].m_recv_over.iocp_buf);
         g_clients[i].m_recv_over.wsa_buf.len = sizeof(g_clients[i].m_recv_over.iocp_buf);
         ZeroMemory(&g_clients[i].m_recv_over.wsa_over, sizeof(g_clients[i].m_recv_over.wsa_over));
         g_clients[i].m_recv_start = g_clients[i].m_recv_over.iocp_buf;
-        g_clients[i].m_sock = ns;
-        g_clients[i].name[0] = 0;
         g_clients[i].x = rand() % WORLD_WIDTH;
         g_clients[i].y = rand() % WORLD_HEIGHT;
+        CreateIoCompletionPort(reinterpret_cast<HANDLE>(ns), h_iocp, i, 0);
+
         DWORD flags = 0;
-        WSARecv(g_clients[i].m_sock, &g_clients[i].m_recv_over.wsa_buf, 1, NULL, &flags, &g_clients[i].m_recv_over.wsa_over, NULL);
+        int ret = 0;
+        g_clients[i].c_lock.lock();
+        if (true == g_clients[i].in_use) {
+            ret = WSARecv(g_clients[i].m_sock, &g_clients[i].m_recv_over.wsa_buf, 1, NULL,
+                &flags, &g_clients[i].m_recv_over.wsa_over, NULL);
+        }
+        g_clients[i].c_lock.unlock();
+        if (SOCKET_ERROR == ret) {
+            int err_no = WSAGetLastError();
+            if (ERROR_IO_PENDING != err_no)
+                error_display("WSARecv : ", err_no);
+        }
     }
     SOCKET cSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
     g_accept_over.op_mode = OP_MODE_ACCEPT;
-    g_accept_over.wsa_buf.len = cSocket;
+    g_accept_over.wsa_buf.len = static_cast<ULONG>(cSocket);
     ZeroMemory(&g_accept_over.wsa_over, 0, sizeof(g_accept_over.wsa_over));
-    AcceptEx(g_lSocket, cSocket, g_accept_over.iocp_buf, 0, 16, 16, NULL, &g_accept_over.wsa_over);
+    AcceptEx(g_lSocket, cSocket, g_accept_over.iocp_buf, 0, 32, 32, NULL, &g_accept_over.wsa_over);
+}
+
+void disconnect_client(int id)
+{
+    for (int i = 0; i < MAX_USER; ++i)
+    {
+        if (true == g_clients[i].in_use)
+        {
+            if (id != i)
+            {
+                send_leave_packet(i, id);
+            }
+        }
+    }
+    g_clients[id].c_lock.lock();
+    g_clients[id].in_use = false;
+    closesocket(g_clients[id].m_sock);
+    g_clients[id].m_sock = 0;
+    g_clients[id].c_lock.unlock();
+}
+
+void worker_thread()
+{
+    // 반복
+    //      - 이 쓰레드를 IOCP thread pool에 등록   => GQCS
+    //      - iocp가 처리를 맞긴 I/O 완료 데이터를 꺼내기  => GQCS
+    //      - 꺼낸 I/O완료 데이터를 처리
+
+    while (true) {
+        DWORD io_size;
+        int key;
+        ULONG_PTR iocp_key;
+        WSAOVERLAPPED* lpover;
+        // 성공하면 True, 실패하면 False
+        int ret = GetQueuedCompletionStatus(h_iocp, &io_size, &iocp_key, &lpover, INFINITE);
+        key = static_cast<int>(iocp_key);
+        cout << "Completion Detected" << endl;
+        if (FALSE == ret) {
+            error_display("GQCS ERROR : ", WSAGetLastError());
+        }
+
+        OVER_EX* over_ex = reinterpret_cast<OVER_EX*>(lpover);
+        switch (over_ex->op_mode) {
+        case OP_MODE_ACCEPT:
+            add_new_client(static_cast<SOCKET>(over_ex->wsa_buf.len));
+            break;
+        case OP_MODE_RECV:
+            if (0 == io_size)
+            {
+                disconnect_client(key);
+            }
+            else
+            {
+                cout << "Packet from Client [" << key << "]" << endl;
+                process_recv(key, io_size);
+            }
+            break;
+        case OP_MODE_SEND:
+            delete over_ex; // send할때 사용한 오버를 반환, 릴리스 해야함
+            break;
+        }
+    }
 }
 
 int main()
 {
+    std::wcout.imbue(std::locale("korean"));
+
     for (auto& cl : g_clients)
         cl.in_use = false;
 
@@ -217,29 +371,18 @@ int main()
 
     SOCKET cSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
     g_accept_over.op_mode = OP_MODE_ACCEPT;
-    g_accept_over.wsa_buf.len = cSocket;
+    g_accept_over.wsa_buf.len = static_cast<ULONG>(cSocket);
     ZeroMemory(&g_accept_over.wsa_over, 0, sizeof(g_accept_over.wsa_over));
-    AcceptEx(g_lSocket, cSocket, g_accept_over.iocp_buf, 0, 16, 16, NULL, &g_accept_over.wsa_over);
+    AcceptEx(g_lSocket, cSocket, g_accept_over.iocp_buf, 0, 32, 32, NULL, &g_accept_over.wsa_over);
 
-    while (true) {
-        DWORD io_size;
-        ULONG_PTR key;
-        WSAOVERLAPPED* lpover;
-        int ret = GetQueuedCompletionStatus(h_iocp, &io_size, &key, &lpover, INFINITE);
-
-        OVER_EX* over_ex = reinterpret_cast<OVER_EX*>(lpover);
-        switch (over_ex->op_mode) {
-        case OP_MODE_ACCEPT:
-            add_new_client(static_cast<SOCKET>(over_ex->wsa_buf.len));
-            break;
-        case OP_MODE_RECV:
-            process_recv(key, io_size);
-            break;
-        case OP_MODE_SEND:
-            delete over_ex; // send할때 사용한 오버를 반환, 릴리스 해야함
-            break;
-        }
+    vector<thread> worker_threads;
+    for (int i = 0; i < 6; ++i)
+    {
+        worker_threads.emplace_back(worker_thread);
     }
+    for (auto& th : worker_threads)
+        th.join();
+
     closesocket(g_lSocket);
     WSACleanup();
 }
