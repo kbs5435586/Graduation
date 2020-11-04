@@ -427,57 +427,6 @@ HRESULT CDevice::CreateRootSignature(ROOT_TYPE eType)
 	return S_OK;
 }
 
-HRESULT CDevice::CreateRootSignature(int i)
-{	
-	
-	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-
-	CD3DX12_ROOT_PARAMETER slotRootParameter[2] = {};
-
-	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[1].InitAsConstantBufferView(0);
-
-	auto staticSamplers = GetStaticSamplers();
-
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter,
-		(UINT)staticSamplers.size(), staticSamplers.data(),
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	ID3DBlob* pRootSignatureCode = nullptr;
-	ID3DBlob* pError = nullptr;
-	if (FAILED(D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pRootSignatureCode, &pError)))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->CreateRootSignature(0, pRootSignatureCode->GetBufferPointer(), pRootSignatureCode->GetBufferSize(), IID_PPV_ARGS(&TempRoot))))
-		return E_FAIL;
-	//m_vecRootSignature.push_back(pRootSignature);
-	return S_OK;
-}
-
-HRESULT CDevice::CreateRootSignature(bool b)
-{
-	//CD3DX12_ROOT_PARAMETER slotRootParameter[2] = {};
-
-	////slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	//slotRootParameter[0].InitAsShaderResourceView(1, 0, D3D12_SHADER_VISIBILITY_PIXEL);
-	//slotRootParameter[1].InitAsConstantBufferView(0);
-
-	//auto staticSamplers = GetStaticSamplers();
-
-	//CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter,
-	//	(UINT)staticSamplers.size(), staticSamplers.data(),
-	//	D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	//ID3DBlob* pRootSignatureCode = nullptr;
-	//ID3DBlob* pError = nullptr;
-	//if (FAILED(D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pRootSignatureCode, &pError)))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pDevice->CreateRootSignature(0, pRootSignatureCode->GetBufferPointer(), pRootSignatureCode->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature))))
-	//	return E_FAIL;
-	return S_OK;
-}
 
 void CDevice::Open()
 {

@@ -29,7 +29,7 @@ private:
     virtual void                Free();
 private:
     CHierachy_Loader*           m_pLoader = nullptr;
-    CAnimation_Controller*      m_pController = nullptr;
+   // CAnimation_Controller*      m_pController = nullptr;
 private:
     _float                      m_fTime = 0.f;
         

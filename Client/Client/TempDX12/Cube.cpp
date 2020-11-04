@@ -62,7 +62,7 @@ void CCube::Render_GameObject()
 	}
 	if (nullptr != m_pBufferCom && nullptr != m_pConstBuffer)
 	{
-		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
+		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, m_pConstBuffer->GetGPUVirtualAddress());
 		m_pBufferCom->Render_VIBuffer();
 	}
 }

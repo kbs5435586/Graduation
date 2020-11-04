@@ -23,6 +23,7 @@ private:
 	HRESULT					Ready_Layer_Terrain(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_Terrain_Texture(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_Temp_Mesh(const _tchar* pLayerTag);
+
 private:
 	HRESULT					Add_Prototype_Component_Shader(CManagement* pManagement);
 	HRESULT					Add_Prototype_Component_Buffer(CManagement* pManagement);

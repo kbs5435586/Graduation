@@ -39,6 +39,7 @@ HRESULT CTextureRect::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(0.f, 0.f, 0.f));
 
+//	m_pGraphic_Device->CreateTexture
 	return S_OK;
 }
 _int CTextureRect::Update_GameObject(const _float& fTimeDelta)

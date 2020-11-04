@@ -17,6 +17,7 @@ HRESULT CFBX_Loader::LoadFBX(string strFileName, vector<Vertex>& outVertexVector
 	if (FAILED(Load_Mesh(strFileName, outVertexVector, outIndexVector)))
 		return E_FAIL;
 
+	
 	if (m_pFbxManager == nullptr)
 	{
 		m_pFbxManager = FbxManager::Create();

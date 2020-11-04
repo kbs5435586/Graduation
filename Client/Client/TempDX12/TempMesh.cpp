@@ -36,7 +36,7 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(-0.f, 0.f, 0.f));
 
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(0.05f, 0.05f, 0.05f);
+	m_pTransformCom->Scaling(0.005f, 0.005f, 0.005f);
 	return S_OK;
 }
 
@@ -85,7 +85,8 @@ void CTempMesh::Render_GameObject()
 	if (nullptr != m_pMeshCom && nullptr != m_pConstBuffer)
 	{
 
-		dynamic_cast<CDynamic_Mesh*>(m_pMeshCom)->Render_Mesh(m_pTransformCom->Get_Matrix(), m_pPipeLine, m_pConstBuffer,m_pShaderCom, m_pData,m_iPassSize);
+		dynamic_cast<CDynamic_Mesh*>(m_pMeshCom)->Render_Mesh(m_pTransformCom->Get_Matrix(), m_pPipeLine,
+			m_pConstBuffer,m_pShaderCom, m_pData,m_iPassSize);
 	}
 
 }
@@ -126,7 +127,7 @@ D3D12_RASTERIZER_DESC CTempMesh::CreateRaterizerState()
 {
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
 	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
 	d3dRasterizerDesc.DepthBias = 0;

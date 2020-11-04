@@ -148,6 +148,50 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			}
 		}
 	}
+	else if (eType == TEXTURE_CUBE)
+	{
+		wsprintf(szFilePath, pFilepath, 0);
+
+		BYTE* imageData;
+		D3D12_RESOURCE_DESC textureDesc;
+		int imageBytesPerRow;
+		int imageSize = LoadImageDataFromFile(&imageData, textureDesc, szFilePath, imageBytesPerRow);
+
+		if (imageSize <= 0)
+			return E_FAIL;
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pTexture))))
+			return E_FAIL;
+
+		UINT64 textureUploadBufferSize;
+		CDevice::GetInstance()->GetDevice()->GetCopyableFootprints(&textureDesc, 0, 1, 0, nullptr,
+			nullptr, nullptr, &textureUploadBufferSize);
+
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr, IID_PPV_ARGS(&pTextureUpload))))
+			return E_FAIL;
+
+		D3D12_SUBRESOURCE_DATA textureData = {};
+		textureData.pData = &imageData[0];
+		textureData.RowPitch = imageBytesPerRow;
+		textureData.SlicePitch = imageBytesPerRow * textureDesc.Height;
+
+		UpdateSubresources(CDevice::GetInstance()->GetCommandList(), pTexture, pTextureUpload, 0, 0, 1, &textureData);
+
+		if (pTexture != nullptr)
+		{
+			pTexture->SetName(L"Texture");
+			m_vecTexture.push_back(pTexture);
+			pTextureUpload->SetName(L"Upload");
+			m_vecTextureUpload.push_back(pTextureUpload);
+		}
+		if (FAILED(Create_Shader_Resource_Heap()))
+			return E_FAIL;
+
+		Safe_Delete(imageData);
+	}
 
 	CDevice::GetInstance()->Close();
 	CDevice::GetInstance()->WaitForGpuComplete();
@@ -169,10 +213,7 @@ CTexture* CTexture::Create(ID3D12Device* pGraphic_Device, const _tchar* pFilepat
 HRESULT CTexture::Create_ShaderResourceView(_uint iNum)
 {
 	m_iTexuterIdx = iNum;
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor
-	(
-		m_vecDescriptorHeap[m_iTexuterIdx]->GetCPUDescriptorHandleForHeapStart()
-	);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(m_vecDescriptorHeap[m_iTexuterIdx]->GetCPUDescriptorHandleForHeapStart());
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;

@@ -158,4 +158,65 @@ struct CtrlPoint
 		std::sort(mBoneInfo.begin(), mBoneInfo.end());
 	}
 };
+typedef struct tagMtrInfo
+{
+	XMFLOAT4		vMtrlDiff = { 1.f, 1.f,1.f, 1.f };
+	XMFLOAT4		vMtrlSpec = { 1.f, 1.f,1.f, 1.f };;
+	XMFLOAT4		vMtrlAmb = { 1.f, 1.f,1.f, 1.f };;
+	XMFLOAT4		vMtrlEmiv = { 1.f, 1.f,1.f, 1.f };
+}tMtrlInfo;
+
+typedef struct tagFbxMat
+{
+	tMtrlInfo		tMtrl;
+	wstring			strMtrlName;
+	wstring			strDiff;
+	wstring			strNormal;
+	wstring			strSpec;
+}tFbxMaterial;
+
+typedef struct tagWeightAndIndices
+{
+	int		iBoneIdx;
+	double	dWeight;
+}tWeightsAndIndices;
+
+typedef struct _tagContainer
+{
+	wstring								strName;
+	vector<XMFLOAT3>					vecPos;
+	vector<XMFLOAT3>					vecTangent;
+	vector<XMFLOAT3>					vecBinormal;
+	vector<XMFLOAT3>					vecNormal;
+	vector<XMFLOAT2>					vecUV;
+
+	vector<XMFLOAT4>					vecIndices;
+	vector<XMFLOAT4>					vecWeights;
+
+	vector<vector<UINT>>				vecIdx;
+	vector<tFbxMaterial>				vecMtrl;
+
+	// Animation 관련 정보
+	bool                        bAnimation;
+	vector<vector<tWeightsAndIndices>>   vecWI;
+
+	void Resize(UINT _iSize)
+	{
+		vecPos.resize(_iSize);
+		vecTangent.resize(_iSize);
+		vecBinormal.resize(_iSize);
+		vecNormal.resize(_iSize);
+		vecUV.resize(_iSize);
+		vecIndices.resize(_iSize);
+		vecWeights.resize(_iSize);
+		vecWI.resize(_iSize);
+	}
+
+	_tagContainer()
+	{
+
+	}
+
+}tContainer;
+
 

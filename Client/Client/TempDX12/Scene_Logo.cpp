@@ -25,15 +25,16 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 	if(FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
-	if(FAILED(Ready_Layer_Rect(L"Layer_Rect")))
-		return E_FAIL;
+	//if(FAILED(Ready_Layer_Cube(L"Layer_Cube")))
+	//	return E_FAIL;
+	//if(FAILED(Ready_Layer_Rect(L"Layer_Rect")))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Temp_Mesh(L"Layer_TempMesh")))
 		return E_FAIL;
-
 	//if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Terrain_Texture(L"Layer_Terrain_Texture")))
 	//	return E_FAIL;
 	return S_OK;
@@ -75,6 +76,7 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TempMesh", CTempMesh::Create(m_pGraphic_Device))))
 		return E_FAIL;
+	
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -96,7 +98,6 @@ HRESULT CScene_Logo::Ready_Prototype_Component()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Component_Dynamic_Mesh(pManagement)))
 		return E_FAIL;
-
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -293,10 +294,12 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
-		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/TestAnim/Acher_Test.fbx"))))
+		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Colonial_Ship.FBX"))))
 		return E_FAIL;
 	return S_OK;
 }
+
+
 
 CScene_Logo* CScene_Logo::Create(ID3D12Device* pGraphic_Device)
 {

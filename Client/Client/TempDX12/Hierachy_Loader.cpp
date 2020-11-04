@@ -207,6 +207,7 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 
 	if (iNumVertices > 0)
 	{
+	
 		FbxAMatrix		FbxMatTransform = matWorld;
 		_uint			iNumSkinDeformer = pFbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 		if (iNumSkinDeformer == 0)
@@ -224,16 +225,17 @@ void CHierachy_Loader::Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot, Fb
 
 
 		CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &m_vecDynamic_Mesh_Render[0].tVertexBufferView);
-		CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&m_vecDynamic_Mesh_Render[0].tIndexBufferView);
-		CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(m_vecDynamic_Mesh_Render[0].iNumOfIndices, 1, 0, 0, 0);
+		CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &m_vecDynamic_Mesh_Render[1].tVertexBufferView);
+		CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&m_vecDynamic_Mesh_Render[1].tIndexBufferView);
+		CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(m_vecDynamic_Mesh_Render[1].iNumOfIndices, 1, 0, 0, 0);
 
 
-		if (m_iCurrentIdx >= m_iMaxIdx-1)
-		{
-			m_iCurrentIdx = 0;
-		}
-		m_iCurrentIdx++;
+
+		//if (m_iCurrentIdx >= m_iMaxIdx-1)
+		//{
+		//	m_iCurrentIdx = 0;
+		//}
+		//m_iCurrentIdx++;
 	}
 }
 

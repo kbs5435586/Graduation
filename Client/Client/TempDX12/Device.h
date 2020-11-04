@@ -25,8 +25,6 @@ public:
 	void										MoveToNextFrame();
 public:
 	HRESULT										CreateRootSignature(ROOT_TYPE eType);
-	HRESULT										CreateRootSignature(int i);
-	HRESULT										CreateRootSignature(bool b);
 public:
 	ID3D12Device*								GetDevice() { return m_pDevice; }
 	ID3D12GraphicsCommandList*					GetCommandList() { return m_pCommandList; }

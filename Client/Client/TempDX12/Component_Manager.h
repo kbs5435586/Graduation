@@ -12,6 +12,8 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Dynamic_Mesh.h"
+
+
 class CComponent;
 class CComponent_Manager :
 	public CBase

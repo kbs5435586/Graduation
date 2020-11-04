@@ -20,7 +20,6 @@ protected:
     virtual void					Free();
 private:
     HRESULT                         Create_Shader_Resource_Heap();
-    HRESULT                        Temp();
 private:
     int                             LoadImageDataFromFile(BYTE** imageData, D3D12_RESOURCE_DESC& resourceDescription, 
                                                             LPCWSTR filename, int& bytesPerRow);
