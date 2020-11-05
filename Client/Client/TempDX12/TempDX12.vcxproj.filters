@@ -178,6 +178,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\01. Transform">
       <UniqueIdentifier>{e3787958-af7a-405b-a83e-3cdddd1931ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\99. Test">
+      <UniqueIdentifier>{c11cec9d-7356-40d2-9a1d-e14e78f4b7b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -345,6 +348,9 @@
     <ClInclude Include="TempMesh.h">
       <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
     </ClInclude>
+    <ClInclude Include="Loader_Test.h">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\99. Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="TempDX12.ico">
@@ -497,6 +503,9 @@
     </ClCompile>
     <ClCompile Include="TempMesh.cpp">
       <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader_Test.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\99. Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

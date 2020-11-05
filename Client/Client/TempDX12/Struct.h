@@ -60,6 +60,7 @@ typedef struct tagDynamic_MeshRender
 	D3D12_INDEX_BUFFER_VIEW		tIndexBufferView;
 	unsigned int				iNumOfIndices;
 }DYNAMIC_MESH_RENDER;
+
 struct Vertex
 {
 	DirectX::XMFLOAT3 Pos;
@@ -220,3 +221,32 @@ typedef struct _tagContainer
 }tContainer;
 
 
+struct MeshFromFbx
+{
+	D3D12_PRIMITIVE_TOPOLOGY			topology;
+	size_t								slot;
+	size_t								offset;
+	size_t								vertices;
+	ID3D12Resource*						pVertexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW			VertexBufferView;
+	ID3D12Resource*						pIndexBuffer;
+	ID3D12Resource*						pIndexUploadeBuffer;
+	D3D12_VERTEX_BUFFER_VIEW			IndexBufferView;
+};
+
+struct MeshData
+{
+	MeshData()
+	{
+
+	}
+	MeshData(int _iNumVertices, int _iIndeices, int* _pIndices)
+	{
+		iNumVertices = _iNumVertices;
+		iIndices = _iIndeices;
+		pIndices = _pIndices;
+	}
+	int		iNumVertices;
+	int		iIndices;
+	int*	pIndices;
+};
