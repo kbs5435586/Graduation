@@ -36,7 +36,7 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(-0.f, 0.f, 0.f));
 
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(0.005f, 0.005f, 0.005f);
+	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
 	return S_OK;
 }
 
@@ -45,9 +45,7 @@ _int CTempMesh::Update_GameObject(const _float& fTimeDelta)
 	//m_pTransformCom->Go_Straight(fTimeDelta * 0.1f);
 	if (nullptr != m_pMeshCom)
 	{
-		m_pMeshCom->Play_Animation(fTimeDelta);
-		FbxTime fbxCurrentTime = m_pMeshCom->Get_CurrentTime();
-		m_pMeshCom->AnimateFbxNodeHierarchy(fbxCurrentTime);
+
 	}
 
 	return _int();
@@ -67,26 +65,12 @@ _int CTempMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CTempMesh::Render_GameObject()
 {
-	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CDevice::GetInstance()->GetViewMatrix();
-	_matrix matProj = CDevice::GetInstance()->GetProjectionMatrix();
-
-	// for문으로 Index관리
-	// 1. Hierachy 내부에서 변환된 matrix 값을 밖으로 빼내온 뒤 여기서 렌더링 한다
-	// 2. Hierachy 내부에서 shader와 constantBuffer를 넣어준 뒤 Hierachy 내부에서 렌더링 한다.
-	// 2번으로 할 경우 안에 넣어줄 값: Constant Buffer, Shader Class, void* World Matrix
-	if (nullptr != m_pShaderCom && nullptr != m_pConstBuffer)
-	{
-		m_pShaderCom->SetUp_OnShader(m_pPipeLine, m_pConstBuffer, matWorld, matView, matProj, tMainPass, m_eRootType);
-		memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
-	}
 
 	if (nullptr != m_pMeshCom && nullptr != m_pConstBuffer)
 	{
-
-		dynamic_cast<CDynamic_Mesh*>(m_pMeshCom)->Render_Mesh(m_pTransformCom->Get_Matrix(), m_pPipeLine,
-			m_pConstBuffer,m_pShaderCom, m_pData,m_iPassSize);
+		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(m_eRootType));
+		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0,m_pConstBuffer->GetGPUVirtualAddress());
+		m_pMeshCom->Render_Mesh(m_pPipeLine, m_pShaderCom, m_pTransformCom->Get_Matrix(), m_iPassSize, m_pData, m_eRootType);
 	}
 
 }

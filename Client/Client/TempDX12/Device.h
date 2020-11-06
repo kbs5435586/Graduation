@@ -84,7 +84,7 @@ private:
 	D3D12_VIEWPORT								m_ViewPort = {};
 	D3D12_RECT									m_ScissorRect = {};
 public:
-	ID3D12RootSignature*					GetRootSignature(ROOT_TYPE eType);
+	ID3D12RootSignature*						GetRootSignature(ROOT_TYPE eType);
 	ID3D12RootSignature* TempRoot;
 protected:
 	virtual void								Free();

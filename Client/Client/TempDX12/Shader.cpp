@@ -61,6 +61,69 @@ HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* 
 	return S_OK;
 }
 
+HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, _int iPassSize, void* pData, ROOT_TYPE eType)
+{
+	//CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(eType));
+	CDevice::GetInstance()->GetCommandList()->SetPipelineState(pPipeline);
+
+	XMFLOAT4X4	xmf4x4World = FbxMatrixToXmFloat4x4Matrix(FbxmatWorld);
+
+	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&xmf4x4World));
+	XMMATRIX	xmMatView = XMMatrixTranspose(XMLoadFloat4x4(&matView));
+	XMMATRIX	xmMatProj = XMMatrixTranspose(XMLoadFloat4x4(&matProj));
+
+	tagMainPass tMainPass;
+	tMainPass.matWorld = xmMatWorld;
+	tMainPass.matView = xmMatView;
+	tMainPass.matProj = xmMatProj;
+
+	memcpy_s(pData, iPassSize, (void*)&tMainPass, sizeof(tMainPass));
+
+	return S_OK;
+}
+
+XMFLOAT4X4 CShader::FbxMatrixToXmFloat4x4Matrix(FbxAMatrix* pfbxmtxSource)
+{
+	FbxVector4 S = pfbxmtxSource->GetS();
+	//	FbxVector4 R = FbxVector4(0.0, 45.0, 0.0, 1.0);
+	FbxVector4 R = pfbxmtxSource->GetR();
+	FbxVector4 T = pfbxmtxSource->GetT();
+
+	FbxAMatrix fbxmtxTransform = FbxAMatrix(T, R, S);
+
+	XMFLOAT4X4 xmf4x4Result;
+	for (int i = 0; i < 4; i++)
+	{
+		//		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)fbxmtxTransform[i][j];
+		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)(*pfbxmtxSource)[i][j];
+	}
+
+	XMFLOAT3 xmf3S = XMFLOAT3((float)S.mData[0], (float)S.mData[1], (float)S.mData[2]);
+	XMFLOAT3 xmf3R = XMFLOAT3((float)R.mData[0], (float)R.mData[1], (float)R.mData[2]);
+	XMFLOAT3 xmf3T = XMFLOAT3((float)T.mData[0], (float)T.mData[1], (float)T.mData[2]);
+	//	XMFLOAT4X4 xmf4x4Transform;
+	//	XMStoreFloat4x4(&xmf4x4Transform, XMMatrixAffineTransformation(XMLoadFloat3(&xmf3S), XMVectorZero(), XMQuaternionRotationRollPitchYaw(XMConvertToRadians(xmf3R.x), XMConvertToRadians(xmf3R.y), XMConvertToRadians(xmf3R.z)), XMLoadFloat3(&xmf3T)));
+
+		//XMFLOAT4X4 xmf4x4Translation;
+		//XMMATRIX xmT = XMMatrixTranslation(xmf3T.x, xmf3T.y, xmf3T.z);
+		//XMStoreFloat4x4(&xmf4x4Translation, xmT);
+		//XMFLOAT4X4 xmf4x4Rotation;
+		//XMMATRIX xmR = XMMatrixRotationRollPitchYaw(XMConvertToRadians(xmf3R.x), XMConvertToRadians(xmf3R.y), XMConvertToRadians(xmf3R.z));
+		//XMStoreFloat4x4(&xmf4x4Rotation, xmR);
+		//XMStoreFloat4x4(&xmf4x4Rotation, ));
+		//XMFLOAT4X4 xmf4x4Scale;
+		//XMStoreFloat4x4(&xmf4x4Scale, XMMatrixScaling(xmf3S.x, xmf3S.y, xmf3S.z));
+
+	XMMATRIX Rx = XMMatrixRotationX(XMConvertToRadians(xmf3R.x));
+	XMMATRIX Ry = XMMatrixRotationY(XMConvertToRadians(xmf3R.y));
+	XMMATRIX Rz = XMMatrixRotationZ(XMConvertToRadians(xmf3R.z));
+	XMMATRIX xmR = XMMatrixMultiply(XMMatrixMultiply(Rx, Ry), Rz);
+	XMFLOAT4X4 xmf4x4Multiply;
+	XMStoreFloat4x4(&xmf4x4Multiply, XMMatrixMultiply(XMMatrixMultiply(XMMatrixScaling(xmf3S.x, xmf3S.y, xmf3S.z), xmR), XMMatrixTranslation(xmf3T.x, xmf3T.y, xmf3T.z)));
+
+	return(xmf4x4Result);
+}
+
 CShader* CShader::Create(ID3D12Device* pGraphic_Device, const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, _uint iFlag)
 {
 	CShader* pInstance = new CShader(pGraphic_Device);

@@ -8,9 +8,10 @@ CMesh::CMesh(ID3D12Device* pGraphic_Device)
 }
 
 CMesh::CMesh(const CMesh& rhs)
-	: CComponent(rhs),
-	m_pFbxScene(rhs.m_pFbxScene)
+	: CComponent(rhs)
+	, m_pScene(rhs.m_pScene)
 {
+
 	m_IsClone = true;
 }
 
@@ -28,13 +29,15 @@ void CMesh::Free()
 {
 	if (m_IsClone)
 	{
-		if (m_pFbxScene)
+		if (m_pScene)
 		{
-			m_pFbxScene->Destroy();
-			m_pFbxScene = nullptr;
+			m_pScene->Destroy();
+			m_pScene = nullptr;
 		}
 
 	}
+
+
 	CComponent::Free();
 }
 

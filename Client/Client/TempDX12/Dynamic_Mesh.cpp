@@ -2,6 +2,7 @@
 #include "Dynamic_Mesh.h"
 #include "Animation_Controller.h"
 #include "Loader_Test.h"
+#include "Shader.h"
 
 CDynamic_Mesh::CDynamic_Mesh(ID3D12Device* pGraphic_Device)
 	: CMesh(pGraphic_Device)
@@ -11,7 +12,6 @@ CDynamic_Mesh::CDynamic_Mesh(ID3D12Device* pGraphic_Device)
 CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	: CMesh(rhs)
 	, m_pLoader(rhs.m_pLoader)
-	, m_pScene(rhs.m_pScene)
 {
 	m_pLoader->AddRef();
 	m_IsClone = true;
@@ -25,27 +25,9 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	if (FAILED(m_pLoader->Ready_Load_Hierachy(m_pScene->GetRootNode())))
 		return E_FAIL;
 
-	m_vecMeshData = m_pLoader->GetMeshData();
-
 	return S_OK;
 }
 
-void CDynamic_Mesh::Play_Animation(const _float& fTimeDelta)
-{
-
-}
-
-
-void CDynamic_Mesh::Render_Mesh(_matrix matWorld)
-{
-
-}
-
-void CDynamic_Mesh::Render_Mesh(_matrix matWorld, ID3D12PipelineState* pPipeLine, 
-	ID3D12Resource* pConstantBuffer, CShader* pShader, void* pData, _int iIdx)
-{
-
-}
 
 CDynamic_Mesh* CDynamic_Mesh::Create(ID3D12Device* pGraphic_Device, string strFilePath)
 {
@@ -58,10 +40,6 @@ CDynamic_Mesh* CDynamic_Mesh::Create(ID3D12Device* pGraphic_Device, string strFi
 	return pInstance;
 }
 
-void CDynamic_Mesh::AnimateFbxNodeHierarchy(FbxTime& fbxCurrentTime)
-{
-
-}
 
 CComponent* CDynamic_Mesh::Clone_Component(void* pArg)
 {
@@ -79,18 +57,63 @@ FbxAMatrix CDynamic_Mesh::ConvertMatrixToFbx(_matrix matWorld)
 	FbxAMatrix fbxmtxResult;
 	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < 4; j++)
-		{
-
-			fbxmtxResult[i][j] = matWorld.m[i][j];
-		}
+		for (int j = 0; j < 4; j++) fbxmtxResult[i][j] = matWorld.m[i][j];
 	}
 	return(fbxmtxResult);
 }
-FbxTime CDynamic_Mesh::Get_CurrentTime()
-{
 
-	return 0.f;
+void CDynamic_Mesh::Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxNode* pNode, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
+{
+	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
+
+	if (pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
+	{
+		FbxAMatrix RootNodeMatrix = pNode->EvaluateGlobalTransform();
+		FbxAMatrix GeometicOffest = GetGeometricOffsetTransform(pNode);
+
+		FbxMesh* pfbxMesh = pNode->GetMesh();
+		Render_Buffer(pPipeLine, pShader, pfbxMesh, RootNodeMatrix, GeometicOffest, matWorld, iPassSize, pData, eType);
+	}
+
+	_uint iChildCnt = pNode->GetChildCount();
+	for (_uint i = 0; i < iChildCnt; ++i)
+	{
+		Render_HierachyLoader(pPipeLine, pShader, pNode->GetChild(i), matWorld, iPassSize, pData, eType);
+	}
+
+}
+void CDynamic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxMesh* pMesh, FbxAMatrix& pFbxRootNodeMatrix,
+	FbxAMatrix& pGeomatryMatrix, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
+{
+	FbxAMatrix	FbxMatrixTransform = ConvertMatrixToFbx(matWorld);
+	_int		iSkinDeformers = pMesh->GetDeformerCount(FbxDeformer::eSkin);
+	if (iSkinDeformers == 0)
+		FbxMatrixTransform = ConvertMatrixToFbx(matWorld) * pFbxRootNodeMatrix * pGeomatryMatrix;
+
+	if (FAILED(pShader->SetUp_OnShader(pPipeLine, &FbxMatrixTransform,
+		CDevice::GetInstance()->GetViewMatrix(), CDevice::GetInstance()->GetProjectionMatrix(),
+		iPassSize, pData, eType)))
+		return;
+	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
+
+	CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
+	CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&(pInfo->IndexBufferView));
+	CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(pInfo->iIndices, 1, 0, 0, 0);
+}
+FbxAMatrix CDynamic_Mesh::GetGeometricOffsetTransform(FbxNode* pNode)
+{
+	const FbxVector4 T = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	const FbxVector4 R = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	const FbxVector4 S = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
+
+	return(FbxAMatrix(T, R, S));
+}
+void CDynamic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
+{
+	if (nullptr != pShader && pPipeLine != nullptr)
+		Render_HierachyLoader(pPipeLine, pShader, m_pScene->GetRootNode(), matWorld, iPassSize, pData, eType);
+
 }
 
 

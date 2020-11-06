@@ -11,8 +11,10 @@ public:
 	HRESULT							Ready_Shader(const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, _uint iFlag);
 	HRESULT							Compile_Shader();
 	HRESULT							SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* pConstantBuffer,
-		_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output, ROOT_TYPE eType);
-
+													_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output, ROOT_TYPE eType);
+	HRESULT							SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, _int iPassSize, void* pData, ROOT_TYPE eType);
+private:
+	XMFLOAT4X4					    FbxMatrixToXmFloat4x4Matrix(FbxAMatrix* pfbxmtxSource);
 public:
 	static CShader*					Create(ID3D12Device* pGraphic_Device, const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, _uint iFlag);
 	virtual CComponent*				Clone_Component(void* pArg = nullptr);

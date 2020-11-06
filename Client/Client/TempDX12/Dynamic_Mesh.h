@@ -12,26 +12,23 @@ private:
     ~CDynamic_Mesh() = default;
 public:
     HRESULT                     Ready_Dynamic_Mesh(string strFilePath);
-    void                        Play_Animation(const _float& fTimeDelta);
     FbxAMatrix                  ConvertMatrixToFbx(_matrix matWorld);
+private:
+    void                        Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxNode* pNode, _matrix matWorld, 
+                                                      _int iPassSize, void* pData, ROOT_TYPE eType);
+    void                        Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxMesh* pMesh, FbxAMatrix& pFbxRootNodeMatrix,
+                                                FbxAMatrix& pGeomatryMatrix, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType);
+    FbxAMatrix                  GetGeometricOffsetTransform(FbxNode* pNode);
 public:
-    virtual void                Render_Mesh(_matrix matWorld);
-    void                        Render_Mesh(_matrix matWorld, ID3D12PipelineState* pPipeLine, ID3D12Resource* pConstantBuffer, CShader* pShader, void* pData, _int iIdx);
+    virtual void                Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType);
 public:
     static  CDynamic_Mesh*      Create(ID3D12Device* pGraphic_Device, string strFilePath);
     virtual CComponent*         Clone_Component(void* pArg = nullptr);
-public:
-    void						AnimateFbxNodeHierarchy(FbxTime& fbxCurrentTime);
-   
-public:
-    FbxTime                     Get_CurrentTime();
 private:
     virtual void                Free();
 private:
     CLoader_Test*               m_pLoader = nullptr;
-    FbxScene*                   m_pScene = nullptr;
-private:
-    vector<MeshData*>           m_vecMeshData;
+
 
         
 

@@ -23,10 +23,10 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
-	if(FAILED(Ready_Layer_Camera(L"Layer_Camera")))
-		return E_FAIL;
-	//if(FAILED(Ready_Layer_Cube(L"Layer_Cube")))
+	//if(FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 	//	return E_FAIL;
+	if(FAILED(Ready_Layer_Cube(L"Layer_Cube")))
+		return E_FAIL;
 	//if(FAILED(Ready_Layer_Rect(L"Layer_Rect")))
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Temp_Mesh(L"Layer_TempMesh")))
@@ -294,7 +294,7 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
-		CDynamic_Mesh::Create(m_pGraphic_Device,"a.FBX"))))
+		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/Cherry.fbx"))))
 		return E_FAIL;
 	return S_OK;
 }

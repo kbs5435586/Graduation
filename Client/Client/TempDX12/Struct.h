@@ -240,13 +240,22 @@ struct MeshData
 	{
 
 	}
-	MeshData(int _iNumVertices, int _iIndeices, int* _pIndices)
+	MeshData(int _iNumVertices, int _iIndeices, int* _pIndices, vector< XMFLOAT3> _vPos)
 	{
 		iNumVertices = _iNumVertices;
 		iIndices = _iIndeices;
 		pIndices = _pIndices;
+		vecPosition = _vPos;
 	}
 	int		iNumVertices;
 	int		iIndices;
 	int*	pIndices;
+	vector< XMFLOAT3>	vecPosition;
+};
+
+struct RenderInfo
+{
+	unsigned int				iIndices = 0;
+	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
 };

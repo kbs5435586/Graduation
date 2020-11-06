@@ -411,11 +411,14 @@ void RenderFbxMesh(ID3D12GraphicsCommandList *pd3dCommandList, FbxMesh *pfbxMesh
 		int nSkinDeformers = pfbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 		if (nSkinDeformers == 0) fbxmtxTransform = fbxmtxWorld * fbxmtxNodeToRoot * fbxmtxGeometryOffset;
 
+		// Shader에 데이터 전달
 		CGameObject::UpdateShaderVariable(pd3dCommandList, &fbxmtxTransform);
 
 		CFbxRenderInfo *pFbxRenderInfo = (CFbxRenderInfo *)pfbxMesh->GetUserDataPtr();
+		// 파이프 라인 설정
 		if (pFbxRenderInfo->m_pShader) 
 			pFbxRenderInfo->m_pShader->Render(pd3dCommandList, NULL);
+		// 실질적인 렌더링
 		if (pFbxRenderInfo->m_pMesh) 
 			pFbxRenderInfo->m_pMesh->Render(pd3dCommandList);
 	}
