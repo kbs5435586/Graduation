@@ -294,7 +294,11 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
+<<<<<<< HEAD
 		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/Cherry.fbx"))))
+=======
+		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/a.FBX"))))
+>>>>>>> parent of 54c9e7e... add
 		return E_FAIL;
 	return S_OK;
 }
