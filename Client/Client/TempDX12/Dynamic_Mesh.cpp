@@ -40,6 +40,11 @@ CDynamic_Mesh* CDynamic_Mesh::Create(ID3D12Device* pGraphic_Device, string strFi
 	return pInstance;
 }
 
+<<<<<<< HEAD
+=======
+	if(m_pController!=nullptr)
+	m_pController->Set_Animation(m_pFbxScene, 0);
+>>>>>>> parent of fb04460... Animation -ing
 
 CComponent* CDynamic_Mesh::Clone_Component(void* pArg)
 {
@@ -82,6 +87,7 @@ void CDynamic_Mesh::Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShade
 	}
 
 }
+<<<<<<< HEAD
 void CDynamic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxMesh* pMesh, FbxAMatrix& pFbxRootNodeMatrix,
 	FbxAMatrix& pGeomatryMatrix, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
@@ -116,4 +122,11 @@ void CDynamic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader
 
 }
 
+=======
+
+void CDynamic_Mesh::Free()
+{
+	Safe_Release(m_pLoader);
+	Safe_Release(m_pController);
+>>>>>>> parent of fb04460... Animation -ing
 

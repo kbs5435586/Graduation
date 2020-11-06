@@ -36,10 +36,14 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(0.f, 0.f, 0.f));
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
 =======
 	//m_pTransformCom->SetUp_RotationZ(XMConvertToRadians(90.f));
+=======
+	m_pTransformCom->SetUp_RotationZ(XMConvertToRadians(90.f));
+>>>>>>> parent of fb04460... Animation -ing
 	m_pTransformCom->Scaling(0.05f, 0.05f, 0.05f);
 >>>>>>> parent of 54c9e7e... add
 	return S_OK;
@@ -48,9 +52,13 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 _int CTempMesh::Update_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr != m_pMeshCom)
+<<<<<<< HEAD
 	{
 
 	}
+=======
+		m_pMeshCom->Play_Animation(fTimeDelta);
+>>>>>>> parent of fb04460... Animation -ing
 
 	return _int();
 }

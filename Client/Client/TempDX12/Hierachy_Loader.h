@@ -21,20 +21,6 @@ public:
 	void								Render_Mesh(FbxMesh* pFbxMesh, FbxAMatrix& NodeToRoot,
 													FbxAMatrix& GeometryOffset, FbxAMatrix matWorld, ID3D12PipelineState* pPipeLine,
 													ID3D12Resource* pConstantBuffer, CShader* pShader, void* pData, _uint iIdx);
-public:
-	void								AnimateFbxNodeHierarchy(FbxNode* pfbxNode, FbxTime& fbxCurrentTime);
-	void								AnimateFbxMesh(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime);
-public:
-	FbxAMatrix							ComputeClusterDeformation(FbxMesh* pfbxMesh, FbxCluster* pfbxCluster, FbxCluster::ELinkMode nClusterMode, FbxTime& fbxCurrentTime);
-	void								ComputeSkinDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
-	void								ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
-	void								ComputeDualQuaternionDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
-public:
-	void								MatrixScale(FbxAMatrix& fbxmtxSrcMatrix, double pValue);
-	void								MatrixAddToDiagonal(FbxAMatrix& fbxmtxSrcMatrix, double pValue);
-	void								MatrixAdd(FbxAMatrix& fbxmtxDstMatrix, FbxAMatrix& fbxmtxSrcMatrix);
-public:
-	FbxAMatrix							GetGeometricOffsetTransform(FbxNode* pfbxNode);
 private:
 	_matrix								ConvertFbxToMatrix(FbxAMatrix* fbxmat);
 private:
