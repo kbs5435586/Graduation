@@ -175,10 +175,9 @@
     <ClInclude Include="Funtor.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObject_Manager.h" />
-    <ClInclude Include="Hierachy_Loader.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Layer.h" />
-    <ClInclude Include="Loader_Test.h" />
+    <ClInclude Include="Hierachy_Loader.h" />
     <ClInclude Include="MainApp.h" />
     <ClInclude Include="Management.h" />
     <ClInclude Include="Mesh.h" />
@@ -228,10 +227,9 @@
     <ClCompile Include="FrameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObject_Manager.cpp" />
-    <ClCompile Include="Hierachy_Loader.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="Loader_Test.cpp" />
+    <ClCompile Include="Hierachy_Loader.cpp" />
     <ClCompile Include="MainApp.cpp" />
     <ClCompile Include="Management.cpp" />
     <ClCompile Include="Mesh.cpp" />

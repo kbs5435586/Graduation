@@ -1,5 +1,5 @@
 #include "framework.h"
-#include "Loader_Test.h"
+#include "Hierachy_Loader.h"
 
 CLoader_Test::CLoader_Test(ID3D12Device* pGraphic_Device)
 {
@@ -100,7 +100,7 @@ HRESULT CLoader_Test::CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, ve
 {
 	m_iVertices = iVerticesNum;
 	m_iIndices = iIndicesNum;
-	m_iStride = sizeof(VTXCOL);
+	m_iStride = sizeof(_vec3);
 
 	CDevice::GetInstance()->Open();
 	{

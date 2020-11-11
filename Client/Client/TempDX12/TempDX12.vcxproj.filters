@@ -169,17 +169,14 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh">
       <UniqueIdentifier>{d95ab66c-15d7-49c5-9ef5-267d98c4e63d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Animaion_Controller">
-      <UniqueIdentifier>{b00403d8-e9a6-4132-946c-2b1fdc979048}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Hierachy_Loader">
-      <UniqueIdentifier>{cec6242a-f32d-4f68-94c6-9d6952fd757e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\01. Transform">
       <UniqueIdentifier>{e3787958-af7a-405b-a83e-3cdddd1931ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\99. Test">
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Hierachy_Loader">
       <UniqueIdentifier>{c11cec9d-7356-40d2-9a1d-e14e78f4b7b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller">
+      <UniqueIdentifier>{f40abd90-ccb5-4660-96af-b308d7db6ece}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -339,17 +336,14 @@
     <ClInclude Include="Dynamic_Mesh.h">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Animation_Controller.h">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Animaion_Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="Hierachy_Loader.h">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Hierachy_Loader</Filter>
-    </ClInclude>
     <ClInclude Include="TempMesh.h">
       <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
     </ClInclude>
-    <ClInclude Include="Loader_Test.h">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\99. Test</Filter>
+    <ClInclude Include="Hierachy_Loader.h">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Hierachy_Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation_Controller.h">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -495,17 +489,14 @@
     <ClCompile Include="Dynamic_Mesh.cpp">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Animation_Controller.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Animaion_Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="Hierachy_Loader.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Hierachy_Loader</Filter>
-    </ClCompile>
     <ClCompile Include="TempMesh.cpp">
       <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
     </ClCompile>
-    <ClCompile Include="Loader_Test.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\99. Test</Filter>
+    <ClCompile Include="Hierachy_Loader.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Hierachy_Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation_Controller.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

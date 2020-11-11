@@ -1,6 +1,6 @@
 #pragma once
 #include "Mesh.h"
-class CLoader_Test;
+class CHierachy_Loader;
 class CAnimation_Controller;
 class CShader;
 class CDynamic_Mesh :
@@ -27,8 +27,8 @@ public:
 private:
     virtual void                Free();
 private:
-    CLoader_Test*               m_pLoader = nullptr;
-
+    CHierachy_Loader*           m_pLoader = nullptr;
+    CAnimation_Controller*      m_pController = nullptr;
 
         
 
