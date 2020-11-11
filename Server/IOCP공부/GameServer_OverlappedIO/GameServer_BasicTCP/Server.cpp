@@ -1,5 +1,6 @@
 #include <iostream>
 #include <WS2tcpip.h>
+#include "protocol.h"
 
 using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
@@ -28,14 +29,18 @@ int main()
 	while (true) {
 		int addr_size = sizeof(client_addr);
 		SOCKET client_socket = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
-		while (true) {
+
+		while (true) 
+		{
 			char messageBuffer[MAX_BUFFER];
 			int receiveBytes = recv(client_socket, messageBuffer, MAX_BUFFER, 0);
+
 			if (receiveBytes > 0) {
 				messageBuffer[receiveBytes] = 0;
 				cout << "TRACE - Receive message : " << messageBuffer << "(" << receiveBytes << " bytes)\n";
 			}
 			else break;
+
 			int sendBytes = send(client_socket, messageBuffer, receiveBytes, 0);
 			if (sendBytes > 0) printf("TRACE - Send message : %s (%d bytes)\n", messageBuffer, sendBytes);
 		}

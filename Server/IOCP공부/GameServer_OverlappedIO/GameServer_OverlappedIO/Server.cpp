@@ -1,6 +1,9 @@
 #include <iostream>
 #include <WS2tcpip.h>
+#include "protocol.h"
+
 using namespace std;
+
 #pragma comment(lib, "Ws2_32.lib")
 #define MAX_BUFFER        1024
 #define SERVER_PORT       3500
@@ -8,6 +11,7 @@ using namespace std;
 char messageBuffer[MAX_BUFFER];
 WSABUF wsabuf;
 SOCKET client_socket;
+
 
 void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
 
