@@ -445,8 +445,8 @@ void CDevice::Begin()
 	CDevice::GetInstance()->GetCommandAllocator()->Reset();
 	Open();
 
-	m_pCommandList->ResourceBarrier(1,
-		&CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE	rtvHandle(m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_iSwapChainBufferIdx, m_iDsvDescriptorIncrementSize);
 	CD3DX12_CPU_DESCRIPTOR_HANDLE	dsvHandle(m_pDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
@@ -464,8 +464,8 @@ void CDevice::Begin()
 void CDevice::End()
 {
 	//PIXEndEvent(m_pCommandList);
-	m_pCommandList->ResourceBarrier(1,
-		&CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
 
 
 	Close();

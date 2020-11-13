@@ -345,6 +345,9 @@
     <ClInclude Include="Animation_Controller.h">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller</Filter>
     </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>99. Default</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="TempDX12.ico">

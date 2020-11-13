@@ -73,7 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>packages\WinPixEventRuntime\Include\WinPixEventRuntime;$(WindowsSDK_IncludePath);../lib/include/;$(IncludePath)</IncludePath>
-    <LibraryPath>../lib/lib/x86/debug/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../Lib/lib/x86/debug/;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -160,6 +160,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Component_Manager.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Debug_Camera.h" />
     <ClInclude Include="Define.h" />

@@ -102,9 +102,12 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			int imageBytesPerRow;
 			int imageSize = LoadImageDataFromFile(&imageData, textureDesc, szFilePath, imageBytesPerRow);
 
+			D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+			D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+		
 			if (imageSize <= 0)
 				return E_FAIL;
-			if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default,
 				D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pTexture))))
 				return E_FAIL;
 
@@ -112,9 +115,11 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			CDevice::GetInstance()->GetDevice()->GetCopyableFootprints(&textureDesc, 0, 1, 0, nullptr,
 				nullptr, nullptr, &textureUploadBufferSize);
 
+			D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize);
+
 			if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE,
-				&CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ,
+				&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
+				&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ,
 				nullptr, IID_PPV_ARGS(&pTextureUpload))))
 				return E_FAIL;
 
@@ -157,9 +162,12 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 		int imageBytesPerRow;
 		int imageSize = LoadImageDataFromFile(&imageData, textureDesc, szFilePath, imageBytesPerRow);
 
+		D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
 		if (imageSize <= 0)
 			return E_FAIL;
-		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default,
 			D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pTexture))))
 			return E_FAIL;
 
@@ -167,9 +175,11 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 		CDevice::GetInstance()->GetDevice()->GetCopyableFootprints(&textureDesc, 0, 1, 0, nullptr,
 			nullptr, nullptr, &textureUploadBufferSize);
 
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize);
+
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ,
+			&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
+			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr, IID_PPV_ARGS(&pTextureUpload))))
 			return E_FAIL;
 

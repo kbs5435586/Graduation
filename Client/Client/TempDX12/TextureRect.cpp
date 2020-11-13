@@ -36,8 +36,10 @@ HRESULT CTextureRect::Ready_GameObject(void* pArg)
 		if (FAILED(m_pTextureCom->Create_ShaderResourceView(*iTemp)))
 			return E_FAIL;
 	}
+
+	_vec3 vPos = _vec3(0.f,0.f,0.f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &_vec3(0.f, 0.f, 0.f));
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 //	m_pGraphic_Device->CreateTexture
 	return S_OK;
@@ -178,10 +180,13 @@ D3D12_INPUT_LAYOUT_DESC CTextureRect::CreateInputLayout()
 }
 HRESULT CTextureRect::CreateConstantBuffer()
 {
+	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
+
 	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&tHeap_Pro_Upload,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize),
+		&tResource_Desc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&m_pConstBuffer))))
