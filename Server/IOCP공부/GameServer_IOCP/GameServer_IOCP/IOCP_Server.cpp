@@ -6,8 +6,8 @@
 using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
-constexpr int MAX_BUFFER = 4096;
 
+constexpr int MAX_BUFFER = 4096;
 
 constexpr char OP_MODE_RECV = 0;
 constexpr char OP_MODE_SEND = 1;
@@ -186,6 +186,7 @@ void add_new_client(SOCKET ns)
         g_clients[i].name[0] = 0;
         g_clients[i].x = rand() % WORLD_WIDTH;
         g_clients[i].y = rand() % WORLD_HEIGHT;
+
         DWORD flags = 0;
         WSARecv(g_clients[i].m_sock, &g_clients[i].m_recv_over.wsa_buf, 1, NULL, &flags, &g_clients[i].m_recv_over.wsa_over, NULL);
     }

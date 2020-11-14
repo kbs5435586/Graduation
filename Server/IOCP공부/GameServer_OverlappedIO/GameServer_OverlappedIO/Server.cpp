@@ -35,7 +35,8 @@ void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
         messageBuffer[bytes] = 0;
         cout << "TRACE - Receive message : " << messageBuffer << "(" << bytes << " bytes)\n";
     }
-    else {
+    else 
+    {
         closesocket(client_socket);
         return;
     }

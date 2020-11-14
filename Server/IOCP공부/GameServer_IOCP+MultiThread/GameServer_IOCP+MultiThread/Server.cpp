@@ -11,11 +11,9 @@ using namespace std;
 #pragma comment(lib, "MSWSock.lib")
 constexpr int MAX_BUFFER = 4096;
 
-
 constexpr char OP_MODE_RECV = 0;
 constexpr char OP_MODE_SEND = 1;
 constexpr char OP_MODE_ACCEPT = 2;
-
 constexpr int  KEY_SERVER = 1000000;
 
 struct OVER_EX {

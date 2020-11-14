@@ -1,23 +1,57 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include "protocol.h"
+#include <map>
 
 using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
 
-constexpr int BUF_SIZE = 1024;
-constexpr short PORT = 3500;
+Client_Info Player_Data[10];
 
-Client_Info Player_Data;
-
+void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
+void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
 void UpdatePlayer();
+
+void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
+{
+	if (bytes > 0)
+		printf("TRACE - Send message : %d, %d (%d bytes)\n", Player_Data.x, Player_Data.y, bytes);
+	else {
+		closesocket(client_socket);
+		return;
+	}
+
+	wsabuf.len = BUF_SIZE;
+	ZeroMemory(over, sizeof(*over));
+	int ret = WSARecv(client_socket, &wsabuf, 1, NULL, &flags, over, recv_complete);
+
+}
+
+void CALLBACK recv_complete(int id, DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
+{
+	if (bytes > 0) {
+		Player_Data[ID]. = 0;
+		cout << "received key : " << Player_Data.key << endl;
+		cout << "player x,y : " << Player_Data.x << " , " << Player_Data.y << endl;
+		UpdatePlayer();
+	}
+	else 
+	{
+		closesocket(client_socket);
+		return;
+	}
+	wsabuf.len = bytes;
+	ZeroMemory(over, sizeof(*over));   //오버랩트 초기화 해주고 사용하기
+	int ret = WSASend(client_socket, &wsabuf, 1, NULL, NULL, over, send_complete);
+
+}
 
 int main()
 {
 	WSADATA WSAData;
 	WSAStartup(MAKEWORD(2, 0), &WSAData);
 
-	SOCKET listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, 0);
+	SOCKET listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(SOCKADDR_IN));
@@ -29,33 +63,24 @@ int main()
 	listen(listenSocket, SOMAXCONN);
 
 	SOCKADDR_IN client_addr;
+	WSAOVERLAPPED overlapped;
 
 	while (true)
 	{
+		int ID = 0;
 		int addr_size = sizeof(client_addr);
-		SOCKET client_socket = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
-		if (client_socket == SOCKET_ERROR)
+		Player_Data[ID].m_socket = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
+		if (Player_Data->m_socket == SOCKET_ERROR)
 			cout << "Accept error!\n";
 		else
 			cout << "Accept !\n";
 
+		Player_Data[ID].wsabuf.buf = Player_Data[ID].buffer;
+		Player_Data[ID].wsabuf.len = BUF_SIZE;
+		DWORD flags = 0;
+		ZeroMemory(&overlapped, sizeof(overlapped));
 
-		while (true)
-		{
-			int receiveBytes = recv(client_socket, (char*)&Player_Data, sizeof(Client_Info), 0);
-			if (receiveBytes > 0)
-			{
-				cout << "received key : " << Player_Data.key << endl;
-				cout << "player x,y : " << Player_Data.x << " , " << Player_Data.y << endl;
-			}
-			else break;
-
-			UpdatePlayer();
-
-			int sendBytes = send(client_socket, (char*)&Player_Data, sizeof(Client_Info), 0);
-			if (sendBytes > 0) printf("TRACE - Send message : %d bytes)\n", sendBytes);
-		}
-		closesocket(client_socket);
+		int ret = WSARecv(Player_Data[ID].m_socket, &Player_Data[ID].wsabuf, 1, NULL, &flags, &overlapped, recv_complete);
 	}
 	closesocket(listenSocket);
 	WSACleanup();
