@@ -86,7 +86,7 @@ HRESULT CBuffer_Terrain_Texture::Ready_VIBuffer(const _uint& iNumVerticesX, cons
 		CDevice::GetInstance()->GetCommandList()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	{
-		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(m_pIndices) * m_iIndices);
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iIndices);
 		if (FAILED(m_pGraphic_Device->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))
 			return E_FAIL;
 		m_pIndexBuffer->SetName(L"IndexBuffer");
@@ -99,7 +99,7 @@ HRESULT CBuffer_Terrain_Texture::Ready_VIBuffer(const _uint& iNumVerticesX, cons
 		indexData.RowPitch = sizeof(m_pIndices);
 		indexData.SlicePitch = sizeof(m_pIndices);
 
-		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		UpdateSubresources(CDevice::GetInstance()->GetCommandList(), m_pIndexBuffer, m_pIndexUploadBuffer, 0, 0, 1, &indexData);
 		CDevice::GetInstance()->GetCommandList()->ResourceBarrier(1, &tResource_Barrier);
 	}

@@ -29,8 +29,10 @@ HRESULT CScene_Logo::Ready_Scene()
 	//	return E_FAIL;
 	//if(FAILED(Ready_Layer_Rect(L"Layer_Rect")))
 	//	return E_FAIL;
+
 	if (FAILED(Ready_Layer_Temp_Mesh(L"Layer_TempMesh")))
 		return E_FAIL;
+
 	//if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))

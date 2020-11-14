@@ -17,11 +17,9 @@ public:
     void                            SetAnimationStack(FbxScene* pScene, _int iAnimStack);
     void                            AdvacneTime(const _float& fTimeDelta);
 public:
-    void                            AnimateMesh(FbxMesh* pMesh);
+    void                            AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurTime);
 public:
-    void                            ComputeSkinDeformation(FbxMesh* pMesh, FbxTime& fbxCurTime, 
-                                    FbxVector4* pVertices, _int iVertices);
-private:
+    void                            ComputeSkinDeformation(FbxMesh* pMesh, FbxTime& fbxCurTime, FbxVector4* pVertices, _int iVertices);
 
 public:
     FbxTime                         GetCurrentTime() { return m_pFbxCurrTime[m_iCurrAnimationStack]; }
@@ -30,7 +28,6 @@ private:
     _int                            m_iCurrAnimationStack = 0;
 private:
     FbxAnimStack**                  m_pFbxAnimStack = nullptr;
-    vector<FbxAnimStack*>           m_vecFbxAnimStack;
     FbxTime*                        m_pFbxStartTime = nullptr;
     FbxTime*                        m_pFbxStopTime = nullptr;
     FbxTime*                        m_pFbxCurrTime = nullptr;

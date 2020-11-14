@@ -430,7 +430,7 @@ HRESULT CDevice::CreateRootSignature(ROOT_TYPE eType)
 
 void CDevice::Open()
 {
-	CDevice::GetInstance()->GetCommandList()->Reset(CDevice::GetInstance()->GetCommandAllocator(), 0);
+	CDevice::GetInstance()->GetCommandList()->Reset(CDevice::GetInstance()->GetCommandAllocator(), nullptr);
 }
 
 void CDevice::Close()
@@ -442,20 +442,26 @@ void CDevice::Close()
 
 void CDevice::Begin()
 {
-	CDevice::GetInstance()->GetCommandAllocator()->Reset();
+
+	if(FAILED(CDevice::GetInstance()->GetCommandAllocator()->Reset()))
+		return;
 	Open();
 
-	D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
+	D3D12_RESOURCE_BARRIER	tResource_Barrier = 
+		CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+ 	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE	rtvHandle(m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_iSwapChainBufferIdx, m_iDsvDescriptorIncrementSize);
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE	rtvHandle(m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+		m_iSwapChainBufferIdx, m_iRtvDescriptorIncrementSize);
+
 	CD3DX12_CPU_DESCRIPTOR_HANDLE	dsvHandle(m_pDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 
-	m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+	m_pCommandList->OMSetRenderTargets(1, &rtvHandle, true, &dsvHandle);
 	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
-	m_pCommandList->ClearRenderTargetView(rtvHandle, pfClearColor, 0, NULL);
-	m_pCommandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+	m_pCommandList->ClearRenderTargetView(rtvHandle, pfClearColor, 0, nullptr);
+	m_pCommandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	m_pCommandList->RSSetViewports(1, &m_ViewPort);
 	m_pCommandList->RSSetScissorRects(1, &m_ScissorRect);
@@ -464,14 +470,15 @@ void CDevice::Begin()
 void CDevice::End()
 {
 	//PIXEndEvent(m_pCommandList);
-	D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	D3D12_RESOURCE_BARRIER	tResource_Barrier = 
+		CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
 
 
 	Close();
 
 	WaitForGpuComplete();
-	m_pSwapChain->Present(0, 0);
+	m_pSwapChain->Present(1, 0);
 	MoveToNextFrame();
 
 }

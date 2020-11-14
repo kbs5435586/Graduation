@@ -4,7 +4,7 @@
 CMesh::CMesh(ID3D12Device* pGraphic_Device)
 	: CComponent(pGraphic_Device)
 {
-	
+
 }
 
 CMesh::CMesh(const CMesh& rhs)
@@ -28,15 +28,11 @@ CComponent* CMesh::Clone_Component(void* pArg)
 void CMesh::Free()
 {
 	if (m_IsClone)
-	{
 		if (m_pScene)
 		{
 			m_pScene->Destroy();
 			m_pScene = nullptr;
 		}
-
-	}
-
 
 	CComponent::Free();
 }

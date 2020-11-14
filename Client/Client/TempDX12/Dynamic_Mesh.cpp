@@ -13,7 +13,6 @@ CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	: CMesh(rhs)
 	, m_pLoader(rhs.m_pLoader)
 {
-	m_pLoader->AddRef();
 	m_IsClone = true;
 }
 
@@ -25,9 +24,9 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	if (FAILED(m_pLoader->Ready_Load_Hierachy(m_pScene->GetRootNode())))
 		return E_FAIL;
 
-	m_pController = CAnimation_Controller::Create(m_pGraphic_Device, m_pScene);
-	if (nullptr == m_pController)
-		return E_FAIL;
+	//m_pController = CAnimation_Controller::Create(m_pGraphic_Device, m_pScene);
+	//if (nullptr == m_pController)
+	//	return E_FAIL;
 	
 
 	return S_OK;
@@ -54,6 +53,7 @@ CComponent* CDynamic_Mesh::Clone_Component(void* pArg)
 void CDynamic_Mesh::Free()
 {
 	Safe_Release(m_pLoader);
+	Safe_Release(m_pController);
 
 	CMesh::Free();
 }
@@ -100,7 +100,7 @@ void CDynamic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShad
 		iPassSize, pData, eType)))
 		return;
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
-
+	
 	CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
 	CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&(pInfo->IndexBufferView));

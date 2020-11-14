@@ -91,7 +91,7 @@ void CAnimation_Controller::AdvacneTime(const _float& fTimeDelta)
 		m_pFbxCurrTime[m_iAnimationStack] = m_pFbxStartTime[m_iAnimationStack];
 }
 
-void CAnimation_Controller::AnimateMesh(FbxMesh* pMesh)
+void CAnimation_Controller::AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurTime)
 {
 	_uint iVertices = pMesh->GetControlPointsCount();
 	if (iVertices > 0)
@@ -106,11 +106,28 @@ void CAnimation_Controller::AnimateMesh(FbxMesh* pMesh)
 		}
 
 		RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
-		
+		for (_uint i = 0; i < iVertices; ++i)
+		{
+			pInfo->vecPosition[i] = _vec3(pVertices[i][0], pVertices[i][1], pVertices[i][2]);
+		}
 	}
 }
 
 void CAnimation_Controller::ComputeSkinDeformation(FbxMesh* pMesh, FbxTime& fbxCurTime, FbxVector4* pVertices, _int iVertices)
 {
+	FbxSkin* pSkinDeformer = (FbxSkin*)pMesh->GetDeformer(0, FbxDeformer::eSkin);
+	FbxSkin::EType eSkinningType = pSkinDeformer->GetSkinningType();
 
+	if ((eSkinningType == FbxSkin::eLinear) || (eSkinningType == FbxSkin::eRigid))
+	{
+		//ComputeLinear
+	}
+	else if (eSkinningType == FbxSkin::eDualQuaternion)
+	{
+		// ComputeQuaternion
+	}
+	else if (eSkinningType == FbxSkin::eBlend)
+	{
+
+	}
 }

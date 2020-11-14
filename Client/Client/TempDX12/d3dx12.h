@@ -1866,7 +1866,7 @@ inline void MemcpySubresource(
             memcpy(pDestSlice + pDest->RowPitch * y,
                    pSrcSlice + pSrc->RowPitch * y,
                    RowSizeInBytes);
-        }
+          }
     }
 }
 
