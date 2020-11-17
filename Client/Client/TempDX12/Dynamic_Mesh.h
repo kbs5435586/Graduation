@@ -20,6 +20,9 @@ private:
                                                 FbxAMatrix& pGeomatryMatrix, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType);
     FbxAMatrix                  GetGeometricOffsetTransform(FbxNode* pNode);
 public:
+    void                        SetAnimationStack(_uint iAnimStack);
+    void                        Animate(const _float& fTimeDelta);
+public:
     virtual void                Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType);
 public:
     static  CDynamic_Mesh*      Create(ID3D12Device* pGraphic_Device, string strFilePath);

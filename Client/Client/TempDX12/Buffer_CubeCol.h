@@ -15,5 +15,7 @@ public:
 	virtual CComponent*		Clone_Component(void* pArg = nullptr);
 protected:
 	virtual void			Free();
+private:
+	vector<VTXCOL>			m_vecVertex;
 };
 

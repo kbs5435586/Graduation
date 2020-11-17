@@ -27,6 +27,7 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 	//if(FAILED(Ready_Layer_Cube(L"Layer_Cube")))
 	//	return E_FAIL;
+
 	//if(FAILED(Ready_Layer_Rect(L"Layer_Rect")))
 	//	return E_FAIL;
 
@@ -35,8 +36,8 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	//if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Terrain_Texture(L"Layer_Terrain_Texture")))
 	//	return E_FAIL;
 	return S_OK;

@@ -433,7 +433,7 @@ void CGameFramework::BuildObjects()
 
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
-
+	 
 #ifdef _WITH_FBX_SCENE_INSTANCING
 	if (m_pfbxScene) ::ReleaseUploadBufferFromFbxNodeHierarchy(m_pfbxScene->GetRootNode());
 #endif

@@ -8,6 +8,7 @@ CBuffer_CubeCol::CBuffer_CubeCol(ID3D12Device* pGraphic_Device)
 
 CBuffer_CubeCol::CBuffer_CubeCol(const CBuffer_CubeCol& rhs)
 	: CVIBuffer(rhs)
+	, m_vecVertex(rhs.m_vecVertex)
 {
 }
 
@@ -17,6 +18,7 @@ HRESULT CBuffer_CubeCol::Ready_VIBuffer()
 	m_iStride = sizeof(VTXCOL);
 	m_PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	m_vecVertex.resize(8);
 	VTXCOL pVertices[8];
 	pVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f));
 	pVertices[1] = VTXCOL(XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f));
@@ -28,6 +30,10 @@ HRESULT CBuffer_CubeCol::Ready_VIBuffer()
 	pVertices[7] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f));
 
 
+	for (_int i = 0; i < 8; ++i)
+	{
+		m_vecVertex[i] = pVertices[i];
+	}
 	m_iIndices = 36;
 
 	_uint	indicies[36]{};
@@ -107,6 +113,12 @@ HRESULT CBuffer_CubeCol::Ready_VIBuffer()
 
 void CBuffer_CubeCol::Render_VIBuffer()
 {
+	for (auto& iter : m_vecVertex)
+	{
+		iter.vPosition.x+=1.f;
+	}
+
+
 	CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(m_PrimitiveTopology);
 	CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(m_iSlot, 1, &m_VertexBufferView);
 	CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&m_IndexBufferView);

@@ -36,16 +36,18 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
-	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
+	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	//m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
+	if (nullptr != m_pMeshCom)
+		m_pMeshCom->SetAnimationStack(0);
 	return S_OK;
 }
 
 _int CTempMesh::Update_GameObject(const _float& fTimeDelta)
 {
-	//m_pTransformCom->Go_Straight(fTimeDelta * 0.1f);
 	if (nullptr != m_pMeshCom)
 	{
-
+		m_pMeshCom->Animate(fTimeDelta);
 	}
 
 	return _int();

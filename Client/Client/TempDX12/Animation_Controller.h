@@ -16,10 +16,22 @@ public:
     void                            SetPosition(_int iAnimStack, _float fPosition);
     void                            SetAnimationStack(FbxScene* pScene, _int iAnimStack);
     void                            AdvacneTime(const _float& fTimeDelta);
+    FbxTime                         GetCurrTime() { return m_pFbxCurrTime[m_iCurrAnimationStack]; }
 public:
-    void                            AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurTime);
-public:
-    void                            ComputeSkinDeformation(FbxMesh* pMesh, FbxTime& fbxCurTime, FbxVector4* pVertices, _int iVertices);
+    void                            AnimateHierachyMesh(FbxNode* pNode, FbxTime& fbxCurrTime);
+    void                            AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurrTime);
+private:
+    FbxAMatrix                      ComputeClusterDeformation(FbxMesh* pMesh, FbxCluster* pCluster, FbxCluster::ELinkMode iClusterMode, FbxTime& fbxCurrTime);
+    void                            ComputeSkinDeformation(FbxMesh* pMesh, FbxTime& fbxCurrTime, FbxVector4* pVertices, _int iNumVertices);
+    void                            ComputeLinearDeformation(FbxMesh* pMesh, FbxTime& fbxCurrTime, FbxVector4* pVertices, _int iNumVertices);
+    void                            ComputeDualQuaternionDeformation(FbxMesh* pMesh, FbxTime& fbxCurrTime, FbxVector4* pVertices, _int iNumVertices);
+private:
+    void                            MatrixScale(FbxAMatrix& fbxmatSrcMatrix, double pValue);
+    void                            MatrixAdd(FbxAMatrix& fbxmatDstMatrix, FbxAMatrix& fbxmatSrcMatrix);
+    void                            MatrixAddToDiagonal(FbxAMatrix& fbxmatSrcMatrix, double pValue);
+    FbxAMatrix                      GetGeomatryOffsetTransform(FbxNode* pNode);
+private:
+    HRESULT						    CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec3>& vecPos, RenderInfo* pInfo);
 
 public:
     FbxTime                         GetCurrentTime() { return m_pFbxCurrTime[m_iCurrAnimationStack]; }

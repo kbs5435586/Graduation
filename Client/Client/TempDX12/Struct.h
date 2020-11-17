@@ -260,4 +260,5 @@ struct RenderInfo
 	vector<int>					vecIndices;
 	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
+	XMFLOAT3*					vPos;
 };

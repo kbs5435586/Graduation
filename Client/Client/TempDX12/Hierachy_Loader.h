@@ -11,6 +11,9 @@ public:
 public:
 	HRESULT								Ready_Load_Hierachy(FbxNode* pNode);
 	HRESULT								CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec3>& vecPos, RenderInfo* pInfo);
+	HRESULT								CreateBuffer(_uint iVerticesNum, _uint iIndicesNum, RenderInfo* pInfo);
+public:
+	vector<RenderInfo*>					GetRenderInfo() { return m_vecRenderInfo; }
 public:
 	static CHierachy_Loader*			Create(ID3D12Device* pGraphic_Device,string strFilePath,  FbxScene*& pScene);
 	virtual void						Free();

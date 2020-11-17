@@ -154,9 +154,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\02. Renderer">
       <UniqueIdentifier>{421e2682-050a-49b5-82d4-e595382fe737}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\03. Shader">
-      <UniqueIdentifier>{9d88ed7d-28da-46f1-acdf-ce5040447a53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\04. Texture">
       <UniqueIdentifier>{ca30891b-1c2e-4e27-a563-84248b881faa}</UniqueIdentifier>
     </Filter>
@@ -177,6 +174,9 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller">
       <UniqueIdentifier>{f40abd90-ccb5-4660-96af-b308d7db6ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\03. Shader">
+      <UniqueIdentifier>{9d88ed7d-28da-46f1-acdf-ce5040447a53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

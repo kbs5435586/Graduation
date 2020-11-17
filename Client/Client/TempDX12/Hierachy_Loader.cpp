@@ -1,6 +1,6 @@
 #include "framework.h"
 #include "Hierachy_Loader.h"
-
+#include "TempDX12.h"
 CHierachy_Loader::CHierachy_Loader(ID3D12Device* pGraphic_Device)
 {
 }
@@ -49,50 +49,116 @@ HRESULT CHierachy_Loader::Ready_Load_Hierachy(FbxNode* pNode)
 	if ((pAttr && FbxNodeAttribute::eMesh == pAttr->GetAttributeType()))
 	{
 		FbxMesh* pMesh = pNode->GetMesh();
-		if (nullptr == pMesh)
-			return E_FAIL;
-
-		_uint	iVertices = pMesh->GetControlPointsCount();
-		_uint	iIndices = 0;
-		_uint	iPolygons = pMesh->GetPolygonCount();
-
-		for (_uint i = 0; i < iPolygons; ++i)
-			iIndices += pMesh->GetPolygonSize(i);
-
-
-		FbxVector4* pFbxPos = pMesh->GetControlPoints();
-
-		vector<_vec3> vecPos;
-		for (_uint i = 0; i < iVertices; ++i)
+		if (pMesh)
 		{
-			_vec3	vPos;
-			vPos.x = (float)pFbxPos[i].mData[0];
-			vPos.y = (float)pFbxPos[i].mData[1];
-			vPos.z = (float)pFbxPos[i].mData[2];
-			vecPos.push_back(vPos);
-		}
+			_uint	iVertices = pMesh->GetControlPointsCount();
+			_uint	iIndices = 0;
+			_uint	iPolygons = pMesh->GetPolygonCount();
+
+			for (_uint i = 0; i < iPolygons; ++i)
+				iIndices += pMesh->GetPolygonSize(i);
 
 
-		RenderInfo* pInfo = new RenderInfo;
+			FbxVector4* pFbxPos = pMesh->GetControlPoints();
 
-		for (_uint i = 0, k = 0; i < iPolygons; ++i)
-		{
-			_uint iPolygonSize = pMesh->GetPolygonSize(i);
-			for (_uint j = 0; j < iPolygonSize; ++j)
+			vector<_vec3> vecPos;
+			for (_uint i = 0; i < iVertices; ++i)
 			{
-				pInfo->vecIndices.push_back(pMesh->GetPolygonVertex(i, j));
+				_vec3	vPos;
+				vPos.x = (float)pFbxPos[i].mData[0];
+				vPos.y = (float)pFbxPos[i].mData[1];
+				vPos.z = (float)pFbxPos[i].mData[2];
+				vecPos.push_back(vPos);
 			}
-		}
 
-		CreateBufferView(iVertices, iIndices, vecPos, pInfo);
-		m_vecRenderInfo.push_back(pInfo);
-		
-		pMesh->SetUserDataPtr(pInfo);
+
+			RenderInfo* pInfo = new RenderInfo;
+
+			for (_uint i = 0, k = 0; i < iPolygons; ++i)
+			{
+				_uint iPolygonSize = pMesh->GetPolygonSize(i);
+				for (_uint j = 0; j < iPolygonSize; ++j)
+				{
+					pInfo->vecIndices.push_back(pMesh->GetPolygonVertex(i, j));
+				}
+			}
+
+			CreateBufferView(iVertices, iIndices, vecPos, pInfo);
+			m_vecRenderInfo.push_back(pInfo);
+
+    			pMesh->SetUserDataPtr(pInfo);
+		}
 	}
 	_uint	iChildCnt = pNode->GetChildCount();
 	for (_uint i = 0; i < iChildCnt; ++i)
 		Ready_Load_Hierachy(pNode->GetChild(i));
 
+	return S_OK;
+}
+
+HRESULT CHierachy_Loader::CreateBuffer(_uint iVerticesNum, _uint iIndicesNum, RenderInfo* pInfo)
+{
+	m_iVertices = iVerticesNum;
+	m_iIndices = iIndicesNum;
+	m_iStride = sizeof(_vec3);
+
+	D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+	ID3D12Resource* pVertexBuffer = nullptr;
+	ID3D12Resource* pVertexUploadBuffer = nullptr;
+	ID3D12Resource* pIndexBuffer = nullptr;
+	ID3D12Resource* pIndexUploadBuffer = nullptr;
+	CDevice::GetInstance()->Open();
+	{
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iVertices);
+
+
+		//if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
+		//	&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, 
+		//	nullptr, IID_PPV_ARGS(&pVertexUploadBuffer))))
+		//{
+		//	return E_FAIL;
+		//}
+
+		//if (FAILED(pVertexUploadBuffer->Map(0, nullptr, (void**)&pInfo->vPos)))
+		//	return E_FAIL;
+
+		pVertexUploadBuffer = ::CreateBufferResource(CDevice::GetInstance()->GetDevice()
+			, CDevice::GetInstance()->GetCommandList(), NULL, sizeof(XMFLOAT3) * m_iVertices,
+			D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+		pVertexUploadBuffer->Map(0, NULL, (void**)&pInfo->vPos);
+
+	}
+	{
+		pIndexBuffer = ::CreateBufferResource(CDevice::GetInstance()->GetDevice()
+			, CDevice::GetInstance()->GetCommandList(), pInfo->vecIndices.data(), sizeof(UINT) * m_iIndices,
+			D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &pIndexUploadBuffer);
+	}
+	CDevice::GetInstance()->Close();
+
+	pInfo->VertexBufferView.BufferLocation = pVertexUploadBuffer->GetGPUVirtualAddress();
+	pInfo->VertexBufferView.StrideInBytes = sizeof(XMFLOAT3);
+	pInfo->VertexBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_iVertices;
+
+	//pInfo->VertexBufferView.BufferLocation = pVertexUploadBuffer->GetGPUVirtualAddress();
+	//pInfo->VertexBufferView.StrideInBytes = m_iStride;
+	//pInfo->VertexBufferView.SizeInBytes = m_iStride * m_iVertices;
+
+	pInfo->IndexBufferView.BufferLocation = pIndexBuffer->GetGPUVirtualAddress();
+	pInfo->IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	pInfo->IndexBufferView.SizeInBytes = sizeof(UINT) * m_iIndices;
+
+	pInfo->iIndices = m_iIndices;
+
+
+	m_vecVertexBuffer.push_back(pVertexBuffer);
+	m_vecVertexUploadBuffer.push_back(pVertexUploadBuffer);
+	m_vecIndexBuffer.push_back(pIndexBuffer);
+	m_vecIndexUploadBuffer.push_back(pIndexUploadBuffer);
+
+	CDevice::GetInstance()->WaitForGpuComplete();
 	return S_OK;
 }
 
@@ -103,8 +169,8 @@ HRESULT CHierachy_Loader::CreateBufferView(_uint iVerticesNum, _uint iIndicesNum
 	m_iStride = sizeof(_vec3);
 
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload =	CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	
+	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
 	ID3D12Resource* pVertexBuffer = nullptr;
 	ID3D12Resource* pVertexUploadBuffer = nullptr;
 	ID3D12Resource* pIndexBuffer = nullptr;
@@ -123,13 +189,17 @@ HRESULT CHierachy_Loader::CreateBufferView(_uint iVerticesNum, _uint iIndicesNum
 
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = (void*)(vecPos.data());
+		vertexData.pData = (vecPos.data());
 		vertexData.RowPitch = m_iStride * m_iVertices;
 		vertexData.SlicePitch = m_iStride * m_iVertices;
 
 		UpdateSubresources(CDevice::GetInstance()->GetCommandList(), pVertexBuffer, pVertexUploadBuffer, 0, 0, 1, &vertexData);
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(pVertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 		CDevice::GetInstance()->GetCommandList()->ResourceBarrier(1, &tResource_Barrier);
+
+
+
+
 	}
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iIndices);
@@ -149,6 +219,8 @@ HRESULT CHierachy_Loader::CreateBufferView(_uint iVerticesNum, _uint iIndicesNum
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		CDevice::GetInstance()->GetCommandList()->ResourceBarrier(1, &tResource_Barrier);
 	}
+
+
 	CDevice::GetInstance()->Close();
 
 	pInfo->VertexBufferView.BufferLocation = pVertexBuffer->GetGPUVirtualAddress();

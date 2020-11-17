@@ -12,6 +12,7 @@ CDynamic_Mesh::CDynamic_Mesh(ID3D12Device* pGraphic_Device)
 CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	: CMesh(rhs)
 	, m_pLoader(rhs.m_pLoader)
+	, m_pController(rhs.m_pController)
 {
 	m_IsClone = true;
 }
@@ -24,10 +25,12 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	if (FAILED(m_pLoader->Ready_Load_Hierachy(m_pScene->GetRootNode())))
 		return E_FAIL;
 
-	//m_pController = CAnimation_Controller::Create(m_pGraphic_Device, m_pScene);
-	//if (nullptr == m_pController)
-	//	return E_FAIL;
+	m_pLoader;
+	m_pController = CAnimation_Controller::Create(m_pGraphic_Device, m_pScene);
+	if (nullptr == m_pController)
+		return E_FAIL;
 	
+
 
 	return S_OK;
 }
@@ -113,6 +116,22 @@ FbxAMatrix CDynamic_Mesh::GetGeometricOffsetTransform(FbxNode* pNode)
 	const FbxVector4 S = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
 
 	return(FbxAMatrix(T, R, S));
+}
+void CDynamic_Mesh::SetAnimationStack(_uint iAnimStack)
+{
+	if (nullptr != m_pController)
+	{
+		m_pController->SetAnimationStack(m_pScene, iAnimStack);
+	}
+}
+void CDynamic_Mesh::Animate(const _float& fTimeDelta)
+{
+	if (nullptr != m_pController)
+	{
+		m_pController->AdvacneTime(fTimeDelta);
+		FbxTime	fbxCurrTime = m_pController->GetCurrTime();;
+		m_pController->AnimateHierachyMesh(m_pScene->GetRootNode(), fbxCurrTime);
+	}
 }
 void CDynamic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
