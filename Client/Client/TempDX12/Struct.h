@@ -256,9 +256,9 @@ struct MeshData
 struct RenderInfo
 {
 	unsigned int				iIndices = 0;
-	vector<XMFLOAT3>			vecPosition;
+	vector<XMFLOAT4>			vecPosition;
 	vector<int>					vecIndices;
 	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
-	XMFLOAT3*					vPos;
+	XMFLOAT4*					vPos;
 };

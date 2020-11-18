@@ -22,16 +22,16 @@ public:
     void                            AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurrTime);
 private:
     FbxAMatrix                      ComputeClusterDeformation(FbxMesh* pMesh, FbxCluster* pCluster, FbxCluster::ELinkMode iClusterMode, FbxTime& fbxCurrTime);
-    void                            ComputeSkinDeformation(FbxMesh* pMesh, FbxTime& fbxCurrTime, FbxVector4* pVertices, _int iNumVertices);
-    void                            ComputeLinearDeformation(FbxMesh* pMesh, FbxTime& fbxCurrTime, FbxVector4* pVertices, _int iNumVertices);
-    void                            ComputeDualQuaternionDeformation(FbxMesh* pMesh, FbxTime& fbxCurrTime, FbxVector4* pVertices, _int iNumVertices);
+    void                            ComputeSkinDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
+    void                            ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
+    void                            ComputeDualQuaternionDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
 private:
     void                            MatrixScale(FbxAMatrix& fbxmatSrcMatrix, double pValue);
     void                            MatrixAdd(FbxAMatrix& fbxmatDstMatrix, FbxAMatrix& fbxmatSrcMatrix);
     void                            MatrixAddToDiagonal(FbxAMatrix& fbxmatSrcMatrix, double pValue);
-    FbxAMatrix                      GetGeomatryOffsetTransform(FbxNode* pNode);
+    FbxAMatrix                      GetGeometricOffsetTransform(FbxNode* pNode);
 private:
-    HRESULT						    CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec3>& vecPos, RenderInfo* pInfo);
+    HRESULT						    CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec4>& vecPos, RenderInfo* pInfo);
 
 public:
     FbxTime                         GetCurrentTime() { return m_pFbxCurrTime[m_iCurrAnimationStack]; }

@@ -10,8 +10,8 @@ public:
 	HRESULT								Ready_Hierachy_Loader(string strFilePath, FbxScene*& pScene);
 public:
 	HRESULT								Ready_Load_Hierachy(FbxNode* pNode);
-	HRESULT								CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec3>& vecPos, RenderInfo* pInfo);
-	HRESULT								CreateBuffer(_uint iVerticesNum, _uint iIndicesNum, RenderInfo* pInfo);
+	HRESULT								CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec4>& vecPos, RenderInfo* pInfo);
+	HRESULT								CreateBuffer(_uint iVerticesNum, _uint iIndicesNum,  RenderInfo* pInfo);
 public:
 	vector<RenderInfo*>					GetRenderInfo() { return m_vecRenderInfo; }
 public:

@@ -297,12 +297,10 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
-		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Angrybot.FBX"))))
+		CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Monster.fbx"))))
 		return E_FAIL;
 	return S_OK;
 }
-
-
 
 CScene_Logo* CScene_Logo::Create(ID3D12Device* pGraphic_Device)
 {
