@@ -34,8 +34,6 @@ void err_display(const char* msg)
 
 int main(int argc, char* argv[])
 {
-    int retval;
-
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -49,6 +47,7 @@ int main(int argc, char* argv[])
     serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
     serveraddr.sin_port = htons(SERVERPORT);
 
+    int retval;
     retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR) err_quit("connect()");
 

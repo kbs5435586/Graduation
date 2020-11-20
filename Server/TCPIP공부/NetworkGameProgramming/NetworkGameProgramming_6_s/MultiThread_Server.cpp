@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #define SERVERPORT 9000
-#define BUFSIZE    512
+#define BUFSIZE    1024
 
 void err_quit(const char* msg)
 {
@@ -50,11 +50,8 @@ int recvn(SOCKET s, char* buf, int len, int flags)
     return (len - left);
 }
 
-HANDLE hReadEvent;
-
 DWORD WINAPI Client_Thread(LPVOID arg)
 {
-    DWORD event_retval;
     SOCKET client_sock = (SOCKET)arg;
     int retval;
     SOCKADDR_IN clientaddr;
@@ -62,13 +59,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
     char buf[BUFSIZE] = {};
 
     addrlen = sizeof(clientaddr);
-    //getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
+    getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
 
     while (1)
     {
-        event_retval = WaitForSingleObject(hReadEvent, INFINITE);
-        if (event_retval != WAIT_OBJECT_0) break;
-
         char fileName[256] = {};
         int nameSize;
         int fileSize;
@@ -130,8 +124,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
     printf("[TCP 서버] 클라이언트 종료: IP 주소=%s, 포트 번호=%d\n",
         inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-    SetEvent(hReadEvent); // 비신호(초록불) -> 신호 (빨간불!)
-
     return 0;
 }
 
@@ -163,8 +155,6 @@ int main(int argc, char* argv[])
     int addrlen;
     
     HANDLE hThread;
-    hReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    if (hReadEvent == NULL) return 1;
 
     while (1) {
         addrlen = sizeof(clientaddr);
@@ -177,7 +167,6 @@ int main(int argc, char* argv[])
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
         hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);
-        WaitForSingleObject(hReadEvent, INFINITE);
         if (hThread == NULL)
             closesocket(client_sock);
         else

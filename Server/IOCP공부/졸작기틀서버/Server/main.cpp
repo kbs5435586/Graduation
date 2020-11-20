@@ -1,12 +1,8 @@
-#include <iostream>
-#include <WS2tcpip.h>
-#include "protocol.h"
-#include <map>
+#include "pch.h"
+#include "Client_Info.h"
 
-using namespace std;
-#pragma comment(lib, "Ws2_32.lib")
-
-Client_Info Player_Data[10];
+int ID = 0;
+Client_Info Player_Data[MAX_PLAYER];
 
 void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
 void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
@@ -17,7 +13,7 @@ void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 	if (bytes > 0)
 		printf("TRACE - Send message : %d, %d (%d bytes)\n", Player_Data.x, Player_Data.y, bytes);
 	else {
-		closesocket(client_socket);
+		closesocket(Player_Data[ID].m_sock);
 		return;
 	}
 
@@ -27,10 +23,11 @@ void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 
 }
 
-void CALLBACK recv_complete(int id, DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
+void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
 {
 	if (bytes > 0) {
-		Player_Data[ID]. = 0;
+		Player_Data[ID].buffer[bytes] = 0;
+		strcpy(&Player_Data[ID].key, Player_Data[ID].buffer);
 		cout << "received key : " << Player_Data.key << endl;
 		cout << "player x,y : " << Player_Data.x << " , " << Player_Data.y << endl;
 		UpdatePlayer();
@@ -40,7 +37,7 @@ void CALLBACK recv_complete(int id, DWORD err, DWORD bytes, LPWSAOVERLAPPED over
 		closesocket(client_socket);
 		return;
 	}
-	wsabuf.len = bytes;
+	Player_Data[ID].wsabuf.len = bytes;
 	ZeroMemory(over, sizeof(*over));   //오버랩트 초기화 해주고 사용하기
 	int ret = WSASend(client_socket, &wsabuf, 1, NULL, NULL, over, send_complete);
 
@@ -63,14 +60,12 @@ int main()
 	listen(listenSocket, SOMAXCONN);
 
 	SOCKADDR_IN client_addr;
-	WSAOVERLAPPED overlapped;
 
 	while (true)
 	{
-		int ID = 0;
 		int addr_size = sizeof(client_addr);
-		Player_Data[ID].m_socket = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
-		if (Player_Data->m_socket == SOCKET_ERROR)
+		Player_Data[ID].m_sock = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
+		if (Player_Data[ID].m_sock == SOCKET_ERROR)
 			cout << "Accept error!\n";
 		else
 			cout << "Accept !\n";
@@ -78,9 +73,10 @@ int main()
 		Player_Data[ID].wsabuf.buf = Player_Data[ID].buffer;
 		Player_Data[ID].wsabuf.len = BUF_SIZE;
 		DWORD flags = 0;
-		ZeroMemory(&overlapped, sizeof(overlapped));
+		ZeroMemory(&Player_Data[ID].over, sizeof(Player_Data[ID].over));
 
-		int ret = WSARecv(Player_Data[ID].m_socket, &Player_Data[ID].wsabuf, 1, NULL, &flags, &overlapped, recv_complete);
+		int ret = WSARecv(Player_Data[ID].m_sock, &Player_Data[ID].wsabuf, 1, NULL, &flags, &Player_Data[ID].over, recv_complete);
+		ID++;
 	}
 	closesocket(listenSocket);
 	WSACleanup();
@@ -88,32 +84,35 @@ int main()
 
 void UpdatePlayer()
 {
-	if (Player_Data.key == 'w')
+	for (int i = 0; i < MAX_PLAYER; i++)
 	{
-		if (Player_Data.y <= 0)
-			Player_Data.y = 0;
-		else
-			Player_Data.y -= 1;
-	}
-	if (Player_Data.key == 's')
-	{
-		if (Player_Data.y >= 7)
-			Player_Data.y = 7;
-		else
-			Player_Data.y += 1;
-	}
-	if (Player_Data.key == 'a')
-	{
-		if (Player_Data.x <= 0)
-			Player_Data.x = 0;
-		else
-			Player_Data.x -= 1;
-	}
-	if (Player_Data.key == 'd')
-	{
-		if (Player_Data.x >= 7)
-			Player_Data.x = 7;
-		else
-			Player_Data.x += 1;
+		if (Player_Data[i].packet->key == 'w')
+		{
+			if (Player_Data[i].packet->y <= 0)
+				Player_Data[i].packet->y = 0;
+			else
+				Player_Data[i].packet->y -= 1;
+		}
+		if (Player_Data[i].packet->key == 's')
+		{
+			if (Player_Data[i].packet->y >= 7)
+				Player_Data[i].packet->y = 7;
+			else
+				Player_Data[i].packet->y += 1;
+		}
+		if (Player_Data[i].packet->key == 'a')
+		{
+			if (Player_Data[i].packet->x <= 0)
+				Player_Data[i].packet->x = 0;
+			else
+				Player_Data[i].packet->x -= 1;
+		}
+		if (Player_Data[i].packet->key == 'd')
+		{
+			if (Player_Data[i].packet->x >= 7)
+				Player_Data[i].packet->x = 7;
+			else
+				Player_Data[i].packet->x += 1;
+		}
 	}
 }

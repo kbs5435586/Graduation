@@ -196,23 +196,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case VK_UP:
             Player_Data.key = 'w';
-            send(s_socket, (char*)&Player_Data.key, sizeof(Client_Info), 0);
-            recv(s_socket, (char*)&Player_Data, sizeof(Client_Info), 0);
+            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_DOWN:
             Player_Data.key = 's';
-            send(s_socket, (char*)&Player_Data.key, sizeof(Client_Info), 0);
-            recv(s_socket, (char*)&Player_Data, sizeof(Client_Info), 0);
+            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_LEFT:
             Player_Data.key = 'a';
-            send(s_socket, (char*)&Player_Data.key, sizeof(Client_Info), 0);
-            recv(s_socket, (char*)&Player_Data, sizeof(Client_Info), 0);
+            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_RIGHT:
             Player_Data.key = 'd';
-            send(s_socket, (char*)&Player_Data.key, sizeof(Client_Info), 0);
-            recv(s_socket, (char*)&Player_Data, sizeof(Client_Info), 0);
+            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_ESCAPE:
             closesocket(s_socket);
@@ -231,8 +231,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wstring inpuy_ip2{ client_ip.begin(),client_ip.end() };
         wstring textBox = input_ip + inpuy_ip2;
 
-        PieceX = Player_Data.x * 100;
-        PieceY = Player_Data.y * 100;
+        PieceX = Player_Data.m_position.x * 100;
+        PieceY = Player_Data.m_position.y * 100;
 
         HBRUSH nowBrush;
         HBRUSH oldBrush;

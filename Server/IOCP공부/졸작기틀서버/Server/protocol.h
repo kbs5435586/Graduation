@@ -2,15 +2,22 @@
 
 constexpr int BUF_SIZE = 1024;
 constexpr short PORT = 3500;
+constexpr int MAX_PLAYER = 10;
+
+struct Position
+{
+	int x = 0;
+	int y = 0;
+};
 
 #pragma pack(push,1)
-typedef struct Client_Info
+struct recv_player_packet
 {
-	SOCKET m_socket;
-	WSABUF wsabuf;
-	char buffer[BUF_SIZE];
-	int id;
 	char key;
+};
+
+struct send_player_packet
+{
 	int x;
 	int y;
 };
