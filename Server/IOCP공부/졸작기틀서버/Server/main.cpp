@@ -6,20 +6,20 @@ Client_Info Player_Data[MAX_PLAYER];
 
 void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
 void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
-void UpdatePlayer();
+void UpdatePlayer(int id);
 
 void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
 {
 	if (bytes > 0)
-		printf("TRACE - Send message : %d, %d (%d bytes)\n", Player_Data.x, Player_Data.y, bytes);
+		printf("TRACE - Send message : %d, %d (%d bytes)\n", Player_Data[ID]., Player_Data.y, bytes);
 	else {
 		closesocket(Player_Data[ID].m_sock);
 		return;
 	}
 
-	wsabuf.len = BUF_SIZE;
+	Player_Data[ID].wsabuf.len = BUF_SIZE;
 	ZeroMemory(over, sizeof(*over));
-	int ret = WSARecv(client_socket, &wsabuf, 1, NULL, &flags, over, recv_complete);
+	int ret = WSARecv(Player_Data[ID].m_sock, &Player_Data[ID].wsabuf, 1, NULL, &flags, over, recv_complete);
 
 }
 
@@ -28,21 +28,20 @@ void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 	if (bytes > 0) {
 		Player_Data[ID].buffer[bytes] = 0;
 		strcpy(&Player_Data[ID].key, Player_Data[ID].buffer);
-		cout << "received key : " << Player_Data.key << endl;
-		cout << "player x,y : " << Player_Data.x << " , " << Player_Data.y << endl;
+		cout << "received key : " << Player_Data[ID].key << endl;
+		cout << "player x,y : " << Player_Data[ID].m_position.x << " , " << Player_Data[ID].m_position.y << endl;
 		UpdatePlayer();
 	}
 	else 
 	{
-		closesocket(client_socket);
+		closesocket(Player_Data[ID].m_sock);
 		return;
 	}
-	Player_Data[ID].wsabuf.len = bytes;
+	Player_Data[ID].wsabuf.buf = (char*)&Player_Data[ID].m_position;
+	Player_Data[ID].wsabuf.len = sizeof(send_player_packet);
 	ZeroMemory(over, sizeof(*over));   //오버랩트 초기화 해주고 사용하기
-	int ret = WSASend(client_socket, &wsabuf, 1, NULL, NULL, over, send_complete);
-
+	int ret = WSASend(Player_Data[ID].m_sock, &Player_Data[ID].wsabuf, 1, NULL, NULL, over, send_complete);
 }
-
 int main()
 {
 	WSADATA WSAData;
@@ -82,9 +81,9 @@ int main()
 	WSACleanup();
 }
 
-void UpdatePlayer()
+void UpdatePlayer(int id)
 {
-	for (int i = 0; i < MAX_PLAYER; i++)
+	for (int i = 0; i < ID; i++)
 	{
 		if (Player_Data[i].packet->key == 'w')
 		{
