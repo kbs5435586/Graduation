@@ -512,7 +512,7 @@ void CGameFramework::WaitForGpuComplete()
 
 	if (m_pd3dFence->GetCompletedValue() < nFenceValue)
 	{
-		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent);
+		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent); 
 		::WaitForSingleObject(m_hFenceEvent, INFINITE);
 	}
 }

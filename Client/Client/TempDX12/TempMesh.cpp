@@ -39,7 +39,7 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
 	if (nullptr != m_pMeshCom)
-		m_pMeshCom->SetAnimationStack(0);
+		m_pMeshCom->SetAnimationStack(1);
 	return S_OK;
 }
 

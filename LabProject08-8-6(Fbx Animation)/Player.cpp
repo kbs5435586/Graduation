@@ -242,7 +242,7 @@ CAngrybotPlayer::CAngrybotPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 	m_pfbxScene = pfbxScene;
 	if (!m_pfbxScene)
 	{
-		m_pfbxScene = ::LoadFbxSceneFromFile(pd3dDevice, pd3dCommandList, pfbxSdkManager, "Model/Angrybot.fbx");
+		m_pfbxScene = LoadFbxSceneFromFile(pd3dDevice, pd3dCommandList, pfbxSdkManager, "Model/Angrybot.fbx");
 		::CreateMeshFromFbxNodeHierarchy(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, m_pfbxScene->GetRootNode());
 	}
 

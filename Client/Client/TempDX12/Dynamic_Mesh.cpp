@@ -25,7 +25,7 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	if (FAILED(m_pLoader->Ready_Load_Hierachy(m_pScene->GetRootNode())))
 		return E_FAIL;
 
-	m_pLoader;
+
 	m_pController = CAnimation_Controller::Create(m_pGraphic_Device, m_pScene);
 	if (nullptr == m_pController)
 		return E_FAIL;
@@ -129,7 +129,7 @@ void CDynamic_Mesh::Animate(const _float& fTimeDelta)
 	if (nullptr != m_pController)
 	{
 		m_pController->AdvacneTime(fTimeDelta);
-		FbxTime	fbxCurrTime = m_pController->GetCurrTime();;
+		FbxTime	fbxCurrTime = m_pController->GetCurrTime();
 		m_pController->AnimateHierachyMesh(m_pScene->GetRootNode(), fbxCurrTime);
 	}
 }

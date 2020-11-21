@@ -144,30 +144,30 @@ void  CAnimation_Controller::ComputeSkinDeformation(FbxMesh* pfbxMesh, FbxTime& 
 	{
 		ComputeLinearDeformation(pfbxMesh, fbxCurrentTime, pfbxv4Vertices, nVertices);
 	}
-	else if (nSkinningType == FbxSkin::eDualQuaternion)
-	{
-		ComputeDualQuaternionDeformation(pfbxMesh, fbxCurrentTime, pfbxv4Vertices, nVertices);
-	}
-	else if (nSkinningType == FbxSkin::eBlend)
-	{
-		FbxVector4* pfbxv4LinearVertices = new FbxVector4[nVertices];
-		memcpy(pfbxv4LinearVertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
-		ComputeLinearDeformation(pfbxMesh, fbxCurrentTime, pfbxv4LinearVertices, nVertices);
+	//else if (nSkinningType == FbxSkin::eDualQuaternion)
+	//{
+	//	ComputeDualQuaternionDeformation(pfbxMesh, fbxCurrentTime, pfbxv4Vertices, nVertices);
+	//}
+	//else if (nSkinningType == FbxSkin::eBlend)
+	//{
+	//	FbxVector4* pfbxv4LinearVertices = new FbxVector4[nVertices];
+	//	memcpy(pfbxv4LinearVertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
+	//	ComputeLinearDeformation(pfbxMesh, fbxCurrentTime, pfbxv4LinearVertices, nVertices);
 
-		FbxVector4* pfbxv4DQVertices = new FbxVector4[nVertices];
-		memcpy(pfbxv4DQVertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
-		ComputeDualQuaternionDeformation(pfbxMesh, fbxCurrentTime, pfbxv4DQVertices, nVertices);
+	//	FbxVector4* pfbxv4DQVertices = new FbxVector4[nVertices];
+	//	memcpy(pfbxv4DQVertices, pfbxMesh->GetControlPoints(), nVertices * sizeof(FbxVector4));
+	//	ComputeDualQuaternionDeformation(pfbxMesh, fbxCurrentTime, pfbxv4DQVertices, nVertices);
 
-		int nBlendWeights = pfbxSkinDeformer->GetControlPointIndicesCount();
-		double* pfControlPointBlendWeights = pfbxSkinDeformer->GetControlPointBlendWeights();
-		for (int i = 0; i < nBlendWeights; i++)
-		{
-			pfbxv4Vertices[i] = pfbxv4DQVertices[i] * pfControlPointBlendWeights[i] + pfbxv4LinearVertices[i] * (1 - pfControlPointBlendWeights[i]);
-		}
+	//	int nBlendWeights = pfbxSkinDeformer->GetControlPointIndicesCount();
+	//	double* pfControlPointBlendWeights = pfbxSkinDeformer->GetControlPointBlendWeights();
+	//	for (int i = 0; i < nBlendWeights; i++)
+	//	{
+	//		pfbxv4Vertices[i] = pfbxv4DQVertices[i] * pfControlPointBlendWeights[i] + pfbxv4LinearVertices[i] * (1 - pfControlPointBlendWeights[i]);
+	//	}
 
-		delete[] pfbxv4LinearVertices;
-		delete[] pfbxv4DQVertices;
-	}
+	//	delete[] pfbxv4LinearVertices;
+	//	delete[] pfbxv4DQVertices;
+	//}
 }
 
 void CAnimation_Controller::ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices)
@@ -181,7 +181,8 @@ void CAnimation_Controller::ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime&
 	FbxCluster::ELinkMode nClusterMode = ((FbxSkin*)pfbxMesh->GetDeformer(0, FbxDeformer::eSkin))->GetCluster(0)->GetLinkMode();
 	if (nClusterMode == FbxCluster::eAdditive)
 	{
-		for (int i = 0; i < nVertices; ++i) pfbxmtxClusterDeformations[i].SetIdentity();
+		for (int i = 0; i < nVertices; ++i) 
+			pfbxmtxClusterDeformations[i].SetIdentity();
 	}
 
 	int nSkinDeformers = pfbxMesh->GetDeformerCount(FbxDeformer::eSkin);
@@ -205,7 +206,8 @@ void CAnimation_Controller::ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime&
 			{
 				int nIndex = pnIndices[k];
 				double fWeight = pfWeights[k];
-				if ((nIndex >= nVertices) || (fWeight == 0.0)) continue;
+				if ((nIndex >= nVertices) || (fWeight == 0.0))
+					continue;
 
 				FbxAMatrix fbxmtxInfluence = fbxmtxClusterDeformation;
 				MatrixScale(fbxmtxInfluence, fWeight);

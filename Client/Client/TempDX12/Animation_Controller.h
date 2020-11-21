@@ -31,8 +31,6 @@ private:
     void                            MatrixAddToDiagonal(FbxAMatrix& fbxmatSrcMatrix, double pValue);
     FbxAMatrix                      GetGeometricOffsetTransform(FbxNode* pNode);
 private:
-    HRESULT						    CreateBufferView(_uint iVerticesNum, _uint iIndicesNum, vector<_vec4>& vecPos, RenderInfo* pInfo);
-
 public:
     FbxTime                         GetCurrentTime() { return m_pFbxCurrTime[m_iCurrAnimationStack]; }
 private:
