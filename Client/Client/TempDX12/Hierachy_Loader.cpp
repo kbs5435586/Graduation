@@ -54,10 +54,15 @@ HRESULT CHierachy_Loader::Ready_Load_Hierachy(FbxNode* pNode)
 			_uint	iVertices = pMesh->GetControlPointsCount();
 			_uint	iIndices = 0;
 			_uint	iPolygons = pMesh->GetPolygonCount();
+			//FbxGeometryElementNormal* pNormal = pMesh->GetElementNormal();
 
 			for (_uint i = 0; i < iPolygons; ++i)
 				iIndices += pMesh->GetPolygonSize(i);
 
+			
+
+			pMesh->GetUVLayerCount();
+			
 
 			FbxVector4* pFbxPos = pMesh->GetControlPoints();
 
