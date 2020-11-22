@@ -1,4 +1,5 @@
 #pragma once
+
 typedef struct Position
 {
 	int x = 0;
@@ -7,8 +8,6 @@ typedef struct Position
 
 typedef struct Client_Info
 {
-	send_player_packet s_packet;
-	recv_player_packet r_packet;
 	char key;
 	Position m_position;
 };
