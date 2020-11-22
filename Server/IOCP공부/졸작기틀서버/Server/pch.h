@@ -6,4 +6,6 @@
 
 using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
+
 #include "protocol.h"
+#include "Struct.h"

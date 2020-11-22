@@ -196,17 +196,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case VK_UP:
             Player_Data.key = 'w';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            send(s_socket, (char*)&Player_Data.key, BUF_SIZE, 0);
             recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_DOWN:
             Player_Data.key = 's';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            send(s_socket, (char*)&Player_Data.key, BUF_SIZE, 0);
             recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_LEFT:
             Player_Data.key = 'a';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
+            send(s_socket, (char*)&Player_Data.key, BUF_SIZE, 0);
             recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
             break;
         case VK_RIGHT:

@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Client_Info.h"
 
-int ID = 0;
-Client_Info Player_Data[MAX_PLAYER];
+map<SOCKET, clientData> g_client;
 
 void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
 void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags);
-void UpdatePlayer(int id);
+void UpdatePlayer(char key);
 
 void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
 {
+	SOCKET sock = reinterpret_cast<SOCKET>(over->hEvent);
 	if (bytes > 0)
-		printf("TRACE - Send message : %d, %d (%d bytes)\n", Player_Data[ID]., Player_Data.y, bytes);
+		printf("TRACE - Send message : %d, %d (%d bytes)\n", g_client(ID).m_position.x, Player_Data[ID].m_position.y, bytes);
 	else {
+
 		closesocket(Player_Data[ID].m_sock);
 		return;
 	}
-
-	Player_Data[ID].wsabuf.len = BUF_SIZE;
+	Player_Data[ID].wsabuf.buf = Player_Data[ID].buffer;
+	Player_Data[ID].wsabuf.len = sizeof(recv_player_packet);
 	ZeroMemory(over, sizeof(*over));
 	int ret = WSARecv(Player_Data[ID].m_sock, &Player_Data[ID].wsabuf, 1, NULL, &flags, over, recv_complete);
 
@@ -25,12 +25,14 @@ void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 
 void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
 {
+	SOCKET sock = reinterpret_cast<SOCKET>(over->hEvent);
 	if (bytes > 0) {
-		Player_Data[ID].buffer[bytes] = 0;
-		strcpy(&Player_Data[ID].key, Player_Data[ID].buffer);
+		g_client[sock] .buffer[bytes] = 0;
+		strcpy(&Player_Data[ID].key, Player_Data[ID].wsabuf.buf);
 		cout << "received key : " << Player_Data[ID].key << endl;
-		cout << "player x,y : " << Player_Data[ID].m_position.x << " , " << Player_Data[ID].m_position.y << endl;
-		UpdatePlayer();
+		cout << "before player x,y : " << Player_Data[ID].m_position.x << " , " << Player_Data[ID].m_position.y << endl;
+		UpdatePlayer(Player_Data[ID].key);
+		cout << "after player x,y : " << Player_Data[ID].m_position.x << " , " << Player_Data[ID].m_position.y << endl;
 	}
 	else 
 	{
@@ -63,55 +65,56 @@ int main()
 	while (true)
 	{
 		int addr_size = sizeof(client_addr);
-		Player_Data[ID].m_sock = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
-		if (Player_Data[ID].m_sock == SOCKET_ERROR)
+		SOCKET sock = accept(listenSocket, (sockaddr*)&client_addr, &addr_size);
+		if (sock == SOCKET_ERROR)
 			cout << "Accept error!\n";
 		else
 			cout << "Accept !\n";
 
-		Player_Data[ID].wsabuf.buf = Player_Data[ID].buffer;
-		Player_Data[ID].wsabuf.len = BUF_SIZE;
+		g_client[sock].netData.m_sock = sock;
+		g_client[sock].netData.wsabuf.buf = g_client[sock].p_Info.buffer;
+		g_client[sock].netData.wsabuf.len = BUF_SIZE;
 		DWORD flags = 0;
-		ZeroMemory(&Player_Data[ID].over, sizeof(Player_Data[ID].over));
+		ZeroMemory(&g_client[sock].netData.over, sizeof(g_client[sock].netData.over));
 
-		int ret = WSARecv(Player_Data[ID].m_sock, &Player_Data[ID].wsabuf, 1, NULL, &flags, &Player_Data[ID].over, recv_complete);
-		ID++;
+		int ret = WSARecv(g_client[sock].netData.m_sock, &g_client[sock].netData.wsabuf, 
+			1, NULL, &flags, &g_client[sock].netData.over, recv_complete);
 	}
 	closesocket(listenSocket);
 	WSACleanup();
 }
 
-void UpdatePlayer(int id)
+void UpdatePlayer(char key)
 {
 	for (int i = 0; i < ID; i++)
 	{
-		if (Player_Data[i].packet->key == 'w')
+		if (key == 'w')
 		{
-			if (Player_Data[i].packet->y <= 0)
-				Player_Data[i].packet->y = 0;
+			if (Player_Data[i].m_position.y <= 0)
+				Player_Data[i].m_position.y = 0;
 			else
-				Player_Data[i].packet->y -= 1;
+				Player_Data[i].m_position.y -= 1;
 		}
-		if (Player_Data[i].packet->key == 's')
+		if (key == 's')
 		{
-			if (Player_Data[i].packet->y >= 7)
-				Player_Data[i].packet->y = 7;
+			if (Player_Data[i].m_position.y >= 7)
+				Player_Data[i].m_position.y = 7;
 			else
-				Player_Data[i].packet->y += 1;
+				Player_Data[i].m_position.y += 1;
 		}
-		if (Player_Data[i].packet->key == 'a')
+		if (key == 'a')
 		{
-			if (Player_Data[i].packet->x <= 0)
-				Player_Data[i].packet->x = 0;
+			if (Player_Data[i].m_position.x <= 0)
+				Player_Data[i].m_position.x = 0;
 			else
-				Player_Data[i].packet->x -= 1;
+				Player_Data[i].m_position.x -= 1;
 		}
-		if (Player_Data[i].packet->key == 'd')
+		if (key == 'd')
 		{
-			if (Player_Data[i].packet->x >= 7)
-				Player_Data[i].packet->x = 7;
+			if (Player_Data[i].m_position.x >= 7)
+				Player_Data[i].m_position.x = 7;
 			else
-				Player_Data[i].packet->x += 1;
+				Player_Data[i].m_position.x += 1;
 		}
 	}
 }
