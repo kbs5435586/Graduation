@@ -17,19 +17,19 @@ void CALLBACK send_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 		closesocket(sock);
 		return;
 	}
-	g_client[sock].netData.wsabuf.buf = g_client[sock].p_Info.buffer;
-	g_client[sock].netData.wsabuf.len = sizeof(recv_player_packet);
-	ZeroMemory(over, sizeof(*over));
-	int ret = WSARecv(sock, &g_client[sock].netData.wsabuf, 1, NULL, &flags, over, recv_complete);
+	ZeroMemory(&g_client[sock].netData, sizeof(networkData));
+	g_client[sock].netData.wsabuf.buf = g_client[sock].netData.buffer;
+	g_client[sock].netData.wsabuf.len = BUF_SIZE;
+	g_client[sock].netData.over.hEvent = (HANDLE)sock;
 
+	int ret = WSARecv(sock, &g_client[sock].netData.wsabuf, 1, NULL, &flags, over, recv_complete);
 }
 
 void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD flags)
 {
 	SOCKET sock = reinterpret_cast<SOCKET>(over->hEvent);
 	if (bytes > 0) {
-		g_client[sock].p_Info.buffer[bytes] = 0;
-		strcpy(&g_client[sock].p_Info.key, g_client[sock].p_Info.buffer);
+		strcpy(&g_client[sock].p_Info.key, g_client[sock].netData.buffer);
 		cout << "received key : " << g_client[sock].p_Info.key << endl;
 		cout << "before player x,y : " << g_client[sock].p_Info.m_position.x << " , " << g_client[sock].p_Info.m_position.y << endl;
 		UpdatePlayer(sock, g_client[sock].p_Info.key);
@@ -40,11 +40,15 @@ void CALLBACK recv_complete(DWORD err, DWORD bytes, LPWSAOVERLAPPED over, DWORD 
 		closesocket(sock);
 		return;
 	}
+
+	ZeroMemory(&g_client[sock].netData, sizeof(networkData));
 	g_client[sock].netData.wsabuf.buf = (char*)&g_client[sock].p_Info.m_position;
-	g_client[sock].netData.wsabuf.len = sizeof(send_player_packet);
-	ZeroMemory(over, sizeof(*over));   //오버랩트 초기화 해주고 사용하기
+	g_client[sock].netData.wsabuf.len = sizeof(Position);
+	//ZeroMemory(over, sizeof(*over));   //오버랩트 초기화 해주고 사용하기
+	g_client[sock].netData.over.hEvent = (HANDLE)sock;
 	int ret = WSASend(sock, &g_client[sock].netData.wsabuf, 1, NULL, NULL, over, send_complete);
 }
+
 int main()
 {
 	WSADATA WSAData;
@@ -72,12 +76,11 @@ int main()
 		else
 			cout << "Accept !\n";
 
-		g_client[sock].netData.m_sock = sock;
-		g_client[sock].netData.wsabuf.buf = g_client[sock].p_Info.buffer;
+		g_client[sock].netData.wsabuf.buf = g_client[sock].netData.buffer;
 		g_client[sock].netData.wsabuf.len = BUF_SIZE;
 		DWORD flags = 0;
 		ZeroMemory(&g_client[sock].netData.over, sizeof(g_client[sock].netData.over));
-
+		g_client[sock].netData.over.hEvent = (HANDLE)sock;
 		int ret = WSARecv(sock, &g_client[sock].netData.wsabuf, 1, NULL, &flags, &g_client[sock].netData.over, recv_complete);
 	}
 	closesocket(listenSocket);

@@ -8,14 +8,13 @@ struct Position
 
 struct networkData
 {
-	SOCKET m_sock;
 	WSABUF wsabuf;
 	WSAOVERLAPPED over;
+	char buffer[BUF_SIZE];
 };
 
 struct playerInfo
 {
-	char buffer[BUF_SIZE];
 	Position m_position;
 	char key;
 };
