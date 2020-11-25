@@ -1,26 +1,14 @@
 #pragma once
 
-struct Position
-{
-	int x = 0;
-	int y = 0;
-};
-
-struct networkData
-{
-	WSABUF wsabuf;
-	WSAOVERLAPPED over;
-	char buffer[BUF_SIZE];
-};
-
-struct playerInfo
-{
-	Position m_position;
-	char key;
-};
-
 struct clientData
 {
-	networkData netData;
-	playerInfo p_Info;
+	int id;
+	char name[MAX_ID_LEN];
+	short x, y;
+
+	bool in_use;
+	SOCKET   m_sock;
+	OVER_EX   m_recv_over;
+	unsigned char* m_packet_start;
+	unsigned char* m_recv_start;
 };
