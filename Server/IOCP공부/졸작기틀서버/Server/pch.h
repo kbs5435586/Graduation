@@ -10,4 +10,3 @@ using namespace std;
 #pragma comment(lib, "MSWSock.lib")
 
 #include "protocol.h"
-#include "Struct.h"

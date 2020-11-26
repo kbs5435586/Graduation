@@ -6,6 +6,7 @@ constexpr int MAX_PLAYER = 10;
 constexpr int  KEY_SERVER = 1000000;
 constexpr int MAX_BUFFER = 4096;
 constexpr int MAX_ID_LEN = 10;
+constexpr int MIN_BUFF_SIZE = 1024;
 
 constexpr int WORLD_WIDTH = 8;
 constexpr int WORLD_HEIGHT = 8;
@@ -13,6 +14,13 @@ constexpr int WORLD_HEIGHT = 8;
 constexpr char OP_MODE_RECV = 0;
 constexpr char OP_MODE_SEND = 1;
 constexpr char OP_MODE_ACCEPT = 2;
+
+struct OVER_EX {
+    WSAOVERLAPPED wsa_over;
+    char   op_mode;
+    WSABUF   wsa_buf;
+    unsigned char iocp_buf[MAX_BUFFER];
+};
 
 struct clientData {
     int id;
@@ -26,22 +34,49 @@ struct clientData {
     unsigned char* m_recv_start;
 };
 
-struct OVER_EX {
-    WSAOVERLAPPED wsa_over;
-    char   op_mode;
-    WSABUF   wsa_buf;
-    unsigned char iocp_buf[MAX_BUFFER];
-};
-
 #pragma pack(push,1)
-struct recv_player_packet
-{
-	char key;
+constexpr char SC_PACKET_LOGIN_OK = 0;
+constexpr char SC_PACKET_MOVE = 1;
+constexpr char SC_PACKET_ENTER = 2;
+constexpr char SC_PACKET_LEAVE = 3;
+
+constexpr char CS_LOGIN = 0;
+constexpr char CS_MOVE = 1;
+
+constexpr char MV_UP = 0;
+constexpr char MV_DOWN = 1;
+constexpr char MV_LEFT = 2;
+constexpr char MV_RIGHT = 3;
+
+struct StoC_packet_move {
+    char size;
+    char type;
+    int id;
+    short x, y;
 };
 
-struct send_player_packet
+struct StoC_packet_login_ok 
 {
-	int x;
-	int y;
+    char size;
+    char type;
+    int  id;
+    short x, y;
+    short hp;
+    short level;
+    int   exp;
+};
+
+struct CtoS_packet_login
+{
+    char  size;
+    char  type;
+    char  name[MAX_ID_LEN];
+};
+
+struct CtoS_packet_move 
+{
+    char  size;
+    char  type;
+    char  direction;
 };
 #pragma pack (pop)
