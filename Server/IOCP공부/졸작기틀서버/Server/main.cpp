@@ -74,20 +74,20 @@ void process_move(int id, char dir)
 	send_move_packet(id);
 }
 
-void process_packet(int id)
+void process_packet(int id) // 데이터가 날라 왔을때 해당 패킷을 처리하는 패킷 처리 루틴
 {
 	char p_type = g_client[id].m_packet_start[1]; // 패킷이 여기있음
 	// p_type 은 패킷 타입
 	switch (p_type)
 	{
-	case CS_LOGIN:
+	case CS_LOGIN: // 로그인 패킷일 경우
 	{
 		CtoS_packet_login* p = reinterpret_cast<CtoS_packet_login*>(g_client[id].m_packet_start);
 		strcpy_s(g_client[id].name, p->name);
 		send_login_ok(id);
 	}
 	break;
-	case CS_MOVE:
+	case CS_MOVE: // move 패킷일 경우
 	{
 		CtoS_packet_move* p1 = reinterpret_cast<CtoS_packet_move*>(g_client[id].m_packet_start);
 		process_move(id, p1->direction);
@@ -132,7 +132,7 @@ void add_new_client(SOCKET ns)
 	{
 		if (false == g_client[i].in_use)
 			break;
-	}
+	} 
 
 	if (MAX_PLAYER == i)
 	{
