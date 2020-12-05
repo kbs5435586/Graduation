@@ -21,6 +21,7 @@ SOCKET s_socket; // 클라이언트와 연결할 소켓
 string client_ip;
 constexpr int BUF_SIZE = 1024;
 constexpr short PORT = 3500;
+int g_myid;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -54,7 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, // H는 핸들,
 
     WSADATA WSAData;
     WSAStartup(MAKEWORD(2, 0), &WSAData);
-    s_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
+    s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
     MSG msg;
 
@@ -163,6 +164,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             server_a.sin_port = htons(PORT);
 
             connect(s_socket, (SOCKADDR*)&server_a, sizeof(server_a));
+
+            CtoS_packet_login l_packet;
+            l_packet.size = sizeof(l_packet);
+            l_packet.type = CS_LOGIN;
+            int t_id = GetCurrentProcessId();
+            sprintf_s(l_packet.name, "P%03d", t_id % 1000);
+            strcpy_s(Player_Data.name, l_packet.name);
+            send_packet(&l_packet);
         }
         else if (wParam == VK_BACK)
         {
@@ -196,23 +205,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case VK_UP:
             Player_Data.key = 'w';
-            send(s_socket, (char*)&Player_Data.key, BUF_SIZE, 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(MV_UP);
             break;
         case VK_DOWN:
             Player_Data.key = 's';
-            send(s_socket, (char*)&Player_Data.key, BUF_SIZE, 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(MV_DOWN);
             break;
         case VK_LEFT:
             Player_Data.key = 'a';
-            send(s_socket, (char*)&Player_Data.key, BUF_SIZE, 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(MV_LEFT);
             break;
         case VK_RIGHT:
             Player_Data.key = 'd';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(MV_RIGHT);
             break;
         case VK_ESCAPE:
             closesocket(s_socket);
@@ -309,10 +314,8 @@ void ProcessPacket(char* ptr)
     {
         StoC_packet_login_ok* my_packet = reinterpret_cast<StoC_packet_login_ok*>(ptr);
         g_myid = my_packet->id;
-        avatar.move(my_packet->x, my_packet->y);
-        g_left_x = my_packet->x - (SCREEN_WIDTH / 2);
-        g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
-        avatar.show();
+        Player_Data.m_position.x = my_packet->x;
+        Player_Data.m_position.y = my_packet->y;
     }
     break;
 
@@ -322,10 +325,9 @@ void ProcessPacket(char* ptr)
         int id = my_packet->id;
 
         if (id == g_myid) {
-            avatar.move(my_packet->x, my_packet->y);
-            g_left_x = my_packet->x - (SCREEN_WIDTH / 2);
-            g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
-            avatar.show();
+            g_myid = my_packet->id;
+            Player_Data.m_position.x = my_packet->x;
+            Player_Data.m_position.y = my_packet->y;
         }
         else {
             if (id < NPC_ID_START)
@@ -344,9 +346,9 @@ void ProcessPacket(char* ptr)
         StoC_packet_move* my_packet = reinterpret_cast<StoC_packet_move*>(ptr);
         int other_id = my_packet->id;
         if (other_id == g_myid) {
-            avatar.move(my_packet->x, my_packet->y);
-            g_left_x = my_packet->x - (SCREEN_WIDTH / 2);
-            g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
+            g_myid = my_packet->id;
+            Player_Data.m_position.x = my_packet->x;
+            Player_Data.m_position.y = my_packet->y;
         }
         else {
             if (0 != npcs.count(other_id))
@@ -397,4 +399,21 @@ void process_data(char* net_buf, size_t io_byte)
             io_byte = 0;
         }
     }
+}
+
+void send_packet(void* packet)
+{
+    char* p = reinterpret_cast<char*>(packet);
+    size_t sent;
+    send(s_socket, p, p[0], sent);
+    int a = 3;
+}
+
+void send_move_packet(unsigned char dir)
+{
+    CtoS_packet_move m_packet;
+    m_packet.type = CS_MOVE;
+    m_packet.size = sizeof(m_packet);
+    m_packet.direction = dir;
+    send_packet(&m_packet);
 }

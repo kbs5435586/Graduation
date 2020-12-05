@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 constexpr int BUF_SIZE = 1024;
 constexpr short PORT = 3500;
@@ -29,8 +30,8 @@ struct clientData
     char name[MAX_ID_LEN];
     short x, y;
     bool in_use;
-    SOCKET   m_sock;
 
+    SOCKET   m_sock;
     OVER_EX   m_recv_over; // 클라이언트 객체가 있으면 오버랩드 구조체 하나가 반드시 필요함
     unsigned char* m_packet_start;
     unsigned char* m_recv_start;
@@ -50,7 +51,7 @@ constexpr char MV_DOWN = 1;
 constexpr char MV_LEFT = 2;
 constexpr char MV_RIGHT = 3;
 
-struct StoC_packet_move 
+struct StoC_packet_move
 {
     char size;
     char type;
@@ -58,7 +59,7 @@ struct StoC_packet_move
     short x, y;
 };
 
-struct StoC_packet_login_ok 
+struct StoC_packet_login_ok
 {
     char size;
     char type;
@@ -76,7 +77,7 @@ struct CtoS_packet_login
     char  name[MAX_ID_LEN];
 };
 
-struct CtoS_packet_move 
+struct CtoS_packet_move
 {
     char  size;
     char  type;
