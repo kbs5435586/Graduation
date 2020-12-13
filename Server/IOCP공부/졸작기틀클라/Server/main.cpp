@@ -74,20 +74,20 @@ void process_move(int id, char dir)
 	send_move_packet(id);
 }
 
-void process_packet(int id)
+void process_packet(int id) // 데이터가 날라 왔을때 해당 패킷을 처리하는 패킷 처리 루틴
 {
 	char p_type = g_client[id].m_packet_start[1]; // 패킷이 여기있음
 	// p_type 은 패킷 타입
 	switch (p_type)
 	{
-	case CS_LOGIN:
+	case CS_LOGIN: // 로그인 패킷일 경우
 	{
 		CtoS_packet_login* p = reinterpret_cast<CtoS_packet_login*>(g_client[id].m_packet_start);
 		strcpy_s(g_client[id].name, p->name);
 		send_login_ok(id);
 	}
 	break;
-	case CS_MOVE:
+	case CS_MOVE: // move 패킷일 경우
 	{
 		CtoS_packet_move* p1 = reinterpret_cast<CtoS_packet_move*>(g_client[id].m_packet_start);
 		process_move(id, p1->direction);
@@ -99,24 +99,31 @@ void process_packet(int id)
 	}
 }
 
-void process_recv(int id, DWORD iosize)
+void process_recv(int id, DWORD iosize) 
 {
+	/*
+	패킷 재조립 과정
+	IOCP 버퍼를 임시 포인터에 저장 후 얘가 가리키는 곳에 있는 데이터는 모두 처리해야함
+	size 만큼의 데이터를 루프를 돌면서 전부 처리
+	*/
 	unsigned char p_size = g_client[id].m_packet_start[0];
 	unsigned char* next_recv_ptr = g_client[id].m_recv_start + iosize;
-	while (p_size <= next_recv_ptr - g_client[id].m_packet_start) {
+
+	while (p_size <= next_recv_ptr - g_client[id].m_packet_start) 
+	{
 		process_packet(id);
 		g_client[id].m_packet_start += p_size;
 		if (g_client[id].m_packet_start < next_recv_ptr)
 			p_size = g_client[id].m_packet_start[0];
-		else break;
+		else 
+			break;
 	}
 
 	int left_data = next_recv_ptr - g_client[id].m_packet_start;
 
 	if ((MAX_BUFFER - (next_recv_ptr - g_client[id].m_recv_over.iocp_buf)) < MIN_BUFF_SIZE)
 	{
-		memcpy(g_client[id].m_recv_over.iocp_buf,
-			g_client[id].m_packet_start, left_data);
+		memcpy(g_client[id].m_recv_over.iocp_buf, g_client[id].m_packet_start, left_data);
 		g_client[id].m_packet_start = g_client[id].m_recv_over.iocp_buf;
 		g_client[id].m_recv_start = g_client[id].m_packet_start + left_data;
 	}
@@ -132,7 +139,7 @@ void add_new_client(SOCKET ns)
 	{
 		if (false == g_client[i].in_use)
 			break;
-	}
+	} 
 
 	if (MAX_PLAYER == i)
 	{

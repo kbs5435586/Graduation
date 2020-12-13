@@ -1,18 +1,25 @@
 #pragma once
 
+constexpr int MAX_PLAYER = 10;
+
 typedef struct Position
 {
 	int x = 0;
 	int y = 0;
 };
 
-typedef struct Client_Info
+typedef struct Key_Info
 {
 	char key;
-	Position m_position;
 };
 
 #pragma pack(push,1)
+struct Client_Info
+{
+	char key;
+	int id;
+	Position m_position;
+};
 
 struct send_player_packet
 {
@@ -25,5 +32,3 @@ struct recv_player_packet
 	int y;
 };
 #pragma pack (pop)
-
-
