@@ -3,6 +3,7 @@
 class CHierachy_Loader;
 class CAnimation_Controller;
 class CShader;
+class CTexture;
 class CDynamic_Mesh :
     public CMesh
 {
@@ -24,6 +25,7 @@ public:
     void                        Animate(const _float& fTimeDelta);
 public:
     virtual void                Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType);
+    virtual void                Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, MAINPASS_LIGHT tPass, _int iPassSize, void* pData, ROOT_TYPE eType);
 public:
     static  CDynamic_Mesh*      Create(ID3D12Device* pGraphic_Device, string strFilePath);
     virtual CComponent*         Clone_Component(void* pArg = nullptr);
@@ -32,6 +34,7 @@ private:
 private:
     CHierachy_Loader*           m_pLoader = nullptr;
     CAnimation_Controller*      m_pController = nullptr;
+    CTexture*                   m_pTexture = nullptr;
 
         
 

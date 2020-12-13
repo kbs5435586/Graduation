@@ -1,30 +1,43 @@
 
+Texture2D    g_texture : register(t0);
+SamplerState DiffuseSampler  : register(s0);
+
 cbuffer cbPerObject : register(b0)
 {
-	float4x4 matWorld;
-	float4x4 matView;
-	float4x4 matProj;
+	float4x4	matWorld;
+	float4x4	matView;
+	float4x4	matProj;
 };
 
-struct VertexIn
+struct VS_IN
 {
-	float3 PosL  : POSITION;
+	float3 vPos  : POSITION;
+	float3 vNormal : NORMAL;
+	float2 vUV : TEXCOORD;
 };
 
-struct VertexOut
+struct VS_OUT
 {
-	float4 PosH  : SV_POSITION;
+	float4 vPos  : SV_POSITION;
+	float3 vNormal : NORMAL;
+	float2 vUV : TEXCOORD;
 };
 
-VertexOut VS_Main(VertexIn vin)
+VS_OUT VS_Main(VS_IN vIn)
 {
-	VertexOut vout;
-	vout.PosH = mul(mul(mul(float4(vin.PosL, 1.0f), matWorld), matView), matProj);
-	return vout;
+	VS_OUT vOut;
+	vOut.vPos = mul(mul(mul(float4(vIn.vPos, 1.0f), matWorld), matView), matProj);
+	vOut.vNormal = vIn.vNormal;
+	vOut.vUV = vIn.vUV;
+
+	return vOut;
 }
 
-float4 PS_Main(VertexOut pin) : SV_Target
+float4 PS_Main(VS_OUT vIn) : SV_Target
 {
-	return float4(1.f,1.f,1.f,1.f);
+	float4 vColor = g_texture.Sample(DiffuseSampler, vIn.vUV);
+	return vColor;
+	//return float4(vIn.vUV.x, vIn.vUV.x, 0.f, 1.f);
 }
+
 

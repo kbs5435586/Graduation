@@ -11,6 +11,7 @@ protected:
 public:
 	HRESULT						Ready_VIBuffer();
 	virtual void				Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)=0;
+	virtual void                Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, MAINPASS_LIGHT tPass,_int iPassSize, void* pData, ROOT_TYPE eType)=0;
 public:
 	virtual CComponent*			Clone_Component(void* pArg = nullptr) = 0;
 protected:

@@ -10,6 +10,8 @@ protected:
     CGameObject(const CGameObject& rhs);
 	virtual ~CGameObject()=default;
 public:
+	CComponent*								Get_ComponentPointer(const _tchar* pComponentTag);
+public:
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);

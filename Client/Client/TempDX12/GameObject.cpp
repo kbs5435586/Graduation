@@ -14,6 +14,15 @@ CGameObject::CGameObject(const CGameObject& rhs)
 	m_pGraphic_Device->AddRef();
 }
 
+CComponent* CGameObject::Get_ComponentPointer(const _tchar* pComponentTag)
+{
+	CComponent* pComponent = Find_Component(pComponentTag);
+	if (nullptr == pComponent)
+		return nullptr;
+
+	return pComponent;
+}
+
 HRESULT CGameObject::Ready_GameObject(void* pArg)
 {
 

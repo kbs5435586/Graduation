@@ -1,12 +1,16 @@
 #pragma once
 #include "Base.h"
 class CGameObject;
+class CComponent;
+
 class CLayer :
     public CBase
 {
 private:
     CLayer();
     virtual ~CLayer() = default;
+public:
+	CComponent*					Get_ComponentPointer(const _tchar* pComponentTag, const _uint& iIndex);
 public:
 	HRESULT						Add_Object(CGameObject* pGameObject);
 	HRESULT						Ready_Layer();

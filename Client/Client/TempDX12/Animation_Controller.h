@@ -19,12 +19,13 @@ public:
     FbxTime                         GetCurrTime() { return m_pFbxCurrTime[m_iCurrAnimationStack]; }
 public:
     void                            AnimateHierachyMesh(FbxNode* pNode, FbxTime& fbxCurrTime);
-    void                            AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurrTime);
+    void                            AnimateMesh_(FbxMesh* pMesh, FbxTime& fbxCurrTime);
 private:
-    FbxAMatrix                      ComputeClusterDeformation(FbxMesh* pMesh, FbxCluster* pCluster, FbxCluster::ELinkMode iClusterMode, FbxTime& fbxCurrTime);
     void                            ComputeSkinDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
+    FbxAMatrix                      ComputeClusterDeformation(FbxMesh* pMesh, FbxCluster* pCluster, FbxCluster::ELinkMode iClusterMode, FbxTime& fbxCurrTime);
     void                            ComputeLinearDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
     void                            ComputeDualQuaternionDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices);
+
 private:
     void                            MatrixScale(FbxAMatrix& fbxmatSrcMatrix, double pValue);
     void                            MatrixAdd(FbxAMatrix& fbxmatDstMatrix, FbxAMatrix& fbxmatSrcMatrix);

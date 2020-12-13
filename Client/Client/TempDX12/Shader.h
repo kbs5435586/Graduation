@@ -12,7 +12,11 @@ public:
 	HRESULT							Compile_Shader();
 	HRESULT							SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* pConstantBuffer,
 													_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output, ROOT_TYPE eType);
+	HRESULT							SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* pConstantBuffer,
+													_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS_LIGHT& output, ROOT_TYPE eType);
+
 	HRESULT							SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, _int iPassSize, void* pData, ROOT_TYPE eType);
+	HRESULT							SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, MAINPASS_LIGHT& tPass, _int iPassSize, void* pData, ROOT_TYPE eType);
 private:
 	XMFLOAT4X4					    FbxMatrixToXmFloat4x4Matrix(FbxAMatrix* pfbxmtxSource);
 public:

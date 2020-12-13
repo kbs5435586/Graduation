@@ -11,6 +11,8 @@ private:
 	CGameObject_Manager();
 	virtual ~CGameObject_Manager() = default;
 public:
+	CComponent*					Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex);
+public:
 	HRESULT						Reserve_Object_Manager(const _uint& iNumScene);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, 

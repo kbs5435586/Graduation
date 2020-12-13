@@ -20,7 +20,7 @@ HRESULT CTempMesh::Ready_Prototype()
 
 HRESULT CTempMesh::Ready_GameObject(void* pArg)
 {
-	m_eRootType = ROOT_TYPE_COLOR;
+	m_eRootType = ROOT_TYPE_TEXTURE;
 	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 
 	if (FAILED(Ready_Component()))
@@ -36,10 +36,16 @@ HRESULT CTempMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
-	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	if (m_pTextureCom != nullptr)
+	{
+		if (FAILED(m_pTextureCom->Create_ShaderResourceView(0)))
+			return E_FAIL;
+
+	}
+
 	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
 	if (nullptr != m_pMeshCom)
-		m_pMeshCom->SetAnimationStack(1);
+		m_pMeshCom->SetAnimationStack(0);
 	return S_OK;
 }
 
@@ -67,11 +73,12 @@ _int CTempMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CTempMesh::Render_GameObject()
 {
-
+	CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(m_eRootType));
 	if (nullptr != m_pMeshCom && nullptr != m_pConstBuffer)
 	{
-		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(m_eRootType));
-		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0,m_pConstBuffer->GetGPUVirtualAddress());
+
+		m_pTextureCom->SetUp_OnShader(CDevice::GetInstance()->GetCommandList());
+		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
 		m_pMeshCom->Render_Mesh(m_pPipeLine, m_pShaderCom, m_pTransformCom->Get_Matrix(), m_iPassSize, m_pData, m_eRootType);
 	}
 
@@ -114,7 +121,7 @@ D3D12_RASTERIZER_DESC CTempMesh::CreateRaterizerState()
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
 	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
 	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
 	d3dRasterizerDesc.DepthBias = 0;
 	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
@@ -169,9 +176,14 @@ D3D12_BLEND_DESC CTempMesh::CreateBlendState()
 
 D3D12_INPUT_LAYOUT_DESC CTempMesh::CreateInputLayout()
 {
-	UINT nInputElementDescs = 1;
+	UINT nInputElementDescs = 3;
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+
+	//pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	//pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
@@ -238,6 +250,7 @@ void CTempMesh::Free()
 	if (m_pConstBuffer)
 		m_pConstBuffer->Release();
 
+	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pRendererCom);
@@ -268,8 +281,12 @@ HRESULT CTempMesh::Ready_Component()
 		return E_FAIL;
 
 	m_pMeshCom = (CDynamic_Mesh*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp");
-	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
+	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+		return E_FAIL;
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Mesh_Test");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

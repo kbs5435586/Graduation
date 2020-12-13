@@ -30,6 +30,57 @@ typedef struct tagVertexTex
 	}
 }VTXTEX;
 
+typedef struct tagVertexTexCube
+{
+	XMFLOAT3 vPosition;
+	XMFLOAT3 vTex;
+	tagVertexTexCube()
+	{
+
+	}
+	tagVertexTexCube(XMFLOAT3 vPos, XMFLOAT3 vTex_)
+	{
+		vPosition = vPos;
+		vTex = vTex_;
+	}
+}VTXTEXCUBE;
+
+typedef struct tagVertexTexNor
+{
+	XMFLOAT3	vPos = {};
+	XMFLOAT3	vNormal = {};
+	XMFLOAT2	vTexUV = {};
+	tagVertexTexNor() {}
+	tagVertexTexNor(XMFLOAT3 _vPos, XMFLOAT3 _vNormal, XMFLOAT2 _vTexUV)
+	{
+		vPos = _vPos;
+		vNormal = _vNormal;
+		vTexUV = _vTexUV;
+	}
+
+}VTXTEXNOR;
+
+
+typedef struct tagMesh
+{
+	tagMesh()
+	{
+
+	}
+
+	tagMesh(XMFLOAT3 vPos, XMFLOAT3 vNor, XMFLOAT2 UV)
+	{
+		vPosition = vPos;
+		vNormal = vNor;
+		vUV = UV;
+	}
+	XMFLOAT3		vPosition;
+	XMFLOAT3		vNormal;
+	//XMFLOAT3		vTangent;
+	//XMFLOAT3		vBinormal;
+	XMFLOAT2		vUV;
+}MESH;
+
 typedef struct tagCamera_Desc
 {
 	XMFLOAT3		vEye;
@@ -54,211 +105,86 @@ typedef struct tagMainPass
 
 }MAINPASS;
 
-typedef struct tagDynamic_MeshRender
+
+typedef struct tagMainPass_Light
 {
-	D3D12_VERTEX_BUFFER_VIEW	tVertexBufferView;
-	D3D12_INDEX_BUFFER_VIEW		tIndexBufferView;
-	unsigned int				iNumOfIndices;
-}DYNAMIC_MESH_RENDER;
+	XMMATRIX	matWorld;
+	XMMATRIX	matView;
+	XMMATRIX	matProj;
+	// CamPos
+	XMFLOAT4	vCameraPos;
+	// Material
+	XMFLOAT4	vMaterialDiffuse;
+	XMFLOAT4	vMaterialSpecular;
+	XMFLOAT4	vMaterialAmbient;
+	// Light
+	XMFLOAT4	vLightDiffuse;
+	XMFLOAT4	vLightSpecular;
+	XMFLOAT4	vLightAmbient;
+	XMFLOAT4	vLightDirection;
+	float		fPower;
+	// CamPos
 
-struct Vertex
-{
-	DirectX::XMFLOAT3 Pos;
-	DirectX::XMFLOAT3 Normal;
-	DirectX::XMFLOAT2 TexC;
-
-	bool operator==(const Vertex& other) const
-	{
-		if (Pos.x != other.Pos.x || Pos.y != other.Pos.y || Pos.z != other.Pos.z)
-			return false;
-
-		if (Normal.x != other.Normal.x || Normal.y != other.Normal.y || Normal.z != other.Normal.z)
-			return false;
-
-		if (TexC.x != other.TexC.x || TexC.y != other.TexC.y)
-			return false;
-
-		return true;
-	}
-	bool operator<(const Vertex& rhs)const
-	{
-		if (Pos.x < rhs.Pos.x || Pos.y < rhs.Pos.y || Pos.z < rhs.Pos.z)
-			return false;
-		return true;
-	}
-};
-struct CharacterVertex : Vertex
-{
-	DirectX::XMFLOAT3 BoneWeights;
-	BYTE BoneIndices[4];
-
-	uint16_t MaterialIndex;
-};
-struct UIVertex : Vertex
-{
-	float Row;
-};
+}MAINPASS_LIGHT;
 
 
-struct Material
-{
-	// Unique material name for lookup.
-	std::string Name;
 
-	// Index into constant buffer corresponding to this material.
-	int MatCBIndex = -1;
-
-	// Index into SRV heap for diffuse texture.
-	int DiffuseSrvHeapIndex = -1;
-
-	// Index into SRV heap for normal texture.
-	int NormalSrvHeapIndex = -1;
-
-	// Dirty flag indicating the material has changed and we need to update the constant buffer.
-	// Because we have a material constant buffer for each FrameResource, we have to apply the
-	// update to each FrameResource.  Thus, when we modify a material we should set 
-	// NumFramesDirty = gNumFrameResources so that each frame resource gets the update.
-	int NumFramesDirty = 2;
-
-	// Material constant buffer data used for shading.
-	DirectX::XMFLOAT3 Ambient = { 0.0f, 0.0f, 0.0f };
-	DirectX::XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
-	DirectX::XMFLOAT3 FresnelR0 = { 0.01f, 0.01f, 0.01f };
-	DirectX::XMFLOAT3 Specular = { 0.01f, 0.01f, 0.01f };
-	DirectX::XMFLOAT3 Emissive = { 0.01f, 0.01f, 0.01f };
-
-	float Roughness = .25f;
-	DirectX::XMFLOAT4X4 MatTransform = Matrix::Identity();
-};
-
-
-struct BoneIndexAndWeight
-{
-	BYTE mBoneIndices;
-	float mBoneWeight;
-
-	bool operator < (const BoneIndexAndWeight& rhs)
-	{
-		return (mBoneWeight > rhs.mBoneWeight);
-	}
-};
-
-struct CtrlPoint
-{
-	DirectX::XMFLOAT3 mPosition;
-	std::vector<BoneIndexAndWeight> mBoneInfo;
-	std::string mBoneName;
-
-	CtrlPoint()
-	{
-		mBoneInfo.reserve(4);
-	}
-
-	void SortBlendingInfoByWeight()
-	{
-		std::sort(mBoneInfo.begin(), mBoneInfo.end());
-	}
-};
 typedef struct tagMtrInfo
 {
 	XMFLOAT4		vMtrlDiff = { 1.f, 1.f,1.f, 1.f };
 	XMFLOAT4		vMtrlSpec = { 1.f, 1.f,1.f, 1.f };;
 	XMFLOAT4		vMtrlAmb = { 1.f, 1.f,1.f, 1.f };;
 	XMFLOAT4		vMtrlEmiv = { 1.f, 1.f,1.f, 1.f };
-}tMtrlInfo;
+	float			fPower = 0.f;
 
-typedef struct tagFbxMat
-{
-	tMtrlInfo		tMtrl;
 	wstring			strMtrlName;
 	wstring			strDiff;
 	wstring			strNormal;
 	wstring			strSpec;
-}tFbxMaterial;
+}MTRLINFO;
 
-typedef struct tagWeightAndIndices
+
+struct VTXTEMP
 {
-	int		iBoneIdx;
-	double	dWeight;
-}tWeightsAndIndices;
-
-typedef struct _tagContainer
-{
-	wstring								strName;
-	vector<XMFLOAT3>					vecPos;
-	vector<XMFLOAT3>					vecTangent;
-	vector<XMFLOAT3>					vecBinormal;
-	vector<XMFLOAT3>					vecNormal;
-	vector<XMFLOAT2>					vecUV;
-
-	vector<XMFLOAT4>					vecIndices;
-	vector<XMFLOAT4>					vecWeights;
-
-	vector<vector<UINT>>				vecIdx;
-	vector<tFbxMaterial>				vecMtrl;
-
-	// Animation 관련 정보
-	bool                        bAnimation;
-	vector<vector<tWeightsAndIndices>>   vecWI;
-
-	void Resize(UINT _iSize)
-	{
-		vecPos.resize(_iSize);
-		vecTangent.resize(_iSize);
-		vecBinormal.resize(_iSize);
-		vecNormal.resize(_iSize);
-		vecUV.resize(_iSize);
-		vecIndices.resize(_iSize);
-		vecWeights.resize(_iSize);
-		vecWI.resize(_iSize);
-	}
-
-	_tagContainer()
-	{
-
-	}
-
-}tContainer;
-
-
-struct MeshFromFbx
-{
-	D3D12_PRIMITIVE_TOPOLOGY			topology;
-	size_t								slot;
-	size_t								offset;
-	size_t								vertices;
-	ID3D12Resource*						pVertexBuffer;
-	D3D12_VERTEX_BUFFER_VIEW			VertexBufferView;
-	ID3D12Resource*						pIndexBuffer;
-	ID3D12Resource*						pIndexUploadeBuffer;
-	D3D12_VERTEX_BUFFER_VIEW			IndexBufferView;
+	XMFLOAT3		vPos;
+	XMFLOAT3		vNormal;
+	XMFLOAT2		vUV;
 };
 
-struct MeshData
-{
-	MeshData()
-	{
-
-	}
-	MeshData(int _iNumVertices, int _iIndeices, int* _pIndices, vector< XMFLOAT3> _vPos)
-	{
-		iNumVertices = _iNumVertices;
-		iIndices = _iIndeices;
-		pIndices = _pIndices;
-		vecPosition = _vPos;
-	}
-	int		iNumVertices;
-	int		iIndices;
-	int*	pIndices;
-	vector< XMFLOAT3>	vecPosition;
-};
 
 struct RenderInfo
 {
 	unsigned int				iIndices = 0;
-	vector<XMFLOAT4>			vecPosition;
+	unsigned int				iVertices = 0;
+
+	vector<MESH>				vecMeshData;
+	vector<XMFLOAT3>			vecPosition;
+	vector<XMFLOAT3>			vecTangent;
+	vector<XMFLOAT3>			vecBinormal;
+	vector<XMFLOAT3>			vecNormal;
+	vector<XMFLOAT2>			vecUV;
+
+
 	vector<int>					vecIndices;
 	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
-	XMFLOAT4*					vPos;
+	//XMFLOAT4* vPos;
+
+	vector<tagMtrInfo>			vecMtrlInfo;
+
+	VTXTEMP*						temp;
 };
+
+
+typedef struct tagLight
+{
+	LIGHT_TYPE	eLightType;
+	XMFLOAT4	vDiffuse;
+	XMFLOAT4	vSpecular;
+	XMFLOAT4	vAmbient;
+	XMFLOAT4	vDirection;
+
+}LIGHT;
+
+
+

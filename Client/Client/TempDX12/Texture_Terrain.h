@@ -25,6 +25,8 @@ public:
 	virtual D3D12_BLEND_DESC				CreateBlendState();
 	virtual D3D12_INPUT_LAYOUT_DESC			CreateInputLayout();
 private:
+	HRESULT									Ready_Light(MAINPASS_LIGHT& tInfo);
+private:
 	HRESULT									CreateConstantBuffer();
 public:
 	static CTexture_Terrain*				Create(ID3D12Device* pGraphic_Device);

@@ -36,10 +36,10 @@ HRESULT CTexture_Terrain::Ready_GameObject(void* pArg)
 
 	if (m_pTextureCom != nullptr)
 	{
-		if (FAILED(m_pTextureCom->Create_ShaderResourceView()))
+		if (FAILED(m_pTextureCom->Create_ShaderResourceView(2)))
 			return E_FAIL;
 	}
-	_vec3 vPos = _vec3(0.f,0.f,0.f);
+	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
@@ -182,7 +182,7 @@ D3D12_INPUT_LAYOUT_DESC CTexture_Terrain::CreateInputLayout()
 	UINT nInputElementDescs = 2;
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
@@ -271,7 +271,7 @@ HRESULT CTexture_Terrain::Ready_Component(void* pArg)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Test");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Bricks");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

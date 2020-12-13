@@ -121,9 +121,6 @@
     <Filter Include="99. Default\00. Fbx_Loader\01. FBX_Generator">
       <UniqueIdentifier>{d36f22b8-345d-4c86-b2c5-eed59a9de09e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. Mesh">
-      <UniqueIdentifier>{54a23b58-1e97-4292-94b0-ab17d8ffd0b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Default\05. TempMesh">
       <UniqueIdentifier>{7b36ec34-6037-49ca-af03-2e4570156048}</UniqueIdentifier>
     </Filter>
@@ -169,14 +166,47 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\01. Transform">
       <UniqueIdentifier>{e3787958-af7a-405b-a83e-3cdddd1931ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Hierachy_Loader">
-      <UniqueIdentifier>{c11cec9d-7356-40d2-9a1d-e14e78f4b7b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller">
-      <UniqueIdentifier>{f40abd90-ccb5-4660-96af-b308d7db6ece}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\03. Shader">
       <UniqueIdentifier>{9d88ed7d-28da-46f1-acdf-ce5040447a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Animation_Controller">
+      <UniqueIdentifier>{f40abd90-ccb5-4660-96af-b308d7db6ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\05. Mesh\99. Hierachy_Loader">
+      <UniqueIdentifier>{c11cec9d-7356-40d2-9a1d-e14e78f4b7b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\06. TempStaticMesh">
+      <UniqueIdentifier>{cac6b893-70f7-487d-b946-62d1c3309692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\07. TempStaticMesh1">
+      <UniqueIdentifier>{c64f0f4d-713a-4c7f-aeed-d6e1a7da2acc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\08. TempStaticMesh2">
+      <UniqueIdentifier>{675dd363-81b5-4e94-9716-ddece7a31c58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\09. TempStaticMesh3">
+      <UniqueIdentifier>{0f0a0598-7c80-4404-a225-81feb26f38e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\06. Buffer_Terrain_Height">
+      <UniqueIdentifier>{2c141a2f-a04e-4656-ab73-1515c7baa026}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\10. Height_Terrain">
+      <UniqueIdentifier>{70db84f3-eebe-4550-b911-551b1e9d4c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\03. Light">
+      <UniqueIdentifier>{3a5b2088-571a-4a14-b110-e0fac678eb9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\03. Light\00. Light">
+      <UniqueIdentifier>{1321287d-dddc-4437-8ae4-ec8170bdebd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\03. Light\01. Manager">
+      <UniqueIdentifier>{a5e008df-c0f4-4114-be9a-1cb80062e10f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Default\11. SkyBox">
+      <UniqueIdentifier>{29e00e13-ea88-4994-8a11-fa7b8b53ef6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\07. Buffer_CubeTex">
+      <UniqueIdentifier>{2d0c3477-9af5-4fc9-bd89-193ca75c887b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -340,13 +370,43 @@
       <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
     </ClInclude>
     <ClInclude Include="Hierachy_Loader.h">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Hierachy_Loader</Filter>
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\99. Hierachy_Loader</Filter>
     </ClInclude>
     <ClInclude Include="Animation_Controller.h">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller</Filter>
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Animation_Controller</Filter>
     </ClInclude>
     <ClInclude Include="d3dx12.h">
       <Filter>99. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="TempStaticMesh.h">
+      <Filter>02. GameObject\99. Default\06. TempStaticMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TempStaticMesh1.h">
+      <Filter>02. GameObject\99. Default\07. TempStaticMesh1</Filter>
+    </ClInclude>
+    <ClInclude Include="TempStaticMesh2.h">
+      <Filter>02. GameObject\99. Default\08. TempStaticMesh2</Filter>
+    </ClInclude>
+    <ClInclude Include="TempStaticMesh3.h">
+      <Filter>02. GameObject\99. Default\09. TempStaticMesh3</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer_Terrain_Height.h">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\06. Buffer_Terrain_Height</Filter>
+    </ClInclude>
+    <ClInclude Include="Height_Terrain.h">
+      <Filter>02. GameObject\99. Default\10. Height_Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>97. Engine\01. Utility\03. Light\00. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Light_Manager.h">
+      <Filter>97. Engine\01. Utility\03. Light\01. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>02. GameObject\99. Default\11. SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer_CubeTex.h">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\07. Buffer_CubeTex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -496,10 +556,40 @@
       <Filter>02. GameObject\99. Default\05. TempMesh</Filter>
     </ClCompile>
     <ClCompile Include="Hierachy_Loader.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Hierachy_Loader</Filter>
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\99. Hierachy_Loader</Filter>
     </ClCompile>
     <ClCompile Include="Animation_Controller.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\01. Animation_Controller</Filter>
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\05. Mesh\01. Dynamic_Mesh\00. Animation_Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="TempStaticMesh.cpp">
+      <Filter>02. GameObject\99. Default\06. TempStaticMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TempStaticMesh1.cpp">
+      <Filter>02. GameObject\99. Default\07. TempStaticMesh1</Filter>
+    </ClCompile>
+    <ClCompile Include="TempStaticMesh2.cpp">
+      <Filter>02. GameObject\99. Default\08. TempStaticMesh2</Filter>
+    </ClCompile>
+    <ClCompile Include="TempStaticMesh3.cpp">
+      <Filter>02. GameObject\99. Default\09. TempStaticMesh3</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer_Terrain_Height.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\06. Buffer_Terrain_Height</Filter>
+    </ClCompile>
+    <ClCompile Include="Height_Terrain.cpp">
+      <Filter>02. GameObject\99. Default\10. Height_Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>97. Engine\01. Utility\03. Light\00. Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Light_Manager.cpp">
+      <Filter>97. Engine\01. Utility\03. Light\01. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>02. GameObject\99. Default\11. SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer_CubeTex.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\07. Buffer_CubeTex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -516,6 +606,15 @@
       <Filter>96. ShaderFiles</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Mesh.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Normal.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_SkyBox.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Toon_0.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>

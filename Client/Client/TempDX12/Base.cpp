@@ -16,7 +16,8 @@ _ulong CBase::Release()
 	{
 		Free();
 
-		delete this;
+		if(this)
+			delete this;
 
 		return 0;
 	}

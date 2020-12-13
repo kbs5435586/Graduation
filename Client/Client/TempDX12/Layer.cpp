@@ -6,6 +6,19 @@ CLayer::CLayer()
 {
 }
 
+CComponent* CLayer::Get_ComponentPointer(const _tchar* pComponentTag, const _uint& iIndex)
+{
+	if (m_ObjectList.size() <= iIndex)
+		return nullptr;
+
+	auto	iter = m_ObjectList.begin();
+
+	for (size_t i = 0; i < iIndex; ++i)
+		++iter;
+
+	return (*iter)->Get_ComponentPointer(pComponentTag);
+}
+
 HRESULT CLayer::Add_Object(CGameObject* pGameObject)
 {
 	if (nullptr == pGameObject)

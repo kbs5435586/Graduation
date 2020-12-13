@@ -22,6 +22,7 @@ private:
 private:
 	HRESULT				Ready_Prototype_Component();
 	HRESULT				Ready_Prototype_GameObject();
+
 public:
 	static				CMainApp* Create();
 	virtual void		Free();

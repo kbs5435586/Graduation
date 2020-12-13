@@ -37,16 +37,30 @@ HRESULT CTextureRect::Ready_GameObject(void* pArg)
 			return E_FAIL;
 	}
 
-	_vec3 vPos = _vec3(0.f,0.f,0.f);
+	_vec3 vPos = _vec3(5.f,0.f, 5.f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
-//	m_pGraphic_Device->CreateTexture
+
 	return S_OK;
 }
 _int CTextureRect::Update_GameObject(const _float& fTimeDelta)
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
 
+	pManagement->AddRef();
+
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer(SCENE_LOGO, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+	m_pTransformCom->Set_PositionY(fY+0.5f);
+
+	Safe_Release(pManagement);
 	return _int();
 }
 _int CTextureRect::LastUpdate_GameObject(const _float& fTimeDelta)
@@ -56,6 +70,21 @@ _int CTextureRect::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
+
+	_matrix		matView;
+	matView= CDevice::GetInstance()->GetViewMatrix();
+	matView = Matrix::Inverse(matView);
+
+
+	_vec3		vRight, vUp, vLook;
+
+	vRight = Vector3::ScalarProduct(*(_vec3*)&matView.m[0][0], m_pTransformCom->Get_Scale().x, false);
+	vUp = Vector3::ScalarProduct(*(_vec3*)&matView.m[1][0], m_pTransformCom->Get_Scale().y, false);
+	vLook = Vector3::ScalarProduct(*(_vec3*)&matView.m[2][0], m_pTransformCom->Get_Scale().z, false);
+
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
 
 	return _int();
@@ -75,8 +104,8 @@ void CTextureRect::Render_GameObject()
 	{
 
 		m_pTextureCom->SetUp_OnShader(CDevice::GetInstance()->GetCommandList());
-
 		CDevice::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
+
 
 		m_pBufferCom->Render_VIBuffer();
 	}
@@ -240,7 +269,7 @@ HRESULT CTextureRect::Ready_Component(void* pArg)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Test");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_ELSE");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

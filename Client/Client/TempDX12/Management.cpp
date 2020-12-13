@@ -15,6 +15,14 @@ CManagement::CManagement()
 	m_pComponent_Manager->AddRef();
 }
 
+CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_ComponentPointer(iSceneID, pLayerTag, pComponentTag, iIndex);
+}
+
 HRESULT CManagement::Ready_Management(const _uint& iNumScene)
 {
 

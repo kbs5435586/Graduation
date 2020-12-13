@@ -4,6 +4,8 @@ class CTransform;
 class CShader;
 class CDynamic_Mesh;
 class CRenderer;
+class CTexture;
+
 class CTempMesh :
     public CGameObject
 {
@@ -36,5 +38,6 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CDynamic_Mesh*							m_pMeshCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
 };
 

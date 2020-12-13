@@ -4,6 +4,16 @@ class CTexture :
     public CComponent
 {
 private:
+    struct TargaFile
+    {
+        _ubyte		data1[12];
+        _ushort		iWidth;
+        _ushort		iHeight;
+        _ubyte		bpp;
+        _ubyte		data2;
+
+    };
+private:
     CTexture(ID3D12Device* pGraphic_Device);
     CTexture(const CTexture& rhs);
     ~CTexture() = default;
@@ -14,7 +24,7 @@ public:
                                             TEXTURE_TYPE eType = TEXTURE_TYPE_ELSE);
     virtual CComponent*             Clone_Component(void* pArg = nullptr);
 public:
-    HRESULT                         Create_ShaderResourceView(_uint iNum=0);
+    HRESULT                         Create_ShaderResourceView(_uint iNum=0, _bool IsCube = false);
     HRESULT                         SetUp_OnShader(ID3D12GraphicsCommandList* pCommandLst);
 protected:
     virtual void					Free();
@@ -26,6 +36,9 @@ private:
     DXGI_FORMAT                     GetDXGIFormatFromWICFormat(WICPixelFormatGUID& wicFormatGUID);
     WICPixelFormatGUID              GetConvertToWICFormat(WICPixelFormatGUID& wicFormatGUID);
     int                             GetDXGIFormatBitsPerPixel(DXGI_FORMAT& dxgiFormat);
+private:
+    HRESULT                         LoadTargaDataFromFile(FILE* pFile, _uint& iImageSize, _uint& iHeight, _uint& iWidth);
+    HRESULT                         LoadTargaData(D3D12_RESOURCE_DESC& tDesc, FILE* pFile, vector<_ubyte>& vecbyte, _uint iImageSize, _uint iHeight, _uint iWidth, _uint& iOutput);
 private:
     TEXTURE_TYPE                    m_eType = TEXTURE_TYPE_END;
     _uint                           m_iTexuterIdx = 0;
@@ -45,5 +58,6 @@ private:
     IWICBitmapDecoder*              wicDecoder = NULL;
     IWICBitmapFrameDecode*          wicFrame = NULL;
     IWICFormatConverter*            wicConverter = NULL;
+
 };
 

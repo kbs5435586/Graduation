@@ -7,6 +7,20 @@ CGameObject_Manager::CGameObject_Manager()
 {
 
 }
+CComponent* CGameObject_Manager::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
+{
+	if (nullptr == m_pMapLayers)
+		return nullptr;
+
+	if (m_iNumScene <= iSceneID)
+		return nullptr;
+
+	CLayer* pLayer = Find_Layer(iSceneID, pLayerTag);
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_ComponentPointer(pComponentTag, iIndex);
+}
 HRESULT CGameObject_Manager::Reserve_Object_Manager(const _uint& iNumScene)
 {
 	if (nullptr != m_pMapLayers)

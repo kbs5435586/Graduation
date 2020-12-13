@@ -3,6 +3,7 @@
 #include "Hierachy_Loader.h"
 #include "Animation_Controller.h"
 #include "Shader.h"
+#include "Texture.h"
 
 CDynamic_Mesh::CDynamic_Mesh(ID3D12Device* pGraphic_Device)
 	: CMesh(pGraphic_Device)
@@ -14,6 +15,8 @@ CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 	, m_pLoader(rhs.m_pLoader)
 	, m_pController(rhs.m_pController)
 {
+	m_pLoader->AddRef();
+	m_pController->AddRef();
 	m_IsClone = true;
 }
 
@@ -22,14 +25,14 @@ HRESULT CDynamic_Mesh::Ready_Dynamic_Mesh(string strFilePath)
 	m_pLoader = CHierachy_Loader::Create(m_pGraphic_Device, strFilePath, m_pScene);
 	if (nullptr == m_pLoader || nullptr == m_pScene)
 		return E_FAIL;
-	if (FAILED(m_pLoader->Ready_Load_Hierachy(m_pScene->GetRootNode())))
+	if (FAILED(m_pLoader->Ready_Load_Hierachy(m_pScene->GetRootNode(), false)))
 		return E_FAIL;
 
 
 	m_pController = CAnimation_Controller::Create(m_pGraphic_Device, m_pScene);
 	if (nullptr == m_pController)
 		return E_FAIL;
-	
+
 
 
 	return S_OK;
@@ -70,7 +73,8 @@ FbxAMatrix CDynamic_Mesh::ConvertMatrixToFbx(_matrix matWorld)
 	return(fbxmtxResult);
 }
 
-void CDynamic_Mesh::Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxNode* pNode, _matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
+void CDynamic_Mesh::Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxNode* pNode,
+	_matrix matWorld, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 
@@ -103,11 +107,15 @@ void CDynamic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShad
 		iPassSize, pData, eType)))
 		return;
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
-	
+
+	//CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
+	//CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&(pInfo->IndexBufferView));
+	//CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(pInfo->iIndices, 1, 0, 0, 0);
+
 	CDevice::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	CDevice::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
-	CDevice::GetInstance()->GetCommandList()->IASetIndexBuffer(&(pInfo->IndexBufferView));
-	CDevice::GetInstance()->GetCommandList()->DrawIndexedInstanced(pInfo->iIndices, 1, 0, 0, 0);
+	CDevice::GetInstance()->GetCommandList()->DrawInstanced(pInfo->iIndices, 1, 0, 0);
 }
 FbxAMatrix CDynamic_Mesh::GetGeometricOffsetTransform(FbxNode* pNode)
 {
@@ -138,6 +146,10 @@ void CDynamic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader
 	if (nullptr != pShader && pPipeLine != nullptr)
 		Render_HierachyLoader(pPipeLine, pShader, m_pScene->GetRootNode(), matWorld, iPassSize, pData, eType);
 
+}
+
+void CDynamic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, MAINPASS_LIGHT tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
+{
 }
 
 

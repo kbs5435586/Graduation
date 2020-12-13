@@ -44,7 +44,8 @@ HRESULT CShader::Compile_Shader()
 	return S_OK;
 }
 
-HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* pConstantBuffer, _matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output, ROOT_TYPE eType)
+HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* pConstantBuffer, _matrix matWorld, _matrix matView, _matrix matProj, 
+	MAINPASS& output, ROOT_TYPE eType)
 {
 	CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(eType));
 	CDevice::GetInstance()->GetCommandList()->SetPipelineState(pPipeline);
@@ -61,7 +62,26 @@ HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* 
 	return S_OK;
 }
 
-HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, _int iPassSize, void* pData, ROOT_TYPE eType)
+HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, ID3D12Resource* pConstantBuffer, _matrix matWorld, _matrix matView, _matrix matProj, MAINPASS_LIGHT& output, ROOT_TYPE eType)
+{
+	CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(eType));
+	CDevice::GetInstance()->GetCommandList()->SetPipelineState(pPipeline);
+
+
+	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&matWorld));
+	XMMATRIX	xmMatView = XMMatrixTranspose(XMLoadFloat4x4(&matView));
+	XMMATRIX	xmMatProj = XMMatrixTranspose(XMLoadFloat4x4(&matProj));
+
+	output.matWorld = xmMatWorld;
+	output.matView = xmMatView;
+	output.matProj = xmMatProj;
+
+	return S_OK;
+}
+
+
+HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj,
+	_int iPassSize, void* pData, ROOT_TYPE eType)
 {
 	//CDevice::GetInstance()->GetCommandList()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(eType));
 	CDevice::GetInstance()->GetCommandList()->SetPipelineState(pPipeline);
@@ -78,6 +98,25 @@ HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* Fbxm
 	tMainPass.matProj = xmMatProj;
 
 	memcpy_s(pData, iPassSize, (void*)&tMainPass, sizeof(tMainPass));
+
+	return S_OK;
+}
+
+HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, MAINPASS_LIGHT& tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
+{
+	CDevice::GetInstance()->GetCommandList()->SetPipelineState(pPipeline);
+
+	XMFLOAT4X4	xmf4x4World = FbxMatrixToXmFloat4x4Matrix(FbxmatWorld);
+
+	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&xmf4x4World));
+	XMMATRIX	xmMatView = XMMatrixTranspose(XMLoadFloat4x4(&matView));
+	XMMATRIX	xmMatProj = XMMatrixTranspose(XMLoadFloat4x4(&matProj));
+
+	tPass.matWorld = xmMatWorld;
+	tPass.matView = xmMatView;
+	tPass.matProj = xmMatProj;
+
+	memcpy_s(pData, iPassSize, (void*)&tPass, sizeof(MAINPASS_LIGHT));
 
 	return S_OK;
 }

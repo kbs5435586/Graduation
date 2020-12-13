@@ -16,6 +16,9 @@ public: // Getter
 	_matrix					Get_Matrix() { return m_matWorld; }
 public: // Setter
 	void					Set_StateInfo(STATE eState, const _vec3* pInfo);
+	void Set_PositionY(const _float& fY) {
+		m_matWorld.m[3][1] = fY;
+	}
 public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();

@@ -7,6 +7,7 @@
 #include "Scene_Logo.h"
 #include "Debug_Camera.h"
 
+
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::GetInstance())
 {
@@ -80,6 +81,7 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 		return E_FAIL;
 	return S_OK;
 }
+
 void CMainApp::ComputeFrame()
 {
 	++m_dwRenderCnt;

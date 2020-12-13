@@ -7,11 +7,14 @@
 #include "Buffer_RectTex.h"
 #include "Buffer_Terrain.h"
 #include "Buffer_Terrain_Texture.h"
+#include "Buffer_Terrain_Height.h"
+#include "Buffer_CubeTex.h"
 #include "Renderer.h"
 #include "Transform.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Dynamic_Mesh.h"
+#include "Static_Mesh.h"
 
 
 class CComponent;

@@ -100,7 +100,9 @@ void CAnimation_Controller::AnimateHierachyMesh(FbxNode* pNode, FbxTime& fbxCurr
 	if (pAttribute && (pAttribute->GetAttributeType() == FbxNodeAttribute::eMesh))
 	{
 		FbxMesh* pMesh = pNode->GetMesh();
-		AnimateMesh(pMesh, fbxCurrTime);
+		if (nullptr == pMesh)
+			return;
+		AnimateMesh_(pMesh, fbxCurrTime);
 	}
 
 	_uint	iChild = pNode->GetChildCount();
@@ -109,9 +111,12 @@ void CAnimation_Controller::AnimateHierachyMesh(FbxNode* pNode, FbxTime& fbxCurr
 		AnimateHierachyMesh(pNode->GetChild(i), fbxCurrTime);
 }
 
-void CAnimation_Controller::AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurrTime)
+void CAnimation_Controller::AnimateMesh_(FbxMesh* pMesh, FbxTime& fbxCurrTime)
 {
+	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
+	//int iVertices = pInfo->vecMeshData.size();
 	_uint iVertices = pMesh->GetControlPointsCount();
+
 	if (iVertices > 0)
 	{
 		FbxVector4* pVertices = new FbxVector4[iVertices];
@@ -127,13 +132,15 @@ void CAnimation_Controller::AnimateMesh(FbxMesh* pMesh, FbxTime& fbxCurrTime)
 		for (_uint i = 0; i < iVertices; ++i)
 		{
 			//pInfo->vecPosition[i] = _vec4(pVertices[i][0], pVertices[i][1], pVertices[i][2],1.f);
-			pInfo->vPos[i] = _vec4(pVertices[i][0], pVertices[i][1], pVertices[i][2], 1.f);
+			//pInfo->vPos[i] = _vec4(pVertices[i][0], pVertices[i][1], pVertices[i][2], 1.f);
+			pInfo->temp->vPos= _vec3(pVertices[i][0], pVertices[i][1], pVertices[i][2]);
+			pInfo->temp->vNormal = pInfo->vecNormal[i];
+			pInfo->temp->vUV = pInfo->vecUV[i];
 
 		}
+		delete[] pVertices;
 	}
 }
-
-
 
 void  CAnimation_Controller::ComputeSkinDeformation(FbxMesh* pfbxMesh, FbxTime& fbxCurrentTime, FbxVector4* pfbxv4Vertices, int nVertices)
 {
@@ -338,6 +345,7 @@ void CAnimation_Controller::ComputeDualQuaternionDeformation(FbxMesh* pfbxMesh, 
 	delete[] pfbxDQClusterDeformations;
 	delete[] pfClusterWeights;
 }
+
 
 void CAnimation_Controller::MatrixScale(FbxAMatrix& fbxmatSrcMatrix, double pValue)
 {
