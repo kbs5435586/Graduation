@@ -45,7 +45,7 @@ HRESULT CTempStaticMesh2::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 
-	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 
