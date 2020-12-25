@@ -54,7 +54,7 @@ HRESULT CTempStaticMesh3::Ready_GameObject(void* pArg)
 
 _int CTempStaticMesh3::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Rotation_Y(fTimeDelta);
+//_pTransformCom->Rotation_Y(fTimeDelta);
 
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -317,7 +317,7 @@ HRESULT CTempStaticMesh3::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Shader_Mesh");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Shader_Sumuk");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

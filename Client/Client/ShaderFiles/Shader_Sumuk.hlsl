@@ -45,22 +45,15 @@ VS_OUT	VS_Main(VS_IN vIn)
 	vOut.vNormal = normalize(mul(vector(vIn.vNormal, 0.f), matWorld));
 	vOut.vTexUV = vIn.vTexUV;
 	vOut.vWorldPos = mul(vector(vIn.vPos, 1.f), matWorld);
-	vOut.vNormal = normalize(mul(vector(vIn.vNormal, 0.f), matWorld));
-	//vOut.vNormal = float4(vIn.vNormal, 1.f);
+	//vOut.vNormal = normalize(mul(vector(vIn.vNormal, 0.f), matWorld));
+	vOut.vNormal = float4(vIn.vNormal, 1.f);
 	return vOut;
 }
 
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	float4	vShade;
-	vShade = max(dot(normalize(vLightDirection) * -1.f, normalize(vIn.vNormal)), 0.f);
-
-
 	float4	OutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
-	vShade = ceil(vShade *3.f) / 3.f;
-
-
 
 	float3	rimcolor = float3(-2.f, -2.f, -2.f);
 	int		rimpower = 5.f;
@@ -69,17 +62,9 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 		rim = 1.f;
 	else
 		rim = -1.f;
-
-	vector	vReflect = reflect(normalize(vLightDirection), normalize(vIn.vNormal));
-	vector	vLook = vIn.vWorldPos - vCamPos;
-	float4 vSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), fPower);
-
-	float4 vMtrlSpec = (vLightSpecular * vLightSpecular) * vSpecular;
-
-	float4	vMtrlDif = vLightDiffuse * vMaterialDiffuse * vShade;
-	float4	vMtrlAmb = vLightAmbient * vMaterialAmbient * vShade;
+	float4	vMtrlDif = vLightDiffuse * vMaterialDiffuse;
 	float4  vMtrlEmsv = float4(pow(1 - rim, rimpower) * rimcolor, 1.f);
-	
-	return float4(OutColor * (vMtrlDif+ vMtrlAmb+ vMtrlSpec+vMtrlEmsv));
+
+	return float4(OutColor * (vMtrlDif+vMtrlEmsv));
 }
 

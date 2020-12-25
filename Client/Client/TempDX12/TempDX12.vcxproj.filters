@@ -617,5 +617,8 @@
     <None Include="..\ShaderFiles\Shader_Toon_0.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_Sumuk.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>

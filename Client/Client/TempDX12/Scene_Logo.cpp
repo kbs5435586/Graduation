@@ -364,6 +364,10 @@ HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Toon_0",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Toon_0.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Sumuk",
+		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Sumuk.hlsl", "VS_Main", "PS_Main", 0))))
+		return E_FAIL;
 	return S_OK;
 }
 
