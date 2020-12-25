@@ -475,6 +475,13 @@ HRESULT CScene_Logo::Add_Prototype_Component_Static_Mesh(CManagement* pManagemen
 		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Monster/Monster3/Idle.fbx"))))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Test",
+		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Test0.fbx"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Test1",
+		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Test1.fbx"))))
+		return E_FAIL;
 	return S_OK;
 }
 

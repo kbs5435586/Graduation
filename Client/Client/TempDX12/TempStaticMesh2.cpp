@@ -219,7 +219,7 @@ HRESULT CTempStaticMesh2::Ready_Light(MAINPASS_LIGHT& tInfo)
 	tInfo.vLightDiffuse = tLight.vDiffuse;
 	tInfo.vLightSpecular = tLight.vSpecular;
 	tInfo.vLightAmbient = tLight.vAmbient;
-	tInfo.fPower = 30.f;
+	tInfo.fPower = 1.f;
 
 	tInfo.vMaterialDiffuse = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlDiff;
 	tInfo.vMaterialSpecular = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlSpec;
@@ -321,7 +321,7 @@ HRESULT CTempStaticMesh2::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CStatic_Mesh*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp2");
+	m_pMeshCom = (CStatic_Mesh*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Test1");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
