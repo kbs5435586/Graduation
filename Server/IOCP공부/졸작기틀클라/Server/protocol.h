@@ -28,7 +28,7 @@ struct clientData
     int id;
     char name[MAX_ID_LEN];
     short x, y;
-    bool in_use;
+    bool in_use = false;
 
     SOCKET   m_sock;
     OVER_EX   m_recv_over; // 클라이언트 객체가 있으면 오버랩드 구조체 하나가 반드시 필요함
@@ -37,13 +37,13 @@ struct clientData
 };
 
 #pragma pack(push,1)
-constexpr char SC_PACKET_LOGIN_OK = 0;
-constexpr char SC_PACKET_MOVE = 1;
-constexpr char SC_PACKET_ENTER = 2;
-constexpr char SC_PACKET_LEAVE = 3;
+constexpr char StoC_PACKET_LOGIN_OK = 0;
+constexpr char StoC_PACKET_MOVE = 1;
+constexpr char StoC_PACKET_ENTER = 2;
+constexpr char StoC_PACKET_LEAVE = 3;
 
-constexpr char CS_LOGIN = 0;
-constexpr char CS_MOVE = 1;
+constexpr char CtoS_LOGIN = 0;
+constexpr char CtoS_MOVE = 1;
 
 constexpr char MV_UP = 0;
 constexpr char MV_DOWN = 1;

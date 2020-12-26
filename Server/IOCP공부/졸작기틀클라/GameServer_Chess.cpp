@@ -3,6 +3,7 @@
 #include <WS2tcpip.h>
 #pragma comment (lib, "Ws2_32.lib")
 #include <iostream>
+#include <unordered_map>
 #include "stdafx.h"
 #include "GameServer_Chess.h"
 #include "protocol.h"
@@ -16,18 +17,136 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-Client_Info Player_Data;
+Player_Info g_client;
+unordered_map <int, Player_Info> g_npcs;
 SOCKET s_socket; // 클라이언트와 연결할 소켓
 string client_ip;
 constexpr int BUF_SIZE = 1024;
 constexpr short PORT = 3500;
 int g_myid;
+bool checkSend = false;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+
+void ProcessPacket(char* ptr)
+{
+    static bool first_time = true;
+    switch (ptr[1])
+    {
+    case SC_PACKET_LOGIN_OK:
+    {
+        StoC_packet_login_ok* my_packet = reinterpret_cast<StoC_packet_login_ok*>(ptr);
+        g_myid = my_packet->id;
+        g_client.m_position.x = my_packet->x;
+        g_client.m_position.y = my_packet->y;
+    }
+    break;
+
+    case SC_PACKET_ENTER:
+    {
+        StoC_packet_enter* my_packet = reinterpret_cast<StoC_packet_enter*>(ptr);
+        int id = my_packet->id;
+
+        if (id == g_myid) {
+            g_myid = my_packet->id;
+            g_client.m_position.x = my_packet->x;
+            g_client.m_position.y = my_packet->y;
+        }
+        else {
+            if (id < NPC_ID_START)
+                g_npcs[id] = Player_Info{ true, Position{0,0}, "NPC" };
+            else
+                g_npcs[id] = Player_Info{ true, Position{8,8}, "NPC" };
+            strcpy_s(g_npcs[id].name, my_packet->name);
+            g_npcs[id].m_position.x = my_packet->x;
+            g_npcs[id].m_position.y = my_packet->y;
+            g_npcs[id].isConnected = true;
+        }
+    }
+    break;
+    case SC_PACKET_MOVE:
+    {
+        StoC_packet_move* my_packet = reinterpret_cast<StoC_packet_move*>(ptr);
+        int other_id = my_packet->id;
+        if (other_id == g_myid) {
+            g_myid = my_packet->id;
+            g_client.m_position.x = my_packet->x;
+            g_client.m_position.y = my_packet->y;
+        }
+        else {
+            if (0 != g_npcs.count(other_id))
+            {
+                g_npcs[other_id].m_position.x = my_packet->x;
+                g_npcs[other_id].m_position.y = my_packet->y;
+            }
+        }
+    }
+    break;
+
+    case SC_PACKET_LEAVE:
+    {
+        StoC_packet_leave* my_packet = reinterpret_cast<StoC_packet_leave*>(ptr);
+        int other_id = my_packet->id;
+        if (other_id == g_myid) {
+            g_client.isConnected = false;
+        }
+        else {
+            if (0 != g_npcs.count(other_id))
+                g_npcs[other_id].isConnected = false;
+        }
+    }
+    break;
+    default:
+        printf("Unknown PACKET type [%d]\n", ptr[1]);
+
+    }
+}
+
+void process_data(char* net_buf, size_t io_byte)
+{
+    char* ptr = net_buf;
+    static size_t in_packet_size = 0;
+    static size_t saved_packet_size = 0;
+    static char packet_buffer[BUF_SIZE];
+
+    while (0 != io_byte) {
+        if (0 == in_packet_size) in_packet_size = ptr[0];
+        if (io_byte + saved_packet_size >= in_packet_size) {
+            memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
+            ProcessPacket(packet_buffer);
+            ptr += in_packet_size - saved_packet_size;
+            io_byte -= in_packet_size - saved_packet_size;
+            in_packet_size = 0;
+            saved_packet_size = 0;
+        }
+        else {
+            memcpy(packet_buffer + saved_packet_size, ptr, io_byte);
+            saved_packet_size += io_byte;
+            io_byte = 0;
+        }
+    }
+}
+
+void send_packet(void* packet)
+{
+    char* p = reinterpret_cast<char*>(packet);
+    size_t sent;
+    send(s_socket, p, p[0], 0);
+    int a = 3;
+}
+
+void send_move_packet(unsigned char dir)
+{
+    CtoS_packet_move m_packet;
+    m_packet.type = CS_MOVE;
+    m_packet.size = sizeof(m_packet);
+    m_packet.direction = dir;
+    send_packet(&m_packet);
+}
 
 // 메인 함수
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, // H는 핸들, 
@@ -170,7 +289,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             l_packet.type = CS_LOGIN;
             int t_id = GetCurrentProcessId();
             sprintf_s(l_packet.name, "P%03d", t_id % 1000);
-            strcpy_s(Player_Data.name, l_packet.name);
+            strcpy_s(g_client.name, l_packet.name);
             send_packet(&l_packet);
         }
         else if (wParam == VK_BACK)
@@ -204,20 +323,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wParam)
         {
         case VK_UP:
-            Player_Data.key = 'w';
             send_move_packet(MV_UP);
+            checkSend = true;
             break;
         case VK_DOWN:
-            Player_Data.key = 's';
             send_move_packet(MV_DOWN);
+            checkSend = true;
             break;
         case VK_LEFT:
-            Player_Data.key = 'a';
             send_move_packet(MV_LEFT);
+            checkSend = true;
             break;
         case VK_RIGHT:
-            Player_Data.key = 'd';
             send_move_packet(MV_RIGHT);
+            checkSend = true;
             break;
         case VK_ESCAPE:
             closesocket(s_socket);
@@ -225,10 +344,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PostQuitMessage(0);
             break;
         }
+
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
     {
+        if (checkSend == true)
+        {
+            char net_buf[BUF_SIZE];
+            size_t	received;
+
+            int recv_result = recv(s_socket, net_buf, BUF_SIZE, 0);
+            received = sizeof(net_buf);
+            if (recv_result == SOCKET_ERROR)
+            {
+                wcout << L"Recv 에러!";
+                while (true);
+            }
+
+            if (recv_result == 0)
+            {
+                wcout << L"서버 접속 종료.";
+                break;
+            }
+
+            if (received > 0)
+                process_data(net_buf, received);
+
+            checkSend = false;
+        }
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
         // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
@@ -236,8 +380,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wstring inpuy_ip2{ client_ip.begin(),client_ip.end() };
         wstring textBox = input_ip + inpuy_ip2;
 
-        PieceX = Player_Data.m_position.x * 100;
-        PieceY = Player_Data.m_position.y * 100;
+        PieceX = g_client.m_position.x * 100;
+        PieceY = g_client.m_position.y * 100;
 
         HBRUSH nowBrush;
         HBRUSH oldBrush;
@@ -303,117 +447,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
    
     return (INT_PTR)FALSE;
-}
-
-void ProcessPacket(char* ptr)
-{
-    static bool first_time = true;
-    switch (ptr[1])
-    {
-    case SC_PACKET_LOGIN_OK:
-    {
-        StoC_packet_login_ok* my_packet = reinterpret_cast<StoC_packet_login_ok*>(ptr);
-        g_myid = my_packet->id;
-        Player_Data.m_position.x = my_packet->x;
-        Player_Data.m_position.y = my_packet->y;
-    }
-    break;
-
-    case SC_PACKET_ENTER:
-    {
-        StoC_packet_enter* my_packet = reinterpret_cast<StoC_packet_enter*>(ptr);
-        int id = my_packet->id;
-
-        if (id == g_myid) {
-            g_myid = my_packet->id;
-            Player_Data.m_position.x = my_packet->x;
-            Player_Data.m_position.y = my_packet->y;
-        }
-        else {
-            if (id < NPC_ID_START)
-                npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
-            else
-                npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
-            strcpy_s(npcs[id].name, my_packet->name);
-            npcs[id].set_name(my_packet->name);
-            npcs[id].move(my_packet->x, my_packet->y);
-            npcs[id].show();
-        }
-    }
-    break;
-    case SC_PACKET_MOVE:
-    {
-        StoC_packet_move* my_packet = reinterpret_cast<StoC_packet_move*>(ptr);
-        int other_id = my_packet->id;
-        if (other_id == g_myid) {
-            g_myid = my_packet->id;
-            Player_Data.m_position.x = my_packet->x;
-            Player_Data.m_position.y = my_packet->y;
-        }
-        else {
-            if (0 != npcs.count(other_id))
-                npcs[other_id].move(my_packet->x, my_packet->y);
-        }
-    }
-    break;
-
-    case SC_PACKET_LEAVE:
-    {
-        StoC_packet_leave* my_packet = reinterpret_cast<StoC_packet_leave*>(ptr);
-        int other_id = my_packet->id;
-        if (other_id == g_myid) {
-            avatar.hide();
-        }
-        else {
-            if (0 != npcs.count(other_id))
-                npcs[other_id].hide();
-        }
-    }
-    break;
-    default:
-        printf("Unknown PACKET type [%d]\n", ptr[1]);
-
-    }
-}
-
-void process_data(char* net_buf, size_t io_byte)
-{
-    char* ptr = net_buf;
-    static size_t in_packet_size = 0;
-    static size_t saved_packet_size = 0;
-    static char packet_buffer[BUF_SIZE];
-
-    while (0 != io_byte) {
-        if (0 == in_packet_size) in_packet_size = ptr[0];
-        if (io_byte + saved_packet_size >= in_packet_size) {
-            memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
-            ProcessPacket(packet_buffer);
-            ptr += in_packet_size - saved_packet_size;
-            io_byte -= in_packet_size - saved_packet_size;
-            in_packet_size = 0;
-            saved_packet_size = 0;
-        }
-        else {
-            memcpy(packet_buffer + saved_packet_size, ptr, io_byte);
-            saved_packet_size += io_byte;
-            io_byte = 0;
-        }
-    }
-}
-
-void send_packet(void* packet)
-{
-    char* p = reinterpret_cast<char*>(packet);
-    size_t sent;
-    send(s_socket, p, p[0], sent);
-    int a = 3;
-}
-
-void send_move_packet(unsigned char dir)
-{
-    CtoS_packet_move m_packet;
-    m_packet.type = CS_MOVE;
-    m_packet.size = sizeof(m_packet);
-    m_packet.direction = dir;
-    send_packet(&m_packet);
 }
