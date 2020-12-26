@@ -26,7 +26,7 @@ void send_login_ok(int id)
 	p.id = id;
 	p.level = 1;
 	p.size = sizeof(p);
-	p.type = SC_PACKET_LOGIN_OK;
+	p.type = StoC_PACKET_LOGIN_OK;
 	p.x = g_client[id].x;
 	p.y = g_client[id].y;
 	send_packet(id, &p);
@@ -37,7 +37,7 @@ void send_move_packet(int id)
 	StoC_packet_move p;
 	p.id = id;
 	p.size = sizeof(p);
-	p.type = SC_PACKET_MOVE;
+	p.type = StoC_PACKET_MOVE;
 	p.x = g_client[id].x;
 	p.y = g_client[id].y;
 	send_packet(id, &p);
@@ -80,14 +80,14 @@ void process_packet(int id) // 데이터가 날라 왔을때 해당 패킷을 처리하는 패킷 처
 	// p_type 은 패킷 타입
 	switch (p_type)
 	{
-	case CS_LOGIN: // 로그인 패킷일 경우
+	case CtoS_LOGIN: // 로그인 패킷일 경우
 	{
 		CtoS_packet_login* p = reinterpret_cast<CtoS_packet_login*>(g_client[id].m_packet_start);
 		strcpy_s(g_client[id].name, p->name);
 		send_login_ok(id);
 	}
 	break;
-	case CS_MOVE: // move 패킷일 경우
+	case CtoS_MOVE: // move 패킷일 경우
 	{
 		CtoS_packet_move* p1 = reinterpret_cast<CtoS_packet_move*>(g_client[id].m_packet_start);
 		process_move(id, p1->direction);

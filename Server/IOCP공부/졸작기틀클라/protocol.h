@@ -2,6 +2,7 @@
 
 constexpr int MAX_ID_LEN = 10;
 constexpr int MAX_BUFFER = 4096;
+constexpr int NPC_ID_START = 10000;
 
 typedef struct Position
 {
@@ -9,11 +10,11 @@ typedef struct Position
 	int y = 0;
 };
 
-typedef struct Client_Info
+typedef struct Player_Info
 {
-	char key;
+	bool isConnected;
 	Position m_position;
-	char  name[MAX_ID_LEN];
+	char name[MAX_ID_LEN];
 };
 
 struct OVER_EX
