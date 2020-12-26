@@ -73,14 +73,14 @@ _int CTextureRect::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	_matrix		matView;
 	matView= CDevice::GetInstance()->GetViewMatrix();
-	matView = Matrix::Inverse(matView);
+	matView = Matrix_::Inverse(matView);
 
 
 	_vec3		vRight, vUp, vLook;
 
-	vRight = Vector3::ScalarProduct(*(_vec3*)&matView.m[0][0], m_pTransformCom->Get_Scale().x, false);
-	vUp = Vector3::ScalarProduct(*(_vec3*)&matView.m[1][0], m_pTransformCom->Get_Scale().y, false);
-	vLook = Vector3::ScalarProduct(*(_vec3*)&matView.m[2][0], m_pTransformCom->Get_Scale().z, false);
+	vRight = Vector3_::ScalarProduct(*(_vec3*)&matView.m[0][0], m_pTransformCom->Get_Scale().x, false);
+	vUp = Vector3_::ScalarProduct(*(_vec3*)&matView.m[1][0], m_pTransformCom->Get_Scale().y, false);
+	vLook = Vector3_::ScalarProduct(*(_vec3*)&matView.m[2][0], m_pTransformCom->Get_Scale().z, false);
 
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);

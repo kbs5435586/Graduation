@@ -166,6 +166,7 @@
     <ClInclude Include="Buffer_Terrain_Texture.h" />
     <ClInclude Include="Buffer_TriCol.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Component_Manager.h" />
     <ClInclude Include="Cube.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene_Logo.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="Skinned_Data.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Static_Mesh.h" />
@@ -234,6 +236,7 @@
     <ClCompile Include="Buffer_Terrain_Texture.cpp" />
     <ClCompile Include="Buffer_TriCol.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Component_Manager.cpp" />
     <ClCompile Include="Cube.cpp" />

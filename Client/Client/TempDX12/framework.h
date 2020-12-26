@@ -41,6 +41,8 @@ using namespace std;
 #include <fstream>
 #include <string>
 
+#include "SimpleMath.h"
+
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -52,6 +54,7 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 using namespace fbxsdk;
+using namespace DirectX::SimpleMath;
 
 #include "d3dx12.h"
 

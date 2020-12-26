@@ -1,7 +1,8 @@
 #pragma once
 
 
-class CFinder_Tag
+class C
+	er_Tag
 {
 public:
 	CFinder_Tag(const wchar_t* pTag) : m_pTag(pTag) {}

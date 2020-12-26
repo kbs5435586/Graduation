@@ -40,7 +40,7 @@ unsigned long Safe_Release(T& pInstance)
 
 #pragma once
 
-namespace Vector3
+namespace Vector3_
 {
 	inline XMFLOAT3 XMVectorToFloat3(XMVECTOR& xmvVector)
 	{
@@ -135,7 +135,7 @@ namespace Vector3
 
 }
 
-namespace Vector4
+namespace Vector4_
 {
 	inline XMFLOAT4 Add(XMFLOAT4& xmf4Vector1, XMFLOAT4& xmf4Vector2)
 	{
@@ -145,7 +145,7 @@ namespace Vector4
 	}
 }
 
-namespace Matrix
+namespace Matrix_
 {
 	inline XMFLOAT4X4 Identity()
 	{
@@ -205,7 +205,7 @@ namespace Matrix
 	}
 }
 
-namespace Triangle
+namespace Triangle_
 {
 	inline bool Intersect(XMFLOAT3& xmf3RayPosition, XMFLOAT3& xmf3RayDirection, XMFLOAT3& v0, XMFLOAT3& v1, XMFLOAT3& v2, float& fHitDistance)
 	{
@@ -213,7 +213,7 @@ namespace Triangle
 	}
 }
 
-namespace Plane
+namespace Plane_
 {
 	inline XMFLOAT4 Normalize(XMFLOAT4& xmf4Plane)
 	{

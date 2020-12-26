@@ -50,7 +50,7 @@ _int CSkyBox::Update_GameObject(const _float& fTimeDelta)
 	_matrix			matView;
 
 	matView=CDevice::GetInstance()->GetViewMatrix();
-	matView = Matrix::Inverse(matView);
+	matView = Matrix_::Inverse(matView);
 
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, (_vec3*)&matView.m[3][0]);
 

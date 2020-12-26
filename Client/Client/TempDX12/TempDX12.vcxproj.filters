@@ -208,6 +208,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\07. Buffer_CubeTex">
       <UniqueIdentifier>{2d0c3477-9af5-4fc9-bd89-193ca75c887b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\06. Frustum">
+      <UniqueIdentifier>{21b70d8a-3514-464f-ab30-08af688e8d86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -408,6 +411,12 @@
     <ClInclude Include="Buffer_CubeTex.h">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\07. Buffer_CubeTex</Filter>
     </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\06. Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="TempDX12.ico">
@@ -590,6 +599,9 @@
     </ClCompile>
     <ClCompile Include="Buffer_CubeTex.cpp">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\07. Buffer_CubeTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\01. Component\06. Frustum</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

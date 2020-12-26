@@ -96,27 +96,27 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		_vec3 vSour, vDest, vNormal, vCross;
 		//ÁÂÇÏ
 		
-		vSour = Vector3::Subtract(m_pVertices[m_pIndices[i + 1]].vPos, m_pVertices[m_pIndices[i]].vPos);
-		vDest = Vector3::Subtract(m_pVertices[m_pIndices[i + 2]].vPos, m_pVertices[m_pIndices[i]].vPos);
-		vCross = Vector3::CrossProduct(vSour, vDest);
-		vNormal = Vector3::Normalize(vCross);
+		vSour = Vector3_::Subtract(m_pVertices[m_pIndices[i + 1]].vPos, m_pVertices[m_pIndices[i]].vPos);
+		vDest = Vector3_::Subtract(m_pVertices[m_pIndices[i + 2]].vPos, m_pVertices[m_pIndices[i]].vPos);
+		vCross = Vector3_::CrossProduct(vSour, vDest);
+		vNormal = Vector3_::Normalize(vCross);
 
 
-		m_pVertices[m_pIndices[i]].vNormal = Vector3::Add(m_pVertices[m_pIndices[i]].vNormal, vNormal);
-		m_pVertices[m_pIndices[i+1]].vNormal = Vector3::Add(m_pVertices[m_pIndices[i+1]].vNormal, vNormal);
-		m_pVertices[m_pIndices[i+2]].vNormal = Vector3::Add(m_pVertices[m_pIndices[i+2]].vNormal, vNormal);
+		m_pVertices[m_pIndices[i]].vNormal = Vector3_::Add(m_pVertices[m_pIndices[i]].vNormal, vNormal);
+		m_pVertices[m_pIndices[i+1]].vNormal = Vector3_::Add(m_pVertices[m_pIndices[i+1]].vNormal, vNormal);
+		m_pVertices[m_pIndices[i+2]].vNormal = Vector3_::Add(m_pVertices[m_pIndices[i+2]].vNormal, vNormal);
 		++++++i;
 
 		//¿ì»ó
 
-		vSour = Vector3::Subtract(m_pVertices[m_pIndices[i + 2]].vPos, m_pVertices[m_pIndices[i+1]].vPos);
-		vDest = Vector3::Subtract(m_pVertices[m_pIndices[i]].vPos, m_pVertices[m_pIndices[i+1]].vPos);
-		vCross = Vector3::CrossProduct(vSour, vDest);
-		vNormal = Vector3::Normalize(vCross);
+		vSour = Vector3_::Subtract(m_pVertices[m_pIndices[i + 2]].vPos, m_pVertices[m_pIndices[i+1]].vPos);
+		vDest = Vector3_::Subtract(m_pVertices[m_pIndices[i]].vPos, m_pVertices[m_pIndices[i+1]].vPos);
+		vCross = Vector3_::CrossProduct(vSour, vDest);
+		vNormal = Vector3_::Normalize(vCross);
 
-		m_pVertices[m_pIndices[i]].vNormal = Vector3::Add(m_pVertices[m_pIndices[i]].vNormal, vNormal);
-		m_pVertices[m_pIndices[i + 1]].vNormal = Vector3::Add(m_pVertices[m_pIndices[i + 1]].vNormal, vNormal);
-		m_pVertices[m_pIndices[i + 2]].vNormal = Vector3::Add(m_pVertices[m_pIndices[i + 2]].vNormal, vNormal);
+		m_pVertices[m_pIndices[i]].vNormal = Vector3_::Add(m_pVertices[m_pIndices[i]].vNormal, vNormal);
+		m_pVertices[m_pIndices[i + 1]].vNormal = Vector3_::Add(m_pVertices[m_pIndices[i + 1]].vNormal, vNormal);
+		m_pVertices[m_pIndices[i + 2]].vNormal = Vector3_::Add(m_pVertices[m_pIndices[i + 2]].vNormal, vNormal);
 		++++++i;
 		
 

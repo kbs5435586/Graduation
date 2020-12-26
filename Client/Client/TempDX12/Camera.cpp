@@ -21,8 +21,8 @@ CCamera::CCamera(const CCamera& rhs)
 
 HRESULT CCamera::Ready_Prototype()
 {
-	m_matView = Matrix::Identity();
-	m_matProj = Matrix:: Identity();
+	m_matView = Matrix_::Identity();
+	m_matProj = Matrix_:: Identity();
 	return S_OK;
 }
 
@@ -70,16 +70,16 @@ void CCamera::Invalidate_ViewProjMatrix()
 HRESULT CCamera::SetUp_ViewProjMatrices()
 {
 	_vec3		vLook;
-	vLook = Vector3::Subtract(m_tCameraDesc.vAt, m_tCameraDesc.vEye);
-	vLook = Vector3::Normalize(vLook);
+	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, m_tCameraDesc.vEye);
+	vLook = Vector3_::Normalize(vLook);
 
 	_vec3		vRight;
-	vRight = Vector3::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
-	vRight = Vector3::Normalize(vRight);
+	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
+	vRight = Vector3_::Normalize(vRight);
 
 	_vec3		vUp;
-	vUp = Vector3::CrossProduct(vLook, vRight);
-	vUp = Vector3::Normalize(vUp);
+	vUp = Vector3_::CrossProduct(vLook, vRight);
+	vUp = Vector3_::Normalize(vUp);
 
 	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);

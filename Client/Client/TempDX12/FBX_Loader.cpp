@@ -326,7 +326,8 @@
 //
 //	FBXSDK_FOR_EACH_TEXTURE(textureIndex)
 //	{
-//		property = pMaterial->FindProperty(FbxLayerElement::sTextureChannelNames[textureIndex]);
+//		property = pMaterial->
+Property(FbxLayerElement::sTextureChannelNames[textureIndex]);
 //		if (property.IsValid())
 //		{
 //			unsigned int textureCount = property.GetSrcObjectCount<FbxTexture>();
