@@ -23,6 +23,7 @@ struct VertexOut
 VertexOut VS_Main(VertexIn In)
 {
 	VertexOut Out;
+
 	Out.vPosition = mul(mul(mul(float4(In.vPosition, 1.0f), matWorld), matView), matProj);
 	Out.vTexUV = In.vTexUV;
 

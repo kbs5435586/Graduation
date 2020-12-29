@@ -150,9 +150,6 @@ HRESULT CScene_Logo::Ready_Light()
 	if (FAILED(pLight_Manager->Add_LightInfo(m_pGraphic_Device, L"Light_Default",tLightInfo)))
 		return E_FAIL;
 
-
-
-
 	Safe_Release(pLight_Manager);
 	return S_OK;
 }
@@ -365,6 +362,11 @@ HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Toon_0.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
 
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Toon_1",
+		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Toon_1.hlsl", "VS_Main", "PS_Main", 0))))
+		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Sumuk",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Sumuk.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
@@ -409,6 +411,11 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_ELSE",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/SkyBox%d.dds", 0, TEXTURE_TYPE_DDS))))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Hatching123",
+		CTexture::Create(m_pGraphic_Device, L"../Resource/Hatching/Hatching%d.dds", 2, TEXTURE_TYPE_DDS))))
+		return E_FAIL;
+
 	//jpg Texture
 	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_ELSE",
 	//	CTexture::Create(m_pGraphic_Device, L"../Resource/else%d.jpg", 0, TEXTURE_TYPE_ELSE))))
