@@ -25,7 +25,7 @@ public:
     virtual CComponent*             Clone_Component(void* pArg = nullptr);
 public:
     HRESULT                         Create_ShaderResourceView(_uint iNum=0, _bool IsCube = false);
-    HRESULT                         SetUp_OnShader(ID3D12GraphicsCommandList* pCommandLst);
+    HRESULT                         SetUp_OnShader(ID3D12GraphicsCommandList* pCommandLst, _int iIdx=0);
 protected:
     virtual void					Free();
 private:

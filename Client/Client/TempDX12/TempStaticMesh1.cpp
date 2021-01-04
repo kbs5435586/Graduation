@@ -39,6 +39,11 @@ HRESULT CTempStaticMesh1::Ready_GameObject(void* pArg)
 		if (FAILED(m_pTextureCom->Create_ShaderResourceView(0)))
 			return E_FAIL;
 	}
+	//if (m_pTextureCom1 != nullptr)
+	//{
+	//	if (FAILED(m_pTextureCom1->Create_ShaderResourceView(1)))
+	//		return E_FAIL;
+	//}
 
 
 	_vec3 vPos = _vec3(30.f, 0.f, 30.f);
@@ -317,7 +322,7 @@ HRESULT CTempStaticMesh1::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Shader_Normal");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Shader_Hatching");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
@@ -327,10 +332,11 @@ HRESULT CTempStaticMesh1::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Mesh_Test1");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Hatching123");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+
 
 	Safe_Release(pManagement);
 	return S_OK;

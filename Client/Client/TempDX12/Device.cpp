@@ -35,6 +35,8 @@ HRESULT CDevice::OnCreate()
 		return E_FAIL;
 	if (FAILED(CreateRootSignature(ROOT_TYPE_TEXTURE)))
 		return E_FAIL;
+	if (FAILED(CreateRootSignature(ROOT_TYPE_MULTI_TEXTURE)))
+		return E_FAIL;
 	/*if (FAILED(CreateRootSignature(1)))
 		return E_FAIL;*/
 	m_pDevice->SetName(L"Graphic_Device");
@@ -48,7 +50,7 @@ HRESULT CDevice::OnCreate()
 	m_pCommandQueue->SetName(L"CommandQueue");
 	m_pCommandList->SetName(L"CommandList");
 
-	for(auto& iter: m_vecRootSignature)
+	for (auto& iter : m_vecRootSignature)
 		iter->SetName(L"RootSignature");
 
 	return S_OK;
@@ -423,7 +425,36 @@ HRESULT CDevice::CreateRootSignature(ROOT_TYPE eType)
 			return E_FAIL;
 		m_vecRootSignature.push_back(pRootSignature);
 	}
-	
+	else if (eType == ROOT_TYPE_MULTI_TEXTURE)
+	{
+		CD3DX12_DESCRIPTOR_RANGE texTable;
+		texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0);
+
+
+		CD3DX12_ROOT_PARAMETER slotRootParameter[2] = {};
+		slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[1].InitAsConstantBufferView(0);
+
+		auto staticSamplers = GetStaticSamplers();
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter,
+			(UINT)staticSamplers.size(), staticSamplers.data(),
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		ID3DBlob* pRootSignatureCode = nullptr;
+		ID3DBlob* pError = nullptr;
+		if (FAILED(D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pRootSignatureCode, &pError)))
+		{
+			char* pTemp = ((char*)pError->GetBufferPointer());
+			return E_FAIL;
+		}
+
+
+		if (FAILED(m_pDevice->CreateRootSignature(0, pRootSignatureCode->GetBufferPointer(), pRootSignatureCode->GetBufferSize(), IID_PPV_ARGS(&pRootSignature))))
+			return E_FAIL;
+		m_vecRootSignature.push_back(pRootSignature);
+	}
+
 
 	return S_OK;
 }
@@ -444,13 +475,13 @@ void CDevice::Close()
 void CDevice::Begin()
 {
 
-	if(FAILED(CDevice::GetInstance()->GetCommandAllocator()->Reset()))
+	if (FAILED(CDevice::GetInstance()->GetCommandAllocator()->Reset()))
 		return;
 	Open();
 
-	D3D12_RESOURCE_BARRIER	tResource_Barrier = 
+	D3D12_RESOURCE_BARRIER	tResource_Barrier =
 		CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
- 	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
+	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
 
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE	rtvHandle(m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -471,7 +502,7 @@ void CDevice::Begin()
 void CDevice::End()
 {
 	//PIXEndEvent(m_pCommandList);
-	D3D12_RESOURCE_BARRIER	tResource_Barrier = 
+	D3D12_RESOURCE_BARRIER	tResource_Barrier =
 		CD3DX12_RESOURCE_BARRIER::Transition(m_pRenderTargetBuffers[m_iSwapChainBufferIdx], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 	m_pCommandList->ResourceBarrier(1, &tResource_Barrier);
 

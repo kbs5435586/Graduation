@@ -71,7 +71,7 @@ _int CTempStaticMesh::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
-
+	
 
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)

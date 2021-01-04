@@ -280,14 +280,14 @@ HRESULT CTexture::Create_ShaderResourceView(_uint iNum, _bool IsCube)
 
 	return S_OK;
 }
-HRESULT CTexture::SetUp_OnShader(ID3D12GraphicsCommandList* pCommandLst)
+HRESULT CTexture::SetUp_OnShader(ID3D12GraphicsCommandList* pCommandLst, _int iIdx)
 {
 	CD3DX12_GPU_DESCRIPTOR_HANDLE hTexture
 	(
-		m_vecDescriptorHeap[m_iTexuterIdx]->GetGPUDescriptorHandleForHeapStart()
+		m_vecDescriptorHeap[iIdx]->GetGPUDescriptorHandleForHeapStart()
 	);
-	hTexture.Offset(0, m_vecSrvDescriptorIncrementSize[m_iTexuterIdx]);
-	pCommandLst->SetDescriptorHeaps(1, &m_vecDescriptorHeap[m_iTexuterIdx]);
+	hTexture.Offset(0, m_vecSrvDescriptorIncrementSize[iIdx]);
+	pCommandLst->SetDescriptorHeaps(1, &m_vecDescriptorHeap[iIdx]);
 	pCommandLst->SetGraphicsRootDescriptorTable(0, hTexture);
 
 	return S_OK;
