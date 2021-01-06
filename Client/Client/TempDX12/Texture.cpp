@@ -173,12 +173,14 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			_uint		iHeight = 0;
 			_uint		iWidth = 0;
 
-			if (FAILED(LoadTargaDataFromFile(pFile, iImageSize, iHeight, iWidth)))
+
+			_uint		iTempNum = 0;
+			if (FAILED(LoadTargaDataFromFile(pFile, iImageSize, iHeight, iWidth, iTempNum)))
 				return E_FAIL;
 			//_ubyte* pTgaFile = new _ubyte[iImageSize]{};
 			vector<_ubyte>	vectgaFile;
 			vectgaFile.resize(iImageSize);
-			if (FAILED(LoadTargaData(textureDesc, pFile, vectgaFile, iImageSize, iHeight, iWidth, imageBytesPerRow)))
+			if (FAILED(LoadTargaData(textureDesc, pFile, vectgaFile, iImageSize, iHeight, iWidth, imageBytesPerRow, iTempNum)))
 				return E_FAIL;
 
 			D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
@@ -194,10 +196,8 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 
 			D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize);
 
-			if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-				&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
-				&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ,
-				nullptr, IID_PPV_ARGS(&pTextureUpload))))
+			if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
+				&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pTextureUpload))))
 				return E_FAIL;
 
 			D3D12_SUBRESOURCE_DATA textureData = {};
@@ -217,7 +217,6 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			}
 			if (FAILED(Create_Shader_Resource_Heap()))
 				return E_FAIL;
-
 
 		}
 		else
@@ -529,7 +528,7 @@ int CTexture::GetDXGIFormatBitsPerPixel(DXGI_FORMAT& dxgiFormat)
 	return 8;
 }
 
-HRESULT CTexture::LoadTargaDataFromFile(FILE* pFile, _uint& iImageSize, _uint& iHeight, _uint& iWidth)
+HRESULT CTexture::LoadTargaDataFromFile(FILE* pFile, _uint& iImageSize, _uint& iHeight, _uint& iWidth, _uint& iTempNum)
 {
 
 	_uint		bpp;
@@ -545,27 +544,26 @@ HRESULT CTexture::LoadTargaDataFromFile(FILE* pFile, _uint& iImageSize, _uint& i
 	iWidth = (_uint)tTarga.iWidth;
 	bpp = (_uint)tTarga.bpp;
 
-	if (bpp != 32)
+	if (bpp == 32)
+	{
+		iTempNum = 4;
+	}
+	else if (bpp == 24)
+	{
+		iTempNum = 3;
+	}
+	else
 		return E_FAIL;
-	iImageSize = iWidth * iHeight * 4;
-	return S_OK;
 
+	iImageSize = iWidth * iHeight * iTempNum;
+	return S_OK;
 }
 
-HRESULT CTexture::LoadTargaData(D3D12_RESOURCE_DESC& tDesc, FILE* pFile, vector<_ubyte>& vecbyte, _uint iImageSize, _uint iHeight, _uint iWidth, _uint& iOutput)
+HRESULT CTexture::LoadTargaData(D3D12_RESOURCE_DESC& tDesc, FILE* pFile, vector<_ubyte>& vecbyte,
+	_uint iImageSize, _uint iHeight, _uint iWidth, _uint& iOutput, _uint iTempNum)
 {
 	vector<_ubyte>	vecTemp;
 	vecTemp.resize(iImageSize);
-	//_ubyte* targaImage = new _ubyte[iImageSize];
-	//if (nullptr == targaImage)
-	//	return E_FAIL;
-
-	//for (int i = 0; i < iImageSize; ++i)
-	//{
-	//	_ubyte temp;
-	//	fread(&temp, 1, 1, pFile);
-	//	vecTemp.push_back(temp);
-	//}
 
 	int iCnt = (_uint)fread(vecTemp.data(), 1, iImageSize, pFile);
 	if (iCnt != iImageSize)
@@ -574,47 +572,83 @@ HRESULT CTexture::LoadTargaData(D3D12_RESOURCE_DESC& tDesc, FILE* pFile, vector<
 	if (fclose(pFile) != 0)
 		return E_FAIL;
 
-
-
 	_uint iIdx = 0;
+	_uint k = (iWidth * iHeight * iTempNum) - (iWidth * iTempNum);
+	int bitsPerPixel = 0;
 
-	_uint k = (iWidth * iHeight * 4) - (iWidth * 4);
-
-
-	for (_uint j = 0; j < iHeight; ++j)
+	if (iTempNum == 3)
 	{
-		for (_uint i = 0; i < iWidth; ++i)
+		for (_uint j = 0; j < iHeight; ++j)
 		{
-			vecbyte[iIdx + 0] = vecTemp[k + 2];
-			vecbyte[iIdx + 1] = vecTemp[k + 1];
-			vecbyte[iIdx + 2] = vecTemp[k + 0];
-			vecbyte[iIdx + 3] = vecTemp[k + 3];
+			for (_uint i = 0; i < iWidth; ++i)
+			{
+				vecbyte[iIdx + 0] = vecTemp[k + 2];
+				vecbyte[iIdx + 1] = vecTemp[k + 1];
+				vecbyte[iIdx + 2] = vecTemp[k + 0];
 
-			k += 4;
-			iIdx += 4;
+				k += 3;
+				iIdx += 3;
+			}
+
+			k -= (iWidth * 6);
 		}
 
-		k -= (iWidth * 8);
+
+		bitsPerPixel = 24;
+		iOutput = (iWidth * bitsPerPixel) / 6;
+
+
+		tDesc.Height = iHeight;
+		tDesc.Width = iWidth;
+		tDesc.MipLevels = 1;
+		tDesc.Format = DXGI_FORMAT_B8G8R8X8_UNORM;
+		tDesc.SampleDesc.Count = 1;
+		tDesc.SampleDesc.Quality = 0;
+		tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		tDesc.Alignment = 0;
+		tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		tDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		tDesc.DepthOrArraySize = 1;
+
+	}
+	else if (iTempNum == 4)
+	{
+		for (_uint j = 0; j < iHeight; ++j)
+		{
+			for (_uint i = 0; i < iWidth; ++i)
+			{
+				vecbyte[iIdx + 0] = vecTemp[k + 2];
+				vecbyte[iIdx + 1] = vecTemp[k + 1];
+				vecbyte[iIdx + 2] = vecTemp[k + 0];
+				vecbyte[iIdx + 3] = vecTemp[k + 3];
+
+				k += 4;
+				iIdx += 4;
+			}
+
+			k -= (iWidth * 8);
+		}
+
+
+		bitsPerPixel = 32;
+		iOutput = (iWidth * bitsPerPixel) / 8;
+
+		tDesc.Height = iHeight;
+		tDesc.Width = iWidth;
+		tDesc.MipLevels = 1;
+		tDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		tDesc.SampleDesc.Count = 1;
+		tDesc.SampleDesc.Quality = 0;
+		tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		tDesc.Alignment = 0;
+		tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		tDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		tDesc.DepthOrArraySize = 1;
 	}
 
 
-	//Safe_Delete_Array(targaImage);
-
-	tDesc.Height = iHeight;
-	tDesc.Width = iWidth;
-	tDesc.MipLevels = 1;
-	tDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	tDesc.SampleDesc.Count = 1;
-	tDesc.SampleDesc.Quality = 0;
-	tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	tDesc.Alignment = 0;
-	tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	tDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	tDesc.DepthOrArraySize = 1;
 
 
 
-	int bitsPerPixel = 32;
-	iOutput = (iWidth * bitsPerPixel) / 8;
 	return S_OK;
 }

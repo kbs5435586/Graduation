@@ -15,6 +15,7 @@ public:
 private:
 	HRESULT					Ready_Prototype_GameObject();
 	HRESULT					Ready_Prototype_Component();
+	HRESULT					Ready_Layer();
 	HRESULT					Ready_Light();
 private:
 	HRESULT					Ready_Layer_Camera(const _tchar* pLayerTag);
@@ -27,7 +28,6 @@ private:
 	HRESULT					Ready_Layer_Temp_Mesh(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_TempStatic_Mesh(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_SkyBox(const _tchar* pLayerTag);
-
 private:
 	HRESULT					Add_Prototype_Component_Shader(CManagement* pManagement);
 	HRESULT					Add_Prototype_Component_Buffer(CManagement* pManagement);

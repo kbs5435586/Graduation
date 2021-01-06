@@ -37,8 +37,9 @@ private:
     WICPixelFormatGUID              GetConvertToWICFormat(WICPixelFormatGUID& wicFormatGUID);
     int                             GetDXGIFormatBitsPerPixel(DXGI_FORMAT& dxgiFormat);
 private:
-    HRESULT                         LoadTargaDataFromFile(FILE* pFile, _uint& iImageSize, _uint& iHeight, _uint& iWidth);
-    HRESULT                         LoadTargaData(D3D12_RESOURCE_DESC& tDesc, FILE* pFile, vector<_ubyte>& vecbyte, _uint iImageSize, _uint iHeight, _uint iWidth, _uint& iOutput);
+    HRESULT                         LoadTargaDataFromFile(FILE* pFile, _uint& iImageSize, _uint& iHeight, _uint& iWidth, _uint& iTempNum);
+    HRESULT                         LoadTargaData(D3D12_RESOURCE_DESC& tDesc, FILE* pFile, vector<_ubyte>& vecbyte, 
+        _uint iImageSize, _uint iHeight, _uint iWidth, _uint& iOutput, _uint iTempNum);
 private:
     TEXTURE_TYPE                    m_eType = TEXTURE_TYPE_END;
     _uint                           m_iTexuterIdx = 0;

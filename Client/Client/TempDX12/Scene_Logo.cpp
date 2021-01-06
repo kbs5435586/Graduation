@@ -13,13 +13,8 @@
 #include "TempMesh.h"
 
 #include "TempStaticMesh.h"
-#include "TempStaticMesh1.h"
-#include "TempStaticMesh2.h"
-#include "TempStaticMesh3.h"
 #include "SkyBox.h"
-
 #include "Light_Manager.h"
-
 
 CScene_Logo::CScene_Logo(ID3D12Device* pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -33,22 +28,8 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
-	if(FAILED(Ready_Layer_Camera(L"Layer_Camera")))
+	if (FAILED(Ready_Layer()))
 		return E_FAIL;
-
-
-	if (FAILED(Ready_Layer_TempStatic_Mesh(L"Layer_TempStatic_Mesh")))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain")))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox")))
-		return E_FAIL;
-
-
 	if (FAILED(Ready_Light()))
 		return E_FAIL;
 
@@ -95,12 +76,6 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TempStatic_Mesh", CTempStaticMesh::Create(m_pGraphic_Device))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TempStatic_Mesh1", CTempStaticMesh1::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TempStatic_Mesh2", CTempStaticMesh2::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TempStatic_Mesh3", CTempStaticMesh3::Create(m_pGraphic_Device))))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
@@ -114,7 +89,6 @@ HRESULT CScene_Logo::Ready_Prototype_Component()
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-
 	
 	if (FAILED(Add_Prototype_Component_Shader(pManagement)))
 		return E_FAIL;
@@ -127,6 +101,22 @@ HRESULT CScene_Logo::Ready_Prototype_Component()
 	if (FAILED(Add_Prototype_Component_Dynamic_Mesh(pManagement)))
 		return E_FAIL;
 	Safe_Release(pManagement);
+
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Ready_Layer()
+{
+	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_TempStatic_Mesh(L"Layer_TempStatic_Mesh")))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain")))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox")))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -307,12 +297,6 @@ HRESULT CScene_Logo::Ready_Layer_TempStatic_Mesh(const _tchar* pLayerTag)
 
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TempStatic_Mesh", SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TempStatic_Mesh1", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TempStatic_Mesh2", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TempStatic_Mesh3", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
 	Safe_Release(pManagement);
 
 	return S_OK;
@@ -339,21 +323,27 @@ HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Default",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Default.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Texture",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Texture.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Terrain",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Terrain.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Terrain_Texture",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Terrain_Texture.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Normal",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Normal.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Mesh",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Mesh.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_SkyBox",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_SkyBox.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
@@ -361,7 +351,6 @@ HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Toon_0",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Toon_0.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
-
 
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Toon_1",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Toon_1.hlsl", "VS_Main", "PS_Main", 0))))
@@ -374,6 +363,7 @@ HRESULT CScene_Logo::Add_Prototype_Component_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Shader_Sumuk",
 		CShader::Create(m_pGraphic_Device, L"../ShaderFiles/Shader_Sumuk.hlsl", "VS_Main", "PS_Main", 0))))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -398,11 +388,12 @@ HRESULT CScene_Logo::Add_Prototype_Component_Buffer(CManagement* pManagement)
 		CBuffer_Terrain_Texture::Create(m_pGraphic_Device, 50, 50, 1.f))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Terrain_Height",
-		CBuffer_Terrain_Height::Create(m_pGraphic_Device, L"../Resource/Height.bmp"))))
+		CBuffer_Terrain_Height::Create(m_pGraphic_Device, L"../Resource/Texture/GrayScale/Height.bmp"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Cube_Tex",
 		CBuffer_CubeTex::Create(m_pGraphic_Device))))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -410,93 +401,33 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 {
 	//dds Texture
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Bricks",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/bricks%d.dds", 3, TEXTURE_TYPE_DDS))))
+		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Bricks/bricks%d.dds", 3, TEXTURE_TYPE_DDS))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_ELSE",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/SkyBox%d.dds", 0, TEXTURE_TYPE_DDS))))
+		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/SkyBox/SkyBox%d.dds", 0, TEXTURE_TYPE_DDS))))
 		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Hatching123",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/Hatching/Hatching%d.dds", 2, TEXTURE_TYPE_DDS))))
-		return E_FAIL;
-
-	//jpg Texture
-	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_ELSE",
-	//	CTexture::Create(m_pGraphic_Device, L"../Resource/else%d.jpg", 0, TEXTURE_TYPE_ELSE))))
-	//	return E_FAIL;
-
-	//png Texture
+	// PNG
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/Test%d.png", 0, TEXTURE_TYPE_ELSE))))
+		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Elf/Elf_Albedo%d.png", 0, TEXTURE_TYPE_ELSE))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Mesh_Test",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/FBX/TestTexture/Kachujin_diffuse%d.png", 0, TEXTURE_TYPE_ELSE))))
+	// TGA 
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Grass",
+		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Grass/Grass_%d.tga", 0, TEXTURE_TGA))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Mesh_Test1",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/FBX/TestTexture/Mutant_diffuse%d.png", 0, TEXTURE_TYPE_ELSE))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Mesh_Test2",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/FBX/TestTexture/bear_diffuse%d.png", 0, TEXTURE_TYPE_ELSE))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Mesh_Test3",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/FBX/TestTexture/MAW_diffuse%d.png", 0, TEXTURE_TYPE_ELSE))))
-		return E_FAIL;
-	// Gray Scale
-
-
-
-
-
-
-
-
-
-
-	//// MeshTest
-	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_MeshTest",
-	//	CTexture::Create(m_pGraphic_Device, L"../Resource/Rock01.fbm/rock_01_diffuse%d.jpg", 0, TEXTURE_TYPE_ELSE))))
+	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Elf",
+	//	CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Elf/Elf_Albedo%d.tga", 0, TEXTURE_TGA))))
 	//	return E_FAIL;
 
-	//// TGA 
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Grass",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/Grass_%d.tga", 0, TEXTURE_TGA))))
-		return E_FAIL;
-
-
-	
 	return S_OK;
 }
 
 HRESULT CScene_Logo::Add_Prototype_Component_Static_Mesh(CManagement* pManagement)
 {
-	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Temp",
-	//	CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Rock01.FBX"))))
-	//	return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Character/Idle.fbx"))))
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Elf",
+		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Elf/Elf_Mesh.FBX"))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp1",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Monster/Monster1/Idle.fbx"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp2",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Monster/Monster2/Idle.fbx"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp3",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Monster/Monster3/Idle.fbx"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Test",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Test0.fbx"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Test1",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Test1.fbx"))))
-		return E_FAIL;
 	return S_OK;
 }
 
@@ -505,6 +436,7 @@ HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManageme
 	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Dynamic_Mesh_Temp",
 	//	CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Monster/Monster3/Idle.fbx"))))
 	//	return E_FAIL;
+
 	return S_OK;
 }
 

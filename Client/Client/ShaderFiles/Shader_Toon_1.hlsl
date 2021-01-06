@@ -76,8 +76,8 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 
 	vector	vReflect = reflect(normalize(vLightDirection), normalize(vIn.vNormal));
 	vector	vLook = vIn.vWorldPos - vCamPos;
-	float4 vSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), fPower);
-	float4 vMtrlSpec = (vLightSpecular * vLightSpecular) * vSpecular;
+	float4	vSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), fPower);
+	float4	vMtrlSpec = (vLightSpecular * vLightSpecular) * vSpecular;
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower)*fRimColor,1.f);
 	
