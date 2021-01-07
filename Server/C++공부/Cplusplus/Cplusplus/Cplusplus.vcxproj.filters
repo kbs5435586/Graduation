@@ -42,7 +42,7 @@
     <ClCompile Include="overload.cpp">
       <Filter>소스 파일\example</Filter>
     </ClCompile>
-    <ClCompile Include="aboutC.cpp">
+    <ClCompile Include="aboutC+string.cpp">
       <Filter>소스 파일\example</Filter>
     </ClCompile>
   </ItemGroup>
