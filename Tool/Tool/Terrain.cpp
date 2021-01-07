@@ -202,7 +202,7 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader(pEffect, "g_DiffuseTexture", 1)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader(pEffect, "g_DiffuseTexture", 0)))
 		return E_FAIL;
 
 	D3DMATERIAL9	MtrlInfo;

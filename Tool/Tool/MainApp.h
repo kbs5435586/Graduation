@@ -23,6 +23,8 @@ private:
 	HRESULT Ready_Sampler_State();
 private:
 	HRESULT	Ready_Test_NaviMesh();
+private:
+	HRESULT	Create_FbxManager();
 public:
 	static CMainApp* Create();
 protected:

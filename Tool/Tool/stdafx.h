@@ -67,9 +67,9 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
-
+#include <fbxsdk.h>
 using namespace std;
-
+using namespace fbxsdk;
 
 
 #include "Define.h"

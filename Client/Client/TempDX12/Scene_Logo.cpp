@@ -415,9 +415,6 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Grass",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Grass/Grass_%d.tga", 0, TEXTURE_TGA))))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Elf",
-	//	CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Elf/Elf_Albedo%d.tga", 0, TEXTURE_TGA))))
-	//	return E_FAIL;
 
 	return S_OK;
 }

@@ -128,7 +128,7 @@ HRESULT CSkyBox::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Sky");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_SkyBox");
 	if (nullptr == m_pTextureCom)
 		return E_FAIL;
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))

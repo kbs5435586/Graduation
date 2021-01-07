@@ -29,8 +29,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(Ready_Start_Scene(SCENE_LOGO)))
 		return E_FAIL;
-// 	if (FAILED(Ready_Test_NaviMesh()))
-// 		return E_FAIL;
+	if (FAILED(Create_FbxManager()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -206,6 +206,21 @@ HRESULT CMainApp::Ready_Test_NaviMesh()
 	WriteFile(hFile, vPoint, sizeof(_vec3) * 3, &dwByte, nullptr);
 
 	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Create_FbxManager()
+{
+	if (nullptr != g_FbxManager && g_FbxIOSetting != nullptr)
+		return E_FAIL;
+	g_FbxManager = FbxManager::Create();
+
+	g_FbxIOSetting = FbxIOSettings::Create(g_FbxManager, IOSROOT);
+
+	g_FbxManager->SetIOSettings(g_FbxIOSetting);
+	FbxString	strFbxPath = FbxGetApplicationDirectory();
+	g_FbxManager->LoadPluginsDirectory(strFbxPath.Buffer());
 
 	return S_OK;
 }

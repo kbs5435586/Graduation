@@ -38,6 +38,10 @@ HRESULT CTexture::Ready_Texture(TEXTURE_TYPE eType, const _tchar * pFilePath, co
 		}
 
 		m_vecTexture.push_back(pTexture);
+		int pi = m_vecTexture.size();
+
+
+		int kk = 0;
 	}
 	return S_OK;
 }
@@ -53,7 +57,8 @@ HRESULT CTexture::SetUp_OnGraphicDev(const _uint & iIndex)
 
 HRESULT CTexture::SetUp_OnShader(LPD3DXEFFECT pEffect, const char * pConstantName, const _uint & iIdx)
 {
-	if (m_vecTexture.size() <= iIdx)
+	int i = m_vecTexture.size();
+	if (i <= iIdx)
 		return E_FAIL;
 	if (FAILED(pEffect->SetTexture(pConstantName, m_vecTexture[iIdx])))
 		return E_FAIL;

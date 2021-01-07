@@ -82,7 +82,9 @@ HRESULT CStatic_Mesh::Ready_Mesh_Static(const _tchar * pFilePath, const _tchar *
 
 
 		if (FAILED(D3DXCreateTextureFromFile(m_pGraphic_Device, szTmp, &m_pSubSetDesc[i].MeshTexture.pDiffuseTexture)))
-			return E_FAIL;
+		{
+			
+		}
 
 		lstrcpy(szTmp, szFullPath);
 		if (SUCCEEDED(Change_TextureFileName(szTmp, L"D", L"N")))

@@ -58,15 +58,18 @@ CToolApp::CToolApp()
 CToolApp theApp;
 HINSTANCE g_hInst;
 HWND g_hWnd;
-bool	IsMouseCheck=false;
-bool	m_IsCheckListBox = false;
-bool	IsEditMode = true;
-TOOL_MODE	eMode=MODE_END;
-_tchar*		m_pEdit_Mode;
-_tchar*		m_gLayerTag = L"";
-_bool		m_IsMouseClicked = false;
-_bool		IsWireFrame = false;
-_bool		IsPlay = false;
+bool			IsMouseCheck = false;
+bool			m_IsCheckListBox = false;
+bool			IsEditMode = true;
+TOOL_MODE		eMode = MODE_END;
+_tchar*			m_pEdit_Mode;
+_tchar*			m_gLayerTag = L"";
+_bool			m_IsMouseClicked = false;
+_bool			IsWireFrame = false;
+_bool			IsPlay = false;
+
+FbxManager*		g_FbxManager = nullptr;
+FbxIOSettings*	g_FbxIOSetting = nullptr;
 // CToolApp √ ±‚
 
 BOOL CToolApp::InitInstance()

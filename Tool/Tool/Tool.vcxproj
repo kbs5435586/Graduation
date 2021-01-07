@@ -81,6 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../lib/include/;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>../lib/lib/x64/debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -90,6 +92,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>../lib/include/;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>../lib/lib/x64/debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,10 +124,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dinput8.lib;dxguid.lib;legacy_stdio_definitions.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -171,12 +176,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dinput8.lib;dxguid.lib;legacy_stdio_definitions.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -195,22 +201,13 @@
   <ItemGroup>
     <ClInclude Include="AnimationCtrl.h" />
     <ClInclude Include="AnimationTool.h" />
-    <ClInclude Include="Back_Hp.h" />
-    <ClInclude Include="Back_Mp.h" />
     <ClInclude Include="Base.h" />
-    <ClInclude Include="Beatle.h" />
-    <ClInclude Include="Bee.h" />
     <ClInclude Include="Buffer_CubeTex.h" />
     <ClInclude Include="Buffer_RcTex.h" />
     <ClInclude Include="Buffer_Terrain.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Camera_Debug.h" />
     <ClInclude Include="Cell.h" />
-    <ClInclude Include="Cliff0.h" />
-    <ClInclude Include="Cliff1.h" />
-    <ClInclude Include="Cliff2.h" />
-    <ClInclude Include="Cliff3.h" />
-    <ClInclude Include="Cliff4.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Component_Mgr.h" />
     <ClInclude Include="Constant.h" />
@@ -221,57 +218,15 @@
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="Extern.h" />
-    <ClInclude Include="Fence0.h" />
-    <ClInclude Include="Fence1.h" />
-    <ClInclude Include="Fence2.h" />
-    <ClInclude Include="Fence3.h" />
-    <ClInclude Include="Fence4.h" />
-    <ClInclude Include="Fence5.h" />
-    <ClInclude Include="Fence6.h" />
-    <ClInclude Include="Fence7.h" />
-    <ClInclude Include="Flower0.h" />
-    <ClInclude Include="Flower1.h" />
-    <ClInclude Include="Flower10.h" />
-    <ClInclude Include="Flower2.h" />
-    <ClInclude Include="Flower3.h" />
-    <ClInclude Include="Flower4.h" />
-    <ClInclude Include="Flower5.h" />
-    <ClInclude Include="Flower6.h" />
-    <ClInclude Include="Flower7.h" />
-    <ClInclude Include="Flower8.h" />
-    <ClInclude Include="Flower9.h" />
+    <ClInclude Include="FbxLoader.h" />
+    <ClInclude Include="FbxMesh.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Frame_Mgr.h" />
     <ClInclude Include="Funtion.h" />
     <ClInclude Include="Funtor.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObject_Mgr.h" />
-    <ClInclude Include="Grass0.h" />
-    <ClInclude Include="Grass1.h" />
-    <ClInclude Include="Grass10.h" />
-    <ClInclude Include="Grass11.h" />
-    <ClInclude Include="Grass12.h" />
-    <ClInclude Include="Grass13.h" />
-    <ClInclude Include="Grass14.h" />
-    <ClInclude Include="Grass15.h" />
-    <ClInclude Include="Grass16.h" />
-    <ClInclude Include="Grass17.h" />
-    <ClInclude Include="Grass18.h" />
-    <ClInclude Include="Grass19.h" />
-    <ClInclude Include="Grass2.h" />
-    <ClInclude Include="Grass3.h" />
-    <ClInclude Include="Grass4.h" />
-    <ClInclude Include="Grass5.h" />
-    <ClInclude Include="Grass6.h" />
-    <ClInclude Include="Grass7.h" />
-    <ClInclude Include="Grass8.h" />
-    <ClInclude Include="Grass9.h" />
     <ClInclude Include="HierarchyLoader.h" />
-    <ClInclude Include="Hill0.h" />
-    <ClInclude Include="Hill1.h" />
-    <ClInclude Include="Hill2.h" />
-    <ClInclude Include="House0.h" />
-    <ClInclude Include="HP.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Light.h" />
@@ -281,31 +236,15 @@
     <ClInclude Include="MainApp.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Management.h" />
-    <ClInclude Include="Mantis.h" />
-    <ClInclude Include="Monkey.h" />
-    <ClInclude Include="MP.h" />
     <ClInclude Include="MyFont.h" />
     <ClInclude Include="Navi.h" />
     <ClInclude Include="NaviMesh.h" />
-    <ClInclude Include="NPC.h" />
-    <ClInclude Include="OnHeadFont.h" />
     <ClInclude Include="Picking.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="Rock0.h" />
-    <ClInclude Include="Rock1.h" />
-    <ClInclude Include="Rock2.h" />
-    <ClInclude Include="Rock3.h" />
-    <ClInclude Include="Rock4.h" />
-    <ClInclude Include="Rock5.h" />
-    <ClInclude Include="Rock6.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SecondWnd.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="SkHouse0.h" />
-    <ClInclude Include="SkHouse1.h" />
-    <ClInclude Include="SkHouse2.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Static_Mesh.h" />
     <ClInclude Include="stdafx.h" />
@@ -321,111 +260,36 @@
     <ClInclude Include="ToolDoc.h" />
     <ClInclude Include="ToolView.h" />
     <ClInclude Include="Tool_Scene.h" />
-    <ClInclude Include="Tower.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Tree0.h" />
-    <ClInclude Include="Tree1.h" />
-    <ClInclude Include="Tree2.h" />
-    <ClInclude Include="Tree3.h" />
-    <ClInclude Include="Tree4.h" />
-    <ClInclude Include="Tree5.h" />
-    <ClInclude Include="Tree6.h" />
-    <ClInclude Include="Tree7.h" />
-    <ClInclude Include="Tree8.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="Typedef.h" />
-    <ClInclude Include="UD_HeavyInfantry.h" />
-    <ClInclude Include="UD_LightCarvarly.h" />
-    <ClInclude Include="UD_Worker.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="UnitTool.h" />
-    <ClInclude Include="Vergos.h" />
     <ClInclude Include="VIBuffer.h" />
-    <ClInclude Include="Wall0.h" />
-    <ClInclude Include="Wall1.h" />
-    <ClInclude Include="Wall10.h" />
-    <ClInclude Include="Wall2.h" />
-    <ClInclude Include="Wall3.h" />
-    <ClInclude Include="Wall4.h" />
-    <ClInclude Include="Wall5.h" />
-    <ClInclude Include="Wall6.h" />
-    <ClInclude Include="Wall7.h" />
-    <ClInclude Include="Wall8.h" />
-    <ClInclude Include="Wall9.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationCtrl.cpp" />
     <ClCompile Include="AnimationTool.cpp" />
-    <ClCompile Include="Back_Hp.cpp" />
-    <ClCompile Include="Back_Mp.cpp" />
     <ClCompile Include="Base.cpp" />
-    <ClCompile Include="Beatle.cpp" />
-    <ClCompile Include="Bee.cpp" />
     <ClCompile Include="Buffer_CubeTex.cpp" />
     <ClCompile Include="Buffer_RcTex.cpp" />
     <ClCompile Include="Buffer_Terrain.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Camera_Debug.cpp" />
     <ClCompile Include="Cell.cpp" />
-    <ClCompile Include="Cliff0.cpp" />
-    <ClCompile Include="Cliff1.cpp" />
-    <ClCompile Include="Cliff2.cpp" />
-    <ClCompile Include="Cliff3.cpp" />
-    <ClCompile Include="Cliff4.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Component_Mgr.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="Dynamic_Mesh.cpp" />
     <ClCompile Include="EffectBuffer.cpp" />
     <ClCompile Include="EffectTool.cpp" />
-    <ClCompile Include="Fence0.cpp" />
-    <ClCompile Include="Fence1.cpp" />
-    <ClCompile Include="Fence2.cpp" />
-    <ClCompile Include="Fence3.cpp" />
-    <ClCompile Include="Fence4.cpp" />
-    <ClCompile Include="Fence5.cpp" />
-    <ClCompile Include="Fence6.cpp" />
-    <ClCompile Include="Fence7.cpp" />
-    <ClCompile Include="Flower0.cpp" />
-    <ClCompile Include="Flower1.cpp" />
-    <ClCompile Include="Flower10.cpp" />
-    <ClCompile Include="Flower2.cpp" />
-    <ClCompile Include="Flower3.cpp" />
-    <ClCompile Include="Flower4.cpp" />
-    <ClCompile Include="Flower5.cpp" />
-    <ClCompile Include="Flower6.cpp" />
-    <ClCompile Include="Flower7.cpp" />
-    <ClCompile Include="Flower8.cpp" />
-    <ClCompile Include="Flower9.cpp" />
+    <ClCompile Include="FbxLoader.cpp" />
+    <ClCompile Include="FbxMesh.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Frame_Mgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObject_Mgr.cpp" />
-    <ClCompile Include="Grass0.cpp" />
-    <ClCompile Include="Grass1.cpp" />
-    <ClCompile Include="Grass10.cpp" />
-    <ClCompile Include="Grass11.cpp" />
-    <ClCompile Include="Grass12.cpp" />
-    <ClCompile Include="Grass13.cpp" />
-    <ClCompile Include="Grass14.cpp" />
-    <ClCompile Include="Grass15.cpp" />
-    <ClCompile Include="Grass16.cpp" />
-    <ClCompile Include="Grass17.cpp" />
-    <ClCompile Include="Grass18.cpp" />
-    <ClCompile Include="Grass19.cpp" />
-    <ClCompile Include="Grass2.cpp" />
-    <ClCompile Include="Grass3.cpp" />
-    <ClCompile Include="Grass4.cpp" />
-    <ClCompile Include="Grass5.cpp" />
-    <ClCompile Include="Grass6.cpp" />
-    <ClCompile Include="Grass7.cpp" />
-    <ClCompile Include="Grass8.cpp" />
-    <ClCompile Include="Grass9.cpp" />
     <ClCompile Include="HierarchyLoader.cpp" />
-    <ClCompile Include="Hill0.cpp" />
-    <ClCompile Include="Hill1.cpp" />
-    <ClCompile Include="Hill2.cpp" />
-    <ClCompile Include="House0.cpp" />
-    <ClCompile Include="HP.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -434,30 +298,14 @@
     <ClCompile Include="MainApp.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Management.cpp" />
-    <ClCompile Include="Mantis.cpp" />
-    <ClCompile Include="Monkey.cpp" />
-    <ClCompile Include="MP.cpp" />
     <ClCompile Include="MyFont.cpp" />
     <ClCompile Include="Navi.cpp" />
     <ClCompile Include="NaviMesh.cpp" />
-    <ClCompile Include="NPC.cpp" />
-    <ClCompile Include="OnHeadFont.cpp" />
     <ClCompile Include="Picking.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Rock0.cpp" />
-    <ClCompile Include="Rock1.cpp" />
-    <ClCompile Include="Rock2.cpp" />
-    <ClCompile Include="Rock3.cpp" />
-    <ClCompile Include="Rock4.cpp" />
-    <ClCompile Include="Rock5.cpp" />
-    <ClCompile Include="Rock6.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SecondWnd.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="SkHouse0.cpp" />
-    <ClCompile Include="SkHouse1.cpp" />
-    <ClCompile Include="SkHouse2.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Static_Mesh.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -476,35 +324,11 @@
     <ClCompile Include="ToolDoc.cpp" />
     <ClCompile Include="ToolView.cpp" />
     <ClCompile Include="Tool_Scene.cpp" />
-    <ClCompile Include="Tower.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Tree0.cpp" />
-    <ClCompile Include="Tree1.cpp" />
-    <ClCompile Include="Tree2.cpp" />
-    <ClCompile Include="Tree3.cpp" />
-    <ClCompile Include="Tree4.cpp" />
-    <ClCompile Include="Tree5.cpp" />
-    <ClCompile Include="Tree6.cpp" />
-    <ClCompile Include="Tree7.cpp" />
-    <ClCompile Include="Tree8.cpp" />
-    <ClCompile Include="UD_HeavyInfantry.cpp" />
-    <ClCompile Include="UD_LightCarvarly.cpp" />
-    <ClCompile Include="UD_Worker.cpp" />
+    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="UnitTool.cpp" />
-    <ClCompile Include="Vergos.cpp" />
     <ClCompile Include="VIBuffer.cpp" />
-    <ClCompile Include="Wall0.cpp" />
-    <ClCompile Include="Wall1.cpp" />
-    <ClCompile Include="Wall10.cpp" />
-    <ClCompile Include="Wall2.cpp" />
-    <ClCompile Include="Wall3.cpp" />
-    <ClCompile Include="Wall4.cpp" />
-    <ClCompile Include="Wall5.cpp" />
-    <ClCompile Include="Wall6.cpp" />
-    <ClCompile Include="Wall7.cpp" />
-    <ClCompile Include="Wall8.cpp" />
-    <ClCompile Include="Wall9.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tool.rc" />
@@ -523,24 +347,40 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
     <FxCompile Include="ShaderFiles\Shader_Mesh.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
     <FxCompile Include="ShaderFiles\Shader_Sky.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
     <FxCompile Include="ShaderFiles\Shader_Terrain.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
