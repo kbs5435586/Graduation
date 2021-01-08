@@ -410,11 +410,14 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Elf/Elf_Albedo%d.png", 0, TEXTURE_TYPE_ELSE))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test_Orc",
+		CTexture::Create(m_pGraphic_Device, L"../Resource/Mesh/Orc/Orc_01/Textures/Orc_01_Weapon_Albedo%d.png", 0, TEXTURE_TYPE_ELSE))))
+		return E_FAIL;
 	// TGA 
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Grass",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Grass/Grass_%d.tga", 0, TEXTURE_TGA))))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -422,8 +425,12 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 HRESULT CScene_Logo::Add_Prototype_Component_Static_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Elf",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/FBX/Elf/Elf_Mesh.FBX"))))
+		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Mesh/Elf/Elf_Mesh.FBX"))))
 		return E_FAIL;
+
+	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Orc",
+	//	CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Mesh/Orc/Orc_01/Mesh/Orc_01_Weapon_Mesh.FBX"))))
+	//	return E_FAIL;
 
 	return S_OK;
 }

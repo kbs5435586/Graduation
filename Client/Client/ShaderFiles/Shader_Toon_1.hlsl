@@ -60,7 +60,7 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	
 	float fDot = max(0, dot(vIn.vNormal, vLightDirection));
 
-	fDot = (ceil(fDot * 2.f) / 2.f);
+	fDot = (ceil(fDot * 3.f) / 3.f);
 
 	float4	vMtrlDif = vLightDiffuse * vMaterialDiffuse * fDot;
 	float4	vMtrlAmb = vLightAmbient * vMaterialAmbient * fDot;
@@ -68,7 +68,7 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 
 	float3	fRimColor = float3(-2.f,-2.f,-2.f);
 	float	fRim = saturate(dot(vIn.vNormal, vCamPos));
-	float	fRimPower = 10.f;
+	float	fRimPower = 2.f;
 	if (fRim > 0.3f)
 		fRim = 1.f;
 	else
