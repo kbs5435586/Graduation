@@ -19,6 +19,12 @@
     <Filter Include="소스 파일\example">
       <UniqueIdentifier>{449bded9-2ef1-4eb5-b284-477d309bd93d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\ClassExample">
+      <UniqueIdentifier>{76725d04-79fc-4092-8371-502f5e651d5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\ClassHeader">
+      <UniqueIdentifier>{de62e84f-c18d-44dd-a519-5af3f7f0aae4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bank.cpp">
@@ -42,8 +48,17 @@
     <ClCompile Include="overload.cpp">
       <Filter>소스 파일\example</Filter>
     </ClCompile>
-    <ClCompile Include="aboutC+string.cpp">
+    <ClCompile Include="question.cpp">
       <Filter>소스 파일\example</Filter>
+    </ClCompile>
+    <ClCompile Include="aboutC++.cpp">
+      <Filter>소스 파일\example</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일\ClassExample</Filter>
+    </ClCompile>
+    <ClCompile Include="Dog.cpp">
+      <Filter>소스 파일\ClassExample</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="onlyVoid.h">
       <Filter>소스 파일\Bank</Filter>
+    </ClInclude>
+    <ClInclude Include="Dog.h">
+      <Filter>헤더 파일\ClassHeader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

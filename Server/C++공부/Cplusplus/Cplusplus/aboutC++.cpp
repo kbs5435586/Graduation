@@ -8,6 +8,10 @@ struct student {
 	int score;
 };
 
+//템플릿 함수
+template <class T>
+T square(T x);
+
 int main()
 {
 	// const와 포인터 차이
@@ -96,15 +100,28 @@ int main()
 	//====================================================================================================
 
 	//구조체의 포인터
-	student Kim = { "Byeon Suk",26,95 };
-	student* pt;
-	pt = &Kim;
+	//student Kim = { "Byeon Suk",26,95 };
+	//student* pt;
+	//pt = &Kim;
 
-	void changeStruct(student* temp);
+	//void changeStruct(student* temp);
 
-	cout << "변경 전 : " << Kim.name << " , " << Kim.num << " , " << Kim.score << endl;
-	changeStruct(&Kim);
-	cout << "변경 후 : " << Kim.name << " , " << Kim.num << " , " << Kim.score << endl;
+	//cout << "변경 전 : " << Kim.name << " , " << Kim.num << " , " << Kim.score << endl;
+	//changeStruct(&Kim);
+	//cout << "변경 후 : " << Kim.name << " , " << Kim.num << " , " << Kim.score << endl;
+
+	//====================================================================================================
+
+	//템플릿 함수
+	int ir = square(8);
+	cout << ir;
+
+}
+
+template <class T>
+T square(T x)
+{
+	return x * x;
 }
 
 void changeStruct(student* temp)
