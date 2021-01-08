@@ -89,7 +89,8 @@ HRESULT CScene_Logo::Ready_Prototype_Component()
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-	
+	if (FAILED(Add_Prototype_Component_Function(pManagement)))
+		return E_FAIL;
 	if (FAILED(Add_Prototype_Component_Shader(pManagement)))
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Component_Buffer(pManagement)))
@@ -100,6 +101,7 @@ HRESULT CScene_Logo::Ready_Prototype_Component()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Component_Dynamic_Mesh(pManagement)))
 		return E_FAIL;
+
 	Safe_Release(pManagement);
 
 	return S_OK;
@@ -110,8 +112,6 @@ HRESULT CScene_Logo::Ready_Layer()
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_TempStatic_Mesh(L"Layer_TempStatic_Mesh")))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_TextureRect(L"Layer_TextureRect")))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain")))
 		return E_FAIL;
@@ -166,8 +166,8 @@ HRESULT CScene_Logo::Ready_Layer_Camera(const _tchar* pLayerTag)
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
-	tProjDesc.fNear = 0.2f;
-	tProjDesc.fFar = 5000.f;
+	tProjDesc.fNear = g_Near;
+	tProjDesc.fFar = g_Far;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -403,15 +403,12 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Bricks",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Bricks/bricks%d.dds", 3, TEXTURE_TYPE_DDS))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_ELSE",
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_SkyBox",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/SkyBox/SkyBox%d.dds", 0, TEXTURE_TYPE_DDS))))
 		return E_FAIL;
 	// PNG
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test",
 		CTexture::Create(m_pGraphic_Device, L"../Resource/Texture/Elf/Elf_Albedo%d.png", 0, TEXTURE_TYPE_ELSE))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Test_Orc",
-		CTexture::Create(m_pGraphic_Device, L"../Resource/Mesh/Orc/Orc_01/Textures/Orc_01_Weapon_Albedo%d.png", 0, TEXTURE_TYPE_ELSE))))
 		return E_FAIL;
 	// TGA 
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Texture_Grass",
@@ -441,6 +438,13 @@ HRESULT CScene_Logo::Add_Prototype_Component_Dynamic_Mesh(CManagement* pManageme
 	//	CDynamic_Mesh::Create(m_pGraphic_Device,"../Resource/FBX/Monster/Monster3/Idle.fbx"))))
 	//	return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Add_Prototype_Component_Function(CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Frustum", CFrustum::Create(m_pGraphic_Device))))
+		return E_FAIL;
 	return S_OK;
 }
 

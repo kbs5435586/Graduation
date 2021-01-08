@@ -34,6 +34,7 @@ private:
 	HRESULT					Add_Prototype_Component_Texture(CManagement* pManagement);
 	HRESULT					Add_Prototype_Component_Static_Mesh(CManagement* pManagement);
 	HRESULT					Add_Prototype_Component_Dynamic_Mesh(CManagement* pManagemet);
+	HRESULT					Add_Prototype_Component_Function(CManagement* pManagement);
 public:
 	static CScene_Logo*		Create(ID3D12Device* pGraphic_Device);
 protected:

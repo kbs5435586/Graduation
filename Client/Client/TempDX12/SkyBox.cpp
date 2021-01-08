@@ -40,7 +40,7 @@ HRESULT CSkyBox::Ready_GameObject(void* pArg)
 	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(5000.f, 5000.f, 5000.f);
+	m_pTransformCom->Scaling(1000.f, 1000.f, 1000.f);
 
 	return S_OK;
 }
@@ -298,7 +298,7 @@ HRESULT CSkyBox::Ready_Component(void* pArg)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_ELSE");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_SkyBox");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

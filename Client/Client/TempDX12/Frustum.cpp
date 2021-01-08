@@ -43,38 +43,115 @@ HRESULT CFrustum::Transform_ToWorld()
 
 _bool CFrustum::Culling_Frustum(CTransform* pTransform, const _float& fRadius)
 {
-	_vec3		vPoint[8];
-	memcpy(vPoint, m_vPoint, sizeof(_vec3) * 8);
+	XMMATRIX	xmMatView, xmMatProj;
+	_matrix  matView, matProj;
 
-	_vec3		vPosition = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	_matrix		matWorldInv = pTransform->Get_Matrix_Inverse();
-	XMMATRIX	xmMatWorldInv = ::XMLoadFloat4x4(&matWorldInv);
+	matView = CDevice::GetInstance()->GetViewMatrix();
+	matProj = CDevice::GetInstance()->GetProjectionMatrix();
 
-	vPosition = Vector3_::TransformCoord(vPosition, xmMatWorldInv);
-	
-	for (_uint i = 0; i < 8; ++i)
-		vPoint[i] = Vector3_::TransformCoord(vPoint[i], xmMatWorldInv);
+	_float	fZmin = -matProj._43 / matProj._33;
+	_float	fR = g_Far / (g_Far - fZmin);
+
+	matProj._33 = fR;
+	matProj._43 = -fR * fZmin;
+
+	xmMatView = XMLoadFloat4x4(&matView);
+	xmMatProj = XMLoadFloat4x4(&matProj);
+
+	XMMATRIX	matFinalMatrix = XMMatrixMultiply(xmMatView, xmMatProj);
+
+	_matrix		matTemp;
+	XMStoreFloat4x4(&matTemp, matFinalMatrix);
+
+	// -Z
+	_float	fX = (_float)(matTemp._14 + matTemp._13);
+	_float	fY = (_float)(matTemp._24 + matTemp._23);
+	_float	fZ = (_float)(matTemp._34 + matTemp._33);
+	_float	fW = (_float)(matTemp._44 + matTemp._43);
+	m_Plane[0] = XMVectorSet(fX, fY, fZ, fW);
+	m_Plane[0] = XMPlaneNormalize(m_Plane[0]);
+
+	// +Z
+	fX = (_float)(matTemp._14 - matTemp._13);
+	fY = (_float)(matTemp._24 - matTemp._23);
+	fZ = (_float)(matTemp._34 - matTemp._33);
+	fW = (_float)(matTemp._44 - matTemp._43);
+	m_Plane[1] = XMVectorSet(fX, fY, fZ, fW);
+	m_Plane[1] = XMPlaneNormalize(m_Plane[1]);
+
+	// -X
+	fX = (_float)(matTemp._14 + matTemp._11);
+	fY = (_float)(matTemp._24 + matTemp._21);
+	fZ = (_float)(matTemp._34 + matTemp._31);
+	fW = (_float)(matTemp._44 + matTemp._41);
+	m_Plane[2] = XMVectorSet(fX, fY, fZ, fW);
+	m_Plane[2] = XMPlaneNormalize(m_Plane[2]);
+
+	// +X
+	fX = (_float)(matTemp._14 - matTemp._11);
+	fY = (_float)(matTemp._24 - matTemp._21);
+	fZ = (_float)(matTemp._34 - matTemp._31);
+	fW = (_float)(matTemp._44 - matTemp._41);
+	m_Plane[3] = XMVectorSet(fX, fY, fZ, fW);
+	m_Plane[3] = XMPlaneNormalize(m_Plane[3]);
+
+
+	// +Y
+	fX = (_float)(matTemp._14 - matTemp._12);
+	fY = (_float)(matTemp._24 - matTemp._22);
+	fZ = (_float)(matTemp._34 - matTemp._32);
+	fW = (_float)(matTemp._44 - matTemp._42);
+	m_Plane[4] = XMVectorSet(fX, fY, fZ, fW);
+	m_Plane[4] = XMPlaneNormalize(m_Plane[4]);
+
+
+	// -Y
+	fX = (_float)(matTemp._14 + matTemp._12);
+	fY = (_float)(matTemp._24 + matTemp._22);
+	fZ = (_float)(matTemp._34 + matTemp._32);
+	fW = (_float)(matTemp._44 + matTemp._42);
+	m_Plane[5] = XMVectorSet(fX, fY, fZ, fW);
+	m_Plane[5] = XMPlaneNormalize(m_Plane[5]);
 
 
 
-	return _bool();
+	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	return Isin_Frustum(&vPos, fRadius);
 }
 
 _bool CFrustum::Isin_Frustum(const _vec3* pPosition, const _float& fRadius)
 {
-	return _bool();
+	for (_uint i = 0; i < 6; ++i)
+	{
+		XMVECTOR xmVector;
+
+		_float fTemp = XMVectorGetX(XMPlaneDotCoord(m_Plane[i], XMVectorSet(pPosition->x, pPosition->y, pPosition->z, 1.f)));
+		if (0.f > fTemp)
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 CFrustum* CFrustum::Create(ID3D12Device* pGraphic_Device)
 {
-	return nullptr;
+	CFrustum* pInstance = new CFrustum(pGraphic_Device);
+
+	if (FAILED(pInstance->Ready_Frustum()))
+	{
+		MessageBox(0, L"CFrustum Created Failed", L"System Error", MB_OK);
+		Safe_Release(pInstance);
+	}
+	return pInstance;
 }
 
 CComponent* CFrustum::Clone_Component(void* pArg)
 {
-	return nullptr;
+	return new CFrustum(*this);
 }
 
 void CFrustum::Free()
 {
+	CComponent::Free();
 }

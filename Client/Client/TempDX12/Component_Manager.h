@@ -15,6 +15,7 @@
 #include "Texture.h"
 #include "Dynamic_Mesh.h"
 #include "Static_Mesh.h"
+#include "Frustum.h"
 
 
 class CComponent;

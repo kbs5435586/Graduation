@@ -97,8 +97,12 @@ _int CTempStaticMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+
+	}
 
 
 	return _int();
@@ -345,6 +349,11 @@ HRESULT CTempStaticMesh::Ready_Component()
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Test");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
+
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

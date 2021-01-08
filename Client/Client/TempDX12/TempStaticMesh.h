@@ -4,8 +4,8 @@ class CTransform;
 class CShader;
 class CRenderer;
 class CStatic_Mesh;
-
 class CTexture;
+class CFrustum;
 
 class CTempStaticMesh :
     public CGameObject
@@ -42,5 +42,6 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CStatic_Mesh*							m_pMeshCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 };
 
