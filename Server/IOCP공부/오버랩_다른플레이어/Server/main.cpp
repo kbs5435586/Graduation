@@ -102,7 +102,7 @@ int main()
 			g_client[sock].netData.over.hEvent = (HANDLE)sock;
 			int ret = WSARecv(sock, &g_client[sock].netData.wsabuf, 1, NULL, &flags, &g_client[sock].netData.over, recv_complete);
 		}
-		playerCount++
+		playerCount++;
 	}
 	closesocket(listenSocket);
 	WSACleanup();

@@ -2,38 +2,18 @@
 
 Dog::Dog()
 {
-	m_age = 3;
-	m_weight = 10;
 }
 
-Dog::Dog(int age, int weight)
+Dog::~Dog()
 {
-	m_age = age;
-	m_weight = weight;
 }
 
-int Dog::getAge()
+Color Dog::getColor()
 {
-	return m_age;
+	return m_color;
 }
 
-int Dog::getWeight()
+void Dog::setColor(Color color)
 {
-	return m_weight;
-}
-
-void Dog::setAge(unsigned int a)
-{
-	m_age = a;
-}
-
-void Dog::setWeight(unsigned int a)
-{
-	m_weight = a;
-}
-
-void Dog::showInfo()
-{
-	cout << "age : " << m_age << endl;
-	cout << "weight : " << m_weight << endl;
+	m_color = color;
 }
