@@ -1,23 +1,14 @@
-#pragma once
-#include "pch.h"
-
-class Dog
+#include "Mammal.h"
+class Dog : public Mammal
 {
 public:
 	Dog();
-	Dog(int age, int weight);
+	~Dog();
 
 private:
-	int m_age;
-	int m_weight;
+	Color m_color;
 
 public:
-	int getAge();
-	int getWeight();
-
-	void setAge(unsigned int a);
-	void setWeight(unsigned int a);
-
-	void showInfo();
+	Color getColor();
+	void setColor(Color color);
 };
-

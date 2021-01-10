@@ -13,3 +13,5 @@ struct Info
 	int account = 0;
 	int cash = 0;
 };
+
+enum Color { COLOR_BLACK, COLOR_YELLOW, COLOR_BROWN, COLOR_RED, COLOR_END };

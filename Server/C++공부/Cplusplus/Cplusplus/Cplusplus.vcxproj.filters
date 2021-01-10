@@ -57,7 +57,13 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일\ClassExample</Filter>
     </ClCompile>
+    <ClCompile Include="Mammal.cpp">
+      <Filter>소스 파일\ClassExample</Filter>
+    </ClCompile>
     <ClCompile Include="Dog.cpp">
+      <Filter>소스 파일\ClassExample</Filter>
+    </ClCompile>
+    <ClCompile Include="Cat.cpp">
       <Filter>소스 파일\ClassExample</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +86,13 @@
     <ClInclude Include="onlyVoid.h">
       <Filter>소스 파일\Bank</Filter>
     </ClInclude>
+    <ClInclude Include="Mammal.h">
+      <Filter>헤더 파일\ClassHeader</Filter>
+    </ClInclude>
     <ClInclude Include="Dog.h">
+      <Filter>헤더 파일\ClassHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="Cat.h">
       <Filter>헤더 파일\ClassHeader</Filter>
     </ClInclude>
   </ItemGroup>
