@@ -1,0 +1,19 @@
+HANDLE CreateIoCompletionPort (
+	HANDLE FileHandle,
+	HANDLE ExistingCompletionPort,
+	ULONG_PTR CompletionKey,
+	DWORD NumberOfConcurrentThreads };
+
+HANDLE hIOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0};
+
+커널 객체 생성 API
+FileHandle에는 무조건 INVALID_HANDLE_VALUE가 들어가야함 그래야 IOCP 객체를 생성함
+NumberOfConcurrentThreads - IOCP 객체가 동시에 컨트롤 할 수 있는 쓰레드 수
+0을 넣으면 컴퓨터에 돌아가는 코어의 갯수만큼 사용하겠다는 뜻
+
+HANDLE CreateIoCompletionPort(socket, hIOCP, key, 0};
+
+IOCP 객체를 만들었으니 이제 객체를 이용해 send recv를 해야함
+데이터 통신을 하려면 소켓을 IOCP 객체에 등록을 해줘야함
+등록을 해줘야 소켓의 send recv가 IOCP 객체를 통해서 이루어짐
+

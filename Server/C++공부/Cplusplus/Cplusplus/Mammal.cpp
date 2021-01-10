@@ -14,6 +14,7 @@
 
 Mammal::Mammal()
 {
+	cout << "Mammal 持失切" << endl;
 	m_id = 1004;
 	m_age = 3;
 	m_weight = 10;
@@ -21,6 +22,7 @@ Mammal::Mammal()
 
 Mammal::Mammal(int id, int age, int weight)
 {
+	cout << "Mammal 持失切" << endl;
 	m_id = id;
 	m_age = age;
 	m_weight = weight;
@@ -28,6 +30,7 @@ Mammal::Mammal(int id, int age, int weight)
 
 Mammal::~Mammal()
 {
+	cout << "Mammal 社瑚切" << endl;
 }
 
 int Mammal::getAge() const

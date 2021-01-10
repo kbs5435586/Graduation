@@ -21,6 +21,7 @@ public:
 	void setAge(unsigned int a);
 	void setWeight(unsigned int a);
 
-	void showInfo();
+	virtual void showSound() = 0;
+	virtual void showInfo();
 };
 
