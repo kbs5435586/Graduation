@@ -474,7 +474,6 @@ void CDevice::Close()
 
 void CDevice::Begin()
 {
-
 	if (FAILED(CDevice::GetInstance()->GetCommandAllocator()->Reset()))
 		return;
 	Open();

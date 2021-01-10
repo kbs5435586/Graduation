@@ -130,9 +130,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer">
       <UniqueIdentifier>{fe0efd13-d3cb-4284-8daa-c4ab6b610f5a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\00. Buffer_TriCol">
-      <UniqueIdentifier>{60bbc1d2-7014-4ac7-8cb1-fa2bc8b8dccc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\01. Buffer_RectCol">
       <UniqueIdentifier>{84b43483-5236-46b2-9bcc-5f81174f7747}</UniqueIdentifier>
     </Filter>
@@ -210,6 +207,9 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\06. Frustum">
       <UniqueIdentifier>{21b70d8a-3514-464f-ab30-08af688e8d86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\00. Buffer_TriCol">
+      <UniqueIdentifier>{60bbc1d2-7014-4ac7-8cb1-fa2bc8b8dccc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

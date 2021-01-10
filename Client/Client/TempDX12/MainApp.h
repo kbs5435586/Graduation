@@ -1,4 +1,4 @@
-#pragma once
+      #pragma once
 #include "Base.h"
 class CDevice;
 class CManagement;

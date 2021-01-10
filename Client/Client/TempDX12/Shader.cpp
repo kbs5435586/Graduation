@@ -140,18 +140,6 @@ XMFLOAT4X4 CShader::FbxMatrixToXmFloat4x4Matrix(FbxAMatrix* pfbxmtxSource)
 	XMFLOAT3 xmf3S = XMFLOAT3((float)S.mData[0], (float)S.mData[1], (float)S.mData[2]);
 	XMFLOAT3 xmf3R = XMFLOAT3((float)R.mData[0], (float)R.mData[1], (float)R.mData[2]);
 	XMFLOAT3 xmf3T = XMFLOAT3((float)T.mData[0], (float)T.mData[1], (float)T.mData[2]);
-	//	XMFLOAT4X4 xmf4x4Transform;
-	//	XMStoreFloat4x4(&xmf4x4Transform, XMMatrixAffineTransformation(XMLoadFloat3(&xmf3S), XMVectorZero(), XMQuaternionRotationRollPitchYaw(XMConvertToRadians(xmf3R.x), XMConvertToRadians(xmf3R.y), XMConvertToRadians(xmf3R.z)), XMLoadFloat3(&xmf3T)));
-
-		//XMFLOAT4X4 xmf4x4Translation;
-		//XMMATRIX xmT = XMMatrixTranslation(xmf3T.x, xmf3T.y, xmf3T.z);
-		//XMStoreFloat4x4(&xmf4x4Translation, xmT);
-		//XMFLOAT4X4 xmf4x4Rotation;
-		//XMMATRIX xmR = XMMatrixRotationRollPitchYaw(XMConvertToRadians(xmf3R.x), XMConvertToRadians(xmf3R.y), XMConvertToRadians(xmf3R.z));
-		//XMStoreFloat4x4(&xmf4x4Rotation, xmR);
-		//XMStoreFloat4x4(&xmf4x4Rotation, ));
-		//XMFLOAT4X4 xmf4x4Scale;
-		//XMStoreFloat4x4(&xmf4x4Scale, XMMatrixScaling(xmf3S.x, xmf3S.y, xmf3S.z));
 
 	XMMATRIX Rx = XMMatrixRotationX(XMConvertToRadians(xmf3R.x));
 	XMMATRIX Ry = XMMatrixRotationY(XMConvertToRadians(xmf3R.y));
