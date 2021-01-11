@@ -2,13 +2,14 @@
 #include "Texture.h"
 #include "DDSTextureLoader.h"
 
-CTexture::CTexture(ID3D12Device* pGraphic_Device)
-	: CComponent(pGraphic_Device)
+CTexture::CTexture()
+	: CComponent()
 {
 }
 
 CTexture::CTexture(const CTexture& rhs)
 	: CComponent(rhs)
+	, m_vecSrvDescriptorIncrementSize(rhs.m_vecSrvDescriptorIncrementSize)
 	, m_vecTextureUpload(rhs.m_vecTextureUpload)
 	, m_vecTexture(rhs.m_vecTexture)
 	, m_vecDescriptorHeap(rhs.m_vecDescriptorHeap)
@@ -24,78 +25,49 @@ CTexture::CTexture(const CTexture& rhs)
 		iter->AddRef();
 	for (auto& iter : m_vecDescriptorHeap)
 		iter->AddRef();
-	{
-		if (wicConverter)
-			wicConverter->AddRef();
-		if (wicFactory)
-			wicFactory->AddRef();
-		if (wicDecoder)
-			wicDecoder->AddRef();
-		if (wicFrame)
-			wicFrame->AddRef();
-	}
+
+	if (wicConverter)
+		wicConverter->AddRef();
+	if (wicFactory)
+		wicFactory->AddRef();
+	if (wicDecoder)
+		wicDecoder->AddRef();
+	if (wicFrame)
+		wicFrame->AddRef();
 
 }
 
 
-HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType)
+HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube)
 {
-	m_vecTexture.reserve(iNum);
-	m_vecTextureUpload.reserve(iNum);
-	m_vecDescriptorHeap.reserve(iNum);
-	m_vecSrvDescriptorIncrementSize.reserve(iNum);
 
 	ID3D12Resource* pTexture = nullptr;
 	ID3D12Resource* pTextureUpload = nullptr;
 	_tchar	szFilePath[MAX_PATH] = L"";
 
 	CDevice::GetInstance()->Open();
-	if (eType == TEXTURE_TYPE_DDS)
+	if (eType == TEXTURE_TYPE::TEXTURE_TYPE_DDS)
 	{
-		if (iNum == 0)
+
+		for (_uint i = 0; i < iNum; ++i)
 		{
+			wsprintf(szFilePath, pFilepath, i);
 
-			wsprintf(szFilePath, pFilepath, 0);
-
-			if (FAILED(CreateDDSTextureFromFile12(CDevice::GetInstance()->GetDevice(),
-				CDevice::GetInstance()->GetCommandList(), szFilePath, pTexture, pTextureUpload)))
-			{
+			if (FAILED(CreateDDSTextureFromFile12(CDevice::GetInstance()->GetDevice().Get(),
+				CDevice::GetInstance()->GetCmdLst().Get(), szFilePath, pTexture, pTextureUpload)))
 				return E_FAIL;
-			}
-			if (pTexture != nullptr)
-			{
-				m_vecTexture.push_back(pTexture);
-				m_vecTextureUpload.push_back(pTextureUpload);
-			}
+			m_vecTexture.push_back(pTexture);
+			m_vecTextureUpload.push_back(pTextureUpload);
 			if (FAILED(Create_Shader_Resource_Heap()))
 				return E_FAIL;
 		}
-		else
-		{
-			for (_uint i = 0; i < iNum; ++i)
-			{
-				wsprintf(szFilePath, pFilepath, i);
 
-				if (FAILED(CreateDDSTextureFromFile12(CDevice::GetInstance()->GetDevice(),
-					CDevice::GetInstance()->GetCommandList(), szFilePath, pTexture, pTextureUpload)))
-					return E_FAIL;
-
-				if (pTexture != nullptr)
-				{
-					m_vecTexture.push_back(pTexture);
-					m_vecTextureUpload.push_back(pTextureUpload);
-				}
-				if (FAILED(Create_Shader_Resource_Heap()))
-					return E_FAIL;
-			}
-		}
 	}
-	else if (eType == TEXTURE_TYPE_ELSE)
+	else if (eType == TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG)
 	{
-		if (iNum == 0)
+		for (_uint i = 0; i < iNum; ++i)
 		{
-			wsprintf(szFilePath, pFilepath, 0);
-
+			wsprintf(szFilePath, pFilepath, i);
 			BYTE* imageData;
 			D3D12_RESOURCE_DESC textureDesc;
 			int imageBytesPerRow;
@@ -127,36 +99,25 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			textureData.RowPitch = imageBytesPerRow;
 			textureData.SlicePitch = imageBytesPerRow * textureDesc.Height;
 
-			UpdateSubresources(CDevice::GetInstance()->GetCommandList(), pTexture, pTextureUpload, 0, 0, 1, &textureData);
+			UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), pTexture, pTextureUpload, 0, 0, 1, &textureData);
 
-			if (pTexture != nullptr)
-			{
-				pTexture->SetName(L"Texture");
-				m_vecTexture.push_back(pTexture);
-				pTextureUpload->SetName(L"Upload");
-				m_vecTextureUpload.push_back(pTextureUpload);
-			}
+			m_vecTexture.push_back(pTexture);
+			m_vecTextureUpload.push_back(pTextureUpload);
 			if (FAILED(Create_Shader_Resource_Heap()))
 				return E_FAIL;
 
 			Safe_Delete(imageData);
+
 		}
-		else
-		{
-			for (_uint i = 0; i < iNum; ++i)
-			{
-				wsprintf(szFilePath, pFilepath, i);
 
-
-
-			}
-		}
 	}
-	else if (eType == TEXTURE_TGA)
+	else if (eType == TEXTURE_TYPE::TEXTURE_TGA)
 	{
-		if (iNum == 0)
+
+		for (_uint i = 0; i < iNum; ++i)
 		{
-			wsprintf(szFilePath, pFilepath, 0);
+			wsprintf(szFilePath, pFilepath, i);
+
 			wstring wstrtemp = szFilePath;
 			string strtemp = { wstrtemp.begin(), wstrtemp.end() };
 
@@ -205,7 +166,7 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			textureData.RowPitch = imageBytesPerRow;
 			textureData.SlicePitch = imageBytesPerRow * textureDesc.Height;
 
-			UpdateSubresources(CDevice::GetInstance()->GetCommandList(), pTexture, pTextureUpload, 0, 0, 1, &textureData);
+			UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), pTexture, pTextureUpload, 0, 0, 1, &textureData);
 
 			if (pTexture != nullptr)
 			{
@@ -216,25 +177,28 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			}
 			if (FAILED(Create_Shader_Resource_Heap()))
 				return E_FAIL;
-
 		}
-		else
-		{
 
-		}
 	}
 
+
+	for (_uint i = 0; i < m_vecTexture.size(); ++i)
+	{
+		Create_ShaderResourceView(i, IsCube);
+	}
+
+
 	CDevice::GetInstance()->Close();
-	CDevice::GetInstance()->WaitForGpuComplete();
+	CDevice::GetInstance()->WaitForFenceEvent();
 	return S_OK;
 }
 
 
-CTexture* CTexture::Create(ID3D12Device* pGraphic_Device, const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType)
+CTexture* CTexture::Create(const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube)
 {
-	CTexture* pInstance = new CTexture(pGraphic_Device);
+	CTexture* pInstance = new CTexture();
 
-	if (FAILED(pInstance->Ready_Texture(pFilepath, iNum, eType)))
+	if (FAILED(pInstance->Ready_Texture(pFilepath, iNum, eType, IsCube)))
 	{
 		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
@@ -277,15 +241,18 @@ HRESULT CTexture::Create_ShaderResourceView(_uint iNum, _bool IsCube)
 
 	return S_OK;
 }
-HRESULT CTexture::SetUp_OnShader(ID3D12GraphicsCommandList* pCommandLst, _int iIdx)
+HRESULT CTexture::SetUp_OnShader(_int iIdx)
 {
+	if (m_vecDescriptorHeap.size() <= iIdx)
+		return E_FAIL;
+
 	CD3DX12_GPU_DESCRIPTOR_HANDLE hTexture
 	(
 		m_vecDescriptorHeap[iIdx]->GetGPUDescriptorHandleForHeapStart()
 	);
 	hTexture.Offset(0, m_vecSrvDescriptorIncrementSize[iIdx]);
-	pCommandLst->SetDescriptorHeaps(1, &m_vecDescriptorHeap[iIdx]);
-	pCommandLst->SetGraphicsRootDescriptorTable(0, hTexture);
+	CDevice::GetInstance()->GetCmdLst()->SetDescriptorHeaps(1, &m_vecDescriptorHeap[iIdx]);
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootDescriptorTable(0, hTexture);
 
 	return S_OK;
 }
@@ -302,10 +269,6 @@ void CTexture::Free()
 		Safe_Release(iter);
 	for (auto& iter : m_vecDescriptorHeap)
 		Safe_Release(iter);
-	if (m_IsClone)
-	{
-
-	}
 
 	m_vecTexture.clear();
 	m_vecTextureUpload.clear();

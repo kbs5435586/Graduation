@@ -254,7 +254,7 @@ void CTransform::Rotation_Z(const _float& fTimeDelta)
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
 }
 
-void CTransform::Scaling(const _float& fX, const _float& fY, const _float& fZ)
+void CTransform::Scaling(const _vec3& vScale)
 {
 	_vec3		vDir[3];
 
@@ -265,9 +265,9 @@ void CTransform::Scaling(const _float& fX, const _float& fY, const _float& fZ)
 	}
 
 
-	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], fX, false);
-	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], fY, false);
-	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], fZ, false);
+	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], vScale.x, false);
+	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], vScale.y, false);
+	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], vScale.z, false);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);

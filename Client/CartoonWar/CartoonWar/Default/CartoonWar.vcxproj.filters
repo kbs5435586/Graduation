@@ -100,9 +100,6 @@
     <Filter Include="01. Scene\01. Stage">
       <UniqueIdentifier>{6552fa3a-e608-42d9-b5f7-192d4ce50cda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Scene\03. Ending">
-      <UniqueIdentifier>{2529fef5-9e8b-4f59-88f3-e600b12da46e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer">
       <UniqueIdentifier>{06fc3ebb-4243-49af-89ef-7394a6bb790c}</UniqueIdentifier>
     </Filter>
@@ -132,6 +129,45 @@
     </Filter>
     <Filter Include="97. Engine\00. System\04. Camera">
       <UniqueIdentifier>{a1d71011-493e-4701-975b-463cf58ba3c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex">
+      <UniqueIdentifier>{d21c3bfa-fe43-46c0-8821-cd77faac6a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\04. Texture">
+      <UniqueIdentifier>{c146bee5-b527-4e44-b4ed-d27d44e5a6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol">
+      <UniqueIdentifier>{8cc06ae5-cbca-45fd-afa5-311dc33b249c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex">
+      <UniqueIdentifier>{a7f9bfcd-d175-41c8-98fc-d6daaee3f99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex">
+      <UniqueIdentifier>{9ea58e6e-34a7-4a9b-a0df-4181d7057194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
+      <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\01. Cube">
+      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\00. Scene_Logo">
+      <UniqueIdentifier>{98ecb91f-3121-4ff3-8b0a-54591eedf38d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\00. Scene_Logo\00. Logo">
+      <UniqueIdentifier>{26495649-bea4-4e96-94c5-5d98148c5983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Scene\02. Ending">
+      <UniqueIdentifier>{2529fef5-9e8b-4f59-88f3-e600b12da46e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage">
+      <UniqueIdentifier>{e5920e3e-7b2b-4d62-a4aa-343c9358345f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\00. SkyBox">
+      <UniqueIdentifier>{3f5cec16-69a6-460b-b3e3-fa91565b0c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\01. Terrain">
+      <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +291,30 @@
     <ClInclude Include="..\Headers\Camera_Manager.h">
       <Filter>97. Engine\00. System\04. Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_RectTex.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Texture.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\04. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_CubeCol.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Cube.h">
+      <Filter>02. GameObject\99. BaseShape\01. Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Logo.h">
+      <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage.h">
+      <Filter>01. Scene\01. Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkyBox.h">
+      <Filter>02. GameObject\01. Scene_Stage\00. SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_CubeTex.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -363,12 +423,42 @@
     <ClCompile Include="..\Codes\Camera_Manager.cpp">
       <Filter>97. Engine\00. System\04. Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_RectTex.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Texture.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\04. Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_CubeCol.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cube.cpp">
+      <Filter>02. GameObject\99. BaseShape\01. Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Logo.cpp">
+      <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage.cpp">
+      <Filter>01. Scene\01. Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkyBox.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\00. SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_CubeTex.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
       <Filter>98. Headers</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Default.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Texture.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_SkyBox.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>

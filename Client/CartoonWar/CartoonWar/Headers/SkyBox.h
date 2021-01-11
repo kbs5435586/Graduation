@@ -3,15 +3,15 @@
 class CTransform;
 class CRenderer;
 class CShader;
-class CBuffer_RectTex;
 class CTexture;
-class CMyRect :
+class CBuffer_CubeTex;
+class CSkyBox :
     public CGameObject
 {
 private:
-    CMyRect();
-    CMyRect(const CMyRect& rhs);
-    virtual ~CMyRect() = default;
+    CSkyBox();
+    CSkyBox(const CSkyBox& rhs);
+    virtual ~CSkyBox() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +22,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 	HRESULT									CreateConstantBuffer();
 public:
-	static CMyRect*							Create();
+	static CSkyBox*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -30,8 +30,8 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CBuffer_CubeTex*						m_pBufferCom = nullptr;
 };
 

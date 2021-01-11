@@ -150,11 +150,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h" />
+    <ClInclude Include="..\Headers\Buffer_CubeCol.h" />
+    <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
+    <ClInclude Include="..\Headers\Buffer_RectTex.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
+    <ClInclude Include="..\Headers\Cube.h" />
     <ClInclude Include="..\Headers\DDSTextureLoader.h" />
     <ClInclude Include="..\Headers\Debug_Camera.h" />
     <ClInclude Include="..\Headers\Define.h" />
@@ -170,16 +174,20 @@
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
+    <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\Management.h" />
     <ClInclude Include="..\Headers\Renderer.h" />
     <ClInclude Include="..\Headers\Scene.h" />
+    <ClInclude Include="..\Headers\Scene_Stage.h" />
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
+    <ClInclude Include="..\Headers\SkyBox.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\System.h" />
+    <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\TimerManager.h" />
     <ClInclude Include="..\Headers\Transform.h" />
@@ -192,11 +200,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
+    <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
+    <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
+    <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
+    <ClCompile Include="..\Codes\Cube.cpp" />
     <ClCompile Include="..\Codes\DDSTextureLoader.cpp" />
     <ClCompile Include="..\Codes\Debug_Camera.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
@@ -209,14 +221,18 @@
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Light.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
+    <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\Management.cpp" />
     <ClCompile Include="..\Codes\Renderer.cpp" />
     <ClCompile Include="..\Codes\Scene.cpp" />
+    <ClCompile Include="..\Codes\Scene_Stage.cpp" />
     <ClCompile Include="..\Codes\Shader.cpp" />
+    <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
+    <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\TimerManager.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
@@ -235,6 +251,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ShaderFiles\Shader_Default.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ShaderFiles\Shader_Texture.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ShaderFiles\Shader_SkyBox.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

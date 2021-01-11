@@ -10,6 +10,8 @@ protected:
 public:
 	HRESULT						Ready_VIBuffer();
 public:
+	void						Render_VIBuffer();
+public:
 	virtual CComponent*			Clone_Component(void* pArg = nullptr) = 0;
 protected:
 	virtual void				Free();

@@ -1,25 +1,23 @@
 #include "framework.h"
-#include "MyRect.h"
+#include "Logo.h"
 #include "Management.h"
 
-CMyRect::CMyRect()
+CLogo::CLogo()
 	: CGameObject()
 {
 }
 
-CMyRect::CMyRect(const CMyRect& rhs)
+CLogo::CLogo(const CLogo& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CMyRect::Ready_Prototype()
+HRESULT CLogo::Ready_Prototype()
 {
-
-
 	return S_OK;
 }
 
-HRESULT CMyRect::Ready_GameObject(void* pArg)
+HRESULT CLogo::Ready_GameObject(void* pArg)
 {
 	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 	if (FAILED(Ready_Component()))
@@ -29,32 +27,33 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	
+	m_pTransformCom->Scaling(_vec3(2.f,2.f,1.f));
 
 	return S_OK;
 }
 
-_int CMyRect::Update_GameObject(const _float& fTimeDelta)
+_int CLogo::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CLogo::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-
 	return _int();
 }
 
-void CMyRect::Render_GameObject()
+void CLogo::Render_GameObject()
 {
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+	_matrix matView = Matrix_::Identity();
+	_matrix matProj = Matrix_::Identity();
 
 	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
 	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
@@ -65,12 +64,12 @@ void CMyRect::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 }
 
-HRESULT CMyRect::CreateInputLayout()
+HRESULT CLogo::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	
+
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
 
@@ -78,7 +77,7 @@ HRESULT CMyRect::CreateInputLayout()
 	return S_OK;
 }
 
-HRESULT CMyRect::CreateConstantBuffer()
+HRESULT CLogo::CreateConstantBuffer()
 {
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
@@ -115,33 +114,32 @@ HRESULT CMyRect::CreateConstantBuffer()
 	return S_OK;
 }
 
-CMyRect* CMyRect::Create()
+CLogo* CLogo::Create()
 {
-	CMyRect* pInstance = new CMyRect();
+	CLogo* pInstance = new CLogo();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CMyRect Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CLogo Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CMyRect::Clone_GameObject(void* pArg)
+CGameObject* CLogo::Clone_GameObject(void* pArg)
 {
-	CMyRect* pInstance = new CMyRect(*this);
+	CLogo* pInstance = new CLogo(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"CMyRect Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CLogo Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMyRect::Free()
+void CLogo::Free()
 {
-
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
@@ -151,7 +149,7 @@ void CMyRect::Free()
 	CGameObject::Free();
 }
 
-HRESULT CMyRect::Ready_Component()
+HRESULT CLogo::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);

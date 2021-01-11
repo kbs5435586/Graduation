@@ -29,6 +29,8 @@ public:
 	ComPtr<ID3D12RootSignature>			GetRootSignature(ROOT_SIG_TYPE _eType) { return m_ArrRootSignature[(UINT)_eType]; }
 public:
 	ComPtr<ID3D12DescriptorHeap>		GetConstantBufferDescHeap() { return m_pCbv; }
+public:
+	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 private:
 	ComPtr<ID3D12RootSignature>			m_ArrRootSignature[(_uint)ROOT_SIG_TYPE::END];
 private:

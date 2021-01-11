@@ -16,12 +16,11 @@ public: // Getter
 	_matrix					Get_Matrix() { return m_matWorld; }
 public: // Setter
 	void					Set_StateInfo(STATE eState, const _vec3* pInfo);
-	void Set_PositionY(const _float& fY) {
-		m_matWorld.m[3][1] = fY;
-	}
+	void					Set_PositionY(const _float& fY) {	m_matWorld.m[3][1] = fY;}
 public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();
+	void					Scaling(const _vec3& vScale);
 
 	void					SetUp_Speed(const _float& fMovePerSec, const _float& fRotationPerSec);
 	void					Go_Straight(const _float& fTimeDelta);
@@ -34,7 +33,7 @@ public:
 	void					Rotation_X(const _float& fTimeDelta);
 	void					Rotation_Y(const _float& fTimeDelta);
 	void					Rotation_Z(const _float& fTimeDelta);
-	void					Scaling(const _float& fX, const _float& fY, const _float& fZ);
+
 	void					Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta);
 	void					Rotation_Axis(const _float& fTimeDelta,const _vec3* pAxis);
 private:

@@ -48,12 +48,12 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	return S_OK;
 }
 
-HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc)
+HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType)
 {
 	m_tPipeline.InputLayout = { vecDesc.data(), (_uint)vecDesc.size() };
 	m_tPipeline.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get();
 
-	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)RS_TYPE::DEFAULT];
+	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)eType];
 	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)BLEND_TYPE::DEFAULT];
 	m_tPipeline.DepthStencilState.DepthEnable = FALSE;
 	m_tPipeline.DepthStencilState.StencilEnable = FALSE;

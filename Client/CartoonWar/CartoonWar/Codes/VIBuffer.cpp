@@ -21,6 +21,14 @@ HRESULT CVIBuffer::Ready_VIBuffer()
 	return S_OK;
 }
 
+void CVIBuffer::Render_VIBuffer()
+{
+	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(m_PrimitiveTopology);
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(m_iSlot, 1, &m_tVertexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_tIndexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_iNumIndices, 1, 0, 0, 0);
+}
+
 CComponent* CVIBuffer::Clone_Component(void* pArg)
 {
 	return nullptr;

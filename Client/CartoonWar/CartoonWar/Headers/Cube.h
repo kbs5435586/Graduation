@@ -3,15 +3,15 @@
 class CTransform;
 class CRenderer;
 class CShader;
-class CBuffer_RectTex;
-class CTexture;
-class CMyRect :
+class CBuffer_CubeCol;
+
+class CCube :
     public CGameObject
 {
 private:
-    CMyRect();
-    CMyRect(const CMyRect& rhs);
-    virtual ~CMyRect() = default;
+    CCube();
+    CCube(const CCube& rhs);
+    virtual ~CCube() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +22,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 	HRESULT									CreateConstantBuffer();
 public:
-	static CMyRect*							Create();
+	static CCube*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -30,8 +30,8 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CBuffer_CubeCol*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
+
 };
 

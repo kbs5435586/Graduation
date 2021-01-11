@@ -5,13 +5,13 @@ class CRenderer;
 class CShader;
 class CBuffer_RectTex;
 class CTexture;
-class CMyRect :
+class CLogo :
     public CGameObject
 {
 private:
-    CMyRect();
-    CMyRect(const CMyRect& rhs);
-    virtual ~CMyRect() = default;
+    CLogo();
+    CLogo(const CLogo& rhs);
+    virtual ~CLogo() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +22,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 	HRESULT									CreateConstantBuffer();
 public:
-	static CMyRect*							Create();
+	static CLogo*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();

@@ -4,10 +4,14 @@
 #include "Renderer.h"
 #include "Transform.h"
 #include "Shader.h"
+#include "Texture.h"
 
 
 
 #include "Buffer_RectCol.h"
+#include "Buffer_RectTex.h"
+#include "Buffer_CubeCol.h"
+#include "Buffer_CubeTex.h"
 
 class CComponent;
 class CComponent_Manager :
