@@ -241,22 +241,67 @@ HRESULT CDevice::Create_View()
 		}
 	}
 
+	// DepthStencilView
+	{
+		m_iDSVHeapSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+		D3D12_DESCRIPTOR_HEAP_DESC tHeap_Desc;
+		tHeap_Desc.NumDescriptors = 1;
+		tHeap_Desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		tHeap_Desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		tHeap_Desc.NodeMask = 0;
+		if(FAILED(m_pDevice->CreateDescriptorHeap(&tHeap_Desc, IID_PPV_ARGS(&m_pDSV))))
+			return E_FAIL;
+
+
+		D3D12_RESOURCE_DESC tDesc;
+		tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		tDesc.Alignment = 0;
+		tDesc.Width = WINCX;
+		tDesc.Height = WINCX;
+		tDesc.DepthOrArraySize = 1;
+		tDesc.MipLevels = 1;
+		tDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		tDesc.SampleDesc.Count = 1;
+		tDesc.SampleDesc.Quality =  0;
+		tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		tDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+		D3D12_HEAP_PROPERTIES tHeapProperties;
+		ZeroMemory(&tHeapProperties, sizeof(D3D12_HEAP_PROPERTIES));
+		tHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+		tHeapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		tHeapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		tHeapProperties.CreationNodeMask = 1;
+		tHeapProperties.VisibleNodeMask = 1;
+
+		D3D12_CLEAR_VALUE tClearView;
+		tClearView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		tClearView.DepthStencil.Depth = 1.0f;
+		tClearView.DepthStencil.Stencil = 0;
+
+
+		if(FAILED(m_pDevice -> CreateCommittedResource(&tHeapProperties, D3D12_HEAP_FLAG_NONE, &tDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE,
+			&tClearView, IID_PPV_ARGS(&m_pDSBuffer))))
+			return E_FAIL;
+
+		D3D12_CPU_DESCRIPTOR_HANDLE hDsvHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
+		m_pDevice->CreateDepthStencilView(m_pDSBuffer.Get(), nullptr, hDsvHandle);
+	}
+	
 	// ConstantBufferView
 	{
 		m_iSRVHeapSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
-		tDesc.NumDescriptors = 1;
-		tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		tDesc.NodeMask = 0;
-		if (FAILED(m_pDevice->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pCbv))))
+		D3D12_DESCRIPTOR_HEAP_DESC tHeap_Desc = {};
+		tHeap_Desc.NumDescriptors = 1;
+		tHeap_Desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		tHeap_Desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		tHeap_Desc.NodeMask = 0;
+		if (FAILED(m_pDevice->CreateDescriptorHeap(&tHeap_Desc, IID_PPV_ARGS(&m_pCbv))))
 			return E_FAIL;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE hCbvHeap = m_pCbv->GetCPUDescriptorHandleForHeapStart();
 
 	}
-
-
 
 	return S_OK;
 }

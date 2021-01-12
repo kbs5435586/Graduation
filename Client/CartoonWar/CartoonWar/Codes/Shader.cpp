@@ -55,13 +55,33 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 
 	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)eType];
 	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)BLEND_TYPE::DEFAULT];
-	m_tPipeline.DepthStencilState.DepthEnable = FALSE;
+
+	m_tPipeline.DepthStencilState.DepthEnable = TRUE;
+	m_tPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	m_tPipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+
+
 	m_tPipeline.DepthStencilState.StencilEnable = FALSE;
+	m_tPipeline.DepthStencilState.StencilReadMask = 0x00;
+	m_tPipeline.DepthStencilState.StencilWriteMask = 0x00;
+
+	m_tPipeline.DepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	m_tPipeline.DepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	m_tPipeline.DepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	m_tPipeline.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+	m_tPipeline.DepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	m_tPipeline.DepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	m_tPipeline.DepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	m_tPipeline.DepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+
+
 	m_tPipeline.SampleMask = UINT_MAX;
-	m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	m_tPipeline.NumRenderTargets = 1;
-	m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	m_tPipeline.SampleDesc.Count = 1;
+
+	m_tPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&m_tPipeline,
 		IID_PPV_ARGS(&m_pPipeLineState))))

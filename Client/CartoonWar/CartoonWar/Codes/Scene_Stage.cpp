@@ -65,13 +65,14 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 		return E_FAIL;
 	return S_OK;
 }

@@ -113,9 +113,9 @@ HRESULT CScene_Logo::Ready_Layer()
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_TempStatic_Mesh(L"Layer_TempStatic_Mesh")))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain")))
-		return E_FAIL;
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox")))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain")))
 		return E_FAIL;
 	return S_OK;
 }

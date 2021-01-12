@@ -18,7 +18,10 @@ private:
 	ComPtr<ID3D12Debug>							m_pDbgCtrl = nullptr;
 	ComPtr<IDXGISwapChain>						m_pSwapChain = nullptr;
 	ComPtr<ID3D12Resource>						m_RenderTargets[2] = {nullptr};
+private:
 	ComPtr<ID3D12Resource>						m_pConstantBuffer=nullptr;
+	ComPtr<ID3D12Resource>						m_pDSBuffer = nullptr;
+private:
 
 	ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pDSV = nullptr;
@@ -40,8 +43,10 @@ private:
 	HANDLE										m_hFenceEvent = 0;
 	_uint										m_iFenceValue = 0;
 	_uint										m_iCurTargetIdx=0;
+private:
 	_uint										m_iRTVHeapSize=0;
 	_uint										m_iSRVHeapSize = 0;
+	_uint										m_iDSVHeapSize = 0;
 public:
 	HRESULT										Initialize();
 	void										Render_Begin(float(&_arrFloat)[4]);
