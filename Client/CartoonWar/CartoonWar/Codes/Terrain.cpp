@@ -40,6 +40,8 @@ _int CTerrain::Update_GameObject(const _float& fTimeDelta)
 
 _int CTerrain::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+
+
 	if (nullptr == m_pRendererCom)
 		return -1;
 

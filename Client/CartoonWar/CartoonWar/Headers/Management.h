@@ -37,5 +37,6 @@ private:
 	CScene*					m_pScene = nullptr;
 	CGameObject_Manager*	m_pObject_Manager = nullptr;
 	CComponent_Manager*		m_pComponent_Manager = nullptr;
+	//CServer_Mananger*		m_pSever_Manager = nullptr;
 };
 
