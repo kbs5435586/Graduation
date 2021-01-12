@@ -52,6 +52,7 @@ void CMainApp::Render_MainApp()
 
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Render_RenderGroup();
+	m_pManagement->Render_Management();
 
 	CDevice::GetInstance()->Render_End();
 	Compute_Frame();

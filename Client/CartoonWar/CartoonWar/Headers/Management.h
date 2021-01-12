@@ -28,6 +28,9 @@ public:
 	void					Render_Management();
 	HRESULT					Clear_Layers(const _uint& iSceneID);
 	static void				Release_Engine();
+public:
+	CGameObject*			Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx);
+	list<CGameObject*>		Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag);
 private:
 	virtual void			Free();
 private:

@@ -20,14 +20,17 @@ public:
 	_int						Update_GameObject_Manager(const _float& fTimeDelta);
 	_int						LastUpdate_GameObject_Manager(const _float& fTimeDelta);
 	HRESULT						Clear_Layers(const _uint& iSceneID);
+public:
+	CGameObject*				Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx);
+	list<CGameObject*>			Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag);
 private:
 	CGameObject*				Find_Prototype(const _tchar* pGameObjectTag);
 	CLayer*						Find_Layer(const _uint& iSceneID, const _tchar* pLayerTag);
 	virtual void				Free();
-private: // 원형객체들을 모아놓는다.
+private:
 	map<const _tchar*, CGameObject*>			m_mapPrototype;
 	typedef map<const _tchar*, CGameObject*>	MAPPROTOTYPE;
-private: // 원형객체들을 복제한 객체를 레이어에 보관한다.
+private:
 	map<const _tchar*, CLayer*>*				m_pMapLayers = nullptr;
 	typedef map<const _tchar*, CLayer*>			MAPLAYERS;
 private:

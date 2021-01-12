@@ -47,6 +47,25 @@ _int CScene_Stage::LastUpdate_Scene(const _float& fTimeDelta)
 
 void CScene_Stage::Render_Scene()
 {
+	//CManagement* pManagement = CManagement::GetInstance();
+	//if (nullptr == pManagement)
+	//	return;
+	//pManagement->AddRef();
+	//
+	//// Layer_Basic 안에 있는 0번째 객체에 접근
+	//CGameObject*	pCube = pManagement->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_BasicShape", 0);
+	//// Layer_Basic 안에 있는 0번째 객체의 Transform에 접근
+	//CTransform*		pTransform_Cube = (CTransform*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, 
+	//									L"Layer_BasicShape", L"Com_Transform", 0);
+
+	//_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+
+	//CGameObject*	pTerrain = pManagement->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+	//CTransform*		pTransform_Terrain = (CTransform*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, 
+	//									L"Layer_Terrain", L"Com_Transform", 0);
+
+
+	//Safe_Release(pManagement);
 }
 
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
@@ -74,6 +93,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -86,6 +106,8 @@ HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagemen
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
+
 	return S_OK;
 }
 

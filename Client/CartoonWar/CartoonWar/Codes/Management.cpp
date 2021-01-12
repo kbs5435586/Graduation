@@ -154,6 +154,22 @@ void CManagement::Release_Engine()
 		_MSG_BOX("CDevice Release Failed");
 }
 
+CGameObject* CManagement::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_GameObject(iSceneID, pLayerTag, iIdx);
+}
+
+list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag)
+{
+	if (nullptr == m_pObject_Manager)
+		return list<CGameObject*>();
+
+	return m_pObject_Manager->Get_GameObjectLst(iSceneID, pLayerTag);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);

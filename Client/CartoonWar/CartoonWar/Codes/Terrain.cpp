@@ -29,6 +29,7 @@ HRESULT CTerrain::Ready_GameObject(void* pArg)
 
 
 	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
 
