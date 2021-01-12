@@ -2,11 +2,13 @@
 #include "Shader.h"
 
 CShader::CShader()
+	: CComponent()
 {
 }
 
 CShader::CShader(const CShader& rhs)
-	: m_pVSBlob(rhs.m_pVSBlob)
+	: CComponent(rhs)
+	, m_pVSBlob(rhs.m_pVSBlob)
 	, m_pPSBlob(rhs.m_pPSBlob)
 	, m_pHSBlob(rhs.m_pHSBlob)
 	, m_pDSBlob(rhs.m_pDSBlob)
@@ -41,6 +43,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 		return E_FAIL;
 	}
 
+	ZeroMemory(&m_tPipeline, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 	m_tPipeline.VS = { m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize() };
 	m_tPipeline.PS = { m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize() };
@@ -59,7 +62,6 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	m_tPipeline.DepthStencilState.DepthEnable = TRUE;
 	m_tPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	m_tPipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-
 
 	m_tPipeline.DepthStencilState.StencilEnable = FALSE;
 	m_tPipeline.DepthStencilState.StencilReadMask = 0x00;

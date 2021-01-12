@@ -122,9 +122,11 @@ D3D12_DEPTH_STENCIL_DESC CCube::CreateDepthStencilState()
 	d3dDepthStencilDesc.DepthEnable = TRUE;
 	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	d3dDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+
 	d3dDepthStencilDesc.StencilEnable = FALSE;
 	d3dDepthStencilDesc.StencilReadMask = 0x00;
 	d3dDepthStencilDesc.StencilWriteMask = 0x00;
+
 	d3dDepthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
 	d3dDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
 	d3dDepthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;

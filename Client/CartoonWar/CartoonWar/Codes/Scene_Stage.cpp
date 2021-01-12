@@ -59,13 +59,13 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
 		return E_FAIL;
+
 	return S_OK;
 }
 
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))

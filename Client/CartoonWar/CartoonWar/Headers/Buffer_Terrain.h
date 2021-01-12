@@ -15,8 +15,8 @@ public:
 protected:
 	virtual void					Free();
 private:
-	_uint							m_iNumVerticesX = 0.f;
-	_uint							m_iNumVerticesZ = 0.f;
+	_uint							m_iNumVerticesX = 0;
+	_uint							m_iNumVerticesZ = 0;
 	_float							m_fInterval = 0.f;
 };
 
