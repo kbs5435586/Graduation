@@ -3,9 +3,22 @@ Texture2D    g_texture : register(t0);
 SamplerState DiffuseSampler  : register(s0);
 cbuffer cbPerObject : register(b0)
 {
-	float4x4 matWorld;
-	float4x4 matView;
-	float4x4 matProj;
+	float4x4	matWorld;
+	float4x4	matView;
+	float4x4	matProj;
+
+	float4		vCamPos;
+
+	float4		vMaterialDiffuse;
+	float4		vMaterialSpecular;
+	float4		vMaterialAmbient;
+
+	float4		vLightDiffuse;
+	float4		vLightAmbient;
+	float4		vLightSpecular;
+	float4		vLightDirection;
+
+	float		fPower;
 };
 
 struct VertexIn

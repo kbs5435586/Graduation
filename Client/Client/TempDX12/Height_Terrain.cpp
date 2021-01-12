@@ -7,6 +7,7 @@ CHeight_Terrain::CHeight_Terrain(ID3D12Device* pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 
+
 }
 
 CHeight_Terrain::CHeight_Terrain(const CHeight_Terrain& rhs)
@@ -144,7 +145,7 @@ D3D12_DEPTH_STENCIL_DESC CHeight_Terrain::CreateDepthStencilState()
 {
 	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
 	::ZeroMemory(&d3dDepthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
-	d3dDepthStencilDesc.DepthEnable = TRUE;
+	d3dDepthStencilDesc.DepthEnable = true;
 	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	d3dDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 	d3dDepthStencilDesc.StencilEnable = FALSE;

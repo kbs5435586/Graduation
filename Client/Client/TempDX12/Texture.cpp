@@ -16,6 +16,7 @@ CTexture::CTexture(const CTexture& rhs)
 	, wicFactory(rhs.wicFactory)
 	, wicDecoder(rhs.wicDecoder)
 	, wicFrame(rhs.wicFrame)
+	, m_vecSrvDescriptorIncrementSize(rhs.m_vecSrvDescriptorIncrementSize)
 {
 	m_IsClone = true;
 	for (auto& iter : m_vecTexture)

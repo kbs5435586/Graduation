@@ -40,7 +40,7 @@ HRESULT CSkyBox::Ready_GameObject(void* pArg)
 	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(1000.f, 1000.f, 1000.f);
+	//m_pTransformCom->Scaling(1000.f, 1000.f, 1000.f);
 
 	return S_OK;
 }
@@ -52,7 +52,8 @@ _int CSkyBox::Update_GameObject(const _float& fTimeDelta)
 	matView=CDevice::GetInstance()->GetViewMatrix();
 	matView = Matrix_::Inverse(matView);
 
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, (_vec3*)&matView.m[3][0]);
+	_vec3 vPos = *(_vec3*)&matView.m[3][0];
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 
 	return _int();
@@ -63,7 +64,7 @@ _int CSkyBox::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
 		return -1;
 	return _int();
 }
@@ -148,7 +149,7 @@ D3D12_DEPTH_STENCIL_DESC CSkyBox::CreateDepthStencilState()
 {
 	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
 	::ZeroMemory(&d3dDepthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
-	d3dDepthStencilDesc.DepthEnable = true;
+	d3dDepthStencilDesc.DepthEnable = false;
 	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	d3dDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 	d3dDepthStencilDesc.StencilEnable = FALSE;

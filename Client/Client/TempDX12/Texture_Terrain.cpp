@@ -36,7 +36,7 @@ HRESULT CTexture_Terrain::Ready_GameObject(void* pArg)
 
 	if (m_pTextureCom != nullptr)
 	{
-		if (FAILED(m_pTextureCom->Create_ShaderResourceView(2)))
+		if (FAILED(m_pTextureCom->Create_ShaderResourceView()))
 			return E_FAIL;
 	}
 	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
@@ -271,7 +271,7 @@ HRESULT CTexture_Terrain::Ready_Component(void* pArg)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Bricks");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component(SCENE_LOGO, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
