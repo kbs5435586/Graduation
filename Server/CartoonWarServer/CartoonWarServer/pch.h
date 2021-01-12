@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <WS2tcpip.h>
+#include <MSWSock.h>
 
 #pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "MSWSock.lib")
 using namespace std;
