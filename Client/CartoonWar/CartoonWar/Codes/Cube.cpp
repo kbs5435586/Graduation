@@ -30,13 +30,30 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	_vec3 vPos = _vec3(0.f, 5.f, 0.f);
+	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
 
 _int CCube::Update_GameObject(const _float& fTimeDelta)
 {
+	if (GetAsyncKeyState('T') & 0x8000)
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+	if (GetAsyncKeyState('F') & 0x8000)
+	{
+		m_pTransformCom->Go_Left(fTimeDelta);
+	}
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		m_pTransformCom->BackWard(fTimeDelta);
+	}
+	if (GetAsyncKeyState('H') & 0x8000)
+	{
+		m_pTransformCom->Go_Right(fTimeDelta);
+	}
 	return _int();
 }
 
