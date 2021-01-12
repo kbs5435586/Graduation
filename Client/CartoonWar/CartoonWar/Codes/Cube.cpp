@@ -30,6 +30,8 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
+	_vec3 vPos = _vec3(0.f, 5.f, 0.f);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	return S_OK;
 }
 
@@ -173,10 +175,6 @@ HRESULT CCube::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	//m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
-	//NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 
