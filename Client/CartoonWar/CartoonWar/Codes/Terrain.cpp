@@ -1,23 +1,23 @@
 #include "framework.h"
-#include "Logo.h"
+#include "Terrain.h"
 #include "Management.h"
 
-CLogo::CLogo()
+CTerrain::CTerrain()
 	: CGameObject()
 {
 }
 
-CLogo::CLogo(const CLogo& rhs)
+CTerrain::CTerrain(const CTerrain& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CLogo::Ready_Prototype()
+HRESULT CTerrain::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CLogo::Ready_GameObject(void* pArg)
+HRESULT CTerrain::Ready_GameObject(void* pArg)
 {
 	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 	if (FAILED(Ready_Component()))
@@ -27,18 +27,17 @@ HRESULT CLogo::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	
-	m_pTransformCom->Scaling(_vec3(2.f,2.f,1.f));
 
+	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
 	return S_OK;
 }
 
-_int CLogo::Update_GameObject(const _float& fTimeDelta)
+_int CTerrain::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CLogo::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CTerrain::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -48,12 +47,12 @@ _int CLogo::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CLogo::Render_GameObject()
+void CTerrain::Render_GameObject()
 {
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = Matrix_::Identity();
-	_matrix matProj = Matrix_::Identity();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
 	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
 	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
@@ -64,7 +63,7 @@ void CLogo::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 }
 
-HRESULT CLogo::CreateInputLayout()
+HRESULT CTerrain::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -77,15 +76,14 @@ HRESULT CLogo::CreateInputLayout()
 	return S_OK;
 }
 
-HRESULT CLogo::CreateConstantBuffer()
+HRESULT CTerrain::CreateConstantBuffer()
 {
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
 
 	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&tHeap_Pro_Upload,D3D12_HEAP_FLAG_NONE,&tResource_Desc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,nullptr,IID_PPV_ARGS(&m_pConstBuffer))))
-
+		&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pConstBuffer))))
 	{
 		return E_FAIL;
 	}
@@ -106,25 +104,24 @@ HRESULT CLogo::CreateConstantBuffer()
 	CDevice::GetInstance()->GetDevice()->CreateConstantBufferView(
 		&cbvDesc, CDevice::GetInstance()->GetConstantBufferDescHeap()->GetCPUDescriptorHandleForHeapStart());
 
-
 	return S_OK;
 }
 
-CLogo* CLogo::Create()
+CTerrain* CTerrain::Create()
 {
-	CLogo* pInstance = new CLogo();
+	CTerrain* pInstance = new CTerrain();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CLogo Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTerrain Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CLogo::Clone_GameObject(void* pArg)
+CGameObject* CTerrain::Clone_GameObject(void* pArg)
 {
-	CLogo* pInstance = new CLogo(*this);
+	CTerrain* pInstance = new CTerrain(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
@@ -134,7 +131,7 @@ CGameObject* CLogo::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CLogo::Free()
+void CTerrain::Free()
 {
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
@@ -145,7 +142,7 @@ void CLogo::Free()
 	CGameObject::Free();
 }
 
-HRESULT CLogo::Ready_Component()
+HRESULT CTerrain::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -161,17 +158,17 @@ HRESULT CLogo::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex");
+	m_pBufferCom = (CBuffer_Terrain*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Texture");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

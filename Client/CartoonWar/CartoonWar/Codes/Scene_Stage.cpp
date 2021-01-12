@@ -5,6 +5,7 @@
 #include "Cube.h"
 #include "SkyBox.h"
 #include "Debug_Camera.h"
+#include "Terrain.h"
 
 CScene_Stage::CScene_Stage()
 {
@@ -56,6 +57,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -67,6 +70,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -114,6 +119,13 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 HRESULT CScene_Stage::Ready_Layer_SkyBox(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_SkyBox", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

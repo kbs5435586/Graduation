@@ -12,6 +12,7 @@
 #include "Buffer_RectTex.h"
 #include "Buffer_CubeCol.h"
 #include "Buffer_CubeTex.h"
+#include "Buffer_Terrain.h"
 
 class CComponent;
 class CComponent_Manager :

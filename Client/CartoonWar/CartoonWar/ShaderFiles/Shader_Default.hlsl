@@ -6,8 +6,6 @@ cbuffer cbPerObject : register(b0)
 	float4x4 matProj;
 };
 
-
-
 struct VS_IN
 {
 	float3	vPos : POSITION;
