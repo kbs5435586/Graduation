@@ -22,11 +22,11 @@
     <ClCompile Include="main.cpp">
       <Filter>00. Main</Filter>
     </ClCompile>
-    <ClCompile Include="server.cpp">
-      <Filter>98. Server</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>01. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>98. Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -39,11 +39,11 @@
     <ClInclude Include="Object.h">
       <Filter>01. Object</Filter>
     </ClInclude>
-    <ClInclude Include="server.h">
-      <Filter>98. Server</Filter>
-    </ClInclude>
     <ClInclude Include="Struct.h">
       <Filter>99. Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>98. Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

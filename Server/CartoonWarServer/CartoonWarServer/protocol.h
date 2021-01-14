@@ -13,13 +13,13 @@ constexpr int WORLD_HEIGHT = 8;
 
 constexpr int SERVER_PORT =	9000;
 
-constexpr char C2S_LOGIN = 1;
-constexpr char C2S_MOVE = 2;
+constexpr char CS_PACKET_LOGIN = 1;
+constexpr char CS_PACKET_MOVE = 2;
 
-constexpr char S2C_LOGIN_OK = 1;
-constexpr char S2C_MOVE = 2;
-constexpr char S2C_ENTER = 3;
-constexpr char S2C_LEAVE = 4;
+constexpr char SC_PACKET_LOGIN_OK = 1;
+constexpr char SC_PACKET_MOVE = 2;
+constexpr char SC_PACKET_ENTER = 3;
+constexpr char SC_PACKET_LEAVE = 4;
 
 #pragma pack(push ,1)
 

@@ -18,4 +18,5 @@ struct ClientInfo // 클라이언트 정보
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
 
 	short m_x, m_y; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
+	char m_name[MAX_ID_LEN + 1]; // +1은 아이디가 50 꽉차서 오면 안되긴 하지만 혹시라도 꽉 차서 왔을때 대비
 };
