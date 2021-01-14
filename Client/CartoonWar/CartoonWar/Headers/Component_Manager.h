@@ -13,6 +13,8 @@
 #include "Buffer_Terrain.h"
 #include "Buffer_Terrain_Height.h"
 
+#include "Static_Mesh.h"
+
 class CComponent;
 class CComponent_Manager :
 	public CBase

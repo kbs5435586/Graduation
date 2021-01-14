@@ -1,0 +1,138 @@
+#include "framework.h"
+#include "Static_Mesh.h"
+#include "Management.h"
+#include "FBXLoader.h"
+
+CStatic_Mesh::CStatic_Mesh()
+	: CComponent()
+{
+}
+
+CStatic_Mesh::CStatic_Mesh(const CStatic_Mesh& rhs)
+	: CComponent(rhs)
+	, m_pLoader(rhs.m_pLoader)
+{
+}
+
+HRESULT CStatic_Mesh::Ready_Static_Mesh(string strFilePath)
+{
+	m_pLoader = CFBXLoader::Create(strFilePath);
+	if (nullptr == m_pLoader)
+		return E_FAIL;
+
+	if (FAILED(m_pLoader->Load_FbxFile(m_pLoader->GetScene()->GetRootNode())))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
+{
+	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
+	if (pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
+	{
+		FbxAMatrix RootNodeMatrix = pNode->EvaluateGlobalTransform();
+		FbxAMatrix GeometicOffest = GetGeometricOffsetTransform(pNode);
+		FbxMesh* pMesh = pNode->GetMesh();
+
+
+		Render_Mesh(pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, iPassSize, pData);
+	}
+	
+	_uint iChildCnt = pNode->GetChildCount();
+	for (_uint i = 0; i <iChildCnt; ++i)
+	{
+		Render_Hierachy_Mesh(pNode->GetChild(i), pShaderCom, matWorld, tPass, iPassSize, pData);
+	}
+}
+
+void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix, 
+								_matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
+{
+	FbxAMatrix	fbxMatrixTransform = ConvertMatrixToFbx(matWorld);
+	_int		iSkinDeformers = pMesh->GetDeformerCount(FbxDeformer::eSkin);
+	if (iSkinDeformers == 0)
+		fbxMatrixTransform = fbxMatrixTransform * pRootNodeMatrix * pGeometryMatrix;
+	_matrix		matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix		matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+	if (FAILED(pShaderCom->SetUp_OnShader_FbxMesh(FbxMatrixToMatrix(&fbxMatrixTransform), matView, matProj, tPass)))
+		return ;
+
+	memcpy_s(pData, iPassSize, (void*)&tPass, sizeof(MAINPASS));
+
+	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
+	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
+	CDevice::GetInstance()->GetCmdLst()->DrawInstanced(pInfo->vecMeshData.size(), 1, 0, 0);
+}
+
+FbxAMatrix CStatic_Mesh::GetGeometricOffsetTransform(FbxNode* pNode)
+{
+	const FbxVector4 T = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	const FbxVector4 R = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	const FbxVector4 S = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
+
+	return(FbxAMatrix(T, R, S));
+}
+
+FbxAMatrix CStatic_Mesh::ConvertMatrixToFbx(_matrix matWorld)
+{
+	FbxAMatrix fbxmtxResult;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++) fbxmtxResult[i][j] = matWorld.m[i][j];
+	}
+	return(fbxmtxResult);
+}
+
+_matrix CStatic_Mesh::FbxMatrixToMatrix(FbxAMatrix* pFbxMatrix)
+{
+	FbxVector4 S = pFbxMatrix->GetS();
+	FbxVector4 R = pFbxMatrix->GetR();
+	FbxVector4 T = pFbxMatrix->GetT();
+
+	FbxAMatrix fbxmtxTransform = FbxAMatrix(T, R, S);
+
+	XMFLOAT4X4 xmf4x4Result;
+	for (int i = 0; i < 4; i++)
+	{
+		//		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)fbxmtxTransform[i][j];
+		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)(*pFbxMatrix)[i][j];
+	}
+
+	XMFLOAT3 xmf3S = XMFLOAT3((float)S.mData[0], (float)S.mData[1], (float)S.mData[2]);
+	XMFLOAT3 xmf3R = XMFLOAT3((float)R.mData[0], (float)R.mData[1], (float)R.mData[2]);
+	XMFLOAT3 xmf3T = XMFLOAT3((float)T.mData[0], (float)T.mData[1], (float)T.mData[2]);
+
+	XMMATRIX Rx = XMMatrixRotationX(XMConvertToRadians(xmf3R.x));
+	XMMATRIX Ry = XMMatrixRotationY(XMConvertToRadians(xmf3R.y));
+	XMMATRIX Rz = XMMatrixRotationZ(XMConvertToRadians(xmf3R.z));
+	XMMATRIX xmR = XMMatrixMultiply(XMMatrixMultiply(Rx, Ry), Rz);
+	XMFLOAT4X4 xmf4x4Multiply;
+	XMStoreFloat4x4(&xmf4x4Multiply, XMMatrixMultiply(XMMatrixMultiply(XMMatrixScaling(xmf3S.x, xmf3S.y, xmf3S.z), xmR), XMMatrixTranslation(xmf3T.x, xmf3T.y, xmf3T.z)));
+
+	return(xmf4x4Result);
+}
+
+CStatic_Mesh* CStatic_Mesh::Create(string strFilePath)
+{
+	CStatic_Mesh* pInstance = new CStatic_Mesh();
+	if (FAILED(pInstance->Ready_Static_Mesh(strFilePath)))
+	{
+		MessageBox(0, L"CStatic_Mesh Created Failed", L"System Error", MB_OK);
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CComponent* CStatic_Mesh::Clone_Component(void* pArg)
+{
+	return new CStatic_Mesh(*this);
+}
+
+void CStatic_Mesh::Free()
+{
+	Safe_Release(m_pLoader);
+	CComponent::Free();
+}

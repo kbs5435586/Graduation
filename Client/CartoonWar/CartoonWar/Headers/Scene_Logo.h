@@ -21,6 +21,8 @@ private:
 	HRESULT					Ready_Add_Prototype_Texture(CManagement* pManagement);
 	HRESULT					Ready_Add_Prototype_Shader(CManagement* pManagement);
 	HRESULT					Ready_Add_Prototype_Buffer(CManagement* pManagement);
+public:
+	HRESULT					Ready_Add_Prototype_Mesh(CManagement* pManagement);
 private:
 	HRESULT					Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pManagement);
 public:

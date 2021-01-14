@@ -16,10 +16,10 @@ public:
 protected:
 	virtual void				Free();
 protected:
-	ID3D12Resource*				m_pVertexBuffer = nullptr;
-	ID3D12Resource*				m_pVertexUploadBuffer = nullptr;
-	ID3D12Resource*				m_pIndexBuffer = nullptr;
-	ID3D12Resource*				m_pIndexUploadBuffer = nullptr;
+	ComPtr<ID3D12Resource>		m_pVertexBuffer = nullptr;
+	ComPtr<ID3D12Resource>		m_pVertexUploadBuffer = nullptr;
+	ComPtr<ID3D12Resource>		m_pIndexBuffer = nullptr;
+	ComPtr<ID3D12Resource>		m_pIndexUploadBuffer = nullptr;
 protected:
 	D3D12_PRIMITIVE_TOPOLOGY	m_PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	_uint						m_iSlot = 0;

@@ -108,6 +108,17 @@ void CMainApp::Compute_Frame()
 
 HRESULT CMainApp::Create_FbxManager()
 {
+	FbxIOSettings* pIOSetting = nullptr;
+	if (nullptr != g_FbxManager && pIOSetting != nullptr)
+		return E_FAIL;
+
+	g_FbxManager = FbxManager::Create();
+	pIOSetting = FbxIOSettings::Create(g_FbxManager, IOSROOT);
+
+	g_FbxManager->SetIOSettings(pIOSetting);
+	FbxString	strFbxPath = FbxGetApplicationDirectory();
+	g_FbxManager->LoadPluginsDirectory(strFbxPath.Buffer());
+
 	return S_OK;
 }
 

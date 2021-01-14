@@ -102,7 +102,8 @@ HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* Fbxm
 	return S_OK;
 }
 
-HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, _matrix matProj, MAINPASS_LIGHT& tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
+HRESULT CShader::SetUp_OnShader(ID3D12PipelineState* pPipeline, FbxAMatrix* FbxmatWorld, _matrix matView, 
+	_matrix matProj, MAINPASS_LIGHT& tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
 	CDevice::GetInstance()->GetCommandList()->SetPipelineState(pPipeline);
 

@@ -69,8 +69,8 @@ HRESULT CBuffer_CubeCol::Ready_VIBuffer()
 		vertexData.RowPitch = m_iStride * m_iNumVertices;;
 		vertexData.SlicePitch = m_iStride * m_iNumVertices;
 
-		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer, m_pVertexUploadBuffer, 0, 0, 1, &vertexData);
-		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pVertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer.Get(), m_pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	{
@@ -87,8 +87,8 @@ HRESULT CBuffer_CubeCol::Ready_VIBuffer()
 		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
 		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
-		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer, m_pIndexUploadBuffer, 0, 0, 1, &indexData);
-		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	CDevice::GetInstance()->Close();

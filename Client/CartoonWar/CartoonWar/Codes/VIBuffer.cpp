@@ -36,15 +36,6 @@ CComponent* CVIBuffer::Clone_Component(void* pArg)
 
 void CVIBuffer::Free()
 {
-	if (m_pIndexBuffer)
-		Safe_Release(m_pIndexBuffer);
-	if (m_pIndexUploadBuffer)
-		Safe_Release(m_pIndexUploadBuffer);
-	if (m_pVertexBuffer)
-		Safe_Release(m_pVertexBuffer);
-	if (m_pVertexUploadBuffer)
-		Safe_Release(m_pVertexUploadBuffer);
-
 
 	CComponent::Free();
 }

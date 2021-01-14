@@ -75,6 +75,7 @@ enum class RS_TYPE
 {
 	DEFAULT,
 	SKYBOX,
+	WIREFRAME,
 	END,
 };
 enum class BLEND_TYPE

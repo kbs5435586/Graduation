@@ -18,6 +18,9 @@
 #include <map>
 #include <algorithm>
 #include <array>
+#include <fbxsdk.h>
+#include <wincodec.h>
+
 
 using namespace std;
 #define DIRECTINPUT_VERSION 0x0800

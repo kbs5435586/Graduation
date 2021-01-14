@@ -51,6 +51,8 @@ void CStatic_Mesh::Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShader
 	}
 }
 
+
+//
 void CStatic_Mesh::Render_HierachyLoader(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxNode* pNode, _matrix matWorld, MAINPASS_LIGHT tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
@@ -78,6 +80,8 @@ void CStatic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader,
 		Render_HierachyLoader(pPipeLine, pShader, m_pScene->GetRootNode(), matWorld, iPassSize, pData, eType);
 }
 
+
+//
 void CStatic_Mesh::Render_Mesh(ID3D12PipelineState* pPipeLine, CShader* pShader, _matrix matWorld, MAINPASS_LIGHT tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
 	if (nullptr != pShader && pPipeLine != nullptr)
@@ -119,6 +123,8 @@ void CStatic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShade
 	CDevice::GetInstance()->GetCommandList()->DrawInstanced(pInfo->vecMeshData.size(), 1, 0, 0);
  }
 
+
+//
 void CStatic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShader, FbxMesh* pMesh, FbxAMatrix& pFbxRootNodeMatrix, 
 	FbxAMatrix& pGeomatryMatrix, _matrix matWorld, MAINPASS_LIGHT tPass, _int iPassSize, void* pData, ROOT_TYPE eType)
 {
@@ -126,6 +132,8 @@ void CStatic_Mesh::Render_Buffer(ID3D12PipelineState* pPipeLine, CShader* pShade
 	_int		iSkinDeformers = pMesh->GetDeformerCount(FbxDeformer::eSkin);
 	if (iSkinDeformers == 0)
 		FbxMatrixTransform = ConvertMatrixToFbx(matWorld) * pFbxRootNodeMatrix * pGeomatryMatrix;
+
+
 
 	if (FAILED(pShader->SetUp_OnShader(pPipeLine, &FbxMatrixTransform, CDevice::GetInstance()->GetViewMatrix(), 
 		CDevice::GetInstance()->GetProjectionMatrix(), tPass, iPassSize, pData, eType)))

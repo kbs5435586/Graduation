@@ -15,7 +15,7 @@ CBuffer_Terrain_Height::CBuffer_Terrain_Height(const CBuffer_Terrain_Height& rhs
 	, m_pPosition(rhs.m_pPosition)
 	, m_pPixel(rhs.m_pPixel)
 {
-
+	m_IsClone = true;
 }
 
 HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _float& fInterval)
@@ -145,8 +145,9 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		vertexData.RowPitch = m_iStride* m_iNumVertices;
 		vertexData.SlicePitch = m_iStride * m_iNumVertices;
 
-		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pVertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer, m_pVertexUploadBuffer, 0, 0, 1, &vertexData);
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pVertexBuffer.Get(), 
+												D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer.Get(), m_pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
 		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
 	}
 
@@ -164,8 +165,8 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		indexData.RowPitch = sizeof(_uint)*m_iNumIndices;
 		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
-		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer, m_pIndexUploadBuffer, 0, 0, 1, &indexData);
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
 		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	CDevice::GetInstance()->Close();
@@ -232,6 +233,11 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 
 void CBuffer_Terrain_Height::Free()
 {
-	//Safe_Delete_Array(m_pPosition);
+	if (m_IsClone)
+	{
+		Safe_Delete_Array(m_pPosition);
+		Safe_Delete_Array(m_pPixel);
+	}
+	
 	CVIBuffer::Free();
 }

@@ -54,6 +54,24 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransformCom->Go_Right(fTimeDelta);
 	}
+
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+
+	pManagement->AddRef();
+
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+	m_pTransformCom->Set_PositionY(fY);
+
+	Safe_Release(pManagement);
+
+
 	return _int();
 }
 

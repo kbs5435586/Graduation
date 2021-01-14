@@ -12,8 +12,15 @@ unsigned __stdcall ResourceLoadThread(void* pArguments)
 	CScene_Logo* pLogo = reinterpret_cast<CScene_Logo*>(pArguments);
 	EnterCriticalSection(&(pLogo->m_tCritical_Section));
 
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return 0;
 
-	
+	pManagement->AddRef();
+
+	pLogo->Ready_Add_Prototype_Mesh(pManagement);
+
+	Safe_Release(pManagement);
 
 	LeaveCriticalSection(&(pLogo->m_tCritical_Section));
 	return 0;
@@ -161,6 +168,13 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/GrayScale/Height.bmp"))))
 		return E_FAIL;
 
+	return S_OK;
+}
+HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01", 
+		CStatic_Mesh::Create("../Bin/Resource/Mesh/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
+		return E_FAIL;
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)

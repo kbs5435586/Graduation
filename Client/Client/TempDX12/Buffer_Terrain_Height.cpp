@@ -126,12 +126,13 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	CDevice::GetInstance()->Open();
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iVertices);
-		if (FAILED(m_pGraphic_Device->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pVertexBuffer))))
+		if (FAILED(m_pGraphic_Device->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
+			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pVertexBuffer))))
 			return E_FAIL;
-		m_pVertexBuffer->SetName(L"VertexBuffer");
-		if (FAILED(m_pGraphic_Device->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pVertexUploadBuffer))))
+		if (FAILED(m_pGraphic_Device->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
+			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pVertexUploadBuffer))))
 			return E_FAIL;
-		m_pVertexUploadBuffer->SetName(L"Upload VertexBuffer");
+
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};
 		vertexData.pData = reinterpret_cast<BYTE*>(m_pVertices);

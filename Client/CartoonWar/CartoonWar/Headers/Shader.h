@@ -14,6 +14,7 @@ public:
 public:
 	HRESULT								SetUp_OnShader(ID3D12Resource* pConstantBuffer,_matrix matWorld, _matrix matView, 
 											_matrix matProj, MAINPASS& output);
+	HRESULT								SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass);
 private:
 	ComPtr<ID3DBlob>					m_pVSBlob = nullptr;
 	ComPtr<ID3DBlob>					m_pHSBlob = nullptr;

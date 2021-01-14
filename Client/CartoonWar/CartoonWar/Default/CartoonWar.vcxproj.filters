@@ -172,6 +172,27 @@
     <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Height">
       <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95. Loaders\00. DDSLoader">
+      <UniqueIdentifier>{a03a171f-2388-418f-b519-13c695815ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. FBXLoader">
+      <UniqueIdentifier>{c9a5c365-5042-43b9-9c5b-f56e0f82e08f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\05. Mesh">
+      <UniqueIdentifier>{27bb00e2-56d7-4f85-ba56-8a3647c87fb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\05. Mesh\00. Static_Mesh">
+      <UniqueIdentifier>{109952bb-cfcf-4438-b217-ef3e21bf407f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\05. Mesh\01. Dynamic_Mesh">
+      <UniqueIdentifier>{aa3e4aab-9820-4b77-94d5-63b607b74912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc">
+      <UniqueIdentifier>{048814f2-3709-4400-89d5-3213d5deb0d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\00. Orc01">
+      <UniqueIdentifier>{566d53e0-6414-410b-8250-5ce9fd1546b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -188,9 +209,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Base.h">
       <Filter>97. Engine\02. Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\DDSTextureLoader.h">
-      <Filter>95. Loaders</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Extern.h">
       <Filter>98. Headers</Filter>
@@ -330,6 +348,18 @@
     <ClInclude Include="..\Headers\Terrain_Height.h">
       <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DDSTextureLoader.h">
+      <Filter>95. Loaders\00. DDSLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FBXLoader.h">
+      <Filter>95. Loaders\01. FBXLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Static_Mesh.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh\00. Static_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Orc01.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\00. Orc01</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -350,9 +380,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Base.cpp">
       <Filter>97. Engine\02. Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\DDSTextureLoader.cpp">
-      <Filter>95. Loaders</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\System.cpp">
       <Filter>97. Engine\00. System</Filter>
@@ -473,6 +500,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain_Height.cpp">
       <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DDSTextureLoader.cpp">
+      <Filter>95. Loaders\00. DDSLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FBXLoader.cpp">
+      <Filter>95. Loaders\01. FBXLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Static_Mesh.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh\00. Static_Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Orc01.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\00. Orc01</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -79,7 +79,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../Bin/</OutDir>
-    <IncludePath>../Libray/include/;$(IncludePath)</IncludePath>
+    <IncludePath>../Library/include/;$(IncludePath)</IncludePath>
     <LibraryPath>../Library/lib/x64/debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,6 +166,7 @@
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
     <ClInclude Include="..\Headers\Extern.h" />
+    <ClInclude Include="..\Headers\FBXLoader.h" />
     <ClInclude Include="..\Headers\Frame.h" />
     <ClInclude Include="..\Headers\FrameManager.h" />
     <ClInclude Include="..\Headers\Function.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
+    <ClInclude Include="..\Headers\Orc01.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\Management.h" />
@@ -187,6 +189,7 @@
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
     <ClInclude Include="..\Headers\SkyBox.h" />
+    <ClInclude Include="..\Headers\Static_Mesh.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
@@ -219,6 +222,7 @@
     <ClCompile Include="..\Codes\Debug_Camera.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
+    <ClCompile Include="..\Codes\FBXLoader.cpp" />
     <ClCompile Include="..\Codes\Frame.cpp" />
     <ClCompile Include="..\Codes\FrameManager.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />
@@ -229,6 +233,7 @@
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
+    <ClCompile Include="..\Codes\Orc01.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\Management.cpp" />
@@ -237,6 +242,7 @@
     <ClCompile Include="..\Codes\Scene_Stage.cpp" />
     <ClCompile Include="..\Codes\Shader.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
+    <ClCompile Include="..\Codes\Static_Mesh.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />

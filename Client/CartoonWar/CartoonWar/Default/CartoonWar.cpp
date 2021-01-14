@@ -16,6 +16,8 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 HINSTANCE		g_hInstance;
 HWND				g_hWnd;
 
+FbxManager*         g_FbxManager = nullptr;
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -89,11 +91,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             pMainApp->Render_MainApp();
         }
     }
+
+
+
     _ulong		dwRefCnt = 0;
     Safe_Release(pSystem);
 
     if (dwRefCnt = Safe_Release(pMainApp))
         _MSG_BOX("CMainApp Release Failed");
+    g_FbxManager->Destroy();
 
     return (int) msg.wParam;
 }

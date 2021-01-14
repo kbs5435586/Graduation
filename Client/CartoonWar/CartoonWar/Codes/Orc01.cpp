@@ -1,23 +1,21 @@
 #include "framework.h"
-#include "Terrain.h"
+#include "Orc01.h"
 #include "Management.h"
 
-CTerrain::CTerrain()
-	: CGameObject()
+COrc01::COrc01()
 {
 }
 
-CTerrain::CTerrain(const CTerrain& rhs)
-	: CGameObject(rhs)
+COrc01::COrc01(const COrc01& rhs)
 {
 }
 
-HRESULT CTerrain::Ready_Prototype()
+HRESULT COrc01::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CTerrain::Ready_GameObject(void* pArg)
+HRESULT COrc01::Ready_GameObject(void* pArg)
 {
 	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 	if (FAILED(Ready_Component()))
@@ -27,57 +25,49 @@ HRESULT CTerrain::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 
-	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
 
-_int CTerrain::Update_GameObject(const _float& fTimeDelta)
+_int COrc01::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CTerrain::LastUpdate_GameObject(const _float& fTimeDelta)
+_int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
+
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 	return _int();
 }
 
-void CTerrain::Render_GameObject()
+void COrc01::Render_GameObject()
 {
 	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
-	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
-	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
 	m_pTextureCom->SetUp_OnShader();
-
-
-	m_pBufferCom->Render_VIBuffer();
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
+	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(), m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, m_iPassSize, m_pData);
 }
 
-HRESULT CTerrain::CreateInputLayout()
+HRESULT COrc01::CreateInputLayout()
 {
+	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME)))
 		return E_FAIL;
-
 
 	return S_OK;
 }
-
-HRESULT CTerrain::CreateConstantBuffer()
+HRESULT COrc01::CreateConstantBuffer()
 {
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
@@ -104,46 +94,46 @@ HRESULT CTerrain::CreateConstantBuffer()
 
 	CDevice::GetInstance()->GetDevice()->CreateConstantBufferView(
 		&cbvDesc, CDevice::GetInstance()->GetConstantBufferDescHeap()->GetCPUDescriptorHandleForHeapStart());
-
 	return S_OK;
 }
 
-CTerrain* CTerrain::Create()
+COrc01* COrc01::Create()
 {
-	CTerrain* pInstance = new CTerrain();
+	COrc01* pInstance = new COrc01();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CTerrain Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CTerrain::Clone_GameObject(void* pArg)
+
+CGameObject* COrc01::Clone_GameObject(void* pArg)
 {
-	CTerrain* pInstance = new CTerrain(*this);
+	COrc01* pInstance = new COrc01(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"CTerrain Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CTerrain::Free()
+void COrc01::Free()
 {
-	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pMeshCom);
 
 	CGameObject::Free();
 }
 
-HRESULT CTerrain::Ready_Component()
+HRESULT COrc01::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -159,9 +149,9 @@ HRESULT CTerrain::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_Terrain*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain");
-	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
+	m_pMeshCom = (CStatic_Mesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01");
+	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");

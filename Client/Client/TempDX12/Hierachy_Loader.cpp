@@ -65,7 +65,6 @@ HRESULT CHierachy_Loader::Ready_Load_Hierachy(FbxNode* pNode, _bool IsStatic)
 				{
 					for (_uint i = 0; i < iMtrlCnt; ++i)
 					{
-						MTRLINFO tInfo = {};
 						FbxSurfaceMaterial* pMtrlSur = pNode->GetMaterial(i);
 						if (nullptr == pMtrlSur)
 							return E_FAIL;
@@ -500,12 +499,12 @@ HRESULT CHierachy_Loader::CreateBufferView(_uint iVerticesNum, RenderInfo* pInfo
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iVertices);
 
-		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pVertexBuffer))))
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE, 
+			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pVertexBuffer))))
 			return E_FAIL;
-		pVertexBuffer->SetName(L"VertexBuffer");
-		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pVertexUploadBuffer))))
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, 
+			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pVertexUploadBuffer))))
 			return E_FAIL;
-		pVertexUploadBuffer->SetName(L"Upload VertexBuffer");
 
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};

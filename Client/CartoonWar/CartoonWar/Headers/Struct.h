@@ -76,7 +76,6 @@ typedef struct tagMesh
 	}
 	XMFLOAT3		vPosition;
 	XMFLOAT3		vNormal;
-
 	XMFLOAT2		vUV;
 }MESH;
 
@@ -145,9 +144,9 @@ struct VTXTEMP
 struct RenderInfo
 {
 	vector<MESH>				vecMeshData;
+	vector<tagMtrInfo>			vecMtrlInfo;
 	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
-	vector<tagMtrInfo>			vecMtrlInfo;
 };
 
 

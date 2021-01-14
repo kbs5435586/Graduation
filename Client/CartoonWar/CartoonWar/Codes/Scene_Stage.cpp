@@ -8,6 +8,8 @@
 #include "Terrain.h"
 #include "Terrain_Height.h"
 
+#include "Orc01.h"
+
 CScene_Stage::CScene_Stage()
 {
 }
@@ -65,6 +67,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain_Height", CTerrain_Height::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc01", COrc01::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -78,6 +82,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
 		return E_FAIL;
 
 	return S_OK;
@@ -142,6 +148,14 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
