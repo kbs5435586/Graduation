@@ -25,6 +25,7 @@ void Server::mainServer()
     listen(listenSocket, SOMAXCONN);
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
+    initalize_clients(); // 클라이언트 정보들 초기화
 
      // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록
@@ -64,7 +65,7 @@ void Server::mainServer()
         case OP_ACCEPT:
         {
             int user_id = current_User_ID++;
-            current_User_ID %= MAX_USER; // 10 넘어 갔을때 걸러내는 용도
+            current_User_ID = current_User_ID % MAX_USER; // 10 넘어 갔을때 걸러내는 용도
 
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), g_iocp, user_id, 0); // 
 
@@ -82,7 +83,7 @@ void Server::mainServer()
             WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
                 &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
 
-            SOCKET clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); // 새로 받을 클라 소켓 
+            clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); // 새로 받을 클라 소켓 
             ZeroMemory(&accept_over.over, sizeof(accept_over.over)); // accept용 확장 오버랩 구조체 초기화
             AcceptEx(listenSocket, clientSocket, accept_over.io_buf, NULL,
                 sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
@@ -103,8 +104,9 @@ void Server::process_packet(int user_id, char* buf)
 		cs_packet_login* packet = reinterpret_cast<cs_packet_login*>(buf);
 		strcpy_s(g_clients[user_id].m_name, packet->name);
 		g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 혹시 모르니까 해줬다?
+        send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
 
-		send_login_ok_packet(user_id);
+        enter_game(user_id); // 새로 들어왔으니 접속 처리 및 이미 들어와있는 클라 정보 정리
 	}
 	break;
 	case CS_PACKET_MOVE:
@@ -184,17 +186,61 @@ void Server::do_move(int user_id, char direction)
     }
     g_clients[user_id].m_x = x;
     g_clients[user_id].m_y = y;
-    send_move_packet(user_id);
+
+    for (auto &c : g_clients)
+    {
+        if (true == c.m_isConnected)
+        {
+            send_move_packet(c.m_id, user_id); // 연결된 모든 클라이언트들에게 움직인 클라의 위치값 전송
+        }
+    }
 }
 
-void Server::send_move_packet(int user_id)
+void Server::send_move_packet(int user_id, int mover)
 {
     sc_packet_move packet;
-    packet.id = user_id;
+    packet.id = mover;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_MOVE;
-    packet.x = g_clients[user_id].m_x;
-    packet.y = g_clients[user_id].m_y;
+    packet.x = g_clients[mover].m_x;
+    packet.y = g_clients[mover].m_y; // 이동한 플레이어의 정보 담기
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::enter_game(int user_id)
+{
+    g_clients[user_id].m_isConnected = true;
+    for (int i = 0; i < MAX_USER; i++) 
+    {
+        if (true == g_clients[i].m_isConnected) // 이미 연결 중인 클라들한테만
+        {
+            if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
+            {
+                send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
+                send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
+            }
+          
+        }
+    }
+}
+
+void Server::initalize_clients()
+{
+    for (int i = 0; i < MAX_USER; ++i)
+        g_clients[i].m_isConnected = false;
+}
+
+void Server::send_enter_packet(int user_id, int other_id)
+{
+    sc_packet_enter packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ENTER;
+    packet.x = g_clients[other_id].m_x;
+    packet.y = g_clients[other_id].m_y;
+    strcpy_s(packet.name, g_clients[other_id].m_name);
+    packet.o_type = O_PLAYER; // 다른 플레이어들의 정보 저장
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }

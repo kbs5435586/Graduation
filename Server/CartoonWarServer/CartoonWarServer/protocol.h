@@ -42,6 +42,9 @@ struct sc_packet_move
 	short x, y;
 };
 
+constexpr unsigned char O_PLAYER = 0;
+constexpr unsigned char O_NPC = 1;
+
 struct sc_packet_enter
 {
 	char size;
