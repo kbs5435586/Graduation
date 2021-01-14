@@ -1,8 +1,9 @@
 #include "pch.h"
-#include "server.h"
+#include "Server.h"
 
 int main()
 {
-	mainServer();
+	Server GameServer;
+	GameServer.mainServer();
 	return 0;
 }

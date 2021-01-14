@@ -17,22 +17,16 @@
     <Filter Include="99. Global">
       <UniqueIdentifier>{68debbfc-a50e-427b-bcd3-d3ef0ba03f73}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99a. Test">
-      <UniqueIdentifier>{b099770c-fbf3-4f27-b3c2-1db2544a223f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>00. Main</Filter>
     </ClCompile>
-    <ClCompile Include="server.cpp">
-      <Filter>98. Server</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>01. Object</Filter>
     </ClCompile>
-    <ClCompile Include="IOCP_Test.cpp">
-      <Filter>99a. Test</Filter>
+    <ClCompile Include="Server.cpp">
+      <Filter>98. Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -45,11 +39,11 @@
     <ClInclude Include="Object.h">
       <Filter>01. Object</Filter>
     </ClInclude>
-    <ClInclude Include="server.h">
-      <Filter>98. Server</Filter>
+    <ClInclude Include="Struct.h">
+      <Filter>99. Global</Filter>
     </ClInclude>
-    <ClInclude Include="Protocol_Test.h">
-      <Filter>99a. Test</Filter>
+    <ClInclude Include="Server.h">
+      <Filter>98. Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

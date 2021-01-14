@@ -13,23 +13,6 @@ void drawMoney(vector<Info*>& list)
 	cout << "Ãâ±Ý¾× : ";
 	cin >> drawCash;
 
-	//auto iter = find(list.begin(), list.end(), [searchID](Info* info)
-	//{
-	//	if (strcmp(info->name, searchID) == 0)
-	//	{
-	//		return true;
-	//	}
-	//});
-
-	//if (iter != list.end())
-	//{
-	//	int i = 0;
-	//}
-	//else
-	//{
-	//	int i = 0;
-	//}
-
 	for (auto& iter : list)
 	{
 		if (strcmp(iter->name, searchID) == 0)
