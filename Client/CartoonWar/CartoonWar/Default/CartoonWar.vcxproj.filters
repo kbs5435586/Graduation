@@ -169,7 +169,7 @@
     <Filter Include="02. GameObject\01. Scene_Stage\01. Terrain">
       <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Hight">
+    <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Height">
       <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -324,6 +324,12 @@
     <ClInclude Include="..\Headers\Terrain.h">
       <Filter>02. GameObject\01. Scene_Stage\01. Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_Terrain_Height.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Terrain_Height.h">
+      <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -461,6 +467,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain.cpp">
       <Filter>02. GameObject\01. Scene_Stage\01. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Terrain_Height.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

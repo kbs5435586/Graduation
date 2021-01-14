@@ -155,6 +155,7 @@
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
     <ClInclude Include="..\Headers\Buffer_RectTex.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
+    <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
     <ClInclude Include="..\Headers\Component.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
+    <ClInclude Include="..\Headers\Terrain_Height.h" />
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\TimerManager.h" />
@@ -207,6 +209,7 @@
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
@@ -236,6 +239,7 @@
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
+    <ClCompile Include="..\Codes\Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\TimerManager.cpp" />

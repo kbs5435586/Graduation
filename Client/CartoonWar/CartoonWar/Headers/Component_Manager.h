@@ -6,13 +6,12 @@
 #include "Shader.h"
 #include "Texture.h"
 
-
-
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"
 #include "Buffer_CubeCol.h"
 #include "Buffer_CubeTex.h"
 #include "Buffer_Terrain.h"
+#include "Buffer_Terrain_Height.h"
 
 class CComponent;
 class CComponent_Manager :

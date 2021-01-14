@@ -1,23 +1,25 @@
 #include "framework.h"
-#include "Terrain.h"
+#include "Terrain_Height.h"
 #include "Management.h"
 
-CTerrain::CTerrain()
+CTerrain_Height::CTerrain_Height()
 	: CGameObject()
 {
 }
 
-CTerrain::CTerrain(const CTerrain& rhs)
+CTerrain_Height::CTerrain_Height(const CTerrain_Height& rhs)
 	: CGameObject(rhs)
 {
+
 }
 
-HRESULT CTerrain::Ready_Prototype()
+HRESULT CTerrain_Height::Ready_Prototype()
 {
+
 	return S_OK;
 }
 
-HRESULT CTerrain::Ready_GameObject(void* pArg)
+HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 {
 	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 	if (FAILED(Ready_Component()))
@@ -33,15 +35,14 @@ HRESULT CTerrain::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-_int CTerrain::Update_GameObject(const _float& fTimeDelta)
+_int CTerrain_Height::Update_GameObject(const _float& fTimeDelta)
 {
+
 	return _int();
 }
 
-_int CTerrain::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-
-
 	if (nullptr == m_pRendererCom)
 		return -1;
 
@@ -50,7 +51,7 @@ _int CTerrain::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CTerrain::Render_GameObject()
+void CTerrain_Height::Render_GameObject()
 {
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
@@ -66,8 +67,10 @@ void CTerrain::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 }
 
-HRESULT CTerrain::CreateInputLayout()
+HRESULT CTerrain_Height::CreateInputLayout()
 {
+
+	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -76,11 +79,10 @@ HRESULT CTerrain::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
-HRESULT CTerrain::CreateConstantBuffer()
+HRESULT CTerrain_Height::CreateConstantBuffer()
 {
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
@@ -107,35 +109,34 @@ HRESULT CTerrain::CreateConstantBuffer()
 
 	CDevice::GetInstance()->GetDevice()->CreateConstantBufferView(
 		&cbvDesc, CDevice::GetInstance()->GetConstantBufferDescHeap()->GetCPUDescriptorHandleForHeapStart());
-
 	return S_OK;
 }
 
-CTerrain* CTerrain::Create()
+CTerrain_Height* CTerrain_Height::Create()
 {
-	CTerrain* pInstance = new CTerrain();
+	CTerrain_Height* pInstance = new CTerrain_Height();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CTerrain Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTerrain_Height Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CTerrain::Clone_GameObject(void* pArg)
+CGameObject* CTerrain_Height::Clone_GameObject(void* pArg)
 {
-	CTerrain* pInstance = new CTerrain(*this);
+	CTerrain_Height* pInstance = new CTerrain_Height(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"CTerrain Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTerrain_Height Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CTerrain::Free()
+void CTerrain_Height::Free()
 {
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
@@ -146,7 +147,7 @@ void CTerrain::Free()
 	CGameObject::Free();
 }
 
-HRESULT CTerrain::Ready_Component()
+HRESULT CTerrain_Height::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -162,7 +163,7 @@ HRESULT CTerrain::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_Terrain*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain");
+	m_pBufferCom = (CBuffer_Terrain_Height*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;

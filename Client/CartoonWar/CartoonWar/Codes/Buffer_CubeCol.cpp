@@ -84,8 +84,8 @@ HRESULT CBuffer_CubeCol::Ready_VIBuffer()
 
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = (void*)(vecIndices.data());
-		indexData.RowPitch = m_iStride * m_iNumIndices;
-		indexData.SlicePitch = m_iStride * m_iNumIndices;
+		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
+		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer, m_pIndexUploadBuffer, 0, 0, 1, &indexData);
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);

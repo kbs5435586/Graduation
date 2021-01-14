@@ -24,12 +24,14 @@ cbuffer cbPerObject : register(b0)
 struct VertexIn
 {
 	float3 vPosition  : POSITION;
+	float3 vNormal : NORMAL;
 	float2 vTexUV : TEXCOORD;
 };
 
 struct VertexOut
 {
 	float4 vPosition  : SV_POSITION;
+	float4 vNormal: NORMAL;
 	float2 vTexUV : TEXCOORD;
 };
 
@@ -38,6 +40,7 @@ VertexOut VS_Main(VertexIn In)
 	VertexOut Out;
 
 	Out.vPosition = mul(mul(mul(float4(In.vPosition, 1.0f), matWorld), matView), matProj);
+	Out.vNormal = float4(In.vNormal,1.f);
 	Out.vTexUV = In.vTexUV;
 
 	return Out;
@@ -45,6 +48,6 @@ VertexOut VS_Main(VertexIn In)
 
 float4 PS_Main(VertexOut In) : SV_Target
 {
-	return g_texture.Sample(DiffuseSampler, In.vTexUV * 100.f);
+	return g_texture.Sample(DiffuseSampler, In.vTexUV );
 }
 

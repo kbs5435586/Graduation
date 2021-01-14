@@ -40,7 +40,7 @@ HRESULT CSkyBox::Ready_GameObject(void* pArg)
 	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	//m_pTransformCom->Scaling(1000.f, 1000.f, 1000.f);
+	m_pTransformCom->Scaling(1000.f, 1000.f, 1000.f);
 
 	return S_OK;
 }
@@ -53,7 +53,7 @@ _int CSkyBox::Update_GameObject(const _float& fTimeDelta)
 	matView = Matrix_::Inverse(matView);
 
 	_vec3 vPos = *(_vec3*)&matView.m[3][0];
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 
 	return _int();

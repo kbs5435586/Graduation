@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Layer.h"
 #include "GameObject.h"
+
 _IMPLEMENT_SINGLETON(CComponent_Manager)
 
 CComponent_Manager::CComponent_Manager()

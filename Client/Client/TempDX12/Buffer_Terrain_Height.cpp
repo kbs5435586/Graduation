@@ -90,7 +90,6 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		}
 	}
 
-
 	for (int i = 0; i < m_iNumPolygons * 3;)
 	{
 		_vec3 vSour, vDest, vNormal, vCross;
@@ -143,6 +142,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		UpdateSubresources(CDevice::GetInstance()->GetCommandList(), m_pVertexBuffer, m_pVertexUploadBuffer, 0, 0, 1, &vertexData);
 		CDevice::GetInstance()->GetCommandList()->ResourceBarrier(1, &tResource_Barrier);
 	}
+	
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iIndices);
 		if (FAILED(m_pGraphic_Device->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))

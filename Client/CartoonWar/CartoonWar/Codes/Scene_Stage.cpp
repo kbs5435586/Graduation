@@ -6,6 +6,7 @@
 #include "SkyBox.h"
 #include "Debug_Camera.h"
 #include "Terrain.h"
+#include "Terrain_Height.h"
 
 CScene_Stage::CScene_Stage()
 {
@@ -37,6 +38,8 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
+	//
+
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -47,25 +50,7 @@ _int CScene_Stage::LastUpdate_Scene(const _float& fTimeDelta)
 
 void CScene_Stage::Render_Scene()
 {
-	//CManagement* pManagement = CManagement::GetInstance();
-	//if (nullptr == pManagement)
-	//	return;
-	//pManagement->AddRef();
-	//
-	//// Layer_Basic 안에 있는 0번째 객체에 접근
-	//CGameObject*	pCube = pManagement->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_BasicShape", 0);
-	//// Layer_Basic 안에 있는 0번째 객체의 Transform에 접근
-	//CTransform*		pTransform_Cube = (CTransform*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, 
-	//									L"Layer_BasicShape", L"Com_Transform", 0);
 
-	//_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-
-	//CGameObject*	pTerrain = pManagement->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-	//CTransform*		pTransform_Terrain = (CTransform*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, 
-	//									L"Layer_Terrain", L"Com_Transform", 0);
-
-
-	//Safe_Release(pManagement);
 }
 
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
@@ -78,7 +63,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain_Height", CTerrain_Height::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -89,7 +75,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain", pManagement)))
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 		return E_FAIL;
@@ -148,6 +134,13 @@ HRESULT CScene_Stage::Ready_Layer_SkyBox(const _tchar* pLayerTag, CManagement* p
 HRESULT CScene_Stage::Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

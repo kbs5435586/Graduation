@@ -19,8 +19,8 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _uint& iNumVerticesX, const _uint&
 
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
 
-	m_iStride = sizeof(VTXTEX);
-	vector<VTXTEX>		vecVertices;
+	m_iStride = sizeof(VTXTEXNOR);
+	vector<VTXTEXNOR>		vecVertices;
 	vecVertices.resize(m_iNumVertices);
 
 
@@ -30,8 +30,9 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _uint& iNumVerticesX, const _uint&
 		{
 			_uint iIdx = i * m_iNumVerticesZ + j;
 
-			vecVertices[iIdx].vPosition =_vec3(j * m_fInterval, 0.0f, i * m_fInterval);
-			vecVertices[iIdx].vTex = _vec2(j / (m_iNumVerticesX - 1.f), i / (m_iNumVerticesZ - 1.f));
+			vecVertices[iIdx].vPos =_vec3(j * m_fInterval, 0.0f, i * m_fInterval);
+			vecVertices[iIdx].vTexUV = _vec2(j / (m_iNumVerticesX - 1.f), i / (m_iNumVerticesZ - 1.f));
+			vecVertices[iIdx].vNormal=_vec3(0.f,0.f,0.f);
 		}
 	}
 
@@ -95,8 +96,8 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _uint& iNumVerticesX, const _uint&
 
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = (void*)(vecIndices.data());
-		indexData.RowPitch = m_iStride * m_iNumIndices;
-		indexData.SlicePitch = m_iStride * m_iNumIndices;
+		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
+		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer, m_pIndexUploadBuffer, 0, 0, 1, &indexData);
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
