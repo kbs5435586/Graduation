@@ -193,6 +193,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\00. Orc01">
       <UniqueIdentifier>{566d53e0-6414-410b-8250-5ce9fd1546b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\06. Frustum">
+      <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -360,6 +363,12 @@
     <ClInclude Include="..\Headers\Orc01.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\00. Orc01</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Hash.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Frustum.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -512,6 +521,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Orc01.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\00. Orc01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Frustum.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

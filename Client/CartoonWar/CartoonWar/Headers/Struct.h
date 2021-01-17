@@ -77,6 +77,20 @@ typedef struct tagMesh
 	XMFLOAT3		vPosition;
 	XMFLOAT3		vNormal;
 	XMFLOAT2		vUV;
+
+	bool operator==(const tagMesh& other) const
+	{
+		if (vPosition.x != other.vPosition.x || vPosition.y != other.vPosition.y || vPosition.z != other.vPosition.z)
+			return false;
+
+		if (vNormal.x != other.vNormal.x || vNormal.y != other.vNormal.y || vNormal.z != other.vNormal.z)
+			return false;
+
+		if (vUV.x != other.vUV.x || vUV.y != other.vUV.y)
+			return false;
+
+		return true;
+	}
 }MESH;
 
 typedef struct tagCamera_Desc
@@ -133,17 +147,11 @@ typedef struct tagMtrInfo
 }MTRLINFO;
 
 
-struct VTXTEMP
-{
-	XMFLOAT3		vPos;
-	XMFLOAT3		vNormal;
-	XMFLOAT2		vUV;
-};
-
 
 struct RenderInfo
 {
-	vector<MESH>				vecMeshData;
+	vector<MESH>				vecVertices;
+	vector<size_t>				vecIndices;
 	vector<tagMtrInfo>			vecMtrlInfo;
 	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;

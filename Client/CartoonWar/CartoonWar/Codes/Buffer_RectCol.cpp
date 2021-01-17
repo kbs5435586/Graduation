@@ -20,10 +20,10 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	vector<VTXCOL>	vecVertices;
 	vecVertices.resize(m_iNumVertices);
 
-	vecVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[1] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[2] = VTXCOL(XMFLOAT3(0.5f, -0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[3] = VTXCOL(XMFLOAT3(0.5f, 0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f));
+	vecVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+	vecVertices[1] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+	vecVertices[2] = VTXCOL(XMFLOAT3(0.5f, -0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+	vecVertices[3] = VTXCOL(XMFLOAT3(0.5f, 0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
 
 	m_iNumIndices = 6;
 	vector<_uint>	vecIndices;
@@ -35,6 +35,13 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	vecIndices[3] = 0;
 	vecIndices[4] = 3;
 	vecIndices[5] = 2;
+
+	//vecIndices[0] = 0;
+	//vecIndices[1] = 1;
+	//vecIndices[2] = 3;
+	//vecIndices[3] = 2;
+	//vecIndices[4] = 3;
+	//vecIndices[5] = 1;
 
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);

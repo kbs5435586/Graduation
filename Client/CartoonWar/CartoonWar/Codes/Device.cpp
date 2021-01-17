@@ -113,15 +113,6 @@ HRESULT CDevice::Initialize()
 		return E_FAIL;
 
 
-
-
-
-
-
-
-
-
-
 	// Empty Signature 만들기
 	// 루트 서명 
 	// 그리기 호출 전에 해당 자원이 파이프라인에 묶일 자료이며,

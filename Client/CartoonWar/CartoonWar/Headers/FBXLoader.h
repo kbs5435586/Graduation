@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+class CTexture;
 class CFBXLoader :
     public CBase
 {
@@ -12,7 +13,8 @@ public:
 private:
     HRESULT                     Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo);
     HRESULT                     Load_Material(FbxSurfaceMaterial* pMtrlSur, RenderInfo* pInfo);
-    HRESULT                     Load_Texture(RenderInfo* pInfo);
+public:
+    HRESULT                     Load_Texture(RenderInfo* pInfo, CTexture* pTexture);
 private:
     _vec4                       GetMtrlData(FbxSurfaceMaterial* pSurface, const char* pMtrlName, const char* pMtrlFactorName);
     wstring                     GetMtrlTextureName(FbxSurfaceMaterial* pSurface, const char* pMtrlProperty);
@@ -21,13 +23,16 @@ private:
     _vec2                       Get_UV(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder);
 private:
     // Only VertexBuffer
-    HRESULT                     CreateBufferView(_uint iNumVertices, RenderInfo* pInfo);
+    HRESULT                     CreateBufferView(RenderInfo* pInfo);
+    // Use IndexBuffer
+    HRESULT                     CreateBufferView_Index(RenderInfo* pInfo);
 public:
     static CFBXLoader*          Create(string strFilePath);
 private:
     virtual void                Free();
 public:
     FbxScene*                   GetScene() { return m_pScene; }
+    vector<RenderInfo*>         GetRenderInfo() { return m_vecRenderInfo; }
 private:
     FbxScene*                   m_pScene = nullptr;
 private:
@@ -37,10 +42,12 @@ private:
     _uint                       m_iNumIndices = 0;
     _uint                       m_iStride = 0;
 private:
-    //ComPtr<ID3D12Resource>      m_pVertexBuffer = nullptr;
-    //ComPtr<ID3D12Resource>      m_pVertexUploadBuffer = nullptr;
-    vector<ID3D12Resource*>       m_vecVertexBuffer;
-    vector<ID3D12Resource*>       m_vecVertexUploadBuffer;
+    vector<ID3D12Resource*>     m_vecVertexBuffer;
+    vector<ID3D12Resource*>     m_vecVertexUploadBuffer;
+    vector<ID3D12Resource*>     m_vecIndexBuffer;
+    vector<ID3D12Resource*>     m_vecIndexUploadBuffer;
+
+
 
 };
 

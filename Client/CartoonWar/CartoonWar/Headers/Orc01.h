@@ -5,8 +5,6 @@ class CRenderer;
 class CStatic_Mesh;
 class CShader;
 class CTexture;
-
-
 class COrc01 :
     public CGameObject
 {

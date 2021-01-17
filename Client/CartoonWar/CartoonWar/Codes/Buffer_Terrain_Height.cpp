@@ -96,7 +96,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		}
 	}
 
-	for (int i = 0; i < m_iNumPolygons * 3;)
+	for (_uint i = 0; i < m_iNumPolygons * 3;)
 	{
 		_vec3 vSour, vDest, vNormal, vCross;
 		//ÁÂÇÏ

@@ -15,14 +15,13 @@ LIGHT CLight_Manager::GetLight(const _tchar* pLightTag)
 	return (*iter_find).second->Get_LightInfo();
 }
 
-HRESULT CLight_Manager::Add_LightInfo(ID3D12Device* pGraphic_Device, 
-	const _tchar* pLightTag, LIGHT& tLightInfo)
+HRESULT CLight_Manager::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
 {
 	auto iter_find = m_mapLightInfo.find(pLightTag);
 	if (iter_find != m_mapLightInfo.end())
 		return E_FAIL;
 
-	CLight* pInstance = CLight::Create(pGraphic_Device, tLightInfo);
+	CLight* pInstance = CLight::Create(tLightInfo);
 	if (nullptr == pInstance)
 		return E_FAIL;
 

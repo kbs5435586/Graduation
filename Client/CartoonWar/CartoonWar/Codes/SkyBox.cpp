@@ -57,8 +57,8 @@ void CSkyBox::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
 	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
 	m_pTextureCom->SetUp_OnShader();
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
 
 
 	m_pBufferCom->Render_VIBuffer();

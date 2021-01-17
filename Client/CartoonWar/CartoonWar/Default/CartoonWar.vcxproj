@@ -169,10 +169,12 @@
     <ClInclude Include="..\Headers\FBXLoader.h" />
     <ClInclude Include="..\Headers\Frame.h" />
     <ClInclude Include="..\Headers\FrameManager.h" />
+    <ClInclude Include="..\Headers\Frustum.h" />
     <ClInclude Include="..\Headers\Function.h" />
     <ClInclude Include="..\Headers\Funtor.h" />
     <ClInclude Include="..\Headers\GameObject.h" />
     <ClInclude Include="..\Headers\GameObject_Manager.h" />
+    <ClInclude Include="..\Headers\Hash.h" />
     <ClInclude Include="..\Headers\Input.h" />
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
@@ -225,6 +227,7 @@
     <ClCompile Include="..\Codes\FBXLoader.cpp" />
     <ClCompile Include="..\Codes\Frame.cpp" />
     <ClCompile Include="..\Codes\FrameManager.cpp" />
+    <ClCompile Include="..\Codes\Frustum.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\GameObject_Manager.cpp" />
     <ClCompile Include="..\Codes\Input.cpp" />

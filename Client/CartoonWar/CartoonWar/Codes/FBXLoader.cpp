@@ -35,7 +35,7 @@ HRESULT CFBXLoader::Ready_FbxLoader(string strFilePath)
 	FbxGeometryConverter		FbxGeomConverter(g_FbxManager);
 	FbxGeomConverter.Triangulate(m_pScene, TRUE);
 
-	m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
+	m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::eDirectX);
 
 
 
@@ -72,6 +72,7 @@ HRESULT CFBXLoader::Load_FbxFile(FbxNode* pNode, _bool IsStatic)
 				}
 				if (FAILED(Load_Mesh(pMesh, pInfo)))
 					return E_FAIL;
+
 				pMesh->SetUserDataPtr(pInfo);
 				m_vecRenderInfo.push_back(pInfo);
 			}
@@ -92,6 +93,7 @@ HRESULT CFBXLoader::Load_FbxFile(FbxNode* pNode, _bool IsStatic)
 
 HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 {
+	unordered_map<MESH, _uint> indexMapping;
 	if (nullptr == pMesh)
 		return E_FAIL;
 
@@ -109,37 +111,42 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 
 	_uint	iTriangleCnt = pMesh->GetPolygonCount();
 	_uint	iVtxOrder = 0;
+	_uint	iCnt = 0;
 
 	for (_uint i = 0; i < iTriangleCnt; ++i)
 	{
 		for (_uint j = 0; j < 3; ++j)
 		{
-			_vec3 vPos = {};
-
 			_uint	iControlPointIdx = pMesh->GetPolygonVertex(i, j);
 
-			vPos.x = vecControlPoint[iControlPointIdx].x;
-			vPos.y = vecControlPoint[iControlPointIdx].y;
-			vPos.z = vecControlPoint[iControlPointIdx].z;
-
-			FbxVector2 fbxTexCoord;
-			FbxStringList UVSetNameList;
-
-
+			_vec3 vPos =	vecControlPoint[iControlPointIdx];
 			_vec3 vNormal = Get_Normal(pMesh, iControlPointIdx, iVtxOrder);
-			_vec2 vUV = Get_UV(pMesh, iControlPointIdx, pMesh->GetTextureUVIndex(i, j));
+			_vec2 vUV =		Get_UV(pMesh, iControlPointIdx, pMesh->GetTextureUVIndex(i, j));
 
 
-			pInfo->vecMeshData.push_back(MESH(vPos, vNormal, vUV));
+			MESH Vertex = MESH(vPos, vNormal, vUV);
+
+			auto iter_find = indexMapping.find(Vertex);
+			if (iter_find != indexMapping.end())
+			{
+				pInfo->vecIndices.push_back(iter_find->second);
+			}
+			else
+			{
+				indexMapping[Vertex] = iCnt;
+				pInfo->vecIndices.push_back(iCnt);
+				++iCnt;
+			}
+				pInfo->vecVertices.push_back(Vertex);
 			iVtxOrder++;
 		}
 	}
-
-
 	//Create Buffer
-	if (FAILED(CreateBufferView(pInfo->vecMeshData.size(), pInfo)))
-		return E_FAIL;
+	//if (FAILED(CreateBufferView_Index(pInfo)))
+	//	return E_FAIL;
 
+	if (FAILED(CreateBufferView(pInfo)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -158,11 +165,21 @@ HRESULT CFBXLoader::Load_Material(FbxSurfaceMaterial* pMtrlSur, RenderInfo* pInf
 	tInfo.strNormal = GetMtrlTextureName(pMtrlSur, FbxSurfaceMaterial::sNormalMap);
 	tInfo.strSpec = GetMtrlTextureName(pMtrlSur, FbxSurfaceMaterial::sSpecular);
 
+	pInfo->vecMtrlInfo.push_back(tInfo);
 	return S_OK;
 }
 
-HRESULT CFBXLoader::Load_Texture(RenderInfo* pInfo)
+HRESULT CFBXLoader::Load_Texture(RenderInfo* pInfo, CTexture* pTexture)
 {
+	if (pInfo == nullptr)
+		return E_FAIL;
+
+
+	for (auto& iter : pInfo->vecMtrlInfo)
+	{
+
+	}
+
 	return S_OK;
 }
 
@@ -191,7 +208,7 @@ wstring CFBXLoader::GetMtrlTextureName(FbxSurfaceMaterial* pSurface, const char*
 	FbxProperty TextureProperty = pSurface->FindProperty(pMtrlProperty);
 	if (TextureProperty.IsValid())
 	{
-		UINT iCnt = TextureProperty.GetSrcObjectCount();
+		UINT iCnt = TextureProperty.GetSrcObjectCount<FbxFileTexture>();
 
 		if (1 <= iCnt)
 		{
@@ -270,9 +287,9 @@ _vec2 CFBXLoader::Get_UV(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder)
 	return TempUV;
 }
 
-HRESULT CFBXLoader::CreateBufferView(_uint iNumVertices, RenderInfo* pInfo)
+HRESULT CFBXLoader::CreateBufferView(RenderInfo* pInfo)
 {
-	m_iNumVertices = iNumVertices;
+	m_iNumVertices = pInfo->vecVertices.size();
 	m_iStride = sizeof(MESH);
 
 
@@ -296,7 +313,7 @@ HRESULT CFBXLoader::CreateBufferView(_uint iNumVertices, RenderInfo* pInfo)
 		//m_pVertexUploadBuffer.Get()->SetName(L"Upload");
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = (void*)(pInfo->vecMeshData.data());
+		vertexData.pData = (void*)(pInfo->vecVertices.data());
 		vertexData.RowPitch = m_iStride * m_iNumVertices;
 		vertexData.SlicePitch = m_iStride * m_iNumVertices;
 
@@ -322,6 +339,86 @@ HRESULT CFBXLoader::CreateBufferView(_uint iNumVertices, RenderInfo* pInfo)
 	return S_OK;
 }
 
+HRESULT CFBXLoader::CreateBufferView_Index(RenderInfo* pInfo)
+{
+	m_iStride = sizeof(MESH);
+	m_iNumIndices = pInfo->vecIndices.size();
+	m_iNumVertices = pInfo->vecVertices.size();
+
+
+	D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+	ID3D12Resource* pVertexBuffer = nullptr;
+	ID3D12Resource* pVertexUploadBuffer = nullptr;
+
+	ID3D12Resource* pIndexBuffer = nullptr;
+	ID3D12Resource* pIndexUploadBuffer = nullptr;
+
+	CDevice::GetInstance()->Open();
+	{
+		D3D12_RESOURCE_DESC		tDesc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iNumVertices);
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
+			&tDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pVertexBuffer))))
+			return E_FAIL;
+
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
+			&tDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pVertexUploadBuffer))))
+			return E_FAIL;
+
+		D3D12_SUBRESOURCE_DATA vertexData = {};
+		vertexData.pData = (void*)(pInfo->vecVertices.data());
+		vertexData.RowPitch = m_iStride * m_iNumVertices;
+		vertexData.SlicePitch = m_iStride * m_iNumVertices;
+
+
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(pVertexBuffer,
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+
+		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), pVertexBuffer, pVertexUploadBuffer, 0, 0, 1, &vertexData);
+
+		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
+	}
+	{
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices);
+
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
+			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pIndexBuffer))))
+			return E_FAIL;
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
+			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pIndexUploadBuffer))))
+			return E_FAIL;
+
+		D3D12_SUBRESOURCE_DATA indexData = {};
+		indexData.pData = (void*)(pInfo->vecIndices.data());
+		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
+		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
+
+		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), pIndexBuffer, pIndexUploadBuffer, 0, 0, 1, &indexData);
+		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(pIndexBuffer,
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
+	}
+	CDevice::GetInstance()->Close();
+
+
+	pInfo->VertexBufferView.BufferLocation = pVertexBuffer->GetGPUVirtualAddress();
+	pInfo->VertexBufferView.StrideInBytes = m_iStride;
+	pInfo->VertexBufferView.SizeInBytes = m_iStride * m_iNumVertices;
+
+	pInfo->IndexBufferView.BufferLocation = pIndexBuffer->GetGPUVirtualAddress();
+	pInfo->IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	pInfo->IndexBufferView.SizeInBytes = sizeof(_uint) * m_iNumIndices;
+
+	m_vecVertexBuffer.push_back(pVertexBuffer);
+	m_vecVertexUploadBuffer.push_back(pVertexUploadBuffer);
+	m_vecIndexBuffer.push_back(pIndexBuffer);
+	m_vecIndexUploadBuffer.push_back(pIndexUploadBuffer);
+
+	CDevice::GetInstance()->WaitForFenceEvent();
+	return S_OK;
+}
+
 CFBXLoader* CFBXLoader::Create(string strFilePath)
 {
 	CFBXLoader* pInstance = new CFBXLoader();
@@ -339,8 +436,19 @@ void CFBXLoader::Free()
 		iter->Release();
 	for (auto& iter : m_vecVertexUploadBuffer)
 		iter->Release();
+	for (auto& iter : m_vecIndexBuffer)
+		iter->Release();
+	for (auto& iter : m_vecIndexUploadBuffer)
+		iter->Release();
+
+
 	for (auto& iter : m_vecRenderInfo)
 		Safe_Delete(iter);
+
 	if (m_pScene)
+	{
 		m_pScene->Destroy();
+		m_pScene = nullptr;
+	}
+
 }

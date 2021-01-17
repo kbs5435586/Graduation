@@ -1,10 +1,9 @@
 #include "framework.h"
 #include "Light.h"
 
-CLight::CLight(ID3D12Device* pGraphic_Device)
+CLight::CLight()
 {
-	m_pGraphic_Device = pGraphic_Device;
-	m_pGraphic_Device->AddRef();
+
 }
 
 HRESULT CLight::Ready_Light(const LIGHT& tLightInfo)
@@ -13,9 +12,9 @@ HRESULT CLight::Ready_Light(const LIGHT& tLightInfo)
 	return S_OK;
 }
 
-CLight* CLight::Create(ID3D12Device* pGraphic_Device, const LIGHT& tLightInfo)
+CLight* CLight::Create(const LIGHT& tLightInfo)
 {
-	CLight* pInstance = new CLight(pGraphic_Device);
+	CLight* pInstance = new CLight();
 
 	if (FAILED(pInstance->Ready_Light(tLightInfo)))
 	{
@@ -27,5 +26,5 @@ CLight* CLight::Create(ID3D12Device* pGraphic_Device, const LIGHT& tLightInfo)
 
 void CLight::Free()
 {
-	Safe_Release(m_pGraphic_Device);
+
 }

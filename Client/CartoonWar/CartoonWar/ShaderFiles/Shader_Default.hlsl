@@ -22,13 +22,13 @@ cbuffer cbPerObject : register(b0)
 struct VS_IN
 {
 	float3	vPos : POSITION;
-	float4	vColor : COLOR;
+	//float4	vColor : COLOR;
 };
 
 struct VS_OUT
 {
 	float4	vPos : SV_POSITION;
-	float4	vColor : COLOR;
+	//float4	vColor : COLOR;
 };
 
 
@@ -37,7 +37,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT	vOut;
 
 	vOut.vPos = mul(mul(mul(float4(vIn.vPos, 1.0f), matWorld), matView), matProj);
-	vOut.vColor = vIn.vColor;
+	//vOut.vColor = vIn.vColor;
 
 	return vOut;
 }
@@ -45,6 +45,6 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	return vIn.vColor;
+	return float4(1.f,1.f,1.f,1.f);
 }
 

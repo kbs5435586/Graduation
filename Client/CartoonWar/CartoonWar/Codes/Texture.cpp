@@ -107,7 +107,6 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 				return E_FAIL;
 
 			Safe_Delete(imageData);
-
 		}
 
 	}
@@ -170,9 +169,7 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 
 			if (pTexture != nullptr)
 			{
-				pTexture->SetName(L"Texture");
 				m_vecTexture.push_back(pTexture);
-				pTextureUpload->SetName(L"Upload");
 				m_vecTextureUpload.push_back(pTextureUpload);
 			}
 			if (FAILED(Create_Shader_Resource_Heap()))

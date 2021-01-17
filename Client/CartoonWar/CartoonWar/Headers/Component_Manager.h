@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Frustum.h"
 
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"

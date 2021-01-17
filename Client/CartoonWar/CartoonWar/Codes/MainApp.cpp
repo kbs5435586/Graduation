@@ -3,6 +3,7 @@
 #include "Management.h"
 #include "Renderer.h"
 #include "Scene_Logo.h"
+#include "Scene_Stage.h"
 
 
 CMainApp::CMainApp()
@@ -79,6 +80,7 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eID)
 		pScene = CScene_Logo::Create();
 		break;
 	case SCENEID::SCENE_STAGE:
+		pScene = CScene_Stage::Create();
 		break;
 	}
 

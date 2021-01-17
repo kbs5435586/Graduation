@@ -2,6 +2,7 @@
 #include "Scene_Stage.h"
 #include "Management.h"
 
+#include "MyRect.h"
 #include "Cube.h"
 #include "SkyBox.h"
 #include "Debug_Camera.h"
@@ -22,6 +23,8 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 	pManagement->AddRef();
+
+
 
 	if (FAILED(Ready_Prototype_GameObject(pManagement)))
 		return E_FAIL;
@@ -57,6 +60,8 @@ void CScene_Stage::Render_Scene()
 
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 {
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect", CMyRect::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
@@ -77,12 +82,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
 		return E_FAIL;
 
@@ -96,7 +101,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 

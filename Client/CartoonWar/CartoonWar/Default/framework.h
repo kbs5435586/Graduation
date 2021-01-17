@@ -16,6 +16,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <array>
 #include <fbxsdk.h>
@@ -57,13 +58,14 @@ using namespace Microsoft::WRL;
 using namespace DirectX::SimpleMath;
 
 #include "d3dx12.h"
+
 #include "Define.h"
 #include "Extern.h"
 #include "Function.h"
 #include "Struct.h"
 #include "Typedef.h"
 #include "Funtor.h"
-
+#include "Hash.h"
 
 #include "Device.h"
 #include "Input.h"

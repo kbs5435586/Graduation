@@ -11,7 +11,7 @@ private:
 public:
     LIGHT        GetLight(const _tchar* pLightTag);
 public:
-    HRESULT             Add_LightInfo(ID3D12Device* pGraphic_Device, const _tchar* pLightTag,  LIGHT& tLightInfo);
+    HRESULT             Add_LightInfo(const _tchar* pLightTag,  LIGHT& tLightInfo);
 private:
     map<const _tchar*, CLight*>   m_mapLightInfo;
 private:

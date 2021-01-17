@@ -25,7 +25,9 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	//m_pMeshCom->GetLoader()->Load_Texture();
+
+	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 
 	return S_OK;
@@ -40,18 +42,19 @@ _int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
+
 	return _int();
 }
 
 void COrc01::Render_GameObject()
 {
 	MAINPASS tMainPass = {};
-	m_pTextureCom->SetUp_OnShader();
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
-	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(), m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, m_iPassSize, m_pData);
+
+	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(), m_pConstBuffer.Get(),
+									m_pTextureCom, m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, m_iPassSize, m_pData);
+
 }
 
 HRESULT COrc01::CreateInputLayout()
@@ -62,7 +65,7 @@ HRESULT COrc01::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::COUNTERCLOCK)))
 		return E_FAIL;
 
 	return S_OK;
@@ -109,7 +112,6 @@ COrc01* COrc01::Create()
 	return pInstance;
 }
 
-
 CGameObject* COrc01::Clone_GameObject(void* pArg)
 {
 	COrc01* pInstance = new COrc01(*this);
@@ -127,8 +129,8 @@ void COrc01::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pTextureCom);
 
 	CGameObject::Free();
 }
@@ -159,10 +161,11 @@ HRESULT COrc01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+
 
 	Safe_Release(pManagement);
 	return S_OK;

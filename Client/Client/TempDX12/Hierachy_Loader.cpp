@@ -444,7 +444,7 @@ HRESULT CHierachy_Loader::LoadMaterial(FbxSurfaceMaterial* pMtrlSur, RenderInfo*
 }
 
 HRESULT CHierachy_Loader::LoadTexture(RenderInfo* pInfo)
-{
+{ 
 	if (nullptr == pInfo)
 		return E_FAIL;
 

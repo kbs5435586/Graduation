@@ -23,10 +23,13 @@ HRESULT CStatic_Mesh::Ready_Static_Mesh(string strFilePath)
 	if (FAILED(m_pLoader->Load_FbxFile(m_pLoader->GetScene()->GetRootNode())))
 		return E_FAIL;
 
+
+	m_pLoader->GetRenderInfo();
+
 	return S_OK;
 }
 
-void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
+void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstantBuffer, CTexture* pTexture, CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 	if (pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
@@ -36,17 +39,18 @@ void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _ma
 		FbxMesh* pMesh = pNode->GetMesh();
 
 
-		Render_Mesh(pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, iPassSize, pData);
+		Render_Mesh(pConstantBuffer, pTexture,pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, iPassSize, pData);
+
 	}
 	
 	_uint iChildCnt = pNode->GetChildCount();
 	for (_uint i = 0; i <iChildCnt; ++i)
 	{
-		Render_Hierachy_Mesh(pNode->GetChild(i), pShaderCom, matWorld, tPass, iPassSize, pData);
+		Render_Hierachy_Mesh(pNode->GetChild(i), pConstantBuffer, pTexture, pShaderCom, matWorld, tPass, iPassSize, pData);
 	}
 }
 
-void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix, 
+void CStatic_Mesh::Render_Mesh(ID3D12Resource* pConstantBuffer, CTexture* pTexture, CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix,
 								_matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
 {
 	FbxAMatrix	fbxMatrixTransform = ConvertMatrixToFbx(matWorld);
@@ -58,13 +62,21 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 
 	if (FAILED(pShaderCom->SetUp_OnShader_FbxMesh(FbxMatrixToMatrix(&fbxMatrixTransform), matView, matProj, tPass)))
 		return ;
+	pTexture->SetUp_OnShader();
 
+	// Setup ConstantBuffer
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, pConstantBuffer->GetGPUVirtualAddress());
 	memcpy_s(pData, iPassSize, (void*)&tPass, sizeof(MAINPASS));
 
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
 	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
-	CDevice::GetInstance()->GetCmdLst()->DrawInstanced(pInfo->vecMeshData.size(), 1, 0, 0);
+	CDevice::GetInstance()->GetCmdLst()->DrawInstanced(pInfo->vecVertices.size(), 1, 0, 0);
+
+	//CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
+	//CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&(pInfo->IndexBufferView));
+	//CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(pInfo->vecIndices.size(), 1, 0, 0, 0);
 }
 
 FbxAMatrix CStatic_Mesh::GetGeometricOffsetTransform(FbxNode* pNode)
@@ -97,8 +109,8 @@ _matrix CStatic_Mesh::FbxMatrixToMatrix(FbxAMatrix* pFbxMatrix)
 	XMFLOAT4X4 xmf4x4Result;
 	for (int i = 0; i < 4; i++)
 	{
-		//		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)fbxmtxTransform[i][j];
-		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)(*pFbxMatrix)[i][j];
+		for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)fbxmtxTransform[i][j];
+		//for (int j = 0; j < 4; j++) xmf4x4Result.m[i][j] = (float)(*pFbxMatrix)[i][j];
 	}
 
 	XMFLOAT3 xmf3S = XMFLOAT3((float)S.mData[0], (float)S.mData[1], (float)S.mData[2]);
