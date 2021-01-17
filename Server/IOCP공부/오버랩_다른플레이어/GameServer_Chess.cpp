@@ -1,12 +1,10 @@
-﻿#include <WS2tcpip.h>
-#pragma comment (lib, "Ws2_32.lib")
-#include <iostream>
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "GameServer_Chess.h"
 #include "protocol.h"
 
 using namespace std;
 
+#define WM_SOCKET (WM_USER+1)
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -14,17 +12,42 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-Client_Info Player_Data;
-SOCKET s_socket; // 클라이언트와 연결할 소켓
+ClientInfo player;
+SOCKET c_socket; // 클라이언트와 연결할 소켓
 string client_ip;
 constexpr int BUF_SIZE = 1024;
-constexpr short PORT = 3500;
 int g_myid;
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+
+void err_quit(const char* msg)
+{
+    LPVOID lpMsgBuf;
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL, WSAGetLastError(),
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR)&lpMsgBuf, 0, NULL);
+    MessageBox(NULL, (LPCTSTR)lpMsgBuf, (LPCWSTR)msg, MB_ICONERROR);
+
+    LocalFree(lpMsgBuf);
+    exit(1);
+}
+void err_display(const char* msg)
+{
+    LPVOID lpMsgBuf;
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL, WSAGetLastError(),
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR)&lpMsgBuf, 0, NULL);
+
+    printf("[%s] %s", msg, (char*)lpMsgBuf);
+    LocalFree(lpMsgBuf);
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, // H는 핸들, 
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -35,6 +58,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, // H는 핸들,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
+
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 2), &WSAData);
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -48,10 +74,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, // H는 핸들,
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMESERVERCHESS));
-
-    WSADATA WSAData;
-    WSAStartup(MAKEWORD(2, 2), &WSAData);
-    s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
     MSG msg;
 
@@ -146,13 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CHAR:
         if (wParam == VK_RETURN && !client_ip.empty())
         {
-            SOCKADDR_IN server_a;
-            ZeroMemory(&server_a, sizeof(server_a));
-            server_a.sin_family = AF_INET;
-            inet_pton(AF_INET, client_ip.c_str(), &server_a.sin_addr);
-            server_a.sin_port = htons(PORT);
-
-            connect(s_socket, (SOCKADDR*)&server_a, sizeof(server_a));
+            InitServer(hWnd);
         }
         else if (wParam == VK_BACK)
         {
@@ -164,6 +180,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             client_ip.push_back(wParam);
         }
         break;
+    case WM_SOCKET:
+    {
+        SocketEventMessage(hWnd, lParam);
+    }
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
@@ -185,27 +205,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wParam)
         {
         case VK_UP:
-            Player_Data.key = 'w';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(D_UP);
             break;
         case VK_DOWN:
-            Player_Data.key = 's';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(D_DOWN);
             break;
         case VK_LEFT:
-            Player_Data.key = 'a';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(D_LEFT);
             break;
         case VK_RIGHT:
-            Player_Data.key = 'd';
-            send(s_socket, (char*)&Player_Data.key, sizeof(send_player_packet), 0);
-            recv(s_socket, (char*)&Player_Data.m_position, sizeof(recv_player_packet), 0);
+            send_move_packet(D_RIGHT);
             break;
         case VK_ESCAPE:
-            closesocket(s_socket);
+            EndSocketConnect(c_socket);
             WSACleanup();
             PostQuitMessage(0);
             break;
@@ -221,8 +233,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wstring inpuy_ip2{ client_ip.begin(),client_ip.end() };
         wstring textBox = input_ip + inpuy_ip2;
 
-        PieceX = Player_Data.m_position.x * 100;
-        PieceY = Player_Data.m_position.y * 100;
+        PieceX = player.m_x * 100;
+        PieceY = player.m_y * 100;
 
         HBRUSH nowBrush;
         HBRUSH oldBrush;
@@ -290,6 +302,36 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
+BOOL InitServer(HWND hWnd)
+{
+    c_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    int retval = WSAAsyncSelect(c_socket, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
+    if (retval == SOCKET_ERROR)
+    {
+        EndSocketConnect(c_socket);
+        err_quit("WSAAsyncSelect Error\n");
+        return FALSE;
+    }
+
+    SOCKADDR_IN server_a;
+    ZeroMemory(&server_a, sizeof(server_a));
+    server_a.sin_family = AF_INET;
+    inet_pton(AF_INET, client_ip.c_str(), &server_a.sin_addr);
+    server_a.sin_port = htons(SERVER_PORT);
+
+    retval = connect(c_socket, (SOCKADDR*)&server_a, sizeof(server_a));
+    if ((retval == SOCKET_ERROR) && (WSAEWOULDBLOCK != WSAGetLastError())) // 비동기 connect는 바로 리턴되면서 WSAEWOULDBLOCK 에러를 발생시킴
+    {
+        EndSocketConnect(c_socket);
+        err_quit("connect Error\n");
+        return FALSE;
+    }
+
+    cout << "connect complete!\n";
+    return TRUE;
+}
+
 void ProcessPacket(char* ptr)
 {
     static bool first_time = true;
@@ -299,10 +341,9 @@ void ProcessPacket(char* ptr)
     {
         sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
         g_myid = my_packet->id;
-        avatar.move(my_packet->x, my_packet->y);
-        //g_left_x = my_packet->x - (SCREEN_WIDTH / 2);
-        //g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
-        avatar.show();
+        player.m_x = my_packet->x;
+        player.m_y = my_packet->y;
+        player.showCharacter = true;
     }
     break;
 
@@ -312,12 +353,11 @@ void ProcessPacket(char* ptr)
         int id = my_packet->id;
 
         if (id == g_myid) {
-            avatar.move(my_packet->x, my_packet->y);
-            //g_left_x = my_packet->x - (SCREEN_WIDTH / 2);
-            //g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
-            avatar.show();
+            player.m_x = my_packet->x;
+            player.m_y = my_packet->y;
+            player.showCharacter = true;
         }
-        else {
+       /* else {
             if (id < NPC_ID_START)
                 npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
             else
@@ -326,7 +366,7 @@ void ProcessPacket(char* ptr)
             npcs[id].set_name(my_packet->name);
             npcs[id].move(my_packet->x, my_packet->y);
             npcs[id].show();
-        }
+        }*/
     }
     break;
     case SC_PACKET_MOVE:
@@ -334,14 +374,13 @@ void ProcessPacket(char* ptr)
         sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
         int other_id = my_packet->id;
         if (other_id == g_myid) {
-            avatar.move(my_packet->x, my_packet->y);
-            //g_left_x = my_packet->x - (SCREEN_WIDTH / 2);
-            //g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
+            player.m_x = my_packet->x;
+            player.m_y = my_packet->y;
         }
-        else {
+      /*  else {
             if (0 != npcs.count(other_id))
                 npcs[other_id].move(my_packet->x, my_packet->y);
-        }
+        }*/
     }
     break;
 
@@ -350,12 +389,12 @@ void ProcessPacket(char* ptr)
         sc_packet_leave* my_packet = reinterpret_cast<sc_packet_leave*>(ptr);
         int other_id = my_packet->id;
         if (other_id == g_myid) {
-            avatar.hide();
+            player.showCharacter = false;
         }
-        else {
+       /* else {
             if (0 != npcs.count(other_id))
                 npcs[other_id].hide();
-        }
+        }*/
     }
     break;
     default:
@@ -385,5 +424,93 @@ void process_data(char* net_buf, size_t io_byte)
             saved_packet_size += io_byte;
             io_byte = 0;
         }
+    }
+}
+
+void SocketEventMessage(HWND hWnd, LPARAM lParam)
+{
+    static int count = 0;
+    char TempLog[256];
+
+    switch (WSAGETSELECTEVENT(lParam))
+    {
+    case FD_CONNECT:
+    {
+        player.m_x = 4;
+        player.m_y = 4;
+        player.showCharacter = false;
+
+        cs_packet_login l_packet;
+        l_packet.size = sizeof(l_packet);
+        l_packet.type = CS_PACKET_LOGIN;
+        int t_id = GetCurrentProcessId();
+        sprintf_s(l_packet.name, "P%03d", t_id % 1000);
+        strcpy(player.m_name, l_packet.name);
+        //avatar.set_name(l_packet.name);
+        send_packet(&l_packet);
+    }
+    break;
+    case FD_READ:
+    {
+        char net_buf[BUF_SIZE];
+        size_t	received;
+
+        auto recv_result = recv(c_socket, net_buf, BUF_SIZE, 0);
+        if (recv_result == SOCKET_ERROR)
+        {
+            wcout << L"Recv 에러!";
+            while (true);
+        }
+        else if (recv_result == 0)
+            break;
+        
+        if (recv_result > 0)
+            process_data(net_buf, recv_result);
+    }
+       // ProcessPacket(char* ptr);
+        sprintf(TempLog, "gSock FD_READ");
+        break;
+
+    case FD_WRITE:
+
+
+        sprintf(TempLog, "gSock FD_WRITE");
+        break;
+
+    case FD_CLOSE:
+        EndSocketConnect(c_socket);
+        sprintf(TempLog, "gSock FD_CLOSE");
+        break;
+
+    default:
+        sprintf(TempLog, "gSock Unknown event received: %d", WSAGETSELECTEVENT(lParam));
+        break;
+    }
+}
+
+void send_packet(void* packet)
+{
+    char* p = reinterpret_cast<char*>(packet);
+    //size_t sent;
+    send(c_socket, p, p[0], 0);
+    //g_socket.send(p, p[0], sent);
+}
+
+void send_move_packet(unsigned char dir)
+{
+    cs_packet_move m_packet;
+    m_packet.type = CS_PACKET_MOVE;
+    m_packet.size = sizeof(m_packet);
+    m_packet.direction = dir;
+    send_packet(&m_packet);
+}
+
+void EndSocketConnect(SOCKET& socket)
+{
+    if (socket)
+    {
+        shutdown(socket, SD_BOTH);
+        closesocket(socket);
+        socket = NULL;
     }
 }
