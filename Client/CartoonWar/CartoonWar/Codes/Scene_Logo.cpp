@@ -60,7 +60,24 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
-
+	//if (GetAsyncKeyState('H') & 0x8000)
+	//{
+	//	CDevice::GetInstance()->GetHDRMetaDataIdx() = (CDevice::GetInstance()->GetHDRMetaDataIdx() + 1) % 4;
+	//	CDevice::GetInstance()->SetHDRMetaData(
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][0],
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][1],
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][2],
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][3]);
+	//}
+	//else if (GetAsyncKeyState('J') & 0x8000)
+	//{
+	//	CDevice::GetInstance()->GetHDRMetaDataIdx() =0;
+	//	CDevice::GetInstance()->SetHDRMetaData(
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][0],
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][1],
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][2],
+	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][3]);
+	//}
 
 
 	return CScene::Update_Scene(fTimeDelta);

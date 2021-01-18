@@ -42,6 +42,11 @@ using namespace std;
 #include <string>
 #include <wrl/client.h>
 
+#include <d3d11on12.h>
+#include <d2d1_3.h>
+#include <dwrite.h>
+#include <dxgi1_6.h>
+
 #include "SimpleMath.h"
 
 #pragma comment(lib, "d3d12.lib")

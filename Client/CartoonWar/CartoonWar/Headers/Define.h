@@ -86,3 +86,39 @@ enum class BLEND_TYPE
 };
 
 
+enum class SwapChainBitDepth
+{
+	_8 = 0,
+	_10,
+	_16,
+	SwapChainBitDepthCount
+};
+
+
+enum class RootConstants
+{
+	ReferenceWhiteNits = 0,
+	DisplayCurve,
+	RootConstantsCount
+};
+
+
+enum class DisplayCurve
+{
+	sRGB = 0,    // The display expects an sRGB signal.
+	ST2084,        // The display expects an HDR10 signal.
+	None        // The display expects a linear signal.
+};
+
+
+struct DisplayChromaticities
+{
+	float RedX;
+	float RedY;
+	float GreenX;
+	float GreenY;
+	float BlueX;
+	float BlueY;
+	float WhiteX;
+	float WhiteY;
+};
