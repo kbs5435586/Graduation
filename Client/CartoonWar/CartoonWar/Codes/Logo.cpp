@@ -56,9 +56,9 @@ void CLogo::Render_GameObject()
 	_matrix matProj = Matrix_::Identity();
 
 	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
+	m_pTextureCom->SetUp_OnShader();
 	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
-	m_pTextureCom->SetUp_OnShader();
 
 
 	m_pBufferCom->Render_VIBuffer();

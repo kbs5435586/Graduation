@@ -8,7 +8,8 @@ CLight::CLight()
 
 HRESULT CLight::Ready_Light(const LIGHT& tLightInfo)
 {
-	m_tLight = tLightInfo;
+	m_pLight = new LIGHT(tLightInfo);
+
 	return S_OK;
 }
 
@@ -26,5 +27,5 @@ CLight* CLight::Create(const LIGHT& tLightInfo)
 
 void CLight::Free()
 {
-
+	Safe_Delete(m_pLight);
 }

@@ -76,10 +76,12 @@ HRESULT CDevice::Initialize()
 {
 	UINT iFlag = 0;
 	//m_currentSwapChainBitDepth = _8;
-	m_CurrentSwapChainBitDepth = SwapChainBitDepth::_8;
+	m_CurrentSwapChainBitDepth = SwapChainBitDepth::_16;
 	m_swapChainFormats[0] = { DXGI_FORMAT_R8G8B8A8_UNORM };
 	m_swapChainFormats[1] = { DXGI_FORMAT_R10G10B10A2_UNORM };
 	m_swapChainFormats[2] = { DXGI_FORMAT_R16G16B16A16_FLOAT };
+
+
 #ifdef _DEBUG
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_pDbgCtrl))))
 	{
@@ -135,6 +137,7 @@ HRESULT CDevice::Initialize()
 
 	if (FAILED(EnsureSwapChainColorSpace(m_CurrentSwapChainBitDepth, m_IsEnableST2084)))
 		return E_FAIL;
+
 	m_iHDRMetaDataPoolIdx = 0;
 	if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
 		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
@@ -142,16 +145,12 @@ HRESULT CDevice::Initialize()
 		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
 		return E_FAIL;
 	
-
 	// View 만들기
 	if (FAILED(Create_View()))
 		return E_FAIL;
-
 	// ViewPort 만들기
 	if (FAILED(Create_ViewPort()))
 		return E_FAIL;
-
-
 	// Empty Signature 만들기
 	// 루트 서명 
 	// 그리기 호출 전에 해당 자원이 파이프라인에 묶일 자료이며,

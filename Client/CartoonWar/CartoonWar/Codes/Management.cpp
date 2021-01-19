@@ -10,9 +10,11 @@ _IMPLEMENT_SINGLETON(CManagement)
 CManagement::CManagement()
 	: m_pObject_Manager(CGameObject_Manager::GetInstance())
 	, m_pComponent_Manager(CComponent_Manager::GetInstance())
+	, m_pLight_Manager(CLight_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
+	m_pLight_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -46,6 +48,16 @@ HRESULT CManagement::Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGam
 		return E_FAIL;
 
 	return m_pObject_Manager->Add_Prototype_GameObject(pGameObjectTag, pGameObject);
+}
+
+LIGHT* CManagement::Get_Light(const _tchar* pLightTag)
+{
+	return m_pLight_Manager->GetLight(pLightTag);
+}
+
+HRESULT CManagement::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
+{
+	return m_pLight_Manager->Add_LightInfo(pLightTag, tLightInfo);
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
@@ -173,6 +185,7 @@ list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
+	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pScene);
 }

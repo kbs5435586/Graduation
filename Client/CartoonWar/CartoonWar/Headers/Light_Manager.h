@@ -9,11 +9,10 @@ private:
     CLight_Manager();
     ~CLight_Manager() = default;
 public:
-    LIGHT        GetLight(const _tchar* pLightTag);
-public:
-    HRESULT             Add_LightInfo(const _tchar* pLightTag,  LIGHT& tLightInfo);
+    LIGHT*                      GetLight(const _tchar* pLightTag);
+    HRESULT                     Add_LightInfo(const _tchar* pLightTag,  LIGHT& tLightInfo);
 private:
-    map<const _tchar*, CLight*>   m_mapLightInfo;
+    map<const _tchar*, CLight*> m_mapLightInfo;
 private:
     virtual void        Free();
 };

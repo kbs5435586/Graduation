@@ -80,12 +80,12 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IncludePath>../Library/include/;$(IncludePath)</IncludePath>
-    <LibraryPath>../Library/lib/x64/debug/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../Library/lib/;../Library/lib/x64/debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>../Library/include/;$(IncludePath)</IncludePath>
-    <LibraryPath>../Library/lib/x64/release/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../Library/lib/;../Library/lib/x64/release/;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin/</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -165,6 +165,7 @@
     <ClInclude Include="..\Headers\Debug_Camera.h" />
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
+    <ClInclude Include="..\Headers\DirectXTex.h" />
     <ClInclude Include="..\Headers\Extern.h" />
     <ClInclude Include="..\Headers\FBXLoader.h" />
     <ClInclude Include="..\Headers\Frame.h" />
@@ -264,6 +265,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Codes\DirectXTex.inl" />
     <None Include="..\Headers\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>

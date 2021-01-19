@@ -96,6 +96,19 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
+	LIGHT	tLightInfo = {};
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.eLightType = LIGHT_TYPE::LIGHT_DIRECTIONAL;
+	tLightInfo.vDiffuse = _vec4(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.vSpecular = _vec4(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.vDirection = _vec4(1.f, -1.f, 1.f, 0.f);
+
+	if(FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
+		return E_FAIL;
+
+
+
 	return S_OK;
 }
 

@@ -60,25 +60,6 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
-	//if (GetAsyncKeyState('H') & 0x8000)
-	//{
-	//	CDevice::GetInstance()->GetHDRMetaDataIdx() = (CDevice::GetInstance()->GetHDRMetaDataIdx() + 1) % 4;
-	//	CDevice::GetInstance()->SetHDRMetaData(
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][0],
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][1],
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][2],
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][3]);
-	//}
-	//else if (GetAsyncKeyState('J') & 0x8000)
-	//{
-	//	CDevice::GetInstance()->GetHDRMetaDataIdx() =0;
-	//	CDevice::GetInstance()->SetHDRMetaData(
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][0],
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][1],
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][2],
-	//		CDevice::GetInstance()->m_fHDRMetaDataPool[CDevice::GetInstance()->GetHDRMetaDataIdx()][3]);
-	//}
-
 
 	return CScene::Update_Scene(fTimeDelta);
 }
@@ -207,7 +188,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		return E_FAIL;
 
 	//PNG
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo",
+	//f (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo",
 	//	CTexture::Create(L"../Bin/Resource/Texture/Logo/Logo%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 	//	return E_FAIL;
 	//TGA

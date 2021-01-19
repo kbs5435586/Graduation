@@ -9,9 +9,9 @@ private:
 public:
 	HRESULT			Ready_Light(const LIGHT& tLightInfo);
 public:
-	LIGHT			Get_LightInfo()const { return m_tLight; }
+	LIGHT*			Get_LightInfo()const { return m_pLight; }
 
-	LIGHT			m_tLight = {};
+	LIGHT*			m_pLight = {};
 public:
 	static CLight*	Create(const LIGHT& tLightInfo);
 private:

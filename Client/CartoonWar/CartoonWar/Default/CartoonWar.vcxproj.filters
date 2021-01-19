@@ -196,6 +196,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\06. Frustum">
       <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95. Loaders\02. TextureLoader">
+      <UniqueIdentifier>{e004e0e9-42c1-421d-aa55-e6455d457338}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -369,6 +372,9 @@
     <ClInclude Include="..\Headers\Frustum.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DirectXTex.h">
+      <Filter>95. Loaders\02. TextureLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -541,6 +547,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain.hlsl">
       <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\Codes\DirectXTex.inl">
+      <Filter>95. Loaders\02. TextureLoader</Filter>
     </None>
   </ItemGroup>
 </Project>

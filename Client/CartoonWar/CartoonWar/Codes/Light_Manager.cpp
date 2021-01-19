@@ -6,13 +6,13 @@ CLight_Manager::CLight_Manager()
 {
 
 }
-LIGHT CLight_Manager::GetLight(const _tchar* pLightTag)
+LIGHT* CLight_Manager::GetLight(const _tchar* pLightTag)
 {
 	auto iter_find = m_mapLightInfo.find(pLightTag);
 	if (iter_find == m_mapLightInfo.end())
-		return LIGHT();
+		return nullptr;
 
-	return (*iter_find).second->Get_LightInfo();
+	return iter_find->second->Get_LightInfo();
 }
 
 HRESULT CLight_Manager::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)

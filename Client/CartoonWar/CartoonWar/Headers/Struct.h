@@ -165,6 +165,23 @@ typedef struct tagLight
 	XMFLOAT4	vSpecular;
 	XMFLOAT4	vAmbient;
 	XMFLOAT4	vDirection;
+	tagLight() { }
+	tagLight(LIGHT_TYPE eType, XMFLOAT4 vDiff, XMFLOAT4 vSpec, XMFLOAT4 vAmbi, XMFLOAT4 vDir)
+	{
+		eLightType = eLightType;
+		vDiffuse = vDiff;
+		vSpecular = vSpec;
+		vAmbient = vAmbi;
+		vDirection = vDir;
+	}
+	tagLight(tagLight* tOther)
+	{
+		eLightType = tOther->eLightType;
+		vDiffuse = tOther->vDiffuse;
+		vSpecular = tOther->vSpecular;
+		vAmbient = tOther->vAmbient;
+		vDirection = tOther->vDirection;
+	}
 
 }LIGHT;
 

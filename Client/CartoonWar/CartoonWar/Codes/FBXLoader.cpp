@@ -305,12 +305,10 @@ HRESULT CFBXLoader::CreateBufferView(RenderInfo* pInfo)
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
 			&tDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pVertexBuffer))))
 			return E_FAIL;
-		//m_pVertexBuffer.Get()->SetName(L"VertexBuffer");
-
+	
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
 			&tDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pVertexUploadBuffer))))
 			return E_FAIL;
-		//m_pVertexUploadBuffer.Get()->SetName(L"Upload");
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};
 		vertexData.pData = (void*)(pInfo->vecVertices.data());

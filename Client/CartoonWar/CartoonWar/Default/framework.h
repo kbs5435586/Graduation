@@ -56,6 +56,12 @@ using namespace std;
 #pragma comment(lib, "DInput8.lib")
 #pragma comment(lib, "DXGuid.lib")
 
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTex_debug.lib")
+#else
+#pragma comment(lib, "DirectXTex.lib")
+#endif
+
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
