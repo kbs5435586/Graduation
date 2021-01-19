@@ -1,11 +1,11 @@
 #pragma once
-enum ENUM_OP { OP_RECV, OP_SEND, OP_ACCEPT };
+enum ENUM_FUNC { FUNC_RECV, FUNC_SEND, FUNC_ACCEPT };
 
 struct OverEx // 확장 오버랩 구조체
 {
 	WSAOVERLAPPED	over; // 오버랩 구조체
 	WSABUF			wsabuf;
-	ENUM_OP			op; // send, recv, accept 구별용
+	ENUM_FUNC			function; // send, recv, accept 구별용
 	char			io_buf[MAX_BUF_SIZE]; // IOCP send-recv 버퍼
 };
 

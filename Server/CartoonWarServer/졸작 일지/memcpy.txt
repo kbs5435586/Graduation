@@ -1,0 +1,21 @@
+void* memcpy (void* dest, const void* source, size_t num)
+
+첫번째 인자 void* dest
+= 복사 받을 메모리를 가리키는 포인터
+
+두번째 인자 const void* source
+= 복사할 메모리를 가리키고 있는 포인터
+
+세번째 인자 size_t num
+= 복사할 데이터(값)의 길이(바이트 단위)
+
+두번째 인자(source)에 있는 원본을 세번째 인자(num)만큼의 길이 만큼 복사해서
+첫번째 인자(dest)에 붙여 넣는 함수 입니다.
+
+다시 한번 이야기 해보면 memcpy(dest, source, num) 함수는 source의 
+메모리에 있는 값들을 num 길이만큼 dest에 복사해서 붙여넣는 함수 입니다.
+
+자, 마지막으로 기억하기 좋게 강조하면
+memcpy(복사받을 메모리, 복사할 메모리, 길이) 입니다.
+
+출처: https://blockdmask.tistory.com/442 [개발자 지망생]

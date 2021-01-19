@@ -13,10 +13,12 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
 ClientInfo player;
+unordered_map<int, ClientInfo> npcs;
+
 SOCKET c_socket; // 클라이언트와 연결할 소켓
 string client_ip;
-constexpr int BUF_SIZE = 1024;
 int g_myid;
+int NPC_ID_START = 10000;
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -162,7 +164,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static int PieceX = 0, PieceY = 0;
+    static int PlayerX = 0, PlayerY = 0;
+    //static int OtherX = 0, OtherY = 0;
     switch (message)
     {
     case WM_CHAR:
@@ -233,8 +236,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wstring inpuy_ip2{ client_ip.begin(),client_ip.end() };
         wstring textBox = input_ip + inpuy_ip2;
 
-        PieceX = player.m_x * 100;
-        PieceY = player.m_y * 100;
+        PlayerX = player.m_x * 100;
+        PlayerY = player.m_y * 100;
 
         HBRUSH nowBrush;
         HBRUSH oldBrush;
@@ -263,9 +266,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         nowBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
         oldBrush = (HBRUSH)SelectObject(hdc, nowBrush);
 
-        Ellipse(hdc, 0 + PieceX, 0 + PieceY, 100 + PieceX, 100 + PieceY);
+        Ellipse(hdc, 0 + PlayerX, 0 + PlayerY, 100 + PlayerX, 100 + PlayerY);
         RECT rt = { 675,0,875,300 };
         DrawText(hdc, textBox.c_str(), -1, &rt, DT_RIGHT | DT_WORDBREAK);
+
+        nowBrush = (HBRUSH)CreateSolidBrush(RGB(125, 0, 0));
+        oldBrush = (HBRUSH)SelectObject(hdc, nowBrush);
+
+        for (auto& others : npcs)
+        {
+            if (true == others.second.showCharacter)
+            {
+                int OtherX = others.second.m_x * 100, OtherY = others.second.m_y * 100;
+                Ellipse(hdc, 0 + OtherX, 0 + OtherY, 100 + OtherX, 100 + OtherY);
+            }
+        }
 
         SelectObject(hdc, oldBrush);
         DeleteObject(nowBrush);
@@ -357,16 +372,16 @@ void ProcessPacket(char* ptr)
             player.m_y = my_packet->y;
             player.showCharacter = true;
         }
-       /* else {
-            if (id < NPC_ID_START)
-                npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
-            else
-                npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
-            strcpy_s(npcs[id].name, my_packet->name);
-            npcs[id].set_name(my_packet->name);
-            npcs[id].move(my_packet->x, my_packet->y);
-            npcs[id].show();
-        }*/
+        else {
+            //if (id < NPC_ID_START)
+            //    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
+            //else
+            //    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
+            strcpy_s(npcs[id].m_name, my_packet->name);
+            npcs[id].m_x = my_packet->x;
+            npcs[id].m_y = my_packet->y;
+            npcs[id].showCharacter = true;
+        }
     }
     break;
     case SC_PACKET_MOVE:
@@ -377,10 +392,13 @@ void ProcessPacket(char* ptr)
             player.m_x = my_packet->x;
             player.m_y = my_packet->y;
         }
-      /*  else {
+        else {
             if (0 != npcs.count(other_id))
-                npcs[other_id].move(my_packet->x, my_packet->y);
-        }*/
+            {
+                npcs[other_id].m_x = my_packet->x;
+                npcs[other_id].m_y = my_packet->y;
+            }
+        }
     }
     break;
 
@@ -391,10 +409,10 @@ void ProcessPacket(char* ptr)
         if (other_id == g_myid) {
             player.showCharacter = false;
         }
-       /* else {
+        else {
             if (0 != npcs.count(other_id))
-                npcs[other_id].hide();
-        }*/
+                npcs[other_id].showCharacter = false;
+        }
     }
     break;
     default:
@@ -407,7 +425,7 @@ void process_data(char* net_buf, size_t io_byte)
     char* ptr = net_buf;
     static size_t in_packet_size = 0;
     static size_t saved_packet_size = 0;
-    static char packet_buffer[BUF_SIZE];
+    static char packet_buffer[MAX_BUF_SIZE];
 
     while (0 != io_byte) {
         if (0 == in_packet_size) in_packet_size = ptr[0];
@@ -452,10 +470,8 @@ void SocketEventMessage(HWND hWnd, LPARAM lParam)
     break;
     case FD_READ:
     {
-        char net_buf[BUF_SIZE];
-        size_t	received;
-
-        auto recv_result = recv(c_socket, net_buf, BUF_SIZE, 0);
+        char net_buf[MAX_BUF_SIZE];
+        auto recv_result = recv(c_socket, net_buf, MAX_BUF_SIZE, 0);
         if (recv_result == SOCKET_ERROR)
         {
             wcout << L"Recv 에러!";
@@ -470,7 +486,6 @@ void SocketEventMessage(HWND hWnd, LPARAM lParam)
        // ProcessPacket(char* ptr);
         sprintf(TempLog, "gSock FD_READ");
         break;
-
     case FD_WRITE:
 
 

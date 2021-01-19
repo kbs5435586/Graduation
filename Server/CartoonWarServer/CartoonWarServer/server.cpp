@@ -32,7 +32,7 @@ void Server::mainServer()
     SOCKET clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
     OverEx accept_over;
     ZeroMemory(&accept_over.over, sizeof(accept_over.over)); // accept용 확장 오버랩 구조체 초기화
-    accept_over.op = OP_ACCEPT;
+    accept_over.function = FUNC_ACCEPT;
     // accept에선 wsabuf 이용안하므로 초기화 할 필요 없음
     AcceptEx(listenSocket, clientSocket, accept_over.io_buf, NULL,
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
@@ -43,26 +43,35 @@ void Server::mainServer()
         ULONG_PTR key;
         WSAOVERLAPPED* over;
         GetQueuedCompletionStatus(g_iocp, &io_byte, &key, &over, INFINITE); // recv 결과 IOCP에 저장
-
+        // io_byte가 0인 경우 = 한 클라가 소켓을 종료했기 때문에 0바이트가 전송된다 
         OverEx* overEx = reinterpret_cast<OverEx*>(over); // 임시 확장 오버랩 구조체에 IOCP에 저장된 값 대입
         int id = static_cast<int>(key); // 임시 아이디에 IOCP 키값(클라 id값) 대입
-        switch (overEx->op) // send, recv, accept 결정
+
+        switch (overEx->function) // send, recv, accept 결정
         {
-        case OP_RECV:
+        case FUNC_RECV:
         {
-            process_packet(id, overEx->io_buf); // 패킷 처리 루틴
-            ZeroMemory(&g_clients[id].m_recv_over.over, sizeof(g_clients[id].m_recv_over.over)); // 오버랩 구조체 초기화
-            DWORD flags = 0;
-            WSARecv(g_clients[id].m_socket, &g_clients[id].m_recv_over.wsabuf, 1, NULL, // 패킷 처리랑 초기화 끝나면 다시 recv 호출
-                &flags, &g_clients[id].m_recv_over.over, NULL);
+            if (0 == io_byte)
+                disconnect(id);
+            else
+            {
+                recv_packet_construct(id, io_byte);
+                ZeroMemory(&g_clients[id].m_recv_over.over, sizeof(g_clients[id].m_recv_over.over)); // 오버랩 구조체 초기화
+                DWORD flags = 0;
+                WSARecv(g_clients[id].m_socket, &g_clients[id].m_recv_over.wsabuf, 1, NULL, // 패킷 처리랑 초기화 끝나면 다시 recv 호출
+                    &flags, &g_clients[id].m_recv_over.over, NULL);
+            }
         }
         break;
 
-        case OP_SEND:
+        case FUNC_SEND:
+            if (0 == io_byte)
+                disconnect(id);
+
             delete overEx; // 확장 구조체 초기화만 해주면 된다
             break;
 
-        case OP_ACCEPT:
+        case FUNC_ACCEPT:
         {
             int user_id = current_User_ID++;
             current_User_ID = current_User_ID % MAX_USER; // 10 넘어 갔을때 걸러내는 용도
@@ -71,7 +80,7 @@ void Server::mainServer()
 
             g_clients[user_id].m_id = user_id; // 유저 등록
             g_clients[user_id].m_prev_size = 0; // 버퍼 0으로 초기화
-            g_clients[user_id].m_recv_over.op = OP_RECV; // 오버랩 구조체에 받는걸로 설정
+            g_clients[user_id].m_recv_over.function = FUNC_RECV; // 오버랩 구조체에 받는걸로 설정
             ZeroMemory(&g_clients[user_id].m_recv_over.over, sizeof(g_clients[user_id].m_recv_over.over)); // 오버랩 구조체 초기화
             g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
             g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
@@ -93,6 +102,43 @@ void Server::mainServer()
     }
     closesocket(listenSocket);
     WSACleanup();
+}
+
+void Server::recv_packet_construct(int user_id, int io_byte)
+{
+    int rest_byte = io_byte; // 이만큼 남았다, 이만큼 처리를 마저 해줘야한다
+
+    char* p = g_clients[user_id].m_recv_over.io_buf;// 버퍼 중에서 어느 부분을 처리하고 있다, 패킷을 처리할수록 처리된 패킷 다음 데이터에 엑세스 해야함
+    //우리가 처리해야할 데이터에 대한 포인터, 처음 시작하는거니까 io_buf에 들어있는 데이터 맨 앞부터 시작해야함
+    int packet_size = 0;
+
+    if (0 != g_clients[user_id].m_prev_size) // 이전에 받아놓은 데이터가 있을때
+        packet_size = g_clients[user_id].m_packet_buf[0];
+
+    while (rest_byte > 0) // 처리해야할 데이터가 남아있을때
+    {
+        if (0 == packet_size) // 지금 우리가 처리하는 패킷이 처음일때 -> 포인터를 패킷 데이터 맨 앞을 가리키게 설정
+            packet_size = *p;
+
+        if (packet_size <= rest_byte + g_clients[user_id].m_prev_size) // 지난번에 받은거랑 나머지랑 합쳐서 패킷 사이즈보다 크거나 같으면 패킷 완성
+        {
+            memcpy(g_clients[user_id].m_packet_buf + g_clients[user_id].m_prev_size, p, packet_size - g_clients[user_id].m_prev_size); // p에 있는걸 packet_size만큼 m_packet_buf에 복사
+            
+            p += packet_size - g_clients[user_id].m_prev_size;
+            rest_byte -= packet_size - g_clients[user_id].m_prev_size;
+            packet_size = 0;
+            process_packet(user_id, g_clients[user_id].m_packet_buf);
+            g_clients[user_id].m_prev_size = 0;
+        }
+        else // 합쳐도 패킷 사이브보다 작다, 패킷 완성을 못시킨다, 나머지를 저장해놓고 끝내야함
+        {
+            memcpy(g_clients[user_id].m_packet_buf + g_clients[user_id].m_prev_size, p, rest_byte); // p에 있는걸 rest_byte만큼 m_packet_buf에 복사
+            // 혹시라도 2번이상 받았는데 패킷 완성 못시킨 경우가 생길 수 있으니 이전에 받아놓은 크기 뒤부터 복사해오게 설정
+            g_clients[user_id].m_prev_size += rest_byte;
+            rest_byte = 0;
+            p += rest_byte; // 처리 해줬으니 그만큼 포인터 위치 이동
+        }
+    }
 }
 
 void Server::process_packet(int user_id, char* buf)
@@ -144,7 +190,7 @@ void Server::send_packet(int user_id, void* packet)
 	// m_recv_over는 recv 전용 오버랩 구조체이므로 쓰면 안된다
 	// 그냥 OverEx overex로 오버랩 구조체 선언해서 쓰는것도 안된다, 로컬 변수라 함수 밖으로 나가면 사라져버림 -> 할당받아야함
 	OverEx* overEx = new OverEx; // 확장 오버랩 할당
-	overEx->op = OP_SEND; // 타입 설정
+	overEx->function = FUNC_SEND; // 타입 설정
 	ZeroMemory(&overEx->over, sizeof(overEx->over)); // 오버랩 구조체 초기화
 	memcpy(overEx->io_buf, buf, buf[0]); // IOCP버퍼에 패킷 내용을 패킷 크기만큼 복사
 	overEx->wsabuf.buf = overEx->io_buf; // WSA버퍼에 IOCP버퍼 복사
@@ -241,6 +287,25 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.y = g_clients[other_id].m_y;
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_PLAYER; // 다른 플레이어들의 정보 저장
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::disconnect(int user_id)
+{
+    g_clients[user_id].m_isConnected = false;
+    for (auto& c : g_clients) // 연결되어있는 클라이언트들에게 떠난 클라가 나갔다고 알림
+    {
+        send_leave_packet(c.m_id, user_id);
+    }
+}
+
+void Server::send_leave_packet(int user_id, int other_id)
+{
+    sc_packet_leave packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_LEAVE;
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }

@@ -16,5 +16,6 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <unordered_map>
 
 #pragma comment (lib, "Ws2_32.lib")
