@@ -139,11 +139,16 @@ HRESULT CDevice::Initialize()
 		return E_FAIL;
 
 	m_iHDRMetaDataPoolIdx = 0;
-	if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
-		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
-		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
-		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
-		return E_FAIL;
+
+	if (m_IsHDRSupport)
+	{
+		if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
+			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
+			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
+			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
+			return E_FAIL;
+	}
+
 	
 	// View ¸¸µé±â
 	if (FAILED(Create_View()))
@@ -158,7 +163,7 @@ HRESULT CDevice::Initialize()
 	ComPtr<ID3DBlob> pSignature;
 
 	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 6, 0);
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2] = {};
 

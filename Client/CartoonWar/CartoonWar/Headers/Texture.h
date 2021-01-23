@@ -7,26 +7,19 @@ class CTexture :
     public CComponent
 {
 private:
-    struct TargaFile
-    {
-        _ubyte		data1[12];
-        _ushort		iWidth;
-        _ushort		iHeight;
-        _ubyte		bpp;
-        _ubyte		data2;
-
-    };
-private:
     CTexture();
     CTexture(const CTexture& rhs);
     ~CTexture() = default;
 public:
-    HRESULT                         Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube);
-    static CTexture* Create(const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube = false);
-    virtual CComponent* Clone_Component(void* pArg = nullptr);
+    HRESULT                         Ready_Texture(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube);
+    HRESULT                         Ready_Texture(const _tchar* pFilePath);
+public:
+    static CTexture*                Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube = false);
+    static CTexture*                Create(const _tchar* pFilePath);
+    virtual CComponent*             Clone_Component(void* pArg = nullptr);
     HRESULT                         SetUp_OnShader(_int iIdx = 0);
 private:
-    HRESULT                         Create_ShaderResourceView(ScratchImage& Image, _bool IsCube);
+    HRESULT                         Create_ShaderResourceView(ScratchImage& Image, _bool IsCube = false);
 protected:
     virtual void					Free();
 private:

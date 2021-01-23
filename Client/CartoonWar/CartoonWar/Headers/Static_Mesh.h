@@ -12,9 +12,9 @@ private:
     virtual ~CStatic_Mesh() = default;
 public:
     HRESULT                 Ready_Static_Mesh(string strFilePath);
-    void                    Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstantBuffer, CTexture* pTexture, CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData);
+    void                    Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstantBuffer, CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData);
 
-    void                    Render_Mesh(ID3D12Resource* pConstantBuffer, CTexture* pTexture, CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix,
+    void                    Render_Mesh(ID3D12Resource* pConstantBuffer,  CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix,
                                         FbxAMatrix& pGeometryMatrix, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData);
 private:
     FbxAMatrix              GetGeometricOffsetTransform(FbxNode* pNode);

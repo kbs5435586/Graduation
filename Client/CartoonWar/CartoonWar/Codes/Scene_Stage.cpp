@@ -82,10 +82,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
@@ -106,8 +106,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 	if(FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;
-
-
 
 	return S_OK;
 }

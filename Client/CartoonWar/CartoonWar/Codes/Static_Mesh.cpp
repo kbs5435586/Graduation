@@ -29,7 +29,7 @@ HRESULT CStatic_Mesh::Ready_Static_Mesh(string strFilePath)
 	return S_OK;
 }
 
-void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstantBuffer, CTexture* pTexture, CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
+void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstantBuffer,  CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 	if (pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
@@ -39,18 +39,18 @@ void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstan
 		FbxMesh* pMesh = pNode->GetMesh();
 
 
-		Render_Mesh(pConstantBuffer, pTexture,pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, iPassSize, pData);
+		Render_Mesh(pConstantBuffer,pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, iPassSize, pData);
 
 	}
 	
 	_uint iChildCnt = pNode->GetChildCount();
 	for (_uint i = 0; i <iChildCnt; ++i)
 	{
-		Render_Hierachy_Mesh(pNode->GetChild(i), pConstantBuffer, pTexture, pShaderCom, matWorld, tPass, iPassSize, pData);
+		Render_Hierachy_Mesh(pNode->GetChild(i), pConstantBuffer,pShaderCom, matWorld, tPass, iPassSize, pData);
 	}
 }
 
-void CStatic_Mesh::Render_Mesh(ID3D12Resource* pConstantBuffer, CTexture* pTexture, CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix,
+void CStatic_Mesh::Render_Mesh(ID3D12Resource* pConstantBuffer,  CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix,
 								_matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
 {
 	FbxAMatrix	fbxMatrixTransform = ConvertMatrixToFbx(matWorld);
@@ -62,7 +62,7 @@ void CStatic_Mesh::Render_Mesh(ID3D12Resource* pConstantBuffer, CTexture* pTextu
 
 	if (FAILED(pShaderCom->SetUp_OnShader_FbxMesh(FbxMatrixToMatrix(&fbxMatrixTransform), matView, matProj, tPass)))
 		return ;
-	pTexture->SetUp_OnShader();
+
 
 	// Setup ConstantBuffer
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, pConstantBuffer->GetGPUVirtualAddress());

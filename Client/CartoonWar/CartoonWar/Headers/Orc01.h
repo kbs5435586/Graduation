@@ -5,6 +5,8 @@ class CRenderer;
 class CStatic_Mesh;
 class CShader;
 class CTexture;
+class CFrustum;
+
 class COrc01 :
     public CGameObject
 {
@@ -34,6 +36,8 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CStatic_Mesh*							m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
+	CTexture*								m_pTextureCom_0 = nullptr;
+	CTexture*								m_pTextureCom_1 = nullptr;
 };
 

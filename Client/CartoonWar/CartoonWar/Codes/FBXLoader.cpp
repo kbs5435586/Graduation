@@ -104,8 +104,8 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 	{
 		_vec3 vPos;
 		vPos.x = (_float)(pMesh->GetControlPointAt(i).mData[0]);
-		vPos.y = (_float)(pMesh->GetControlPointAt(i).mData[1]);
-		vPos.z = (_float)(pMesh->GetControlPointAt(i).mData[2]);
+		vPos.y = (_float)(pMesh->GetControlPointAt(i).mData[2]);
+		vPos.z = (_float)(pMesh->GetControlPointAt(i).mData[1]);
 		vecControlPoint.push_back(vPos);
 	}
 
@@ -258,8 +258,8 @@ _vec3 CFBXLoader::Get_Normal(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder)
 	_vec3 vTemp = _vec3();
 
 	vTemp.x = vNormal.mData[0];
-	vTemp.y = vNormal.mData[1];
-	vTemp.z = vNormal.mData[2];
+	vTemp.y = vNormal.mData[2];
+	vTemp.z = vNormal.mData[1];
 
 	return vTemp;
 }

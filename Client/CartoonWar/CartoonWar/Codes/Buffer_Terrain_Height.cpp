@@ -69,7 +69,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 
 			vecVertices[iIndex].vPos = _vec3(j * m_fInterval, (m_pPixel[iIndex] & 0x000000ff) / 10.0f, i * m_fInterval);
 			m_pPosition[iIndex] = vecVertices[iIndex].vPos;
-			vecVertices[iIndex].vTexUV = _vec2(j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
+			vecVertices[iIndex].vTexUV = _vec2(j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f))*30.f;
 		}
 	}
 
@@ -189,7 +189,7 @@ CBuffer_Terrain_Height* CBuffer_Terrain_Height::Create(const _tchar* pFilePath, 
 {
 	CBuffer_Terrain_Height* pInstance = new CBuffer_Terrain_Height();
 
-	if (FAILED(pInstance->Ready_VIBuffer(pFilePath, fInterval)))
+ 	if (FAILED(pInstance->Ready_VIBuffer(pFilePath, fInterval)))
 	{
 		MessageBox(0, L"CBuffer_Terrain_Height Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);

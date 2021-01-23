@@ -112,7 +112,7 @@ HRESULT CShader::SetUp_OnShader(ID3D12Resource* pConstantBuffer, _matrix matWorl
 
 HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass)
 {
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 
 	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&matWorld));

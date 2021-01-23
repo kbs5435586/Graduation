@@ -53,6 +53,8 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			wsprintf(szFilePath, pFilepath, i);
 			if (FAILED(LoadFromWICFile(szFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
 				return E_FAIL;
+			if (FAILED(Create_ShaderResourceView(m_Image, IsCube)))
+				return E_FAIL;
 		}
 
 	}
@@ -65,6 +67,8 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 
 			if (FAILED(LoadFromTGAFile(szFilePath, nullptr, m_Image)))
 				return E_FAIL;
+			if (FAILED(Create_ShaderResourceView(m_Image, IsCube)))
+				return E_FAIL;
 		}
 	}
 
@@ -76,55 +80,65 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 	return S_OK;
 }
 
+HRESULT CTexture::Ready_Texture(const _tchar* pFilePath)
+{
+	wchar_t szExt[50] = L"";
+	_wsplitpath_s(pFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, 50);
 
-CTexture* CTexture::Create(const _tchar* pFilepath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube)
+	wstring strExt = szExt;
+
+	CDevice::GetInstance()->Open();
+
+	if (L".dds" == strExt || L".DDS" == strExt)
+	{
+		if (FAILED(LoadFromDDSFile(pFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))
+			return E_FAIL;
+	
+	}
+	else if (L".tga" == strExt || L".TGA" == strExt)
+	{
+		if (FAILED(LoadFromTGAFile(pFilePath, nullptr, m_Image)))
+			return E_FAIL;
+	}
+	else
+	{
+
+		if (FAILED(LoadFromWICFile(pFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
+			return E_FAIL;
+	}
+
+
+	if (FAILED(Create_ShaderResourceView(m_Image)))
+		return E_FAIL;
+
+	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
+	return S_OK;
+}
+
+
+CTexture* CTexture::Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube)
 {
 	CTexture* pInstance = new CTexture();
 
-	if (FAILED(pInstance->Ready_Texture(pFilepath, iNum, eType, IsCube)))
+	if (FAILED(pInstance->Ready_Texture(pFilePath, iNum, eType, IsCube)))
 	{
 		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
-//HRESULT CTexture::Create_ShaderResourceView(_uint iNum, _bool IsCube)
-//{
-//	if (IsCube == false)
-//	{
-//		m_iTexuterIdx = iNum;
-//		CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(m_vecDescriptorHeap[m_iTexuterIdx]->GetCPUDescriptorHandleForHeapStart());
-//
-//		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-//		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-//		srvDesc.Format = m_vecTexture[iNum]->GetDesc().Format;
-//		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-//		srvDesc.Texture2D.MostDetailedMip = 0;
-//		srvDesc.Texture2D.MipLevels = m_vecTexture[iNum]->GetDesc().MipLevels;
-//		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-//
-//		CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_vecTexture[iNum], &srvDesc, hDescriptor);
-//	}
-//	else
-//	{
-//
-//		m_iTexuterIdx = iNum;
-//		CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(m_vecDescriptorHeap[m_iTexuterIdx]->GetCPUDescriptorHandleForHeapStart());
-//
-//		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-//		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-//		srvDesc.Format = m_vecTexture[iNum]->GetDesc().Format;
-//		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
-//		srvDesc.TextureCube.MostDetailedMip = 0;
-//		srvDesc.TextureCube.MipLevels = m_vecTexture[iNum]->GetDesc().MipLevels;
-//		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
-//
-//		CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_vecTexture[iNum], &srvDesc, hDescriptor);
-//	}
-//
-//	return S_OK;
-//}
+CTexture* CTexture::Create(const _tchar* pFilePath)
+{
+	CTexture* pInstance = new CTexture();
 
+	if (FAILED(pInstance->Ready_Texture(pFilePath)))
+	{
+		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
 HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 {
 

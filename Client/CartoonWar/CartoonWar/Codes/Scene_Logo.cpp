@@ -110,10 +110,13 @@ HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Add_Prototype_Buffer(pManagement)))
 		return E_FAIL;
+
 	if (FAILED(Ready_Add_Prototype_Texture(pManagement)))
 		return E_FAIL;
-
-
+	if (FAILED(Ready_Add_Prototype_Function(pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Add_Prototype_Texture_Mesh(pManagement)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -163,18 +166,37 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
-		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/GrayScale/Height.bmp"))))
+		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp", 5.f))))
+		return E_FAIL;
+
+	return S_OK;
+}
+HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum", CFrustum::Create())))
+		return E_FAIL;
+	return S_OK;
+}
+HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
+{
+	//Orc_01
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Armors_Albedo",
+		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Albedo.tga"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Albedo",
+		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Albedo.tga"))))
 		return E_FAIL;
 
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01", 
-	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Cube/Rect.FBX"))))
+		CStatic_Mesh::Create("../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
 		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rect/Rect.FBX"))))
+	//	return E_FAIL;
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
@@ -191,10 +213,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//f (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo",
 	//	CTexture::Create(L"../Bin/Resource/Texture/Logo/Logo%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 	//	return E_FAIL;
+
+
 	//TGA
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
-	//	CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
+		CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -212,6 +236,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain",
 		CShader::Create(L"../ShaderFiles/Shader_Terrain.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon",
+		CShader::Create(L"../ShaderFiles/Shader_Toon.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	return S_OK;
 }

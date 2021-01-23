@@ -551,5 +551,8 @@
     <None Include="..\Codes\DirectXTex.inl">
       <Filter>95. Loaders\02. TextureLoader</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_Toon.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>
