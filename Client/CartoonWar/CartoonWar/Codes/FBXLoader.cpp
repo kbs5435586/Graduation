@@ -119,9 +119,9 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 		{
 			_uint	iControlPointIdx = pMesh->GetPolygonVertex(i, j);
 
-			_vec3 vPos =	vecControlPoint[iControlPointIdx];
+			_vec3 vPos = vecControlPoint[iControlPointIdx];
 			_vec3 vNormal = Get_Normal(pMesh, iControlPointIdx, iVtxOrder);
-			_vec2 vUV =		Get_UV(pMesh, iControlPointIdx, pMesh->GetTextureUVIndex(i, j));
+			_vec2 vUV = Get_UV(pMesh, iControlPointIdx, pMesh->GetTextureUVIndex(i, j));
 
 
 			MESH Vertex = MESH(vPos, vNormal, vUV);
@@ -137,7 +137,7 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 				pInfo->vecIndices.push_back(iCnt);
 				++iCnt;
 			}
-				pInfo->vecVertices.push_back(Vertex);
+			pInfo->vecVertices.push_back(Vertex);
 			iVtxOrder++;
 		}
 	}
@@ -305,7 +305,7 @@ HRESULT CFBXLoader::CreateBufferView(RenderInfo* pInfo)
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
 			&tDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&pVertexBuffer))))
 			return E_FAIL;
-	
+
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
 			&tDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pVertexUploadBuffer))))
 			return E_FAIL;
@@ -443,10 +443,13 @@ void CFBXLoader::Free()
 	for (auto& iter : m_vecRenderInfo)
 		Safe_Delete(iter);
 
+
 	if (m_pScene)
 	{
 		m_pScene->Destroy();
 		m_pScene = nullptr;
 	}
+
+
 
 }

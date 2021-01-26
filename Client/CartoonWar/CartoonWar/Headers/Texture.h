@@ -17,7 +17,7 @@ public:
     static CTexture*                Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube = false);
     static CTexture*                Create(const _tchar* pFilePath);
     virtual CComponent*             Clone_Component(void* pArg = nullptr);
-    HRESULT                         SetUp_OnShader(_int iIdx = 0);
+    HRESULT                         SetUp_OnShader(_int iIdx = 0, TEXTURE_REGISTER eRegister = TEXTURE_REGISTER::t0);
 private:
     HRESULT                         Create_ShaderResourceView(ScratchImage& Image, _bool IsCube = false);
 protected:

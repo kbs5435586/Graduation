@@ -56,23 +56,24 @@ _int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 void COrc01::Render_GameObject()
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+
 	//1. Set Root Signature
 	//2. SetUp Texture
 	//3. SetUp PipeLine
 	//4. Render Call
-
-	//Or
-
+	//OR
 	//1. Set Root Signature2
 	//2. SetUp PipeLine
 	//3. SetUp Texture
 	//4. Render Call
 
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pShaderCom->GetPipeLine().Get());
 	MAINPASS tMainPass = {};
-	m_pTextureCom_1->SetUp_OnShader();
+	m_pTextureCom_0->SetUp_OnShader(0, TEXTURE_REGISTER::t0);
+	//m_pTextureCom_1->SetUp_OnShader(0, TEXTURE_REGISTER::t1);
+
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(), m_pConstBuffer.Get(),
 		m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, m_iPassSize, m_pData);
-
 }
 
 HRESULT COrc01::CreateInputLayout()

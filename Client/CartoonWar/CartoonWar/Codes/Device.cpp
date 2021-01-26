@@ -167,7 +167,7 @@ HRESULT CDevice::Initialize()
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2] = {};
 
-	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[0].InitAsDescriptorTable(1, &texTable);
 	slotRootParameter[1].InitAsConstantBufferView(0);
 
 	auto staticSamplers = GetStaticSamplers();
@@ -429,8 +429,6 @@ HRESULT CDevice::EnsureSwapChainColorSpace(SwapChainBitDepth swapChainBitDepth, 
 		}
 	}
 	
-
-
 	return S_OK;
 }
 

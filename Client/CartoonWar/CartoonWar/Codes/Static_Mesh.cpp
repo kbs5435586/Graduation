@@ -12,6 +12,7 @@ CStatic_Mesh::CStatic_Mesh(const CStatic_Mesh& rhs)
 	: CComponent(rhs)
 	, m_pLoader(rhs.m_pLoader)
 {
+	m_IsClone = true;
 }
 
 HRESULT CStatic_Mesh::Ready_Static_Mesh(string strFilePath)
@@ -145,6 +146,7 @@ CComponent* CStatic_Mesh::Clone_Component(void* pArg)
 
 void CStatic_Mesh::Free()
 {
-	Safe_Release(m_pLoader);
+	if(m_IsClone)
+		Safe_Release(m_pLoader);
 	CComponent::Free();
 }

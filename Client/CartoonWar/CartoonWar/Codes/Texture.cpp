@@ -141,7 +141,6 @@ CTexture* CTexture::Create(const _tchar* pFilePath)
 }
 HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 {
-
 	ID3D12Resource* pTexture = nullptr;
 	ID3D12Resource* pTextureUpload = nullptr;
 	ID3D12DescriptorHeap* pDescHeap = nullptr;
@@ -181,7 +180,8 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = pDescHeap->GetCPUDescriptorHandleForHeapStart();
 
-
+	_uint iSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	if (!IsCube)
@@ -202,9 +202,6 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 	}
 
 	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(pTexture, &srvDesc, handle);
-	_uint iSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	//CDevice::GetInstance()->GetCmdLst()->SetDescriptorHeaps(0, &pDescHeap);
 
 	m_vecDescriptorHeap.push_back(pDescHeap);
 	m_vecTexture.push_back(pTexture);
@@ -214,7 +211,7 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 
 	return S_OK;
 }
-HRESULT CTexture::SetUp_OnShader(_int iIdx)
+HRESULT CTexture::SetUp_OnShader(_int iIdx, TEXTURE_REGISTER eRegister)	//0 t1
 {
 	if (m_vecDescriptorHeap.size() <= iIdx)
 		return E_FAIL;
@@ -223,7 +220,13 @@ HRESULT CTexture::SetUp_OnShader(_int iIdx)
 	(
 		m_vecDescriptorHeap[iIdx]->GetGPUDescriptorHandleForHeapStart()
 	);
-	hTexture.Offset(0, m_vecSrvDescriptorIncrementSize[iIdx]);
+	//hTexture가 DescHeap위치를 참조 못함
+	//이유: Gpu핸들의 ptr증가가 아니라 Cpu 핸들을 증가시킨뒤 그 값으로 gpu핸들의 값 유추
+
+	hTexture.Offset((_uint)0, m_vecSrvDescriptorIncrementSize[iIdx]);
+
+
+
 	CDevice::GetInstance()->GetCmdLst()->SetDescriptorHeaps(1, &m_vecDescriptorHeap[iIdx]);
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootDescriptorTable(0, hTexture);
 

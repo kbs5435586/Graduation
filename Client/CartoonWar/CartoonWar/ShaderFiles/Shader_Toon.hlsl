@@ -58,7 +58,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
+	float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
 
 	
 	float fDot = max(0, dot(vIn.vNormal, vLightDirection));
