@@ -8,8 +8,24 @@ Server::~Server()
 {
 }
 
+void Server::error_display(const char* msg, int err_no)
+{
+    WCHAR* lpMsgBuf; 
+    FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_FROM_SYSTEM, 
+        NULL, err_no, 
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR)&lpMsgBuf, 0, NULL);
+    cout << msg;
+    wcout << L"¿¡·¯ " << lpMsgBuf << endl;
+    while (true);
+    LocalFree(lpMsgBuf);
+}
+
 void Server::mainServer()
 {
+    wcout.imbue(std::locale("korean"));
+
     WSADATA WSAData;
     WSAStartup(MAKEWORD(2, 2), &WSAData);
 

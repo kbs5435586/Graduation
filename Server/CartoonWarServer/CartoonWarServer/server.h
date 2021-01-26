@@ -15,6 +15,7 @@ private:
 
 public:
 	void mainServer(); // 메인 서버
+	void error_display(const char* msg, int err_no);
 
 	void recv_packet_construct(int user_id, int io_byte); // 수신한 패킷이 커서 짤려서 온 경우 재조립 함수
 	void process_packet(int user_id, char* buf); // 패킷 처리 루틴
