@@ -60,8 +60,10 @@ void CTerrain_Height::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
 	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, 0, TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
-	m_pTextureCom->SetUp_OnShader();
+	//m_pTextureCom->SetUp_OnShader();
+	CDevice::GetInstance()->UpdateTextureTable();
 
 
 	m_pBufferCom->Render_VIBuffer();

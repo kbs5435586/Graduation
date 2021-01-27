@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+class CTexture;
 class CDevice :
     public CBase
 {
@@ -60,7 +61,8 @@ private:
 	_uint										m_iRTVHeapSize=0;
 	_uint										m_iSRVHeapSize = 0;
 	_uint										m_iDSVHeapSize = 0;
-	_uint										m_iHDRMetaDataPoolIdx = 0;
+	_uint										m_iHDRMetaDataPoolIdx = 0;;
+	_uint										m_iCurrentDummyIdx = 0;
 private:
 	_uint										m_iRootConstant[(_uint)RootConstants::RootConstantsCount];
 private:
@@ -83,6 +85,7 @@ private:
 	HRESULT										Create_SwapChain(_bool IsWindowed);
 	HRESULT										Create_View();
 	HRESULT										Create_ViewPort();
+	HRESULT										Create_RootSignature();
 private:
 	HRESULT										CheckHDRSupport();
 	_int										ComputeIntersectionArea(_int ax1, _int ay1, _int ax2, _int ay2,
@@ -90,6 +93,11 @@ private:
 	HRESULT										EnsureSwapChainColorSpace(SwapChainBitDepth swapChainBitDepth, _bool enableST);
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
+public:
+	void										SetTextureToShader(CTexture* pTexture, _uint iTextureIdx,TEXTURE_REGISTER eRegisterNum);
+	void										UpdateTextureTable();
+private:
+	void										ClearDummyDesc(_uint iIdx);
 private:
     virtual void								Free();
 };

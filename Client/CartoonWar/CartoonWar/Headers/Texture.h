@@ -25,11 +25,16 @@ protected:
 private:
     TEXTURE_TYPE                    m_eType = TEXTURE_TYPE::TEXTURE_TYPE_END;
     _uint                           m_iTexuterIdx = 0;
+public:
+   ID3D12DescriptorHeap*            GetSRV(const _uint& iTextureIdx) { return m_vecDescriptorHeap[iTextureIdx]; }
 private:
     vector<ID3D12Resource*>         m_vecTexture;
     vector<ID3D12Resource*>         m_vecTextureUpload;
     vector<ID3D12DescriptorHeap*>   m_vecDescriptorHeap;
     vector<_uint>                   m_vecSrvDescriptorIncrementSize;
+private:
+    vector<ID3D12DescriptorHeap*>   m_vecDummyTextureDesc;
+    ID3D12DescriptorHeap*           m_pInitTextureDesc;
 
 private:
     _bool                           m_IsClone = false;
