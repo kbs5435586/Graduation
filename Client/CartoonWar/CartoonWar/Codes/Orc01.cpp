@@ -70,7 +70,7 @@ void COrc01::Render_GameObject()
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pShaderCom->GetPipeLine().Get());
 	MAINPASS tMainPass = {};
 	m_pTextureCom_0->SetUp_OnShader(0, TEXTURE_REGISTER::t0);
-	//m_pTextureCom_1->SetUp_OnShader(0, TEXTURE_REGISTER::t1);
+	m_pTextureCom_1->SetUp_OnShader(1, TEXTURE_REGISTER::t1);
 
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(), m_pConstBuffer.Get(),
 		m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, m_iPassSize, m_pData);

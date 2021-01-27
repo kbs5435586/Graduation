@@ -149,25 +149,25 @@ HRESULT CDevice::Initialize()
 			return E_FAIL;
 	}
 
-	
-	// View 만들기
 	if (FAILED(Create_View()))
 		return E_FAIL;
-	// ViewPort 만들기
 	if (FAILED(Create_ViewPort()))
 		return E_FAIL;
-	// Empty Signature 만들기
-	// 루트 서명 
-	// 그리기 호출 전에 해당 자원이 파이프라인에 묶일 자료이며,
-	// 어느 시점에 묶이는지, 또는 쉐이더 자원으로 사용 시 레지스터 대응정보를 기술한다
+
+
+
 	ComPtr<ID3DBlob> pSignature;
 
-	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 6, 0);
+	D3D12_DESCRIPTOR_RANGE range = {};
+	range.BaseShaderRegister = 0;  // t0 에서
+	range.NumDescriptors = 13;	   // t12 까지 13 개 텍스쳐 레지스터 사용여부 
+	range.OffsetInDescriptorsFromTableStart = 5;
+	range.RegisterSpace = 0;
+	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2] = {};
 
-	slotRootParameter[0].InitAsDescriptorTable(1, &texTable);
+	slotRootParameter[0].InitAsDescriptorTable(1, &range);
 	slotRootParameter[1].InitAsConstantBufferView(0);
 
 	auto staticSamplers = GetStaticSamplers();
@@ -186,6 +186,24 @@ HRESULT CDevice::Initialize()
 		IID_PPV_ARGS(&m_ArrRootSignature[(UINT)ROOT_SIG_TYPE::RENDER]))))
 		return E_FAIL;
 
+	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
+
+	_uint iDescriptorNum = 0;
+	iDescriptorNum += range.NumDescriptors;
+
+	cbvHeapDesc.NumDescriptors = iDescriptorNum;
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+
+	for (size_t i = 0; i < 512; ++i)
+	{
+		ComPtr<ID3D12DescriptorHeap> pDummyDescriptor = nullptr;
+		m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&pDummyDescriptor));
+		m_vecDummyDescriptor.push_back(pDummyDescriptor);
+	}
+
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
 	return S_OK;
 }
 

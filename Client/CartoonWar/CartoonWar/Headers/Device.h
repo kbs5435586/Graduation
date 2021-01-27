@@ -22,14 +22,17 @@ private:
 	ComPtr<ID3D12Resource>						m_pConstantBuffer=nullptr;
 	ComPtr<ID3D12Resource>						m_pDSBuffer = nullptr;
 private:
-
+	vector<ComPtr<ID3D12DescriptorHeap>>		m_vecDummyDescriptor;
+private:
 	ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pDSV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pCbv = nullptr;
+	ComPtr<ID3D12DescriptorHeap>				m_pInitDescriptor = nullptr;
 public:
 	ComPtr<ID3D12Device>						GetDevice() { return m_pDevice; }
 	ComPtr<ID3D12GraphicsCommandList>			GetCmdLst() { return m_pCmdListGraphic; }
 	ComPtr<ID3D12RootSignature>					GetRootSignature(ROOT_SIG_TYPE _eType) { return m_ArrRootSignature[(UINT)_eType]; }
+	vector<ComPtr<ID3D12DescriptorHeap>>		GetDummyDesc() { return m_vecDummyDescriptor; }
 public:
 	ComPtr<ID3D12DescriptorHeap>				GetConstantBufferDescHeap() { return m_pCbv; }
 
