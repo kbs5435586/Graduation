@@ -11,6 +11,8 @@ private:
 	ClientInfo g_clients[MAX_USER];
 	int current_User_ID = 0;
 	HANDLE g_iocp;
+	SOCKET listenSocket; // 서버에서 한번 정해지면 안바뀌는 값 (데이터레이스X, 전역해도 무방)
+
 	int LISTEN_KEY = 999;
 
 public:
@@ -19,6 +21,7 @@ public:
 
 	void recv_packet_construct(int user_id, int io_byte); // 수신한 패킷이 커서 짤려서 온 경우 재조립 함수
 	void process_packet(int user_id, char* buf); // 패킷 처리 루틴
+	void worker_thread();
 
 	void send_packet(int user_id, void* packet); // 보낼 패킷의 버퍼와 사이즈 설정
 	void send_login_ok_packet(int user_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정

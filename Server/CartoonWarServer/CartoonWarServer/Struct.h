@@ -3,11 +3,22 @@ enum ENUM_FUNC { FUNC_RECV, FUNC_SEND, FUNC_ACCEPT };
 
 struct OverEx // 확장 오버랩 구조체
 {
-	WSAOVERLAPPED	over; // 오버랩 구조체
-	WSABUF			wsabuf;
-	ENUM_FUNC			function; // send, recv, accept 구별용
-	char			io_buf[MAX_BUF_SIZE]; // IOCP send-recv 버퍼
+	WSAOVERLAPPED over; // 오버랩 구조체
+	ENUM_FUNC function; // send, recv, accept 구별용
+	char io_buf[MAX_BUF_SIZE]; // IOCP send-recv 버퍼
+	union 
+	{
+		WSABUF wsabuf;
+		SOCKET c_socket;
+	};
 };
+
+/*
+OverEx에 그냥 SOCKET 자료형 변수를 추가해도 상관없는데
+OverEx 자체가 엄청 자주 사용하는 자료구조이므로 오버헤드 발생 가능
+union으로 WSABUF wsabuf; SOCKET c_socket; 선언하면 둘중 필요한거 하나만
+꺼내쓸 수 있음
+*/
 
 struct ClientInfo // 클라이언트 정보
 {

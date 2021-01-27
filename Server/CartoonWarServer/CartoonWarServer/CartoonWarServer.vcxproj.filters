@@ -28,6 +28,9 @@
     <ClCompile Include="Server.cpp">
       <Filter>98. Server</Filter>
     </ClCompile>
+    <ClCompile Include="SetPackets.cpp">
+      <Filter>98. Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="protocol.h">
