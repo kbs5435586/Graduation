@@ -20,7 +20,6 @@ public:
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
-	HRESULT									CreateConstantBuffer();
 public:
 	static CLogo*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;

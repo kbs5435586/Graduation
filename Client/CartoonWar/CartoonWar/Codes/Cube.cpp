@@ -94,7 +94,7 @@ void CCube::Render_GameObject()
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	m_pShaderCom->SetUp_OnShader(m_pConstBuffer.Get(), matWorld, matView, matProj, tMainPass);
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
 

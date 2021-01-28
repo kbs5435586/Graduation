@@ -4,6 +4,7 @@
 #include "System.h"
 #include "TimerManager.h"
 #include "FrameManager.h"
+#include "Constant_Buffer_Manager.h"
 
 
 _IMPLEMENT_SINGLETON(CManagement)
@@ -11,10 +12,12 @@ CManagement::CManagement()
 	: m_pObject_Manager(CGameObject_Manager::GetInstance())
 	, m_pComponent_Manager(CComponent_Manager::GetInstance())
 	, m_pLight_Manager(CLight_Manager::GetInstance())
+	, m_pConstant_Buffer_Manager(CConstant_Buffer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
 	m_pLight_Manager->AddRef();
+	m_pConstant_Buffer_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -58,6 +61,11 @@ LIGHT* CManagement::Get_Light(const _tchar* pLightTag)
 HRESULT CManagement::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
 {
 	return m_pLight_Manager->Add_LightInfo(pLightTag, tLightInfo);
+}
+
+HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
+{
+	return m_pConstant_Buffer_Manager->Create_Constant_Buffer(iBufferSize, iMaxCnt, eType);
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
@@ -141,6 +149,9 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CConstant_Buffer_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CManagement Release Failed");
+
 	if (dwRefCnt = CGameObject_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CObject_Manager Release Failed");
 
@@ -187,5 +198,6 @@ void CManagement::Free()
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pObject_Manager);
+	Safe_Release(m_pConstant_Buffer_Manager);
 	Safe_Release(m_pScene);
 }

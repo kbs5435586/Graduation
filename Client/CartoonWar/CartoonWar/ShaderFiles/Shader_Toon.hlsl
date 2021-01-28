@@ -2,7 +2,7 @@ Texture2D		g_texture : register(t0);
 Texture2D		g_texture1 : register(t1);
 Texture2D		g_texture2 : register(t2);
 Texture2D		g_texture3 : register(t3);
-SamplerState	DiffuseSampler  : register(s4);
+SamplerState	DiffuseSampler  : register(s0);
 
 
 

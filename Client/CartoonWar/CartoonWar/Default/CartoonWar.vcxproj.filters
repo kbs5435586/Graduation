@@ -166,9 +166,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\00. SkyBox">
       <UniqueIdentifier>{3f5cec16-69a6-460b-b3e3-fa91565b0c21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\01. Terrain">
-      <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Height">
       <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
     </Filter>
@@ -198,6 +195,18 @@
     </Filter>
     <Filter Include="95. Loaders\02. TextureLoader">
       <UniqueIdentifier>{e004e0e9-42c1-421d-aa55-e6455d457338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer">
+      <UniqueIdentifier>{9543250d-65ad-47bc-9cd2-774d198ef8f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\00. Constant_Buffer">
+      <UniqueIdentifier>{2c75a1dd-c7c3-4867-924e-b99c183117f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\01. Constant_Buffer_Manager">
+      <UniqueIdentifier>{69783f59-863d-4086-8a76-922b2f29122d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\01. Terrain">
+      <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -375,6 +384,12 @@
     <ClInclude Include="..\Headers\DirectXTex.h">
       <Filter>95. Loaders\02. TextureLoader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Constant_Buffer.h">
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\00. Constant_Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Constant_Buffer_Manager.h">
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\01. Constant_Buffer_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -530,6 +545,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Frustum.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Constant_Buffer.cpp">
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\00. Constant_Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Constant_Buffer_Manager.cpp">
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\01. Constant_Buffer_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

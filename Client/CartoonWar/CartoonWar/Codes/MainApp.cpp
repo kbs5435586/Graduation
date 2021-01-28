@@ -28,6 +28,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(tagMainPass), 512, CONST_REGISTER::b0)))
+		return E_FAIL;
 
 
 	srand(unsigned(time(NULL)));
@@ -56,6 +58,9 @@ void CMainApp::Render_MainApp()
 	m_pManagement->Render_Management();
 
 	CDevice::GetInstance()->Render_End();
+
+	for (auto& iter : m_pManagement->GetConstantBuffer())
+		iter->ResetCount();
 	Compute_Frame();
 }
 

@@ -12,7 +12,7 @@ public:
 											const char*HSEntry = nullptr, const char* DSEntry = nullptr, const char* GSEntry = nullptr);
 	HRESULT								Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType = RS_TYPE::DEFAULT);
 public:
-	HRESULT								SetUp_OnShader(ID3D12Resource* pConstantBuffer,_matrix matWorld, _matrix matView, 
+	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, 
 											_matrix matProj, MAINPASS& output);
 	HRESULT								SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass);
 public:

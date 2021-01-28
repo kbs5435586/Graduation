@@ -130,7 +130,6 @@ HRESULT CScene_Logo::Ready_Layer(CManagement* pManagement)
 
 HRESULT CScene_Logo::Ready_Light(CManagement* pManagement)
 {
-
 	return S_OK;
 }
 
@@ -166,7 +165,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
-		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp", 5.f))))
+		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp"))))
 		return E_FAIL;
 
 	return S_OK;

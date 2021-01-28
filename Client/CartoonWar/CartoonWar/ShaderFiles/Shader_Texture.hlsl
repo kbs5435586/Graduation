@@ -1,5 +1,6 @@
 
 Texture2D    g_texture : register(t0);
+Texture2D    g_texture1 : register(t1);
 SamplerState DiffuseSampler  : register(s0);
 cbuffer cbPerObject : register(b0)
 {
@@ -45,5 +46,6 @@ VertexOut VS_Main(VertexIn In)
 float4 PS_Main(VertexOut In) : SV_Target
 {
 	return g_texture.Sample(DiffuseSampler, In.vTexUV);
+	//return float4(1.f,0.f,0.f,1.f);
 }
 

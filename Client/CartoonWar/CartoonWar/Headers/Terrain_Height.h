@@ -21,7 +21,6 @@ public:
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
-	HRESULT									CreateConstantBuffer();
 public:
 	static CTerrain_Height*					Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;

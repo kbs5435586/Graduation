@@ -93,7 +93,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	return S_OK;
 }
 
-HRESULT CShader::SetUp_OnShader(ID3D12Resource* pConstantBuffer, _matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output)
+HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output)
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());

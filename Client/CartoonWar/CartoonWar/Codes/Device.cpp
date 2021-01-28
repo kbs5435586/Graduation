@@ -302,7 +302,23 @@ void CDevice::SetTextureToShader(CTexture* pTexture, _uint iTextureIdx, TEXTURE_
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
-void CDevice::UpdateTextureTable()
+void CDevice::SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_vecDummyDescriptor[m_iCurrentDummyIdx]->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pConstantBuffer->GetCPUDescriptorHandleForHeapStart();
+	hSrcHandle.ptr += iOffset * iSize;
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::UpdateTable()
 {
 	ID3D12DescriptorHeap* pDescriptor = m_vecDummyDescriptor[m_iCurrentDummyIdx].Get();
 	m_pCmdListGraphic->SetDescriptorHeaps(1, &pDescriptor);
@@ -342,11 +358,9 @@ HRESULT CDevice::Create_ViewPort()
 
 	return S_OK;
 }
-
+ 
 HRESULT CDevice::Create_RootSignature()
 {
-	ComPtr<ID3DBlob> pSignature;
-
 	vector< D3D12_DESCRIPTOR_RANGE> vecRange;
 
 	D3D12_ROOT_PARAMETER slotParam = {};
@@ -374,31 +388,31 @@ HRESULT CDevice::Create_RootSignature()
 	slotParam.DescriptorTable.NumDescriptorRanges = vecRange.size();
 	slotParam.DescriptorTable.pDescriptorRanges = &vecRange[0];
 
-	auto staticSamplers = GetStaticSamplers();
+	// Sampler Desc 만들기
+	if (FAILED(Create_SamplerDesc()))
+		return E_FAIL;
 
-
+	// 루트 서명 	
 	D3D12_ROOT_SIGNATURE_DESC sigDesc = {};
 	sigDesc.NumParameters = 1;
 	sigDesc.pParameters = &slotParam;
 	sigDesc.NumStaticSamplers = 2;// m_vecSamplerDesc.size();
-	sigDesc.pStaticSamplers = &staticSamplers[0]; // 사용 될 Sampler 정보
+	sigDesc.pStaticSamplers = &m_vecSamplerDesc[0]; // 사용 될 Sampler 정보
 	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; // 입력 조립기 단계 허용
 
+	ComPtr<ID3DBlob> pSignature;
+	ComPtr<ID3DBlob> pError;
+	HRESULT hr = D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSignature, &pError);
+	m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_ArrRootSignature[(UINT)ROOT_SIG_TYPE::RENDER]));
 
-	ComPtr<ID3DBlob> pRootSignatureCode = nullptr;
-	ComPtr<ID3DBlob> pError = nullptr;
-
-	if (FAILED(D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pRootSignatureCode, &pError)))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->CreateRootSignature(0, pRootSignatureCode->GetBufferPointer(), pRootSignatureCode->GetBufferSize(),
-		IID_PPV_ARGS(&m_ArrRootSignature[(UINT)ROOT_SIG_TYPE::RENDER]))))
-		return E_FAIL;
-
+	// 더미용 Descriptor Heap 만들기
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
 
-	_uint iDescriptorNum = 0;
-	iDescriptorNum += range.NumDescriptors;
+	UINT iDescriptorNum = 0;
+	for (size_t i = 0; i < vecRange.size(); ++i)
+	{
+		iDescriptorNum += vecRange[i].NumDescriptors;
+	}
 
 	cbvHeapDesc.NumDescriptors = iDescriptorNum;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -406,18 +420,53 @@ HRESULT CDevice::Create_RootSignature()
 
 	for (size_t i = 0; i < 512; ++i)
 	{
-		ComPtr<ID3D12DescriptorHeap> pDummyDescriptor = nullptr;
-		if (FAILED(m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&pDummyDescriptor))))
-			return E_FAIL;
+		ComPtr<ID3D12DescriptorHeap> pDummyDescriptor;
+		m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&pDummyDescriptor));
 		m_vecDummyDescriptor.push_back(pDummyDescriptor);
 	}
 
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	if (FAILED(m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor))))
-		return E_FAIL;
+	m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
+
+
+}
+
+HRESULT CDevice::Create_SamplerDesc()
+{
+	D3D12_STATIC_SAMPLER_DESC sampler = {};
+	sampler.Filter = D3D12_FILTER_ANISOTROPIC;
+	sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler.MipLODBias = 0;
+	sampler.MaxAnisotropy = 0;
+	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	sampler.MinLOD = 0.0f;
+	sampler.MaxLOD = D3D12_FLOAT32_MAX;
+	sampler.ShaderRegister = 0;
+	sampler.RegisterSpace = 0;
+	sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	m_vecSamplerDesc.push_back(sampler);
+
+	sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
+	sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	sampler.MipLODBias = 0;
+	sampler.MaxAnisotropy = 0;
+	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	sampler.MinLOD = 0.0f;
+	sampler.MaxLOD = D3D12_FLOAT32_MAX;
+	sampler.ShaderRegister = 1;
+	sampler.RegisterSpace = 0;
+	sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+
+	m_vecSamplerDesc.push_back(sampler);
 	return S_OK;
-
-
 }
 
 HRESULT CDevice::CheckHDRSupport()
@@ -649,7 +698,7 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 	m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
 	m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
 	m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-	ClearDummyDesc(0);
+	//ClearDummyDesc(0);
 }
 
 void CDevice::Render_End()

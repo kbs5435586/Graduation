@@ -1,6 +1,6 @@
 
 TextureCube    g_texture : register(t0);
-SamplerState DiffuseSampler  : register(s2);
+SamplerState DiffuseSampler  : register(s0);
 cbuffer cbPerObject : register(b0)
 {
 	float4x4	matWorld;

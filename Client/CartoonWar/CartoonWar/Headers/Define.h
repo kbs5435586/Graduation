@@ -123,10 +123,20 @@ struct DisplayChromaticities
 	float WhiteY;
 };
 
+enum class CONST_REGISTER
+{
+	b0 = 0,
+	b1 = 1,
+	b2 = 2,
+	b3 = 3,
+	b4 = 4,
+
+	END,
+};
 
 enum class TEXTURE_REGISTER
 {
-	t0,
+	t0 = (UINT)CONST_REGISTER::END, 
 	t1,
 	t2,
 	t3,
@@ -141,3 +151,4 @@ enum class TEXTURE_REGISTER
 	t12,
 	END,
 };
+

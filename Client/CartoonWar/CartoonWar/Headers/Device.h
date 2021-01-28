@@ -24,6 +24,7 @@ private:
 	ComPtr<ID3D12Resource>						m_pDSBuffer = nullptr;
 private:
 	vector<ComPtr<ID3D12DescriptorHeap>>		m_vecDummyDescriptor;
+	vector<D3D12_STATIC_SAMPLER_DESC>			m_vecSamplerDesc;
 private:
 	ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pDSV = nullptr;
@@ -86,6 +87,7 @@ private:
 	HRESULT										Create_View();
 	HRESULT										Create_ViewPort();
 	HRESULT										Create_RootSignature();
+	HRESULT										Create_SamplerDesc();
 private:
 	HRESULT										CheckHDRSupport();
 	_int										ComputeIntersectionArea(_int ax1, _int ay1, _int ax2, _int ay2,
@@ -95,7 +97,8 @@ public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
 public:
 	void										SetTextureToShader(CTexture* pTexture, _uint iTextureIdx,TEXTURE_REGISTER eRegisterNum);
-	void										UpdateTextureTable();
+	void										SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
+	void										UpdateTable();
 private:
 	void										ClearDummyDesc(_uint iIdx);
 private:
