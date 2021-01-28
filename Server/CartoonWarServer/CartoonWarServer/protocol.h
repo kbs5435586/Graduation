@@ -8,10 +8,10 @@ constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 255;
 constexpr int MAX_USER = 10;
 
-constexpr int WORLD_WIDTH = 8;
+constexpr int WORLD_WIDTH =	8;
 constexpr int WORLD_HEIGHT = 8;
 
-constexpr int SERVER_PORT = 9000;
+constexpr int SERVER_PORT =	9000;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
@@ -23,7 +23,7 @@ constexpr char SC_PACKET_LEAVE = 4;
 
 #pragma pack(push ,1)
 
-struct sc_packet_login_ok
+struct sc_packet_login_ok 
 {
 	char size;
 	char type;
@@ -34,7 +34,7 @@ struct sc_packet_login_ok
 	int	exp;
 };
 
-struct sc_packet_move
+struct sc_packet_move 
 {
 	char size;
 	char type;
@@ -55,7 +55,7 @@ struct sc_packet_enter
 	short x, y;
 };
 
-struct sc_packet_leave
+struct sc_packet_leave 
 {
 	char size;
 	char type;
@@ -82,7 +82,7 @@ constexpr unsigned char D_DOWN = 1;
 constexpr unsigned char D_LEFT = 2;
 constexpr unsigned char D_RIGHT = 3;
 
-struct cs_packet_move
+struct cs_packet_move 
 {
 	char	size;
 	char	type;

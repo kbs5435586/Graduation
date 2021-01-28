@@ -11,4 +11,3 @@ using namespace std;
 
 #include "protocol.h"
 #include "Struct.h"
-#include "server.h"

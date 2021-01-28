@@ -25,23 +25,14 @@
     <ClCompile Include="Object.cpp">
       <Filter>01. Object</Filter>
     </ClCompile>
-    <ClCompile Include="packet_sends.cpp">
-      <Filter>98. Server</Filter>
-    </ClCompile>
-    <ClCompile Include="packet_management.cpp">
-      <Filter>98. Server</Filter>
-    </ClCompile>
-    <ClCompile Include="client_management.cpp">
-      <Filter>98. Server</Filter>
-    </ClCompile>
-    <ClCompile Include="thread_management.cpp">
-      <Filter>98. Server</Filter>
-    </ClCompile>
-    <ClCompile Include="server_management.cpp">
+    <ClCompile Include="Server.cpp">
       <Filter>98. Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="protocol.h">
+      <Filter>98. Server</Filter>
+    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>99. Global</Filter>
     </ClInclude>
@@ -51,11 +42,8 @@
     <ClInclude Include="Struct.h">
       <Filter>99. Global</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
-      <Filter>99. Global</Filter>
-    </ClInclude>
-    <ClInclude Include="server.h">
-      <Filter>99. Global</Filter>
+    <ClInclude Include="Server.h">
+      <Filter>98. Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

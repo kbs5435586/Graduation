@@ -139,19 +139,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="client_management.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="packet_management.cpp" />
-    <ClCompile Include="packet_sends.cpp" />
-    <ClCompile Include="server_management.cpp" />
-    <ClCompile Include="thread_management.cpp" />
+    <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="protocol.h" />
-    <ClInclude Include="server.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
