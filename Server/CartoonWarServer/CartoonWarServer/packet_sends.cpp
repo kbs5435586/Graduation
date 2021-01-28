@@ -15,6 +15,42 @@ void send_login_ok_packet(int user_id)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
+void send_enter_packet(int user_id, int other_id)
+{
+    sc_packet_enter packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ENTER;
+    packet.x = g_clients[other_id].m_x;
+    packet.y = g_clients[other_id].m_y;
+    strcpy_s(packet.name, g_clients[other_id].m_name);
+    packet.o_type = O_PLAYER; // 다른 플레이어들의 정보 저장
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void send_move_packet(int user_id, int mover)
+{
+    sc_packet_move packet;
+    packet.id = mover;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_MOVE;
+    packet.x = g_clients[mover].m_x;
+    packet.y = g_clients[mover].m_y; // 이동한 플레이어의 정보 담기
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void send_leave_packet(int user_id, int other_id)
+{
+    sc_packet_leave packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_LEAVE;
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
 void send_packet(int user_id, void* packet)
 {
     char* buf = reinterpret_cast<char*>(packet);
@@ -30,4 +66,3 @@ void send_packet(int user_id, void* packet)
 
     WSASend(g_clients[user_id].m_socket, &overEx->wsabuf, 1, NULL, 0, &overEx->over, NULL);
 }
-
