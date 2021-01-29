@@ -12,6 +12,7 @@ private:
 	SOCKET listenSocket;
 	int current_User_ID = 0;
 	HANDLE g_iocp;
+	mutex g_idLock;
 	int LISTEN_KEY = 999;
 
 public:
@@ -29,7 +30,7 @@ public:
 	void send_leave_packet(int user_id, int other_id);
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
-	void enter_game(int user_id); // 다른 클라들 입장 알림
+	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initalize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
 };

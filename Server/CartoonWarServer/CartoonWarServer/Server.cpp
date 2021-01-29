@@ -66,11 +66,12 @@ void Server::process_packet(int user_id, char* buf)
 	case CS_PACKET_LOGIN: // case에서는 변수를 선언할때 중괄호 해줘야 변수로 선언이 된다
 	{
 		cs_packet_login* packet = reinterpret_cast<cs_packet_login*>(buf);
-		strcpy_s(g_clients[user_id].m_name, packet->name);
-		g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 혹시 모르니까 해줬다?
-        send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+        enter_game(user_id, packet->name); // 새로 들어왔으니 접속 처리 및 이미 들어와있는 클라 정보 정리
 
-        enter_game(user_id); // 새로 들어왔으니 접속 처리 및 이미 들어와있는 클라 정보 정리
+        // 원래 락 걸때 socket이랑 connected랑 name을 동시에 보호해줘야함
+        // bool connected 만든 이유가 true일때 socket이나 name처럼 한번 쓰고 업데이트 되지 않는
+        // 값들은 안전하다는 의미, 그래서 connected를 true 되기 전에 socket, name을 처리하던가
+        // true할때 같이 락을 걸던가 둘 중 하나로 해야함
 	}
 	break;
 	case CS_PACKET_MOVE:
@@ -153,10 +154,12 @@ void Server::do_move(int user_id, char direction)
 
     for (auto &c : g_clients)
     {
+        c.m_cLock.lock();
         if (true == c.m_isConnected)
         {
             send_move_packet(c.m_id, user_id); // 연결된 모든 클라이언트들에게 움직인 클라의 위치값 전송
         }
+        c.m_cLock.unlock();
     }
 }
 
@@ -172,11 +175,22 @@ void Server::send_move_packet(int user_id, int mover)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
-void Server::enter_game(int user_id)
+void Server::enter_game(int user_id, char name[])
 {
-    g_clients[user_id].m_isConnected = true;
+    g_clients[user_id].m_cLock.lock();
+
+    strcpy_s(g_clients[user_id].m_name, name);
+    g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
+    send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+    g_clients[user_id].m_isConnected = true; // m_isConnected를 true로 바꾸는건 여기뿐임
+
+
+
     for (int i = 0; i < MAX_USER; i++) 
     {
+        if (user_id == i)
+            continue;
+        g_clients[i].m_cLock.lock();
         if (true == g_clients[i].m_isConnected) // 이미 연결 중인 클라들한테만
         {
             if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
@@ -184,15 +198,20 @@ void Server::enter_game(int user_id)
                 send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
                 send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
             }
-          
         }
+        g_clients[i].m_cLock.unlock();
     }
+    g_clients[user_id].m_cLock.unlock();
+    // true == g_clients[i].m_isConnected 하므로 원래는 여기다 unlock 해야하는데 안에 범위가 너무 큼
 }
 
 void Server::initalize_clients()
 {
     for (int i = 0; i < MAX_USER; ++i)
-        g_clients[i].m_isConnected = false;
+    {
+        g_clients[i].m_id = i; // 유저 등록
+        g_clients[i].m_isConnected = false; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+    }
 }
 
 void Server::send_enter_packet(int user_id, int other_id)
@@ -211,11 +230,24 @@ void Server::send_enter_packet(int user_id, int other_id)
 
 void Server::disconnect(int user_id)
 {
+    g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_isConnected = false;
+    send_leave_packet(user_id, user_id); // 나 자신
+    closesocket(g_clients[user_id].m_socket);
+
     for (auto& c : g_clients) // 연결되어있는 클라이언트들에게 떠난 클라가 나갔다고 알림
     {
-        send_leave_packet(c.m_id, user_id);
+        if (user_id == c.m_id)
+            continue;
+
+        c.m_cLock.lock();
+        if (true == c.m_isConnected)
+        {
+            send_leave_packet(c.m_id, user_id);
+        }
+        c.m_cLock.unlock();
     }
+    g_clients[user_id].m_cLock.unlock();
 }
 
 void Server::send_leave_packet(int user_id, int other_id)
@@ -266,13 +298,15 @@ void Server::worker_thread()
 
         case FUNC_ACCEPT:
         {
+            g_idLock.lock(); // 나중에 AcceptEx를 여러곳에서 호출하게 확장했을때를 대비한 락
+            // 현재는 한 쓰레드가 accept 끝나면 끝에 AcceptEx를 호출하게 해놔서 여러 쓰레드가 동시 접근 안함
             int user_id = current_User_ID++;
             current_User_ID = current_User_ID % MAX_USER; // 10 넘어 갔을때 걸러내는 용도
+            g_idLock.unlock();
 
             SOCKET clientSocket = overEx->c_socket;
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), g_iocp, user_id, 0); // 
 
-            g_clients[user_id].m_id = user_id; // 유저 등록
             g_clients[user_id].m_prev_size = 0; // 버퍼 0으로 초기화
             g_clients[user_id].m_recv_over.function = FUNC_RECV; // 오버랩 구조체에 받는걸로 설정
             ZeroMemory(&g_clients[user_id].m_recv_over.over, sizeof(g_clients[user_id].m_recv_over.over)); // 오버랩 구조체 초기화

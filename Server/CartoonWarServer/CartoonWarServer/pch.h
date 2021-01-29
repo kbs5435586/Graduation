@@ -4,6 +4,7 @@
 #include <MSWSock.h>
 #include <vector>
 #include <thread>
+#include <mutex>
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
