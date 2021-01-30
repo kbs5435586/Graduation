@@ -22,6 +22,7 @@ public:
 	virtual void							Render_GameObject();
 private:
 	HRESULT									Ready_Component();
+	HRESULT									Ready_Light(MAINPASS& tPass);
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -29,7 +30,6 @@ public:
     virtual CGameObject*					Clone_GameObject(void* pArg);
 private:
     virtual void							Free();
-private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -39,5 +39,7 @@ private:
 	CTexture*								m_pTextureCom_0 = nullptr;
 	CTexture*								m_pTextureCom_1 = nullptr;
 	CTexture*								m_pTextureCom_2 = nullptr;
+	CTexture*								m_pTextureCom_3 = nullptr;
+	CTexture*								m_pTextureCom_4 = nullptr;
 };
 

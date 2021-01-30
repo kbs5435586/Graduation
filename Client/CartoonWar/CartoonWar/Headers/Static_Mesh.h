@@ -13,10 +13,13 @@ private:
 public:
     HRESULT                 Ready_Static_Mesh(string strFilePath);
     void                    Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _matrix matWorld, MAINPASS& tPass, 
-                                                CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2);
+                                                CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2, 
+                                                 CTexture* pTexture3, CTexture* pTexture4);
 
     void                    Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix,
-                                        FbxAMatrix& pGeometryMatrix, _matrix matWorld, MAINPASS& tPass, CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2);
+                                        FbxAMatrix& pGeometryMatrix, _matrix matWorld, MAINPASS& tPass,
+                                        CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2, 
+                                        CTexture* pTexture3, CTexture* pTexture4);
 private:
     FbxAMatrix              GetGeometricOffsetTransform(FbxNode* pNode);
     FbxAMatrix              ConvertMatrixToFbx(_matrix matWorld);

@@ -1,8 +1,9 @@
-Texture2D		g_texture : register(t0);
-Texture2D		g_texture1 : register(t1);
-Texture2D		g_texture2 : register(t2);
-Texture2D		g_texture3 : register(t3);
-SamplerState	DiffuseSampler  : register(s0);
+Texture2D		g_texture			: register(t0);
+Texture2D		g_Normal_Texture	: register(t1);
+Texture2D		g_texture2			: register(t2);
+Texture2D		g_texture3			: register(t3);
+
+SamplerState	DiffuseSampler		: register(s0);
 
 
 
@@ -31,6 +32,8 @@ struct VS_IN
 	float3	vPos : POSITION;
 	float3	vNormal : NORMAL;
 	float2	vTexUV : TEXCOORD;
+	float3	vTangent : TANGENT;
+	float3	vBinormal: BINORMAL;
 };
 
 struct VS_OUT
@@ -39,6 +42,8 @@ struct VS_OUT
 	float4	vNormal : NORMAL;
 	float2	vTexUV : TEXCOORD0;
 	float4	vWorldPos : TEXCOORD1;
+	float4	vTangent : TANGENT;
+	float4	vBinormal: BINORMAL;
 };
 
 
@@ -52,13 +57,15 @@ VS_OUT	VS_Main(VS_IN vIn)
 	vOut.vTexUV = vIn.vTexUV;
 	vOut.vWorldPos = mul(vector(vIn.vPos, 1.f), matWorld);
 	vOut.vNormal = normalize(mul(vector(vIn.vNormal, 0.f), matWorld));
+	vOut.vTangent = normalize(mul(vector(vIn.vTangent, 0.f), matWorld));
+	vOut.vBinormal = normalize(mul(vector(vIn.vBinormal, 0.f), matWorld));
 	return vOut;
 }
 
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
+	/*float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
 
 	
 	float fDot = max(0, dot(vIn.vNormal, vLightDirection));
@@ -86,7 +93,30 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	
 	vOutColor = vOutColor*(vMtrlDif + vMtrlAmb+ vMtrlSpec +vMtrlEmiv);
 
-	return vOutColor;
+	return vOutColor;*/
 
+	// Normal Mapping
+	float4	vTexture = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
+	float4	vNormalMap = g_Normal_Texture.Sample(DiffuseSampler, vIn.vTexUV);
+	float4	vOutColor;
+	float3	vLightDir;
+	float4	vDiffuseColor = float4(1.f,1.f,1.f,1.f);
+	float	fLightIntendity = 0.f;
+
+	vNormalMap = (vNormalMap * 2.f) - 1.f;
+
+	float3 vBumpNormal = (vIn.vNormal.xyz + vNormalMap.x) * (vIn.vTangent.xyz + vNormalMap.y) * vIn.vBinormal.xyz;
+
+	vBumpNormal = normalize(vBumpNormal);
+
+	vLightDir = -vLightDirection.xyz;
+	fLightIntendity = saturate(dot(vBumpNormal, vLightDir));
+
+
+	vOutColor = saturate(vDiffuseColor * fLightIntendity);
+
+	vOutColor = vOutColor * vTexture;
+
+	return vOutColor;
 }
 

@@ -67,16 +67,25 @@ typedef struct tagMesh
 	{
 
 	}
-
 	tagMesh(XMFLOAT3 vPos, XMFLOAT3 vNor, XMFLOAT2 UV)
 	{
 		vPosition = vPos;
 		vNormal = vNor;
 		vUV = UV;
 	}
+	tagMesh(XMFLOAT3 vPos, XMFLOAT3 vNor, XMFLOAT2 UV, XMFLOAT3 Tangent, XMFLOAT3 Binormal)
+	{
+		vPosition = vPos;
+		vNormal = vNor;
+		vUV = UV;
+		vTangent = Tangent;
+		vBinormal = Binormal;
+	}
 	XMFLOAT3		vPosition;
 	XMFLOAT3		vNormal;
 	XMFLOAT2		vUV;
+	XMFLOAT3		vTangent;
+	XMFLOAT3		vBinormal;
 
 	bool operator==(const tagMesh& other) const
 	{
@@ -87,6 +96,12 @@ typedef struct tagMesh
 			return false;
 
 		if (vUV.x != other.vUV.x || vUV.y != other.vUV.y)
+			return false;
+
+		if (vTangent.x != other.vTangent.x || vTangent.y != other.vTangent.y || vTangent.z != other.vTangent.z)
+			return false;
+
+		if (vBinormal.x != other.vBinormal.x || vBinormal.y != other.vBinormal.y || vBinormal.z != other.vBinormal.z)
 			return false;
 
 		return true;

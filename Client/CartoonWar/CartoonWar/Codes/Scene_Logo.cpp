@@ -188,6 +188,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_T_Hair_Albedo",
 		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/T_Hair_Albedo.tga"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Armors_Normal",
+		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Normals.tga"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Normal",
+		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Normals.tga"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -196,9 +202,11 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01",
 		CStatic_Mesh::Create("../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
 		return E_FAIL;
+
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01",
-	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rect/Rect.FBX"))))
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Monster/Monster.fbx"))))
 	//	return E_FAIL;
+
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)

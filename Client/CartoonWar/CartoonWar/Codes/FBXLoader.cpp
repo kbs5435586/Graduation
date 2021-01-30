@@ -72,7 +72,7 @@ HRESULT CFBXLoader::Load_FbxFile(FbxNode* pNode, _bool IsStatic)
 							return E_FAIL;
 					}
 				}
-				if (FAILED(Load_Mesh(pMesh, pInfo)))
+ 				if (FAILED(Load_Mesh(pMesh, pInfo)))
 					return E_FAIL;
 
 				pMesh->SetUserDataPtr(pInfo);
@@ -117,6 +117,7 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 
 	for (_uint i = 0; i < iTriangleCnt; ++i)
 	{
+		vector<MESH>		vecPos;
 		for (_uint j = 0; j < 3; ++j)
 		{
 			_uint	iControlPointIdx = pMesh->GetPolygonVertex(i, j);
@@ -124,11 +125,14 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 			_vec3 vPos = vecControlPoint[iControlPointIdx];
 			_vec3 vNormal = Get_Normal(pMesh, iControlPointIdx, iVtxOrder);
 			_vec2 vUV = Get_UV(pMesh, iControlPointIdx, pMesh->GetTextureUVIndex(i, j));
+			_vec3 vTangent = Get_Tangent(pMesh, iControlPointIdx, iVtxOrder);
+			_vec3 vBinormal = Get_BiNormal(pMesh, iControlPointIdx, iVtxOrder);
 
 
-			MESH Vertex = MESH(vPos, vNormal, vUV);
+			MESH Vertex = MESH(vPos, vNormal, vUV, vTangent, vBinormal);
 
-			auto iter_find = indexMapping.find(Vertex);
+			// IndexBuffer Setting
+		/*	auto iter_find = indexMapping.find(Vertex);
 			if (iter_find != indexMapping.end())
 			{
 				pInfo->vecIndices.push_back(iter_find->second);
@@ -138,10 +142,33 @@ HRESULT CFBXLoader::Load_Mesh(FbxMesh* pMesh, RenderInfo* pInfo)
 				indexMapping[Vertex] = iCnt;
 				pInfo->vecIndices.push_back(iCnt);
 				++iCnt;
-			}
+			}*/
+			// if use IndexBuffer Under line Set Line 144
+
+
 			pInfo->vecVertices.push_back(Vertex);
+			vecPos.push_back(Vertex);
 			iVtxOrder++;
 		}
+
+		// if Get_Tangent() return 0
+		_vec3 vTangent, vBinormal, vNormal;
+		CalculateTangentBinormal(vecPos[0], vecPos[1], vecPos[2], vTangent, vBinormal);
+		CalculateNormal(vTangent, vBinormal, vNormal);
+
+		pInfo->vecVertices[iVtxOrder - 3].vTangent = vTangent;
+		pInfo->vecVertices[iVtxOrder - 2].vTangent = vTangent;
+		pInfo->vecVertices[iVtxOrder - 1].vTangent = vTangent;
+
+		pInfo->vecVertices[iVtxOrder - 3].vBinormal = vBinormal;
+		pInfo->vecVertices[iVtxOrder - 2].vBinormal = vBinormal;
+		pInfo->vecVertices[iVtxOrder - 1].vBinormal = vBinormal;
+
+		pInfo->vecVertices[iVtxOrder - 3].vNormal = vNormal;
+		pInfo->vecVertices[iVtxOrder - 2].vNormal = vNormal;
+		pInfo->vecVertices[iVtxOrder - 1].vNormal = vNormal;
+
+		vecPos.clear();
 	}
 	//Create Buffer
 	//if (FAILED(CreateBufferView_Index(pInfo)))
@@ -226,7 +253,7 @@ _vec3 CFBXLoader::Get_Normal(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder)
 {
 	_uint		iNormalCnt = pMesh->GetElementNormalCount();
 
-	if (iNormalCnt != 1)
+	if (iNormalCnt < 1)
 		return _vec3();
 
 	FbxGeometryElementNormal* pNormal = pMesh->GetElementNormal();
@@ -287,6 +314,154 @@ _vec2 CFBXLoader::Get_UV(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder)
 	TempUV.y = 1.f - vUV.mData[1];
 
 	return TempUV;
+}
+
+_vec3 CFBXLoader::Get_Tangent(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder)
+{
+	_uint		iTangentCnt = pMesh->GetElementTangentCount();
+
+	if (iTangentCnt < 1)
+		return _vec3();
+
+	FbxGeometryElementTangent* pTangent = pMesh->GetElementTangent();
+	if (nullptr == pTangent)
+		return _vec3();
+
+	_uint	iTangentIdx = 0;
+
+	if (pTangent->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+	{
+		if (pTangent->GetReferenceMode() == FbxGeometryElement::eDirect)
+		{
+			iTangentIdx = iVtxOrder;
+		}
+		else
+		{
+			iTangentIdx = pTangent->GetIndexArray().GetAt(iVtxOrder);
+		}
+	}
+	else if (pTangent->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+	{
+		if (pTangent->GetReferenceMode() == FbxGeometryElement::eDirect)
+		{
+			iTangentIdx = iIdx;
+		}
+		else
+			iTangentIdx = pTangent->GetIndexArray().GetAt(iIdx);
+	}
+
+	FbxVector4	vTangent = pTangent->GetDirectArray().GetAt(iTangentIdx);
+	_vec3 vTemp = _vec3();
+
+	vTemp.x = vTangent.mData[0];
+	vTemp.y = vTangent.mData[2];
+	vTemp.z = vTangent.mData[1];
+
+	return vTemp;
+}
+
+_vec3 CFBXLoader::Get_BiNormal(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder)
+{
+	_uint		iBinormalCnt = pMesh->GetElementBinormalCount();
+
+	if (iBinormalCnt < 1)
+		return _vec3();
+
+	FbxGeometryElementBinormal* pBinormal = pMesh->GetElementBinormal();
+	if (nullptr == pBinormal)
+		return _vec3();
+
+	_uint	iBinormalIdx = 0;
+
+	if (pBinormal->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+	{
+		if (pBinormal->GetReferenceMode() == FbxGeometryElement::eDirect)
+		{
+			iBinormalIdx = iVtxOrder;
+		}
+		else
+		{
+			iBinormalIdx = pBinormal->GetIndexArray().GetAt(iVtxOrder);
+		}
+	}
+	else if (pBinormal->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+	{
+		if (pBinormal->GetReferenceMode() == FbxGeometryElement::eDirect)
+		{
+			iBinormalIdx = iIdx;
+		}
+		else
+			iBinormalIdx = pBinormal->GetIndexArray().GetAt(iIdx);
+	}
+
+	FbxVector4	vBinormal = pBinormal->GetDirectArray().GetAt(iBinormalIdx);
+	_vec3 vTemp = _vec3();
+
+	vTemp.x = vBinormal.mData[0];
+	vTemp.y = vBinormal.mData[2];
+	vTemp.z = vBinormal.mData[1];
+
+	return vTemp;
+}
+
+void CFBXLoader::CalculateTangentBinormal(MESH vPos0, MESH vPos1, MESH vPos2, _vec3& vTangent, _vec3& vBinormal)
+{
+	_float Vector1[3], Vector2[3];
+	_float tuVector[2], tvVector[2];
+
+
+	Vector1[0] = vPos1.vPosition.x - vPos0.vPosition.x;
+	Vector1[1] = vPos1.vPosition.y - vPos0.vPosition.y;
+	Vector1[2] = vPos1.vPosition.z - vPos0.vPosition.z;
+
+	Vector2[0] = vPos2.vPosition.x - vPos0.vPosition.x;
+	Vector2[1] = vPos2.vPosition.y - vPos0.vPosition.y;
+	Vector2[2] = vPos2.vPosition.z - vPos0.vPosition.z;
+
+	tuVector[0] = vPos1.vUV.x - vPos0.vUV.x;
+	tvVector[0] = vPos1.vUV.y - vPos0.vUV.y;
+
+	tuVector[1] = vPos2.vUV.x - vPos0.vUV.x;
+	tvVector[1] = vPos2.vUV.y - vPos0.vUV.y;
+
+
+
+	_float fDen = 1.f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+
+	vTangent.x = (tvVector[1] * Vector1[0] - tvVector[0] * Vector2[0]) * fDen;
+	vTangent.y = (tvVector[1] * Vector1[1] - tvVector[0] * Vector2[1]) * fDen;
+	vTangent.z = (tvVector[1] * Vector1[2] - tvVector[0] * Vector2[2]) * fDen;
+
+
+	vBinormal.x = (tuVector[0] * Vector2[0] - tuVector[1] *	Vector1[0]) * fDen;
+	vBinormal.y = (tuVector[0] * Vector2[1] - tuVector[1] * Vector1[1]) * fDen;
+	vBinormal.z = (tuVector[0] * Vector2[2] - tuVector[1] * Vector1[2]) * fDen;
+
+
+	_float fLen = sqrtf((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
+
+	vTangent.x = vTangent.x / fLen;
+	vTangent.y = vTangent.y / fLen;
+	vTangent.z = vTangent.z / fLen;
+
+	fLen = sqrtf((vBinormal.x * vBinormal.x) + (vBinormal.y * vBinormal.y) + (vBinormal.z * vBinormal.z));
+
+	vBinormal.x = vBinormal.x / fLen;
+	vBinormal.y = vBinormal.y / fLen;
+	vBinormal.z = vBinormal.z / fLen;
+}
+
+void CFBXLoader::CalculateNormal(_vec3 vTangent, _vec3 vBinormal, _vec3& vNormal)
+{
+	vNormal.x = (vTangent.y * vBinormal.z) - (vTangent.z * vBinormal.y);
+	vNormal.y = (vTangent.z * vBinormal.x) - (vTangent.x * vBinormal.z);
+	vNormal.z = (vTangent.x * vBinormal.y) - (vTangent.y * vBinormal.x);
+
+	_float fLen = sqrtf((vNormal.x * vNormal.x) + (vNormal.y * vNormal.y) + (vNormal.z * vNormal.z));
+
+	vNormal.x = vNormal.x / fLen;
+	vNormal.y = vNormal.y / fLen;
+	vNormal.z = vNormal.z / fLen;
 }
 
 HRESULT CFBXLoader::CreateBufferView(RenderInfo* pInfo)

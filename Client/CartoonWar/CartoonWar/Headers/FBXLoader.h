@@ -21,6 +21,11 @@ private:
 private:
     _vec3                       Get_Normal(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder);
     _vec2                       Get_UV(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder);
+    _vec3                       Get_Tangent(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder);
+    _vec3                       Get_BiNormal(FbxMesh* pMesh, _uint iIdx, _uint iVtxOrder);
+private:
+    void                        CalculateTangentBinormal(MESH vPos0, MESH vPos1, MESH vPos2, _vec3& vTangent, _vec3& vBinormal);
+    void                        CalculateNormal(_vec3 vTangent, _vec3 vBinormal, _vec3& vNormal);
 private:
     // Only VertexBuffer
     HRESULT                     CreateBufferView(RenderInfo* pInfo);

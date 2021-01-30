@@ -31,7 +31,7 @@ HRESULT CStatic_Mesh::Ready_Static_Mesh(string strFilePath)
 }
 
 void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _matrix matWorld, MAINPASS& tPass,
-	CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2)
+	CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2, CTexture* pTexture3, CTexture* pTexture4)
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 	if (pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
@@ -41,19 +41,19 @@ void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _ma
 		FbxMesh* pMesh = pNode->GetMesh();
 
 
-		Render_Mesh(pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, pTexture0, pTexture1, pTexture2);
+		Render_Mesh(pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, pTexture0, pTexture1, pTexture2, pTexture3, pTexture4);
 
 	}
 	
 	_uint iChildCnt = pNode->GetChildCount();
 	for (_uint i = 0; i <iChildCnt; ++i)
 	{
-		Render_Hierachy_Mesh(pNode->GetChild(i), pShaderCom, matWorld, tPass, pTexture0, pTexture1, pTexture2);
+		Render_Hierachy_Mesh(pNode->GetChild(i), pShaderCom, matWorld, tPass, pTexture0, pTexture1, pTexture2, pTexture3, pTexture4);
 	}
 }
 
 void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix,
-	_matrix matWorld, MAINPASS& tPass, CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2)
+	_matrix matWorld, MAINPASS& tPass, CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2, CTexture* pTexture3, CTexture* pTexture4)
 {
 	FbxAMatrix	fbxMatrixTransform = ConvertMatrixToFbx(matWorld);
 	_int		iSkinDeformers = pMesh->GetDeformerCount(FbxDeformer::eSkin);
@@ -67,10 +67,17 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 	if (FAILED(pShaderCom->SetUp_OnShader_FbxMesh(FbxMatrixToMatrix(&fbxMatrixTransform), matView, matProj, tPass)))
 		return ;
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
-	if (pInfo->strNodeName.find("Body")!=string::npos)
+	if (pInfo->strNodeName.find("Body") != string::npos)
+	{
 		CDevice::GetInstance()->SetTextureToShader(pTexture0, 0, TEXTURE_REGISTER::t0);
-	else /*if (pInfo->strNodeName.find("Armor") != string::npos)*/
+		CDevice::GetInstance()->SetTextureToShader(pTexture3, 0, TEXTURE_REGISTER::t1);
+	}
+		/*if (pInfo->strNodeName.find("Armor") != string::npos)*/
+	else
+	{
 		CDevice::GetInstance()->SetTextureToShader(pTexture1, 0, TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(pTexture4, 0, TEXTURE_REGISTER::t1);
+	}
 	//else
 	//	CDevice::GetInstance()->SetTextureToShader(pTexture2, 0, TEXTURE_REGISTER::t0);
 
