@@ -155,7 +155,7 @@ void Server::do_move(int user_id, char direction)
     for (auto &c : g_clients)
     {
         c.m_cLock.lock();
-        if (true == c.m_isConnected)
+        if (ST_ACTIVE == c.m_status)
         {
             send_move_packet(c.m_id, user_id); // 연결된 모든 클라이언트들에게 움직인 클라의 위치값 전송
         }
@@ -182,16 +182,13 @@ void Server::enter_game(int user_id, char name[])
     strcpy_s(g_clients[user_id].m_name, name);
     g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
-    g_clients[user_id].m_isConnected = true; // m_isConnected를 true로 바꾸는건 여기뿐임
-
-
 
     for (int i = 0; i < MAX_USER; i++) 
     {
         if (user_id == i)
             continue;
         g_clients[i].m_cLock.lock();
-        if (true == g_clients[i].m_isConnected) // 이미 연결 중인 클라들한테만
+        if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만
         {
             if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
             {
@@ -203,6 +200,7 @@ void Server::enter_game(int user_id, char name[])
     }
     g_clients[user_id].m_cLock.unlock();
     // true == g_clients[i].m_isConnected 하므로 원래는 여기다 unlock 해야하는데 안에 범위가 너무 큼
+    g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
 }
 
 void Server::initalize_clients()
@@ -210,7 +208,7 @@ void Server::initalize_clients()
     for (int i = 0; i < MAX_USER; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
-        g_clients[i].m_isConnected = false; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+        g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
     }
 }
 
@@ -231,7 +229,7 @@ void Server::send_enter_packet(int user_id, int other_id)
 void Server::disconnect(int user_id)
 {
     g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_isConnected = false;
+    g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     send_leave_packet(user_id, user_id); // 나 자신
     closesocket(g_clients[user_id].m_socket);
 
@@ -241,12 +239,13 @@ void Server::disconnect(int user_id)
             continue;
 
         c.m_cLock.lock();
-        if (true == c.m_isConnected)
+        if (ST_ACTIVE == c.m_status)
         {
             send_leave_packet(c.m_id, user_id);
         }
         c.m_cLock.unlock();
     }
+    g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
     g_clients[user_id].m_cLock.unlock();
 }
 
@@ -298,30 +297,44 @@ void Server::worker_thread()
 
         case FUNC_ACCEPT:
         {
-            g_idLock.lock(); // 나중에 AcceptEx를 여러곳에서 호출하게 확장했을때를 대비한 락
             // 현재는 한 쓰레드가 accept 끝나면 끝에 AcceptEx를 호출하게 해놔서 여러 쓰레드가 동시 접근 안함
-            int user_id = current_User_ID++;
-            current_User_ID = current_User_ID % MAX_USER; // 10 넘어 갔을때 걸러내는 용도
-            g_idLock.unlock();
+            int user_id = -1;
+            for (int i = 0; i < MAX_USER; ++i)
+            {
+                lock_guard <mutex> guardLock{ g_clients[i].m_cLock }; // 함수에서 lock 할때 편함
+                // 이 cLock를 락을 걸고 락가드가 속한 블록에서 빠져나갈때 unlock해주고 루프 돌때마다 unlock-lock 해줌
+                if (ST_FREE == g_clients[i].m_status) // 동접 객체 돌면서 새로 접속한애 id 부여
+                {
+                    g_clients[i].m_status = ST_ALLOC;
+                    user_id = i;
+                    break; // 할당 가능한 객체 있으면 break
+                }
+            }
 
             SOCKET clientSocket = overEx->c_socket;
-            CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), g_iocp, user_id, 0); // 
 
-            g_clients[user_id].m_prev_size = 0; // 버퍼 0으로 초기화
-            g_clients[user_id].m_recv_over.function = FUNC_RECV; // 오버랩 구조체에 받는걸로 설정
-            ZeroMemory(&g_clients[user_id].m_recv_over.over, sizeof(g_clients[user_id].m_recv_over.over)); // 오버랩 구조체 초기화
-            g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
-            g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
-            g_clients[user_id].m_socket = clientSocket;
-            g_clients[user_id].m_x = rand() % WORLD_WIDTH;
-            g_clients[user_id].m_x = rand() % WORLD_HEIGHT;
+            if (-1 == user_id) // 만약 모든 객체 돌았는데 할당 가능한 객체가 없을때
+                closesocket(clientSocket); //send_login_fail_packet();
+            else
+            {
+                CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), g_iocp, user_id, 0); // IOCP 객체에 소켓정도 등록 및 객체 초기화
 
-            DWORD flags = 0;
-            WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
-                &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
+                g_clients[user_id].m_prev_size = 0; // 버퍼 0으로 초기화
+                g_clients[user_id].m_recv_over.function = FUNC_RECV; // 오버랩 구조체에 받는걸로 설정
+                ZeroMemory(&g_clients[user_id].m_recv_over.over, sizeof(g_clients[user_id].m_recv_over.over)); // 오버랩 구조체 초기화
+                g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
+                g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
+                g_clients[user_id].m_socket = clientSocket;
+                g_clients[user_id].m_x = rand() % WORLD_WIDTH;
+                g_clients[user_id].m_x = rand() % WORLD_HEIGHT;
 
+                DWORD flags = 0;
+                WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
+                    &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
+            }
+            // 여기서부터 새로운 클라 소켓 accept
             clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); // 새로 받을 클라 소켓 
-            overEx->c_socket= clientSocket; // 새로 받을 클라니까 그 소켓 정보도 확장 오버랩에 넣어줘야함
+            overEx->c_socket = clientSocket; // 새로 받을 클라니까 그 소켓 정보도 확장 오버랩에 넣어줘야함
             ZeroMemory(&overEx->over, sizeof(overEx->over)); // accept용 확장 오버랩 구조체 초기화
             // accept가 완료된 다음에 다시 accept 받는 부분이므로 overEx 다시 사용해도됨, 중복해서 불릴 일 없음
             AcceptEx(listenSocket, clientSocket, overEx->io_buf, NULL,

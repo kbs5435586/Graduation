@@ -10,9 +10,7 @@ public:
 private:
 	ClientInfo g_clients[MAX_USER];
 	SOCKET listenSocket;
-	int current_User_ID = 0;
 	HANDLE g_iocp;
-	mutex g_idLock;
 	int LISTEN_KEY = 999;
 
 public:
@@ -25,6 +23,7 @@ public:
 
 	void send_packet(int user_id, void* packet); // 보낼 패킷의 버퍼와 사이즈 설정
 	void send_login_ok_packet(int user_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
+	//void send_login_fail_packet();
 	void send_move_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
