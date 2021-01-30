@@ -131,24 +131,25 @@ HRESULT CDevice::Initialize()
 	if (FAILED(Create_SwapChain(true)))
 		return E_FAIL;
 
-	if (FAILED(CheckHDRSupport()))
-		return E_FAIL;
+	//if (FAILED(CheckHDRSupport()))
+	//	return E_FAIL;
 
-	m_IsEnableST2084 = m_IsHDRSupport;
+	//m_IsEnableST2084 = m_IsHDRSupport;
 
-	if (FAILED(EnsureSwapChainColorSpace(m_CurrentSwapChainBitDepth, m_IsEnableST2084)))
-		return E_FAIL;
+	//if (FAILED(EnsureSwapChainColorSpace(m_CurrentSwapChainBitDepth, m_IsEnableST2084)))
+	//	return E_FAIL;
 
-	m_iHDRMetaDataPoolIdx = 0;
+	//m_iHDRMetaDataPoolIdx = 0;
 
-	if (m_IsHDRSupport)
-	{
-		if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
-			return E_FAIL;
-	}
+
+	//if (m_IsHDRSupport)
+	//{
+	//	if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
+	//		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
+	//		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
+	//		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
+	//		return E_FAIL;
+	//}
 
 	if (FAILED(Create_View()))
 		return E_FAIL;

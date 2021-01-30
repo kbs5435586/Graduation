@@ -150,6 +150,7 @@ typedef struct tagMtrInfo
 
 struct RenderInfo
 {
+	string						strNodeName;
 	vector<MESH>				vecVertices;
 	vector<size_t>				vecIndices;
 	vector<tagMtrInfo>			vecMtrlInfo;

@@ -17,10 +17,7 @@ HRESULT COrc01::Ready_Prototype()
 
 HRESULT COrc01::Ready_GameObject(void* pArg)
 {
-	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 	if (FAILED(Ready_Component()))
-		return E_FAIL;
-	if (FAILED(CreateConstantBuffer()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
@@ -57,28 +54,21 @@ void COrc01::Render_GameObject()
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 
-	//1. Set Root Signature
-	//2. SetUp Texture
-	//3. SetUp PipeLine
-	//4. Render Call
-	//OR
-	//1. Set Root Signature2
-	//2. SetUp PipeLine
-	//3. SetUp Texture
-	//4. Render Call
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
 
-	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pShaderCom->GetPipeLine().Get());
-	MAINPASS tMainPass = {};
+	MAINPASS tPass = {};
 
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_0, 0, TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_1, 0, TEXTURE_REGISTER::t1);
+	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_0, 0, TEXTURE_REGISTER::t0);
+	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_1, 0, TEXTURE_REGISTER::t1);
 
-	//m_pTextureCom_0->SetUp_OnShader(0, TEXTURE_REGISTER::t0);
-	//m_pTextureCom_1->SetUp_OnShader(1, TEXTURE_REGISTER::t1);
+	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
+		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom_0, m_pTextureCom_1, m_pTextureCom_2);
 
-	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(), m_pConstBuffer.Get(),
-		m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, m_iPassSize, m_pData);
+	Safe_Release(pManagement);
 }
 
 HRESULT COrc01::CreateInputLayout()
@@ -92,35 +82,6 @@ HRESULT COrc01::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::COUNTERCLOCK)))
 		return E_FAIL;
 
-	return S_OK;
-}
-HRESULT COrc01::CreateConstantBuffer()
-{
-	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
-
-	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc,
-		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pConstBuffer))))
-	{
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pConstBuffer->Map(0, nullptr, &m_pData)))
-		return E_FAIL;
-
-
-	D3D12_GPU_VIRTUAL_ADDRESS ConstantBufferAddress = m_pConstBuffer->GetGPUVirtualAddress();
-
-	int Idx = 0;
-	ConstantBufferAddress += (Idx * m_iPassSize);
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	cbvDesc.BufferLocation = ConstantBufferAddress;
-	cbvDesc.SizeInBytes = CalcConstantBufferByteSize(sizeof(MAINPASS));
-
-	CDevice::GetInstance()->GetDevice()->CreateConstantBufferView(
-		&cbvDesc, CDevice::GetInstance()->GetConstantBufferDescHeap()->GetCPUDescriptorHandleForHeapStart());
 	return S_OK;
 }
 
@@ -156,6 +117,7 @@ void COrc01::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pTextureCom_0);
 	Safe_Release(m_pTextureCom_1);
+	Safe_Release(m_pTextureCom_2);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
@@ -187,14 +149,19 @@ HRESULT COrc01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom_0 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Armors_Albedo");
+	m_pTextureCom_0 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Albedo");
 	NULL_CHECK_VAL(m_pTextureCom_0, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Armor", m_pTextureCom_0)))
+	if (FAILED(Add_Component(L"Com_Texture_Body", m_pTextureCom_0)))
 		return E_FAIL;
 
-	m_pTextureCom_1 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Albedo");
+	m_pTextureCom_1 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Armors_Albedo");
 	NULL_CHECK_VAL(m_pTextureCom_1, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Body", m_pTextureCom_1)))
+	if (FAILED(Add_Component(L"Com_Texture_Armor", m_pTextureCom_1)))
+		return E_FAIL;
+
+	m_pTextureCom_2 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_T_Hair_Albedo");
+	NULL_CHECK_VAL(m_pTextureCom_2, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture_Hair", m_pTextureCom_2)))
 		return E_FAIL;
 
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");

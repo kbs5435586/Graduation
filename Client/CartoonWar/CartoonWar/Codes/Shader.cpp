@@ -111,6 +111,8 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 
 HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass)
 {
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+
 	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&matWorld));
 	XMMATRIX	xmMatView = XMMatrixTranspose(XMLoadFloat4x4(&matView));
 	XMMATRIX	xmMatProj = XMMatrixTranspose(XMLoadFloat4x4(&matProj));

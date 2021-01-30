@@ -45,7 +45,7 @@ VertexOut VS_Main(VertexIn In)
 
 float4 PS_Main(VertexOut In) : SV_Target
 {
-	return g_texture.Sample(DiffuseSampler, In.vTexUV);
+	return g_texture.Sample(DiffuseSampler, In.vTexUV) + g_texture1.Sample(DiffuseSampler, In.vTexUV);
 	//return float4(1.f,0.f,0.f,1.f);
 }
 

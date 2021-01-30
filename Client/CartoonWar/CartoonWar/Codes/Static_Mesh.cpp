@@ -30,7 +30,8 @@ HRESULT CStatic_Mesh::Ready_Static_Mesh(string strFilePath)
 	return S_OK;
 }
 
-void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstantBuffer,  CShader* pShaderCom, _matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
+void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, CShader* pShaderCom, _matrix matWorld, MAINPASS& tPass,
+	CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2)
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 	if (pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
@@ -40,36 +41,50 @@ void CStatic_Mesh::Render_Hierachy_Mesh(FbxNode* pNode, ID3D12Resource* pConstan
 		FbxMesh* pMesh = pNode->GetMesh();
 
 
-		Render_Mesh(pConstantBuffer,pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, iPassSize, pData);
+		Render_Mesh(pShaderCom, pMesh, RootNodeMatrix, GeometicOffest, matWorld, tPass, pTexture0, pTexture1, pTexture2);
 
 	}
 	
 	_uint iChildCnt = pNode->GetChildCount();
 	for (_uint i = 0; i <iChildCnt; ++i)
 	{
-		Render_Hierachy_Mesh(pNode->GetChild(i), pConstantBuffer,pShaderCom, matWorld, tPass, iPassSize, pData);
+		Render_Hierachy_Mesh(pNode->GetChild(i), pShaderCom, matWorld, tPass, pTexture0, pTexture1, pTexture2);
 	}
 }
 
-void CStatic_Mesh::Render_Mesh(ID3D12Resource* pConstantBuffer,  CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix,
-								_matrix matWorld, MAINPASS tPass, _uint iPassSize, void* pData)
+void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& pRootNodeMatrix, FbxAMatrix& pGeometryMatrix,
+	_matrix matWorld, MAINPASS& tPass, CTexture* pTexture0, CTexture* pTexture1, CTexture* pTexture2)
 {
 	FbxAMatrix	fbxMatrixTransform = ConvertMatrixToFbx(matWorld);
 	_int		iSkinDeformers = pMesh->GetDeformerCount(FbxDeformer::eSkin);
 	if (iSkinDeformers == 0)
 		fbxMatrixTransform = fbxMatrixTransform * pRootNodeMatrix * pGeometryMatrix;
+
 	_matrix		matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix		matProj = CCamera_Manager::GetInstance()->GetMatProj();
+	
 
 	if (FAILED(pShaderCom->SetUp_OnShader_FbxMesh(FbxMatrixToMatrix(&fbxMatrixTransform), matView, matProj, tPass)))
 		return ;
-
-
-	// Setup ConstantBuffer
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, pConstantBuffer->GetGPUVirtualAddress());
-	memcpy_s(pData, iPassSize, (void*)&tPass, sizeof(MAINPASS));
-
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
+	if (pInfo->strNodeName.find("Body")!=string::npos)
+		CDevice::GetInstance()->SetTextureToShader(pTexture0, 0, TEXTURE_REGISTER::t0);
+	else /*if (pInfo->strNodeName.find("Armor") != string::npos)*/
+		CDevice::GetInstance()->SetTextureToShader(pTexture1, 0, TEXTURE_REGISTER::t0);
+	//else
+	//	CDevice::GetInstance()->SetTextureToShader(pTexture2, 0, TEXTURE_REGISTER::t0);
+
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tPass);
+
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+	CDevice::GetInstance()->UpdateTable();
+
+
+
 	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &(pInfo->VertexBufferView));
 	CDevice::GetInstance()->GetCmdLst()->DrawInstanced(pInfo->vecVertices.size(), 1, 0, 0);

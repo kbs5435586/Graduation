@@ -1,6 +1,7 @@
 #pragma once
 
-namespace std {
+namespace std 
+{
 	template <>
 	struct hash<DirectX::XMFLOAT2>
 	{
@@ -53,4 +54,4 @@ namespace std {
 				^ (hash<DirectX::XMFLOAT2>()(k.vUV) << 1);
 		}
 	};
-}
+} 

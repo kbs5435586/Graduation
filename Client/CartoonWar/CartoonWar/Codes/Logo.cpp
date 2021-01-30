@@ -61,9 +61,9 @@ void CLogo::Render_GameObject()
 	_matrix matProj = Matrix_::Identity();
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
-	pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), 0, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, 0, TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, 1, TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();

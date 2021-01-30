@@ -18,7 +18,7 @@ unsigned __stdcall ResourceLoadThread(void* pArguments)
 
 	pManagement->AddRef();
 
-	//pLogo->Ready_Add_Prototype_Mesh(pManagement);
+	pLogo->Ready_Add_Prototype_Mesh(pManagement);
 
 	Safe_Release(pManagement);
 
@@ -184,6 +184,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Albedo",
 		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Albedo.tga"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_T_Hair_Albedo",
+		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/T_Hair_Albedo.tga"))))
 		return E_FAIL;
 
 	return S_OK;

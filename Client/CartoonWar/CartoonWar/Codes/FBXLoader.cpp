@@ -53,11 +53,13 @@ HRESULT CFBXLoader::Load_FbxFile(FbxNode* pNode, _bool IsStatic)
 		if ((pAttr && FbxNodeAttribute::eMesh == pAttr->GetAttributeType()))
 		{
 			FbxMesh* pMesh = pNode->GetMesh();
+			//string str = pNode->GetName();
 			if (pMesh)
 			{
 				RenderInfo* pInfo = new RenderInfo();
-
+				
 				_uint iMtrlCnt = pNode->GetMaterialCount();
+				pInfo->strNodeName = pNode->GetName();
 
 				if (iMtrlCnt > 0)
 				{

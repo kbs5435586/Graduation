@@ -21,10 +21,7 @@ HRESULT CMyRect::Ready_Prototype()
 
 HRESULT CMyRect::Ready_GameObject(void* pArg)
 {
-	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 	if (FAILED(Ready_Component()))
-		return E_FAIL;
-	if (FAILED(CreateConstantBuffer()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
@@ -51,16 +48,26 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CMyRect::Render_GameObject()
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	m_pShaderCom->SetUp_OnShader( matWorld, matView, matProj, tMainPass);
-	memcpy_s(m_pData, m_iPassSize, (void*)&tMainPass, sizeof(tMainPass));
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootConstantBufferView(1, m_pConstBuffer->GetGPUVirtualAddress());
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+	_uint iOffeset = pManagement->GetConstantBuffer(0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->UpdateTable();
+
 
 	m_pBufferCom->Render_VIBuffer();
+	Safe_Release(pManagement);
 }
 
 HRESULT CMyRect::CreateInputLayout()
@@ -71,43 +78,6 @@ HRESULT CMyRect::CreateInputLayout()
 	
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME)))
 		return E_FAIL;
-
-
-	return S_OK;
-}
-
-HRESULT CMyRect::CreateConstantBuffer()
-{
-	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
-
-	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&tHeap_Pro_Upload,
-		D3D12_HEAP_FLAG_NONE,
-		&tResource_Desc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_pConstBuffer))))
-	{
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pConstBuffer->Map(0, nullptr, &m_pData)))
-		return E_FAIL;
-
-
-	D3D12_GPU_VIRTUAL_ADDRESS ConstantBufferAddress = m_pConstBuffer->GetGPUVirtualAddress();
-
-	int Idx = 0;
-	ConstantBufferAddress += (Idx * m_iPassSize);
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	cbvDesc.BufferLocation = ConstantBufferAddress;
-	cbvDesc.SizeInBytes = CalcConstantBufferByteSize(sizeof(MAINPASS));
-
-	CDevice::GetInstance()->GetDevice()->CreateConstantBufferView(
-		&cbvDesc,
-		CDevice::GetInstance()->GetConstantBufferDescHeap()->GetCPUDescriptorHandleForHeapStart());
 
 
 	return S_OK;

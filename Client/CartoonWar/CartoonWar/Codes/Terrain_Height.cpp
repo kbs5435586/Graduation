@@ -52,7 +52,6 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CTerrain_Height::Render_GameObject()
 {
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;

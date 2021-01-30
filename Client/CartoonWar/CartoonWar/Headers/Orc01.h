@@ -24,7 +24,6 @@ private:
 	HRESULT									Ready_Component();
 private:
 	virtual HRESULT							CreateInputLayout();
-	HRESULT									CreateConstantBuffer();
 public:
     static COrc01*							Create();
     virtual CGameObject*					Clone_GameObject(void* pArg);
@@ -39,5 +38,6 @@ private:
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom_0 = nullptr;
 	CTexture*								m_pTextureCom_1 = nullptr;
+	CTexture*								m_pTextureCom_2 = nullptr;
 };
 
