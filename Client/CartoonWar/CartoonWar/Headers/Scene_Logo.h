@@ -34,5 +34,7 @@ public:
 	static CScene_Logo*		Create();
 protected:
 	virtual void			Free();
+private:
+	CTexture*				m_pTextureCom = nullptr;
 };
 

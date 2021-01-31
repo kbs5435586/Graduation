@@ -96,7 +96,7 @@ private:
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
 public:
-	void										SetTextureToShader(CTexture* pTexture, _uint iTextureIdx,TEXTURE_REGISTER eRegisterNum);
+	void										SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, _uint iTextureIdx,TEXTURE_REGISTER eRegisterNum);
 	void										SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
 	void										UpdateTable();
 private:

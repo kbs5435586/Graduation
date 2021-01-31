@@ -36,10 +36,7 @@ private:
 	CStatic_Mesh*							m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
-	CTexture*								m_pTextureCom_0 = nullptr;
-	CTexture*								m_pTextureCom_1 = nullptr;
-	CTexture*								m_pTextureCom_2 = nullptr;
-	CTexture*								m_pTextureCom_3 = nullptr;
-	CTexture*								m_pTextureCom_4 = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
+
 };
 

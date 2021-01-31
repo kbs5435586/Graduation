@@ -287,7 +287,7 @@ HRESULT CDevice::SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _f
 	return S_OK;
 }
 
-void CDevice::SetTextureToShader(CTexture* pTexture, _uint iTextureIdx, TEXTURE_REGISTER eRegisterNum)
+void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, _uint iTextureIdx, TEXTURE_REGISTER eRegisterNum)
 {
 	_uint			iDestRange = 1;
 	_uint			iSrcRange = 1;
@@ -297,7 +297,7 @@ void CDevice::SetTextureToShader(CTexture* pTexture, _uint iTextureIdx, TEXTURE_
 
 	hDestHandle.ptr += (iSize* (_uint)eRegisterNum);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pTexture->GetSRV(iTextureIdx)->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pTextureDesc->GetCPUDescriptorHandleForHeapStart();
 
 	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);

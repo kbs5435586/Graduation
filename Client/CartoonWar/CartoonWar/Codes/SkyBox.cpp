@@ -63,7 +63,7 @@ void CSkyBox::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer(0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, 0, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), 0, TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 

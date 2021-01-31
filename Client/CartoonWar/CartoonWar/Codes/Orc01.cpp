@@ -26,12 +26,13 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
-
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	return S_OK;
 }
 
 _int COrc01::Update_GameObject(const _float& fTimeDelta)
 {
+
 	return _int();
 }
 
@@ -64,9 +65,7 @@ void COrc01::Render_GameObject()
 		return ;
 
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
-		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, 
-		m_pTextureCom_0, m_pTextureCom_1, m_pTextureCom_2,
-		m_pTextureCom_3, m_pTextureCom_4);
+		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc");
 
 	Safe_Release(pManagement);
 }
@@ -117,11 +116,8 @@ void COrc01::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pTextureCom_0);
-	Safe_Release(m_pTextureCom_1);
-	Safe_Release(m_pTextureCom_2);
-	Safe_Release(m_pTextureCom_3);
-	Safe_Release(m_pTextureCom_4);
+	Safe_Release(m_pTextureCom);
+
 
 	Safe_Release(m_pFrustumCom);
 
@@ -154,30 +150,11 @@ HRESULT COrc01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom_0 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Albedo");
-	NULL_CHECK_VAL(m_pTextureCom_0, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Body", m_pTextureCom_0)))
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	m_pTextureCom_1 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Armors_Albedo");
-	NULL_CHECK_VAL(m_pTextureCom_1, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Armor", m_pTextureCom_1)))
-		return E_FAIL;
-
-	m_pTextureCom_2 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_T_Hair_Albedo");
-	NULL_CHECK_VAL(m_pTextureCom_2, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Hair", m_pTextureCom_2)))
-		return E_FAIL;
-
-	m_pTextureCom_3 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Body_Normal");
-	NULL_CHECK_VAL(m_pTextureCom_3, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Body_Normal", m_pTextureCom_3)))
-		return E_FAIL;
-
-	m_pTextureCom_4 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01_Armors_Normal");
-	NULL_CHECK_VAL(m_pTextureCom_4, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Armor_Normal", m_pTextureCom_4)))
-		return E_FAIL;
 
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
