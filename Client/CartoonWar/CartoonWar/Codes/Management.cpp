@@ -13,11 +13,13 @@ CManagement::CManagement()
 	, m_pComponent_Manager(CComponent_Manager::GetInstance())
 	, m_pLight_Manager(CLight_Manager::GetInstance())
 	, m_pConstant_Buffer_Manager(CConstant_Buffer_Manager::GetInstance())
+	, m_pRTT_Mananger(CRTTMananger::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
 	m_pLight_Manager->AddRef();
 	m_pConstant_Buffer_Manager->AddRef();
+	m_pRTT_Mananger->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -66,6 +68,21 @@ HRESULT CManagement::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
 HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
 {
 	return m_pConstant_Buffer_Manager->Create_Constant_Buffer(iBufferSize, iMaxCnt, eType);
+}
+
+HRESULT CManagement::Add_RenderToTexture(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight)
+{
+	return m_pRTT_Mananger->Ready_RTTMananger(pRTT_Tag, iTextureWidth, iTextureHeight);
+}
+
+void CManagement::Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv)
+{
+	m_pRTT_Mananger->Set_RenderTarget(pRTT_Tag, pDsv);
+}
+
+CRTT* CManagement::Get_RTT(const _tchar* pRTT_Tag)
+{
+	return m_pRTT_Mananger->Get_RTT(pRTT_Tag);
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
@@ -149,8 +166,11 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CRTTMananger::GetInstance()->DestroyInstance())
+		_MSG_BOX("CRTTMananger Release Failed");
+
 	if (dwRefCnt = CConstant_Buffer_Manager::GetInstance()->DestroyInstance())
-		_MSG_BOX("CManagement Release Failed");
+		_MSG_BOX("CConstant_Buffer_Manager Release Failed");
 
 	if (dwRefCnt = CGameObject_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CObject_Manager Release Failed");
@@ -199,5 +219,6 @@ void CManagement::Free()
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pConstant_Buffer_Manager);
+	Safe_Release(m_pRTT_Mananger);
 	Safe_Release(m_pScene);
 }

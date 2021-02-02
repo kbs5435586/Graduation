@@ -42,6 +42,8 @@ using namespace std;
 #include <string>
 #include <wrl/client.h>
 
+
+
 #include <d3d11on12.h>
 #include <d2d1_3.h>
 #include <dwrite.h>
@@ -62,11 +64,14 @@ using namespace std;
 #pragma comment(lib, "DirectXTex.lib")
 #endif
 
+
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
 using namespace DirectX::SimpleMath;
+
+
 
 #include "d3dx12.h"
 
@@ -81,3 +86,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
+
+
+
+

@@ -31,6 +31,9 @@ HRESULT CMainApp::Ready_MainApp()
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(tagMainPass), 512, CONST_REGISTER::b0)))
 		return E_FAIL;
 
+	//if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
+		//return E_FAIL;
+
 
 	srand(unsigned(time(NULL)));
 
@@ -51,6 +54,8 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 void CMainApp::Render_MainApp()
 {
 	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
+	// ¿©±â¼­ RTT Set
+	//m_pManagement->Set_RenderTarget(L"RTT_DEFAULT", CDevice::GetInstance()->GetDSV().Get());
 	CDevice::GetInstance()->Render_Begin(pfClearColor);
 
 	if (nullptr != m_pRenderer)
@@ -140,6 +145,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		return E_FAIL;
 	m_pRenderer->AddRef();
 
+	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex_RTT",CBuffer_RectTex::Create())))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_RTT",CShader::Create(L"../ShaderFiles/Shader_RTT.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	return S_OK;
 }
 

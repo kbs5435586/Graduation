@@ -185,6 +185,8 @@
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
+    <ClInclude Include="..\Headers\RTT.h" />
+    <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\Management.h" />
@@ -242,6 +244,8 @@
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
+    <ClCompile Include="..\Codes\RTT.cpp" />
+    <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\Management.cpp" />
@@ -294,6 +298,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ShaderFiles\Shader_Toon.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ShaderFiles\Shader_RTT.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

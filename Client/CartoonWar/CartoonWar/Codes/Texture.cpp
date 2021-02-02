@@ -1,7 +1,6 @@
 #include "framework.h"
 #include "Texture.h"
-#include "DirectXTex.h"
-#include "DirectXTex.inl"
+
 
 CTexture::CTexture()
 	: CComponent()
@@ -88,42 +87,6 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 	return S_OK;
 }
 
-HRESULT CTexture::Ready_Texture(const _tchar* pFilePath)
-{
-	wchar_t szExt[50] = L"";
-	_wsplitpath_s(pFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, 50);
-
-	wstring strExt = szExt;
-
-	CDevice::GetInstance()->Open();
-
-	if (L".dds" == strExt || L".DDS" == strExt)
-	{
-		if (FAILED(LoadFromDDSFile(pFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))
-			return E_FAIL;
-	
-	}
-	else if (L".tga" == strExt || L".TGA" == strExt)
-	{
-		if (FAILED(LoadFromTGAFile(pFilePath, nullptr, m_Image)))
-			return E_FAIL;
-	}
-	else
-	{
-
-		if (FAILED(LoadFromWICFile(pFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
-			return E_FAIL;
-	}
-
-
-	if (FAILED(Create_ShaderResourceView(m_Image)))
-		return E_FAIL;
-
-	CDevice::GetInstance()->Close();
-	CDevice::GetInstance()->WaitForFenceEvent();
-	return S_OK;
-}
-
 HRESULT CTexture::Ready_Texture(const _tchar* pTag, const _tchar* pFilePath)
 {
 	wchar_t szExt[50] = L"";
@@ -182,17 +145,7 @@ CTexture* CTexture::Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eTy
 	}
 	return pInstance;
 }
-CTexture* CTexture::Create(const _tchar* pFilePath)
-{
-	CTexture* pInstance = new CTexture();
 
-	if (FAILED(pInstance->Ready_Texture(pFilePath)))
-	{
-		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
 CTexture* CTexture::Create(const _tchar* pTag, const _tchar* pFilePath)
 {
 	CTexture* pInstance = new CTexture();
@@ -209,8 +162,6 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 	ID3D12Resource* pTexture = nullptr;
 	ID3D12Resource* pTextureUpload = nullptr;
 	ID3D12DescriptorHeap* pDescHeap = nullptr;
-
-
 	if (FAILED(CreateTexture(CDevice::GetInstance()->GetDevice().Get(), Image.GetMetadata(), &pTexture)))
 		return E_FAIL;
 

@@ -42,8 +42,6 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	pManagement->AddRef();
 
-
-
 	if (FAILED(Ready_Prototype_Component(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject(pManagement)))
@@ -60,6 +58,10 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
+	CDevice::GetInstance()->GetCmdQueue().Get();
+	CDevice::GetInstance()->GetRenderTarget().Get();
+
+
 
 	return CScene::Update_Scene(fTimeDelta);
 }
@@ -94,6 +96,7 @@ _int CScene_Logo::LastUpdate_Scene(const _float& fTimeDelta)
 
 void CScene_Logo::Render_Scene()
 {
+
 }
 
 HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)

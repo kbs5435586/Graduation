@@ -2,7 +2,6 @@
 #include "Component.h"
 #include "DirectXTex.h"
 #include "DirectXTex.inl"
-
 class CTexture :
     public CComponent
 {
@@ -12,11 +11,9 @@ private:
     ~CTexture() = default;
 public:
     HRESULT                                             Ready_Texture(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube);
-    HRESULT                                             Ready_Texture(const _tchar* pFilePath);
     HRESULT                                             Ready_Texture(const _tchar* pTag, const _tchar* pFilePath);
 public:
     static CTexture*                                    Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube = false);
-    static CTexture*                                    Create(const _tchar* pFilePath);
     static CTexture*                                    Create(const _tchar* pTag, const _tchar* pFilePath);
 public:
     virtual CComponent*                                 Clone_Component(void* pArg = nullptr);
@@ -41,7 +38,7 @@ private:
     map<const _tchar*, vector<ID3D12DescriptorHeap*>>   m_mapSrvDescHeap;
 private:
     vector<ID3D12DescriptorHeap*>                       m_vecDummyTextureDesc;
-    ID3D12DescriptorHeap*                               m_pInitTextureDesc;
+    ID3D12DescriptorHeap*                               m_pInitTextureDesc = nullptr;
 
 private:
     _bool                                               m_IsClone = false;

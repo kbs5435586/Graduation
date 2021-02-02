@@ -3,6 +3,7 @@
 #include "GameObject_Manager.h"
 #include "Light_Manager.h"
 #include "Constant_Buffer_Manager.h"
+#include "RTTMananger.h"
 #include "FBXLoader.h"
 
 #include "Base.h"
@@ -36,6 +37,10 @@ public://ConstantBuffer_Mananger
 	HRESULT						Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType);
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }
 	vector<CConstant_Buffer*>	GetConstantBuffer() { return m_pConstant_Buffer_Manager->GetConstantBuffer(); }
+public://RTT_Manager
+	HRESULT						Add_RenderToTexture(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight);
+	void                        Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
+	CRTT*						Get_RTT(const _tchar* pRTT_Tag);
 public:	
 	HRESULT						Clear_Layers(const _uint& iSceneID);
 	static void					Release_Engine();
@@ -50,5 +55,6 @@ private:
 	CComponent_Manager*			m_pComponent_Manager = nullptr;
 	CLight_Manager*				m_pLight_Manager = nullptr;
 	CConstant_Buffer_Manager*	m_pConstant_Buffer_Manager = nullptr;
+	CRTTMananger*				m_pRTT_Mananger = nullptr;
 };
 

@@ -34,6 +34,7 @@ HRESULT CLogo::Ready_GameObject(void* pArg)
 
 _int CLogo::Update_GameObject(const _float& fTimeDelta)
 {
+
 	return _int();
 }
 

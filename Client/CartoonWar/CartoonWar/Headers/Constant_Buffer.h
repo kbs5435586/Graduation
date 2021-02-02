@@ -7,7 +7,7 @@ private:
     CConstant_Buffer();
     virtual ~CConstant_Buffer() = default;
 public:
-    HRESULT                             Create_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType);
+    HRESULT                             Ready_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType);
 public:
     static  CConstant_Buffer*           Create(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType);
 private:

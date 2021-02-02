@@ -95,8 +95,6 @@ HRESULT CDevice::Initialize()
 	if (FAILED(CreateDXGIFactory2(m_iFactoryFlags, IID_PPV_ARGS(&m_pFactory))))
 		return E_FAIL;
 	
-	//	CreateDXGIFactory(IID_PPV_ARGS(&m_pFactory));
-
 	// CreateDevice
 	D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_pDevice));
 
@@ -131,25 +129,25 @@ HRESULT CDevice::Initialize()
 	if (FAILED(Create_SwapChain(true)))
 		return E_FAIL;
 
-	//if (FAILED(CheckHDRSupport()))
-	//	return E_FAIL;
+	if (FAILED(CheckHDRSupport()))
+		return E_FAIL;
 
-	//m_IsEnableST2084 = m_IsHDRSupport;
+	m_IsEnableST2084 = m_IsHDRSupport;
 
-	//if (FAILED(EnsureSwapChainColorSpace(m_CurrentSwapChainBitDepth, m_IsEnableST2084)))
-	//	return E_FAIL;
+	if (FAILED(EnsureSwapChainColorSpace(m_CurrentSwapChainBitDepth, m_IsEnableST2084)))
+		return E_FAIL;
 
-	//m_iHDRMetaDataPoolIdx = 0;
+	m_iHDRMetaDataPoolIdx = 0;
 
 
-	//if (m_IsHDRSupport)
-	//{
-	//	if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
-	//		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
-	//		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
-	//		m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
-	//		return E_FAIL;
-	//}
+	if (m_IsHDRSupport)
+	{
+		if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
+			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
+			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
+			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
+			return E_FAIL;
+	}
 
 	if (FAILED(Create_View()))
 		return E_FAIL;
@@ -158,7 +156,7 @@ HRESULT CDevice::Initialize()
 	if (FAILED(Create_RootSignature()))
 		return E_FAIL;
 
-
+	
 	return S_OK;
 	
 }
@@ -174,29 +172,7 @@ HRESULT CDevice::Create_SwapChain(_bool IsWindowed)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.SampleDesc.Count = 1;
 
-	// It is recommended to always use the tearing flag when it is available.
 	swapChainDesc.Flags = m_IsTearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
-	{
-		//DXGI_SWAP_CHAIN_DESC	tDesc = { };
-//tDesc.BufferCount = 2; // dx12 는 버퍼 카운트는 2를 넣어준다
-
-//tDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 버퍼의 픽셀 포멧(픽셀당 4바이트
-//tDesc.BufferDesc.Width = (UINT)WINCX;  // 버퍼의 해상도(윈도우 해상도랑 일치시켜놓음)
-//tDesc.BufferDesc.Height = (UINT)WINCY;// 버퍼의 해상도(윈도우 해상도랑 일치시켜놓음)
-//tDesc.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED; // 윈도우와 해상도 불일치시 화면 스케일링을 할것인지
-//tDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; // 픽셀의 스캔라인 순서
-//tDesc.BufferDesc.RefreshRate.Numerator = 100; // 화면 갱신 비율
-//tDesc.BufferDesc.RefreshRate.Denominator = 1;    // 화면 갱신 비율 
-
-//tDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 출력 타겟 용도로 버퍼를 만든다.
-//tDesc.Flags = 0; // DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH
-
-//tDesc.OutputWindow = g_hWnd;	// 출력 윈도우
-//tDesc.Windowed = IsWindowed;   // 창 모드 or 전체화면 모드
-//tDesc.SampleDesc.Count = 1;		// 멀티 샘플 사용 안함
-//tDesc.SampleDesc.Quality = 0;
-//tDesc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD; // 전면 후면 버퍼 교체 시 이전 프레임 정보 버림
-	}
 
 	ComPtr<IDXGISwapChain1> swapChain;
 	if (FAILED(m_pFactory->CreateSwapChainForHwnd(m_pCmdQueue.Get(), g_hWnd, &swapChainDesc,nullptr, nullptr, &swapChain)))
@@ -693,7 +669,7 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE		hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle(m_pDSV->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle (m_pDSV->GetCPUDescriptorHandleForHeapStart());
 
 	hRTVHandle.ptr += (m_iCurTargetIdx * m_iRTVHeapSize);
 	m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);

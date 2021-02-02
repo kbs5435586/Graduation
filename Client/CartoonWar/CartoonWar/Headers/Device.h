@@ -33,8 +33,11 @@ private:
 public:
 	ComPtr<ID3D12Device>						GetDevice() { return m_pDevice; }
 	ComPtr<ID3D12GraphicsCommandList>			GetCmdLst() { return m_pCmdListGraphic; }
+	ComPtr<ID3D12CommandQueue>					GetCmdQueue() { return m_pCmdQueue; }
 	ComPtr<ID3D12RootSignature>					GetRootSignature(ROOT_SIG_TYPE _eType) { return m_ArrRootSignature[(UINT)_eType]; }
 	vector<ComPtr<ID3D12DescriptorHeap>>		GetDummyDesc() { return m_vecDummyDescriptor; }
+	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
+	ComPtr< ID3D12DescriptorHeap>				GetDSV() { return m_pDSV; }
 public:
 	ComPtr<ID3D12DescriptorHeap>				GetConstantBufferDescHeap() { return m_pCbv; }
 

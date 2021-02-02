@@ -6,7 +6,7 @@ CConstant_Buffer::CConstant_Buffer()
 
 }
 
-HRESULT CConstant_Buffer::Create_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
+HRESULT CConstant_Buffer::Ready_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
 {
 	m_iBufferSize = (iBufferSize + 255) & ~255; // 버퍼 사이즈는 256 바이트 단위여야 한다.
 	m_iMaxCnt = iMaxCnt;
@@ -72,7 +72,7 @@ HRESULT CConstant_Buffer::Create_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt
 CConstant_Buffer* CConstant_Buffer::Create(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
 {
 	CConstant_Buffer* pInstance = new CConstant_Buffer();
-	if (FAILED(pInstance->Create_ConstantBuffer(iBufferSize, iMaxCnt, eType)))
+	if (FAILED(pInstance->Ready_ConstantBuffer(iBufferSize, iMaxCnt, eType)))
 	{
 		return nullptr;
 	}
