@@ -319,7 +319,12 @@ void CDevice::ClearDummyDesc(_uint iIdx)
 	UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
 
 	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
-		,&hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		,&hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	//m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
+	//	, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// Render Target View
+
 }
 
 void CDevice::Free()
@@ -675,7 +680,6 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 	m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
 	m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
 	m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-	//ClearDummyDesc(0);
 }
 
 void CDevice::Render_End()

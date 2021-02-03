@@ -2,7 +2,6 @@
 #include "RTT.h"
 #include "Management.h"
 
-
 CRTT::CRTT()
 {
 }
@@ -11,37 +10,66 @@ HRESULT CRTT::Ready_RTT(_uint iTextureWidth, _uint iTextureHeight)
 {
 	m_iTextureWidth = iTextureWidth;
 	m_iTextureHeight= iTextureHeight;
-	ComPtr<ID3D12Resource> textureUploadHeap;
 
-	D3D12_RESOURCE_DESC tDesc;
-	ZeroMemory(&tDesc, sizeof(D3D12_RESOURCE_DESC));
+	D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
+	tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	tDesc.NumDescriptors = 1;
+	tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	tDesc.NodeMask = 0;
+	CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pRTV));
 
-	tDesc.MipLevels = 1;
-	tDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	tDesc.Width = m_iTextureWidth;
-	tDesc.Height = m_iTextureHeight;
-	tDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	tDesc.DepthOrArraySize = 1;
-	tDesc.SampleDesc.Count = 1;
-	tDesc.SampleDesc.Quality = 0;
-	tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	
-	
-	CD3DX12_HEAP_PROPERTIES tHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-	if(FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&tHeap, D3D12_HEAP_FLAG_NONE, &tDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pTexture))))
+	D3D12_RESOURCE_DESC resourceDesc;
+	ZeroMemory(&resourceDesc, sizeof(resourceDesc));
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Alignment = 0;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.SampleDesc.Quality = 0;
+	resourceDesc.MipLevels = 1;
+
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.Width = m_iTextureWidth;
+	resourceDesc.Height = m_iTextureHeight;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+	resourceDesc.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+
+	D3D12_CLEAR_VALUE tClearVal;
+	tClearVal.Color[0] = m_fClearColor[0];
+	tClearVal.Color[1] = m_fClearColor[1];
+	tClearVal.Color[2] = m_fClearColor[2];
+	tClearVal.Color[3] = m_fClearColor[3];
+	tClearVal.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+
+	CD3DX12_HEAP_PROPERTIES heapProperty(D3D12_HEAP_TYPE_DEFAULT);
+
+	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&heapProperty,
+		D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_RENDER_TARGET,
+		&tClearVal, IID_PPV_ARGS(m_pTexture.GetAddressOf()) )))
 		return E_FAIL;
 
-	const _uint UploadBufferSize = GetRequiredIntermediateSize(m_pTexture.Get(), 0, 1);
+	//Create Render Target View
+	D3D12_RENDER_TARGET_VIEW_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Texture2D.MipSlice = 0;
+	desc.Texture2D.PlaneSlice = 0;
 
-	CD3DX12_HEAP_PROPERTIES tUploadHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC	tDesc_ = CD3DX12_RESOURCE_DESC::Buffer(UploadBufferSize);
+	desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	desc.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
 
-	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tUploadHeap,
-		D3D12_HEAP_FLAG_NONE, &tDesc_, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&textureUploadHeap))))
-		return E_FAIL;
+	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHeap = m_pRTV->GetCPUDescriptorHandleForHeapStart();
+	CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), &desc, hRTVHeap);
 
+	//Device Copy Desc 
 
+	//Create Shader Resource View
+	D3D12_SHADER_RESOURCE_VIEW_DESC descSRV;
+	ZeroMemory(&descSRV, sizeof(descSRV));
+	descSRV.Texture2D.MipLevels = resourceDesc.MipLevels;
+	descSRV.Texture2D.MostDetailedMip = 0;
+	descSRV.Format = resourceDesc.Format;
+	descSRV.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	descSRV.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	descSRV.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
 
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	ZeroMemory(&srvHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
@@ -49,46 +77,63 @@ HRESULT CRTT::Ready_RTT(_uint iTextureWidth, _uint iTextureHeight)
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	srvHeapDesc.NodeMask = 0;
-	CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pRTV));
+	CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSRV));
 
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, handle);
-
+	D3D12_CPU_DESCRIPTOR_HANDLE hSRVHeap = m_pSRV->GetCPUDescriptorHandleForHeapStart();
+	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &descSRV, hSRVHeap);
 
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(Crate_InputLayOut()))
 		return E_FAIL;
 
+	
+
+	//D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
+	//hDescHandle.ptr/* += RTV HeapSize */;
+
+	//D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
+	//hSrcHandle.ptr;
+
+	//UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
+	//UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
+
+	//CDevice::GetInstance()->GetDevice()->CopyDescriptors(1, &hDescHandle, &iDestRange, 
+	//	1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	// Omset RT °¹¼ö, handle, 
+
 	return S_OK;
 }
 
 void CRTT::Set_RenderTarget(ID3D12DescriptorHeap* pDsv)
 {
-	float arr[4] = {0.f,0.f,1.f,1.f};
+	float arr[4] = { 0.f,0.f,1.f,1.f };
+	CDevice::GetInstance()->Render_Begin(arr);
+
+	D3D12_VIEWPORT tViewPor = D3D12_VIEWPORT{ 0.f, 0.f, 50, 50, 0.f, 1.f };
+	D3D12_RECT m_tScissorRect = D3D12_RECT{ 0, 0, (LONG)50, (LONG)50 };
+	CDevice::GetInstance()->GetCmdLst()->RSSetViewports(1, &tViewPor);
+	CDevice::GetInstance()->GetCmdLst()->RSSetScissorRects(1, &m_tScissorRect);
+
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
 	D3D12_CPU_DESCRIPTOR_HANDLE dHandle = pDsv->GetCPUDescriptorHandleForHeapStart();
+
 	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(1, &handle, FALSE, &dHandle);
 	CDevice::GetInstance()->GetCmdLst()->ClearRenderTargetView(handle, arr, 0, nullptr);
 	CDevice::GetInstance()->GetCmdLst()->ClearDepthStencilView(pDsv->GetCPUDescriptorHandleForHeapStart(), 
 		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+
+
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(
+		CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pShaderCom->GetPipeLine().Get());
 
-
-	CDevice::GetInstance()->SetTextureToShader(m_pRTV.Get(), 0, TEXTURE_REGISTER::t0);
-
+	CDevice::GetInstance()->SetTextureToShader(m_pSRV.Get(), 0, TEXTURE_REGISTER::t0);
 	m_pBufferCom->Render_VIBuffer();
+
+	CDevice::GetInstance()->Render_End();
 }
 
 HRESULT CRTT::Ready_Component()

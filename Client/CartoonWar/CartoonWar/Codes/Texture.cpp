@@ -145,7 +145,6 @@ CTexture* CTexture::Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eTy
 	}
 	return pInstance;
 }
-
 CTexture* CTexture::Create(const _tchar* pTag, const _tchar* pFilePath)
 {
 	CTexture* pInstance = new CTexture();
@@ -335,7 +334,6 @@ void CTexture::Free()
 
 	CComponent::Free();
 }
-
 ID3D12DescriptorHeap* CTexture::GetSRV(const _tchar* pTag, const _uint& iTextureIdx)
 {
 	auto iter = m_mapSrvDescHeap.find(pTag);

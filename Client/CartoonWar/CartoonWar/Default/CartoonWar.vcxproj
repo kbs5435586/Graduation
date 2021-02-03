@@ -163,7 +163,6 @@
     <ClInclude Include="..\Headers\Constant_Buffer.h" />
     <ClInclude Include="..\Headers\Constant_Buffer_Manager.h" />
     <ClInclude Include="..\Headers\Cube.h" />
-    <ClInclude Include="..\Headers\DDSTextureLoader.h" />
     <ClInclude Include="..\Headers\Debug_Camera.h" />
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
@@ -227,7 +226,6 @@
     <ClCompile Include="..\Codes\Constant_Buffer.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer_Manager.cpp" />
     <ClCompile Include="..\Codes\Cube.cpp" />
-    <ClCompile Include="..\Codes\DDSTextureLoader.cpp" />
     <ClCompile Include="..\Codes\Debug_Camera.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />

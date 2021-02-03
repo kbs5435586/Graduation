@@ -169,12 +169,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Height">
       <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\00. DDSLoader">
-      <UniqueIdentifier>{a03a171f-2388-418f-b519-13c695815ff1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="95. Loaders\01. FBXLoader">
-      <UniqueIdentifier>{c9a5c365-5042-43b9-9c5b-f56e0f82e08f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\05. Mesh">
       <UniqueIdentifier>{27bb00e2-56d7-4f85-ba56-8a3647c87fb1}</UniqueIdentifier>
     </Filter>
@@ -189,9 +183,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\06. Frustum">
       <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="95. Loaders\02. TextureLoader">
-      <UniqueIdentifier>{e004e0e9-42c1-421d-aa55-e6455d457338}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\04. Constant_Buffer">
       <UniqueIdentifier>{9543250d-65ad-47bc-9cd2-774d198ef8f0}</UniqueIdentifier>
@@ -219,6 +210,12 @@
     </Filter>
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\00. FBXLoader">
+      <UniqueIdentifier>{c9a5c365-5042-43b9-9c5b-f56e0f82e08f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader">
+      <UniqueIdentifier>{e004e0e9-42c1-421d-aa55-e6455d457338}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -375,11 +372,8 @@
     <ClInclude Include="..\Headers\Terrain_Height.h">
       <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\DDSTextureLoader.h">
-      <Filter>95. Loaders\00. DDSLoader</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\FBXLoader.h">
-      <Filter>95. Loaders\01. FBXLoader</Filter>
+      <Filter>95. Loaders\00. FBXLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Static_Mesh.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh\00. Static_Mesh</Filter>
@@ -394,7 +388,7 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\DirectXTex.h">
-      <Filter>95. Loaders\02. TextureLoader</Filter>
+      <Filter>95. Loaders\01. TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Constant_Buffer.h">
       <Filter>97. Engine\01. Utility\04. Constant_Buffer\00. Constant_Buffer</Filter>
@@ -546,11 +540,8 @@
     <ClCompile Include="..\Codes\Terrain_Height.cpp">
       <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\DDSTextureLoader.cpp">
-      <Filter>95. Loaders\00. DDSLoader</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\FBXLoader.cpp">
-      <Filter>95. Loaders\01. FBXLoader</Filter>
+      <Filter>95. Loaders\00. FBXLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Static_Mesh.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh\00. Static_Mesh</Filter>
@@ -594,15 +585,13 @@
       <Filter>96. ShaderFiles</Filter>
     </None>
     <None Include="..\Codes\DirectXTex.inl">
-      <Filter>95. Loaders\02. TextureLoader</Filter>
+      <Filter>95. Loaders\01. TextureLoader</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Toon.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\ShaderFiles\Shader_RTT.hlsl">
+    <None Include="..\ShaderFiles\Shader_RTT.hlsl">
       <Filter>96. ShaderFiles</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>

@@ -20,11 +20,14 @@ private:
     virtual void                                Free();
 private:
     ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
+    ComPtr<ID3D12DescriptorHeap>				m_pSRV = nullptr;
     ComPtr<ID3D12Resource>                      m_pTexture = nullptr;
     _uint                                       m_iTextureWidth = 0;
     _uint                                       m_iTextureHeight = 0;
 private:
     CBuffer_RectTex*                            m_pBufferCom = nullptr;
     CShader*                                    m_pShaderCom = nullptr;
+private:
+    _float                                      m_fClearColor[4] = {0.f,0.f,1.f,1.f};
 };
 

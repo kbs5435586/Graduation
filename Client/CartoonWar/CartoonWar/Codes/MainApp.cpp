@@ -31,8 +31,8 @@ HRESULT CMainApp::Ready_MainApp()
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(tagMainPass), 512, CONST_REGISTER::b0)))
 		return E_FAIL;
 
-	//if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
-		//return E_FAIL;
+	if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
+		return E_FAIL;
 
 
 	srand(unsigned(time(NULL)));
@@ -55,7 +55,7 @@ void CMainApp::Render_MainApp()
 {
 	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
 	// ¿©±â¼­ RTT Set
-	//m_pManagement->Set_RenderTarget(L"RTT_DEFAULT", CDevice::GetInstance()->GetDSV().Get());
+	m_pManagement->Set_RenderTarget(L"RTT_DEFAULT", CDevice::GetInstance()->GetDSV().Get());
 	CDevice::GetInstance()->Render_Begin(pfClearColor);
 
 	if (nullptr != m_pRenderer)

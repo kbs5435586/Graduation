@@ -38,6 +38,7 @@ public:
 	vector<ComPtr<ID3D12DescriptorHeap>>		GetDummyDesc() { return m_vecDummyDescriptor; }
 	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
 	ComPtr< ID3D12DescriptorHeap>				GetDSV() { return m_pDSV; }
+	ComPtr<IDXGISwapChain4>						GetSwapChain() { return m_pSwapChain; }
 public:
 	ComPtr<ID3D12DescriptorHeap>				GetConstantBufferDescHeap() { return m_pCbv; }
 
