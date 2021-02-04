@@ -27,5 +27,14 @@
     <ClCompile Include="no_lock.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="sync_volatile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="peterson_algorithm.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="bound.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
