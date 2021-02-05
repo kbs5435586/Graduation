@@ -5,14 +5,13 @@
 using namespace std;
 
 volatile int sum = 0;
-volatile bool flags[2] = { false,false };
-volatile int victim = 0;
-
+atomic_bool flags[2] = { false,false };
+atomic_int victim = 0;
+// 피터슨 알고리즘 자체가 변수가 아토믹이라는 가정하에 만들어진 알고리즘임
 void p_lock(int id)
 {
 	int other = 1 - id;
 	flags[id] = true;
-	atomic_thread_fence(memory_order_seq_cst);
 	victim = id;
 	while ((true == flags[other] && victim == id)); 
 	// 여기서 아웃 오브 오더 발생해서 flags[id] = true 먼저 안읽어서 두 thread가 전부 
@@ -20,7 +19,6 @@ void p_lock(int id)
 
 void p_unlock(int id)
 {
-	atomic_thread_fence(memory_order_seq_cst);
 	flags[id] = false;
 }
 

@@ -8,8 +8,8 @@ constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 255;
 constexpr int MAX_USER = 10;
 
-constexpr int WORLD_WIDTH =	8;
-constexpr int WORLD_HEIGHT = 8;
+constexpr int WORLD_WIDTH =	400;
+constexpr int WORLD_HEIGHT = 400;
 
 constexpr int SERVER_PORT =	9000;
 
@@ -40,6 +40,7 @@ struct sc_packet_move
 	char type;
 	int id;
 	short x, y;
+	unsigned move_time; // unsigned int¶û °°À½
 };
 
 constexpr unsigned char O_PLAYER = 0;
@@ -87,6 +88,7 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
+	unsigned move_time;
 };
 
 #pragma pack (pop)

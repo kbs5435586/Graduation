@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <mutex>
+#include <atomic>
 
 using namespace std;
 using namespace chrono;
@@ -10,19 +11,16 @@ using namespace chrono;
 constexpr int LOOP = 50'000'000;
 constexpr int MAX_THREADS = 32;
 
-volatile int sum = 0;
+atomic_int sum = 0;
 mutex m1;
 
 void worker(int num_thread)
 {
-	volatile int local_sum = 0;
 	for (int i = 0; i < LOOP / num_thread; ++i)
 	{
-		local_sum += 2;
+		sum += 2;
+		// sum = sum + 2하면 각각 sum에 아토믹이 적용되지 +2하는 과정은 적용이 안된다
 	}
-	m1.lock();
-	sum += local_sum;  // 임계영역의 크기를 줄여버림
-	m1.unlock();
 }
 
 int main()
