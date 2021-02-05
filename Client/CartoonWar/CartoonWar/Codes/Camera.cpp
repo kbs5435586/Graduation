@@ -83,7 +83,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices()
 	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &m_tCameraDesc.vEye);
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tCameraDesc.vEye);
 
 	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
 	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));

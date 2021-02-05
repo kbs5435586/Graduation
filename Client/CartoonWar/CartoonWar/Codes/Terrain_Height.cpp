@@ -72,12 +72,13 @@ void CTerrain_Height::Render_GameObject()
 
 
 	m_pBufferCom->Render_VIBuffer();
+	m_pNaviCom->Render_Navigation();
+
 	Safe_Release(pManagement);
 }
 
 HRESULT CTerrain_Height::CreateInputLayout()
 {
-
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -121,7 +122,8 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-
+	Safe_Release(m_pNaviCom);
+	
 	CGameObject::Free();
 }
 
@@ -145,7 +147,7 @@ HRESULT CTerrain_Height::Ready_Component()
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
-
+		
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
@@ -154,6 +156,11 @@ HRESULT CTerrain_Height::Ready_Component()
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
+
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

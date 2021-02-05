@@ -23,6 +23,7 @@ private:
 	HRESULT					Ready_Add_Prototype_Buffer(CManagement* pManagement);
 	HRESULT					Ready_Add_Prototype_Function(CManagement* pManagement);
 	HRESULT					Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement);
+	HRESULT					Ready_Add_Prototype_NaviMesh(CManagement* pManagement);
 public:
 	HRESULT					Ready_Add_Prototype_Mesh(CManagement* pManagement);
 private:

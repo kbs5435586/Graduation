@@ -318,11 +318,11 @@ void CDevice::ClearDummyDesc(_uint iIdx)
 	UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
 	UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
 
-	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
-		,&hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	/*m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
+		,&hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);*/
 
-	//m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
-	//	, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
+		, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	// Render Target View
 
 }

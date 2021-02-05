@@ -67,7 +67,7 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 {
 	/*float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
 
-	
+
 	float fDot = max(0, dot(vIn.vNormal, vLightDirection));
 
 	fDot = (ceil(fDot * 3.f) / 3.f);
@@ -90,10 +90,14 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vMtrlSpec = (vLightSpecular * vLightSpecular) * vSpecular;
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower)*fRimColor,1.f);
-	
+
 	vOutColor = vOutColor*(vMtrlDif + vMtrlAmb+ vMtrlSpec +vMtrlEmiv);
 
 	return vOutColor;*/
+
+
+
+
 
 	// Normal Mapping
 	float4	vTexture = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
@@ -118,5 +122,10 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	vOutColor = vOutColor * vTexture;
 
 	return vOutColor;
+
+
+
+	//Default
+	//return g_texture.Sample(DiffuseSampler, vIn.vTexUV);
 }
 

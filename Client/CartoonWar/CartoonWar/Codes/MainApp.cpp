@@ -55,7 +55,7 @@ void CMainApp::Render_MainApp()
 {
 	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
 	// ¿©±â¼­ RTT Set
-	m_pManagement->Set_RenderTarget(L"RTT_DEFAULT", CDevice::GetInstance()->GetDSV().Get());
+	//m_pManagement->Set_RenderTarget(L"RTT_DEFAULT", CDevice::GetInstance()->GetDSV().Get());
 	CDevice::GetInstance()->Render_Begin(pfClearColor);
 
 	if (nullptr != m_pRenderer)

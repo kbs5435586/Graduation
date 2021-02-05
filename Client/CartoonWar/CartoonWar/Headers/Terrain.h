@@ -5,6 +5,7 @@ class CRenderer;
 class CShader;
 class CBuffer_Terrain;
 class CTexture;
+class CNavigation;
 
 class CTerrain :
     public CGameObject
@@ -21,7 +22,6 @@ public:
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
-	HRESULT									CreateConstantBuffer();
 public:
 	static CTerrain*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
@@ -34,5 +34,6 @@ private:
 	CBuffer_Terrain*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CNavigation*							m_pNaviCom = nullptr;
 };
 

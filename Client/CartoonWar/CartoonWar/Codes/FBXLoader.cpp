@@ -498,7 +498,7 @@ HRESULT CFBXLoader::CreateBufferView(RenderInfo* pInfo)
 
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), pVertexBuffer, pVertexUploadBuffer, 0, 0, 1, &vertexData);
 
-		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
+ 		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	CDevice::GetInstance()->Close();
 

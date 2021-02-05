@@ -84,12 +84,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
-		return E_FAIL;
+	//f (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -102,7 +102,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.vDiffuse = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.vSpecular = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vDirection = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vDirection = _vec4(1.f, 0.f, 0.f, 0.f);
 
 	if(FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;
@@ -114,14 +114,11 @@ HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagemen
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
-
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagement* pManagement)
 {
-
 	CDebug_Camera* pCameraObject = nullptr;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 		(CGameObject**)&pCameraObject)))
@@ -162,7 +159,7 @@ HRESULT CScene_Stage::Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* 
 
 HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

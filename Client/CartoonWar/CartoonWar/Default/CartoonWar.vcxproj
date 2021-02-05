@@ -158,6 +158,7 @@
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
+    <ClInclude Include="..\Headers\Cell.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
     <ClInclude Include="..\Headers\Constant_Buffer.h" />
@@ -181,8 +182,10 @@
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
+    <ClInclude Include="..\Headers\Line.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
+    <ClInclude Include="..\Headers\Navigation.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
@@ -221,6 +224,7 @@
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
+    <ClCompile Include="..\Codes\Cell.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer.cpp" />
@@ -239,8 +243,10 @@
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Light.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
+    <ClCompile Include="..\Codes\Line.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
+    <ClCompile Include="..\Codes\Navigation.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
@@ -301,6 +307,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ShaderFiles\Shader_RTT.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

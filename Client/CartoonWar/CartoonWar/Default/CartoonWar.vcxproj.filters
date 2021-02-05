@@ -217,6 +217,15 @@
     <Filter Include="95. Loaders\01. TextureLoader">
       <UniqueIdentifier>{e004e0e9-42c1-421d-aa55-e6455d457338}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation">
+      <UniqueIdentifier>{5b8e89c8-a5fa-4806-a337-97edc872d1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation\00. Cell">
+      <UniqueIdentifier>{0f407913-afe9-42ce-844d-85d7e155363d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line">
+      <UniqueIdentifier>{8953f098-e96a-4594-b98b-08975b3bbee5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -402,6 +411,15 @@
     <ClInclude Include="..\Headers\RTT.h">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\01. RTT</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Navigation.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Cell.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\00. Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Line.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -567,6 +585,15 @@
     <ClCompile Include="..\Codes\Desc.cpp">
       <Filter>99. Default\00. Setting</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Navigation.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cell.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\00. Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Line.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -591,6 +618,9 @@
       <Filter>96. ShaderFiles</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_RTT.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>

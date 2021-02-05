@@ -5,6 +5,7 @@ class CRenderer;
 class CBuffer_Terrain_Height;
 class CTexture;
 class CShader;
+class CNavigation;
 
 class CTerrain_Height :
     public CGameObject
@@ -30,8 +31,9 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_Terrain_Height*						m_pBufferCom = nullptr;
+	CBuffer_Terrain_Height*					m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CNavigation*							m_pNaviCom = nullptr;
 };
 

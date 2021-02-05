@@ -69,13 +69,13 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
 	if (pInfo->strNodeName.find("Body") != string::npos)
 	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag,0), 0, TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag,1), 0, TEXTURE_REGISTER::t0);
 		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3), 0, TEXTURE_REGISTER::t1);
 	}
 	else
 	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2), 0, TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 4), 0, TEXTURE_REGISTER::t1);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0), 0, TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2), 0, TEXTURE_REGISTER::t1);
 	}
 
 	CManagement* pManagement = CManagement::GetInstance();

@@ -28,6 +28,7 @@ HRESULT CCell::Ready_Cell(const _vec3 * pPointA, const _vec3 * pPointB, const _v
 
 	if (FAILED(D3DXCreateLine(m_pGraphic_Device, &m_pLineSDK)))
 		return E_FAIL;
+	
 
 	return NOERROR;
 }

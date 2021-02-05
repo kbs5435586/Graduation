@@ -108,7 +108,7 @@ HRESULT CRTT::Ready_RTT(_uint iTextureWidth, _uint iTextureHeight)
 void CRTT::Set_RenderTarget(ID3D12DescriptorHeap* pDsv)
 {
 	float arr[4] = { 0.f,0.f,1.f,1.f };
-	CDevice::GetInstance()->Render_Begin(arr);
+	CDevice::GetInstance()->Open();
 
 	D3D12_VIEWPORT tViewPor = D3D12_VIEWPORT{ 0.f, 0.f, 50, 50, 0.f, 1.f };
 	D3D12_RECT m_tScissorRect = D3D12_RECT{ 0, 0, (LONG)50, (LONG)50 };
@@ -133,7 +133,8 @@ void CRTT::Set_RenderTarget(ID3D12DescriptorHeap* pDsv)
 	CDevice::GetInstance()->SetTextureToShader(m_pSRV.Get(), 0, TEXTURE_REGISTER::t0);
 	m_pBufferCom->Render_VIBuffer();
 
-	CDevice::GetInstance()->Render_End();
+	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
 }
 
 HRESULT CRTT::Ready_Component()
