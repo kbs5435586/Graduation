@@ -6,7 +6,7 @@ constexpr unsigned int MAX_BUF_SIZE = 1024;
 
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 255;
-constexpr int MAX_USER = 10;
+constexpr int MAX_USER = 10000;
 
 constexpr int WORLD_WIDTH =	400;
 constexpr int WORLD_HEIGHT = 400;

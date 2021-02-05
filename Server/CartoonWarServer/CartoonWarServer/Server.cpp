@@ -77,6 +77,7 @@ void Server::process_packet(int user_id, char* buf)
 	case CS_PACKET_MOVE:
 	{
 		cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+        g_clients[user_id].m_move_time = packet->move_time;
 		do_move(user_id, packet->direction);
 	}
 	break;
@@ -171,6 +172,7 @@ void Server::send_move_packet(int user_id, int mover)
     packet.type = SC_PACKET_MOVE;
     packet.x = g_clients[mover].m_x;
     packet.y = g_clients[mover].m_y; // 이동한 플레이어의 정보 담기
+    packet.move_time = g_clients[mover].m_move_time;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
