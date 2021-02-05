@@ -72,6 +72,7 @@ HRESULT CNavigation::Ready_Neighbor()
 
 HRESULT CNavigation::Ready_Clone_Navigation(void* pArg)
 {
+	m_IsClone = true;
 	if (nullptr == pArg)
 		return S_OK;
 
@@ -87,7 +88,10 @@ HRESULT CNavigation::Ready_Clone_Navigation(void* pArg)
 void CNavigation::Render_Navigation()
 {
 	for (auto& iter : m_vecCell)
+	{
+
 		iter->Render_Cell();
+	}
 }
 
 _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec)
@@ -134,13 +138,14 @@ CComponent* CNavigation::Clone_Component(void* pArg)
 
 void CNavigation::Free()
 {
-	if (false == m_IsClone)
+	if (!m_IsClone)
 	{
 		for (auto& pCell : m_vecCell)
 		{
 			pCell->Clear_Neighbor();
 		}
-	}
+	} 
+
 	for (auto& pCell : m_vecCell)
 		Safe_Release(pCell);
 

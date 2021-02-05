@@ -26,7 +26,6 @@ HRESULT CCell::Ready_Cell(const _vec3* pPointA, const _vec3* pPointB, const _vec
 	m_pLine[(_uint)LINE::LINE_BC] = CLine::Create(m_vPoint[(_uint)POINT_::POINT_B], m_vPoint[(_uint)POINT_::POINT_C]);
 	m_pLine[(_uint)LINE::LINE_CA] = CLine::Create(m_vPoint[(_uint)POINT_::POINT_C], m_vPoint[(_uint)POINT_::POINT_A]);
 
-	// 여기서 점 찍기?
 	vector<VTXCOL>		vecVertices;
 	vecVertices.resize(3);
 
@@ -125,7 +124,10 @@ _bool CCell::Compare_Point(_vec3* pPoint1, _vec3* pPoint2)
 void CCell::Clear_Neighbor()
 {
 	for (auto& pNeighbor : m_pNeighbor)
+	{
+
 		Safe_Release(pNeighbor);
+	}
 }
 
 void CCell::Render_Cell()
@@ -189,4 +191,5 @@ void CCell::Free()
 {
 	for (auto& pLine : m_pLine)
 		Safe_Release(pLine);
+	Safe_Release(m_pShaderCom);
 }
