@@ -14,12 +14,14 @@ CManagement::CManagement()
 	, m_pLight_Manager(CLight_Manager::GetInstance())
 	, m_pConstant_Buffer_Manager(CConstant_Buffer_Manager::GetInstance())
 	, m_pRTT_Mananger(CRTTMananger::GetInstance())
+	, m_pKey_Manager(CKeyManager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
 	m_pLight_Manager->AddRef();
 	m_pConstant_Buffer_Manager->AddRef();
 	m_pRTT_Mananger->AddRef();
+	m_pKey_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -85,6 +87,31 @@ CRTT* CManagement::Get_RTT(const _tchar* pRTT_Tag)
 	return m_pRTT_Mananger->Get_RTT(pRTT_Tag);
 }
 
+void CManagement::Key_Update()
+{
+	m_pKey_Manager->Key_Update();
+}
+
+_bool CManagement::Key_Down(DWORD dwKey)
+{
+	return m_pKey_Manager->Key_Down(dwKey);
+}
+
+_bool CManagement::Key_Up(DWORD dwKey)
+{
+	return m_pKey_Manager->Key_Up(dwKey);
+}
+
+_bool CManagement::Key_Pressing(DWORD dwKey)
+{
+	return m_pKey_Manager->Key_Pressing(dwKey);
+}
+
+_bool CManagement::Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey)
+{
+	return m_pKey_Manager->Key_Combine(dwFirstKey, dwSecondKey);
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -131,6 +158,8 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 		return -1;
 
 	_int	iProcessCodes = 0;
+	
+	m_pKey_Manager->Key_Update();
 
 	iProcessCodes = m_pScene->Update_Scene(fTimeDelta);
 	if (iProcessCodes & 0x80000000)
@@ -164,6 +193,10 @@ void CManagement::Release_Engine()
 	_ulong			dwRefCnt = 0;
 
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
+		_MSG_BOX("CManagement Release Failed");
+
+
+	if (dwRefCnt = CKeyManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
 	if (dwRefCnt = CRTTMananger::GetInstance()->DestroyInstance())
@@ -220,5 +253,6 @@ void CManagement::Free()
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pConstant_Buffer_Manager);
 	Safe_Release(m_pRTT_Mananger);
+	Safe_Release(m_pKey_Manager);
 	Safe_Release(m_pScene);
 }

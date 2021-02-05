@@ -4,6 +4,7 @@
 #include "Light_Manager.h"
 #include "Constant_Buffer_Manager.h"
 #include "RTTMananger.h"
+#include "KeyManager.h"
 #include "FBXLoader.h"
 
 #include "Base.h"
@@ -41,6 +42,12 @@ public://RTT_Manager
 	HRESULT						Add_RenderToTexture(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight);
 	void                        Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
 	CRTT*						Get_RTT(const _tchar* pRTT_Tag);
+public://Key_Manager
+	void						Key_Update();
+	_bool						Key_Down(DWORD dwKey);
+	_bool						Key_Up(DWORD dwKey);
+	_bool						Key_Pressing(DWORD dwKey);
+	_bool						Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey);
 public:	
 	HRESULT						Clear_Layers(const _uint& iSceneID);
 	static void					Release_Engine();
@@ -56,5 +63,6 @@ private:
 	CLight_Manager*				m_pLight_Manager = nullptr;
 	CConstant_Buffer_Manager*	m_pConstant_Buffer_Manager = nullptr;
 	CRTTMananger*				m_pRTT_Mananger = nullptr;
+	CKeyManager*				m_pKey_Manager = nullptr;
 };
 

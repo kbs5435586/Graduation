@@ -226,6 +226,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line">
       <UniqueIdentifier>{8953f098-e96a-4594-b98b-08975b3bbee5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\06. KeyMananger">
+      <UniqueIdentifier>{7fea3e37-35cb-433b-a7be-76d00d4ee7a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -420,6 +423,15 @@
     <ClInclude Include="..\Headers\Line.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\KeyManager.h">
+      <Filter>97. Engine\01. Utility\06. KeyMananger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Enum.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Constant.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -593,6 +605,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Line.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\KeyManager.cpp">
+      <Filter>97. Engine\01. Utility\06. KeyMananger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

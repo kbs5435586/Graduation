@@ -22,9 +22,6 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//m_pMeshCom->GetLoader()->Load_Texture();
-
-	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	return S_OK;
@@ -32,7 +29,7 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 
 _int COrc01::Update_GameObject(const _float& fTimeDelta)
 {
-
+	
 	return _int();
 }
 

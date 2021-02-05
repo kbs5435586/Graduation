@@ -132,7 +132,7 @@ CComponent* CNavigation::Clone_Component(void* pArg)
 	{
 		MessageBox(0, L"CNavigation Cloned Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
-	}
+	} 
 	return pInstance;
 }
 

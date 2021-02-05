@@ -161,6 +161,7 @@
     <ClInclude Include="..\Headers\Cell.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
+    <ClInclude Include="..\Headers\Constant.h" />
     <ClInclude Include="..\Headers\Constant_Buffer.h" />
     <ClInclude Include="..\Headers\Constant_Buffer_Manager.h" />
     <ClInclude Include="..\Headers\Cube.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
     <ClInclude Include="..\Headers\DirectXTex.h" />
+    <ClInclude Include="..\Headers\Enum.h" />
     <ClInclude Include="..\Headers\Extern.h" />
     <ClInclude Include="..\Headers\FBXLoader.h" />
     <ClInclude Include="..\Headers\Frame.h" />
@@ -179,6 +181,7 @@
     <ClInclude Include="..\Headers\GameObject_Manager.h" />
     <ClInclude Include="..\Headers\Hash.h" />
     <ClInclude Include="..\Headers\Input.h" />
+    <ClInclude Include="..\Headers\KeyManager.h" />
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
@@ -240,6 +243,7 @@
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\GameObject_Manager.cpp" />
     <ClCompile Include="..\Codes\Input.cpp" />
+    <ClCompile Include="..\Codes\KeyManager.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Light.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />

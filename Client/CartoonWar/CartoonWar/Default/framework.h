@@ -76,12 +76,14 @@ using namespace DirectX::SimpleMath;
 #include "d3dx12.h"
 
 #include "Define.h"
+#include "Enum.h"
 #include "Extern.h"
 #include "Function.h"
 #include "Struct.h"
 #include "Typedef.h"
 #include "Funtor.h"
 #include "Hash.h"
+#include "Constant.h"
 
 #include "Device.h"
 #include "Input.h"
