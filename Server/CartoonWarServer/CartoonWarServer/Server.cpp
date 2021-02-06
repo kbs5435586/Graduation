@@ -155,12 +155,12 @@ void Server::do_move(int user_id, char direction)
 
     for (auto &c : g_clients)
     {
-        c.m_cLock.lock();
-        if (ST_ACTIVE == c.m_status)
+        c.second.m_cLock.lock();
+        if (ST_ACTIVE == c.second.m_status)
         {
-            send_move_packet(c.m_id, user_id); // 연결된 모든 클라이언트들에게 움직인 클라의 위치값 전송
+            send_move_packet(c.second.m_id, user_id); // 연결된 모든 클라이언트들에게 움직인 클라의 위치값 전송
         }
-        c.m_cLock.unlock();
+        c.second.m_cLock.unlock();
     }
 }
 
@@ -187,18 +187,23 @@ void Server::enter_game(int user_id, char name[])
 
     for (int i = 0; i < MAX_USER; i++) 
     {
-        if (user_id == i)
+        if (user_id == i) // 데드락 회피용
             continue;
-        g_clients[i].m_cLock.lock();
-        if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만
+
+
+        if (false == is_near(user_id, i))
         {
-            if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
+            g_clients[i].m_cLock.lock();
+            if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만
             {
-                send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
-                send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
+                if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
+                {
+                    send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
+                    send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
+                }
             }
+            g_clients[i].m_cLock.unlock();
         }
-        g_clients[i].m_cLock.unlock();
     }
     g_clients[user_id].m_cLock.unlock();
     // true == g_clients[i].m_isConnected 하므로 원래는 여기다 unlock 해야하는데 안에 범위가 너무 큼
@@ -225,6 +230,10 @@ void Server::send_enter_packet(int user_id, int other_id)
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_PLAYER; // 다른 플레이어들의 정보 저장
 
+    g_clients[other_id].m_cLock.lock();
+    g_clients[other_id].m_view_list.insert(other_id);
+    g_clients[other_id].m_cLock.unlock();
+
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -237,18 +246,29 @@ void Server::disconnect(int user_id)
 
     for (auto& c : g_clients) // 연결되어있는 클라이언트들에게 떠난 클라가 나갔다고 알림
     {
-        if (user_id == c.m_id)
+        if (user_id == c.second.m_id)
             continue;
 
-        c.m_cLock.lock();
-        if (ST_ACTIVE == c.m_status)
+        c.second.m_cLock.lock();
+        if (ST_ACTIVE == c.second.m_status)
         {
-            send_leave_packet(c.m_id, user_id);
+            send_leave_packet(c.second.m_id, user_id);
         }
-        c.m_cLock.unlock();
+        c.second.m_cLock.unlock();
     }
     g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
     g_clients[user_id].m_cLock.unlock();
+}
+
+bool Server::is_near(int a, int b)
+{
+    if (abs(g_clients[a].m_x - g_clients[b].m_x) > VIEW_RADIUS) // abs = 절대값
+        return false;
+    if (abs(g_clients[a].m_y - g_clients[b].m_y) > VIEW_RADIUS)
+        return false;
+    // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
+    // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
+    return true;
 }
 
 void Server::send_leave_packet(int user_id, int other_id)

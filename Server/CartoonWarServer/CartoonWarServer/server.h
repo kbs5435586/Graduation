@@ -8,10 +8,11 @@ public:
 	~Server();
 
 private:
-	ClientInfo g_clients[MAX_USER];
+	map <int, ClientInfo> g_clients;
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
+	int VIEW_RADIUS = 6;
 
 public:
 	void mainServer(); // 메인 서버
@@ -32,5 +33,7 @@ public:
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initalize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
+
+	bool is_near(int a, int b);
 };
 
