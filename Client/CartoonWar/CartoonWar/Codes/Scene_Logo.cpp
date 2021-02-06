@@ -21,7 +21,7 @@ unsigned __stdcall ResourceLoadThread(void* pArguments)
 
 	pManagement->AddRef();
 
-	//pLogo->Ready_Add_Prototype_Mesh(pManagement);
+	pLogo->Ready_Add_Prototype_Mesh(pManagement);
 
 	Safe_Release(pManagement);
 
@@ -203,7 +203,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test", CNavigation::Create(L"../Data/TestNaviMesh.dat"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test",
+		CNavigation::Create(L"../Data/TestNaviMesh.dat"))))
 		return E_FAIL;
 	return S_OK;
 }

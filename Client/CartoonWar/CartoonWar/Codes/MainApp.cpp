@@ -36,8 +36,6 @@ HRESULT CMainApp::Ready_MainApp()
 
 
 	srand(unsigned(time(NULL)));
-
-
 	return S_OK;
 }
 
@@ -45,8 +43,6 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return - 1;
-
-
 	m_fTimeAcc += fTimeDelta;
 	CInput::GetInstance()->SetUp_InputState();
 	return m_pManagement->Update_Management(fTimeDelta);

@@ -6,6 +6,7 @@ class CStatic_Mesh;
 class CShader;
 class CTexture;
 class CFrustum;
+class CNavigation;
 
 class COrc01 :
     public CGameObject
@@ -37,6 +38,7 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CNavigation*							m_pNaviCom = nullptr;
 
 };
 

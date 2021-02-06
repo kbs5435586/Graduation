@@ -84,12 +84,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
-		return E_FAIL;
 	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 	//	return E_FAIL;
-	//f (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
+		return E_FAIL;
 
 	return S_OK;
 }

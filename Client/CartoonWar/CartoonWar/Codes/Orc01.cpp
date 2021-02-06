@@ -29,7 +29,42 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 
 _int COrc01::Update_GameObject(const _float& fTimeDelta)
 {
-	
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+	pManagement->AddRef();
+
+	if (pManagement->Key_Pressing(KEY_LEFT))
+	{
+		m_pTransformCom->Go_Left(fTimeDelta);
+	}
+	else if (pManagement->Key_Pressing(KEY_RIGHT))
+	{
+		m_pTransformCom->Go_Right(fTimeDelta);
+	}
+	else if (pManagement->Key_Pressing(KEY_UP))
+	{
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec))
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta);
+		}
+
+
+	}
+	else if (pManagement->Key_Pressing(KEY_DOWN))
+	{
+		m_pTransformCom->BackWard(fTimeDelta);
+	}
+
+
+
+	Safe_Release(pManagement);
 	return _int();
 }
 
@@ -114,8 +149,7 @@ void COrc01::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pTextureCom);
-
-
+	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
@@ -156,6 +190,12 @@ HRESULT COrc01::Ready_Component()
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
+
+
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
