@@ -107,7 +107,10 @@ _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionP
 	if (!IsIn)
 	{
 		if (pNeighbor = m_vecCell[m_iCurrentIdx]->Get_Neighbor(NEIGHBOR(eOutLine)))
+		{
+			m_iCurrentIdx = pNeighbor->Get_CellIndex();
 			return true;
+		}
 		else
 			return false;
 	}

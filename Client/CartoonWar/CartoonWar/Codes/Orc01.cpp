@@ -22,8 +22,10 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	
 	return S_OK;
 }
 
@@ -36,11 +38,11 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 
 	if (pManagement->Key_Pressing(KEY_LEFT))
 	{
-		m_pTransformCom->Go_Left(fTimeDelta);
+		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
 	else if (pManagement->Key_Pressing(KEY_RIGHT))
 	{
-		m_pTransformCom->Go_Right(fTimeDelta);
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
 	}
 	else if (pManagement->Key_Pressing(KEY_UP))
 	{
@@ -52,14 +54,14 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec))
 		{
-			m_pTransformCom->Go_Straight(fTimeDelta);
+			m_pTransformCom->BackWard(fTimeDelta);
 		}
 
 
 	}
 	else if (pManagement->Key_Pressing(KEY_DOWN))
 	{
-		m_pTransformCom->BackWard(fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
 
 
