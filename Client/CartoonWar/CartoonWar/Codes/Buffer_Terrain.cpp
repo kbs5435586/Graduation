@@ -26,7 +26,7 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _uint& iNumVerticesX, const _uint&
 
 	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
 	{
-		for (_uint j = 0; j < m_iNumVerticesZ; ++j)
+		for (_uint j = 0; j < m_iNumVerticesX; ++j)
 		{
 			_uint iIdx = i * m_iNumVerticesZ + j;
 
