@@ -98,6 +98,13 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
+void CTransform::Go_There( const _vec3& vPos)
+{
+	m_matWorld._41 -= (vPos.x );
+	m_matWorld._42 -= (vPos.y );
+	m_matWorld._43 -= (vPos.z );
+}
+
 void CTransform::BackWard(const _float& fTimeDelta)
 {
 	_vec3		vLook, vPosition;

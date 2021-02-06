@@ -13,7 +13,7 @@ public:
     HRESULT                 Ready_Neighbor();
     HRESULT                 Ready_Clone_Navigation(void* pArg);
     void                    Render_Navigation();
-    _bool                   Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec);
+    _bool                   Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec, _vec3* vSliding = nullptr);
 
 private:
     vector<CCell*>          m_vecCell;

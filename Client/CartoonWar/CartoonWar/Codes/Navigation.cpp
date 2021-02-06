@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Navigation.h"
 #include "Cell.h"
+#include "Line.h"
 
 CNavigation::CNavigation()
 {
@@ -94,13 +95,14 @@ void CNavigation::Render_Navigation()
 	}
 }
 
-_bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec)
+_bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec, _vec3* vSliding)
 {
 	if (m_vecCell.size() <= m_iCurrentIdx)
 		return false;
 
 	LINE		eOutLine = LINE(-1);
 	const CCell* pNeighbor = nullptr;
+	CLine* pLine = nullptr;
 
 
 	_bool IsIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
@@ -112,8 +114,16 @@ _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionP
 			return true;
 		}
 		else
+		{
+			pLine = m_vecCell[m_iCurrentIdx]->GetLine(eOutLine);
+			_vec3 vNormal = pLine->Get_Normal();
+			_vec3 vDirectionPerSec_ = *vDirectionPerSec;
+
+			float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
+			*vSliding = vDirectionPerSec_ - fDot* vNormal;
 			return false;
-	}
+		}
+	} 
 	return _bool(true);
 }
 

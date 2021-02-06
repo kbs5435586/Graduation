@@ -15,11 +15,12 @@ public:
     void                        Clear_Neighbor();
     void                        Render_Cell();
 public:
-     _vec3*                Get_Point(POINT_ ePoint) { return &m_vPoint[(_uint)ePoint]; }
-    CCell*                Get_Neighbor(NEIGHBOR eNeighbor) const { return m_pNeighbor[(_uint)eNeighbor]; }
+     _vec3*                     Get_Point(POINT_ ePoint) { return &m_vPoint[(_uint)ePoint]; }
+    CCell*                      Get_Neighbor(NEIGHBOR eNeighbor) const { return m_pNeighbor[(_uint)eNeighbor]; }
     _ubyte                      Get_CellIndex()const { return m_iIndex; }
     _vec3*                      GetPoint() { return m_vPoint; }
     _bool&                      GetIsLast() { return m_IsLast; }
+    CLine*                      GetLine(LINE eLine) { return m_pLine[(_uint)eLine]; }
 public:
     void                        Set_Neighbor(NEIGHBOR eNeighbor, CCell* pCell);
 private:

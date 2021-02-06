@@ -26,6 +26,7 @@ public:
 	void					Go_Straight(const _float& fTimeDelta);
 	void					Go_Left(const _float& fTimeDelta);
 	void					Go_Right(const _float& fTimeDelta);
+	void					Go_There(const _vec3& vPos);
 	void					BackWard(const _float& fTimeDelta);
 	void					SetUp_RotationX(const _float& fRadian);
 	void					SetUp_RotationY(const _float& fRadian);
