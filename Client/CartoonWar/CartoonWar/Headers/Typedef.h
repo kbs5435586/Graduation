@@ -19,8 +19,8 @@ typedef bool					_bool;
 
 typedef wchar_t					_tchar;
 
-typedef Vector2				_vec2;
-typedef Vector3				_vec3;
-typedef Vector4				_vec4;
+typedef Vector2					_vec2;
+typedef Vector3					_vec3;
+typedef Vector4					_vec4;
 
-typedef XMFLOAT4X4				_matrix;
+typedef Matrix					_matrix;

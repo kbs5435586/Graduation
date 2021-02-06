@@ -74,7 +74,7 @@ CConstant_Buffer* CConstant_Buffer::Create(_uint iBufferSize, _uint iMaxCnt, CON
 	CConstant_Buffer* pInstance = new CConstant_Buffer();
 	if (FAILED(pInstance->Ready_ConstantBuffer(iBufferSize, iMaxCnt, eType)))
 	{
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 	return pInstance;
 }

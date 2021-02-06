@@ -27,11 +27,6 @@ public:
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;
 	typedef map<const _tchar*, CComponent*>	MAPCOMPONENT;
-protected:
-	ComPtr<ID3D12Resource>					m_pConstBuffer = nullptr;
-	ComPtr<ID3D12DescriptorHeap>			m_pConstantBufferView = nullptr;
-	_int									m_iPassSize = 0;
-	void*									m_pData = nullptr;
 
 };
 

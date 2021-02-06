@@ -229,6 +229,12 @@
     <Filter Include="97. Engine\01. Utility\06. KeyMananger">
       <UniqueIdentifier>{7fea3e37-35cb-433b-a7be-76d00d4ee7a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI">
+      <UniqueIdentifier>{58fcaaa1-590e-4ce8-b687-8802eb936395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\00. UI_Loading">
+      <UniqueIdentifier>{140750d1-b766-4257-884c-a1b3f6c48163}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -432,6 +438,9 @@
     <ClInclude Include="..\Headers\Constant.h">
       <Filter>98. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Loading.h">
+      <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -608,6 +617,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\KeyManager.cpp">
       <Filter>97. Engine\01. Utility\06. KeyMananger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Loading.cpp">
+      <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -169,7 +169,7 @@ CRTT* CRTT::Create(_uint iTextureWidth, _uint iTextureHeight)
 {
 	CRTT* pInstance = new CRTT();
 	if (FAILED(pInstance->Ready_RTT(iTextureWidth, iTextureHeight)))
-		return nullptr;
+		Safe_Release(pInstance);
 	return pInstance;
 }
 

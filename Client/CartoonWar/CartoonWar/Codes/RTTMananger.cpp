@@ -44,7 +44,7 @@ CRTTMananger* CRTTMananger::Create(const _tchar* pRTT_Tag, _uint iTextureWidth, 
 {
 	CRTTMananger* pInstance = new CRTTMananger();
 	if (FAILED(pInstance->Ready_RTTMananger(pRTT_Tag, iTextureWidth, iTextureHeight)))
-		return nullptr;
+		Safe_Release(pInstance);
 
 	return pInstance;
 }

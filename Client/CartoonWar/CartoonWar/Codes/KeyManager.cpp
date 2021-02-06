@@ -85,7 +85,9 @@ CKeyManager* CKeyManager::Create()
 {
 	CKeyManager* pInstance = new CKeyManager();
 	if (FAILED(pInstance->Ready_KeyManager()))
-		return nullptr;
+	{
+		Safe_Release(pInstance);
+	}
 	
 	return pInstance;
 }

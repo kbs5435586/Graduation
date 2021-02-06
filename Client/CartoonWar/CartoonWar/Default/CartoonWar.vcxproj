@@ -211,6 +211,7 @@
     <ClInclude Include="..\Headers\TimerManager.h" />
     <ClInclude Include="..\Headers\Transform.h" />
     <ClInclude Include="..\Headers\Typedef.h" />
+    <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
@@ -270,6 +271,7 @@
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\TimerManager.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
+    <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>

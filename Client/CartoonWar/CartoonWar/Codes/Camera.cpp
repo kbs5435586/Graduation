@@ -62,8 +62,11 @@ HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDE
 void CCamera::Invalidate_ViewProjMatrix()
 {
 	m_matView = m_pTransform->Get_Matrix_Inverse();
+	_matrix matOrtho = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 0.f, 1.f);
 	CCamera_Manager::GetInstance()->SetMatView(m_matView);
 	CCamera_Manager::GetInstance()->SetMatProj(m_matProj);
+	CCamera_Manager::GetInstance()->SetMatOrtho(matOrtho);
+	
 } 
 
 HRESULT CCamera::SetUp_ViewProjMatrices()

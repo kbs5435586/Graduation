@@ -132,7 +132,7 @@ CNavigation* CNavigation::Create(const _tchar* pFilePath)
 {
 	CNavigation* pInstance = new CNavigation();
 	if (FAILED(pInstance->Ready_Navigation(pFilePath)))
-		return nullptr;
+		Safe_Release(pInstance);
 
 	return pInstance;
 }

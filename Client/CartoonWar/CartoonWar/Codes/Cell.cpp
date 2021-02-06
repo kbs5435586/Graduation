@@ -182,7 +182,7 @@ CCell* CCell::Create(const _vec3* pPointA, const _vec3* pPointB, const _vec3* pP
 {
 	CCell* pInstance = new CCell();
 	if (FAILED(pInstance->Ready_Cell(pPointA, pPointB, pPointC, iIdx)))
-		return nullptr;
+		Safe_Release(pInstance);
 
 	return pInstance;
 }

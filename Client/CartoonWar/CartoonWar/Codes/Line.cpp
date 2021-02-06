@@ -37,7 +37,7 @@ CLine* CLine::Create(const _vec3& vStart, const _vec3 vEnd)
 {
 	CLine* pInstance = new CLine();
 	if (FAILED(pInstance->Ready_Line(vStart, vEnd)))
-		return nullptr;
+		Safe_Release(pInstance);
 
 	return pInstance;
 }
