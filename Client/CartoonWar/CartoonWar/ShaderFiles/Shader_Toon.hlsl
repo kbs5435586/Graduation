@@ -1,49 +1,22 @@
-Texture2D		g_texture			: register(t0);
-Texture2D		g_Normal_Texture	: register(t1);
-Texture2D		g_texture2			: register(t2);
-Texture2D		g_texture3			: register(t3);
-
-SamplerState	DiffuseSampler		: register(s0);
-
-
-
-cbuffer cbPerObject : register(b0)
-{
-	float4x4	matWorld;
-	float4x4	matView;
-	float4x4	matProj;
-
-	float4		vCamPos;
-
-	float4		vMaterialDiffuse;
-	float4		vMaterialSpecular;
-	float4		vMaterialAmbient;
-
-	float4		vLightDiffuse;
-	float4		vLightAmbient;
-	float4		vLightSpecular;
-	float4		vLightDirection;
-
-	float		fPower;
-};
-
+#include "Value.hlsl"
+#include "Function.hlsl"
 struct VS_IN
 {
-	float3	vPos : POSITION;
-	float3	vNormal : NORMAL;
-	float2	vTexUV : TEXCOORD;
-	float3	vTangent : TANGENT;
-	float3	vBinormal: BINORMAL;
+	float3	vPosition	: POSITION;
+	float3	vNormal		: NORMAL;
+	float2	vTexUV		: TEXCOORD;
+	float3	vTangent	: TANGENT;
+	float3	vBinormal	: BINORMAL;
 };
 
 struct VS_OUT
 {
-	float4	vPos : SV_POSITION;
-	float4	vNormal : NORMAL;
-	float2	vTexUV : TEXCOORD0;
-	float4	vWorldPos : TEXCOORD1;
-	float4	vTangent : TANGENT;
-	float4	vBinormal: BINORMAL;
+	float4	vPosition	: SV_POSITION;
+	float3	vViewPos	: POSITION;
+	float4	vNormal		: NORMAL;
+	float2	vTexUV		: TEXCOORD0;
+	float4	vTangent	: TANGENT;
+	float4	vBinormal	: BINORMAL;
 };
 
 
@@ -51,24 +24,24 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
 
-	vOut.vPos = mul(mul(mul(float4(vIn.vPos, 1.0f), matWorld), matView), matProj);
+	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vViewPos	= mul(float4(vIn.vPosition, 1.f), matWV).xyz;
+	vOut.vNormal	= normalize(mul(float4(vIn.vNormal, 0.f)matWV).xyz);
+	vOut.vTangent	= normalize(mul(float4(vIn.vTangent, 0.f)matWV).xyz);
+	vOut.vBinormal	= normalize(mul(float4(vIn.vBinormal, 0.f)matWV).xyz);
 
-	vOut.vNormal = normalize(mul(vector(vIn.vNormal, 0.f), matWorld));
+
 	vOut.vTexUV = vIn.vTexUV;
-	vOut.vWorldPos = mul(vector(vIn.vPos, 1.f), matWorld);
-	vOut.vNormal = normalize(mul(vector(vIn.vNormal, 0.f), matWorld));
-	vOut.vTangent = normalize(mul(vector(vIn.vTangent, 0.f), matWorld));
-	vOut.vBinormal = normalize(mul(vector(vIn.vBinormal, 0.f), matWorld));
 	return vOut;
 }
 
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	/*float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
+	//float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
 
 
-	float fDot = max(0, dot(vIn.vNormal, vLightDirection));
+	/*float fDot = max(0, dot(vIn.vNormal, vLightDirection));
 
 	fDot = (ceil(fDot * 3.f) / 3.f);
 
@@ -100,32 +73,34 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 
 
 	// Normal Mapping
-	float4	vTexture = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
-	float4	vNormalMap = g_Normal_Texture.Sample(DiffuseSampler, vIn.vTexUV);
-	float4	vOutColor;
-	float3	vLightDir;
-	float4	vDiffuseColor = float4(1.f,1.f,1.f,1.f);
-	float	fLightIntendity = 0.f;
+	//float4	vTexture = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
+	//float4	vNormalMap = g_Normal_Texture.Sample(DiffuseSampler, vIn.vTexUV);
+	//float4	vOutColor;
+	//float3	vLightDir;
+	//float4	vDiffuseColor = float4(1.f,1.f,1.f,1.f);
+	//float	fLightIntendity = 0.f;
 
-	vNormalMap = (vNormalMap * 2.f) - 1.f;
+	//vNormalMap = (vNormalMap * 2.f) - 1.f;
 
-	float3 vBumpNormal = (vIn.vNormal.xyz + vNormalMap.x) * (vIn.vTangent.xyz + vNormalMap.y) * vIn.vBinormal.xyz;
+	//float3 vBumpNormal = (vIn.vNormal.xyz + vNormalMap.x) * (vIn.vTangent.xyz + vNormalMap.y) * vIn.vBinormal.xyz;
 
-	vBumpNormal = normalize(vBumpNormal);
+	//vBumpNormal = normalize(vBumpNormal);
 
-	vLightDir = -vLightDirection.xyz;
-	fLightIntendity = saturate(dot(vBumpNormal, vLightDir));
+	//vLightDir = -vLightDirection.xyz;
+	//fLightIntendity = saturate(dot(vBumpNormal, vLightDir));
 
 
-	vOutColor = saturate(vDiffuseColor * fLightIntendity);
+	//vOutColor = saturate(vDiffuseColor * fLightIntendity);
 
-	vOutColor = vOutColor * vTexture;
+	//vOutColor = vOutColor * vTexture;
 
-	return vOutColor;
+	//return vOutColor;
 
 
 
 	//Default
-	//return g_texture.Sample(DiffuseSampler, vIn.vTexUV);
+	return g_texture0.Sample(Sampler0, vIn.vTexUV);
+
+
 }
 

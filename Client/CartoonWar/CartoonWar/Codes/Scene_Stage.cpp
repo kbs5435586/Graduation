@@ -111,6 +111,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.vSpecular = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.vDirection = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.fRange = 100.f;
 
 	if(FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;

@@ -64,6 +64,9 @@ using namespace std;
 #pragma comment(lib, "DirectXTex.lib")
 #endif
 
+#pragma warning(push)
+#pragma warning(disable: 4267)
+#pragma warning(disable: 4244)
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;

@@ -28,11 +28,17 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(tagMainPass), 512, CONST_REGISTER::b0)))
-		return E_FAIL;
+	//if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
+	
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(MAINPASS), 512, CONST_REGISTER::b0)))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(MATERIAL), 512, CONST_REGISTER::b1)))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(LIGHT), 512, CONST_REGISTER::b2, true)))
+		return E_FAIL;
+	
 
 
 	srand(unsigned(time(NULL)));
@@ -142,10 +148,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		return E_FAIL;
 	m_pRenderer->AddRef();
 
-	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex_RTT",CBuffer_RectTex::Create())))
-		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_RTT",CShader::Create(L"../ShaderFiles/Shader_RTT.hlsl", "VS_Main", "PS_Main"))))
-		return E_FAIL;
+	//if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex_RTT",CBuffer_RectTex::Create())))
+	//	return E_FAIL;
+	//if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_RTT",CShader::Create(L"../ShaderFiles/Shader_RTT.hlsl", "VS_Main", "PS_Main"))))
+	//	return E_FAIL;
 	return S_OK;
 }
 

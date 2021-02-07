@@ -40,11 +40,11 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
-	else if (pManagement->Key_Pressing(KEY_RIGHT))
+	if (pManagement->Key_Pressing(KEY_RIGHT))
 	{
 		m_pTransformCom->Rotation_Y(-fTimeDelta);
 	}
-	else if (pManagement->Key_Pressing(KEY_UP))
+	if (pManagement->Key_Pressing(KEY_UP))
 	{
 		_vec3 vLook = {};
 		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
@@ -64,7 +64,7 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 
 
 	}
-	else if (pManagement->Key_Pressing(KEY_DOWN))
+	if (pManagement->Key_Pressing(KEY_DOWN))
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
@@ -100,8 +100,8 @@ void COrc01::Render_GameObject()
 	pManagement->AddRef();
 
 	MAINPASS tPass = {};
-	if (FAILED(Ready_Light(tPass)))
-		return ;
+	/*if (FAILED(Ready_Light(tPass)))
+		return ;*/
 
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
 		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc");
@@ -218,17 +218,11 @@ HRESULT COrc01::Ready_Light(MAINPASS& tPass)
 
 	LIGHT tLight = pLight_Manager->GetLight(L"Light_Default");
 
-	tPass.vLightDirection = tLight.vDirection;
-	tPass.vLightDiffuse = tLight.vDiffuse;
-	tPass.vLightSpecular = tLight.vSpecular;
-	tPass.vLightAmbient = tLight.vAmbient;
-	tPass.fPower = 30.f;
-
-	tPass.vMaterialDiffuse = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlDiff;
+	/*tPass.vMaterialDiffuse = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlDiff;
 	tPass.vMaterialSpecular = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlSpec;
-	tPass.vMaterialAmbient = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlAmb;
+	tPass.vMaterialAmbient = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlAmb;*/
 
-	tPass.vCameraPos = (_vec4)CCamera_Manager::GetInstance()->GetMatView().m[3];
+	///tPass.vCameraPos = (_vec4)CCamera_Manager::GetInstance()->GetMatView().m[3];
 
 	Safe_Release(pLight_Manager);
 	return S_OK;

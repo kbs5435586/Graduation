@@ -8,7 +8,7 @@ CConstant_Buffer_Manager::CConstant_Buffer_Manager()
 
 }
 
-HRESULT CConstant_Buffer_Manager::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
+HRESULT CConstant_Buffer_Manager::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal)
 {
 	CConstant_Buffer* pInstance = CConstant_Buffer::Create(iBufferSize, iMaxCnt, eType);
 	if (nullptr == pInstance)
@@ -16,6 +16,9 @@ HRESULT CConstant_Buffer_Manager::Create_Constant_Buffer(_uint iBufferSize, _uin
 		return E_FAIL;
 	}
 	m_vecConstantBuffer.push_back(pInstance);
+
+	if (IsGlobal)
+		CDevice::GetInstance()->SetGlobalConstantBufferToShader(pInstance->GetCBV().Get(), 0, eType);
 
 	return S_OK;
 }

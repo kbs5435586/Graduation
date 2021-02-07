@@ -73,7 +73,7 @@ private:
 private:
 	_bool										m_IsHDRSupport= false;
 	_bool										m_IsEnableST2084 = false;
-	_bool										m_IsTearingSupport ;
+	_bool										m_IsTearingSupport = true;
 private:
 	_uint										m_iFactoryFlags=0;
 public:
@@ -94,6 +94,7 @@ private:
 	HRESULT										Create_SamplerDesc();
 private:
 	HRESULT										CheckHDRSupport();
+	HRESULT										CheckSupportTearing();
 	_int										ComputeIntersectionArea(_int ax1, _int ay1, _int ax2, _int ay2,
 																		_int bx1, _int by1, _int bx2, _int by2);
 	HRESULT										EnsureSwapChainColorSpace(SwapChainBitDepth swapChainBitDepth, _bool enableST);
@@ -102,6 +103,8 @@ public:
 public:
 	void										SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, _uint iTextureIdx,TEXTURE_REGISTER eRegisterNum);
 	void										SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
+	void										SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
+
 	void										UpdateTable();
 private:
 	void										ClearDummyDesc(_uint iIdx);

@@ -1,50 +1,33 @@
-
-TextureCube    g_texture : register(t0);
-SamplerState DiffuseSampler  : register(s0);
-cbuffer cbPerObject : register(b0)
+#include "Value.hlsl"
+#include "Function.hlsl"
+struct VS_IN
 {
-	float4x4	matWorld;
-	float4x4	matView;
-	float4x4	matProj;
-
-	float4		vCamPos;
-
-	float4		vMaterialDiffuse;
-	float4		vMaterialSpecular;
-	float4		vMaterialAmbient;
-
-	float4		vLightDiffuse;
-	float4		vLightAmbient;
-	float4		vLightSpecular;
-	float4		vLightDirection;
-
-	float		fPower;
+	float3 vPosition	: POSITION;
+	float3 vTexUV		: TEXCOORD;
 };
 
-struct VertexIn
+struct VS_OUT
 {
-	float3 vPosition  : POSITION;
-	float3 vTexUV : TEXCOORD;
+	float4 vPosition	: SV_POSITION;
+	float3 vViewPos		: POSITION;
+	float3 vTexUV		: TEXCOORD;
 };
 
-struct VertexOut
+VS_OUT VS_Main(VS_IN vIn)
 {
-	float4 vPosition  : SV_POSITION;
-	float3 vTexUV : TEXCOORD;
-};
+	VS_OUT vOut;
 
-VertexOut VS_Main(VertexIn In)
-{
-	VertexOut Out;
-	Out.vPosition = mul(mul(mul(float4(In.vPosition, 1.0f), matWorld), matView), matProj);
-	Out.vTexUV = In.vTexUV;
+	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vViewPos	= mul(float4(vIn.vPosition, 1.f), matWV).xyz;
 
-	return Out;
+	vOut.vTexUV		= vIn.vTexUV;
+
+	return vOut;
 }
 
-float4 PS_Main(VertexOut In) : SV_Target
+float4 PS_Main(VS_OUT vIn) : SV_Target
 {
 
-	return g_texture.Sample(DiffuseSampler, In.vTexUV);
+	return g_texture0.Sample(Sampler0, vIn.vTexUV);
 }
 

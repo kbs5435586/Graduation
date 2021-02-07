@@ -81,7 +81,9 @@ HRESULT CDevice::Initialize()
 	m_swapChainFormats[0] = { DXGI_FORMAT_R8G8B8A8_UNORM };
 	m_swapChainFormats[1] = { DXGI_FORMAT_R10G10B10A2_UNORM };
 	m_swapChainFormats[2] = { DXGI_FORMAT_R16G16B16A16_FLOAT };
-
+	
+	//if (FAILED(CheckSupportTearing()))
+	//	return E_FAIL;
 
 #ifdef _DEBUG
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_pDbgCtrl))))
@@ -295,6 +297,22 @@ void CDevice::SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
+void CDevice::SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pInitDescriptor->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pConstantBuffer->GetCPUDescriptorHandleForHeapStart();
+	hSrcHandle.ptr += iOffset * iSize;
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
 void CDevice::UpdateTable()
 {
 	ID3D12DescriptorHeap* pDescriptor = m_vecDummyDescriptor[m_iCurrentDummyIdx].Get();
@@ -318,12 +336,8 @@ void CDevice::ClearDummyDesc(_uint iIdx)
 	UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
 	UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
 
-	/*m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
-		,&hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);*/
-
 	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
 		, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	// Render Target View
 
 }
 
@@ -410,7 +424,7 @@ HRESULT CDevice::Create_RootSignature()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
 
-
+	return S_OK;
 }
 
 HRESULT CDevice::Create_SamplerDesc()
@@ -513,6 +527,19 @@ HRESULT CDevice::CheckHDRSupport()
 
 	m_IsHDRSupport = (desc1.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020);;
 
+	return S_OK;
+}
+
+HRESULT CDevice::CheckSupportTearing()
+{
+	ComPtr<IDXGIFactory6> pFactory;
+	if (SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory))))
+	{
+		_bool allowTearing = FALSE;
+		if (FAILED(pFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing))))
+			return E_FAIL;
+		m_IsTearingSupport = allowTearing;
+	}
 	return S_OK;
 }
 

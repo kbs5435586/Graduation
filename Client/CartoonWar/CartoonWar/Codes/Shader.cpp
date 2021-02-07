@@ -26,7 +26,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	if (nullptr == VSEntry || nullptr == PSEntry)
 		return E_FAIL;
 
-	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, nullptr
+	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
 		, VSEntry, "vs_5_1", 0, 0, &m_pVSBlob, &m_pErrBlob)))
 	{
 		pErr = (char*)m_pErrBlob->GetBufferPointer();
@@ -35,7 +35,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	}
 	
 
-	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, nullptr
+	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
 		, PSEntry, "ps_5_1", 0, 0, &m_pPSBlob, &m_pErrBlob)))
 	{
 		pErr = (char*)m_pErrBlob->GetBufferPointer();
@@ -97,13 +97,15 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 
-	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&matWorld));
-	XMMATRIX	xmMatView = XMMatrixTranspose(XMLoadFloat4x4(&matView));
-	XMMATRIX	xmMatProj = XMMatrixTranspose(XMLoadFloat4x4(&matProj));
+	XMMATRIX	xmMatWorld	= XMLoadFloat4x4(&matWorld);
+	XMMATRIX	xmMatView	= XMLoadFloat4x4(&matView);
+	XMMATRIX	xmMatProj	= XMLoadFloat4x4(&matProj);
 
-	output.matWorld = xmMatWorld;
-	output.matView = xmMatView;
-	output.matProj = xmMatProj;
+	output.matWorld		= xmMatWorld;
+	output.matView		= xmMatView;
+	output.matProj		= xmMatProj;
+	output.matWV		= xmMatWorld * xmMatView;
+	output.matWVP		= output.matWV * xmMatProj;
 
 	return S_OK;
 }
@@ -112,13 +114,15 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 {
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 
-	XMMATRIX	xmMatWorld = XMMatrixTranspose(XMLoadFloat4x4(&matWorld));
-	XMMATRIX	xmMatView = XMMatrixTranspose(XMLoadFloat4x4(&matView));
-	XMMATRIX	xmMatProj = XMMatrixTranspose(XMLoadFloat4x4(&matProj));
+	XMMATRIX	xmMatWorld	= XMLoadFloat4x4(&matWorld);
+	XMMATRIX	xmMatView	= XMLoadFloat4x4(&matView);
+	XMMATRIX	xmMatProj	= XMLoadFloat4x4(&matProj);
 
-	tPass.matWorld = xmMatWorld;
-	tPass.matView = xmMatView;
-	tPass.matProj = xmMatProj;
+	tPass.matWorld	= xmMatWorld;
+	tPass.matView	= xmMatView;
+	tPass.matProj	= xmMatProj;
+	tPass.matWV		= xmMatWorld * xmMatView;
+	tPass.matWVP	= tPass.matWV * xmMatProj;
 
 	return S_OK;
 }

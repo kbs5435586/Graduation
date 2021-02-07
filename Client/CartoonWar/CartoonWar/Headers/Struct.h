@@ -130,20 +130,17 @@ typedef struct tagMainPass
 	XMMATRIX	matWorld;
 	XMMATRIX	matView;
 	XMMATRIX	matProj;
-	// CamPos
-	XMFLOAT4	vCameraPos;
-	// Material
-	XMFLOAT4	vMaterialDiffuse;
-	XMFLOAT4	vMaterialSpecular;
-	XMFLOAT4	vMaterialAmbient;
-	// Light
-	XMFLOAT4	vLightDiffuse;
-	XMFLOAT4	vLightSpecular;
-	XMFLOAT4	vLightAmbient;
-	XMFLOAT4	vLightDirection;
-	float		fPower;
-
+	XMMATRIX	matWV;
+	XMMATRIX	matWVP;
 }MAINPASS;
+
+typedef struct tagMaterial
+{
+	XMFLOAT4		vMtrlDiff;
+	XMFLOAT4		vMtrlSpec;
+	XMFLOAT4		vMtrlAmb;
+	XMFLOAT4		vMtrlEmiv;
+}MATERIAL;
 
 
 
@@ -153,7 +150,6 @@ typedef struct tagMtrInfo
 	XMFLOAT4		vMtrlSpec = { 1.f, 1.f,1.f, 1.f };;
 	XMFLOAT4		vMtrlAmb = { 1.f, 1.f,1.f, 1.f };;
 	XMFLOAT4		vMtrlEmiv = { 1.f, 1.f,1.f, 1.f };
-	float			fPower = 0.f;
 
 	wstring			strMtrlName;
 	wstring			strDiff;
@@ -181,14 +177,17 @@ typedef struct tagLight
 	XMFLOAT4	vSpecular;
 	XMFLOAT4	vAmbient;
 	XMFLOAT4	vDirection;
+	float		fRange;
+	float		fPower;
 	tagLight() { }
-	tagLight(LIGHT_TYPE eType, XMFLOAT4 vDiff, XMFLOAT4 vSpec, XMFLOAT4 vAmbi, XMFLOAT4 vDir)
+	tagLight(LIGHT_TYPE eType, XMFLOAT4 vDiff, XMFLOAT4 vSpec, XMFLOAT4 vAmbi, XMFLOAT4 vDir, float fRan)
 	{
-		eLightType = eLightType;
+		eLightType = eType;
 		vDiffuse = vDiff;
 		vSpecular = vSpec;
 		vAmbient = vAmbi;
 		vDirection = vDir;
+		fRange = fRan;
 	}
 	tagLight(tagLight* tOther)
 	{
@@ -197,6 +196,8 @@ typedef struct tagLight
 		vSpecular = tOther->vSpecular;
 		vAmbient = tOther->vAmbient;
 		vDirection = tOther->vDirection;
+		fRange = tOther->fRange;
+		fPower = tOther->fPower;
 	}
 
 }LIGHT;
