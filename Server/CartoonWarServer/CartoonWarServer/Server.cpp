@@ -153,14 +153,75 @@ void Server::do_move(int user_id, char direction)
     g_clients[user_id].m_x = x;
     g_clients[user_id].m_y = y;
 
-    for (auto &c : g_clients)
+    g_clients[user_id].m_cLock.lock();
+    unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
+    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
+    g_clients[user_id].m_cLock.unlock();
+    unordered_set<int> new_viewlist;
+
+    for (auto& c : g_clients)
     {
-        c.second.m_cLock.lock();
-        if (ST_ACTIVE == c.second.m_status)
+        if (ST_ACTIVE != c.second.m_status)
+            continue;
+        if (c.second.m_id == user_id)
+            continue;
+        if (true == is_near(c.second.m_id, user_id))
+            new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
+    }
+
+    // send_move_packet 해주는 부분
+    send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도
+
+    for (auto& new_vl : new_viewlist) // 움직인 이후의 시야 범위에 대하여
+    {
+        if (0 == old_viewlist.count(new_vl)) // 이전 뷰리스트에 new_vl의 개수가 0개 일때 = 이전 시야에 없던 애일때
         {
-            send_move_packet(c.second.m_id, user_id); // 연결된 모든 클라이언트들에게 움직인 클라의 위치값 전송
+            send_enter_packet(user_id, new_vl); // 다른 객체들의 정보를 나에게 전송
+
+            g_clients[new_vl].m_cLock.lock();
+            if (0 == g_clients[new_vl].m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
+            {
+                g_clients[new_vl].m_cLock.unlock();
+                send_enter_packet(new_vl, user_id); // 나의 입장 정보를 다른 객체들에게 전송
+            }
+            else
+            {
+                g_clients[new_vl].m_cLock.unlock();
+                send_move_packet(new_vl, user_id); // 나의 움직임 정보를 다른 객체들에게 전송
+            }
         }
-        c.second.m_cLock.unlock();
+        else // 이동 한 후에 새 시야에 보이는 플레이어인데 이전에도 보였던 애다
+        {
+            g_clients[new_vl].m_cLock.lock();
+            if (0 != g_clients[new_vl].m_view_list.count(user_id))
+            {
+                g_clients[new_vl].m_cLock.unlock();
+                send_move_packet(new_vl, user_id);
+            }
+            else
+            {
+                g_clients[new_vl].m_cLock.unlock();
+                send_enter_packet(new_vl, user_id);
+            }
+        }
+    }
+
+    for (auto& old_vl : old_viewlist) // 움직이기 전 시야범위에 대하여
+    {
+        if (0 == new_viewlist.count(old_vl)) // 새 시야범위에 old_vl 갯수가 0일때 = 시야 범위에서 벗어난 객체일때
+        {
+            send_leave_packet(user_id, old_vl); // 나에게 상대 객체가 나갔다 알림
+            g_clients[old_vl].m_cLock.lock();
+            if (0 != g_clients[old_vl].m_view_list.count(user_id))
+            {
+                g_clients[old_vl].m_cLock.unlock();
+                send_leave_packet(old_vl, user_id); // 상대 객체에게 내가 나갔다 알림
+            }
+            else // 실수하기 쉬움, else에 뭐 없더라고 unlock 해줄것, 안그러면 조건 불만족시 락 안풀림
+            {
+                g_clients[old_vl].m_cLock.unlock();
+            }
+        }
     }
 }
 
@@ -179,22 +240,22 @@ void Server::send_move_packet(int user_id, int mover)
 
 void Server::enter_game(int user_id, char name[])
 {
-    g_clients[user_id].m_cLock.lock();
-
+    g_clients[user_id].m_cLock.lock(); // name, m_status 락
     strcpy_s(g_clients[user_id].m_name, name);
     g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+    g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
+    g_clients[user_id].m_cLock.unlock();
 
     for (int i = 0; i < MAX_USER; i++) 
     {
         if (user_id == i) // 데드락 회피용
             continue;
 
-
         if (false == is_near(user_id, i))
         {
-            g_clients[i].m_cLock.lock();
-            if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만
+            //g_clients[i].m_cLock.lock();
+            if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
                 if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
                 {
@@ -202,12 +263,9 @@ void Server::enter_game(int user_id, char name[])
                     send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
                 }
             }
-            g_clients[i].m_cLock.unlock();
+            //g_clients[i].m_cLock.unlock();
         }
     }
-    g_clients[user_id].m_cLock.unlock();
-    // true == g_clients[i].m_isConnected 하므로 원래는 여기다 unlock 해야하는데 안에 범위가 너무 큼
-    g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
 }
 
 void Server::initalize_clients()
@@ -252,7 +310,7 @@ void Server::disconnect(int user_id)
         c.second.m_cLock.lock();
         if (ST_ACTIVE == c.second.m_status)
         {
-            send_leave_packet(c.second.m_id, user_id);
+            send_leave_packet(c.second.m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
         }
         c.second.m_cLock.unlock();
     }
@@ -277,6 +335,10 @@ void Server::send_leave_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_LEAVE;
+
+    g_clients[other_id].m_cLock.lock();
+    g_clients[other_id].m_view_list.erase(other_id);
+    g_clients[other_id].m_cLock.unlock();
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -349,6 +411,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_socket = clientSocket;
                 g_clients[user_id].m_x = rand() % WORLD_WIDTH;
                 g_clients[user_id].m_x = rand() % WORLD_HEIGHT;
+                g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;
                 WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,

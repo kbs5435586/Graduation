@@ -7,6 +7,7 @@
 #include <mutex>
 #include <map>
 #include <unordered_set>
+#include <atomic>
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
