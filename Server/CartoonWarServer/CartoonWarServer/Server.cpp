@@ -172,7 +172,7 @@ void Server::do_move(int user_id, char direction)
     // send_move_packet 해주는 부분
     send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도
 
-    for (auto& new_vl : new_viewlist) // 움직인 이후의 시야 범위에 대하여
+    for (auto new_vl : new_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         if (0 == old_viewlist.count(new_vl)) // 이전 뷰리스트에 new_vl의 개수가 0개 일때 = 이전 시야에 없던 애일때
         {
@@ -206,7 +206,7 @@ void Server::do_move(int user_id, char direction)
         }
     }
 
-    for (auto& old_vl : old_viewlist) // 움직이기 전 시야범위에 대하여
+    for (auto old_vl : old_viewlist) // 움직이기 전 시야범위에 대하여
     {
         if (0 == new_viewlist.count(old_vl)) // 새 시야범위에 old_vl 갯수가 0일때 = 시야 범위에서 벗어난 객체일때
         {
@@ -288,18 +288,32 @@ void Server::send_enter_packet(int user_id, int other_id)
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_PLAYER; // 다른 플레이어들의 정보 저장
 
-    g_clients[other_id].m_cLock.lock();
-    g_clients[other_id].m_view_list.insert(other_id);
-    g_clients[other_id].m_cLock.unlock();
+    g_clients[user_id].m_cLock.lock();
+    g_clients[user_id].m_view_list.insert(other_id);
+    g_clients[user_id].m_cLock.unlock();
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_leave_packet(int user_id, int other_id)
+{
+    sc_packet_leave packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_LEAVE;
+
+    g_clients[user_id].m_cLock.lock();
+    g_clients[user_id].m_view_list.erase(other_id);
+    g_clients[user_id].m_cLock.unlock();
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
 void Server::disconnect(int user_id)
 {
+    send_leave_packet(user_id, user_id); // 나 자신
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
-    send_leave_packet(user_id, user_id); // 나 자신
     closesocket(g_clients[user_id].m_socket);
 
     for (auto& c : g_clients) // 연결되어있는 클라이언트들에게 떠난 클라가 나갔다고 알림
@@ -307,12 +321,12 @@ void Server::disconnect(int user_id)
         if (user_id == c.second.m_id)
             continue;
 
-        c.second.m_cLock.lock();
+        //c.second.m_cLock.lock();
         if (ST_ACTIVE == c.second.m_status)
         {
             send_leave_packet(c.second.m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
         }
-        c.second.m_cLock.unlock();
+       // c.second.m_cLock.unlock();
     }
     g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
     g_clients[user_id].m_cLock.unlock();
@@ -327,20 +341,6 @@ bool Server::is_near(int a, int b)
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
     // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
     return true;
-}
-
-void Server::send_leave_packet(int user_id, int other_id)
-{
-    sc_packet_leave packet;
-    packet.id = other_id;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_LEAVE;
-
-    g_clients[other_id].m_cLock.lock();
-    g_clients[other_id].m_view_list.erase(other_id);
-    g_clients[other_id].m_cLock.unlock();
-
-    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
 void Server::worker_thread()
@@ -410,7 +410,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
                 g_clients[user_id].m_x = rand() % WORLD_WIDTH;
-                g_clients[user_id].m_x = rand() % WORLD_HEIGHT;
+                g_clients[user_id].m_y = rand() % WORLD_HEIGHT;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;
