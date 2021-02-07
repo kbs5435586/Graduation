@@ -1,7 +1,5 @@
 #include "Value.hlsl"
 #include "Function.hlsl"
-
-
 struct VS_IN
 {
 	float3 vPosition	: POSITION;
@@ -13,7 +11,7 @@ struct VS_OUT
 {
 	float4 vPosition	: SV_POSITION;
 	float3 vViewPos		: POSITION;
-	float4 vNormal		: NORMAL;
+	float3 vNormal		: NORMAL;
 	float2 vTexUV		: TEXCOORD;
 };
 
@@ -23,7 +21,7 @@ VS_OUT VS_Main(VS_IN vIn)
 
 	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vViewPos	= mul(float4(vIn.vPosition, 1.f), matWV).xyz;
-	vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f)matWV).xyz);
+	vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f), matWV).xyz);
 	vOut.vTexUV		= vIn.vTexUV;
 
 	return vOut;

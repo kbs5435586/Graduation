@@ -12,11 +12,11 @@ struct VS_IN
 struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
+	float3	vNormal		: NORMAL;
+	float3	vTangent	: TANGENT;
+	float3	vBinormal	: BINORMAL;
 	float3	vViewPos	: POSITION;
-	float4	vNormal		: NORMAL;
 	float2	vTexUV		: TEXCOORD0;
-	float4	vTangent	: TANGENT;
-	float4	vBinormal	: BINORMAL;
 };
 
 
@@ -26,9 +26,9 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vViewPos	= mul(float4(vIn.vPosition, 1.f), matWV).xyz;
-	vOut.vNormal	= normalize(mul(float4(vIn.vNormal, 0.f)matWV).xyz);
-	vOut.vTangent	= normalize(mul(float4(vIn.vTangent, 0.f)matWV).xyz);
-	vOut.vBinormal	= normalize(mul(float4(vIn.vBinormal, 0.f)matWV).xyz);
+	vOut.vNormal	= normalize(mul(float4(vIn.vNormal, 0.f), matWV).xyz);
+	vOut.vTangent	= normalize(mul(float4(vIn.vTangent, 0.f), matWV).xyz);
+	vOut.vBinormal	= normalize(mul(float4(vIn.vBinormal, 0.f), matWV).xyz);
 
 
 	vOut.vTexUV = vIn.vTexUV;
