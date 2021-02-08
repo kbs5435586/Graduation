@@ -164,7 +164,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		CBuffer_CubeTex::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain",
-		CBuffer_Terrain::Create(100,100))))
+		CBuffer_Terrain::Create(100, 100))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
 		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp"))))
@@ -181,20 +181,20 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc",
-		m_pTextureCom=CTexture::Create(L"Texture_Orc", L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Albedo.tga"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01",
+		m_pTextureCom = CTexture::Create(L"Texture_Orc_01", L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Albedo.tga"))))
 		return E_FAIL;
 	if (nullptr == m_pTextureCom)
 		return E_FAIL;
 	m_pTextureCom->AddRef();
 
-	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc", 
+	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
 		L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Albedo.tga")))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc",
+	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
 		L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Normals.tga")))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc",
+	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
 		L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Normals.tga")))
 		return E_FAIL;
 

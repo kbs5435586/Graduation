@@ -67,6 +67,11 @@ HRESULT CManagement::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
 	return m_pLight_Manager->Add_LightInfo(pLightTag, tLightInfo);
 }
 
+void CManagement::SetUp_OnShader_Light()
+{
+	return m_pLight_Manager->SetUp_OnShader();
+}
+
 HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal)
 {
 	return m_pConstant_Buffer_Manager->Create_Constant_Buffer(iBufferSize, iMaxCnt, eType, IsGlobal);

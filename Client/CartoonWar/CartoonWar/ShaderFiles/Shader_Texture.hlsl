@@ -27,7 +27,9 @@ VS_OUT VS_Main(VS_IN vIn)
 
 float4 PS_Main(VS_OUT vIn) : SV_Target
 {
-	return g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+
+	return vOutColor;
 
 }
 

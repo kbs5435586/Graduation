@@ -124,7 +124,6 @@ typedef struct tagProjection_Desc
 }PROJDESC;
 
 
-
 typedef struct tagMainPass
 {
 	XMMATRIX	matWorld;
@@ -142,8 +141,6 @@ typedef struct tagMaterial
 	XMFLOAT4		vMtrlEmiv;
 }MATERIAL;
 
-
-
 typedef struct tagMtrInfo
 {
 	XMFLOAT4		vMtrlDiff = { 1.f, 1.f,1.f, 1.f };
@@ -157,8 +154,6 @@ typedef struct tagMtrInfo
 	wstring			strSpec;
 }MTRLINFO;
 
-
-
 struct RenderInfo
 {
 	string						strNodeName;
@@ -170,37 +165,36 @@ struct RenderInfo
 };
 
 
-typedef struct tagLight
+typedef struct tagLightColor
 {
-	LIGHT_TYPE	eLightType;
 	XMFLOAT4	vDiffuse;
 	XMFLOAT4	vSpecular;
 	XMFLOAT4	vAmbient;
-	XMFLOAT4	vDirection;
+}LIGHTCOLOR;
+
+typedef struct tagLight
+{
+	LIGHTCOLOR	tLightColor;
+	XMFLOAT4	vLightPos;
+	XMFLOAT4	vLightDir;
 	float		fRange;
+	float		fAngle;
 	float		fPower;
-	tagLight() { }
-	tagLight(LIGHT_TYPE eType, XMFLOAT4 vDiff, XMFLOAT4 vSpec, XMFLOAT4 vAmbi, XMFLOAT4 vDir, float fRan)
-	{
-		eLightType = eType;
-		vDiffuse = vDiff;
-		vSpecular = vSpec;
-		vAmbient = vAmbi;
-		vDirection = vDir;
-		fRange = fRan;
-	}
-	tagLight(tagLight* tOther)
-	{
-		eLightType = tOther->eLightType;
-		vDiffuse = tOther->vDiffuse;
-		vSpecular = tOther->vSpecular;
-		vAmbient = tOther->vAmbient;
-		vDirection = tOther->vDirection;
-		fRange = tOther->fRange;
-		fPower = tOther->fPower;
-	}
+	int			iLightType;
+	int			iPadding;
 
 }LIGHT;
 
+typedef struct tagLightInfo
+{
+	LIGHT			arrLight;
+	int				iCurLightCnt;
+	XMFLOAT3		vPadding;
+}LIGHTINFO;
 
 
+
+struct TEMP_
+{
+	int i;
+};

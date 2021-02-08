@@ -130,7 +130,7 @@ void CRTT::Set_RenderTarget(ID3D12DescriptorHeap* pDsv)
 		CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pShaderCom->GetPipeLine().Get());
 
-	CDevice::GetInstance()->SetTextureToShader(m_pSRV.Get(), 0, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pSRV.Get(),  TEXTURE_REGISTER::t0);
 	m_pBufferCom->Render_VIBuffer();
 
 	CDevice::GetInstance()->Close();

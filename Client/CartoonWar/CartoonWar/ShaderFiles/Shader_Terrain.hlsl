@@ -13,6 +13,7 @@ struct VS_OUT
 	float3 vViewPos		: POSITION;
 	float3 vNormal		: NORMAL;
 	float2 vTexUV		: TEXCOORD;
+
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -29,6 +30,22 @@ VS_OUT VS_Main(VS_IN vIn)
 
 float4 PS_Main(VS_OUT vIn) : SV_Target
 {
-	return g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+
+	float3 vInNormal = vIn.vNormal;
+	LIGHT  tLight = (LIGHT)0.f;
+
+	for (int i = 0; i < iNumLight; ++i)
+	{
+		LIGHT tCurLight = Calculate_Light(i, vInNormal, vIn.vViewPos);
+		tLight.vDiffuse += tCurLight.vDiffuse;
+		tLight.vSpecular += tCurLight.vSpecular;
+		tLight.vAmbient += tCurLight.vAmbient;
+	}
+
+	vOutColor.xyz = (tLight.vDiffuse.xyz*vOutColor.xyz) + (tLight.vSpecular.xyz) + (tLight.vAmbient.xyz*vOutColor.xyz);
+	vOutColor.w = 1.f;
+	return vOutColor;
+
 }
 

@@ -19,9 +19,6 @@
     <Filter Include="97. Engine\01. Utility">
       <UniqueIdentifier>{8671c37f-2c29-4cc3-870a-074b22f00f59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\02. Base">
-      <UniqueIdentifier>{f7ae0d71-f621-472b-8290-bfc15807a849}</UniqueIdentifier>
-    </Filter>
     <Filter Include="95. Loaders">
       <UniqueIdentifier>{55ecfdb3-5d2d-471d-a21b-ca30d6021430}</UniqueIdentifier>
     </Filter>
@@ -235,6 +232,9 @@
     <Filter Include="02. GameObject\97. UI\00. UI_Loading">
       <UniqueIdentifier>{140750d1-b766-4257-884c-a1b3f6c48163}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\99. Base">
+      <UniqueIdentifier>{f7ae0d71-f621-472b-8290-bfc15807a849}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -250,7 +250,7 @@
       <Filter>99. Default</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Base.h">
-      <Filter>97. Engine\02. Base</Filter>
+      <Filter>97. Engine\99. Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Extern.h">
       <Filter>98. Headers</Filter>
@@ -460,7 +460,7 @@
       <Filter>99. Default</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Base.cpp">
-      <Filter>97. Engine\02. Base</Filter>
+      <Filter>97. Engine\99. Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\System.cpp">
       <Filter>97. Engine\00. System</Filter>

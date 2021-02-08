@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Light_Manager.h"
 #include "Light.h"
+#include "Management.h"
+
 _IMPLEMENT_SINGLETON(CLight_Manager)
 CLight_Manager::CLight_Manager()
 {
@@ -28,6 +30,35 @@ HRESULT CLight_Manager::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo
 	m_mapLightInfo.insert(make_pair(pLightTag, pInstance));
 
 	return S_OK;
+}
+
+void CLight_Manager::SetUp_OnShader()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+	LIGHTINFO tInfo = {};
+
+	if (m_mapLightInfo.size() <= 0)
+	{
+		Safe_Release(pManagement);
+		return;
+	}
+
+
+	for (auto& iter : m_mapLightInfo)
+	{
+		const LIGHT& tLight = *iter.second->Get_LightInfo();
+		tInfo.arrLight = tLight;
+	}
+
+	tInfo.iCurLightCnt = 1;
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b2)->SetData(&tInfo);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b2)->GetCBV().Get(), iOffset, CONST_REGISTER::b2);
+
+	Safe_Release(pManagement);
 }
 
 void CLight_Manager::Free()

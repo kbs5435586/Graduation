@@ -2,14 +2,14 @@
 #define _VALUE
 
 
-struct tagLightColor
+typedef struct tagLightColor
 {
 	float4				vDiffuse;
 	float4				vSpecular;
 	float4				vAmbient;
-};
+}LIGHT;
 
-struct tagLightInfo
+typedef struct tagLightInfo
 {
 	tagLightColor		tColor;
 	float4				vLightPos;
@@ -19,7 +19,7 @@ struct tagLightInfo
 	float				fPower;
 	int					iLightType;
 	int					iPadding;
-};
+}LIGHTINFO;
 
 
 cbuffer	TRANSFORM_MATRIX : register (b0)
@@ -42,9 +42,9 @@ cbuffer MATERIAL : register (b1)
 
 cbuffer LIGHT :register(b2)
 {
-	tagLightInfo		tLight[100];
+	LIGHTINFO			tLight;
 	int					iNumLight;
-	int3				iPaddingLight;
+	float3				iPaddingLight;
 };
 
 
@@ -75,4 +75,10 @@ int HasTex(in Texture2D _tex)
 SamplerState Sampler0 : register(s0);
 SamplerState Sampler1 : register(s1);
 
+
+
+cbuffer TEMP :register(b3)
+{
+	int i;
+}
 #endif

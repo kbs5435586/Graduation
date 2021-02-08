@@ -45,7 +45,6 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
-	//
 
 	return CScene::Update_Scene(fTimeDelta);
 }
@@ -106,14 +105,17 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.eLightType = LIGHT_TYPE::LIGHT_DIRECTIONAL;
-	tLightInfo.vDiffuse = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vSpecular = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vDirection = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.fRange = 100.f;
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 1.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(0.f, 0.f, 0.f, 1.f);
 
-	if(FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
+
+	tLightInfo.fRange = 100.f;
+	tLightInfo.fPower = 20.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;
 
 	return S_OK;
