@@ -8,52 +8,67 @@ CRTTMananger::CRTTMananger()
 
 }
 
-HRESULT CRTTMananger::Ready_RTTMananger(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight)
+HRESULT CRTTMananger::Ready_RTTMananger(const _tchar* pRTT_Tag)
 {
-	auto iter = m_mapRTT.find(pRTT_Tag);
-	if (iter != m_mapRTT.end())
-		return E_FAIL;
+	m_iSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-	CRTT* pRTT = CRTT::Create(iTextureWidth, iTextureHeight);
-	if (nullptr == pRTT)
-		return E_FAIL;
-	m_mapRTT.insert({pRTT_Tag, pRTT});
+
+	_tchar szName[128] = {};
+	vector<CRTT*>	vecRtt = {};
+	for (_uint i = 0; i < 2; ++i)
+	{
+		wsprintf(szName, L"SwapchainTargetTex_%d", i);
+		ComPtr<ID3D12Resource>		pTarget;
+		CDevice::GetInstance()->GetSwapChain()->GetBuffer(i, IID_PPV_ARGS(&pTarget));
+		CRTT* pTemp = Create_TextureFromResource(szName, pTarget.Get());
+		vecRtt.push_back(pTemp);
+	}
+
+
+
+
+
+
 
 	return S_OK;
 }
 
 void CRTTMananger::Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv)
 {
-	auto iter = m_mapRTT.find(pRTT_Tag);
-	if (iter == m_mapRTT.end())
-		return;
 
-	iter->second->Set_RenderTarget(pDsv);
 }
 
 CRTT* CRTTMananger::Get_RTT(const _tchar* pRTT_Tag)
 {
-	auto iter = m_mapRTT.find(pRTT_Tag);
-	if (iter == m_mapRTT.end())
-		return nullptr;
 
-	return iter->second;
+	return nullptr;
 }
 
 CRTTMananger* CRTTMananger::Create(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight)
 {
 	CRTTMananger* pInstance = new CRTTMananger();
-	if (FAILED(pInstance->Ready_RTTMananger(pRTT_Tag, iTextureWidth, iTextureHeight)))
+	if (FAILED(pInstance->Ready_RTTMananger(pRTT_Tag)))
 		Safe_Release(pInstance);
 
 	return pInstance;
+}
+
+CRTT* CRTTMananger::Create_TextureFromResource(const _tchar* pRTT_Tag, ComPtr<ID3D12Resource> pResource)
+{
+	CRTT* pRTT = CRTT::Create(pRTT_Tag,pResource);
+
+	return pRTT;
 }
 
 void CRTTMananger::Free()
 {
 	for (auto& iter : m_mapRTT)
 	{
-		Safe_Release(iter.second);
+		for (auto& iter_ : iter.second)
+		{
+			Safe_Release(iter_);
+		}
+		iter.second.clear();
 	}
 	m_mapRTT.clear();
 }

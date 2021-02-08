@@ -198,3 +198,10 @@ struct TEMP_
 {
 	int i;
 };
+
+
+typedef struct tagRenderTarget
+{
+	ID3D12Resource*		pTarget;
+	XMFLOAT4			fClear_Color;
+}RENDERTARGER;

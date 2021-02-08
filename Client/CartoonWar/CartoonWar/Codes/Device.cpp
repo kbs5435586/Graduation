@@ -661,20 +661,7 @@ HRESULT CDevice::Create_View()
 		m_pDevice->CreateDepthStencilView(m_pDSBuffer.Get(), nullptr, hDsvHandle);
 	}
 	
-	// ConstantBufferView
-	{
-		m_iSRVHeapSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		D3D12_DESCRIPTOR_HEAP_DESC tHeap_Desc = {};
-		tHeap_Desc.NumDescriptors = 1;
-		tHeap_Desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		tHeap_Desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		tHeap_Desc.NodeMask = 0;
-		if (FAILED(m_pDevice->CreateDescriptorHeap(&tHeap_Desc, IID_PPV_ARGS(&m_pCbv))))
-			return E_FAIL;
 
-		D3D12_CPU_DESCRIPTOR_HANDLE hCbvHeap = m_pCbv->GetCPUDescriptorHandleForHeapStart();
-
-	}
 
 	return S_OK;
 }
@@ -689,8 +676,6 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 	m_pCmdListGraphic->RSSetViewports(1, &m_tViewPort);
 	m_pCmdListGraphic->RSSetScissorRects(1, &m_tScissorRect);
 
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
-
 	// Indicate that the back buffer will be used as a render target.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -702,13 +687,8 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE		hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle (m_pDSV->GetCPUDescriptorHandleForHeapStart());
 
-	hRTVHandle.ptr += (m_iCurTargetIdx * m_iRTVHeapSize);
-	m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
-	m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
-	m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, nullptr);
+
 	ClearDummyDesc(0);
 }
 

@@ -28,7 +28,6 @@ private:
 private:
 	ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pDSV = nullptr;
-	ComPtr<ID3D12DescriptorHeap>				m_pCbv = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pInitDescriptor = nullptr;
 public:
 	ComPtr<ID3D12Device>						GetDevice() { return m_pDevice; }
@@ -39,8 +38,6 @@ public:
 	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
 	ComPtr< ID3D12DescriptorHeap>				GetDSV() { return m_pDSV; }
 	ComPtr<IDXGISwapChain4>						GetSwapChain() { return m_pSwapChain; }
-public:
-	ComPtr<ID3D12DescriptorHeap>				GetConstantBufferDescHeap() { return m_pCbv; }
 
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
