@@ -106,11 +106,11 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
-	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 1.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(0.f, 0.f, 0.f, 1.f);
+	tLightInfo.vLightPos = _vec4(100.f, 0.f, 0.f, 1.f);
 
 
 	tLightInfo.fRange = 100.f;

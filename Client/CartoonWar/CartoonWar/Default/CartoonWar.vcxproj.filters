@@ -235,6 +235,9 @@
     <Filter Include="97. Engine\99. Base">
       <UniqueIdentifier>{f7ae0d71-f621-472b-8290-bfc15807a849}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96. ShaderFiles\00. Default">
+      <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -653,10 +656,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
-      <Filter>96. ShaderFiles</Filter>
+      <Filter>96. ShaderFiles\00. Default</Filter>
     </FxCompile>
-    <FxCompile Include="..\ShaderFiles\Funtion.hlsl">
-      <Filter>96. ShaderFiles</Filter>
+    <FxCompile Include="..\ShaderFiles\Function.hlsl">
+      <Filter>96. ShaderFiles\00. Default</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

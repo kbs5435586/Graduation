@@ -126,11 +126,11 @@ typedef struct tagProjection_Desc
 
 typedef struct tagMainPass
 {
-	XMMATRIX	matWorld;
-	XMMATRIX	matView;
-	XMMATRIX	matProj;
-	XMMATRIX	matWV;
-	XMMATRIX	matWVP;
+	XMFLOAT4X4	matWorld;
+	XMFLOAT4X4	matView;
+	XMFLOAT4X4	matProj;
+	XMFLOAT4X4	matWV;
+	XMFLOAT4X4	matWVP;
 }MAINPASS;
 
 typedef struct tagMaterial

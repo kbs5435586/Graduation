@@ -31,7 +31,7 @@ tagLightColor Calculate_Light(int _iLightIdx, float3 _vViewNormal, float3 _vView
 	float3	vReflect = normalize(vViewLightDir + 2 * (dot(-vViewLightDir, _vViewNormal) * _vViewNormal));
 	float	vEye = normalize(_vViewPos);
 	fSpecularPower = saturate(dot(-vEye, vReflect));
-	fSpecularPower = pow(fSpecularPower, 20);
+	fSpecularPower = pow(fSpecularPower,10);
 
 	tColor.vDiffuse = fDiffusePower * tLight.tColor.vDiffuse * fRatio;
 	tColor.vSpecular = fSpecularPower * tLight.tColor.vSpecular * fRatio;
