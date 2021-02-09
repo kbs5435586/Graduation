@@ -11,10 +11,10 @@
     <Filter Include="01. Object">
       <UniqueIdentifier>{854fc08a-059e-4129-b2ad-60bc0b9fdd8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Server">
+    <Filter Include="97. Server">
       <UniqueIdentifier>{cb86ae62-cd99-415d-841c-808d6652487b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99. Global">
+    <Filter Include="98. Header">
       <UniqueIdentifier>{68debbfc-a50e-427b-bcd3-d3ef0ba03f73}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -26,24 +26,44 @@
       <Filter>01. Object</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
-      <Filter>98. Server</Filter>
+      <Filter>97. Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="protocol.h">
-      <Filter>98. Server</Filter>
+      <Filter>97. Server</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>99. Global</Filter>
+      <Filter>98. Header</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>01. Object</Filter>
     </ClInclude>
     <ClInclude Include="Struct.h">
-      <Filter>99. Global</Filter>
+      <Filter>98. Header</Filter>
     </ClInclude>
     <ClInclude Include="Server.h">
-      <Filter>98. Server</Filter>
+      <Filter>97. Server</Filter>
     </ClInclude>
+    <ClInclude Include="lauxlib.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="lua.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="lua.hpp">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="luaconf.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="lualib.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lua54.lib">
+      <Filter>리소스 파일</Filter>
+    </Library>
   </ItemGroup>
 </Project>

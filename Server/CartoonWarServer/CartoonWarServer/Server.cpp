@@ -252,7 +252,7 @@ void Server::enter_game(int user_id, char name[])
         if (user_id == i) // 데드락 회피용
             continue;
 
-        if (false == is_near(user_id, i))
+        if (true == is_near(user_id, i))
         {
             //g_clients[i].m_cLock.lock();
             if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임

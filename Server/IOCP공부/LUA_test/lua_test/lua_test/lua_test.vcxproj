@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{db526885-aa34-400c-88b5-c6a6082ea3bc}</ProjectGuid>
-    <RootNamespace>CartoonWarServer</RootNamespace>
+    <ProjectGuid>{70ce7049-8ec7-4a65-a053-7ba861c1be95}</ProjectGuid>
+    <RootNamespace>luatest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,9 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="test1.cpp" />
+    <ClCompile Include="test2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lauxlib.h" />
@@ -149,11 +148,6 @@
     <ClInclude Include="lua.hpp" />
     <ClInclude Include="luaconf.h" />
     <ClInclude Include="lualib.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="protocol.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="Struct.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lua54.lib" />
