@@ -7,6 +7,7 @@
 #include "KeyManager.h"
 #include "FBXLoader.h"
 
+#include "MRT.h"
 #include "Base.h"
 class CComponent;
 class CGameObject;
@@ -49,6 +50,8 @@ public://Key_Manager
 	_bool						Key_Up(DWORD dwKey);
 	_bool						Key_Pressing(DWORD dwKey);
 	_bool						Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey);
+public:
+	CScene*						Get_Scene(){return m_pScene;}
 public:	
 	HRESULT						Clear_Layers(const _uint& iSceneID);
 	static void					Release_Engine();

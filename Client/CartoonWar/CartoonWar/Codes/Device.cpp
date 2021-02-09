@@ -147,11 +147,11 @@ HRESULT CDevice::Initialize()
 
 	if (m_IsHDRSupport)
 	{
-		if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
-			return E_FAIL;
+		//if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
+		//	m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
+		//	m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
+		//	m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
+		//	return E_FAIL;
 	}
 
 	/*if (FAILED(Create_View()))

@@ -241,6 +241,12 @@
     <Filter Include="97. Engine\01. Utility\05. RenderToTexture\02. MRT">
       <UniqueIdentifier>{6254b08b-1cc1-4e10-b054-a05060ddb759}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\01. UI_Diffuse">
+      <UniqueIdentifier>{8e8b7fbb-a5f3-47fe-a2cd-7af55099a752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ShaderFiles\01. Defferd">
+      <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -450,6 +456,12 @@
     <ClInclude Include="MRT.h">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Diffuse.h">
+      <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI.h">
+      <Filter>02. GameObject\97. UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -633,6 +645,12 @@
     <ClCompile Include="MRT.cpp">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Diffuse.cpp">
+      <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI.cpp">
+      <Filter>02. GameObject\97. UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -661,6 +679,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Defferd_Diffuse.hlsl">
+      <Filter>96. ShaderFiles\01. Defferd</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

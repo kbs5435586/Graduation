@@ -3,8 +3,10 @@
 #include "Management.h"
 // GameObject
 #include "Logo.h"
+#include "UI_Diffuse.h"
 // New Scene
 #include "Scene_Stage.h"
+
 
 unsigned __stdcall ResourceLoadThread(void* pArguments)
 {
@@ -35,6 +37,7 @@ CScene_Logo::CScene_Logo()
 
 HRESULT CScene_Logo::Ready_Scene()
 {
+	m_eSceneID = SCENEID::SCENE_LOGO;
 	InitializeCriticalSection(&m_tCritical_Section);
 	m_hThread_Handle = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
 
@@ -105,7 +108,8 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Logo", CLogo::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Diffuse", CUI_Diffuse::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -131,7 +135,8 @@ HRESULT CScene_Logo::Ready_Layer(CManagement* pManagement)
 {
 	if (FAILED(Ready_Layer_Logo(L"Layer_Logo", pManagement)))
 		return E_FAIL;
-
+	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -144,6 +149,13 @@ HRESULT CScene_Logo::Ready_Light(CManagement* pManagement)
 HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Logo", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -261,6 +273,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		CShader::Create(L"../ShaderFiles/Shader_Toon.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Defferd_Diffuse",
+		CShader::Create(L"../ShaderFiles/Shader_Defferd_Diffuse.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	return S_OK;
 }
 CScene_Logo* CScene_Logo::Create()

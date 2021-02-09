@@ -59,6 +59,10 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 void CMainApp::Render_MainApp()
 {
+	if (m_pManagement->Get_Scene()->Get_SceneID() == SCENEID::SCENE_STAGE)
+	{
+		_int i = 0;
+	}
 	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
 
 	CDevice::GetInstance()->Render_Begin(pfClearColor);

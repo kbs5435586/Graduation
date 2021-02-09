@@ -30,7 +30,7 @@ HRESULT CMRT::Ready_MRT(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)
 		UINT iSrcRange = 1;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-		hDescHandle.ptr += iRTVSize * i;
+		hDescHandle.ptr += (iRTVSize * i);
 
 		ComPtr<ID3D12DescriptorHeap> pRTVHeap = m_tArr[i].pRtt->GetRTV();
 		D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pRTVHeap->GetCPUDescriptorHandleForHeapStart();
@@ -46,7 +46,7 @@ void CMRT::OM_Set(_uint iCnt, _uint iOffset)
 {
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	hRTVHandle.ptr += iRTVSize * iOffset;
+	hRTVHandle.ptr += (iRTVSize * iOffset);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDsTex->GetDSV()->GetCPUDescriptorHandleForHeapStart();
 
@@ -87,7 +87,7 @@ void CMRT::Clear(_uint iRtIdx)
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
 
-	hRTVHandle.ptr += iRTVSize * iRtIdx;
+	hRTVHandle.ptr += (iRTVSize * iRtIdx);
 	float arrClearColor[4] = {
 		  m_tArr[iRtIdx].vClear_Color.x
 		, m_tArr[iRtIdx].vClear_Color.y

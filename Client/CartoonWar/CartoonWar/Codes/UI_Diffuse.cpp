@@ -1,58 +1,53 @@
 #include "framework.h"
-#include "UI_Loading.h"
+#include "UI_Diffuse.h"
 #include "Management.h"
 
-
-CUI_Loading::CUI_Loading()
+CUI_Diffuse::CUI_Diffuse()
+	: CUI()
 {
 }
 
-CUI_Loading::CUI_Loading(const CUI_Loading& rhs)
+CUI_Diffuse::CUI_Diffuse(const CUI_Diffuse& rhs)
 	: CUI(rhs)
 {
-
 }
 
-HRESULT CUI_Loading::Ready_Prototype()
+HRESULT CUI_Diffuse::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Loading::Ready_GameObject(void* pArg)
+HRESULT CUI_Diffuse::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-
 	m_fX = 50.0f;
 	m_fY = 50.0f;
 
 	m_fSizeX = 100.0f;
 	m_fSizeY = 100.0f;
-
 	return S_OK;
 }
 
-_int CUI_Loading::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Diffuse::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Loading::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Diffuse::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-
 	if (m_pRendererCom != nullptr)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 			return E_FAIL;
 	}
-
 	return _int();
 }
 
-void CUI_Loading::Render_GameObject()
+void CUI_Diffuse::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -76,8 +71,9 @@ void CUI_Loading::Render_GameObject()
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
+
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -85,21 +81,21 @@ void CUI_Loading::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Loading::CreateInputLayout()
+HRESULT CUI_Diffuse::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, SHADER_TYPE::SHADER_DEFFERD)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CUI_Loading* CUI_Loading::Create()
+CUI_Diffuse* CUI_Diffuse::Create()
 {
-	CUI_Loading* pInstance = new CUI_Loading();
+	CUI_Diffuse* pInstance = new CUI_Diffuse();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -107,9 +103,9 @@ CUI_Loading* CUI_Loading::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
+CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg)
 {
-	CUI_Loading* pInstance = new CUI_Loading();
+	CUI_Diffuse* pInstance = new CUI_Diffuse();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -117,7 +113,7 @@ CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Loading::Free()
+void CUI_Diffuse::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -129,7 +125,7 @@ void CUI_Loading::Free()
 	CGameObject::Free();
 }
 
-HRESULT CUI_Loading::Ready_Component()
+HRESULT CUI_Diffuse::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -150,7 +146,7 @@ HRESULT CUI_Loading::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Texture");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Defferd_Diffuse");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

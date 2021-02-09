@@ -51,7 +51,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	return S_OK;
 }
 
-HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType)
+HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, SHADER_TYPE eShaderType)
 {
 	m_tPipeline.InputLayout = { vecDesc.data(), (_uint)vecDesc.size() };
 	m_tPipeline.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get();
@@ -78,11 +78,29 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 
 
 	m_tPipeline.SampleMask = UINT_MAX;
-	m_tPipeline.NumRenderTargets = 1;
+	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	m_tPipeline.SampleDesc.Count = 1;
 
-	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-	m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+	switch (eShaderType)
+	{
+	case SHADER_TYPE::SHADER_FORWARD:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+		break;
+	case SHADER_TYPE::SHADER_DEFFERD:
+		m_tPipeline.NumRenderTargets = 3;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		break;
+	case SHADER_TYPE::SHADER_LIGHT:
+		m_tPipeline.NumRenderTargets = 2;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	}
+
+
 	m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&m_tPipeline, IID_PPV_ARGS(&m_pPipeLineState))))

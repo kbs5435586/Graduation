@@ -6,13 +6,14 @@ class CBuffer_RectTex;
 class CShader;
 class CTexture;
 
-class CUI_Loading :
+
+class CUI_Diffuse :
     public CUI
 {
 private:
-    CUI_Loading();
-    CUI_Loading(const CUI_Loading& rhs);
-    virtual ~CUI_Loading() = default;
+    CUI_Diffuse();
+    CUI_Diffuse(const CUI_Diffuse& rhs);
+    virtual ~CUI_Diffuse() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +23,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Loading*						Create();
+	static CUI_Diffuse*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -33,6 +34,5 @@ private:
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
-
 };
 
