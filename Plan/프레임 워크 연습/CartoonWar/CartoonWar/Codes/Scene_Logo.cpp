@@ -189,7 +189,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
 	//오크 02
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc",
 	//	m_pTextureCom = CTexture::Create(L"Texture_Orc", L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_02/Textures/Orc_02_Armor_Albedo.tga"))))
-	//	return E_FAIL;
+	//	return E_FAIL;q
 
 	//오크 03
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc",
@@ -270,8 +270,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 	return S_OK;
 }
+
+
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 {
+	//텍스쳐 넣을때 항상 이름 잘 확인하자
+
 	//DDS
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks",
 		CTexture::Create(L"../Bin/Resource/Texture/Bricks/bricks%d.dds", 3, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
@@ -286,10 +290,20 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//	return E_FAIL;
 
 	//TGA
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
-		CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+	//	return E_FAIL;
+
+
+	//오류 발생안할때
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Brick",
+		CTexture::Create(L"../Bin/Resource/Texture/Bricks/bricks%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 		return E_FAIL;
 
+	//오류 발생할때
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Brick",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Bricks/bricks%d.dds", 0, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
