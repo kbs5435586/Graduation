@@ -42,7 +42,7 @@ public://ConstantBuffer_Mananger
 public://RTT_Manager
 	HRESULT						Ready_RTT_Manager();
 	void                        Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
-	CRTT*						Get_RTT(const _tchar* pRTT_Tag);
+	CMRT*						Get_RTT(const _uint& iIdx);
 public://Key_Manager
 	void						Key_Update();
 	_bool						Key_Down(DWORD dwKey);

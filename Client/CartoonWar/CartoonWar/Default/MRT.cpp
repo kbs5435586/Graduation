@@ -113,5 +113,9 @@ CMRT* CMRT::Create(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)
 
 void CMRT::Free()
 {
+	for (auto& iter : m_tArr)
+	{
+		Safe_Release(iter.pRtt);
+	}
 	Safe_Release(m_pDsTex);
 }

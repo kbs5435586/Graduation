@@ -55,6 +55,7 @@ private:
 public:
 	DXGI_FORMAT									GetSwapChainFormat(_int iIdx) { return m_swapChainFormats[iIdx]; }
 	_int										GetBitDepth() { return (_int)m_CurrentSwapChainBitDepth; }
+	_uint										GetSwapChainIdx() { return m_iCurTargetIdx; }
 private:
 	HANDLE										m_hFenceEvent = 0;
 	_uint										m_iFenceValue = 0;

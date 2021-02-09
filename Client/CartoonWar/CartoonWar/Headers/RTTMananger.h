@@ -14,7 +14,7 @@ private:
 public:
     HRESULT                                 Ready_RTTMananger();
     void                                    Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
-    CRTT*                                   Get_RTT(const _tchar* pRTT_Tag);
+    CMRT*                                   Get_RTT(const _uint& iIdx) { return m_vecMRT[iIdx]; }
 public:
     static CRTTMananger*                    Create();
     virtual void                            Free();

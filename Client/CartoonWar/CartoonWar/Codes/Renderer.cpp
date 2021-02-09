@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Renderer.h"
 #include "GameObject.h"
+#include "Management.h"
+#include "MRT.h"
 
 CRenderer::CRenderer()
 {
@@ -10,6 +12,7 @@ CRenderer::CRenderer()
 HRESULT CRenderer::Ready_Renderer()
 {
 
+	
 	return S_OK;
 }
 
@@ -30,11 +33,25 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eGroup, CGameObject* pGameObject)
 
 HRESULT CRenderer::Render_RenderGroup()
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+	pManagement->AddRef();
+
+
+	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
+
 	Render_Priority();
 	Render_NoneAlpha();
 	Render_Alpha();
 	Render_UI();
 
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+
+	Safe_Release(pManagement);
 	return S_OK;
 }
 

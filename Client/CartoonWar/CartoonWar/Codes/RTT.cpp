@@ -69,7 +69,7 @@ HRESULT CRTT::CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTe
 HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, 
 	const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
 {
-
+	lstrcpy(m_pTag, pTag);
 	m_tDesc.MipLevels = 1;
 	m_tDesc.Format = _eFormat;
 	m_tDesc.Width = _iWidth;
@@ -79,7 +79,13 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	m_tDesc.SampleDesc.Count = 1;
 	m_tDesc.SampleDesc.Quality = 0;
 	m_tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	m_tDesc.Layout;
+	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	m_tDesc.SampleDesc.Count = 1;
+	m_tDesc.SampleDesc.Quality = 0;
+	m_tDesc.Alignment = 0;
+	m_tDesc.DepthOrArraySize = 1;
+	m_tDesc.MipLevels = 1;
+
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;
 	D3D12_RESOURCE_STATES eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
@@ -98,16 +104,10 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		pValue = &depthOptimizedClearValue;
 	}
 
-	HRESULT hr = CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&_HeapProperty,
-		_eHeapFlag,
-		&m_tDesc,
-		eResStates,
-		pValue,
-		IID_PPV_ARGS(&m_pTexture));
 
-	if (FAILED(hr))
-		assert(nullptr);
+	if(FAILED(CDevice ::GetInstance()->GetDevice()->
+		CreateCommittedResource(&_HeapProperty, _eHeapFlag, &m_tDesc, eResStates, pValue, IID_PPV_ARGS(&m_pTexture))))
+		return E_FAIL;
 
 	// Texture 甫 包府且 View 积己(SRV, RTV, DSV)
 	if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
@@ -117,7 +117,8 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		tDesc.NumDescriptors = 1;
 		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		tDesc.NodeMask = 0;
-		hr = CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV));
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV))))
+			return E_FAIL;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
 		CDevice::GetInstance()->GetDevice()->CreateDepthStencilView(m_pTexture.Get(), nullptr, hDSVHandle);

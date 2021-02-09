@@ -20,6 +20,8 @@ public:
     void                            Clear();
     void                            Clear(_uint iRtIdx);
 public:
+    tRtt*                           Get_RTT(_uint iIdx){return &m_tArr[iIdx]; }
+public:
     static CMRT*                    Create(_uint iCnt, tRtt* arrRT, CRTT* pDsTex);
 private:
     virtual void                    Free();
@@ -28,5 +30,7 @@ private:
     _uint                           m_iRTCnt = 0;
     CRTT*                           m_pDsTex= nullptr;
     ComPtr<ID3D12DescriptorHeap>    m_pRTV;
+private:
+
 };
 

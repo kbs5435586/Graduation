@@ -24,10 +24,11 @@ public:
     static CRTT*                    Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                             , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
                                             , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr = _vec4());
+    const _tchar*                   Get_MRT_Tag() { return m_pTag; }
+public:
 private:
     virtual void                    Free();
 private:
-   // ScratchImage                    m_Image;
     D3D12_RESOURCE_DESC             m_tDesc;
     ComPtr<ID3D12Resource>		    m_pTexture;
     ComPtr<ID3D12DescriptorHeap>    m_pSRV;

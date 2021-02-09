@@ -87,10 +87,11 @@ void CManagement::Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap*
 	m_pRTT_Mananger->Set_RenderTarget(pRTT_Tag, pDsv);
 }
 
-CRTT* CManagement::Get_RTT(const _tchar* pRTT_Tag)
+CMRT* CManagement::Get_RTT(const _uint& iIdx)
 {
-	return m_pRTT_Mananger->Get_RTT(pRTT_Tag);
+	return m_pRTT_Mananger->Get_RTT(iIdx);
 }
+
 
 void CManagement::Key_Update()
 {
