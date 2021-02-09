@@ -25,17 +25,8 @@
     <Filter Include="97. Engine\00. System\00. Device">
       <UniqueIdentifier>{7e57608a-7263-47df-8907-b3438696f217}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\00. System\01. Frame">
-      <UniqueIdentifier>{9d7a81a1-a847-4529-bc15-930336ef453c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\00. System\02. Timer">
       <UniqueIdentifier>{bf61ff41-e550-445c-acd3-4bc2704ba501}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\00. System\01. Frame\00. Frame">
-      <UniqueIdentifier>{e1f5e810-2406-4343-b57f-938fc2017f49}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\00. System\01. Frame\01. Frame_Manager">
-      <UniqueIdentifier>{d88702df-4d99-42c8-b498-8670630542ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\00. System\02. Timer\00. Timer">
       <UniqueIdentifier>{d1bfa901-b671-42f0-b8d3-b80682365b6c}</UniqueIdentifier>
@@ -237,6 +228,18 @@
     </Filter>
     <Filter Include="96. ShaderFiles\00. Default">
       <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\00. System\01. Frame">
+      <UniqueIdentifier>{9d7a81a1-a847-4529-bc15-930336ef453c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\00. System\01. Frame\00. Frame">
+      <UniqueIdentifier>{e1f5e810-2406-4343-b57f-938fc2017f49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\00. System\01. Frame\01. Frame_Manager">
+      <UniqueIdentifier>{d88702df-4d99-42c8-b498-8670630542ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\05. RenderToTexture\02. MRT">
+      <UniqueIdentifier>{6254b08b-1cc1-4e10-b054-a05060ddb759}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -444,6 +447,9 @@
     <ClInclude Include="..\Headers\UI_Loading.h">
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClInclude>
+    <ClInclude Include="MRT.h">
+      <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -623,6 +629,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Loading.cpp">
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="MRT.cpp">
+      <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

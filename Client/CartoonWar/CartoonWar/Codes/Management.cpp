@@ -77,9 +77,9 @@ HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CO
 	return m_pConstant_Buffer_Manager->Create_Constant_Buffer(iBufferSize, iMaxCnt, eType, IsGlobal);
 }
 
-HRESULT CManagement::Add_RenderToTexture(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight)
+HRESULT CManagement::Ready_RTT_Manager()
 {
-	return m_pRTT_Mananger->Ready_RTTMananger(pRTT_Tag, iTextureWidth, iTextureHeight);
+	return m_pRTT_Mananger->Ready_RTTMananger();
 }
 
 void CManagement::Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv)

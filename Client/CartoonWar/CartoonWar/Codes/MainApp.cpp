@@ -39,6 +39,9 @@ HRESULT CMainApp::Ready_MainApp()
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(TEMP_), 1, CONST_REGISTER::b3, true)))
 		return E_FAIL;
 
+	if (FAILED(m_pManagement->Ready_RTT_Manager()))
+		return E_FAIL;
+
 
 
 	srand(unsigned(time(NULL)));

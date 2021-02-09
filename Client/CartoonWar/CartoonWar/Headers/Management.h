@@ -40,7 +40,7 @@ public://ConstantBuffer_Mananger
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }
 	vector<CConstant_Buffer*>	GetConstantBuffer() { return m_pConstant_Buffer_Manager->GetConstantBuffer(); }
 public://RTT_Manager
-	HRESULT						Add_RenderToTexture(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight);
+	HRESULT						Ready_RTT_Manager();
 	void                        Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
 	CRTT*						Get_RTT(const _tchar* pRTT_Tag);
 public://Key_Manager

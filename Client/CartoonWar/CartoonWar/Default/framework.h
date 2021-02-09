@@ -58,6 +58,7 @@ using namespace std;
 #pragma comment(lib, "DInput8.lib")
 #pragma comment(lib, "DXGuid.lib")
 
+
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex_debug.lib")
 #else
@@ -71,13 +72,9 @@ using namespace std;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
-
 using namespace DirectX::SimpleMath;
 
-
-
 #include "d3dx12.h"
-
 #include "Define.h"
 #include "Enum.h"
 #include "Extern.h"
@@ -91,6 +88,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
+
 
 
 
