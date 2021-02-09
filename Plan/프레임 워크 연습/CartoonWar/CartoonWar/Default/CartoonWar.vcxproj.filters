@@ -655,8 +655,11 @@
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\ShaderFiles\Funtion.hlsl">
-      <Filter>96. ShaderFiles</Filter>
-    </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Function.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="memojang.txt">
+      <Filter>99. Default</Filter>
+    </Text>
   </ItemGroup>
 </Project>

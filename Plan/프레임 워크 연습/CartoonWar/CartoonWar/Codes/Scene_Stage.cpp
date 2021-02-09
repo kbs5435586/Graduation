@@ -94,8 +94,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
 		return E_FAIL;
 
