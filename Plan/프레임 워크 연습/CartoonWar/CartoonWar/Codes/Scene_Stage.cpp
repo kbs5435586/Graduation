@@ -90,14 +90,25 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
+
+
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
-		return E_FAIL;
+
+	//_vec3 vPosOne = { 500.f ,500.f, 0.f };
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosOne)))
+	//	return E_FAIL;
+	//_vec3 vPosTwo = { 10.f ,10.f, 0.f };
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo)))
+	//	return E_FAIL;
+	//
+	//_vec3 vPosThree = { 10.f ,0.f, 10.f };
+	//if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement, &vPosThree)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -173,18 +184,18 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement)
+HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement, void* pArg)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc01", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
+HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg)
 {
-
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
 		return E_FAIL;
 
 	return S_OK;

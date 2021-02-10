@@ -24,10 +24,12 @@ HRESULT CUI_Loading::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-
-
-	m_fX = 50.0f;
-	m_fY = 50.0f;
+	
+	
+	//m_fX = 50.0f;
+	//m_fY = 50.0f;
+	m_fX = ((_vec3*)pArg)->x;
+	m_fY = ((_vec3*)pArg)->y;
 
 	m_fSizeX = 100.0f;
 	m_fSizeY = 100.0f;
