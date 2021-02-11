@@ -26,33 +26,33 @@ void Server::recv_packet_construct(int user_id, int io_byte)
 {
     int rest_byte = io_byte; // 이만큼 남았다, 이만큼 처리를 마저 해줘야한다
 
-    char* p = g_clients[user_id].m_recv_over.io_buf;// 버퍼 중에서 어느 부분을 처리하고 있다, 패킷을 처리할수록 처리된 패킷 다음 데이터에 엑세스 해야함
+    char* p = g_clients[user_id]->m_recv_over.io_buf;// 버퍼 중에서 어느 부분을 처리하고 있다, 패킷을 처리할수록 처리된 패킷 다음 데이터에 엑세스 해야함
     //우리가 처리해야할 데이터에 대한 포인터, 처음 시작하는거니까 io_buf에 들어있는 데이터 맨 앞부터 시작해야함
     int packet_size = 0;
 
-    if (0 != g_clients[user_id].m_prev_size) // 이전에 받아놓은 데이터가 있을때
-        packet_size = g_clients[user_id].m_packet_buf[0];
+    if (0 != g_clients[user_id]->m_prev_size) // 이전에 받아놓은 데이터가 있을때
+        packet_size = g_clients[user_id]->m_packet_buf[0];
 
     while (rest_byte > 0) // 처리해야할 데이터가 남아있을때
     {
         if (0 == packet_size) // 지금 우리가 처리하는 패킷이 처음일때 -> 포인터를 패킷 데이터 맨 앞을 가리키게 설정
             packet_size = *p;
 
-        if (packet_size <= rest_byte + g_clients[user_id].m_prev_size) // 지난번에 받은거랑 나머지랑 합쳐서 패킷 사이즈보다 크거나 같으면 패킷 완성
+        if (packet_size <= rest_byte + g_clients[user_id]->m_prev_size) // 지난번에 받은거랑 나머지랑 합쳐서 패킷 사이즈보다 크거나 같으면 패킷 완성
         {
-            memcpy(g_clients[user_id].m_packet_buf + g_clients[user_id].m_prev_size, p, packet_size - g_clients[user_id].m_prev_size); // p에 있는걸 packet_size만큼 m_packet_buf에 복사
+            memcpy(g_clients[user_id]->m_packet_buf + g_clients[user_id]->m_prev_size, p, packet_size - g_clients[user_id]->m_prev_size); // p에 있는걸 packet_size만큼 m_packet_buf에 복사
             
-            p += packet_size - g_clients[user_id].m_prev_size;
-            rest_byte -= packet_size - g_clients[user_id].m_prev_size;
+            p += packet_size - g_clients[user_id]->m_prev_size;
+            rest_byte -= packet_size - g_clients[user_id]->m_prev_size;
             packet_size = 0;
-            process_packet(user_id, g_clients[user_id].m_packet_buf);
-            g_clients[user_id].m_prev_size = 0;
+            process_packet(user_id, g_clients[user_id]->m_packet_buf);
+            g_clients[user_id]->m_prev_size = 0;
         }
         else // 합쳐도 패킷 사이브보다 작다, 패킷 완성을 못시킨다, 나머지를 저장해놓고 끝내야함
         {
-            memcpy(g_clients[user_id].m_packet_buf + g_clients[user_id].m_prev_size, p, rest_byte); // p에 있는걸 rest_byte만큼 m_packet_buf에 복사
+            memcpy(g_clients[user_id]->m_packet_buf + g_clients[user_id]->m_prev_size, p, rest_byte); // p에 있는걸 rest_byte만큼 m_packet_buf에 복사
             // 혹시라도 2번이상 받았는데 패킷 완성 못시킨 경우가 생길 수 있으니 이전에 받아놓은 크기 뒤부터 복사해오게 설정
-            g_clients[user_id].m_prev_size += rest_byte;
+            g_clients[user_id]->m_prev_size += rest_byte;
             rest_byte = 0;
             p += rest_byte; // 처리 해줬으니 그만큼 포인터 위치 이동
         }
@@ -77,7 +77,7 @@ void Server::process_packet(int user_id, char* buf)
 	case CS_PACKET_MOVE:
 	{
 		cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
-        g_clients[user_id].m_move_time = packet->move_time;
+        g_clients[user_id]->m_move_time = packet->move_time;
 		do_move(user_id, packet->direction);
 	}
 	break;
@@ -97,8 +97,8 @@ void Server::send_login_ok_packet(int user_id)
 	packet.level = 0;
 	packet.size = sizeof(packet);
 	packet.type = SC_PACKET_LOGIN_OK;
-	packet.x = g_clients[user_id].m_x;
-	packet.y = g_clients[user_id].m_y;
+	packet.x = g_clients[user_id]->m_x;
+	packet.y = g_clients[user_id]->m_y;
 
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -116,13 +116,13 @@ void Server::send_packet(int user_id, void* packet)
 	overEx->wsabuf.buf = overEx->io_buf; // WSA버퍼에 IOCP버퍼 복사
 	overEx->wsabuf.len = buf[0]; // 버퍼 사이즈 설정
 
-	WSASend(g_clients[user_id].m_socket, &overEx->wsabuf, 1, NULL, 0, &overEx->over, NULL);
+	WSASend(g_clients[user_id]->m_socket, &overEx->wsabuf, 1, NULL, 0, &overEx->over, NULL);
 }
 
 void Server::do_move(int user_id, char direction)
 {
-    int x = g_clients[user_id].m_x;
-    int y = g_clients[user_id].m_y;
+    int x = g_clients[user_id]->m_x;
+    int y = g_clients[user_id]->m_y;
 
     switch (direction)
     {
@@ -150,23 +150,23 @@ void Server::do_move(int user_id, char direction)
         DebugBreak();
         exit(-1);
     }
-    g_clients[user_id].m_x = x;
-    g_clients[user_id].m_y = y;
+    g_clients[user_id]->m_x = x;
+    g_clients[user_id]->m_y = y;
 
-    g_clients[user_id].m_cLock.lock();
-    unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
+    g_clients[user_id]->m_cLock.lock();
+    unordered_set<int> old_viewlist = g_clients[user_id]->m_view_list;
     // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[user_id]->m_cLock.unlock();
     unordered_set<int> new_viewlist;
 
     for (auto& c : g_clients)
     {
-        if (ST_ACTIVE != c.second.m_status)
+        if (ST_ACTIVE != c.second->m_status)
             continue;
-        if (c.second.m_id == user_id)
+        if (c.second->m_id == user_id)
             continue;
-        if (true == is_near(c.second.m_id, user_id))
-            new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
+        if (true == is_near(c.second->m_id, user_id))
+            new_viewlist.insert(c.second->m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
 
     // send_move_packet 해주는 부분
@@ -178,29 +178,29 @@ void Server::do_move(int user_id, char direction)
         {
             send_enter_packet(user_id, new_vl); // 다른 객체들의 정보를 나에게 전송
 
-            g_clients[new_vl].m_cLock.lock();
-            if (0 == g_clients[new_vl].m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
+            g_clients[new_vl]->m_cLock.lock();
+            if (0 == g_clients[new_vl]->m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl]->m_cLock.unlock();
                 send_enter_packet(new_vl, user_id); // 나의 입장 정보를 다른 객체들에게 전송
             }
             else
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl]->m_cLock.unlock();
                 send_move_packet(new_vl, user_id); // 나의 움직임 정보를 다른 객체들에게 전송
             }
         }
         else // 이동 한 후에 새 시야에 보이는 플레이어인데 이전에도 보였던 애다
         {
-            g_clients[new_vl].m_cLock.lock();
-            if (0 != g_clients[new_vl].m_view_list.count(user_id))
+            g_clients[new_vl]->m_cLock.lock();
+            if (0 != g_clients[new_vl]->m_view_list.count(user_id))
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl]->m_cLock.unlock();
                 send_move_packet(new_vl, user_id);
             }
             else
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl]->m_cLock.unlock();
                 send_enter_packet(new_vl, user_id);
             }
         }
@@ -211,15 +211,15 @@ void Server::do_move(int user_id, char direction)
         if (0 == new_viewlist.count(old_vl)) // 새 시야범위에 old_vl 갯수가 0일때 = 시야 범위에서 벗어난 객체일때
         {
             send_leave_packet(user_id, old_vl); // 나에게 상대 객체가 나갔다 알림
-            g_clients[old_vl].m_cLock.lock();
-            if (0 != g_clients[old_vl].m_view_list.count(user_id))
+            g_clients[old_vl]->m_cLock.lock();
+            if (0 != g_clients[old_vl]->m_view_list.count(user_id))
             {
-                g_clients[old_vl].m_cLock.unlock();
+                g_clients[old_vl]->m_cLock.unlock();
                 send_leave_packet(old_vl, user_id); // 상대 객체에게 내가 나갔다 알림
             }
             else // 실수하기 쉬움, else에 뭐 없더라고 unlock 해줄것, 안그러면 조건 불만족시 락 안풀림
             {
-                g_clients[old_vl].m_cLock.unlock();
+                g_clients[old_vl]->m_cLock.unlock();
             }
         }
     }
@@ -231,21 +231,21 @@ void Server::send_move_packet(int user_id, int mover)
     packet.id = mover;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_MOVE;
-    packet.x = g_clients[mover].m_x;
-    packet.y = g_clients[mover].m_y; // 이동한 플레이어의 정보 담기
-    packet.move_time = g_clients[mover].m_move_time;
+    packet.x = g_clients[mover]->m_x;
+    packet.y = g_clients[mover]->m_y; // 이동한 플레이어의 정보 담기
+    packet.move_time = g_clients[mover]->m_move_time;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
 void Server::enter_game(int user_id, char name[])
 {
-    g_clients[user_id].m_cLock.lock(); // name, m_status 락
-    strcpy_s(g_clients[user_id].m_name, name);
-    g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
+    g_clients[user_id]->m_cLock.lock(); // name, m_status 락
+    strcpy_s(g_clients[user_id]->m_name, name);
+    g_clients[user_id]->m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
-    g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[user_id]->m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
+    g_clients[user_id]->m_cLock.unlock();
 
     for (int i = 0; i < MAX_USER; i++) 
     {
@@ -255,7 +255,7 @@ void Server::enter_game(int user_id, char name[])
         if (true == is_near(user_id, i))
         {
             //g_clients[i].m_cLock.lock();
-            if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
+            if (ST_ACTIVE == g_clients[i]->m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
                 if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
                 {
@@ -272,8 +272,8 @@ void Server::initalize_clients()
 {
     for (int i = 0; i < MAX_USER; ++i)
     {
-        g_clients[i].m_id = i; // 유저 등록
-        g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+        g_clients[i]->m_id = i; // 유저 등록
+        g_clients[i]->m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
     }
 }
 
@@ -283,14 +283,14 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
-    packet.x = g_clients[other_id].m_x;
-    packet.y = g_clients[other_id].m_y;
-    strcpy_s(packet.name, g_clients[other_id].m_name);
+    packet.x = g_clients[other_id]->m_x;
+    packet.y = g_clients[other_id]->m_y;
+    strcpy_s(packet.name, g_clients[other_id]->m_name);
     packet.o_type = O_PLAYER; // 다른 플레이어들의 정보 저장
 
-    g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_view_list.insert(other_id);
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[user_id]->m_cLock.lock();
+    g_clients[user_id]->m_view_list.insert(other_id);
+    g_clients[user_id]->m_cLock.unlock();
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -302,9 +302,9 @@ void Server::send_leave_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_LEAVE;
 
-    g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_view_list.erase(other_id);
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[user_id]->m_cLock.lock();
+    g_clients[user_id]->m_view_list.erase(other_id);
+    g_clients[user_id]->m_cLock.unlock();
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -312,31 +312,31 @@ void Server::send_leave_packet(int user_id, int other_id)
 void Server::disconnect(int user_id)
 {
     send_leave_packet(user_id, user_id); // 나 자신
-    g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
-    closesocket(g_clients[user_id].m_socket);
+    g_clients[user_id]->m_cLock.lock();
+    g_clients[user_id]->m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
+    closesocket(g_clients[user_id]->m_socket);
 
     for (auto& c : g_clients) // 연결되어있는 클라이언트들에게 떠난 클라가 나갔다고 알림
     {
-        if (user_id == c.second.m_id)
+        if (user_id == c.second->m_id)
             continue;
 
         //c.second.m_cLock.lock();
-        if (ST_ACTIVE == c.second.m_status)
+        if (ST_ACTIVE == c.second->m_status)
         {
-            send_leave_packet(c.second.m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
+            send_leave_packet(c.second->m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
         }
        // c.second.m_cLock.unlock();
     }
-    g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[user_id]->m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
+    g_clients[user_id]->m_cLock.unlock();
 }
 
 bool Server::is_near(int a, int b)
 {
-    if (abs(g_clients[a].m_x - g_clients[b].m_x) > VIEW_RADIUS) // abs = 절대값
+    if (abs(g_clients[a]->m_x - g_clients[b]->m_x) > VIEW_RADIUS) // abs = 절대값
         return false;
-    if (abs(g_clients[a].m_y - g_clients[b].m_y) > VIEW_RADIUS)
+    if (abs(g_clients[a]->m_y - g_clients[b]->m_y) > VIEW_RADIUS)
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
     // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
@@ -364,10 +364,10 @@ void Server::worker_thread()
             else
             {
                 recv_packet_construct(id, io_byte);
-                ZeroMemory(&g_clients[id].m_recv_over.over, sizeof(g_clients[id].m_recv_over.over)); // 오버랩 구조체 초기화
+                ZeroMemory(&g_clients[id]->m_recv_over.over, sizeof(g_clients[id]->m_recv_over.over)); // 오버랩 구조체 초기화
                 DWORD flags = 0;
-                WSARecv(g_clients[id].m_socket, &g_clients[id].m_recv_over.wsabuf, 1, NULL, // 패킷 처리랑 초기화 끝나면 다시 recv 호출
-                    &flags, &g_clients[id].m_recv_over.over, NULL);
+                WSARecv(g_clients[id]->m_socket, &g_clients[id]->m_recv_over.wsabuf, 1, NULL, // 패킷 처리랑 초기화 끝나면 다시 recv 호출
+                    &flags, &g_clients[id]->m_recv_over.over, NULL);
             }
         }
         break;
@@ -385,11 +385,11 @@ void Server::worker_thread()
             int user_id = -1;
             for (int i = 0; i < MAX_USER; ++i)
             {
-                lock_guard <mutex> guardLock{ g_clients[i].m_cLock }; // 함수에서 lock 할때 편함
+                lock_guard <mutex> guardLock{ g_clients[i]->m_cLock }; // 함수에서 lock 할때 편함
                 // 이 cLock를 락을 걸고 락가드가 속한 블록에서 빠져나갈때 unlock해주고 루프 돌때마다 unlock-lock 해줌
-                if (ST_FREE == g_clients[i].m_status) // 동접 객체 돌면서 새로 접속한애 id 부여
+                if (ST_FREE == g_clients[i]->m_status) // 동접 객체 돌면서 새로 접속한애 id 부여
                 {
-                    g_clients[i].m_status = ST_ALLOC;
+                    g_clients[i]->m_status = ST_ALLOC;
                     user_id = i;
                     break; // 할당 가능한 객체 있으면 break
                 }
@@ -403,19 +403,19 @@ void Server::worker_thread()
             {
                 CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), g_iocp, user_id, 0); // IOCP 객체에 소켓정도 등록 및 객체 초기화
 
-                g_clients[user_id].m_prev_size = 0; // 버퍼 0으로 초기화
-                g_clients[user_id].m_recv_over.function = FUNC_RECV; // 오버랩 구조체에 받는걸로 설정
-                ZeroMemory(&g_clients[user_id].m_recv_over.over, sizeof(g_clients[user_id].m_recv_over.over)); // 오버랩 구조체 초기화
-                g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
-                g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
-                g_clients[user_id].m_socket = clientSocket;
-                g_clients[user_id].m_x = rand() % WORLD_WIDTH;
-                g_clients[user_id].m_y = rand() % WORLD_HEIGHT;
-                g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
+                g_clients[user_id]->m_prev_size = 0; // 버퍼 0으로 초기화
+                g_clients[user_id]->m_recv_over.function = FUNC_RECV; // 오버랩 구조체에 받는걸로 설정
+                ZeroMemory(&g_clients[user_id]->m_recv_over.over, sizeof(g_clients[user_id]->m_recv_over.over)); // 오버랩 구조체 초기화
+                g_clients[user_id]->m_recv_over.wsabuf.buf = g_clients[user_id]->m_recv_over.io_buf; // WSA 버퍼 위치 설정
+                g_clients[user_id]->m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
+                g_clients[user_id]->m_socket = clientSocket;
+                g_clients[user_id]->m_x = rand() % WORLD_WIDTH;
+                g_clients[user_id]->m_y = rand() % WORLD_HEIGHT;
+                g_clients[user_id]->m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;
-                WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
-                    &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
+                WSARecv(clientSocket, &g_clients[user_id]->m_recv_over.wsabuf, 1, NULL,
+                    &flags, &g_clients[user_id]->m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
             }
             // 여기서부터 새로운 클라 소켓 accept
             clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); // 새로 받을 클라 소켓 
