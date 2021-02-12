@@ -88,8 +88,11 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
+
+	// 이상한 색 배경 > 이동해도 가까워지는 느낌은 안난다
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
+
 	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
