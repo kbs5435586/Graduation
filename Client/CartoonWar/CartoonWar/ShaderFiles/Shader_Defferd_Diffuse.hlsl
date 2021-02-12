@@ -39,6 +39,8 @@ PS_OUT PS_Main(VS_OUT vIn)
 
 
 	vOut.vTarget0 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget1 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget2 = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
 	
 

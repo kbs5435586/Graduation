@@ -81,8 +81,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	//UI
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Loading", CUI_Loading::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Diffuse", CUI_Diffuse::Create())))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Diffuse", CUI_Diffuse::Create())))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -190,8 +190,8 @@ HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pMan
 HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	//GameObject_UI_Diffuse
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;

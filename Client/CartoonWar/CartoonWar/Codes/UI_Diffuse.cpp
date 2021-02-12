@@ -27,8 +27,8 @@ HRESULT CUI_Diffuse::Ready_GameObject(void* pArg)
 	m_fX = 50.0f;
 	m_fY = 50.0f;
 
-	m_fSizeX = 100.0f;
-	m_fSizeY = 100.0f;
+	m_fSizeX = 200.f;
+	m_fSizeY = 200.f;
 	return S_OK;
 }
 
