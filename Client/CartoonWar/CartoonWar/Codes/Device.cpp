@@ -154,8 +154,8 @@ HRESULT CDevice::Initialize()
 		//	return E_FAIL;
 	}
 
-	/*if (FAILED(Create_View()))
-		return E_FAIL;*/
+	//if (FAILED(Create_View()))
+	//	return E_FAIL;
 	if (FAILED(Create_ViewPort()))
 		return E_FAIL;
 	if (FAILED(Create_RootSignature()))
@@ -698,7 +698,13 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
-
+	//D3D12_CPU_DESCRIPTOR_HANDLE		hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
+	//CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle(m_pDSV->GetCPUDescriptorHandleForHeapStart());
+	//
+	//hRTVHandle.ptr += (m_iCurTargetIdx * m_iRTVHeapSize);
+	//m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
+	//m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
+	//m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	ClearDummyDesc(0);
 

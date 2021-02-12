@@ -104,7 +104,7 @@ void COrc01::Render_GameObject()
 		return ;*/
 
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
-		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc");
+		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc_01");
 
 	Safe_Release(pManagement);
 }

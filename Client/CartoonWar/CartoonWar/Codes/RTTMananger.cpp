@@ -50,14 +50,14 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[0].pRtt == nullptr)
 			return E_FAIL;
 
-		arrRT[1].vClear_Color = { 0.f,1.f,0.f,0.f };
+		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[1].pRtt = CRTT::Create(L"NormalTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
 		if (arrRT[1].pRtt == nullptr)
 			return E_FAIL;
 
-		arrRT[2].vClear_Color = { 0.f,0.f,1.f,0.f };
+		arrRT[2].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[2].pRtt = CRTT::Create(L"PositionTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[2].vClear_Color);
@@ -71,12 +71,12 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 	// Light MRT
 	{
 		tRtt arrRT[8] = {};
-		arrRT[0].vClear_Color = { 0.f,0.f,0.f,0.f };
+		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[0].pRtt = CRTT::Create(L"DiffuseLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
 
-		arrRT[1].vClear_Color = { 0.f,0.f,0.f,0.f };
+		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[1].pRtt = CRTT::Create(L"SpecularLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);

@@ -25,7 +25,7 @@ HRESULT CLogo::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	
-	m_pTransformCom->Scaling(_vec3(2.f,2.f,1.f));
+	m_pTransformCom->Scaling(_vec3(1.f, 1.f,1.f));
 
 	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
@@ -43,7 +43,7 @@ _int CLogo::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
 		return -1;
 	return _int();
 }
@@ -57,16 +57,20 @@ void CLogo::Render_GameObject()
 
 
 	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	//_matrix matWorld = m_pTransformCom->Get_Matrix();
+	//_matrix matView = Matrix_::Identity();
+	//_matrix matProj = Matrix_::Identity();
+	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
-	_matrix matProj = Matrix_::Identity();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData(&tMainPass);
 
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), 
+		iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1),  TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 
 

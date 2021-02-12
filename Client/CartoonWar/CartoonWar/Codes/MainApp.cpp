@@ -59,10 +59,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 void CMainApp::Render_MainApp()
 {
-	if (m_pManagement->Get_Scene()->Get_SceneID() == SCENEID::SCENE_STAGE)
-	{
-		_int i = 0;
-	}
+
 	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
 
 	CDevice::GetInstance()->Render_Begin(pfClearColor);
@@ -119,9 +116,10 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eID)
 void CMainApp::Compute_Frame()
 {
 	++m_dwRenderCnt;
+	
 	if (m_fTimeAcc >= 1.f)
 	{
-		wsprintf(m_szFPS, L"FPS:%d", m_dwRenderCnt);
+		wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID()-1);
 		m_dwRenderCnt = 0;
 		m_fTimeAcc = 0.f;
 	}

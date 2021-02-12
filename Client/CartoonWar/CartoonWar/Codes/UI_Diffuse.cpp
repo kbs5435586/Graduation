@@ -59,7 +59,7 @@ void CUI_Diffuse::Render_GameObject()
 
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+ 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
 	matWorld._11 = m_fSizeX;
 	matWorld._22 = m_fSizeY;
@@ -72,8 +72,9 @@ void CUI_Diffuse::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
+	ComPtr<ID3D12DescriptorHeap>	pTemp = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pTemp.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 

@@ -17,6 +17,7 @@ private:
 	HRESULT					Ready_Prototype_Component(CManagement* pManagement);
 	HRESULT					Ready_Layer(CManagement* pManagement);
 	HRESULT					Ready_Light(CManagement* pManagement);
+
 private:
 	HRESULT					Ready_Add_Prototype_Texture(CManagement* pManagement);
 	HRESULT					Ready_Add_Prototype_Shader(CManagement* pManagement);
@@ -29,6 +30,7 @@ public:
 private:
 	HRESULT					Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement);
+
 public:
 	CRITICAL_SECTION		m_tCritical_Section = {};
 	HANDLE					m_hThread_Handle = {};

@@ -64,10 +64,6 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
-	CDevice::GetInstance()->GetCmdQueue().Get();
-	CDevice::GetInstance()->GetRenderTarget().Get();
-
-
 
 	return CScene::Update_Scene(fTimeDelta);
 }
@@ -155,7 +151,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pMan
 
 HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
