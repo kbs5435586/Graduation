@@ -164,7 +164,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		CBuffer_CubeTex::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain",
-		CBuffer_Terrain::Create(100,100))))
+		CBuffer_Terrain::Create(50,50))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
 		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp"))))

@@ -28,6 +28,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
+
+	// 원래 주석처리가 된거였나? > 원래 프레임워크를 확인해보자
 	//if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
 	//	return E_FAIL;
 

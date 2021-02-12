@@ -163,6 +163,7 @@ HRESULT CTerrain::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
+
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
