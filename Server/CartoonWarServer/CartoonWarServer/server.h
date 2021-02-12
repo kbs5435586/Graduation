@@ -8,7 +8,7 @@ public:
 	~Server();
 
 private:
-	map <int, ClientInfo*> g_clients;
+	map <int, ClientInfo> g_clients;
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
@@ -33,6 +33,10 @@ public:
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initalize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
+
+	void initalize_NPC();
+	void do_AI();
+	void random_move_npc(int npc_id);
 
 	bool is_near(int a, int b);
 };
