@@ -22,9 +22,11 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	_vec3 vPos = *(_vec3*)pArg;
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	
 	return S_OK;
 }
@@ -141,7 +143,7 @@ CGameObject* COrc01::Clone_GameObject(void* pArg)
 {
 	COrc01* pInstance = new COrc01(*this);
 
-	if (FAILED(pInstance->Ready_GameObject()))
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);

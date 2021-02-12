@@ -8,7 +8,7 @@ public:
 	~Server();
 
 private:
-	map <int, ClientInfo> g_clients;
+	map <int, ClientInfo*> g_clients;
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
