@@ -187,6 +187,7 @@
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Line.h" />
     <ClInclude Include="..\Headers\Logo.h" />
+    <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
@@ -214,10 +215,11 @@
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
+    <ClInclude Include="..\Headers\UI_Normal.h" />
+    <ClInclude Include="..\Headers\UI_Specular.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MRT.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -253,6 +255,7 @@
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Line.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
+    <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
@@ -277,9 +280,10 @@
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
+    <ClCompile Include="..\Codes\UI_Normal.cpp" />
+    <ClCompile Include="..\Codes\UI_Specular.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
-    <ClCompile Include="MRT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
@@ -318,11 +322,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\ShaderFiles\Shader_RTT.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -336,7 +335,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <None Include="..\ShaderFiles\Shader_Defferd_Diffuse.hlsl">
+    <None Include="..\ShaderFiles\Shader_Defferd.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

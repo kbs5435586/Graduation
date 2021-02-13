@@ -13,7 +13,13 @@ struct VS_OUT
 	float3 vViewPos		: POSITION;
 	float3 vNormal		: NORMAL;
 	float2 vTexUV		: TEXCOORD;
+};
 
+struct PS_OUT
+{
+	float4 vTarget0		: SV_TARGET0;
+	float4 vTarget1		: SV_TARGET1;
+	float4 vTarget2		: SV_TARGET2;
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -28,24 +34,20 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-float4 PS_Main(VS_OUT vIn) : SV_Target
+PS_OUT PS_Main(VS_OUT vIn)
 {
-	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	PS_OUT vOut = (PS_OUT)0;
 
 	float3 vInNormal = vIn.vNormal;
 	LIGHT  tLight = Calculate_Light(0, vInNormal, vIn.vViewPos);
 
-	//for (int i = 0; i < iNumLight; ++i)
-	//{
-	//	LIGHT tCurLight = Calculate_Light(i, vInNormal, vIn.vViewPos);
-	//	tLight.vDiffuse += tCurLight.vDiffuse;
-	//	tLight.vSpecular += tCurLight.vSpecular;
-	//	tLight.vAmbient += tCurLight.vAmbient;
-	//}
+	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
-	vOutColor.xyz = (tLight.vDiffuse.xyz*vOutColor.xyz) + (tLight.vSpecular.xyz) + (tLight.vAmbient.xyz*vOutColor.xyz);
-	vOutColor.w = 1.f;
-	return vOutColor;
 
+	vOut.vTarget0 = vOutColor;
+	vOut.vTarget1.xyz = vIn.vNormal;
+	vOut.vTarget2.xyz = (tLight.vSpecular.xyz) + (tLight.vAmbient.xyz * vOutColor.xyz);
+
+	return vOut;
 }
 

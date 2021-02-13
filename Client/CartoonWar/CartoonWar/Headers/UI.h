@@ -9,7 +9,7 @@ protected:
     virtual ~CUI() = default;
 protected:
     virtual CGameObject* Clone_GameObject(void* pArg) override;
-private:
+protected:
     virtual void		 Free();
 protected:
     _float	m_fX, m_fY, m_fSizeX, m_fSizeY;

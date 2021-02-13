@@ -1,23 +1,23 @@
 #include "framework.h"
-#include "UI_Diffuse.h"
+#include "UI_Specular.h"
 #include "Management.h"
 
-CUI_Diffuse::CUI_Diffuse()
+CUI_Specular::CUI_Specular()
 	: CUI()
 {
 }
 
-CUI_Diffuse::CUI_Diffuse(const CUI_Diffuse& rhs)
+CUI_Specular::CUI_Specular(const CUI_Specular& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Diffuse::Ready_Prototype()
+HRESULT CUI_Specular::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Diffuse::Ready_GameObject(void* pArg)
+HRESULT CUI_Specular::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -25,19 +25,19 @@ HRESULT CUI_Diffuse::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_fX = 100.f;
-	m_fY = 100.f;
+	m_fY = 300.f;
 
 	m_fSizeX = 200.f;
 	m_fSizeY = 200.f;
 	return S_OK;
 }
 
-_int CUI_Diffuse::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Specular::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Diffuse::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Specular::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -47,7 +47,7 @@ _int CUI_Diffuse::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Diffuse::Render_GameObject()
+void CUI_Specular::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -59,7 +59,7 @@ void CUI_Diffuse::Render_GameObject()
 
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
- 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
 	matWorld._11 = m_fSizeX;
 	matWorld._22 = m_fSizeY;
@@ -72,7 +72,7 @@ void CUI_Diffuse::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTemp = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTemp = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pTemp.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
@@ -82,7 +82,7 @@ void CUI_Diffuse::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Diffuse::CreateInputLayout()
+HRESULT CUI_Specular::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -94,9 +94,9 @@ HRESULT CUI_Diffuse::CreateInputLayout()
 	return S_OK;
 }
 
-CUI_Diffuse* CUI_Diffuse::Create()
+CUI_Specular* CUI_Specular::Create()
 {
-	CUI_Diffuse* pInstance = new CUI_Diffuse();
+	CUI_Specular* pInstance = new CUI_Specular();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -104,9 +104,9 @@ CUI_Diffuse* CUI_Diffuse::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg)
+CGameObject* CUI_Specular::Clone_GameObject(void* pArg)
 {
-	CUI_Diffuse* pInstance = new CUI_Diffuse();
+	CUI_Specular* pInstance = new CUI_Specular();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -114,8 +114,9 @@ CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Diffuse::Free()
+void CUI_Specular::Free()
 {
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
@@ -125,7 +126,7 @@ void CUI_Diffuse::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_Diffuse::Ready_Component()
+HRESULT CUI_Specular::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);

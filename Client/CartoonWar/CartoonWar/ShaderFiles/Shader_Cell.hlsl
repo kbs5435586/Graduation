@@ -25,7 +25,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-float4	PS_Main(VS_OUT vIn) : SV_Target
+float4	PS_Main(VS_OUT vIn) : SV_Target0
 {
 	return vIn.vColor;
 }

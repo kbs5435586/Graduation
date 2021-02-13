@@ -25,9 +25,9 @@ HRESULT CLogo::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	
-	m_pTransformCom->Scaling(_vec3(2.f, 1.5f, 1.f));
+	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
 
-	_vec3 vPos = _vec3(0.25f, -0.25f, 0.f);
+	_vec3 vPos = _vec3(0.f, -0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	return S_OK;
 }

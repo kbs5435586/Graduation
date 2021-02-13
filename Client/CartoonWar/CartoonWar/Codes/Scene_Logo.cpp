@@ -3,7 +3,10 @@
 #include "Management.h"
 // GameObject
 #include "Logo.h"
+// Defferd UI
 #include "UI_Diffuse.h"
+#include "UI_Normal.h"
+#include "UI_Specular.h"
 // New Scene
 #include "Scene_Stage.h"
 
@@ -106,6 +109,10 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Diffuse", CUI_Diffuse::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Normal", CUI_Normal::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Specular", CUI_Specular::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -152,6 +159,10 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pMan
 HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+		return E_FAIL; 
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Specular", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -269,8 +280,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		CShader::Create(L"../ShaderFiles/Shader_Toon.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Defferd_Diffuse",
-		CShader::Create(L"../ShaderFiles/Shader_Defferd_Diffuse.hlsl", "VS_Main", "PS_Main"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Defferd",
+		CShader::Create(L"../ShaderFiles/Shader_Defferd.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	return S_OK;
 }

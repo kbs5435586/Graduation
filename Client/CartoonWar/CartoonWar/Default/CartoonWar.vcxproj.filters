@@ -247,6 +247,12 @@
     <Filter Include="96. ShaderFiles\01. Defferd">
       <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\02. UI_Normal">
+      <UniqueIdentifier>{2849075b-6750-4f2d-bf07-d3240fbdb606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\03. UI_Specular">
+      <UniqueIdentifier>{bcbacaca-fbd5-4673-b9a0-87aee48e7674}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -453,14 +459,20 @@
     <ClInclude Include="..\Headers\UI_Loading.h">
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClInclude>
-    <ClInclude Include="MRT.h">
-      <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\UI_Diffuse.h">
       <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI.h">
       <Filter>02. GameObject\97. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Normal.h">
+      <Filter>02. GameObject\97. UI\02. UI_Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Specular.h">
+      <Filter>02. GameObject\97. UI\03. UI_Specular</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MRT.h">
+      <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -642,14 +654,20 @@
     <ClCompile Include="..\Codes\UI_Loading.cpp">
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClCompile>
-    <ClCompile Include="MRT.cpp">
-      <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\UI_Diffuse.cpp">
       <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI.cpp">
       <Filter>02. GameObject\97. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Normal.cpp">
+      <Filter>02. GameObject\97. UI\02. UI_Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Specular.cpp">
+      <Filter>02. GameObject\97. UI\03. UI_Specular</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MRT.cpp">
+      <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -674,13 +692,10 @@
     <None Include="..\ShaderFiles\Shader_Toon.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_RTT.hlsl">
-      <Filter>96. ShaderFiles</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Defferd_Diffuse.hlsl">
+    <None Include="..\ShaderFiles\Shader_Defferd.hlsl">
       <Filter>96. ShaderFiles\01. Defferd</Filter>
     </None>
   </ItemGroup>

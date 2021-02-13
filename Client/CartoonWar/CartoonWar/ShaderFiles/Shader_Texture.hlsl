@@ -14,6 +14,13 @@ struct VS_OUT
 	float2 vTexUV		: TEXCOORD;
 };
 
+struct PS_OUT
+{
+	float4 vTarget0		: SV_TARGET0;
+	float4 vTarget1		: SV_TARGET1;
+	float4 vTarget2		: SV_TARGET2;
+};
+
 VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
@@ -25,11 +32,17 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-float4 PS_Main(VS_OUT vIn) : SV_Target
+PS_OUT PS_Main(VS_OUT vIn)
 {
-	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	PS_OUT vOut = (PS_OUT)0;
 
-	return vOutColor;
+
+	//float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vTarget0 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vTarget1 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vTarget2 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+
+	return vOut;
 
 }
 
