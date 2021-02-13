@@ -14,6 +14,8 @@
 #include "UI_Loading.h"
 #include "UI_Diffuse.h"
 
+#include "Logo.h"
+
 CScene_Stage::CScene_Stage()
 {
 }
@@ -77,7 +79,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc01", COrc01::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Test", CLogo::Create())))
+		return E_FAIL;
 	//UI
 	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Loading", CUI_Loading::Create())))
 	//	return E_FAIL;
@@ -102,7 +105,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
-
+	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -195,6 +199,13 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Test", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

@@ -33,18 +33,21 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-PS_OUT PS_Main(VS_OUT vIn)
+
+float4 PS_Main(VS_OUT vIn): SV_TARGET
 {
-	PS_OUT vOut = (PS_OUT)0;
+	//PS_OUT vOut = (PS_OUT)0;
+	
+	//vIn.vTexUV = float2(vIn.vTexUV.xy * 2.f - 1.f);
 
 
-	vOut.vTarget0 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4 fOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	//vOut.vTarget1 = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	//vOut.vTarget2 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget2 = g_texture0.Sample       (Sampler0, vIn.vTexUV);
 
 	
 
-	return vOut;
+	return fOutColor;
 
 }
 
