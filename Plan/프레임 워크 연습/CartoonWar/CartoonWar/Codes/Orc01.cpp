@@ -48,22 +48,22 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (pManagement->Key_Pressing(KEY_UP))
 	{
-		_vec3 vLook = {};
-		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		vLook = Vector3_::Normalize(vLook);
-
-
-		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-		_vec3 vSlide = {};
-		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-		{
-			m_pTransformCom->BackWard(fTimeDelta);
-		}
-		else
-		{
-			m_pTransformCom->Go_There(vSlide);
-		}
-
+		//_vec3 vLook = {};
+		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		//vLook = Vector3_::Normalize(vLook);
+		//
+		//
+		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		//_vec3 vSlide = {};
+		//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		//{
+		//	m_pTransformCom->BackWard(fTimeDelta);
+		//}
+		//else
+		//{
+		//	m_pTransformCom->Go_There(vSlide);
+		//}
+		m_pTransformCom->BackWard(fTimeDelta);
 
 	}
 	if (pManagement->Key_Pressing(KEY_DOWN))

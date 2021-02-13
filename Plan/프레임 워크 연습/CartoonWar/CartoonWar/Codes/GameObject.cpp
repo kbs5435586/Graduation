@@ -19,9 +19,14 @@ CComponent* CGameObject::Get_ComponentPointer(const _tchar* pComponentTag)
 	return pComponent;
 }
 
-HRESULT CGameObject::Ready_GameObject(void* pArg)
-{
+//HRESULT CGameObject::Ready_GameObject(void* pArg)
+//{
+//
+//	return S_OK;
+//}
 
+HRESULT CGameObject::Ready_GameObject(void* pArg, void* pSize)
+{
 	return S_OK;
 }
 
@@ -70,6 +75,11 @@ CComponent* CGameObject::Find_Component(const _tchar* pComponentTag)
 }
 
 CGameObject* CGameObject::Clone_GameObject(void* pArg)
+{
+	return nullptr;
+}
+
+CGameObject* CGameObject::Clone_GameObject(void* pArg, void* pSize)
 {
 	return nullptr;
 }

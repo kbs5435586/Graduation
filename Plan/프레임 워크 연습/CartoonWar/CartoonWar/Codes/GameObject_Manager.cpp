@@ -46,7 +46,7 @@ HRESULT CGameObject_Manager::Add_Prototype_GameObject(const _tchar* pGameObjectT
 	return S_OK;
 }
 
-HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject, void* pArg)
+HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject, void* pArg, void* pSize)
 {
 	if (nullptr == m_pMapLayers)
 		return E_FAIL;
@@ -62,7 +62,7 @@ HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, cons
 		return E_FAIL;
 
 	//////////////
-	CGameObject* pGameObject = pPrototype->Clone_GameObject(pArg);
+	CGameObject* pGameObject = pPrototype->Clone_GameObject(pArg, pSize);
 	if (nullptr == pGameObject)
 		return E_FAIL;
 

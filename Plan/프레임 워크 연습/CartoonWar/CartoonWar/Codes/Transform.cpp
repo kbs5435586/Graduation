@@ -98,6 +98,7 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
+//입력한 좌표값으로 이동?
 void CTransform::Go_There( const _vec3& vPos)
 {
 	m_matWorld._41 -= (vPos.x );
