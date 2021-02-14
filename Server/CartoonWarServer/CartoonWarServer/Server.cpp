@@ -178,6 +178,9 @@ void Server::do_move(int user_id, char direction)
         {
             send_enter_packet(user_id, new_vl); // 다른 객체들의 정보를 나에게 전송
 
+            if (false == is_player(new_vl)) // 새로 시야에 들어온 애가 플레이어가 아니면 걍 반복문 넘김
+                continue;
+
             g_clients[new_vl].m_cLock.lock();
             if (0 == g_clients[new_vl].m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
             {
@@ -190,8 +193,11 @@ void Server::do_move(int user_id, char direction)
                 send_move_packet(new_vl, user_id); // 나의 움직임 정보를 다른 객체들에게 전송
             }
         }
-        else // 이동 한 후에 새 시야에 보이는 플레이어인데 이전에도 보였던 애다
+        else // 이동 한 후에 새 시야에 보이는 플레이어인데 이전에도 보였던 애다 = 기존 시야에 있던 애
         {
+            if (false == is_player(new_vl)) // npc에게 내 새로운 움직임을 보내줄 필요가 없음
+                continue;
+
             g_clients[new_vl].m_cLock.lock();
             if (0 != g_clients[new_vl].m_view_list.count(user_id))
             {
@@ -211,6 +217,10 @@ void Server::do_move(int user_id, char direction)
         if (0 == new_viewlist.count(old_vl)) // 새 시야범위에 old_vl 갯수가 0일때 = 시야 범위에서 벗어난 객체일때
         {
             send_leave_packet(user_id, old_vl); // 나에게 상대 객체가 나갔다 알림
+
+            if (false == is_player(old_vl)) // npc에게 내가 나갔다는거 안알려도 된다
+                continue;
+
             g_clients[old_vl].m_cLock.lock();
             if (0 != g_clients[old_vl].m_view_list.count(user_id))
             {
@@ -229,6 +239,7 @@ void Server::do_AI()
 {
     while (true)
     {
+        auto ai_start_time = high_resolution_clock::now();
         for (int i = NPC_ID_START; i < NPC_ID_START + MAX_NPC; ++i)
         {
             if ((high_resolution_clock::now() - g_clients[i].m_last_move_time) > 1s) // 지금에서 마지막으로 움직인 시간이 1초가 되면 다시 이동
@@ -237,6 +248,8 @@ void Server::do_AI()
                 g_clients[i].m_last_move_time = high_resolution_clock::now();
             }
         }
+        auto ai_finish_time = high_resolution_clock::now() - ai_start_time;
+        cout << "all AI move time : " << duration_cast<milliseconds>(ai_finish_time).count() << "ms\n"; // 여기 검색해보기
     }
 }
 
@@ -263,6 +276,9 @@ void Server::random_move_npc(int npc_id)
             y--;
         break;
     }
+
+    g_clients[npc_id].m_x = x;
+    g_clients[npc_id].m_y = y;
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -299,6 +315,24 @@ void Server::random_move_npc(int npc_id)
     // 근데 이제 플레이어가 문제임, 플레이어 뷰 리스트 관리할때 npc까지 고려해서 뷰 리스트 관리해줘야 되므로 처음부터 끝까지 뷰리스트 다 살펴봐야함
 }
 
+void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
+{
+    timer_lock.lock();
+    timer_queue.emplace(obj_id, op_type, high_resolution_clock::now() + milliseconds(duration), 0);
+    timer_lock.unlock();
+}
+
+void Server::do_timer()
+{
+    while (true)
+    {
+        //Sleep(1); // 윈도우에서만 가능함
+        this_thread::sleep_for(1ms);
+        if (timer_queue.top().wakeup_time < high_resolution_clock::now()) // wakeup_time이 지금보다 작으면 아직 큐에서 꺼낼때가 아니다
+            continue;
+    }
+}
+
 void Server::send_move_packet(int user_id, int mover)
 {
     sc_packet_move packet;
@@ -321,8 +355,10 @@ void Server::enter_game(int user_id, char name[])
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
 
-    for (int i = 0; i < MAX_USER; i++) 
+    for (auto& c : g_clients)
     {
+        int i = c.second.m_id;
+
         if (user_id == i) // 데드락 회피용
             continue;
 
@@ -331,11 +367,9 @@ void Server::enter_game(int user_id, char name[])
             //g_clients[i].m_cLock.lock();
             if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
-                if (user_id != i) // 나 자신한텐 send_enter_packet 보낼 필요가 없음, 내가 들어왔다는걸 다른 클라에 알리는 패킷임
-                {
-                    send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
+                send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
+                if (true == is_player(i))
                     send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
-                }
             }
             //g_clients[i].m_cLock.unlock();
         }
@@ -405,15 +439,15 @@ void Server::disconnect(int user_id)
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
 
-    for (auto& c : g_clients) // 연결되어있는 클라이언트들에게 떠난 클라가 나갔다고 알림
+    for (int i = 0; i < NPC_ID_START; ++i)
     {
-        if (user_id == c.second.m_id)
+        if (user_id == g_clients[i].m_id)
             continue;
 
         //c.second.m_cLock.lock();
-        if (ST_ACTIVE == c.second.m_status)
+        if (ST_ACTIVE == g_clients[i].m_status)
         {
-            send_leave_packet(c.second.m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
+            send_leave_packet(g_clients[i].m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
         }
        // c.second.m_cLock.unlock();
     }
@@ -430,6 +464,11 @@ bool Server::is_near(int a, int b)
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
     // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
     return true;
+}
+
+bool Server::is_player(int id)
+{
+    return id < NPC_ID_START;
 }
 
 void Server::worker_thread()
@@ -562,9 +601,11 @@ void Server::mainServer()
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
 
-    thread AI_thread([this]() {this->do_AI(); });
+    //thread AI_thread([this]() {this->do_AI(); });
+    //AI_thread.join();
 
-    AI_thread.join();
+    thread timer_thread([this]() {this->do_timer(); });
+
     for (auto& t : worker_threads)
     {
         t.join();

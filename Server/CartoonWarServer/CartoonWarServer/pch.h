@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <atomic>
 #include <chrono>
+#include <queue>
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "MSWSock.lib")

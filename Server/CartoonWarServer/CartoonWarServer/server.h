@@ -9,6 +9,9 @@ public:
 
 private:
 	map <int, ClientInfo> g_clients;
+	priority_queue<event_type> timer_queue;
+	mutex timer_lock;
+
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
@@ -38,6 +41,10 @@ public:
 	void do_AI();
 	void random_move_npc(int npc_id);
 
+	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
+	void do_timer();
+
 	bool is_near(int a, int b);
+	bool is_player(int id);
 };
 
