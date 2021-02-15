@@ -18,40 +18,40 @@ HRESULT CUI_Loading::Ready_Prototype()
 	return S_OK;
 }
 
-//HRESULT CUI_Loading::Ready_GameObject(void* pArg)
-//{
-//	if (FAILED(Ready_Component()))
-//		return E_FAIL;
-//	if (FAILED(CreateInputLayout()))
-//		return E_FAIL;
-//	
-//	
-//	//m_fX = 50.0f;
-//	//m_fY = 50.0f;
-//	m_fX = ((_vec3*)pArg)->x;
-//	m_fY = ((_vec3*)pArg)->y;
-//
-//	m_fSizeX = 100.0f;
-//	m_fSizeY = 100.0f;
-//
-//	return S_OK;
-//}
-
-HRESULT CUI_Loading::Ready_GameObject(void* pArg, void* pSize)
+HRESULT CUI_Loading::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-
+	
+	
+	//m_fX = 50.0f;
+	//m_fY = 50.0f;
 	m_fX = ((_vec3*)pArg)->x;
 	m_fY = ((_vec3*)pArg)->y;
 
-	m_fSizeX = ((_vec3*)pSize)->x;
-	m_fSizeY = ((_vec3*)pSize)->y;
+	m_fSizeX = 100.0f;
+	m_fSizeY = 100.0f;
 
 	return S_OK;
 }
+
+//HRESULT CUI_Loading::Ready_GameObject(void* pArg, void* pSize)
+//{
+//	if (FAILED(Ready_Component()))
+//		return E_FAIL;
+//	if (FAILED(CreateInputLayout()))
+//		return E_FAIL;
+//
+//	m_fX = ((_vec3*)pArg)->x;
+//	m_fY = ((_vec3*)pArg)->y;
+//
+//	m_fSizeX = ((_vec3*)pSize)->x;
+//	m_fSizeY = ((_vec3*)pSize)->y;
+//
+//	return S_OK;
+//}
 
 _int CUI_Loading::Update_GameObject(const _float& fTimeDelta)
 {
@@ -135,15 +135,15 @@ CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-CGameObject* CUI_Loading::Clone_GameObject(void* pArg, void* pSize)
-{
-	CUI_Loading* pInstance = new CUI_Loading();
-	if (FAILED(pInstance->Ready_GameObject(pArg, pSize)))
-	{
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
+//CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
+//{
+//	CUI_Loading* pInstance = new CUI_Loading();
+//	if (FAILED(pInstance->Ready_GameObject(pArg)))
+//	{
+//		Safe_Release(pInstance);
+//	}
+//	return pInstance;
+//}
 
 void CUI_Loading::Free()
 {

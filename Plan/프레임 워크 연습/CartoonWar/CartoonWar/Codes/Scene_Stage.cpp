@@ -108,7 +108,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	_vec3 vPosTwo = { 10.f ,10.f, 0.f };
 	_vec3 vSizeTwo = { 10.f ,10.f, 0.f };
-	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo, &vSizeTwo)))
+	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo)))
 		return E_FAIL;
 	
 	_vec3 vPosThree = { 10.f ,0.f, 10.f };
@@ -197,10 +197,10 @@ HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pMan
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg, void* pSize)
+HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg)
 {
 	
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg, pSize)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
 		return E_FAIL;
 
 	return S_OK;

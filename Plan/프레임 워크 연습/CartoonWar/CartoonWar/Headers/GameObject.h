@@ -12,8 +12,8 @@ protected:
 public:
 	CComponent*								Get_ComponentPointer(const _tchar* pComponentTag);
 public:
-	//virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual HRESULT							Ready_GameObject(void* pArg = nullptr, void* pSize = nullptr);
+	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
+	//virtual HRESULT							Ready_GameObject(void* pArg = nullptr, void* pSize = nullptr);
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
@@ -24,7 +24,7 @@ protected:
 	CComponent*								Find_Component(const _tchar* pComponentTag);
 public:
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr) = 0;
-	virtual CGameObject*					Clone_GameObject(void* pArg, void* pSize);
+	//virtual CGameObject*					Clone_GameObject(void* pArg, void* pSize);
 	virtual void							Free();
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;

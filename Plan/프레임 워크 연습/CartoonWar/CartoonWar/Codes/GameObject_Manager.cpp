@@ -62,7 +62,7 @@ HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, cons
 		return E_FAIL;
 
 	//////////////
-	CGameObject* pGameObject = pPrototype->Clone_GameObject(pArg, pSize);
+	CGameObject* pGameObject = pPrototype->Clone_GameObject(pArg);
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
