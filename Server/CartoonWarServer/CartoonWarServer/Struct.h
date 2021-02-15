@@ -1,6 +1,6 @@
 #pragma once
 enum ENUM_FUNCTION { FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_RANDMOVE, FUNC_END };
-enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE,ST_END };
+enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_END };
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
 

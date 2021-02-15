@@ -40,6 +40,7 @@ public:
 	void initalize_NPC();
 	void do_AI();
 	void random_move_npc(int npc_id);
+	void activate_npc(int npc_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();

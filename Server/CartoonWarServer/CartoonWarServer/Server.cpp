@@ -161,6 +161,8 @@ void Server::do_move(int user_id, char direction)
 
     for (auto& c : g_clients)
     {
+        if (ST_SLEEP == c.second.m_status)
+            activate_npc(c.second.m_id);
         if (ST_ACTIVE != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
@@ -178,8 +180,10 @@ void Server::do_move(int user_id, char direction)
         {
             send_enter_packet(user_id, new_vl); // 다른 객체들의 정보를 나에게 전송
 
-            if (false == is_player(new_vl)) // 새로 시야에 들어온 애가 플레이어가 아니면 걍 반복문 넘김
+            if (false == is_player(new_vl)) // 새로 시야에 들어온 애가 플레이어가 아니면 걍 반복문 넘김 / 이 아니라 npc 발동해주고 넘김
+            {
                 continue;
+            }
 
             g_clients[new_vl].m_cLock.lock();
             if (0 == g_clients[new_vl].m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
@@ -315,10 +319,22 @@ void Server::random_move_npc(int npc_id)
     // 근데 이제 플레이어가 문제임, 플레이어 뷰 리스트 관리할때 npc까지 고려해서 뷰 리스트 관리해줘야 되므로 처음부터 끝까지 뷰리스트 다 살펴봐야함
 }
 
+void Server::activate_npc(int npc_id)
+{
+    g_clients[npc_id].m_status = ST_ACTIVE;
+    ENUM_STATUS old_status = ST_SLEEP;
+    if (true == atomic_compare_exchange_strong(&g_clients[npc_id].m_status, &old_status, ST_ACTIVE)) // m_status가 슬립에서 엑티브로 바뀐 경우에만
+        // 동시에 두 클라가 접근하면 ACTIVE 로 2번 바뀌고 타이머가 2번 발동하는걸 방지하기 위한 용도
+        add_timer(npc_id, FUNC_RANDMOVE, 1000);
+}
+
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
 {
     timer_lock.lock();
-    timer_queue.emplace(obj_id, op_type, high_resolution_clock::now() + milliseconds(duration), 0);
+    event_type event{ obj_id, op_type, high_resolution_clock::now() + milliseconds(duration), 0 };
+    timer_queue.push(event);
+    //timer_queue.emplace(obj_id, op_type, high_resolution_clock::now() + milliseconds(duration), 0);
+    // 메모리 복사 안일어나게 하려고 위에 방식대로 했는데 emplace가 인자를 인식을 못함, 인자 개수가 많아질수록 이런버그 발생
     timer_lock.unlock();
 }
 
@@ -327,9 +343,41 @@ void Server::do_timer()
     while (true)
     {
         //Sleep(1); // 윈도우에서만 가능함
-        this_thread::sleep_for(1ms);
-        if (timer_queue.top().wakeup_time < high_resolution_clock::now()) // wakeup_time이 지금보다 작으면 아직 큐에서 꺼낼때가 아니다
-            continue;
+        this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1초마다 검사해라, 계속 하고있지 말고
+        while (true) // 실행 시간이 된게 있으면 계속 실행해주는 용
+        {
+            timer_lock.lock();
+            if (true == timer_queue.empty()) // 타이머 큐에 아무것도 없으면
+            {
+                timer_lock.unlock();
+                break; // 실행 시간이 안됐으면 루프 나가서 1초 쉬고옴
+            }
+            if (timer_queue.top().wakeup_time > high_resolution_clock::now()) // wakeup_time이 지금보다 크면 아직 큐에서 꺼낼때가 아니다
+            {
+                // 근데 이렇게 돌려버리면 <busy waiting : 조건이 성립할 때까지 반복문을 실행하며 기다리는 방법> 발생함
+                timer_lock.unlock();
+                break; // 실행 시간이 안됐으면 루프 나가서 1초 쉬고옴
+            }
+
+            event_type event = timer_queue.top(); // 이렇게 하면 메모리 복사 일어남, 오버헤드 커짐, 그래서 큐의 자료형을 포인터로 받을것
+            // 그렇게 해서 발생하는 new 자체가 오버헤드 아니냐, 맞음, 그래서 free list 써서 재사용 해줘야함 -> 알아서 할것
+            timer_queue.pop();
+            timer_lock.unlock();
+
+            switch (event.event_id)
+            {
+            case FUNC_RANDMOVE:
+                OverEx* over = new OverEx;
+                over->function = (ENUM_FUNCTION)event.event_id;
+                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
+                //random_move_npc(event.obj_id); 
+                //add_timer(event.obj_id, (ENUM_FUNCTION)event.event_id, 1000);
+                // 타이머 쓰레드에서 움직이는거 처리까지 다 하면 과부화가 심하다
+                // PostQueuedCompletionStatus 이걸로 worket thread에 작업 넘겨주고 여기선 어떤 이벤트인지만 알려줌
+                // 오버랩 구조체 따로 초기화 안해줘도 되는게 PostQueuedCompletionStatus 자체가 진짜 넣어주는값 그대로 GetQueued에 넘겨줘서 괜찮음
+                break;
+            }
+        }
     }
 }
 
@@ -365,6 +413,10 @@ void Server::enter_game(int user_id, char name[])
         if (true == is_near(user_id, i))
         {
             //g_clients[i].m_cLock.lock();
+            if (ST_SLEEP == g_clients[i].m_status)
+            {
+                activate_npc(i);
+            }
             if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
                 send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
@@ -392,11 +444,11 @@ void Server::initalize_NPC()
         g_clients[i].m_socket = 0;
         g_clients[i].m_id = i;
         sprintf_s(g_clients[i].m_name, "NPC %d", i);
-        g_clients[i].m_status = ST_ACTIVE;
+        g_clients[i].m_status = ST_SLEEP;
         g_clients[i].m_x = rand() % WORLD_WIDTH;
         g_clients[i].m_y = rand() % WORLD_HEIGHT;
-        g_clients[i].m_last_move_time = high_resolution_clock::now();
-
+        //g_clients[i].m_last_move_time = high_resolution_clock::now();
+        //add_timer(i, FUNC_RANDMOVE, 1000);
     }
 }
 
@@ -554,6 +606,34 @@ void Server::worker_thread()
                 sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &overEx->over);
         }
         break;
+        case FUNC_RANDMOVE:
+        {
+            random_move_npc(id);
+            bool keep_alive = false;
+            for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+            {
+                if (true == is_near(id, i)) // 플레이어 시야범위 안에 있고
+                {
+                    if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+                    {
+                        keep_alive = true; // npc가 활성화 되어있다
+                        break;
+                    }
+                }
+            }
+
+            if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
+                add_timer(id, FUNC_RANDMOVE, 1000);
+            else
+                g_clients[id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+
+            delete overEx;
+        }
+            break;
+
+        default:
+            cout << "Unknown Operation in Worker_Thread\n";
+            while (true);
         }
     }
 }
