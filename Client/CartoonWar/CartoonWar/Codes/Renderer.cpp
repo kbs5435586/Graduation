@@ -41,17 +41,14 @@ HRESULT CRenderer::Render_RenderGroup()
 
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
-	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 
-	/*Forward To Defferd*/
-	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
+
+
+	Render_Deffered(pManagement, iSwapChainIdx);
+	Render_Light(pManagement, iSwapChainIdx);
+	Render_Blend(pManagement, iSwapChainIdx);
 
 	Render_Priority();
-	Render_NoneAlpha();
-
-	/*Defferd To Forward*/
-	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
-
 	Render_Alpha();
 	Render_UI();
 
@@ -110,6 +107,35 @@ void CRenderer::Render_UI()
 		}
 	}
 	m_RenderList[RENDER_UI].clear();
+}
+
+void CRenderer::Render_Deffered(CManagement* pManagement, _uint iSwapChainIdx)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
+
+	Render_NoneAlpha();
+
+	/*Defferd To Forward*/
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+
+}
+
+void CRenderer::Render_Light(CManagement* pManagement, _uint iSwapChainIdx)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->OM_Set();
+
+	//Render_NoneAlpha();
+
+	/*Defferd To Forward*/
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+}
+
+void CRenderer::Render_Blend(CManagement* pManagement, _uint iSwapChainidx)
+{
+
+
 }
 
 

@@ -77,8 +77,8 @@ void CUI_Main::Render_GameObject()
 	ComPtr<ID3D12DescriptorHeap>	pTextureDesc2 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc1.Get(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc2.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc1.Get(), TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc2.Get(), TEXTURE_REGISTER::t2);
 	CDevice::GetInstance()->UpdateTable();
 
 

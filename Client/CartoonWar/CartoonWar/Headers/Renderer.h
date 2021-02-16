@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 class CGameObject;
+class CManagement;
 class CRenderer :
     public CComponent
 {
@@ -18,6 +19,10 @@ private:
 	void							Render_NoneAlpha();
 	void							Render_Alpha();
 	void							Render_UI();
+private:
+	void							Render_Deffered(CManagement* pManagement, _uint iSwapChainIdx);
+	void							Render_Light(CManagement* pManagement, _uint iSwapChainIdx);
+	void							Render_Blend(CManagement* pManagement, _uint iSwapChainidx);
 public:
 	static CRenderer*				Create(); 
 	virtual CComponent*				Clone_Component(void* pArg = nullptr); 
