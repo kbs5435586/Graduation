@@ -161,14 +161,16 @@ void Server::do_move(int user_id, char direction)
 
     for (auto& c : g_clients)
     {
-        if (ST_SLEEP == c.second.m_status)
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
+            continue;
+        if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
             activate_npc(c.second.m_id);
         if (ST_ACTIVE != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
             continue;
-        if (true == is_near(c.second.m_id, user_id))
-            new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
+        
+        new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
 
     // send_move_packet 해주는 부분
@@ -321,7 +323,6 @@ void Server::random_move_npc(int npc_id)
 
 void Server::activate_npc(int npc_id)
 {
-    g_clients[npc_id].m_status = ST_ACTIVE;
     ENUM_STATUS old_status = ST_SLEEP;
     if (true == atomic_compare_exchange_strong(&g_clients[npc_id].m_status, &old_status, ST_ACTIVE)) // m_status가 슬립에서 엑티브로 바뀐 경우에만
         // 동시에 두 클라가 접근하면 ACTIVE 로 2번 바뀌고 타이머가 2번 발동하는걸 방지하기 위한 용도
@@ -482,6 +483,17 @@ void Server::send_leave_packet(int user_id, int other_id)
     g_clients[user_id].m_cLock.unlock();
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_chat_packet(int lisn_id, int chat_id, char mess[])
+{
+    sc_packet_chat packet;
+    packet.id = chat_id; // 채팅 보내는 사람들의
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_CHAT;
+    strcpy_s(packet.message, mess);
+
+    send_packet(lisn_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
 void Server::disconnect(int user_id)
