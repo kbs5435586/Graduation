@@ -90,7 +90,6 @@ _bool CCell::Is_inCell(_vec3 vMovedPos, LINE* pOutLine)
 
 _bool CCell::Compare_Point(_vec3* pPoint1, _vec3* pPoint2)
 {
-
 	if (m_vPoint[(_uint)POINT_::POINT_A] == *pPoint1)
 	{
 		if (m_vPoint[(_uint)POINT_::POINT_B] == *pPoint2)
@@ -171,7 +170,7 @@ HRESULT CCell::Create_InputLayOut()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 

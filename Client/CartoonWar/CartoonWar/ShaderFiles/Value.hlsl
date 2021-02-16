@@ -48,16 +48,18 @@ cbuffer LIGHT :register(b2)
 };
 
 
-Texture2D g_texture0 : register(t0);
-Texture2D g_texture1 : register(t1);
-Texture2D g_texture2 : register(t2);
-Texture2D g_texture3 : register(t3);
-Texture2D g_texture4 : register(t4);
-Texture2D g_texture5 : register(t5);
-Texture2D g_texture6 : register(t6);
-Texture2D g_texture7 : register(t7);
+Texture2D	g_texture0		: register(t0);
+Texture2D	g_texture1		: register(t1);
+Texture2D	g_texture2		: register(t2);
+Texture2D	g_texture3		: register(t3);
+Texture2D	g_texture4		: register(t4);
+Texture2D	g_texture5		: register(t5);
+Texture2D	g_texture6		: register(t6);
+TextureCube g_textureCube	: register(t7);
 
 
+SamplerState Sampler0		: register(s0);
+SamplerState Sampler1		: register(s1);
 
 int HasTex(in Texture2D _tex)
 {
@@ -72,8 +74,6 @@ int HasTex(in Texture2D _tex)
 	return 1;
 }
 
-SamplerState Sampler0 : register(s0);
-SamplerState Sampler1 : register(s1);
 
 
 

@@ -41,11 +41,9 @@ HRESULT CRenderer::Render_RenderGroup()
 
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
-
-
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 
 	/*Forward To Defferd*/
-	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
 
 	Render_Priority();
@@ -56,8 +54,6 @@ HRESULT CRenderer::Render_RenderGroup()
 
 	Render_Alpha();
 	Render_UI();
-
-
 
 
 	Safe_Release(pManagement);

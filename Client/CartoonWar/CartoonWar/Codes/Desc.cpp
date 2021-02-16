@@ -49,7 +49,7 @@ D3D12_RASTERIZER_DESC g_arrRSDesc[(UINT)RS_TYPE::END] =
 	{
 		  D3D12_FILL_MODE_SOLID // FillMode
 		, D3D12_CULL_MODE_BACK	//CullMode
-		, TRUE //FrontCounterClockwise
+		, FALSE //FrontCounterClockwise
 		, D3D12_DEFAULT_DEPTH_BIAS //DepthBias
 		, D3D12_DEFAULT_DEPTH_BIAS_CLAMP //DepthBiasClamp
 		, D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS	//SlopeScaledDepthBias

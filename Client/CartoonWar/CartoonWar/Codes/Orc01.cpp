@@ -92,7 +92,6 @@ _int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void COrc01::Render_GameObject()
 {
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)

@@ -241,17 +241,23 @@
     <Filter Include="97. Engine\01. Utility\05. RenderToTexture\02. MRT">
       <UniqueIdentifier>{6254b08b-1cc1-4e10-b054-a05060ddb759}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\01. UI_Diffuse">
-      <UniqueIdentifier>{8e8b7fbb-a5f3-47fe-a2cd-7af55099a752}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. ShaderFiles\01. Defferd">
       <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\02. UI_Normal">
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered">
+      <UniqueIdentifier>{5aae7e2a-b1fc-47bd-8b52-8eeea9cead56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\01. UI_Diffuse">
+      <UniqueIdentifier>{8e8b7fbb-a5f3-47fe-a2cd-7af55099a752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\02. UI_Normal">
       <UniqueIdentifier>{2849075b-6750-4f2d-bf07-d3240fbdb606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\03. UI_Specular">
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\03. UI_Specular">
       <UniqueIdentifier>{bcbacaca-fbd5-4673-b9a0-87aee48e7674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\04. UI_Main">
+      <UniqueIdentifier>{54249dab-acf5-4d20-8ecc-f5a08d829b8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -460,19 +466,22 @@
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Diffuse.h">
-      <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\01. UI_Diffuse</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI.h">
       <Filter>02. GameObject\97. UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Normal.h">
-      <Filter>02. GameObject\97. UI\02. UI_Normal</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\02. UI_Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Specular.h">
-      <Filter>02. GameObject\97. UI\03. UI_Specular</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\03. UI_Specular</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MRT.h">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Main.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -655,19 +664,22 @@
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Diffuse.cpp">
-      <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\01. UI_Diffuse</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI.cpp">
       <Filter>02. GameObject\97. UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Normal.cpp">
-      <Filter>02. GameObject\97. UI\02. UI_Normal</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\02. UI_Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Specular.cpp">
-      <Filter>02. GameObject\97. UI\03. UI_Specular</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\03. UI_Specular</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MRT.cpp">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Main.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -695,7 +707,10 @@
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Defferd.hlsl">
+    <None Include="..\ShaderFiles\Shader_UI_Deffered.hlsl">
+      <Filter>96. ShaderFiles\01. Defferd</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
       <Filter>96. ShaderFiles\01. Defferd</Filter>
     </None>
   </ItemGroup>
