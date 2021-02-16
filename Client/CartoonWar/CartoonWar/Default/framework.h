@@ -68,6 +68,7 @@ using namespace std;
 #pragma warning(push)
 #pragma warning(disable: 4267)
 #pragma warning(disable: 4244)
+#pragma warning(disable: 4099)
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;

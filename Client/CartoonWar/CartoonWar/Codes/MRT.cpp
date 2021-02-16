@@ -13,7 +13,6 @@ HRESULT CMRT::Ready_MRT(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)
 	memcpy(m_tArr, arrRT, sizeof(tRtt) * iCnt);
 	m_pDsTex = pDsTex;
 
-	// 복사받을 RTV 를 만들어둔다.
 	D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
 	tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	tDesc.NumDescriptors = m_iRTCnt;

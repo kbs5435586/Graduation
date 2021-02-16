@@ -36,8 +36,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(LIGHTINFO), 1, CONST_REGISTER::b2, true)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(TEMP_), 1, CONST_REGISTER::b3, true)))
-		return E_FAIL;
+
 
 	if (FAILED(m_pManagement->Ready_RTT_Manager()))
 		return E_FAIL;
@@ -59,10 +58,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 void CMainApp::Render_MainApp()
 {
-
-	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
-
-	CDevice::GetInstance()->Render_Begin(pfClearColor);
+	CDevice::GetInstance()->Render_Begin();
 
 	m_pManagement->SetUp_OnShader_Light();
 	if (nullptr != m_pRenderer)

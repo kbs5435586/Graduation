@@ -192,14 +192,6 @@ typedef struct tagLightInfo
 	XMFLOAT3		vPadding;
 }LIGHTINFO;
 
-
-
-struct TEMP_
-{
-	int i;
-};
-
-
 typedef struct tagRenderTarget
 {
 	ID3D12Resource*		pTarget;

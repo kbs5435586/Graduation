@@ -78,7 +78,7 @@ public:
 	static _float								m_fHDRMetaDataPool[4][4];
 public:
 	HRESULT										Initialize();
-	void										Render_Begin(float(&_arrFloat)[4]);
+	void										Render_Begin();
 	void										Render_End();
 	void										WaitForFenceEvent();
 public:

@@ -34,7 +34,6 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 		return E_FAIL;
 	}
 	
-
 	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
 		, PSEntry, "ps_5_1", 0, 0, &m_pPSBlob, &m_pErrBlob)))
 	{
@@ -78,7 +77,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 
 
 	m_tPipeline.SampleMask = UINT_MAX;
-	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	m_tPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	m_tPipeline.SampleDesc.Count = 1;
 
 	switch (eShaderType)
@@ -87,7 +86,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.NumRenderTargets = 1;
 		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
 		break;
-	case SHADER_TYPE::SHADER_DEFFERD:
+	case SHADER_TYPE::SHADER_DEFFERED:
 		m_tPipeline.NumRenderTargets = 3;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -126,6 +125,7 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 
 HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass)
 {
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 
 	XMMATRIX	xmMatWorld	= XMLoadFloat4x4(&matWorld);
