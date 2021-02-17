@@ -10,7 +10,6 @@ private:
     virtual ~CDevice() = default;
 private:
 	ComPtr<ID3D12Device>						m_pDevice = nullptr;
-	ComPtr<ID3D12PipelineState>					m_pPipelineState = nullptr;
 	ComPtr<ID3D12CommandQueue>					m_pCmdQueue = nullptr;
 	ComPtr<ID3D12CommandAllocator>				m_pCmdAlloc = nullptr;
 	ComPtr<ID3D12GraphicsCommandList>			m_pCmdListGraphic = nullptr;
@@ -38,7 +37,7 @@ public:
 	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
 	ComPtr< ID3D12DescriptorHeap>				GetDSV() { return m_pDSV; }
 	ComPtr<IDXGISwapChain4>						GetSwapChain() { return m_pSwapChain; }
-
+	D3D12_VIEWPORT								GetViewPort() { return m_tViewPort; }
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 public:

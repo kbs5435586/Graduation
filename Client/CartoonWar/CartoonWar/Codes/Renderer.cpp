@@ -50,6 +50,7 @@ HRESULT CRenderer::Render_RenderGroup()
 
 	Render_Priority();
 	Render_Alpha();
+
 	Render_UI();
 
 
@@ -118,7 +119,6 @@ void CRenderer::Render_Deffered(CManagement* pManagement, _uint iSwapChainIdx)
 
 	/*Defferd To Forward*/
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
-
 }
 
 void CRenderer::Render_Light(CManagement* pManagement, _uint iSwapChainIdx)
@@ -126,7 +126,11 @@ void CRenderer::Render_Light(CManagement* pManagement, _uint iSwapChainIdx)
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->OM_Set();
 
-	//Render_NoneAlpha();
+	// 여기서 Normal Tex랑 각 Light 클래스 내부에 있는 LightDir을 쉐이더에 넘겨줘서 
+	// 렌더링을 진행함
+
+	//pManagement->Render_Light();
+
 
 	/*Defferd To Forward*/
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);

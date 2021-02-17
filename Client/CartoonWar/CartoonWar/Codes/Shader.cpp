@@ -22,31 +22,32 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	const char* PSEntry, const char* HSEntry, const char* DSEntry, const char* GSEntry)
 {
 	char* pErr = nullptr;
-
-	if (nullptr == VSEntry || nullptr == PSEntry)
-		return E_FAIL;
-
-	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-		, VSEntry, "vs_5_1", 0, 0, &m_pVSBlob, &m_pErrBlob)))
-	{
-		pErr = (char*)m_pErrBlob->GetBufferPointer();
-		MessageBoxA(nullptr, pErr, "VS_Shader Create Failed !!!", MB_OK);
-		return E_FAIL;
-	}
-	
-	if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-		, PSEntry, "ps_5_1", 0, 0, &m_pPSBlob, &m_pErrBlob)))
-	{
-		pErr = (char*)m_pErrBlob->GetBufferPointer();
-		MessageBoxA(nullptr, pErr, "PS_Shader Create Failed !!!", MB_OK);
-		return E_FAIL;
-	}
-
 	ZeroMemory(&m_tPipeline, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	if (VSEntry)
+	{
+		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, VSEntry, "vs_5_1", 0, 0, &m_pVSBlob, &m_pErrBlob)))
+		{
+			pErr = (char*)m_pErrBlob->GetBufferPointer();
+			MessageBoxA(nullptr, pErr, "VS_Shader Create Failed !!!", MB_OK);
+			return E_FAIL;
+		}
 
-	m_tPipeline.VS = { m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize() };
-	m_tPipeline.PS = { m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize() };
-	
+		m_tPipeline.VS = { m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize() };
+	}
+
+	if (PSEntry)
+	{
+		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, PSEntry, "ps_5_1", 0, 0, &m_pPSBlob, &m_pErrBlob)))
+		{
+			pErr = (char*)m_pErrBlob->GetBufferPointer();
+			MessageBoxA(nullptr, pErr, "PS_Shader Create Failed !!!", MB_OK);
+			return E_FAIL;
+		}
+		m_tPipeline.PS = { m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize() };
+	}
+
 	return S_OK;
 }
 
@@ -87,10 +88,12 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
 		break;
 	case SHADER_TYPE::SHADER_DEFFERED:
-		m_tPipeline.NumRenderTargets = 3;
+		m_tPipeline.NumRenderTargets = 5;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 	case SHADER_TYPE::SHADER_LIGHT:
 		m_tPipeline.NumRenderTargets = 2;

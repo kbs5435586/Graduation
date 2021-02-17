@@ -1,43 +1,43 @@
 #include "framework.h"
-#include "UI_Specular.h"
+#include "UI_Light.h"
 #include "Management.h"
 
-CUI_Specular::CUI_Specular()
+CUI_Light::CUI_Light()
 	: CUI()
 {
 }
 
-CUI_Specular::CUI_Specular(const CUI_Specular& rhs)
+CUI_Light::CUI_Light(const CUI_Light& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Specular::Ready_Prototype()
+HRESULT CUI_Light::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Specular::Ready_GameObject(void* pArg)
+HRESULT CUI_Light::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 75.f;
-	m_fY = 375.f;
+	m_fX = 225.f;
+	m_fY = 225.f;
 
 	m_fSizeX = 150.f;
 	m_fSizeY = 150.f;
 	return S_OK;
 }
 
-_int CUI_Specular::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Light::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Specular::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Light::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -47,7 +47,7 @@ _int CUI_Specular::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Specular::Render_GameObject()
+void CUI_Light::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -72,7 +72,7 @@ void CUI_Specular::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
@@ -82,7 +82,7 @@ void CUI_Specular::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Specular::CreateInputLayout()
+HRESULT CUI_Light::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -93,20 +93,20 @@ HRESULT CUI_Specular::CreateInputLayout()
 
 	return S_OK;
 }
-CUI_Specular* CUI_Specular::Create()
+
+CUI_Light* CUI_Light::Create()
 {
-	CUI_Specular* pInstance = new CUI_Specular();
+	CUI_Light* pInstance = new CUI_Light();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CUI_Specular Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CUI_Specular::Clone_GameObject(void* pArg)
+CGameObject* CUI_Light::Clone_GameObject(void* pArg)
 {
-	CUI_Specular* pInstance = new CUI_Specular();
+	CUI_Light* pInstance = new CUI_Light();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -114,18 +114,16 @@ CGameObject* CUI_Specular::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Specular::Free()
+void CUI_Light::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-
-
 	CUI::Free();
 }
 
-HRESULT CUI_Specular::Ready_Component()
+HRESULT CUI_Light::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);

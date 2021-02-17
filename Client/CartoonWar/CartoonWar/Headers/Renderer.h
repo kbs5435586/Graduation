@@ -6,7 +6,7 @@ class CRenderer :
     public CComponent
 {
 public:
-	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_ALPHA, RENDER_UI, RENDER_END };
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT ,RENDER_ALPHA, RENDER_UI, RENDER_END };
 private:
 	explicit						CRenderer();
 	virtual							~CRenderer() = default;

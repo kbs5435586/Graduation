@@ -11,6 +11,7 @@ private:
 public:
     LIGHT*                      GetLight(const _tchar* pLightTag);
     HRESULT                     Add_LightInfo(const _tchar* pLightTag,  LIGHT& tLightInfo);
+    void                        Render_Light();
 public:
     void                        SetUp_OnShader();
 private:

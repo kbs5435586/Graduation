@@ -5,13 +5,13 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Specular :
+class CUI_Light :
     public CUI
 {
 private:
-    CUI_Specular();
-    CUI_Specular(const CUI_Specular& rhs);
-    virtual ~CUI_Specular() = default;
+    CUI_Light();
+    CUI_Light(const CUI_Light& rhs);
+    virtual ~CUI_Light() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Specular*					Create();
+	static CUI_Light*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -31,5 +31,6 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+
 };
 

@@ -72,6 +72,11 @@ void CManagement::SetUp_OnShader_Light()
 	return m_pLight_Manager->SetUp_OnShader();
 }
 
+void CManagement::Render_Light()
+{
+	return m_pLight_Manager->Render_Light();
+}
+
 HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal)
 {
 	return m_pConstant_Buffer_Manager->Create_Constant_Buffer(iBufferSize, iMaxCnt, eType, IsGlobal);
@@ -201,9 +206,11 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CLight_Manager Release Failed");
 
 	if (dwRefCnt = CKeyManager::GetInstance()->DestroyInstance())
-		_MSG_BOX("CManagement Release Failed");
+		_MSG_BOX("CKeyManager Release Failed");
 
 	if (dwRefCnt = CRTTMananger::GetInstance()->DestroyInstance())
 		_MSG_BOX("CRTTMananger Release Failed");
@@ -212,7 +219,7 @@ void CManagement::Release_Engine()
 		_MSG_BOX("CConstant_Buffer_Manager Release Failed");
 
 	if (dwRefCnt = CGameObject_Manager::GetInstance()->DestroyInstance())
-		_MSG_BOX("CObject_Manager Release Failed");
+		_MSG_BOX("CGameObject_Manager Release Failed");
 
 	if (dwRefCnt = CComponent_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CComponent_Manager Release Failed");

@@ -36,13 +36,6 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	vecIndices[4] = 3;
 	vecIndices[5] = 2;
 
-	//vecIndices[0] = 0;
-	//vecIndices[1] = 1;
-	//vecIndices[2] = 3;
-	//vecIndices[3] = 2;
-	//vecIndices[4] = 3;
-	//vecIndices[5] = 1;
-
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 

@@ -92,7 +92,6 @@ _int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void COrc01::Render_GameObject()
 {
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
@@ -127,7 +126,6 @@ HRESULT COrc01::CreateInputLayout()
 COrc01* COrc01::Create()
 {
 	COrc01* pInstance = new COrc01();
-
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
@@ -139,7 +137,6 @@ COrc01* COrc01::Create()
 CGameObject* COrc01::Clone_GameObject(void* pArg)
 {
 	COrc01* pInstance = new COrc01(*this);
-
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
 		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);

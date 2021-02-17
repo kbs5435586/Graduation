@@ -20,6 +20,8 @@ struct PS_OUT
 	float4 vTarget0		: SV_TARGET0;
 	float4 vTarget1		: SV_TARGET1;
 	float4 vTarget2		: SV_TARGET2;
+	float4 vTarget3		: SV_TARGET3;
+	float4 vTarget4		: SV_TARGET4;
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -39,14 +41,17 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	float3 vInNormal = vIn.vNormal;
-	LIGHT  tLight = Calculate_Light(0, vInNormal, vIn.vViewPos);
+	LIGHT  tLight_ = Calculate_Light(0, vInNormal, vIn.vViewPos);
 
 	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
-
+	float3 vOutNormal = (vIn.vNormal.xyz-0.5f) * 2.f;
+	float3 vNorm = normalize(mul(tLight.vLightDir, matView).xyz);
 
 	vOut.vTarget0 = vOutColor;
-	vOut.vTarget1.xyz = vIn.vNormal;
-	vOut.vTarget2.xyz = (tLight.vSpecular.xyz) + (tLight.vAmbient.xyz * vOutColor.xyz);
+	vOut.vTarget1.xyz = vOutNormal;
+	vOut.vTarget2.xyz = vIn.vViewPos;
+	vOut.vTarget3.xyz = saturate(dot(-vNorm, vInNormal));
+	vOut.vTarget4.xyz = tLight_.vSpecular;
 
 	return vOut;
 }

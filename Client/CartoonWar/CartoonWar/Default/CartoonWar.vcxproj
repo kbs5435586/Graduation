@@ -214,9 +214,11 @@
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_Light.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
+    <ClInclude Include="..\Headers\UI_Position.h" />
     <ClInclude Include="..\Headers\UI_Specular.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
@@ -280,9 +282,11 @@
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_Light.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
+    <ClCompile Include="..\Codes\UI_Position.cpp" />
     <ClCompile Include="..\Codes\UI_Specular.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
@@ -341,6 +345,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

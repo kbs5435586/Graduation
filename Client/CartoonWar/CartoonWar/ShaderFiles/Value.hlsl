@@ -74,11 +74,4 @@ int HasTex(in Texture2D _tex)
 	return 1;
 }
 
-
-
-
-cbuffer TEMP :register(b3)
-{
-	int i;
-}
 #endif

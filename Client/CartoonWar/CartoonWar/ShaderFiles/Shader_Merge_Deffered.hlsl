@@ -30,8 +30,10 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV);
 	float4	vTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV);
+	float4	vTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV);
+	float4	vTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV);
 
-	float4	vTexMerge = vTex0 + vTex1 + vTex2;
+	float4	vTexMerge = vTex0 * vTex3+vTex4;
 
 	return vTexMerge;
 }

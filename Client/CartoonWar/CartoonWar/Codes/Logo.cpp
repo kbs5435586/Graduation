@@ -19,7 +19,7 @@ HRESULT CLogo::Ready_Prototype()
 
 HRESULT CLogo::Ready_GameObject(void* pArg)
 {
-	if (FAILED(Ready_Component()))
+ 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
