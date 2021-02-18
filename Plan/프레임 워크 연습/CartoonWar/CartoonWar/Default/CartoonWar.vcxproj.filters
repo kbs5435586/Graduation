@@ -235,6 +235,12 @@
     <Filter Include="02. GameObject\97. UI\00. UI_Loading">
       <UniqueIdentifier>{140750d1-b766-4257-884c-a1b3f6c48163}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_CircleCol">
+      <UniqueIdentifier>{570dc60b-3219-4f80-bbe1-941a2def126f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_SphereCol">
+      <UniqueIdentifier>{72613873-f702-41c3-ac66-8a1a4b9ff75f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -441,6 +447,12 @@
     <ClInclude Include="..\Headers\UI_Loading.h">
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClInclude>
+    <ClInclude Include="CBuffer_CircleCol.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_CircleCol</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer_SphereCol.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_SphereCol</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -620,6 +632,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Loading.cpp">
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="CBuffer_CircleCol.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_CircleCol</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer_SphereCol.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_SphereCol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

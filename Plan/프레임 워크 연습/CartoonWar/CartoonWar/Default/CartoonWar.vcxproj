@@ -213,7 +213,11 @@
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
+    <ClInclude Include="Buffer_SphereCol.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="CartoonWar.h" />
+    <ClInclude Include="CBuffer_CircleCol.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -273,7 +277,11 @@
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
+    <ClCompile Include="Buffer_SphereCol.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="CartoonWar.cpp" />
+    <ClCompile Include="CBuffer_CircleCol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
