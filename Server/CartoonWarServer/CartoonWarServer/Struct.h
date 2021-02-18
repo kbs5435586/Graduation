@@ -13,6 +13,7 @@ struct OverEx // 확장 오버랩 구조체
 	{
 		WSABUF wsabuf;
 		SOCKET c_socket;
+		int player_id; // 타이머로 넘겨받을 객체 아이디
 	};
 };
 
@@ -42,8 +43,8 @@ struct ClientInfo // 클라이언트 정보
 
 	unordered_set <int> m_view_list;
 	// 그냥 set은 iter 돌렸을때 순서대로 나오지만 unordered_set은 순서대로 안나옴, 근데 뷰리스트 자체가 순서상관X
-	lua_State* L;
-	mutex lua_lock;
+	lua_State* m_lua;
+	mutex m_lLock;
 };
 
 struct event_type

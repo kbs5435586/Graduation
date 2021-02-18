@@ -169,6 +169,13 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (c.second.m_id == user_id)
             continue;
+        if (false == is_player(c.second.m_id)) // 플레이어가 아닌 npc이면
+        {
+            OverEx* overEx = new OverEx;
+            overEx->function = FUNC_PLAYER_MOVE;
+            overEx->player_id = user_id;
+            PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
+        }
         
         new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
@@ -450,6 +457,18 @@ void Server::initalize_NPC()
         g_clients[i].m_y = rand() % WORLD_HEIGHT;
         //g_clients[i].m_last_move_time = high_resolution_clock::now();
         //add_timer(i, FUNC_RANDMOVE, 1000);
+        lua_State* L = g_clients[i].m_lua = luaL_newstate();
+        luaL_openlibs(L);
+        luaL_loadfile(L, "NPC.LUA"); // NPC.LUA 파일 불러오기
+        lua_pcall(L, 0, 0, 0);
+        lua_getglobal(L, "set_uid"); // set_uid 함수를 스텍에 로딩
+        lua_pushnumber(L, i);
+        lua_pcall(L, 1, 0, 0);
+        lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
+
+        lua_register(L, "API_send_message", [this]() {this->API_SendMessage(L); });
+        lua_register(L, "API_get_x", API_get_x);
+        lua_register(L, "API_get_y", API_get_y);
     }
 }
 
@@ -485,15 +504,15 @@ void Server::send_leave_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
-void Server::send_chat_packet(int lisn_id, int chat_id, char mess[])
+void Server::send_chat_packet(int listen_id, int chatter_id, char mess[])
 {
     sc_packet_chat packet;
-    packet.id = chat_id; // 채팅 보내는 사람들의
+    packet.id = chatter_id; // 채팅 보내는 사람들의
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_CHAT;
     strcpy_s(packet.message, mess);
 
-    send_packet(lisn_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    send_packet(listen_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
 void Server::disconnect(int user_id)
@@ -533,6 +552,35 @@ bool Server::is_near(int a, int b)
 bool Server::is_player(int id)
 {
     return id < NPC_ID_START;
+}
+
+int Server::API_SendMessage(lua_State* L)
+{
+    int my_id = (int)lua_tointeger(L, -3);
+    int user_id = (int)lua_tointeger(L, -2);
+    char* mess = (char*)lua_tostring(L, -1);
+
+    send_chat_packet(user_id, my_id, mess);
+    lua_pop(L, 3);
+    return 0;
+}
+
+int Server::API_get_x(lua_State* L)
+{
+    int obj_id = (int)lua_tointeger(L, -1);
+    lua_pop(L, 2);
+    int x = g_clients[obj_id].m_x;
+    lua_pushnumber(L, x);
+    return 1;
+}
+
+int Server::API_get_y(lua_State* L)
+{
+    int obj_id = (int)lua_tointeger(L, -1);
+    lua_pop(L, 2);
+    int y = g_clients[obj_id].m_y;
+    lua_pushnumber(L, y);
+    return 1;
 }
 
 void Server::worker_thread()
@@ -642,6 +690,18 @@ void Server::worker_thread()
             delete overEx;
         }
             break;
+        case FUNC_PLAYER_MOVE:
+        {
+            g_clients[id].m_lLock.lock();
+            lua_State* L = g_clients[id].m_lua;
+            lua_getglobal(L, "event_player_move");
+            lua_pushnumber(L, overEx->player_id);
+            lua_pcall(L, 1, 0, 0);
+            lua_pop(L, 1);
+            g_clients[id].m_lLock.unlock();
+            delete overEx;
+        }
+
 
         default:
             cout << "Unknown Operation in Worker_Thread\n";
