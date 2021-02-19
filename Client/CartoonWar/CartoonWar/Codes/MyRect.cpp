@@ -28,6 +28,7 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 
 	_vec3 vPos = _vec3(5.f, 5.f, 5.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	return S_OK;
 }
 
@@ -59,8 +60,9 @@ void CMyRect::Render_GameObject()
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+	_matrix matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
 
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	m_pShaderCom->SetUp_OnShader(matWorld, matReflect, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
@@ -142,7 +144,7 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Test");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflect");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

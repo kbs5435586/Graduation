@@ -761,6 +761,9 @@
     <None Include="..\ShaderFiles\Shader_Test.hlsl">
       <Filter>96. ShaderFiles\99. Test</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

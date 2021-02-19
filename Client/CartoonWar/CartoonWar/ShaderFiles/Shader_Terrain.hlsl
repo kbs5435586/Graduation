@@ -13,7 +13,7 @@ struct VS_OUT
 	float3 vViewPos			: POSITION;
 	float3 vNormal			: NORMAL;
 	float2 vTexUV			: TEXCOORD0;
-	float2 vReflectPosition : TEXCOORD1;
+
 };
 
 struct PS_OUT
@@ -35,12 +35,7 @@ VS_OUT VS_Main(VS_IN vIn)
 	vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f), matWV).xyz);
 	vOut.vTexUV		= vIn.vTexUV;
 
-	matrix matReflectProjWorld;
 
-	matReflectProjWorld = mul(matReflect, matProj);
-	matReflectProjWorld = mul(matWorld, matReflectProjWorld);
-
-	vOut.vReflectPosition = mul(vIn.vPosition, matReflectProjWorld);
 
 	return vOut;
 }
@@ -65,7 +60,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 
 
 
-	vOut.vTarget5.xyz = vOutNormal;
+	vOut.vTarget5.xyz = saturate(dot(-vNorm, vInNormal));
 	return vOut;
 }
 

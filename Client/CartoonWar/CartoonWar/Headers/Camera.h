@@ -16,6 +16,8 @@ public:
 	virtual _int				LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void				Render_GameObject();
 public:
+	_matrix						Calculate_RelfectMatrix(const _float& fHeight);
+public:
 	HRESULT						SetUp_CameraProjDesc(const CAMERADESC & CameraDesc, const PROJDESC & ProjDesc);
 	void						Invalidate_ViewProjMatrix();
 private:
@@ -27,13 +29,15 @@ protected:
 protected:
 	CInput*						m_pInput_Device = nullptr;
 protected:
-	//_matrix						m_matWorld;
 	CTransform*					m_pTransform = nullptr;
+	CTransform*					m_pTransform_Reflect = nullptr;
 	_matrix						m_matView;
 	CAMERADESC					m_tCameraDesc;
 protected:
 	_matrix						m_matProj;
 	PROJDESC					m_tProjDesc;
+protected:
+	_matrix						m_matReflect;
 
 };
 

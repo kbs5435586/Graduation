@@ -90,7 +90,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 	//if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
+	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
@@ -125,7 +125,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube_Texture", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
