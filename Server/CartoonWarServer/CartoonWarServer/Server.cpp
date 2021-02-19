@@ -466,7 +466,7 @@ void Server::initalize_NPC()
         lua_pcall(L, 1, 0, 0);
         lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
 
-        lua_register(L, "API_send_message", [this]() {this->API_SendMessage(L); });
+        lua_register(L, "API_send_message", API_SendMessage);
         lua_register(L, "API_get_x", API_get_x);
         lua_register(L, "API_get_y", API_get_y);
     }

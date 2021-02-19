@@ -60,6 +60,9 @@
     <ClInclude Include="lualib.h">
       <Filter>98. Header</Filter>
     </ClInclude>
+    <ClInclude Include="API.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lua54.lib">
