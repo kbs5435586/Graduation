@@ -202,7 +202,8 @@ void CServer_Manager::process_data(char* net_buf, size_t io_byte)
 
 	while (0 != io_byte) {
 		if (0 == in_packet_size) in_packet_size = ptr[0];
-		if (io_byte + saved_packet_size >= in_packet_size) {
+		if (io_byte + saved_packet_size >= in_packet_size)
+		{
 			memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
 			ProcessPacket(packet_buffer);
 			ptr += in_packet_size - saved_packet_size;
