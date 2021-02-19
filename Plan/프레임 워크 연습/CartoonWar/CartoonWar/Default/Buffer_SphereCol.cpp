@@ -14,7 +14,7 @@ CBuffer_SphereCol::CBuffer_SphereCol(const CBuffer_SphereCol& rhs)
 HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 {
 	//정점 개수
-	m_iNumVertices = 360;
+	m_iNumVertices = 200;
 	//한 정점 벡터의 크기?
 	m_iStride = sizeof(VTXCOL);
 
@@ -25,9 +25,9 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 
 	const float PI = acos(-1);
 
-	float radius;
-	int sectorCnt;
-	int stackCnt;
+	float radius = 1.f;
+	int sectorCnt = 10;
+	int stackCnt = 10;
 
 	float x, y, z, xy;                              // vertex position
 	float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
@@ -58,6 +58,7 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 
 	//인덱스 개수
 	//인덱스
+	m_iNumIndices = 1000;
 	vector<_uint>	vecIndices;
 	//>사이즈 조정
 	unsigned int k1, k2;
@@ -71,6 +72,7 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 			// 2 triangles per sector excluding 1st and last stacks
 			if (i != 0)
 			{
+
 				vecIndices.push_back(k1);
 				vecIndices.push_back(k2);
 				vecIndices.push_back(k1 + 1);
@@ -85,14 +87,14 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 				// k1+1---k2---k2+1
 			}
 
-			// vertical lines for all stacks
-			lineIndices.push_back(k1);
-			lineIndices.push_back(k2);
-			if (i != 0)  // horizontal lines except 1st stack
-			{
-				lineIndices.push_back(k1);
-				lineIndices.push_back(k1 + 1);
-			}
+			//// vertical lines for all stacks
+			//lineIndices.push_back(k1);
+			//lineIndices.push_back(k2);
+			//if (i != 0)  // horizontal lines except 1st stack
+			//{
+			//	lineIndices.push_back(k1);
+			//	lineIndices.push_back(k1 + 1);
+			//}
 		}
 	}
 

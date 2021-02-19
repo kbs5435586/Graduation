@@ -93,8 +93,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
 
-	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
@@ -106,14 +106,14 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//_vec3 vPosOne = { 500.f ,500.f, 0.f };
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosOne)))
 	//	return E_FAIL;
-	_vec3 vPosTwo = { 10.f ,10.f, 0.f };
-	_vec3 vSizeTwo = { 10.f ,10.f, 0.f };
-	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo)))
-		return E_FAIL;
-	
-	_vec3 vPosThree = { 10.f ,0.f, 10.f };
-	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement, &vPosThree)))
-		return E_FAIL;
+	//_vec3 vPosTwo = { 10.f ,10.f, 0.f };
+	//_vec3 vSizeTwo = { 10.f ,10.f, 0.f };
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo)))
+	//	return E_FAIL;
+	//
+	//_vec3 vPosThree = { 10.f ,0.f, 10.f };
+	//if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement, &vPosThree)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

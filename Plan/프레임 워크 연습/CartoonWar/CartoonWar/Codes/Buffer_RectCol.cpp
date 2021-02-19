@@ -15,7 +15,9 @@ CBuffer_RectCol::CBuffer_RectCol(const CBuffer_RectCol& rhs)
 HRESULT CBuffer_RectCol::Ready_VIBuffer()
 {
 	//정점 개수
-	m_iNumVertices = 4;
+	m_iNumVertices = 11;
+	
+	float rad = 10.f;
 	//한 정점 벡터의 크기?
 	m_iStride = sizeof(VTXCOL);
 
@@ -24,29 +26,32 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	vecVertices.resize(m_iNumVertices);
 
 	//정점 초기화
-	vecVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[1] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[2] = VTXCOL(XMFLOAT3(0.5f, -0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[3] = VTXCOL(XMFLOAT3(0.5f, 0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+	
+	for (int i = 0; i < 10; ++i)
+	{
+		float angle = 36 * i * 3.141592 / 180;
+		float x = rad * cos(angle);
+		float y = rad * sin(angle);
+
+		vecVertices[i] = VTXCOL(XMFLOAT3(x, y, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+	}
+	vecVertices[10] = VTXCOL(XMFLOAT3(0.f, 0.f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
 
 	//인덱스
-	m_iNumIndices = 6;
+	//시계방향
+	m_iNumIndices = 30;
 	vector<_uint>	vecIndices;
 	vecIndices.resize(m_iNumIndices);
-
-	vecIndices[0] = 0;
-	vecIndices[1] = 2;
-	vecIndices[2] = 1;
-	vecIndices[3] = 0;
-	vecIndices[4] = 3;
-	vecIndices[5] = 2;
-
-	//vecIndices[0] = 0;
-	//vecIndices[1] = 1;
-	//vecIndices[2] = 3;
-	//vecIndices[3] = 2;
-	//vecIndices[4] = 3;
-	//vecIndices[5] = 1;
+	
+	for (int i = 0; i < 10; ++i)
+	{
+		vecIndices[3 * i] = 10;
+		vecIndices[3 * i + 1] = i;
+		if (i == 9)
+			vecIndices[3 * i + 2] = 0;
+		else
+			vecIndices[3 * i + 2] = i + 1;
+	}
 
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
@@ -54,7 +59,7 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	CDevice::GetInstance()->Open();
 	{
 		//정점벡터 크기 * 인덱스 버퍼 개수만큼 곱 
-		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iNumIndices);
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iNumVertices);
 
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
 			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pVertexBuffer))))
@@ -83,20 +88,20 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	}
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices);
-
-
+	
+	
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
 			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))
 			return E_FAIL;
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, 
 			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pIndexUploadBuffer))))
 			return E_FAIL;
-
+	
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = (void*)(vecIndices.data());
 		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
 		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
-
+	
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
 		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);

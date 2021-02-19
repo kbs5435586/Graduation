@@ -3,6 +3,7 @@
 class CBuffer_CircleCol :
     public CVIBuffer
 {
+private:
     CBuffer_CircleCol();
     CBuffer_CircleCol(const CBuffer_CircleCol& rhs);
     virtual ~CBuffer_CircleCol() = default;

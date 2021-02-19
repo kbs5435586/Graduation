@@ -169,6 +169,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
 		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CircleCol",
+		CBuffer_CircleCol::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_SphereCol",
+		CBuffer_SphereCol::Create())))
+		return E_FAIL;
 
 	return S_OK;
 }

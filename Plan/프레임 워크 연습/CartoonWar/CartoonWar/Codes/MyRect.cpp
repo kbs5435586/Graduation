@@ -134,7 +134,7 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectCol*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectCol");
+	m_pBufferCom = (CBuffer_RectCol*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_SphereCol");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;

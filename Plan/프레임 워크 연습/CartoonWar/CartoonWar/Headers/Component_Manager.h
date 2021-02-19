@@ -15,6 +15,8 @@
 #include "Buffer_CubeTex.h"
 #include "Buffer_Terrain.h"
 #include "Buffer_Terrain_Height.h"
+#include "CBuffer_CircleCol.h"
+#include "Buffer_SphereCol.h"
 
 class CComponent;
 class CComponent_Manager :
