@@ -47,6 +47,11 @@ cbuffer LIGHT :register(b2)
 	float3				iPaddingLight;
 };
 
+cbuffer REFLECT : register(b3)
+{
+	row_major matrix	matReflect;
+};
+
 
 Texture2D	g_texture0		: register(t0);
 Texture2D	g_texture1		: register(t1);

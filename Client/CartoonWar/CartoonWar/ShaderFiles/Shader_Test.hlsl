@@ -4,13 +4,13 @@
 struct VS_IN
 {
 	float3	vPosition	: POSITION;
-	float4	vColor		: COLOR;
+	float4	vTexUV		: TEXCOORD;
 };
 
 struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
-	float4	vColor		: COLOR;
+	float4	vTexUV		: TEXCOORD;
 	float3	vViewPos	: POSITION;
 };
 struct PS_OUT
@@ -29,17 +29,20 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vViewPos = mul(float4(vIn.vPosition, 1.f), matWV).xyz;
-	vOut.vColor = vIn.vColor;
+	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
 }
 
-PS_OUT	PS_Main(VS_OUT vIn) 
+PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	vOut.vTarget0 = vIn.vColor;
-	vOut.vTarget2.xyz = vIn.vColor;
-	vOut.vTarget5.xyz = vIn.vColor;
+	//vOut.vTarget5 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget1.xyz = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget2.xyz = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vTarget3.xyz = g_textureCube.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget4.xyz = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget5.xyz = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	return vOut;
 }
 

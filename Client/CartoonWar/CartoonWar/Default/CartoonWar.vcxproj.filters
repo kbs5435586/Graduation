@@ -136,9 +136,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
       <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. BaseShape\01. Cube">
-      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\00. Scene_Logo">
       <UniqueIdentifier>{98ecb91f-3121-4ff3-8b0a-54591eedf38d}</UniqueIdentifier>
     </Filter>
@@ -267,6 +264,18 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\08. Collider">
       <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Reflect">
+      <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\02. Cube">
+      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
+      <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ShaderFiles\99. Test">
+      <UniqueIdentifier>{677384db-b2ee-4e78-9dc8-75e200645ddc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -397,7 +406,7 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Cube.h">
-      <Filter>02. GameObject\99. BaseShape\01. Cube</Filter>
+      <Filter>02. GameObject\99. BaseShape\02. Cube</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Logo.h">
       <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
@@ -497,6 +506,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Specular.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_Specular</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Reflect.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Reflect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Cube_Texture.h">
+      <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -610,7 +625,7 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Cube.cpp">
-      <Filter>02. GameObject\99. BaseShape\01. Cube</Filter>
+      <Filter>02. GameObject\99. BaseShape\02. Cube</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Logo.cpp">
       <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
@@ -702,6 +717,12 @@
     <ClCompile Include="..\Codes\UI_Specular.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_Specular</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Reflect.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Reflect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cube_Texture.cpp">
+      <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -736,6 +757,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Test.hlsl">
+      <Filter>96. ShaderFiles\99. Test</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

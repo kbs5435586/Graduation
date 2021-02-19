@@ -36,7 +36,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(LIGHTINFO), 1, CONST_REGISTER::b2, true)))
 		return E_FAIL;
-
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(tagReflect), 512, CONST_REGISTER::b3)))
+		return E_FAIL;
 
 	if (FAILED(m_pManagement->Ready_RTT_Manager()))
 		return E_FAIL;

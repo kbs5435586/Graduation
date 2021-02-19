@@ -66,20 +66,27 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			return E_FAIL;
 
 		arrRT[3].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[3].pRtt = CRTT::Create(L"PositionTargetTex"
+		arrRT[3].pRtt = CRTT::Create(L"ShadingTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[3].vClear_Color);
 		if (arrRT[3].pRtt == nullptr)
 			return E_FAIL;
 
 		arrRT[4].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[4].pRtt = CRTT::Create(L"PositionTargetTex"
+		arrRT[4].pRtt = CRTT::Create(L"SpecularTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[4].vClear_Color);
 		if (arrRT[4].pRtt == nullptr)
 			return E_FAIL;
 
-		CMRT* pMRT = CMRT::Create(5, arrRT, pDsTex);
+		arrRT[5].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[5].pRtt = CRTT::Create(L"ReflectTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[5].vClear_Color);
+		if (arrRT[5].pRtt == nullptr)
+			return E_FAIL;
+
+		CMRT* pMRT = CMRT::Create(6, arrRT, pDsTex);
 		m_vecMRT.push_back(pMRT);
 	}
 

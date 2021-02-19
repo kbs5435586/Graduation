@@ -1,25 +1,23 @@
 #include "framework.h"
-#include "Terrain_Height.h"
+#include "Cube_Texture.h"
 #include "Management.h"
 
-CTerrain_Height::CTerrain_Height()
+CCube_Texture::CCube_Texture()
 	: CGameObject()
 {
 }
 
-CTerrain_Height::CTerrain_Height(const CTerrain_Height& rhs)
+CCube_Texture::CCube_Texture(const CCube_Texture& rhs)
 	: CGameObject(rhs)
 {
-
 }
 
-HRESULT CTerrain_Height::Ready_Prototype()
+HRESULT CCube_Texture::Ready_Prototype()
 {
-
 	return S_OK;
 }
 
-HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
+HRESULT CCube_Texture::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -28,18 +26,35 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
+	_vec3 vPos = _vec3(5.f, 5.f, 5.f);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
 
-_int CTerrain_Height::Update_GameObject(const _float& fTimeDelta)
+_int CCube_Texture::Update_GameObject(const _float& fTimeDelta)
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+
+	pManagement->AddRef();
+
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+	//m_pTransformCom->Set_PositionY(fY + 0.5f);
+
+	Safe_Release(pManagement);
+
 
 	return _int();
 }
 
-_int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CCube_Texture::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -47,10 +62,11 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+
 	return _int();
 }
 
-void CTerrain_Height::Render_GameObject()
+void CCube_Texture::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -65,76 +81,66 @@ void CTerrain_Height::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
+
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t7);
 	CDevice::GetInstance()->UpdateTable();
 
 
 	m_pBufferCom->Render_VIBuffer();
-	m_pNaviCom->Render_Navigation();
-
-
-
-
-	// 여기서 ReflectMatrxi값 구해주고
-	// Cube_Texture에 접근해서 Render 해주고
-	// Cube_Texture에서 사용한 Texture를 쉐이더에 Set
-
 	Safe_Release(pManagement);
 }
 
-HRESULT CTerrain_Height::CreateInputLayout()
+HRESULT CCube_Texture::CreateInputLayout()
 {
-	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::SKYBOX, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
 
-CTerrain_Height* CTerrain_Height::Create()
+CCube_Texture* CCube_Texture::Create()
 {
-	CTerrain_Height* pInstance = new CTerrain_Height();
+	CCube_Texture* pInstance = new CCube_Texture();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CTerrain_Height Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CCube Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CTerrain_Height::Clone_GameObject(void* pArg)
+CGameObject* CCube_Texture::Clone_GameObject(void* pArg)
 {
-	CTerrain_Height* pInstance = new CTerrain_Height(*this);
+	CCube_Texture* pInstance = new CCube_Texture(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"CTerrain_Height Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CCube Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CTerrain_Height::Free()
+void CCube_Texture::Free()
 {
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pNaviCom);
-	
+
 	CGameObject::Free();
 }
 
-HRESULT CTerrain_Height::Ready_Component()
+HRESULT CCube_Texture::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -150,26 +156,21 @@ HRESULT CTerrain_Height::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_Terrain_Height*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height");
+	m_pBufferCom = (CBuffer_CubeTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
-		
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
+
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Test");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
-
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-		return E_FAIL;
-
 	Safe_Release(pManagement);
+
 	return S_OK;
 }

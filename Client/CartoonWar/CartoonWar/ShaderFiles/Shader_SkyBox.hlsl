@@ -20,6 +20,7 @@ struct PS_OUT
 	float4 vTarget2		: SV_TARGET2;
 	float4 vTarget3		: SV_TARGET3;
 	float4 vTarget4		: SV_TARGET4;
+	float4 vTarget5		: SV_TARGET5;
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -40,6 +41,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 
 	vOut.vTarget0 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 	vOut.vTarget3 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vTarget5 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 	//vOut.vTarget1 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 	//vOut.vTarget2 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 	return vOut;

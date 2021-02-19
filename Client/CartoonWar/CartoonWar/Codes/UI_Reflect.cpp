@@ -1,53 +1,53 @@
 #include "framework.h"
-#include "MyRect.h"
+#include "UI_Reflect.h"
 #include "Management.h"
 
-CMyRect::CMyRect()
-	: CGameObject()
+CUI_Reflect::CUI_Reflect()
+	: CUI()
 {
 }
 
-CMyRect::CMyRect(const CMyRect& rhs)
-	: CGameObject(rhs)
+CUI_Reflect::CUI_Reflect(const CUI_Reflect& rhs)
+	: CUI(rhs)
 {
 }
 
-HRESULT CMyRect::Ready_Prototype()
+HRESULT CUI_Reflect::Ready_Prototype()
 {
-
-
 	return S_OK;
 }
 
-HRESULT CMyRect::Ready_GameObject(void* pArg)
+HRESULT CUI_Reflect::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(5.f, 5.f, 5.f);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_fX = 225.f;
+	m_fY = 375.f;
+
+	m_fSizeX = 150.f;
+	m_fSizeY = 150.f;
 	return S_OK;
 }
 
-_int CMyRect::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Reflect::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Reflect::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (nullptr == m_pRendererCom)
-		return -1;
-
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-
+	if (m_pRendererCom != nullptr)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+			return E_FAIL;
+	}
 	return _int();
 }
 
-void CMyRect::Render_GameObject()
+void CUI_Reflect::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -56,15 +56,25 @@ void CMyRect::Render_GameObject()
 
 
 	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+	_matrix matWorld = Matrix_::Identity();
+	_matrix matView = Matrix_::Identity();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+
+	matWorld._11 = m_fSizeX;
+	matWorld._22 = m_fSizeY;
+
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -m_fY + (WINCY >> 1);
+
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
+
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -72,56 +82,49 @@ void CMyRect::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CMyRect::CreateInputLayout()
+HRESULT CUI_Reflect::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
-
 
 	return S_OK;
 }
 
-CMyRect* CMyRect::Create()
+CUI_Reflect* CUI_Reflect::Create()
 {
-	CMyRect* pInstance = new CMyRect();
-
+	CUI_Reflect* pInstance = new CUI_Reflect();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CMyRect Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CMyRect::Clone_GameObject(void* pArg)
+CGameObject* CUI_Reflect::Clone_GameObject(void* pArg)
 {
-	CMyRect* pInstance = new CMyRect(*this);
-
-	if (FAILED(pInstance->Ready_GameObject()))
+	CUI_Reflect* pInstance = new CUI_Reflect();
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MessageBox(0, L"CMyRect Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CMyRect::Free()
+void CUI_Reflect::Free()
 {
-
-	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-
-	CGameObject::Free();
+	CUI::Free();
+	CUI::Free();
 }
 
-HRESULT CMyRect::Ready_Component()
+HRESULT CUI_Reflect::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -137,21 +140,17 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectCol");
+	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Test");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
+
 
 	Safe_Release(pManagement);
-
 	return S_OK;
 }

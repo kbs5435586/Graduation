@@ -165,6 +165,7 @@
     <ClInclude Include="..\Headers\Constant_Buffer.h" />
     <ClInclude Include="..\Headers\Constant_Buffer_Manager.h" />
     <ClInclude Include="..\Headers\Cube.h" />
+    <ClInclude Include="..\Headers\Cube_Texture.h" />
     <ClInclude Include="..\Headers\Debug_Camera.h" />
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
     <ClInclude Include="..\Headers\UI_Position.h" />
+    <ClInclude Include="..\Headers\UI_Reflect.h" />
     <ClInclude Include="..\Headers\UI_Specular.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
@@ -242,6 +244,7 @@
     <ClCompile Include="..\Codes\Constant_Buffer.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer_Manager.cpp" />
     <ClCompile Include="..\Codes\Cube.cpp" />
+    <ClCompile Include="..\Codes\Cube_Texture.cpp" />
     <ClCompile Include="..\Codes\Debug_Camera.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
@@ -287,6 +290,7 @@
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
     <ClCompile Include="..\Codes\UI_Position.cpp" />
+    <ClCompile Include="..\Codes\UI_Reflect.cpp" />
     <ClCompile Include="..\Codes\UI_Specular.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
@@ -348,6 +352,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Test.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

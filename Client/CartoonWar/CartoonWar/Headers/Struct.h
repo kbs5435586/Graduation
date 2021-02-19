@@ -197,3 +197,8 @@ typedef struct tagRenderTarget
 	ID3D12Resource*		pTarget;
 	XMFLOAT4			fClear_Color;
 }RENDERTARGER;
+
+typedef struct tagReflect
+{
+	XMFLOAT4X4	matReflect;
+}REFLECT;

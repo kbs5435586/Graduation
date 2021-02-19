@@ -29,7 +29,7 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	_vec3 vPos = _vec3(0.f,5.f,0.f);
+	_vec3 vPos = _vec3(5.f,5.f, 5.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
@@ -37,23 +37,6 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 
 _int CCube::Update_GameObject(const _float& fTimeDelta)
 {
-	if (GetAsyncKeyState('T') & 0x8000)
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	if (GetAsyncKeyState('F') & 0x8000)
-	{
-		m_pTransformCom->Go_Left(fTimeDelta);
-	}
-	if (GetAsyncKeyState('G') & 0x8000)
-	{
-		m_pTransformCom->BackWard(fTimeDelta);
-	}
-	if (GetAsyncKeyState('H') & 0x8000)
-	{
-		m_pTransformCom->Go_Right(fTimeDelta);
-	}
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return -1;
@@ -66,7 +49,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(fY);
+	m_pTransformCom->Set_PositionY(fY+0.5f);
 
 	Safe_Release(pManagement);
 
@@ -88,13 +71,26 @@ _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CCube::Render_GameObject()
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->UpdateTable();
+
 
 	m_pBufferCom->Render_VIBuffer();
+	Safe_Release(pManagement);
 }
 
 HRESULT CCube::CreateInputLayout()
@@ -103,7 +99,7 @@ HRESULT CCube::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 	return S_OK;
 }
