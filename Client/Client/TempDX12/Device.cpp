@@ -13,7 +13,6 @@ HRESULT CDevice::Initialize()
 		m_iFenceValues[i] = 0;
 		m_pRenderTargetBuffers[i] = nullptr;
 	}
-
 	return S_OK;
 }
 

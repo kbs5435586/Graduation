@@ -24,15 +24,6 @@ CServer_Manager::CServer_Manager()
 void CServer_Manager::MainServer(CManagement* managment)
 {
 	////////////////////// 엔터 누르고 client_ip가 안비어있을시
-	InitServer(g_hWnd);
-
-	cs_packet_login l_packet;
-	l_packet.size = sizeof(l_packet);
-	l_packet.type = CS_PACKET_LOGIN;
-	int t_id = GetCurrentProcessId();
-	//sprintf_s(l_packet.name, "P%03d", t_id % 1000);
-	strcpy_s(g_client.name, l_packet.name);
-	send_packet(&l_packet);
 
 	//else if (wParam == VK_BACK) // 백스페이스 누르면 ip지워지게
 	//{
@@ -69,21 +60,22 @@ void CServer_Manager::MainServer(CManagement* managment)
 
 void CServer_Manager::Free() // 여기에 소켓, 윈속 종료
 {
-	if (c_socket)
+	if (m_cSocket)
 	{
-		shutdown(c_socket, SD_BOTH);
-		closesocket(c_socket);
-		c_socket = NULL;
+		shutdown(m_cSocket, SD_BOTH);
+		closesocket(m_cSocket);
+		m_cSocket = NULL;
 	}
-
 	WSACleanup();
 }
 
 BOOL CServer_Manager::InitServer(HWND hWnd)
 {
-	c_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	WSADATA WSAData;
+	WSAStartup(MAKEWORD(2, 2), &WSAData);
+	m_cSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-	int retval = WSAAsyncSelect(c_socket, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
+	int retval = WSAAsyncSelect(m_cSocket, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
 	if (retval == SOCKET_ERROR)
 	{
 		Free();
@@ -94,10 +86,10 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, client_IP.c_str(), &server_a.sin_addr);
+	inet_pton(AF_INET, "127.0.0.1", &server_a.sin_addr);
 	server_a.sin_port = htons(SERVER_PORT);
 
-	retval = connect(c_socket, (SOCKADDR*)&server_a, sizeof(server_a));
+	retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
 	if ((retval == SOCKET_ERROR) && (WSAEWOULDBLOCK != WSAGetLastError())) // 비동기 connect는 바로 리턴되면서 WSAEWOULDBLOCK 에러를 발생시킴
 	{
 		Free();
@@ -105,7 +97,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 		return FALSE;
 	}
 
-	cout << "connect complete!\n";
+	//cout << "connect complete!\n";
 	return TRUE;
 }
 
@@ -117,13 +109,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	case SC_PACKET_LOGIN_OK:
 	{
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
-		g_myid = my_packet->id;
-		avatar.move(my_packet->x, my_packet->y);
-
-		g_left_x = my_packet->x - (SCREEN_WIDTH / 2); // 아바타가 움직일때 카메라가 따라가게 설정해줌
-		g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
-
-		avatar.show();
+		m_myid = my_packet->id;
+		m_player.x = my_packet->x;
+		m_player.y = my_packet->y;
+		m_player.showCharacter = true;
 	}
 	break;
 
@@ -132,23 +121,20 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_enter* my_packet = reinterpret_cast<sc_packet_enter*>(ptr);
 		int id = my_packet->id;
 
-		if (id == g_myid) {
-			avatar.move(my_packet->x, my_packet->y);
-
-			g_left_x = my_packet->x - (SCREEN_WIDTH / 2); // 아바타가 움직일때 카메라가 따라가게 설정해줌
-			g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
-
-			avatar.show();
+		if (id == m_myid) {
+			m_player.x = my_packet->x;
+			m_player.y = my_packet->y;
+			m_player.showCharacter = true;
 		}
 		else {
-			if (id < NPC_ID_START)
-				npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
-			else
-				npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
-			strcpy_s(npcs[id].name, my_packet->name);
-			npcs[id].set_name(my_packet->name);
-			npcs[id].move(my_packet->x, my_packet->y);
-			npcs[id].show();
+			//if (id < NPC_ID_START)
+			//    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
+			//else
+			//    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
+			strcpy_s(m_npcs[id].name, my_packet->name);
+			m_npcs[id].x = my_packet->x;
+			m_npcs[id].y = my_packet->y;
+			m_npcs[id].showCharacter = true;
 		}
 	}
 	break;
@@ -156,42 +142,42 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int other_id = my_packet->id;
-		if (other_id == g_myid) {
-			avatar.move(my_packet->x, my_packet->y);
-
-			g_left_x = my_packet->x - (SCREEN_WIDTH / 2); // 아바타가 움직일때 카메라가 따라가게 설정해줌
-			g_top_y = my_packet->y - (SCREEN_HEIGHT / 2);
+		if (other_id == m_myid) {
+			m_player.x = my_packet->x;
+			m_player.y = my_packet->y;
 		}
 		else {
-			if (0 != npcs.count(other_id))
-				npcs[other_id].move(my_packet->x, my_packet->y);
+			if (0 != m_npcs.count(other_id))
+			{
+				m_npcs[other_id].x = my_packet->x;
+				m_npcs[other_id].y = my_packet->y;
+			}
 		}
 	}
 	break;
-
 	case SC_PACKET_LEAVE:
 	{
 		sc_packet_leave* my_packet = reinterpret_cast<sc_packet_leave*>(ptr);
 		int other_id = my_packet->id;
-		if (other_id == g_myid) {
-			avatar.hide();
+		if (other_id == m_myid) {
+			m_player.showCharacter = false;
 		}
 		else {
-			if (0 != npcs.count(other_id))
-				npcs[other_id].hide();
+			if (0 != m_npcs.count(other_id))
+				m_npcs[other_id].showCharacter = false;
 		}
 	}
 	break;
-	case SC_PACKET_CHAT:
-	{
-		sc_packet_chat* my_packet = reinterpret_cast<sc_packet_chat*>(ptr);
-		int o_id = my_packet->id;
-		if (0 != npcs.count(o_id))
-		{
-			npcs[o_id].add_chat(my_packet->message);
-		}
-	}
-	break;
+	//case SC_PACKET_CHAT:
+	//{
+	//	sc_packet_chat* my_packet = reinterpret_cast<sc_packet_chat*>(ptr);
+	//	int o_id = my_packet->id;
+	//	if (0 != m_npcs.count(o_id))
+	//	{
+	//		m_npcs[o_id].add_chat(my_packet->message);
+	//	}
+	//}
+	//break;
 	default:
 		printf("Unknown PACKET type [%d]\n", ptr[1]);
 	}
@@ -222,11 +208,63 @@ void CServer_Manager::process_data(char* net_buf, size_t io_byte)
 	}
 }
 
+void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
+{
+	static int count = 0;
+	char TempLog[256];
+
+	switch (WSAGETSELECTEVENT(lParam))
+	{
+	case FD_CONNECT:
+	{
+		m_player.x = 4;
+		m_player.y = 4;
+		m_player.showCharacter = false;
+
+		send_login_ok_packet();
+	}
+	break;
+	case FD_READ:
+	{
+		char net_buf[MAX_BUF_SIZE];
+		auto recv_result = recv(m_cSocket, net_buf, MAX_BUF_SIZE, 0);
+		if (recv_result == SOCKET_ERROR)
+		{
+			//Free();
+			//wcout << L"Recv 에러!";
+			while (true);
+		}
+		else if (recv_result == 0)
+			break;
+
+		if (recv_result > 0)
+			process_data(net_buf, recv_result);
+	}
+	// ProcessPacket(char* ptr);
+	sprintf(TempLog, "gSock FD_READ");
+	break;
+	case FD_WRITE:
+
+
+		sprintf(TempLog, "gSock FD_WRITE");
+		break;
+
+	case FD_CLOSE:
+		Free();
+		sprintf(TempLog, "gSock FD_CLOSE");
+		break;
+
+	default:
+		sprintf(TempLog, "gSock Unknown event received: %d", WSAGETSELECTEVENT(lParam));
+		break;
+	}
+}
+
 void CServer_Manager::send_packet(void* packet)
 {
 	char* p = reinterpret_cast<char*>(packet);
 	//size_t sent;
-	send(c_socket, p, p[0], 0);
+	send(m_cSocket, p, p[0], 0);
 	//g_socket.send(p, p[0], sent);
 }
 
@@ -237,4 +275,15 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.size = sizeof(m_packet);
 	m_packet.direction = dir;
 	send_packet(&m_packet);
+}
+
+void CServer_Manager::send_login_ok_packet()
+{
+	cs_packet_login l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_LOGIN;
+	int t_id = GetCurrentProcessId();
+	//sprintf_s(l_packet.name, "P%03d", t_id % 1000);
+	strcpy_s(m_player.name, l_packet.name);
+	send_packet(&l_packet);
 }
