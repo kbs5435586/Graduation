@@ -1,4 +1,5 @@
 #pragma once
+#include "protocol.h"
 
 typedef struct tagVertexCol
 {
@@ -188,8 +189,8 @@ typedef struct tagLight
 
 struct Player_Info
 {
-	bool isConnected;
-	char name[MAX_ID_LEN];
+	bool showCharacter;
+	char name[MAX_ID_LEN + 1];
 	int x = 0;
 	int y = 0;
 };

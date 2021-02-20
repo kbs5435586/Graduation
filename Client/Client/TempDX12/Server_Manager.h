@@ -10,10 +10,11 @@ private:
     virtual ~CServer_Manager() = default;
 
 private:
-    Player_Info g_client;
-    unordered_map <int, Player_Info> g_npcs;
-    SOCKET c_socket; // 서버와 연결할 소켓
-    string client_IP; // 클라 IP
+    int m_myid;
+    Player_Info m_player;
+    unordered_map <int, Player_Info> m_npcs;
+    SOCKET m_cSocket; // 서버와 연결할 소켓
+    string m_client_IP; // 클라 IP
     short PORT = 3500;
 public:
     void MainServer(CManagement* managment);
@@ -21,6 +22,7 @@ public:
 
     void ProcessPacket(char* ptr);
     void process_data(char* net_buf, size_t io_byte);
+    void SocketEventMessage(HWND hWnd, LPARAM lParam);
 
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);

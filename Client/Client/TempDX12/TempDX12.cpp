@@ -5,6 +5,7 @@
 #include "TempDX12.h"
 #include "System.h"
 #include "MainApp.h"
+#include "Server_Manager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -192,6 +193,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_SOCKET:
+    {
+        CServer_Manager* server = CServer_Manager::GetInstance();
+        if (nullptr == server)
+            return;
+        server->AddRef();
+        server->SocketEventMessage(hWnd, lParam);
+    }
+    break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
