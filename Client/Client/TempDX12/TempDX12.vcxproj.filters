@@ -211,6 +211,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\01. Component\00. VIBuffer\00. Buffer_TriCol">
       <UniqueIdentifier>{60bbc1d2-7014-4ac7-8cb1-fa2bc8b8dccc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Server">
+      <UniqueIdentifier>{d738c14c-8bd1-4a41-bc44-25f540a9ad5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -417,6 +420,12 @@
     <ClInclude Include="SimpleMath.h">
       <Filter>98. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>97. Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Server_Manager.h">
+      <Filter>97. Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="TempDX12.ico">
@@ -602,6 +611,9 @@
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>97. Engine\01. Utility\02. Component\01. Component\06. Frustum</Filter>
+    </ClCompile>
+    <ClCompile Include="Server_Manager.cpp">
+      <Filter>97. Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

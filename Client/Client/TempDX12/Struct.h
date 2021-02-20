@@ -186,5 +186,14 @@ typedef struct tagLight
 
 }LIGHT;
 
+struct Player_Info
+{
+	bool isConnected;
+	char name[MAX_ID_LEN];
+	int x = 0;
+	int y = 0;
+};
+
+
 
 

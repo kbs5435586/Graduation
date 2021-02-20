@@ -82,3 +82,17 @@ void CLayer::Free()
 	}
 	m_ObjectList.clear();
 }
+
+CGameObject* CLayer::Get_GameObject(const _uint& iIdx)
+{
+	if (m_ObjectList.size() <= iIdx)
+		return nullptr;
+
+	auto iter = m_ObjectList.begin();
+
+	for (_uint i = 0; i < iIdx; ++i)
+		++iter;
+
+
+	return (*iter);
+}

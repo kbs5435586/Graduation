@@ -5,6 +5,7 @@
 #include "TimerManager.h"
 #include "FrameManager.h"
 #include "Device.h"
+#include "Server_Manager.h"
 
 _IMPLEMENT_SINGLETON(CManagement)
 CManagement::CManagement()
@@ -129,6 +130,9 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CServer_Manager Release Failed");
+
 	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CLight_Manager Release Failed");
 
@@ -151,9 +155,26 @@ void CManagement::Release_Engine()
 		_MSG_BOX("CGraphic_Device Release Failed");
 }
 
+CGameObject* CManagement::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_GameObject(iSceneID, pLayerTag, iIdx);
+}
+
+list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag)
+{
+	if (nullptr == m_pObject_Manager)
+		return list<CGameObject*>();
+
+	return m_pObject_Manager->Get_GameObjectLst(iSceneID, pLayerTag);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pScene);
+	Safe_Release(m_pServer_Manager);
 }

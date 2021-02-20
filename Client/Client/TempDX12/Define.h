@@ -54,6 +54,10 @@ const float g_Far = 1000.f;
 #define NULL_CHECK_VOID(PTR) if(nullptr == PTR) return;
 #define NULL_CHECK_VAL(PTR, RETURN_VAL) if(nullptr == PTR) return RETURN_VAL;
 
+//------ Server
+#define WM_SOCKET (WM_USER+1)
+//------
+
 
 
 enum SCENEID { SCENE_STATIC, SCENE_LOGO, SCENE_STAGE, SCENE_END };

@@ -2,6 +2,7 @@
 #include "Component_Manager.h"
 #include "GameObject_Manager.h"
 #include "Light_Manager.h"
+#include "Server_Manager.h"
 
 #include "Base.h"
 class CComponent;
@@ -28,11 +29,15 @@ public:
 	void					Render_Management();
 	HRESULT					Clear_Layers(const _uint& iSceneID);
 	static void				Release_Engine();
+public:
+	CGameObject*			Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx);
+	list<CGameObject*>		Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag);
 private:
 	virtual void			Free();
 private:
 	CScene*					m_pScene = nullptr;
 	CGameObject_Manager*	m_pObject_Manager = nullptr;
 	CComponent_Manager*		m_pComponent_Manager = nullptr;
+	CServer_Manager*		m_pServer_Manager = nullptr;
 };
 
