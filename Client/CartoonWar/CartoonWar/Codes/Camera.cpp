@@ -59,41 +59,40 @@ void CCamera::Render_GameObject()
 
 _matrix CCamera::Calculate_RelfectMatrix(const _float& fHeight)
 {
-	_vec3 up, position, lookAt, right;
-
 	// 위쪽을 가리키는 벡터를 설정합니다.
-	up.x = 0.0f;
-	up.y = 1.0f;
-	up.z = 0.0f;
+	m_vUp.x = 0.0f;
+	m_vUp.y = 1.0f;
+	m_vUp.z = 0.0f;
 
 	// XMVECTOR 구조체에 로드한다.
 	// 3D월드에서 카메라의 위치를 ​​설정합니다.
-	position.x = m_pTransform->Get_StateInfo(CTransform::STATE_POSITION)->x;
-	position.y = -m_pTransform->Get_StateInfo(CTransform::STATE_POSITION)->y + (fHeight * 2.0f);
-	position.z = m_pTransform->Get_StateInfo(CTransform::STATE_POSITION)->z;
+	m_vPos.x = m_pTransform->Get_StateInfo(CTransform::STATE_POSITION)->x;
+	m_vPos.y = -m_pTransform->Get_StateInfo(CTransform::STATE_POSITION)->y + (fHeight * 2.0f);
+	m_vPos.z = m_pTransform->Get_StateInfo(CTransform::STATE_POSITION)->z;
 
 	// XMVECTOR 구조체에 로드한다.
 
 	// Calculate the rotation in radians.
 
 	// 기본적으로 카메라가 찾고있는 위치를 설정합니다.
-	lookAt.x = position.x;
-	lookAt.y = position.y;
-	lookAt.z = position.z;
+	m_vLook.x = sinf(0.f) +m_vPos.x;
+	m_vLook.y = m_vPos.y;
+	m_vLook.z = cosf(0.f) + m_vPos.z;
 
 
-	right = Vector3_::CrossProduct(up, lookAt);
-	right = Vector3_::Normalize(right);
+	m_vRight = Vector3_::CrossProduct(m_vUp, m_vLook);
+	m_vRight = Vector3_::Normalize(m_vRight);
 
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_RIGHT, &right);
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_UP, &up);
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_LOOK, &lookAt);
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_POSITION, &position);
+	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_RIGHT, &m_vRight);
+	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_UP, &m_vUp);
+	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_LOOK, &m_vLook);
+	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
 
 	m_matReflect = m_pTransform_Reflect->Get_Matrix_Inverse();
 
 	// 마지막으로 세 개의 업데이트 된 벡터에서 뷰 행렬을 만듭니다.
-	//m_matReflect = Matrix_::LookAtLH(position, lookAt, up);
+	//m_matReflect = Matrix_::LookAtLH(m_vPos, m_vLook, m_vUp);
+
 
 	return m_matReflect;
 }

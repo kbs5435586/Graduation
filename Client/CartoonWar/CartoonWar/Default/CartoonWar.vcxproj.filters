@@ -274,8 +274,8 @@
     <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
       <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles\99. Test">
-      <UniqueIdentifier>{677384db-b2ee-4e78-9dc8-75e200645ddc}</UniqueIdentifier>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
+      <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -513,6 +513,9 @@
     <ClInclude Include="..\Headers\Cube_Texture.h">
       <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\QuadTree.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -723,6 +726,9 @@
     <ClCompile Include="..\Codes\Cube_Texture.cpp">
       <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\QuadTree.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -757,9 +763,6 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
-    </None>
-    <None Include="..\ShaderFiles\Shader_Test.hlsl">
-      <Filter>96. ShaderFiles\99. Test</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
       <Filter>96. ShaderFiles</Filter>

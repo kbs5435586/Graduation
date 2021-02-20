@@ -26,9 +26,10 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(5.f, 5.f, 5.f);
+	_vec3 vPos = _vec3(10.f, 5.f, 10.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(_vec3(5.f, 5.f, 5.f));
 	return S_OK;
 }
 
@@ -65,7 +66,7 @@ void CMyRect::Render_GameObject()
 	m_pShaderCom->SetUp_OnShader(matWorld, matReflect, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 

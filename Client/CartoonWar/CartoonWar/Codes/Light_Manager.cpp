@@ -8,11 +8,11 @@ CLight_Manager::CLight_Manager()
 {
 
 }
-LIGHT* CLight_Manager::GetLight(const _tchar* pLightTag)
+LIGHT CLight_Manager::GetLight(const _tchar* pLightTag)
 {
 	auto iter_find = m_mapLightInfo.find(pLightTag);
 	if (iter_find == m_mapLightInfo.end())
-		return nullptr;
+		return LIGHT();
 
 	return iter_find->second->Get_LightInfo();
 }
@@ -49,23 +49,33 @@ void CLight_Manager::SetUp_OnShader()
 
 	LIGHTINFO tInfo = {};
 
+
+
 	if (m_mapLightInfo.size() <= 0)
 	{
 		Safe_Release(pManagement);
 		return;
 	}
 
-
 	for (auto& iter : m_mapLightInfo)
 	{
-		const LIGHT& tLight = *iter.second->Get_LightInfo();
-		tInfo.arrLight = tLight;
+		m_vecLightInfo.push_back(iter.second);
 	}
 
-	tInfo.iCurLightCnt = 1;
+
+	for (int i = 0; i < m_vecLightInfo.size(); ++i)
+	{
+		LIGHT tLight = m_vecLightInfo[i]->Get_LightInfo();
+		tInfo.arrLight[i] = tLight;
+	}
+	tInfo.iCurLightCnt = (UINT)m_vecLightInfo.size();
+
+
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b2)->SetData(&tInfo);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b2)->GetCBV().Get(), iOffset, CONST_REGISTER::b2);
 
+
+	m_vecLightInfo.clear();
 	Safe_Release(pManagement);
 }
 

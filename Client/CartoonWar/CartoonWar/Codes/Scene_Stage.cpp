@@ -116,7 +116,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 
 	tLightInfo.fRange = 100.f;
-	tLightInfo.fPower = 20.f;
 	if (FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;
 

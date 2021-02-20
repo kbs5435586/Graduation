@@ -90,11 +90,11 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	case SHADER_TYPE::SHADER_DEFFERED:
 		m_tPipeline.NumRenderTargets = 6;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[5] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[5] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		break;
 	case SHADER_TYPE::SHADER_LIGHT:
 		m_tPipeline.NumRenderTargets = 2;
@@ -117,13 +117,16 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+	_matrix	matTemp		= matView;
+	matTemp = Matrix_::Inverse(matTemp);
+
 
 	output.matWorld		= matWorld;
 	output.matView		= matView;
 	output.matProj		= matProj;
 	output.matWV		= matWorld * matView;
 	output.matWVP		= output.matWV * matProj;
-
+	output.vCamPos		= (_vec4)&matTemp.m[3][0];
 	return S_OK;
 }
 
@@ -132,16 +135,15 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 
-	XMMATRIX	xmMatWorld	= XMLoadFloat4x4(&matWorld);
-	XMMATRIX	xmMatView	= XMLoadFloat4x4(&matView);
-	XMMATRIX	xmMatProj	= XMLoadFloat4x4(&matProj);
+	_matrix	matTemp = matView;
+	matTemp = Matrix_::Inverse(matTemp);
 
 	tPass.matWorld	= matWorld;
 	tPass.matView	= matView;
 	tPass.matProj	= matProj;
 	tPass.matWV		= matWorld * matView;
 	tPass.matWVP	= tPass.matWV * matProj;
-
+	tPass.vCamPos = (_vec4)&matTemp.m[3][0];
 	return S_OK;
 }
 

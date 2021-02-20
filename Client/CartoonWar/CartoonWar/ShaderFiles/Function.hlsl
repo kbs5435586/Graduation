@@ -3,22 +3,28 @@
 #include "Value.hlsl"
 
 
-tagLightColor Calculate_Light(int _iLightIdx, float3 _vViewNormal, float3 _vViewPos)
+LIGHT Calculate_Light(int _iLightIdx, float3 _vNormal, float4 _vWorldPos)
 {
-	tagLightColor tColor = (tagLightColor)0.f;
+	LIGHT tColor = (LIGHT)0.f;
 
 
-	float3	vViewLightDir = (float3)0.f;
+	float4	vLightDir = normalize(tLight[_iLightIdx].vLightDir);
+	float4	vNormal = float4(_vNormal, 0.f);
 	float	fDiffusePower = 0.f;
 	float	fSpecularPower = 0.f;
 	float	fRatio = 1.f;
 
-	if (tLight.iLightType == 0)
+
+	float4	vShade = max(dot(-vLightDir, normalize(vNormal)), 0.f);
+
+
+	if (tLight[_iLightIdx].iLightType == 0)
 	{
-		vViewLightDir = normalize(mul(float4(tLight.vLightDir.xyz, 0.f), matView).xyz);
-		fDiffusePower = saturate(dot(-vViewLightDir, _vViewNormal));
+		//fDiffusePower = saturate(dot(-vLightDir, normalize(_vNormal)) );
+		fDiffusePower = saturate(dot(-vLightDir, normalize(vNormal)));
+		
 	}
-	else if (tLight.iLightType == 1)
+	else if (tLight[_iLightIdx].iLightType == 1)
 	{
 
 
@@ -27,16 +33,19 @@ tagLightColor Calculate_Light(int _iLightIdx, float3 _vViewNormal, float3 _vView
 	{
 
 	}
+	float4	vReflect = reflect(vLightDir, normalize(vNormal));
+	float4	vLook	 = _vWorldPos - vCamPos;
+	float4	vEye	 = normalize(vLook);
 
-	float3	vReflect = normalize(vViewLightDir + 2 * (dot(-vViewLightDir, _vViewNormal) * _vViewNormal));
-	float	vEye = normalize(_vViewPos);
-	fSpecularPower = saturate(dot(-vEye, vReflect));
-	fSpecularPower = pow(fSpecularPower,10);
+	fSpecularPower	 = max(dot(-vEye, normalize(vReflect)), 0.f);
+	fSpecularPower	 = pow(fSpecularPower, 200.f);
 
-	tColor.vDiffuse = fDiffusePower * tLight.tColor.vDiffuse * fRatio;
-	tColor.vSpecular = fSpecularPower * tLight.tColor.vSpecular * fRatio;
-	tColor.vAmbient = tLight.tColor.vAmbient;
+
+	tColor.vDiffuse = fDiffusePower * tLight[_iLightIdx].tColor.vDiffuse * fRatio;
+	tColor.vSpecular = fSpecularPower * tLight[_iLightIdx].tColor.vSpecular * fRatio;
+	tColor.vAmbient = vShade + tLight[_iLightIdx].tColor.vAmbient;
 	return tColor;
 
 }
+
 #endif

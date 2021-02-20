@@ -10,7 +10,6 @@ struct VS_IN
 struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
-	float3	vViewPos	: POSITION;
 	float2	vTexUV		: TEXCOORD0;
 };
 
@@ -27,7 +26,6 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT	vOut;
 
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.vViewPos = mul(float4(vIn.vPosition, 1.f), matWV).xyz;
 	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
 }

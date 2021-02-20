@@ -38,6 +38,8 @@ protected:
 	PROJDESC					m_tProjDesc;
 protected:
 	_matrix						m_matReflect;
+protected:
+	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
 
 };
 

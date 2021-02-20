@@ -1,5 +1,10 @@
 #pragma once
 
+typedef struct tagPolygon32
+{
+	unsigned long		_0, _1, _2;
+}POLYGON32;
+
 typedef struct tagVertexCol
 {
 	XMFLOAT3 vPosition;
@@ -131,6 +136,7 @@ typedef struct tagMainPass
 	XMFLOAT4X4	matProj;
 	XMFLOAT4X4	matWV;
 	XMFLOAT4X4	matWVP;
+	XMFLOAT4	vCamPos;
 }MAINPASS;
 
 typedef struct tagMaterial
@@ -175,21 +181,20 @@ typedef struct tagLightColor
 typedef struct tagLight
 {
 	LIGHTCOLOR	tLightColor;
-	XMFLOAT4	vLightPos;
-	XMFLOAT4	vLightDir;
+	_vec4		vLightPos;
+	_vec4		vLightDir;
+	int			iLightType;
 	float		fRange;
 	float		fAngle;
-	float		fPower;
-	int			iLightType;
 	int			iPadding;
 
 }LIGHT;
 
 typedef struct tagLightInfo
 {
-	LIGHT			arrLight;
+	LIGHT			arrLight[100];
 	int				iCurLightCnt;
-	XMFLOAT3		vPadding;
+	_vec3			vPadding;
 }LIGHTINFO;
 
 typedef struct tagRenderTarget
@@ -202,3 +207,5 @@ typedef struct tagReflect
 {
 	XMFLOAT4X4	matReflect;
 }REFLECT;
+
+

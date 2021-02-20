@@ -11,11 +11,11 @@ public:
 	HRESULT						Ready_Light(const LIGHT& tLightInfo);
 	void						Render_Light();
 public:
-	LIGHT*						Get_LightInfo()const { return m_pLight; }
+	LIGHT&						Get_LightInfo() { return m_tLight; }
 private:
 	HRESULT						Create_InputLayOut();
 private:
-	LIGHT*						m_pLight = {};
+	LIGHT						m_tLight = {};
 	CShader*					m_pShaderCom = nullptr;
 private:
 	ComPtr<ID3D12Resource>		m_pVertexBuffer = nullptr;

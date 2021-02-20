@@ -11,7 +11,6 @@ struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
 	float2	vTexUV		: TEXCOORD0;
-	float3	vViewPos	: POSITION;
 };
 
 
@@ -33,7 +32,7 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV);
 	float4	vTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV);
 
-	float4	vTexMerge = vTex0 * vTex3+vTex4;
+	float4	vTexMerge = vTex0 * vTex3 + vTex4;
 
 	return vTexMerge;
 }

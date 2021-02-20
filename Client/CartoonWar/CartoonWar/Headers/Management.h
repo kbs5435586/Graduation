@@ -33,7 +33,7 @@ public://GameObjectManager
 	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 public://LightManager
-	LIGHT*						Get_Light(const _tchar* pLightTag);
+	LIGHT						Get_Light(const _tchar* pLightTag);
 	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);
 	void						SetUp_OnShader_Light();
 	void						Render_Light();

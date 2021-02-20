@@ -73,6 +73,8 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		}
 	}
 
+
+
 	m_iNumIndices = (3 * ((m_iNumVerticesX * 2) * (m_iNumVerticesZ - 1)) + ((m_iNumVerticesZ - 1) - 1));
 	//m_pIndices = new _uint[m_iIndices];
 	vector<_uint>		vecIndices;

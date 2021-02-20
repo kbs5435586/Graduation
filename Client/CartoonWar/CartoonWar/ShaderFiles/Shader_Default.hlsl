@@ -6,7 +6,6 @@ struct VS_IN
 	float3	vPosition	: POSITION;
 	float4	vColor		: COLOR;
 };
-
 struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
@@ -22,7 +21,6 @@ struct PS_OUT
 	float4 vTarget4			: SV_TARGET4;
 	float4 vTarget5			: SV_TARGET5;
 };
-
 VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut;
@@ -32,7 +30,6 @@ VS_OUT	VS_Main(VS_IN vIn)
 	vOut.vColor = vIn.vColor;
 	return vOut;
 }
-
 PS_OUT	PS_Main(VS_OUT vIn) 
 {
 	PS_OUT vOut = (PS_OUT)0;

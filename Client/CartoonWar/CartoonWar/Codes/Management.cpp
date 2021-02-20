@@ -57,7 +57,7 @@ HRESULT CManagement::Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGam
 	return m_pObject_Manager->Add_Prototype_GameObject(pGameObjectTag, pGameObject);
 }
 
-LIGHT* CManagement::Get_Light(const _tchar* pLightTag)
+LIGHT CManagement::Get_Light(const _tchar* pLightTag)
 {
 	return m_pLight_Manager->GetLight(pLightTag);
 }

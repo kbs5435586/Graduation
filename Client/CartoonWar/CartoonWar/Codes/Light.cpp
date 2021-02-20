@@ -9,7 +9,7 @@ CLight::CLight()
 
 HRESULT CLight::Ready_Light(const LIGHT& tLightInfo)
 {
-	m_pLight = new LIGHT(tLightInfo);
+	m_tLight = tLightInfo;
 
 	/*D3D12_VIEWPORT tViewPort = CDevice::GetInstance()->GetViewPort();
 
@@ -145,5 +145,5 @@ CLight* CLight::Create(const LIGHT& tLightInfo)
 void CLight::Free()
 {
 	Safe_Release(m_pShaderCom);
-	Safe_Delete(m_pLight);
+	//Safe_Delete(m_pLight);
 }

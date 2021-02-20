@@ -192,6 +192,7 @@
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
+    <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
+    <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
@@ -352,9 +354,6 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\ShaderFiles\Shader_Test.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Reflect.hlsl">

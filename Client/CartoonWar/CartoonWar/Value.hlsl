@@ -29,9 +29,6 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 
 	row_major matrix	matWV;
 	row_major matrix	matWVP;
-
-
-	float4				vCamPos;
 };
 
 cbuffer MATERIAL : register (b1)
