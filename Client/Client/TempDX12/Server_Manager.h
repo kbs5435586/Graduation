@@ -26,6 +26,7 @@ public:
 
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);
+    void send_login_ok_packet();
 
     void err_quit(const char* msg);
 

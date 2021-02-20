@@ -24,15 +24,6 @@ CServer_Manager::CServer_Manager()
 void CServer_Manager::MainServer(CManagement* managment)
 {
 	////////////////////// 엔터 누르고 client_ip가 안비어있을시
-	InitServer(g_hWnd);
-
-	cs_packet_login l_packet;
-	l_packet.size = sizeof(l_packet);
-	l_packet.type = CS_PACKET_LOGIN;
-	int t_id = GetCurrentProcessId();
-	//sprintf_s(l_packet.name, "P%03d", t_id % 1000);
-	strcpy_s(m_player.name, l_packet.name);
-	send_packet(&l_packet);
 
 	//else if (wParam == VK_BACK) // 백스페이스 누르면 ip지워지게
 	//{
@@ -80,6 +71,8 @@ void CServer_Manager::Free() // 여기에 소켓, 윈속 종료
 
 BOOL CServer_Manager::InitServer(HWND hWnd)
 {
+	WSADATA WSAData;
+	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	m_cSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	int retval = WSAAsyncSelect(m_cSocket, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
@@ -93,7 +86,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, m_client_IP.c_str(), &server_a.sin_addr);
+	inet_pton(AF_INET, "127.0.0.1", &server_a.sin_addr);
 	server_a.sin_port = htons(SERVER_PORT);
 
 	retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
@@ -228,14 +221,7 @@ void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 		m_player.y = 4;
 		m_player.showCharacter = false;
 
-		cs_packet_login l_packet;
-		l_packet.size = sizeof(l_packet);
-		l_packet.type = CS_PACKET_LOGIN;
-		int t_id = GetCurrentProcessId();
-		sprintf_s(l_packet.name, "P%03d", t_id % 1000);
-		strcpy(m_player.name, l_packet.name);
-		//avatar.set_name(l_packet.name);
-		send_packet(&l_packet);
+		send_login_ok_packet();
 	}
 	break;
 	case FD_READ:
@@ -289,4 +275,15 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.size = sizeof(m_packet);
 	m_packet.direction = dir;
 	send_packet(&m_packet);
+}
+
+void CServer_Manager::send_login_ok_packet()
+{
+	cs_packet_login l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_LOGIN;
+	int t_id = GetCurrentProcessId();
+	//sprintf_s(l_packet.name, "P%03d", t_id % 1000);
+	strcpy_s(m_player.name, l_packet.name);
+	send_packet(&l_packet);
 }

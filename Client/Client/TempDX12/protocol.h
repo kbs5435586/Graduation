@@ -5,14 +5,14 @@ constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
 constexpr int MAX_ID_LEN = 50;
-constexpr int MAX_STR_LEN = 80;
+constexpr int MAX_STR_LEN = 255;
 
-constexpr int MAX_USER = 20'000;
-constexpr int NPC_ID_START = 20'000;
-constexpr int MAX_NPC = 200'000;
+constexpr int MAX_USER = 10'000;
+constexpr int NPC_ID_START = 10'000;
+constexpr int MAX_NPC = 10'000;
 
-constexpr int WORLD_WIDTH = 2000;
-constexpr int WORLD_HEIGHT = 2000;
+constexpr int WORLD_WIDTH = 800;
+constexpr int WORLD_HEIGHT = 800;
 
 constexpr int SERVER_PORT = 9000;
 
@@ -23,7 +23,6 @@ constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
 constexpr char SC_PACKET_ENTER = 3;
 constexpr char SC_PACKET_LEAVE = 4;
-constexpr char SC_PACKET_CHAT = 5;
 
 #pragma pack(push ,1)
 
@@ -73,7 +72,7 @@ struct sc_packet_chat
 	char size;
 	char type;
 	int	 id;
-	char message[MAX_STR_LEN];
+	char chat[100];
 };
 
 struct cs_packet_login

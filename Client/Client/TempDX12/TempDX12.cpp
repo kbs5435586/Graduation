@@ -197,7 +197,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         CServer_Manager* server = CServer_Manager::GetInstance();
         if (nullptr == server)
-            return;
+            break;
         server->AddRef();
         server->SocketEventMessage(hWnd, lParam);
     }
