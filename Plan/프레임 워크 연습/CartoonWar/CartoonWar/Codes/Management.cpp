@@ -195,6 +195,8 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CLight_Manager Release Failed");
 
 	if (dwRefCnt = CKeyManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");

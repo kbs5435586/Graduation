@@ -21,7 +21,7 @@ unsigned __stdcall ResourceLoadThread(void* pArguments)
 
 	pManagement->AddRef();
 
-	pLogo->Ready_Add_Prototype_Mesh(pManagement);
+	//pLogo->Ready_Add_Prototype_Mesh(pManagement);
 
 	Safe_Release(pManagement);
 
