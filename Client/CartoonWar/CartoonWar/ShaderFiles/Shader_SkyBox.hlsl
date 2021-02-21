@@ -23,9 +23,8 @@ VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
 
-	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vPosition	= mul(float4(vIn.vPosition, 0.f), matWVP).xyww;
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld);
-
 	vOut.vTexUV		= vIn.vTexUV;
 
 	return vOut;

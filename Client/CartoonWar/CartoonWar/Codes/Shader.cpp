@@ -51,7 +51,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	return S_OK;
 }
 
-HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, SHADER_TYPE eShaderType)
+HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, DEPTH_STENCIL_TYPE eDepthType, SHADER_TYPE eShaderType)
 {
 	m_tPipeline.InputLayout = { vecDesc.data(), (_uint)vecDesc.size() };
 	m_tPipeline.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get();
@@ -59,9 +59,8 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)eType];
 	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)BLEND_TYPE::DEFAULT];
 
-	m_tPipeline.DepthStencilState.DepthEnable = TRUE;
-	m_tPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	m_tPipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	m_tPipeline.DepthStencilState = g_arrDepthStencilDesc[(UINT)eDepthType];
+
 
 	m_tPipeline.DepthStencilState.StencilEnable = FALSE;
 	m_tPipeline.DepthStencilState.StencilReadMask = 0x00;
