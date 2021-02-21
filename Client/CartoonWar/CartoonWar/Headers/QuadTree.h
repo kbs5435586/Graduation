@@ -14,7 +14,7 @@ private:
 public:
 	HRESULT				Ready_QuadTree(_vec3 * pVerticesPos, const _uint & iNumVerticeX, const _uint & iNumVerticeZ);
 	HRESULT				Ready_QuadTree(_vec3 * pVerticesPos, const _uint & iLT, const _uint & iRT, const _uint & iRB, const _uint & iLB);
-	void				Culling_ToQuadTree(CFrustum * pFrustum, Plane* pLocalPlane, const _uint& pVertexIndex, _uint & iNumPolygons);
+	void				Culling_ToQuadTree(CFrustum * pFrustum, Plane* pLocalPlane, _uint* pVertexIndex, _uint & iNumPolygons);
 	_bool				Check_LOD();
 private:
 	CQuadTree*			m_pNeighbor[(_uint)NEIGHBOR::NEIGHBOR_END] = { nullptr };
@@ -25,6 +25,7 @@ private:
 	_vec3*				m_pVerticesPos = nullptr;
 private:
 	HRESULT				SetUp_ChildNode();
+	HRESULT				SetUp_Neighbor();
 public:
 	static CQuadTree*	Create(_vec3 * pVerticesPos, const _uint & iNumVerticeX, const _uint & iNumVerticeZ);
 	static CQuadTree*	Create(_vec3 * pVerticesPos, const _uint & iLT, const _uint & iRT, const _uint & iRB, const _uint & iLB);

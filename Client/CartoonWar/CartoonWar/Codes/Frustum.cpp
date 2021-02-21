@@ -116,22 +116,47 @@ _bool CFrustum::Culling_Frustum(CTransform* pTransform, const _float& fRadius)
 
 
 	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	return Isin_Frustum(&vPos, fRadius);
+	return Isin_Frustum(m_Plane, &vPos, fRadius);
 }
 
-_bool CFrustum::Isin_Frustum(const _vec3* pPosition, const _float& fRadius)
+_bool CFrustum::Isin_Frustum(Plane* pPlane, const _vec3* pPosition, const _float& fRadius)
 {
 	for (_uint i = 0; i < 6; ++i)
 	{
 		XMVECTOR xmVector = {};
 
-		_float fTemp = XMVectorGetX(XMPlaneDotCoord(m_Plane[i], XMVectorSet(pPosition->x, pPosition->y, pPosition->z, 1.f)));
+		_float fTemp = XMVectorGetX(XMPlaneDotCoord(pPlane[i], XMVectorSet(pPosition->x, pPosition->y, pPosition->z, 1.f)));
 		if (0.f > fTemp)
 		{
 			return false;
 		}
 	}
 	return true;
+}
+
+HRESULT CFrustum::Get_LocalPlane(Plane* pOutPlane, const _matrix* pInMatWorld)
+{
+	_vec3	vPoint[8];
+	_matrix	matWorldInv;
+
+
+	matWorldInv = Matrix_::Inverse(matWorldInv);
+
+	XMMATRIX temp = XMLoadFloat4x4(&matWorldInv);
+	for (_uint i = 0; i < 8; ++i)
+	{
+		vPoint[i]= Vector3_::TransformCoord(vPoint[i], temp);
+	}
+	pOutPlane[0] = Plane(vPoint[0], vPoint[5], vPoint[6]);
+	pOutPlane[1] = Plane(vPoint[1], vPoint[0], vPoint[3]);
+
+	pOutPlane[2] = Plane(vPoint[2], vPoint[5], vPoint[1]);
+	pOutPlane[3] = Plane(vPoint[3], vPoint[2], vPoint[6]);
+
+	pOutPlane[4] = Plane(vPoint[4], vPoint[6], vPoint[5]);
+	pOutPlane[5] = Plane(vPoint[5], vPoint[1], vPoint[2]);
+
+	return S_OK;
 }
 
 CFrustum* CFrustum::Create()

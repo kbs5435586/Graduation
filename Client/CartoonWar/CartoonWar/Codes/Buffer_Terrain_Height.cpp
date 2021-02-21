@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Buffer_Terrain_Height.h"
 #include "Transform.h"
+#include "QuadTree.h"
 
 CBuffer_Terrain_Height::CBuffer_Terrain_Height()
 	: CVIBuffer()
@@ -58,6 +59,9 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	m_iStride = sizeof(VTXTEXNOR);
 	m_iNumPolygons = (iNumVerticesX - 1) * (iNumVerticesZ - 1) * 2;
 
+
+
+
 	//m_pVertices = new VTXTEXNOR[m_iVertices];
 	vector<VTXTEXNOR>		vecVertices;
 	vecVertices.resize(m_iNumVertices);
@@ -97,6 +101,9 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 			iPolygonIndex += 6;
 		}
 	}
+
+	m_pPolygonVertexIndex = new _uint[m_iNumPolygons];
+	memcpy(m_pPolygonVertexIndex, vecIndices.data(), m_iNumPolygons);
 
 	for (_uint i = 0; i < m_iNumPolygons * 3;)
 	{
@@ -184,6 +191,11 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	CDevice::GetInstance()->WaitForFenceEvent();
 
 
+
+	m_pQuadTree = CQuadTree::Create(m_pPosition, m_iNumVerticesX, m_iNumVerticesZ);
+	if (nullptr == m_pQuadTree)
+		return E_FAIL;
+
 	return S_OK;
 }	
 
@@ -233,13 +245,24 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 	}
 }
 
+HRESULT CBuffer_Terrain_Height::Culling_Frustum(CFrustum* pFrustum, const _matrix& matWorld)
+{
+	Plane	tPlane[6];
+
+
+
+	return S_OK;
+}
+
 void CBuffer_Terrain_Height::Free()
 {
 	if (m_IsClone)
 	{
 		Safe_Delete_Array(m_pPosition);
 		Safe_Delete_Array(m_pPixel);
+		Safe_Delete_Array(m_pPolygonVertexIndex);
 	}
+	Safe_Release(m_pQuadTree);
 	
 	CVIBuffer::Free();
 }
