@@ -309,6 +309,7 @@ CTransform* CTransform::Create()
 
 CComponent* CTransform::Clone_Component(void* pArg)
 {
+
 	return new CTransform(*this);
 }
 

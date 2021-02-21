@@ -315,6 +315,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 {
+	//HLSL 프로토타입 생성
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Default",
 		CShader::Create(L"../ShaderFiles/Shader_Default.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;

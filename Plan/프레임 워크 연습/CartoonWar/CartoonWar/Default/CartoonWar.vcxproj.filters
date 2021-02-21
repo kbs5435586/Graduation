@@ -453,6 +453,8 @@
     <ClInclude Include="Buffer_SphereCol.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_SphereCol</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="Particle_Rain.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -639,6 +641,8 @@
     <ClCompile Include="Buffer_SphereCol.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_SphereCol</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Particle_Rain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">

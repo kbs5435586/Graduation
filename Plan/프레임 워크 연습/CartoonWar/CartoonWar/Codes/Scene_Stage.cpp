@@ -93,8 +93,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-		return E_FAIL;
+	for (int i = 0; i < 100; ++i)
+	{
+		if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+			return E_FAIL;
+	}
+	
 
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
@@ -203,6 +207,13 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Particle", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 
