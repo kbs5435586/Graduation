@@ -201,7 +201,9 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene_Logo.h" />
-    <ClInclude Include="Server_Manager.h" />
+    <ClInclude Include="Server_Manager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="Skinned_Data.h" />
@@ -265,7 +267,9 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Scene_Logo.cpp" />
-    <ClCompile Include="Server_Manager.cpp" />
+    <ClCompile Include="Server_Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skinned_Data.cpp" />
     <ClCompile Include="SkyBox.cpp" />

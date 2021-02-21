@@ -16,6 +16,7 @@ void CServer_Manager::err_quit(const char* msg)
 	LocalFree(lpMsgBuf);
 	exit(1);
 }
+
 CServer_Manager::CServer_Manager()
 {
 
@@ -58,21 +59,8 @@ void CServer_Manager::MainServer(CManagement* managment)
 	Safe_Release(managment);
 }
 
-void CServer_Manager::Free() // 여기에 소켓, 윈속 종료
-{
-	if (m_cSocket)
-	{
-		shutdown(m_cSocket, SD_BOTH);
-		closesocket(m_cSocket);
-		m_cSocket = NULL;
-	}
-	WSACleanup();
-}
-
 BOOL CServer_Manager::InitServer(HWND hWnd)
 {
-	WSADATA WSAData;
-	WSAStartup(MAKEWORD(2, 2), &WSAData);
 	m_cSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	int retval = WSAAsyncSelect(m_cSocket, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
@@ -286,4 +274,20 @@ void CServer_Manager::send_login_ok_packet()
 	//sprintf_s(l_packet.name, "P%03d", t_id % 1000);
 	strcpy_s(m_player.name, l_packet.name);
 	send_packet(&l_packet);
+}
+
+void CServer_Manager::disconnect()
+{
+	if (m_cSocket)
+	{
+		shutdown(m_cSocket, SD_BOTH);
+		closesocket(m_cSocket);
+		m_cSocket = NULL;
+	}
+	WSACleanup();
+}
+
+void CServer_Manager::Free() // 여기에 소켓, 윈속 종료
+{
+	disconnect();
 }

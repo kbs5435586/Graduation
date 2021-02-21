@@ -29,6 +29,7 @@ public:
     void send_login_ok_packet();
 
     void err_quit(const char* msg);
+    void disconnect();
 
 private:
     virtual void Free();

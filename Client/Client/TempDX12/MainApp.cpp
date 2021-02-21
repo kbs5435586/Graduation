@@ -29,7 +29,11 @@ HRESULT CMainApp::Ready_MainApp()
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
 
-	CServer_Manager::GetInstance()->InitServer(g_hWnd);
+	//CServer_Manager* server = CServer_Manager::GetInstance();
+	//if (nullptr == server)
+	//	return -1;
+	//server->AddRef();
+	//server->InitServer(g_hWnd);
 
 	srand(unsigned(time(NULL)));
 	return S_OK;

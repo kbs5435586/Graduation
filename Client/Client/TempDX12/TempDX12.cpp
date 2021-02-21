@@ -45,6 +45,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TEMPDX12));
 
     MSG msg;
+
+    //WSADATA WSAData;
+    //WSAStartup(MAKEWORD(2, 2), &WSAData);
+
     CSystem* pSystem = CSystem::GetInstance();
     NULL_CHECK_VAL(pSystem, FALSE);
     pSystem->AddRef();
@@ -173,8 +177,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_KEYDOWN:
-        if(wParam == 'Q')
+        if (wParam == 'Q')
+        {
+          /*  CServer_Manager* server = CServer_Manager::GetInstance();
+            if (nullptr == server)
+                break;
+            server->AddRef();
+            server->disconnect();*/
             PostQuitMessage(0);
+        }
         break;
     case WM_COMMAND:
         {
@@ -193,15 +204,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    case WM_SOCKET:
+   /* case WM_SOCKET:
     {
         CServer_Manager* server = CServer_Manager::GetInstance();
         if (nullptr == server)
             break;
         server->AddRef();
-        server->SocketEventMessage(hWnd, lParam);
+        server->SocketEventMessage(g_hWnd, lParam);
     }
-    break;
+    break;*/
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
