@@ -27,12 +27,12 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//여기서 위치 및 각종 설정 변경
-	m_pTransformCom->Scaling(_vec3(.1f, .1f, .1f));
-
-	default_random_engine dre(random_device{}());
-	uniform_int_distribution<> uid(0, 10);
-	_vec3 vPos = _vec3(uid(dre), uid(dre), uid(dre));
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//m_pTransformCom->Scaling(_vec3(.1f, .1f, .1f));
+	//
+	//default_random_engine dre(random_device{}());
+	//uniform_int_distribution<> uid(0, 10);
+	//_vec3 vPos = _vec3(uid(dre), uid(dre), uid(dre));
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	return S_OK;
 }

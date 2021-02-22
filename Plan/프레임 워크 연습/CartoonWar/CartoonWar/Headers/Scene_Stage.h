@@ -23,7 +23,7 @@ private:
 	HRESULT					Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement, void* pArg);
-	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg);
+	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg = nullptr);
 	HRESULT					Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement);
 public:
 	static CScene_Stage*	Create();

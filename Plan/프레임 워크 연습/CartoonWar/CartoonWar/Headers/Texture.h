@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "DirectXTex.h"
-#include "DirectXTex.inl"
+#include "../Codes/DirectXTex.inl"
 class CTexture :
     public CComponent
 {

@@ -241,6 +241,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_SphereCol">
       <UniqueIdentifier>{72613873-f702-41c3-ac66-8a1a4b9ff75f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\01. UI_StatusBar">
+      <UniqueIdentifier>{7a41f511-5e34-46a3-a6aa-1296dc6e3537}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -455,6 +458,9 @@
     </ClInclude>
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Particle_Rain.h" />
+    <ClInclude Include="UI_StatusBar.h">
+      <Filter>02. GameObject\97. UI\01. UI_StatusBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -643,6 +649,9 @@
     </ClCompile>
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Particle_Rain.cpp" />
+    <ClCompile Include="UI_StatusBar.cpp">
+      <Filter>02. GameObject\97. UI\01. UI_StatusBar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
