@@ -2,17 +2,16 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
+class CBuffer_Sphere;
 class CShader;
-class CBuffer_CubeCol;
-class CCollider;
 
-class CCube :
+class CCircle :
     public CGameObject
 {
 private:
-    CCube();
-    CCube(const CCube& rhs);
-    virtual ~CCube() = default;
+    CCircle();
+    CCircle(const CCircle& rhs);
+    virtual ~CCircle() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CCube*							Create();
+	static CCircle*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -30,8 +29,8 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_CubeCol*						m_pBufferCom = nullptr;
+	CBuffer_Sphere*							m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CCollider*								m_pColliderCom[3] = { nullptr };
+
 };
 

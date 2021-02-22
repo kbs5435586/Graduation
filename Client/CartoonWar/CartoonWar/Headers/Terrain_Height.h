@@ -6,6 +6,7 @@ class CBuffer_Terrain_Height;
 class CTexture;
 class CShader;
 class CNavigation;
+class CFrustum;
 
 class CTerrain_Height :
     public CGameObject
@@ -35,5 +36,6 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 };
 

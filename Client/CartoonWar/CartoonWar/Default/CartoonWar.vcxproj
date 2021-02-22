@@ -154,11 +154,14 @@
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
     <ClInclude Include="..\Headers\Buffer_RectTex.h" />
+    <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
     <ClInclude Include="..\Headers\Cell.h" />
+    <ClInclude Include="..\Headers\Circle.h" />
+    <ClInclude Include="..\Headers\Collider.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
     <ClInclude Include="..\Headers\Constant.h" />
@@ -235,11 +238,14 @@
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
+    <ClCompile Include="..\Codes\Circle.cpp" />
+    <ClCompile Include="..\Codes\Collider.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer.cpp" />
@@ -357,6 +363,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Collider.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

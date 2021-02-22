@@ -277,6 +277,12 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
       <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\04. Circle">
+      <UniqueIdentifier>{f7d5b165-b434-4c03-9277-08f928bfa167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
+      <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -516,6 +522,15 @@
     <ClInclude Include="..\Headers\QuadTree.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Collider.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\08. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_Sphere.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Circle.h">
+      <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -729,6 +744,15 @@
     <ClCompile Include="..\Codes\QuadTree.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Collider.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\08. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Circle.cpp">
+      <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -765,6 +789,9 @@
       <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Collider.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>

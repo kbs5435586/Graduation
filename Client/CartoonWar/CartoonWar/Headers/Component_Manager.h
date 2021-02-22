@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Frustum.h"
 #include "Navigation.h"
+#include "Collider.h"
 #include "Static_Mesh.h"
 
 #include "Buffer_RectCol.h"
@@ -15,6 +16,7 @@
 #include "Buffer_CubeTex.h"
 #include "Buffer_Terrain.h"
 #include "Buffer_Terrain_Height.h"
+#include "Buffer_Sphere.h"
 
 class CComponent;
 class CComponent_Manager :

@@ -29,19 +29,42 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
+
 	_vec3 vPos = _vec3(5.f,5.f, 5.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
+
+	_vec3 vColliderSize = _vec3(2.f, 2.f, 2.f);
+	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColliderCom[2]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	return S_OK;
 }
 
 _int CCube::Update_GameObject(const _float& fTimeDelta)
 {
-	CManagement* pManagement = CManagement::GetInstance();
+ 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return -1;
 
 	pManagement->AddRef();
+
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	{
+		m_pTransformCom->BackWard(fTimeDelta);
+	}
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	{
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	{
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
@@ -50,9 +73,10 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
 	m_pTransformCom->Set_PositionY(fY+0.5f);
-
+	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
+	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
+	m_pColliderCom[2]->Update_Collider(m_pTransformCom);
 	Safe_Release(pManagement);
-
 
 	return _int();
 }
@@ -90,6 +114,9 @@ void CCube::Render_GameObject()
 
 
 	m_pBufferCom->Render_VIBuffer();
+	m_pColliderCom[0]->Render_Collider();
+	m_pColliderCom[1]->Render_Collider();
+	m_pColliderCom[2]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -135,6 +162,9 @@ void CCube::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom[0]);
+	Safe_Release(m_pColliderCom[1]);
+	Safe_Release(m_pColliderCom[2]);
 
 	CGameObject::Free();
 }
@@ -165,6 +195,20 @@ HRESULT CCube::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pColliderCom[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pColliderCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_0", m_pColliderCom[0])))
+		return E_FAIL;
+
+	m_pColliderCom[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColliderCom[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_1", m_pColliderCom[1])))
+		return E_FAIL;
+
+	m_pColliderCom[2] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_SPHERE");
+	NULL_CHECK_VAL(m_pColliderCom[2], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_2", m_pColliderCom[2])))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 

@@ -121,3 +121,13 @@ enum class DEPTH_STENCIL_TYPE
 	LESS_NO_WRITE,	// Less 깊이테스트, 깊이기록 X
 	END,
 };
+
+
+
+enum class COLLIDER_TYPE
+{
+	COLLIDER_AABB,
+	COLLIDER_OBB,
+	COLLIDER_SPHERE,
+	COLLIDER_END
+};

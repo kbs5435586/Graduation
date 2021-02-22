@@ -9,7 +9,7 @@ CQuadTree::CQuadTree()
 
 HRESULT CQuadTree::Ready_QuadTree(_vec3* pVerticesPos, const _uint& iNumVerticeX, const _uint& iNumVerticeZ)
 {
-	m_pVerticesPos = pVerticesPos;
+ 	m_pVerticesPos = pVerticesPos;
 
 	m_iCorner[(_uint)CORNER::CORNER_LT] = iNumVerticeX * iNumVerticeZ - iNumVerticeX;
 	m_iCorner[(_uint)CORNER::CORNER_RT] = iNumVerticeX * iNumVerticeZ - 1;
@@ -213,11 +213,11 @@ _bool CQuadTree::Check_LOD()
 	_vec3			vCamPosition;
 	memcpy(&vCamPosition, &matView.m[3][0], sizeof(_vec3));
 
-	_vec3 vTempDist = vCamPosition - m_pVerticesPos[m_iCenter];
-	_vec3 vTempWidth = m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_RT]] - m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_LT]];
-	_float		fDistance = Vector3_::Length(vTempDist);
+	_vec3	vTempDist = vCamPosition - m_pVerticesPos[m_iCenter];
+	_vec3	vTempWidth = m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_RT]] - m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_LT]];
+	_float	fDistance = Vector3_::Length(vTempDist);
 
-	_float		fWidth = Vector3_::Length(vTempWidth);
+	_float	fWidth = Vector3_::Length(vTempWidth);
 
 	if (fDistance * 0.1f > fWidth)
 		return true;

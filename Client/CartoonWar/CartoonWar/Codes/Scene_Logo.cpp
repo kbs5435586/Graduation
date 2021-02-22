@@ -201,14 +201,24 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
 		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
+		CBuffer_Sphere::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum", CFrustum::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB",
+		CCollider::Create(COLLIDER_TYPE::COLLIDER_AABB))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB",
+		CCollider::Create(COLLIDER_TYPE::COLLIDER_OBB))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_SPHERE",
+		CCollider::Create(COLLIDER_TYPE::COLLIDER_SPHERE))))
+		return E_FAIL;
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)

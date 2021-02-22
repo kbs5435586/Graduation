@@ -15,6 +15,9 @@
 // UI
 #include "UI_Loading.h"
 
+
+#include "Circle.h"
+
 CScene_Stage::CScene_Stage()
 {
 }
@@ -48,6 +51,7 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
+	
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -78,6 +82,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc01", COrc01::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube_Texture", CCube_Texture::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Circle", CCircle::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -124,7 +130,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

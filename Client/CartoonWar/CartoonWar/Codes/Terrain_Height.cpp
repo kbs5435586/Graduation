@@ -36,6 +36,7 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 _int CTerrain_Height::Update_GameObject(const _float& fTimeDelta)
 {
 
+	//m_pBufferCom->Culling_Frustum(m_pFrustumCom, m_pTransformCom->Get_Matrix());
 	return _int();
 }
 
@@ -78,12 +79,6 @@ void CTerrain_Height::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 	m_pNaviCom->Render_Navigation();
 
-
-
-
-	// 여기서 ReflectMatrxi값 구해주고
-	// Cube_Texture에 접근해서 Render 해주고
-	// Cube_Texture에서 사용한 Texture를 쉐이더에 Set
 
 	Safe_Release(pManagement);
 }
@@ -134,6 +129,7 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pNaviCom);
+	Safe_Release(m_pFrustumCom);
 	
 	CGameObject::Free();
 }
@@ -172,6 +168,11 @@ HRESULT CTerrain_Height::Ready_Component()
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
+
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
