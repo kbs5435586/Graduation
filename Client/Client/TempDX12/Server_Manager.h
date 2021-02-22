@@ -16,6 +16,7 @@ private:
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
     short PORT = 3500;
+    CManagement* managment;
 public:
     void MainServer(CManagement* managment);
     BOOL InitServer(HWND hWnd);

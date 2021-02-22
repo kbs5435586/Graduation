@@ -2,7 +2,7 @@
 #include "Component_Manager.h"
 #include "GameObject_Manager.h"
 #include "Light_Manager.h"
-//#include "Server_Manager.h"
+#include "Server_Manager.h"
 
 #include "Base.h"
 class CComponent;

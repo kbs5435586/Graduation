@@ -40,7 +40,7 @@ public:
 private:
 	_matrix					m_matWorld={}; // 객체의 상태.
 	_float					m_fSpeed_Move = 0.f;
-	_float					m_fSpeed_Rotation=0.f;
+	_float					m_fSpeed_Rotation = 0.f;
 public:
 	static CTransform*		Create(ID3D12Device* pGraphic_Device);
 	virtual CComponent*		Clone_Component(void* pArg = nullptr);

@@ -46,8 +46,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    //WSADATA WSAData;
-    //WSAStartup(MAKEWORD(2, 2), &WSAData);
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 2), &WSAData);
 
     CSystem* pSystem = CSystem::GetInstance();
     NULL_CHECK_VAL(pSystem, FALSE);
@@ -179,11 +179,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         if (wParam == 'Q')
         {
-          /*  CServer_Manager* server = CServer_Manager::GetInstance();
+            CServer_Manager* server = CServer_Manager::GetInstance();
             if (nullptr == server)
                 break;
             server->AddRef();
-            server->disconnect();*/
+            server->disconnect();
+            Safe_Release(server);
+
             PostQuitMessage(0);
         }
         break;
@@ -204,15 +206,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-   /* case WM_SOCKET:
+    case WM_SOCKET:
     {
         CServer_Manager* server = CServer_Manager::GetInstance();
         if (nullptr == server)
             break;
         server->AddRef();
         server->SocketEventMessage(g_hWnd, lParam);
+        Safe_Release(server);
     }
-    break;*/
+    break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;

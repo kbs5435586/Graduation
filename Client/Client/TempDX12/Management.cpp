@@ -5,7 +5,7 @@
 #include "TimerManager.h"
 #include "FrameManager.h"
 #include "Device.h"
-//#include "Server_Manager.h"
+#include "Server_Manager.h"
 
 _IMPLEMENT_SINGLETON(CManagement)
 CManagement::CManagement()
@@ -130,8 +130,8 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
-	//if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
-	//	_MSG_BOX("CServer_Manager Release Failed");
+	if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CServer_Manager Release Failed");
 
 	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CLight_Manager Release Failed");

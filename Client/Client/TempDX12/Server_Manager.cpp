@@ -38,18 +38,13 @@ void CServer_Manager::MainServer(CManagement* managment)
 
 	////////////////
 
-	managment = CManagement::GetInstance();
-	if (nullptr == managment)
-		return;
-	managment->AddRef();
+	
 
 	// Layer_Basic 안에 있는 0번째 객체에 접근
 	CGameObject* pCube = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_BasicShape", 0);
-	// Layer_Basic 안에 있는 0번째 객체의 Transform에 접근
-	CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_BasicShape", L"Com_Transform", 0);
 
-	_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+
+
 
 	CGameObject* pTerrain = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
 	CTransform* pTransform_Terrain = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -92,55 +87,94 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 void CServer_Manager::ProcessPacket(char* ptr)
 {
 	static bool first_time = true;
+
 	switch (ptr[1])
 	{
 	case SC_PACKET_LOGIN_OK:
 	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
 		m_myid = my_packet->id;
-		m_player.x = my_packet->x;
-		m_player.y = my_packet->y;
+
+		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+			L"Layer_Cube", L"Com_Transform", 0);
+		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+
+		vPos.x = my_packet->x;
+		vPos.y = my_packet->y;
+		pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		m_player.showCharacter = true;
+
+		Safe_Release(managment);
 	}
 	break;
 
 	case SC_PACKET_ENTER:
 	{
-		sc_packet_enter* my_packet = reinterpret_cast<sc_packet_enter*>(ptr);
-		int id = my_packet->id;
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
 
-		if (id == m_myid) {
-			m_player.x = my_packet->x;
-			m_player.y = my_packet->y;
+		sc_packet_enter* my_packet = reinterpret_cast<sc_packet_enter*>(ptr);
+		int recv_id = my_packet->id;
+
+		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_BasicShape", L"Com_Transform", 0);
+		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+
+		if (recv_id == m_myid) {
+			vPos.x = my_packet->x;
+			vPos.y = my_packet->y;
 			m_player.showCharacter = true;
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
-		else {
-			//if (id < NPC_ID_START)
-			//    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
-			//else
-			//    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
-			strcpy_s(m_npcs[id].name, my_packet->name);
-			m_npcs[id].x = my_packet->x;
-			m_npcs[id].y = my_packet->y;
-			m_npcs[id].showCharacter = true;
-		}
+		//else {
+		//	if (id < NPC_ID_START)
+		//	    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
+		//	else
+		//	    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
+		//	strcpy_s(m_npcs[recv_id].name, my_packet->name);
+		//	m_npcs[recv_id].x = my_packet->x;
+		//	m_npcs[recv_id].y = my_packet->y;
+		//	m_npcs[recv_id].showCharacter = true;
+		//}
+
+		Safe_Release(managment);
 	}
 	break;
 	case SC_PACKET_MOVE:
 	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
-		int other_id = my_packet->id;
-		if (other_id == m_myid) {
-			m_player.x = my_packet->x;
-			m_player.y = my_packet->y;
+		int recv_id = my_packet->id;
+
+		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_BasicShape", L"Com_Transform", 0);
+
+		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+
+		if (recv_id == m_myid) {
+			vPos.x = my_packet->x;
+			vPos.y = my_packet->y;
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
-		else {
-			if (0 != m_npcs.count(other_id))
-			{
-				m_npcs[other_id].x = my_packet->x;
-				m_npcs[other_id].y = my_packet->y;
-			}
-		}
+		//else { // NPC
+		//	if (0 != m_npcs.count(recv_id))
+		//	{
+		//		m_npcs[recv_id].x = my_packet->x;
+		//		m_npcs[recv_id].y = my_packet->y;
+		//	}
+		//}
+		Safe_Release(managment);
 	}
 	break;
 	case SC_PACKET_LEAVE:
@@ -205,10 +239,7 @@ void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 	{
 	case FD_CONNECT:
 	{
-		m_player.x = 4;
-		m_player.y = 4;
 		m_player.showCharacter = false;
-
 		send_login_ok_packet();
 	}
 	break;
@@ -271,7 +302,7 @@ void CServer_Manager::send_login_ok_packet()
 	l_packet.size = sizeof(l_packet);
 	l_packet.type = CS_PACKET_LOGIN;
 	int t_id = GetCurrentProcessId();
-	//sprintf_s(l_packet.name, "P%03d", t_id % 1000);
+	sprintf_s(l_packet.name, "P%03d", t_id % 1000);
 	strcpy_s(m_player.name, l_packet.name);
 	send_packet(&l_packet);
 }
