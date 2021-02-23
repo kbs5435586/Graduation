@@ -84,13 +84,14 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
-	//	return E_FAIL;
+
 	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
 	//	return E_FAIL;
 
+	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
@@ -171,7 +172,7 @@ HRESULT CScene_Stage::Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* 
 
 HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

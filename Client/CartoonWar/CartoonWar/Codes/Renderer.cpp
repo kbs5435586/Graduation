@@ -44,16 +44,18 @@ HRESULT CRenderer::Render_RenderGroup()
 
 
 
+
+
 	/*Forward To Defferd*/
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
 
-	Render_Priority();
 	Render_NoneAlpha();
 
 	/*Defferd To Forward*/
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 
+	Render_Priority();
 	Render_Alpha();
 	Render_UI();
 

@@ -19,14 +19,17 @@ HRESULT CSkyBox::Ready_Prototype()
 
 HRESULT CSkyBox::Ready_GameObject(void* pArg)
 {
-	if (FAILED(Ready_Component()))
+	if (FAILED(Ready_Component() ))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
 
-	m_pTransformCom->Scaling(_vec3(1000.f, 1000.f, 1000.f));
+	//m_pTransformCom->Scaling(_vec3(1000.f, 1000.f, 1000.f));
+	m_pTransformCom->Scaling(_vec3(10.f, 10.f, 10.f));
 
+	_vec3 vPos = {0.f,0.f,0.f};
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	return S_OK;
 }
 
@@ -63,7 +66,7 @@ void CSkyBox::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t7);
 	CDevice::GetInstance()->UpdateTable();
 
 

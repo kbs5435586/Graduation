@@ -39,10 +39,10 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	float3 vInNormal = vIn.vNormal;
-	LIGHT  tLight = Calculate_Light(0, vInNormal, vIn.vViewPos);
-
 	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
+
+	LIGHT  tLight = Calculate_Light(0, vInNormal, vIn.vViewPos);
 
 	vOut.vTarget0 = vOutColor;
 	vOut.vTarget1.xyz = vIn.vNormal;

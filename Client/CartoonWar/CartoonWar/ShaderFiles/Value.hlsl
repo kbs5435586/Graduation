@@ -55,7 +55,7 @@ Texture2D g_texture3 : register(t3);
 Texture2D g_texture4 : register(t4);
 Texture2D g_texture5 : register(t5);
 Texture2D g_texture6 : register(t6);
-Texture2D g_texture7 : register(t7);
+Texture3D g_texture7 : register(t7);
 
 
 
