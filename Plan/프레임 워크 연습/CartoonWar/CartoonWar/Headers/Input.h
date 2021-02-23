@@ -18,6 +18,7 @@ public:
 	_byte					Get_DIKeyState(_ubyte byKeyID) {return m_KeyState[byKeyID];}
 	_byte					Get_DIMouseState(_ubyte byKeyID) {return m_MouseState.rgbButtons[byKeyID];}
 	LONG					Get_DIMouseMove(_ubyte byKeyID) {return *((long*)&m_MouseState + byKeyID);}
+	DIMOUSESTATE			Get_DIMousePos() { return m_MouseState; }
 private:
 	HRESULT					Ready_KeyBoard(HWND hWnd);
 	HRESULT					Ready_Mouse(HWND hWnd);

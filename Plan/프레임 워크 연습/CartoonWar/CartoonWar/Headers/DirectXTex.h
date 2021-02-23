@@ -779,6 +779,6 @@ namespace DirectX
         _In_ D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET);
 #endif
 
-#include "DirectXTex.inl"
+//#include "DirectXTex.inl"
 
 } // namespace

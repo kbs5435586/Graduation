@@ -16,8 +16,11 @@ CBuffer_SphereCol::CBuffer_SphereCol(const CBuffer_SphereCol& rhs)
 
 HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 {
+	//10   100   111
+	//6    36    43    7
+	//5    25    31    6
 	//정점 개수
-	m_iNumVertices = 400;
+	m_iNumVertices = 31;
 	//한 정점 벡터의 크기?
 	m_iStride = sizeof(VTXCOL);
 
@@ -61,107 +64,15 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 	{
 		for (int j = 0; j < N; j++)
 		{
-
 			vecIndices[index++] = N * i + j;
-				//new Vertex4(new Vector4(Point3D[i, j].x,
-				//Point3D[i, j].y, Point3D[i, j].z, 1.0f), col);
 			vecIndices[index++] = N * (i + 1) + j;
-				//new Vertex4(new Vector4(Point3D[i + 1, j].x,
-				//Point3D[i + 1, j].y, Point3D[i + 1, j].z, 1.0f), col);
 			vecIndices[index++] = N * i + (j + 1);
-				//new Vertex4(new Vector4(Point3D[i, j + 1].x,
-				//Point3D[i, j + 1].y, Point3D[i, j + 1].z, 1.0f), col);
 
 			vecIndices[index++] = N * i + (j + 1);
-				//new Vertex4(new Vector4(Point3D[i, j + 1].x,
-				//Point3D[i, j + 1].y, Point3D[i, j + 1].z, 1.0f), col);
 			vecIndices[index++] = N * (i + 1) + j;
-				//new Vertex4(new Vector4(Point3D[i + 1, j].x,
-				//Point3D[i + 1, j].y, Point3D[i + 1, j].z, 1.0f), col);
 			vecIndices[index++] = N * (i + 1) + (j + 1);
-				//new Vertex4(new Vector4(Point3D[i + 1, j + 1].x,
-				//Point3D[i + 1, j + 1].y, Point3D[i + 1, j + 1].z, 1.0f), col);
-
 		}
 	}
-
-
-	
-
-	//const float PI = acos(-1);
-	//
-	//float radius = 1.f;
-	//int sectorCnt = 5;
-	//int stackCnt = 5;
-	//
-	//float x, y, z, xy;                              // vertex position
-	//float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
-	//
-	//float sectorStep = 2 * PI / sectorCnt;
-	//float stackStep = PI / stackCnt;
-	//float sectorAngle, stackAngle;
-	//
-	//for (int i = 0; i <= stackCnt; ++i)
-	//{
-	//	stackAngle = PI / 2 - i * stackStep;        // starting from pi/2 to -pi/2
-	//	xy = radius * cosf(stackAngle);             // r * cos(u)
-	//	z = radius * sinf(stackAngle);              // r * sin(u)
-	//
-	//	// add (sectorCount+1) vertices per stack
-	//	// the first and last vertices have same position and normal, but different tex coords
-	//	for (int j = 0; j <= sectorCnt; ++j)
-	//	{
-	//		sectorAngle = j * sectorStep;           // starting from 0 to 2pi
-	//
-	//		// vertex position
-	//		x = xy * cosf(sectorAngle);             // r * cos(u) * cos(v)
-	//		y = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
-	//
-	//		vecVertices[sectorCnt * i + j] = VTXCOL(XMFLOAT3(x, y, z), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	//	}
-	//}
-	//
-	////인덱스 개수
-	////인덱스
-	//m_iNumIndices = 1000;
-	//vector<_uint>	vecIndices;
-	////>사이즈 조정
-	//unsigned int k1, k2;
-	//for (int i = 0; i < stackCnt; ++i)
-	//{
-	//	k1 = i * (sectorCnt + 1);     // beginning of current stack
-	//	k2 = k1 + sectorCnt + 1;      // beginning of next stack
-	//
-	//	for (int j = 0; j < sectorCnt; ++j, ++k1, ++k2)
-	//	{
-	//		// 2 triangles per sector excluding 1st and last stacks
-	//		if (i != 0)
-	//		{
-	//
-	//			vecIndices.push_back(k1);
-	//			vecIndices.push_back(k2);
-	//			vecIndices.push_back(k1 + 1);
-	//			// k1---k2---k1+1
-	//		}
-	//
-	//		if (i != (stackCnt - 1))
-	//		{
-	//			vecIndices.push_back(k1 + 1);
-	//			vecIndices.push_back(k2);
-	//			vecIndices.push_back(k2 + 1);
-	//			// k1+1---k2---k2+1
-	//		}
-	//
-	//		//// vertical lines for all stacks
-	//		//lineIndices.push_back(k1);
-	//		//lineIndices.push_back(k2);
-	//		//if (i != 0)  // horizontal lines except 1st stack
-	//		//{
-	//		//	lineIndices.push_back(k1);
-	//		//	lineIndices.push_back(k1 + 1);
-	//		//}
-	//	}
-	//}
 
 
 	////////////////////////////////////////////////////////////////////////////////////

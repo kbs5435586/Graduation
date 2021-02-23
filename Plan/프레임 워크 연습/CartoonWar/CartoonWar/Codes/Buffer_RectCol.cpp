@@ -17,7 +17,7 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	//정점 개수
 	m_iNumVertices = 11;
 	
-	float rad = 10.f;
+	float rad = 1.f;
 	//한 정점 벡터의 크기?
 	m_iStride = sizeof(VTXCOL);
 

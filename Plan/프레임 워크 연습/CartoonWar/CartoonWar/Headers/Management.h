@@ -5,6 +5,7 @@
 #include "Constant_Buffer_Manager.h"
 #include "RTTMananger.h"
 #include "KeyManager.h"
+#include "Input.h"
 #include "FBXLoader.h"
 
 #include "Base.h"
@@ -12,6 +13,7 @@ class CComponent;
 class CGameObject;
 class CLight;
 class CScene;
+class CInput;
 class CManagement :
     public CBase
 {
@@ -48,6 +50,8 @@ public://Key_Manager
 	_bool						Key_Up(DWORD dwKey);
 	_bool						Key_Pressing(DWORD dwKey);
 	_bool						Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey);
+public://mouse
+	_vec3						Mouse_Down(DWORD dwKey);
 public:	
 	HRESULT						Clear_Layers(const _uint& iSceneID);
 	static void					Release_Engine();
@@ -64,5 +68,6 @@ private:
 	CConstant_Buffer_Manager*	m_pConstant_Buffer_Manager = nullptr;
 	CRTTMananger*				m_pRTT_Mananger = nullptr;
 	CKeyManager*				m_pKey_Manager = nullptr;
+	CInput*						m_pInput = nullptr;
 };
 

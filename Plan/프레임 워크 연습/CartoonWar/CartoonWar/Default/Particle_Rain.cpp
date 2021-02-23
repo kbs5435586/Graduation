@@ -4,8 +4,13 @@
 
 HRESULT CParticle_Rain::Init()
 {
-	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-		return E_FAIL;
+
+	for (int i = 0; i < 100; ++i)
+	{
+		if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+			return E_FAIL;
+	}
+	
 
 
 	return S_OK;
