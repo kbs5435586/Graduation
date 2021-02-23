@@ -1,6 +1,6 @@
 #pragma once
-enum ENUM_FUNCTION { FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_END };
-enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE,ST_END };
+enum ENUM_FUNCTION { FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_RANDMOVE, FUNC_PLAYER_MOVE, FUNC_END };
+enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_END };
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
 
@@ -13,6 +13,7 @@ struct OverEx // 확장 오버랩 구조체
 	{
 		WSABUF wsabuf;
 		SOCKET c_socket;
+		int player_id; // 타이머로 넘겨받을 객체 아이디
 	};
 };
 
@@ -42,4 +43,19 @@ struct ClientInfo // 클라이언트 정보
 
 	unordered_set <int> m_view_list;
 	// 그냥 set은 iter 돌렸을때 순서대로 나오지만 unordered_set은 순서대로 안나옴, 근데 뷰리스트 자체가 순서상관X
+	lua_State* m_lua;
+	mutex m_lLock;
+};
+
+struct event_type
+{
+	int obj_id; // 어떤 객체가 움직여야 하는가
+	int event_id; // 어떤 이벤트인가
+	high_resolution_clock::time_point wakeup_time; // 언제 이 이벤트가 실행되야 하는가
+	int target_id; // 발생하는 추가정보
+
+	constexpr bool operator < (const event_type& left) const
+	{
+		return (wakeup_time > left.wakeup_time); // 순서대로 저장하는 용도
+	}
 };

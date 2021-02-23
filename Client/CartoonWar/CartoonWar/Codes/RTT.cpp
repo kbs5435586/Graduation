@@ -37,6 +37,7 @@ HRESULT CRTT::CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTe
 			tDesc.NumDescriptors = 1;
 			tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 			tDesc.NodeMask = 0;
+			
 			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pRTV));
 			D3D12_CPU_DESCRIPTOR_HANDLE hRTVHeap = m_pRTV->GetCPUDescriptorHandleForHeapStart();
 
@@ -92,7 +93,7 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 
 	if (_eResFlag & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
 	{
-		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
+		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D24_UNORM_S8_UINT, 1.0f, 0);
 		pValue = &depthOptimizedClearValue;
 		eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE;
 	}

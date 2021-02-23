@@ -68,6 +68,7 @@ using namespace std;
 #pragma warning(push)
 #pragma warning(disable: 4267)
 #pragma warning(disable: 4244)
+#pragma warning(disable: 4099)
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
@@ -79,8 +80,8 @@ using namespace DirectX::SimpleMath;
 #include "Enum.h"
 #include "Extern.h"
 #include "Function.h"
-#include "Struct.h"
 #include "Typedef.h"
+#include "Struct.h"
 #include "Funtor.h"
 #include "Hash.h"
 #include "Constant.h"

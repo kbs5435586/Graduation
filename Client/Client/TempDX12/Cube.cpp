@@ -31,17 +31,46 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	if (FAILED(CreatePipeLine(m_pShaderCom)))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(2.5f, 0.f, 2.5f);
+	_vec3 vPos = _vec3(2.5f, 5.f, 2.5f);
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	return S_OK;
 }
 
-_int CCube::Update_GameObject(const _float& fTimeDelta)
+_int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return E_FAIL;
+
+	if (GetAsyncKeyState('T') & 0x8000)
+	{
+		server->AddRef();
+		server->send_move_packet(D_UP);
+		Safe_Release(server);
+	}
+	if (GetAsyncKeyState('F') & 0x8000)
+	{
+		server->AddRef();
+		server->send_move_packet(D_LEFT);
+		Safe_Release(server);
+	}
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		server->AddRef();
+		server->send_move_packet(D_DOWN);
+		Safe_Release(server);
+	}
+	if (GetAsyncKeyState('H') & 0x8000)
+	{
+		server->AddRef();
+		server->send_move_packet(D_RIGHT);
+		Safe_Release(server);
+	}
 	return _int();
 }
+
 _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)

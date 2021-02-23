@@ -33,9 +33,10 @@ public://GameObjectManager
 	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 public://LightManager
-	LIGHT*						Get_Light(const _tchar* pLightTag);
+	LIGHT						Get_Light(const _tchar* pLightTag);
 	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);
 	void						SetUp_OnShader_Light();
+	void						Render_Light();
 public://ConstantBuffer_Mananger
 	HRESULT						Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal = false);
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }

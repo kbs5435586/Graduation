@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="98.Managers">
+      <UniqueIdentifier>{47dae9b2-a50c-4d17-91c0-061ba393e207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\00.Device">
+      <UniqueIdentifier>{0d30ba8b-54c9-4f5b-94e6-afb379a580a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\01.TextureMgr">
+      <UniqueIdentifier>{57a10f0e-96b0-423b-93a5-10d8b6d5e4cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\02.ObjectMgr">
+      <UniqueIdentifier>{701def2f-1214-4382-9d0f-0727d2463f89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\03.SceneMgr">
+      <UniqueIdentifier>{d9c1c018-7420-4358-a4de-e996d013c8c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\01.TextureMgr\00.Texture">
+      <UniqueIdentifier>{a5d825e8-f3ca-4174-bdf1-209475f1ad64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\01.TextureMgr\00.Texture\01.SingleTex">
+      <UniqueIdentifier>{06fbf80d-9330-4218-bee6-ac1f1692b219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\01.TextureMgr\00.Texture\02.MultiTex">
+      <UniqueIdentifier>{e2a292ec-58a4-4e01-b488-2cd8c05b6323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Maingame">
+      <UniqueIdentifier>{a5544a9d-f65e-476e-9d19-860ce495c977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\03.SceneMgr\00.Scene">
+      <UniqueIdentifier>{17314ebd-c530-473a-942a-e48f73299c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\03.SceneMgr\00.Scene\00.Logo">
+      <UniqueIdentifier>{fc286ad9-a4bb-47a5-8951-2e8b52aaeda3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\03.SceneMgr\00.Scene\01.Stage">
+      <UniqueIdentifier>{a297d754-1d78-4a9f-8b52-97055e83e713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Object">
+      <UniqueIdentifier>{82abdbc4-918e-418a-850e-691c951d4967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\04.AbstractFactory">
+      <UniqueIdentifier>{65fc7268-f7e5-47ed-8baf-0831232a8d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Object\00.Terrain">
+      <UniqueIdentifier>{c3ccc060-f73b-4f9c-926f-b3a5b666bb9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Mouse">
+      <UniqueIdentifier>{6cefa92c-1060-45a4-87a8-5309dc3e6af8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\05.ScrollMgr">
+      <UniqueIdentifier>{ebf781d2-9c02-4ed1-937b-7e5a799c2dc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\06.TimeMgr">
+      <UniqueIdentifier>{75463b4e-9935-41ef-8395-18143d7ea378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\06.FrameMgr">
+      <UniqueIdentifier>{74191a8e-bc48-446e-aee9-7d1719972bd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Object\01.Player">
+      <UniqueIdentifier>{649322e7-4ace-419c-a2b6-04d4fd2607e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\07.KeyMgr">
+      <UniqueIdentifier>{b5a2d49a-e889-401f-93cb-45a9453cf660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\08.AstarMgr">
+      <UniqueIdentifier>{0d1bcdf2-0acd-4902-9cd0-9ce43514b0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.EffectBridge">
+      <UniqueIdentifier>{3dbafef7-5a32-45d1-87b1-9da101e5ce37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.EffectBridge\00.Abstraction">
+      <UniqueIdentifier>{f820a1ce-e46b-4e96-8413-b0bdbbcd22c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.EffectBridge\01.Implementor">
+      <UniqueIdentifier>{57d58842-b69d-47f1-808a-ea03ca79b33b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.EffectBridge\01.Implementor\00.AnimBridge">
+      <UniqueIdentifier>{6beb074b-96eb-44d2-aaeb-75546a4478e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.EffectBridge\01.Implementor\01.NonAnimBridge">
+      <UniqueIdentifier>{602ec49f-23cb-4812-887f-309134a1c489}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.EffectBridge\00.Abstraction\01.BuffEffect">
+      <UniqueIdentifier>{1ebd62ed-f703-4803-b257-eefb718daa17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{938aca8d-cefa-46d6-abaa-367817934ac2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ObserverPattern">
+      <UniqueIdentifier>{4d8075b4-2e3d-4c03-9e0d-9c6f41fa6a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ObserverPattern\00.Subject">
+      <UniqueIdentifier>{d08b037f-1697-40a1-8fea-de540624587e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ObserverPattern\01.Observer">
+      <UniqueIdentifier>{b285918f-a542-4ea9-90a4-107f390f550d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ObserverPattern\00.Subject\00.DataSubject">
+      <UniqueIdentifier>{4388bc1c-3cd9-4b77-8565-b4d48d8f9b7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Object\02.UserInterface">
+      <UniqueIdentifier>{eda8d7ce-4eb3-4d56-b528-b6bad158064c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Object\02.UserInterface\00.HpBar">
+      <UniqueIdentifier>{d43ceb8c-acf9-4fc9-ab91-4c0b19db2f03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Object\02.UserInterface\01.MpBar">
+      <UniqueIdentifier>{577007ad-a797-431b-a792-d4d166909fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.ObserverPattern\01.Observer\00.UIObserver">
+      <UniqueIdentifier>{9b1800f8-2401-4045-b29b-970191b4d744}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureMgr.h">
+      <Filter>98.Managers\01.TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>98.Managers\00.Device</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiTexture.h">
+      <Filter>98.Managers\01.TextureMgr\00.Texture\02.MultiTex</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleTexture.h">
+      <Filter>98.Managers\01.TextureMgr\00.Texture\01.SingleTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>98.Managers\01.TextureMgr\00.Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Maingame.h">
+      <Filter>00.Maingame</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>98.Managers\03.SceneMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>98.Managers\03.SceneMgr\00.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>98.Managers\03.SceneMgr\00.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Obj.h">
+      <Filter>01.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractFactory.h">
+      <Filter>98.Managers\04.AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjMgr.h">
+      <Filter>98.Managers\02.ObjectMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>01.Object\00.Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>02.Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollMgr.h">
+      <Filter>98.Managers\05.ScrollMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeMgr.h">
+      <Filter>98.Managers\06.TimeMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>01.Object\01.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameMgr.h">
+      <Filter>98.Managers\06.FrameMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyMgr.h">
+      <Filter>98.Managers\07.KeyMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="AstarMgr.h">
+      <Filter>98.Managers\08.AstarMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>03.EffectBridge\00.Abstraction</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectBridge.h">
+      <Filter>03.EffectBridge\01.Implementor</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimBridge.h">
+      <Filter>03.EffectBridge\01.Implementor\00.AnimBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="NonAnimBridge.h">
+      <Filter>03.EffectBridge\01.Implementor\01.NonAnimBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="BuffEffect.h">
+      <Filter>03.EffectBridge\00.Abstraction\01.BuffEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>04.ObserverPattern\00.Subject</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>04.ObserverPattern\01.Observer</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSubject.h">
+      <Filter>04.ObserverPattern\00.Subject\00.DataSubject</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.h">
+      <Filter>01.Object\02.UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="HpBar.h">
+      <Filter>01.Object\02.UserInterface\00.HpBar</Filter>
+    </ClInclude>
+    <ClInclude Include="UIObserver.h">
+      <Filter>04.ObserverPattern\01.Observer\00.UIObserver</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMgr.cpp">
+      <Filter>98.Managers\01.TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>98.Managers\00.Device</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiTexture.cpp">
+      <Filter>98.Managers\01.TextureMgr\00.Texture\02.MultiTex</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleTexture.cpp">
+      <Filter>98.Managers\01.TextureMgr\00.Texture\01.SingleTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>98.Managers\01.TextureMgr\00.Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Maingame.cpp">
+      <Filter>00.Maingame</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>98.Managers\03.SceneMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>98.Managers\03.SceneMgr\00.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>98.Managers\03.SceneMgr\00.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Obj.cpp">
+      <Filter>01.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjMgr.cpp">
+      <Filter>98.Managers\02.ObjectMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>01.Object\00.Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>02.Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollMgr.cpp">
+      <Filter>98.Managers\05.ScrollMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMgr.cpp">
+      <Filter>98.Managers\06.TimeMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>01.Object\01.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameMgr.cpp">
+      <Filter>98.Managers\06.FrameMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyMgr.cpp">
+      <Filter>98.Managers\07.KeyMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="AstarMgr.cpp">
+      <Filter>98.Managers\08.AstarMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>03.EffectBridge\00.Abstraction</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectBridge.cpp">
+      <Filter>03.EffectBridge\01.Implementor</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimBridge.cpp">
+      <Filter>03.EffectBridge\01.Implementor\00.AnimBridge</Filter>
+    </ClCompile>
+    <ClCompile Include="NonAnimBridge.cpp">
+      <Filter>03.EffectBridge\01.Implementor\01.NonAnimBridge</Filter>
+    </ClCompile>
+    <ClCompile Include="BuffEffect.cpp">
+      <Filter>03.EffectBridge\00.Abstraction\01.BuffEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Subject.cpp">
+      <Filter>04.ObserverPattern\00.Subject</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>04.ObserverPattern\01.Observer</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSubject.cpp">
+      <Filter>04.ObserverPattern\00.Subject\00.DataSubject</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>01.Object\02.UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="HpBar.cpp">
+      <Filter>01.Object\02.UserInterface\00.HpBar</Filter>
+    </ClCompile>
+    <ClCompile Include="UIObserver.cpp">
+      <Filter>04.ObserverPattern\01.Observer\00.UIObserver</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>99.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

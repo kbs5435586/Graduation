@@ -16,6 +16,7 @@ private:
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
+	//virtual HRESULT							Ready_GameObject(void* pArg = nullptr, void* pSize  = nullptr);
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
@@ -24,6 +25,7 @@ private:
 public:
 	static CUI_Loading*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	//virtual CGameObject*					Clone_GameObject(void* pArg, void* pSize) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

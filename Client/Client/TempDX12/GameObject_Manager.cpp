@@ -144,6 +144,33 @@ HRESULT CGameObject_Manager::Clear_Layers(const _uint& iSceneID)
 	return S_OK;
 }
 
+CGameObject* CGameObject_Manager::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
+{
+	if (nullptr == m_pMapLayers)
+		return nullptr;
+	if (m_iNumScene <= iSceneID)
+		return nullptr;
+
+	CLayer* pLayer = Find_Layer(iSceneID, pLayerTag);
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_GameObject(iIdx);
+}
+
+list<CGameObject*> CGameObject_Manager::Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag)
+{
+	auto iter = find_if(m_pMapLayers[iSceneID].begin(), m_pMapLayers[iSceneID].end()
+		, CFinder_Tag(pLayerTag));
+
+	if (iter == m_pMapLayers[iSceneID].end())
+	{
+		return list<CGameObject*>();
+	}
+
+	return iter->second->Get_GameObjectLst();
+}
+
 CGameObject* CGameObject_Manager::Find_Prototype(const _tchar* pGameObjectTag)
 {
 	auto	iter = find_if(m_mapPrototype.begin(), m_mapPrototype.end(), CFinder_Tag(pGameObjectTag));

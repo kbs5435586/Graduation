@@ -1,5 +1,7 @@
 #pragma once
 #include "VIBuffer.h"
+class CQuadTree;
+class CFrustum;
 class CTransform;
 class CBuffer_Terrain_Height :
     public CVIBuffer
@@ -15,6 +17,7 @@ public:
     virtual CComponent*             Clone_Component(void* pArg = nullptr);
 public:
     _float                          Compute_HeightOnTerrain(CTransform* pTransform);
+    HRESULT                         Culling_Frustum(CFrustum* pFrustum, const _matrix& matWorld);
 private:
     virtual void                    Free();
 private:
@@ -28,5 +31,8 @@ private:
 private:
     BITMAPFILEHEADER				m_fh;
     BITMAPINFOHEADER				m_ih;
+private:
+    _uint*                          m_pPolygonVertexIndex = nullptr;
+    CQuadTree*                      m_pQuadTree = nullptr;
 };
 

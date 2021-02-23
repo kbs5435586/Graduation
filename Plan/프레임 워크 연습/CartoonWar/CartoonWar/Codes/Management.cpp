@@ -15,6 +15,7 @@ CManagement::CManagement()
 	, m_pConstant_Buffer_Manager(CConstant_Buffer_Manager::GetInstance())
 	, m_pRTT_Mananger(CRTTMananger::GetInstance())
 	, m_pKey_Manager(CKeyManager::GetInstance())
+	, m_pInput(CInput::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
@@ -22,6 +23,7 @@ CManagement::CManagement()
 	m_pConstant_Buffer_Manager->AddRef();
 	m_pRTT_Mananger->AddRef();
 	m_pKey_Manager->AddRef();
+	m_pInput->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -112,6 +114,15 @@ _bool CManagement::Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey)
 	return m_pKey_Manager->Key_Combine(dwFirstKey, dwSecondKey);
 }
 
+_vec3 CManagement::Mouse_Down(DWORD dwKey)
+{
+	_vec3 vPos = { (float)CInput::GetInstance()->Get_DIMousePos().lX, 
+		(float)CInput::GetInstance()->Get_DIMousePos().lY,
+		(float)CInput::GetInstance()->Get_DIMousePos().lZ } ;
+	//m_pInput->Get_DIMousePos()
+	return vPos;
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -195,6 +206,8 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CLight_Manager Release Failed");
 
 	if (dwRefCnt = CKeyManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
@@ -254,5 +267,6 @@ void CManagement::Free()
 	Safe_Release(m_pConstant_Buffer_Manager);
 	Safe_Release(m_pRTT_Mananger);
 	Safe_Release(m_pKey_Manager);
+	Safe_Release(m_pInput);
 	Safe_Release(m_pScene);
 }

@@ -26,10 +26,10 @@ HRESULT CUI_Loading::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	
 	
-	//m_fX = 50.0f;
-	//m_fY = 50.0f;
-	m_fX = ((_vec3*)pArg)->x;
-	m_fY = ((_vec3*)pArg)->y;
+	m_fX = 500.0f;
+	m_fY = 500.0f;
+	//m_fX = ((_vec3*)pArg)->x;
+	//m_fY = ((_vec3*)pArg)->y;
 
 	m_fSizeX = 100.0f;
 	m_fSizeY = 100.0f;
@@ -37,8 +37,56 @@ HRESULT CUI_Loading::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
+//HRESULT CUI_Loading::Ready_GameObject(void* pArg, void* pSize)
+//{
+//	if (FAILED(Ready_Component()))
+//		return E_FAIL;
+//	if (FAILED(CreateInputLayout()))
+//		return E_FAIL;
+//
+//	m_fX = ((_vec3*)pArg)->x;
+//	m_fY = ((_vec3*)pArg)->y;
+//
+//	m_fSizeX = ((_vec3*)pSize)->x;
+//	m_fSizeY = ((_vec3*)pSize)->y;
+//
+//	return S_OK;
+//}
+
 _int CUI_Loading::Update_GameObject(const _float& fTimeDelta)
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+	pManagement->AddRef();
+
+	if (pManagement->Key_Pressing(KEY_LEFT))
+	{
+		//m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	if (pManagement->Key_Pressing(KEY_RIGHT))
+	{
+		//++m_fX;
+		//++m_fSizeX;
+		//m_fSizeY = 100.0f;
+
+		//m_fY = ((_vec3*)pArg)->y;
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	if (pManagement->Key_Pressing(KEY_UP))
+	{
+
+		//m_pTransformCom->BackWard(fTimeDelta);
+
+	}
+	if (pManagement->Key_Pressing(KEY_DOWN))
+	{
+		//m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+
+
+
+	Safe_Release(pManagement);
 	return _int();
 }
 
@@ -118,6 +166,16 @@ CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
 	}
 	return pInstance;
 }
+
+//CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
+//{
+//	CUI_Loading* pInstance = new CUI_Loading();
+//	if (FAILED(pInstance->Ready_GameObject(pArg)))
+//	{
+//		Safe_Release(pInstance);
+//	}
+//	return pInstance;
+//}
 
 void CUI_Loading::Free()
 {

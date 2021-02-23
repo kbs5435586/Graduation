@@ -8,6 +8,8 @@
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일
 #include <windows.h>
+#include <WS2tcpip.h>
+#include <MSWSock.h>
 // C 런타임 헤더 파일입니다.
 #include <stdlib.h>
 #include <malloc.h>
@@ -50,6 +52,9 @@ using namespace std;
 #pragma comment(lib, "DInput8.lib")
 #pragma comment(lib, "DXGuid.lib")
 
+#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "MSWSock.lib")
+
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
@@ -64,7 +69,7 @@ using namespace DirectX::SimpleMath;
 #include "Struct.h"
 #include "Typedef.h"
 #include "Funtor.h"
-
+#include "protocol.h"
 
 #include "Device.h"
 

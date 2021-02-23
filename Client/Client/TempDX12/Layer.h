@@ -19,6 +19,9 @@ public:
 public:
 	static CLayer*				Create();
 	virtual void				Free();
+public:
+	list<CGameObject*>			Get_GameObjectLst() { return m_ObjectList; }
+	CGameObject*				Get_GameObject(const _uint& iIdx);
 private:
 	list<CGameObject*>			m_ObjectList;
 	typedef list<CGameObject*>	OBJECTLIST;

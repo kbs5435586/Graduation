@@ -111,11 +111,13 @@ HRESULT CScene_Logo::Ready_Layer()
 {
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_TempStatic_Mesh(L"Layer_TempStatic_Mesh")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_TempStatic_Mesh(L"Layer_TempStatic_Mesh")))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox")))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain")))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Cube(L"Layer_Cube")))
 		return E_FAIL;
 	return S_OK;
 }
@@ -421,9 +423,9 @@ HRESULT CScene_Logo::Add_Prototype_Component_Texture(CManagement* pManagement)
 
 HRESULT CScene_Logo::Add_Prototype_Component_Static_Mesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Elf",
-		CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Mesh/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Elf",
+	//	CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Mesh/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
+	//	return E_FAIL;
 
 	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Static_Mesh_Orc",
 	//	CStatic_Mesh::Create(m_pGraphic_Device, "../Resource/Mesh/Orc/Orc_01/Mesh/Orc_01_Weapon_Mesh.FBX"))))

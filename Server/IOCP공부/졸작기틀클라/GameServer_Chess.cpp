@@ -173,7 +173,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, // H는 핸들,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMESERVERCHESS));
 
     WSADATA WSAData;
-    WSAStartup(MAKEWORD(2, 0), &WSAData);
+    WSAStartup(MAKEWORD(2, 2), &WSAData);
     s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
     MSG msg;

@@ -12,6 +12,7 @@
 #include "Orc01.h"
 
 #include "UI_Loading.h"
+#include "UI_StatusBar.h"
 
 CScene_Stage::CScene_Stage()
 {
@@ -80,6 +81,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	//UI
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Loading", CUI_Loading::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_StatusBar", CUI_StatusBar::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -93,19 +96,25 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-		return E_FAIL;
+	//for (int i = 0; i < 100; ++i)
+	//{
+	//	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+	//		return E_FAIL;
+	//}
+	
+
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 
 
-	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
+		return E_FAIL;
 
 	//_vec3 vPosOne = { 500.f ,500.f, 0.f };
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosOne)))
 	//	return E_FAIL;
 	//_vec3 vPosTwo = { 10.f ,10.f, 0.f };
+	//_vec3 vSizeTwo = { 10.f ,10.f, 0.f };
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo)))
 	//	return E_FAIL;
 	//
@@ -198,9 +207,16 @@ HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pMan
 HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg)
 {
 	
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Loading", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_StatusBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Particle", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 

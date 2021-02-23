@@ -144,6 +144,7 @@
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="API.h" />
     <ClInclude Include="lauxlib.h" />
     <ClInclude Include="lua.h" />
     <ClInclude Include="lua.hpp" />
@@ -157,6 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="lua54.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NPC.LUA" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

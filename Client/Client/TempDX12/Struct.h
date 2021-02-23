@@ -1,4 +1,5 @@
 #pragma once
+#include "protocol.h"
 
 typedef struct tagVertexCol
 {
@@ -185,6 +186,15 @@ typedef struct tagLight
 	XMFLOAT4	vDirection;
 
 }LIGHT;
+
+struct Player_Info
+{
+	bool showCharacter;
+	char name[MAX_ID_LEN + 1];
+	int x = 0;
+	int y = 0;
+};
+
 
 
 

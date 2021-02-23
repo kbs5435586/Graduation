@@ -42,6 +42,7 @@ using namespace std;
 #include <fstream>
 #include <string>
 #include <wrl/client.h>
+#include <math.h>
 
 
 

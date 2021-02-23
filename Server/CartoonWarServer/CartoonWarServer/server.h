@@ -9,6 +9,9 @@ public:
 
 private:
 	map <int, ClientInfo> g_clients;
+	priority_queue<event_type> timer_queue;
+	mutex timer_lock;
+
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
@@ -28,6 +31,7 @@ public:
 	void send_move_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
+	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
@@ -37,7 +41,16 @@ public:
 	void initalize_NPC();
 	void do_AI();
 	void random_move_npc(int npc_id);
+	void activate_npc(int npc_id);
+
+	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
+	void do_timer();
 
 	bool is_near(int a, int b);
+	bool is_player(int id);
+
+	int API_SendMessage(lua_State* L);
+	int API_get_x(lua_State* L);
+	int API_get_y(lua_State* L);
 };
 

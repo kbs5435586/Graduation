@@ -3,7 +3,8 @@
 class CTransform;
 class CRenderer;
 class CShader;
-class CBuffer_RectCol;
+class CBuffer_RectTex;
+class CTexture;
 
 class CMyRect :
     public CGameObject
@@ -29,8 +30,9 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectCol*						m_pBufferCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
 
 };
 

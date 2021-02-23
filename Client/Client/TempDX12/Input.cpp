@@ -36,7 +36,7 @@ HRESULT CInput::Ready_KeyBoard(HWND hWnd)
 {
 	if (FAILED(m_pSDK->CreateDevice(GUID_SysKeyboard, &m_pKeyBoard, nullptr)))
 		return E_FAIL;
-	if (FAILED(m_pKeyBoard->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY)))
+	if (FAILED(m_pKeyBoard->SetCooperativeLevel(hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE)))
 		return E_FAIL;
 	if (FAILED(m_pKeyBoard->SetDataFormat(&c_dfDIKeyboard)))
 		return E_FAIL;

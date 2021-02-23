@@ -154,17 +154,21 @@
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
     <ClInclude Include="..\Headers\Buffer_RectTex.h" />
+    <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
     <ClInclude Include="..\Headers\Cell.h" />
+    <ClInclude Include="..\Headers\Circle.h" />
+    <ClInclude Include="..\Headers\Collider.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
     <ClInclude Include="..\Headers\Constant.h" />
     <ClInclude Include="..\Headers\Constant_Buffer.h" />
     <ClInclude Include="..\Headers\Constant_Buffer_Manager.h" />
     <ClInclude Include="..\Headers\Cube.h" />
+    <ClInclude Include="..\Headers\Cube_Texture.h" />
     <ClInclude Include="..\Headers\Debug_Camera.h" />
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
@@ -191,6 +195,7 @@
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
+    <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -214,8 +219,12 @@
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_Light.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
+    <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
+    <ClInclude Include="..\Headers\UI_Position.h" />
+    <ClInclude Include="..\Headers\UI_Reflect.h" />
     <ClInclude Include="..\Headers\UI_Specular.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
@@ -229,16 +238,20 @@
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
+    <ClCompile Include="..\Codes\Circle.cpp" />
+    <ClCompile Include="..\Codes\Collider.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer_Manager.cpp" />
     <ClCompile Include="..\Codes\Cube.cpp" />
+    <ClCompile Include="..\Codes\Cube_Texture.cpp" />
     <ClCompile Include="..\Codes\Debug_Camera.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
@@ -259,6 +272,7 @@
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
+    <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
@@ -279,8 +293,12 @@
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_Light.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
+    <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
+    <ClCompile Include="..\Codes\UI_Position.cpp" />
+    <ClCompile Include="..\Codes\UI_Reflect.cpp" />
     <ClCompile Include="..\Codes\UI_Specular.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
@@ -335,7 +353,19 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
-    <None Include="..\ShaderFiles\Shader_Defferd.hlsl">
+    <None Include="..\ShaderFiles\Shader_UI_Deffered.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Collider.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

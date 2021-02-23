@@ -26,12 +26,20 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	//여기서 위치 및 각종 설정 변경
+	//m_pTransformCom->Scaling(_vec3(.1f, .1f, .1f));
+	//
+	//default_random_engine dre(random_device{}());
+	//uniform_int_distribution<> uid(0, 10);
+	//_vec3 vPos = _vec3(uid(dre), uid(dre), uid(dre));
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	return S_OK;
 }
 
 _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 {
+	m_pTransformCom->Go_Left(1.f);
 	return _int();
 }
 
@@ -109,7 +117,6 @@ CGameObject* CMyRect::Clone_GameObject(void* pArg)
 
 void CMyRect::Free()
 {
-
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
@@ -134,7 +141,7 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectCol*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectCol");
+	m_pBufferCom = (CBuffer_RectCol*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_SphereCol");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;

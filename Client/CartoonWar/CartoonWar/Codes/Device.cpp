@@ -636,7 +636,7 @@ HRESULT CDevice::Create_View()
 		tDesc.Height = WINCX;
 		tDesc.DepthOrArraySize = 1;
 		tDesc.MipLevels = 1;
-		tDesc.Format = DXGI_FORMAT_D32_FLOAT;
+		tDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		tDesc.SampleDesc.Count = 1;
 		tDesc.SampleDesc.Quality =  0;
 		tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
@@ -651,7 +651,7 @@ HRESULT CDevice::Create_View()
 		tHeapProperties.VisibleNodeMask = 1;
 
 		D3D12_CLEAR_VALUE tClearView;
-		tClearView.Format = DXGI_FORMAT_D32_FLOAT;
+		tClearView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		tClearView.DepthStencil.Depth = 1.0f;
 		tClearView.DepthStencil.Stencil = 0;
 
@@ -669,12 +669,11 @@ HRESULT CDevice::Create_View()
 	return S_OK;
 }
 
-void CDevice::Render_Begin(float(&_arrFloat)[4])
+void CDevice::Render_Begin()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
-	pManagement->AddRef();
 
 	m_iCurrentDummyIdx = 0;
 	m_pCmdAlloc->Reset();
@@ -707,8 +706,6 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 	//m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	ClearDummyDesc(0);
-
-	Safe_Release(pManagement);
 }
 
 void CDevice::Render_End()
@@ -716,17 +713,17 @@ void CDevice::Render_End()
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
-	pManagement->AddRef();
-
 
 	// Indicate that the back buffer will now be used to present.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
 	//barrier.Transition.pResource = m_RenderTargets[m_iCurTargetIdx].Get();
-	barrier.Transition.pResource = pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(m_iCurTargetIdx)->pRtt->GetTex2D().Get();
+	barrier.Transition.pResource = pManagement->Get_RTT(
+		(_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(m_iCurTargetIdx)->pRtt->GetTex2D().Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 백버퍼에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;			// 다시 출력으로 지정
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
@@ -738,8 +735,6 @@ void CDevice::Render_End()
 
 	// 백버퍼 타겟 인덱스 변경
 	m_iCurTargetIdx == 0 ? m_iCurTargetIdx = 1 : m_iCurTargetIdx = 0;
-
-	Safe_Release(pManagement);
 }
 
 void CDevice::WaitForFenceEvent()

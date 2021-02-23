@@ -6,10 +6,13 @@ constexpr unsigned int MAX_BUF_SIZE = 1024;
 
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 255;
-constexpr int MAX_USER = 10000;
 
-constexpr int WORLD_WIDTH = 400;
-constexpr int WORLD_HEIGHT = 400;
+constexpr int MAX_USER = 20'000;
+constexpr int NPC_ID_START = 20'000;
+constexpr int MAX_NPC = 200'000;
+
+constexpr int WORLD_WIDTH = 2000;
+constexpr int WORLD_HEIGHT = 2000;
 
 constexpr int SERVER_PORT = 9000;
 
@@ -43,8 +46,9 @@ struct sc_packet_move
 	unsigned move_time; // unsigned int¶û °°À½
 };
 
-constexpr unsigned char O_PLAYER = 0;
-constexpr unsigned char O_NPC = 1;
+constexpr unsigned char O_HUMAN = 0;
+constexpr unsigned char O_ELF = 1;
+constexpr unsigned char O_ORK = 2;
 
 struct sc_packet_enter
 {

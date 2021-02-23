@@ -136,9 +136,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
       <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. BaseShape\01. Cube">
-      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\00. Scene_Logo">
       <UniqueIdentifier>{98ecb91f-3121-4ff3-8b0a-54591eedf38d}</UniqueIdentifier>
     </Filter>
@@ -226,9 +223,6 @@
     <Filter Include="97. Engine\99. Base">
       <UniqueIdentifier>{f7ae0d71-f621-472b-8290-bfc15807a849}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles\00. Default">
-      <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\00. System\01. Frame">
       <UniqueIdentifier>{9d7a81a1-a847-4529-bc15-930336ef453c}</UniqueIdentifier>
     </Filter>
@@ -241,17 +235,53 @@
     <Filter Include="97. Engine\01. Utility\05. RenderToTexture\02. MRT">
       <UniqueIdentifier>{6254b08b-1cc1-4e10-b054-a05060ddb759}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\01. UI_Diffuse">
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered">
+      <UniqueIdentifier>{5aae7e2a-b1fc-47bd-8b52-8eeea9cead56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\01. UI_Diffuse">
       <UniqueIdentifier>{8e8b7fbb-a5f3-47fe-a2cd-7af55099a752}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles\01. Defferd">
-      <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\02. UI_Normal">
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\02. UI_Normal">
       <UniqueIdentifier>{2849075b-6750-4f2d-bf07-d3240fbdb606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\03. UI_Specular">
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\03. UI_Position">
       <UniqueIdentifier>{bcbacaca-fbd5-4673-b9a0-87aee48e7674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\99. UI_Main">
+      <UniqueIdentifier>{54249dab-acf5-4d20-8ecc-f5a08d829b8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\04. UI_Light">
+      <UniqueIdentifier>{dfe35634-f1da-4e5f-b47b-09f04c832c8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\05. UI_Specular">
+      <UniqueIdentifier>{262ab305-0494-4602-9919-a43527480650}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ShaderFiles\01. Deffered">
+      <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ShaderFiles\00. Struct">
+      <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\08. Collider">
+      <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Reflect">
+      <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\02. Cube">
+      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
+      <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
+      <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\04. Circle">
+      <UniqueIdentifier>{f7d5b165-b434-4c03-9277-08f928bfa167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
+      <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -382,7 +412,7 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Cube.h">
-      <Filter>02. GameObject\99. BaseShape\01. Cube</Filter>
+      <Filter>02. GameObject\99. BaseShape\02. Cube</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Logo.h">
       <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
@@ -460,19 +490,46 @@
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Diffuse.h">
-      <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\01. UI_Diffuse</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI.h">
       <Filter>02. GameObject\97. UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Normal.h">
-      <Filter>02. GameObject\97. UI\02. UI_Normal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\UI_Specular.h">
-      <Filter>02. GameObject\97. UI\03. UI_Specular</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\02. UI_Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MRT.h">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Main.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\99. UI_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Position.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\03. UI_Position</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Light.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Specular.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_Specular</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Reflect.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Reflect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Cube_Texture.h">
+      <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\QuadTree.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Collider.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\08. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_Sphere.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Circle.h">
+      <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -586,7 +643,7 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Cube.cpp">
-      <Filter>02. GameObject\99. BaseShape\01. Cube</Filter>
+      <Filter>02. GameObject\99. BaseShape\02. Cube</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Logo.cpp">
       <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
@@ -655,19 +712,46 @@
       <Filter>02. GameObject\97. UI\00. UI_Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Diffuse.cpp">
-      <Filter>02. GameObject\97. UI\01. UI_Diffuse</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\01. UI_Diffuse</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI.cpp">
       <Filter>02. GameObject\97. UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Normal.cpp">
-      <Filter>02. GameObject\97. UI\02. UI_Normal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\UI_Specular.cpp">
-      <Filter>02. GameObject\97. UI\03. UI_Specular</Filter>
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\02. UI_Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MRT.cpp">
       <Filter>97. Engine\01. Utility\05. RenderToTexture\02. MRT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Main.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\99. UI_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Position.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\03. UI_Position</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Light.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Specular.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_Specular</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Reflect.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Reflect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cube_Texture.cpp">
+      <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\QuadTree.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Collider.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\08. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Circle.cpp">
+      <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -695,16 +779,28 @@
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Defferd.hlsl">
-      <Filter>96. ShaderFiles\01. Defferd</Filter>
+    <None Include="..\ShaderFiles\Shader_UI_Deffered.hlsl">
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Collider.hlsl">
+      <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
-      <Filter>96. ShaderFiles\00. Default</Filter>
+      <Filter>96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
-      <Filter>96. ShaderFiles\00. Default</Filter>
+      <Filter>96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

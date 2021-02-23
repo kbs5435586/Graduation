@@ -15,6 +15,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 	_tchar szName[128] = {};
 
 
+	// Create RenderTarget for SwapChain
 	tRtt  arrRT[2] = {};
 	for (_uint i = 0; i < 2; ++i)
 	{
@@ -28,12 +29,12 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 	}
 
 	CRTT* pDsTex  = CRTT::Create(L"DepthStencilTex"
-		, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
+		, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D24_UNORM_S8_UINT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
 		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 	if (pDsTex == nullptr)
 		return E_FAIL;
 
-
+	//DXGI_FORMAT_D24_UNORM_S8_UINT
 
 	// SwapChain MRT
 	CMRT* pMRT = CMRT::Create(2, arrRT, pDsTex);
@@ -56,7 +57,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
 		if (arrRT[1].pRtt == nullptr)
 			return E_FAIL;
-
+		
 		arrRT[2].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[2].pRtt = CRTT::Create(L"PositionTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
@@ -64,19 +65,40 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[2].pRtt == nullptr)
 			return E_FAIL;
 
-		CMRT* pMRT = CMRT::Create(3, arrRT, pDsTex);
+		arrRT[3].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[3].pRtt = CRTT::Create(L"ShadingTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[3].vClear_Color);
+		if (arrRT[3].pRtt == nullptr)
+			return E_FAIL;
+
+		arrRT[4].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[4].pRtt = CRTT::Create(L"SpecularTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[4].vClear_Color);
+		if (arrRT[4].pRtt == nullptr)
+			return E_FAIL;
+
+		arrRT[5].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[5].pRtt = CRTT::Create(L"ReflectTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[5].vClear_Color);
+		if (arrRT[5].pRtt == nullptr)
+			return E_FAIL;
+
+		CMRT* pMRT = CMRT::Create(6, arrRT, pDsTex);
 		m_vecMRT.push_back(pMRT);
 	}
 
 	// Light MRT
 	{
 		tRtt arrRT[8] = {};
-		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[0].vClear_Color = { 0.f,0.f,1.f,1.f };
 		arrRT[0].pRtt = CRTT::Create(L"DiffuseLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
 
-		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[1].vClear_Color = { 0.f,0.f,1.f,1.f };
 		arrRT[1].pRtt = CRTT::Create(L"SpecularLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);

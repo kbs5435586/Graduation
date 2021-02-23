@@ -1,0 +1,11 @@
+EFFECT|BossMultiAttack|36|..\Texture\Stage\EFFECT\BossMultiAttack\BossMultiAttack%d.png
+EFFECT|Crash|4|..\Texture\Stage\EFFECT\Crash\Crash%d.png
+EFFECT|Cray|8|..\Texture\Stage\EFFECT\Cray\Cray%d.png
+EFFECT|Dust|6|..\Texture\Stage\EFFECT\Dust\Dust%d.png
+EFFECT|ElectronicShock|9|..\Texture\Stage\EFFECT\ElectronicShock\ElecShock%d.png
+EFFECT|Fire|39|..\Texture\Stage\EFFECT\Fire\AKAAKIHA_AKI51_%d.png
+PLAYER|Attack|6|..\Texture\Stage\PLAYER\Attack\AKIHA_AKI01_00%d.png
+PLAYER|Dash|11|..\Texture\Stage\PLAYER\Dash\AKIHA_AKI13_00%d.png
+PLAYER|Stand|12|..\Texture\Stage\PLAYER\Stand\AKIHA_AKI00_00%d.png
+PLAYER|Walk|13|..\Texture\Stage\PLAYER\Walk\AKIHA_AKI26_00%d.png
+TERRAIN|Tile|38|..\Texture\Stage\TERRAIN\Tile\Tile%d.png
