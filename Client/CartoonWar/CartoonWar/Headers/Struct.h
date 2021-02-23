@@ -209,3 +209,12 @@ typedef struct tagReflect
 }REFLECT;
 
 
+
+typedef struct tagInfo
+{
+	float	fHP = 0;
+	float	fMP = 0;
+	float	fAtt = 0;
+	float	fDef = 0;
+}INFO;
+

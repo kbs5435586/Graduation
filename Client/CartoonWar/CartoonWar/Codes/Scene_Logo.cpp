@@ -219,6 +219,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_SPHERE",
 		CCollider::Create(COLLIDER_TYPE::COLLIDER_SPHERE))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer",
+		CObserver::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)

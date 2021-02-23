@@ -38,6 +38,11 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[2]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+
+
+	m_tInfo = {10.f,10.f,10.f,10.f};
+
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
 	return S_OK;
 }
 
@@ -63,6 +68,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
+		m_tInfo.fHP -= 1.f;
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
 
@@ -89,6 +95,8 @@ _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
 
 	return _int();
 }
@@ -162,6 +170,7 @@ void CCube::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pObserverCom);
 	Safe_Release(m_pColliderCom[0]);
 	Safe_Release(m_pColliderCom[1]);
 	Safe_Release(m_pColliderCom[2]);
@@ -208,6 +217,11 @@ HRESULT CCube::Ready_Component()
 	m_pColliderCom[2] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_SPHERE");
 	NULL_CHECK_VAL(m_pColliderCom[2], E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_2", m_pColliderCom[2])))
+		return E_FAIL;
+
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

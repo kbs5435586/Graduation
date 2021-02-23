@@ -5,6 +5,7 @@ class CRenderer;
 class CShader;
 class CBuffer_CubeCol;
 class CCollider;
+class CObserver;
 
 class CCube :
     public CGameObject
@@ -33,5 +34,6 @@ private:
 	CBuffer_CubeCol*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CCollider*								m_pColliderCom[3] = { nullptr };
+	CObserver*								m_pObserverCom = nullptr;
 };
 

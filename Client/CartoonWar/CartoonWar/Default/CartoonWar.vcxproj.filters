@@ -283,6 +283,15 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
       <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\07. Subject">
+      <UniqueIdentifier>{bf1f5867-e5e7-4ca6-a5b5-9701b69ce1e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\07. Subject\00. Subject">
+      <UniqueIdentifier>{13df338a-658a-46f6-8aca-2f4e5510440f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\09. Observer">
+      <UniqueIdentifier>{750f9af0-9d7b-4a72-9092-c2934bbabc8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -531,6 +540,12 @@
     <ClInclude Include="..\Headers\Circle.h">
       <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Observer.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\09. Observer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ObserverManager.h">
+      <Filter>97. Engine\01. Utility\07. Subject\00. Subject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -752,6 +767,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Circle.cpp">
       <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Observer.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\09. Observer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ObserverManager.cpp">
+      <Filter>97. Engine\01. Utility\07. Subject\00. Subject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 #include "Navigation.h"
 #include "Collider.h"
 #include "Static_Mesh.h"
+#include "Observer.h"
 
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"

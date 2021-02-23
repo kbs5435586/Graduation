@@ -3,6 +3,7 @@
 #include "GameObject_Manager.h"
 #include "Light_Manager.h"
 #include "Constant_Buffer_Manager.h"
+#include "ObserverManager.h"
 #include "RTTMananger.h"
 #include "KeyManager.h"
 #include "FBXLoader.h"
@@ -36,7 +37,6 @@ public://LightManager
 	LIGHT						Get_Light(const _tchar* pLightTag);
 	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);
 	void						SetUp_OnShader_Light();
-	void						Render_Light();
 public://ConstantBuffer_Mananger
 	HRESULT						Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal = false);
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }
@@ -51,6 +51,13 @@ public://Key_Manager
 	_bool						Key_Up(DWORD dwKey);
 	_bool						Key_Pressing(DWORD dwKey);
 	_bool						Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey);
+public://Observer_Manager
+	list<void*>*				Get_List(DATA_TYPE eType);
+	void						Add_Data(DATA_TYPE eType, void* pData);
+	void                        Remove_Data(DATA_TYPE eType, void* pData);
+	void                        Subscribe(CObserver* pObserver);
+	void                        UnSubscribe(CObserver* pObserver);
+	void                        Notify(DATA_TYPE eType, void* pData = nullptr);
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -69,5 +76,6 @@ private:
 	CConstant_Buffer_Manager*	m_pConstant_Buffer_Manager = nullptr;
 	CRTTMananger*				m_pRTT_Mananger = nullptr;
 	CKeyManager*				m_pKey_Manager = nullptr;
+	CObserverManager*			m_pObserver_Manager = nullptr;
 };
 
