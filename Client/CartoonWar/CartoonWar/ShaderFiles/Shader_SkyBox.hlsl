@@ -19,12 +19,7 @@ struct PS_OUT
 	float4 vTarget3		: SV_TARGET3;
 };
 
-struct PS_OUT
-{
-	float4 vTarget0		: SV_TARGET0;
-	float4 vTarget1		: SV_TARGET1;
-	float4 vTarget2		: SV_TARGET2;
-};
+
 
 VS_OUT VS_Main(VS_IN vIn)
 {
