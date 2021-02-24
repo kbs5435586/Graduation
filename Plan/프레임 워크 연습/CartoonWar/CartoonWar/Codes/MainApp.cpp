@@ -29,18 +29,19 @@ HRESULT CMainApp::Ready_MainApp()
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
 
-	// 원래 주석처리가 된거였나? > 원래 프레임워크를 확인해보자
-	//if (FAILED(m_pManagement->Add_RenderToTexture(L"RTT_DEFAULT", 50, 50)))
-	//	return E_FAIL;
-
 	
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(MAINPASS), 512, CONST_REGISTER::b0)))
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(MATERIAL), 512, CONST_REGISTER::b1)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(LIGHT), 512, CONST_REGISTER::b2, true)))
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(LIGHTINFO), 1, CONST_REGISTER::b2, true)))
 		return E_FAIL;
-	
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(tagReflect), 512, CONST_REGISTER::b3)))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->Ready_RTT_Manager()))
+		return E_FAIL;
+
 
 
 	srand(unsigned(time(NULL)));
@@ -58,19 +59,18 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 void CMainApp::Render_MainApp()
 {
-	float pfClearColor[4] = { 0.f, 0.f, 1.f, 1.f };
-	// 여기서 RTT Set
-	//m_pManagement->Set_RenderTarget(L"RTT_DEFAULT", CDevice::GetInstance()->GetDSV().Get());
-	CDevice::GetInstance()->Render_Begin(pfClearColor);
+	CDevice::GetInstance()->Render_Begin();
 
+	m_pManagement->SetUp_OnShader_Light();
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Render_RenderGroup();
-	m_pManagement->Render_Management();
+
 
 	CDevice::GetInstance()->Render_End();
 
-	for (auto& iter : m_pManagement->GetConstantBuffer())
+ 	for (auto& iter : m_pManagement->GetConstantBuffer())
 		iter->ResetCount();
+
 	Compute_Frame();
 }
 
@@ -113,9 +113,10 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eID)
 void CMainApp::Compute_Frame()
 {
 	++m_dwRenderCnt;
+	
 	if (m_fTimeAcc >= 1.f)
 	{
-		wsprintf(m_szFPS, L"FPS:%d", m_dwRenderCnt);
+		wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID()-1);
 		m_dwRenderCnt = 0;
 		m_fTimeAcc = 0.f;
 	}

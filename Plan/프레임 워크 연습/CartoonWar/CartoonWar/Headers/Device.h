@@ -10,7 +10,6 @@ private:
     virtual ~CDevice() = default;
 private:
 	ComPtr<ID3D12Device>						m_pDevice = nullptr;
-	ComPtr<ID3D12PipelineState>					m_pPipelineState = nullptr;
 	ComPtr<ID3D12CommandQueue>					m_pCmdQueue = nullptr;
 	ComPtr<ID3D12CommandAllocator>				m_pCmdAlloc = nullptr;
 	ComPtr<ID3D12GraphicsCommandList>			m_pCmdListGraphic = nullptr;
@@ -28,7 +27,6 @@ private:
 private:
 	ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pDSV = nullptr;
-	ComPtr<ID3D12DescriptorHeap>				m_pCbv = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pInitDescriptor = nullptr;
 public:
 	ComPtr<ID3D12Device>						GetDevice() { return m_pDevice; }
@@ -39,9 +37,7 @@ public:
 	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
 	ComPtr< ID3D12DescriptorHeap>				GetDSV() { return m_pDSV; }
 	ComPtr<IDXGISwapChain4>						GetSwapChain() { return m_pSwapChain; }
-public:
-	ComPtr<ID3D12DescriptorHeap>				GetConstantBufferDescHeap() { return m_pCbv; }
-
+	D3D12_VIEWPORT								GetViewPort() { return m_tViewPort; }
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 public:
@@ -58,6 +54,7 @@ private:
 public:
 	DXGI_FORMAT									GetSwapChainFormat(_int iIdx) { return m_swapChainFormats[iIdx]; }
 	_int										GetBitDepth() { return (_int)m_CurrentSwapChainBitDepth; }
+	_uint										GetSwapChainIdx() { return m_iCurTargetIdx; }
 private:
 	HANDLE										m_hFenceEvent = 0;
 	_uint										m_iFenceValue = 0;
@@ -80,7 +77,7 @@ public:
 	static _float								m_fHDRMetaDataPool[4][4];
 public:
 	HRESULT										Initialize();
-	void										Render_Begin(float(&_arrFloat)[4]);
+	void										Render_Begin();
 	void										Render_End();
 	void										WaitForFenceEvent();
 public:
@@ -101,7 +98,7 @@ private:
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
 public:
-	void										SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, _uint iTextureIdx,TEXTURE_REGISTER eRegisterNum);
+	void										SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum);
 	void										SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
 	void										SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
 

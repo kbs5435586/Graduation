@@ -14,6 +14,10 @@ public:
 	virtual void			Render_Scene();
 protected:
 	virtual void			Free();
+public:
+	SCENEID					Get_SceneID() { return m_eSceneID; }
+protected:
+	SCENEID					m_eSceneID = SCENEID::SCENE_END;
 private:
 	CGameObject_Manager*	m_pObject_Manager = nullptr;  
 };

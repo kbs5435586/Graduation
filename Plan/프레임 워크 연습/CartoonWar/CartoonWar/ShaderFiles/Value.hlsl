@@ -2,22 +2,21 @@
 #define _VALUE
 
 
-struct tagLightColor
+struct LIGHT
 {
 	float4				vDiffuse;
 	float4				vSpecular;
 	float4				vAmbient;
 };
 
-struct tagLightInfo
+struct LIGHTINFO
 {
-	tagLightColor		tColor;
+	LIGHT				tColor;
 	float4				vLightPos;
 	float4				vLightDir;
+	int					iLightType;
 	float				fRange;
 	float				fAngle;
-	float				fPower;
-	int					iLightType;
 	int					iPadding;
 };
 
@@ -30,6 +29,9 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 
 	row_major matrix	matWV;
 	row_major matrix	matWVP;
+
+
+	float4				vCamPos;
 };
 
 cbuffer MATERIAL : register (b1)
@@ -42,22 +44,29 @@ cbuffer MATERIAL : register (b1)
 
 cbuffer LIGHT :register(b2)
 {
-	tagLightInfo		tLight[100];
+	LIGHTINFO			tLight[100];
 	int					iNumLight;
-	int3				iPaddingLight;
+	float3				iPaddingLight;
+};
+
+cbuffer REFLECT : register(b3)
+{
+	row_major matrix	matReflect;
 };
 
 
-Texture2D g_texture0 : register(t0);
-Texture2D g_texture1 : register(t1);
-Texture2D g_texture2 : register(t2);
-Texture2D g_texture3 : register(t3);
-Texture2D g_texture4 : register(t4);
-Texture2D g_texture5 : register(t5);
-Texture2D g_texture6 : register(t6);
-Texture2D g_texture7 : register(t7);
 
+Texture2D	g_texture0		: register(t0);
+Texture2D	g_texture1		: register(t1);
+Texture2D	g_texture2		: register(t2);
+Texture2D	g_texture3		: register(t3);
+Texture2D	g_texture4		: register(t4);
+Texture2D	g_texture5		: register(t5);
+Texture2D	g_texture6		: register(t6);
+TextureCube g_textureCube	: register(t7);
 
+SamplerState Sampler0		: register(s0);
+SamplerState Sampler1		: register(s1);
 
 int HasTex(in Texture2D _tex)
 {
@@ -71,8 +80,5 @@ int HasTex(in Texture2D _tex)
 	}
 	return 1;
 }
-
-SamplerState Sampler0 : register(s0);
-SamplerState Sampler1 : register(s1);
 
 #endif

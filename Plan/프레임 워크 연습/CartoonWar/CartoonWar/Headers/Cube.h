@@ -4,6 +4,7 @@ class CTransform;
 class CRenderer;
 class CShader;
 class CBuffer_CubeCol;
+class CCollider;
 
 class CCube :
     public CGameObject
@@ -31,6 +32,6 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_CubeCol*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-
+	CCollider*								m_pColliderCom[3] = { nullptr };
 };
 

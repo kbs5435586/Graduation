@@ -4,177 +4,185 @@
 
 CRTT::CRTT()
 {
+
 }
 
-HRESULT CRTT::Ready_RTT(_uint iTextureWidth, _uint iTextureHeight)
+
+HRESULT CRTT::CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTex2D)
 {
-	m_iTextureWidth = iTextureWidth;
-	m_iTextureHeight= iTextureHeight;
+	lstrcpy(m_pTag, pTag);
+	m_pTexture = _pTex2D;
+	m_tDesc = _pTex2D->GetDesc();
 
-	D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
-	tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	tDesc.NumDescriptors = 1;
-	tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	tDesc.NodeMask = 0;
-	CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pRTV));
+	HRESULT hr = S_OK;
+	if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
+		tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		tDesc.NumDescriptors = 1;
+		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		tDesc.NodeMask = 0;
+		hr = CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV));
 
-	D3D12_RESOURCE_DESC resourceDesc;
-	ZeroMemory(&resourceDesc, sizeof(resourceDesc));
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	resourceDesc.Alignment = 0;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.SampleDesc.Quality = 0;
-	resourceDesc.MipLevels = 1;
+		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
+		CDevice::GetInstance()->GetDevice()->CreateDepthStencilView(m_pTexture.Get(), nullptr, hDSVHandle);
+	}
+	else
+	{
+		if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET)
+		{
+			// RenderTargetView 만들기	
+			D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
+			tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+			tDesc.NumDescriptors = 1;
+			tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			tDesc.NodeMask = 0;
+			
+			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pRTV));
+			D3D12_CPU_DESCRIPTOR_HANDLE hRTVHeap = m_pRTV->GetCPUDescriptorHandleForHeapStart();
 
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.Width = m_iTextureWidth;
-	resourceDesc.Height = m_iTextureHeight;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-	resourceDesc.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+			CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), nullptr, hRTVHeap);
+		}
 
-	D3D12_CLEAR_VALUE tClearVal;
-	tClearVal.Color[0] = m_fClearColor[0];
-	tClearVal.Color[1] = m_fClearColor[1];
-	tClearVal.Color[2] = m_fClearColor[2];
-	tClearVal.Color[3] = m_fClearColor[3];
-	tClearVal.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+		if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE)
+		{
+			// SRV 를 저장할 DescriptorHeap Create
+			D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+			srvHeapDesc.NumDescriptors = 1;
+			srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+			srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSRV));
 
-	CD3DX12_HEAP_PROPERTIES heapProperty(D3D12_HEAP_TYPE_DEFAULT);
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pSRV->GetCPUDescriptorHandleForHeapStart();
 
-	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&heapProperty,
-		D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_RENDER_TARGET,
-		&tClearVal, IID_PPV_ARGS(m_pTexture.GetAddressOf()) )))
-		return E_FAIL;
-
-	//Create Render Target View
-	D3D12_RENDER_TARGET_VIEW_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.Texture2D.MipSlice = 0;
-	desc.Texture2D.PlaneSlice = 0;
-
-	desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	desc.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
-
-	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHeap = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), &desc, hRTVHeap);
-
-	//Device Copy Desc 
-
-	//Create Shader Resource View
-	D3D12_SHADER_RESOURCE_VIEW_DESC descSRV;
-	ZeroMemory(&descSRV, sizeof(descSRV));
-	descSRV.Texture2D.MipLevels = resourceDesc.MipLevels;
-	descSRV.Texture2D.MostDetailedMip = 0;
-	descSRV.Format = resourceDesc.Format;
-	descSRV.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	descSRV.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	descSRV.Format = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
-
-	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	ZeroMemory(&srvHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-	srvHeapDesc.NumDescriptors = 1;
-	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	srvHeapDesc.NodeMask = 0;
-	CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSRV));
-
-	D3D12_CPU_DESCRIPTOR_HANDLE hSRVHeap = m_pSRV->GetCPUDescriptorHandleForHeapStart();
-	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &descSRV, hSRVHeap);
-
-	if (FAILED(Ready_Component()))
-		return E_FAIL;
-	if (FAILED(Crate_InputLayOut()))
-		return E_FAIL;
-
-	
-
-	//D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	//hDescHandle.ptr/* += RTV HeapSize */;
-
-	//D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	//hSrcHandle.ptr;
-
-	//UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
-	//UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
-
-	//CDevice::GetInstance()->GetDevice()->CopyDescriptors(1, &hDescHandle, &iDestRange, 
-	//	1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	// Omset RT 갯수, handle, 
+			D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			//srvDesc.Format = m_Image.GetMetadata().format;
+			srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels = 1;
+		}
+	}
 
 	return S_OK;
 }
 
-void CRTT::Set_RenderTarget(ID3D12DescriptorHeap* pDsv)
+HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, 
+	const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
 {
-	float arr[4] = { 0.f,0.f,1.f,1.f };
-	CDevice::GetInstance()->Open();
+	lstrcpy(m_pTag, pTag);
+	m_tDesc.MipLevels = 1;
+	m_tDesc.Format = _eFormat;
+	m_tDesc.Width = _iWidth;
+	m_tDesc.Height = _iHeight;
+	m_tDesc.Flags = _eResFlag;
+	m_tDesc.DepthOrArraySize = 1;
+	m_tDesc.SampleDesc.Count = 1;
+	m_tDesc.SampleDesc.Quality = 0;
+	m_tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	m_tDesc.SampleDesc.Count = 1;
+	m_tDesc.SampleDesc.Quality = 0;
+	m_tDesc.Alignment = 0;
+	m_tDesc.DepthOrArraySize = 1;
+	m_tDesc.MipLevels = 1;
 
-	D3D12_VIEWPORT tViewPor = D3D12_VIEWPORT{ 0.f, 0.f, 50, 50, 0.f, 1.f };
-	D3D12_RECT m_tScissorRect = D3D12_RECT{ 0, 0, (LONG)50, (LONG)50 };
-	CDevice::GetInstance()->GetCmdLst()->RSSetViewports(1, &tViewPor);
-	CDevice::GetInstance()->GetCmdLst()->RSSetScissorRects(1, &m_tScissorRect);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	D3D12_CPU_DESCRIPTOR_HANDLE dHandle = pDsv->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CLEAR_VALUE* pValue = nullptr;
+	D3D12_RESOURCE_STATES eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
 
-	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(1, &handle, FALSE, &dHandle);
-	CDevice::GetInstance()->GetCmdLst()->ClearRenderTargetView(handle, arr, 0, nullptr);
-	CDevice::GetInstance()->GetCmdLst()->ClearDepthStencilView(pDsv->GetCPUDescriptorHandleForHeapStart(), 
-		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	if (_eResFlag & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
+	{
+		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D24_UNORM_S8_UINT, 1.0f, 0);
+		pValue = &depthOptimizedClearValue;
+		eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	}
+	else if (_eResFlag & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET)
+	{
+		eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET;
+		float arrFloat[4] = { _vClearColor.x, _vClearColor.y, _vClearColor.z, _vClearColor.w };
+		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(_eFormat, arrFloat);
+		pValue = &depthOptimizedClearValue;
+	}
 
 
-
-
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(
-		CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
-	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pShaderCom->GetPipeLine().Get());
-
-	CDevice::GetInstance()->SetTextureToShader(m_pSRV.Get(), 0, TEXTURE_REGISTER::t0);
-	m_pBufferCom->Render_VIBuffer();
-
-	CDevice::GetInstance()->Close();
-	CDevice::GetInstance()->WaitForFenceEvent();
-}
-
-HRESULT CRTT::Ready_Component()
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
+	if(FAILED(CDevice ::GetInstance()->GetDevice()->
+		CreateCommittedResource(&_HeapProperty, _eHeapFlag, &m_tDesc, eResStates, pValue, IID_PPV_ARGS(&m_pTexture))))
 		return E_FAIL;
-	pManagement->AddRef();
 
-	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex_RTT");
-	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_RTT");
-	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
+	// Texture 를 관리할 View 생성(SRV, RTV, DSV)
+	if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
+		tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		tDesc.NumDescriptors = 1;
+		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		tDesc.NodeMask = 0;
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV))))
+			return E_FAIL;
 
-	Safe_Release(pManagement);
+		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
+		CDevice::GetInstance()->GetDevice()->CreateDepthStencilView(m_pTexture.Get(), nullptr, hDSVHandle);
+	}
+	else
+	{
+		if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET)
+		{
+			// RenderTargetView 만들기	
+			D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
+			tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+			tDesc.NumDescriptors = 1;
+			tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			tDesc.NodeMask = 0;
+			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pRTV));
+			D3D12_CPU_DESCRIPTOR_HANDLE hRTVHeap = m_pRTV->GetCPUDescriptorHandleForHeapStart();
+
+			CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), nullptr, hRTVHeap);
+		}
+
+		// SRV 를 저장할 DescriptorHeap Create
+		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+		srvHeapDesc.NumDescriptors = 1;
+		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSRV));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pSRV->GetCPUDescriptorHandleForHeapStart();
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		//srvDesc.Format = m_Image.GetMetadata().format;
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pSRV->GetCPUDescriptorHandleForHeapStart());
+	}
+
 	return S_OK;
 }
 
-HRESULT CRTT::Crate_InputLayOut()
+CRTT* CRTT::Create(const _tchar* pTag, ComPtr<ID3D12Resource> _pTex2D)
 {
-	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
-	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-CRTT* CRTT::Create(_uint iTextureWidth, _uint iTextureHeight)
-{
-	CRTT* pInstance = new CRTT();
-	if (FAILED(pInstance->Ready_RTT(iTextureWidth, iTextureHeight)))
+	CRTT* pInstance = new CRTT;
+	if (FAILED(pInstance->CreateFromResource(pTag, _pTex2D)))
 		Safe_Release(pInstance);
+
 	return pInstance;
 }
 
+
+CRTT* CRTT::Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty,
+					D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr)
+{
+	CRTT* pInstance = new CRTT;
+	if (FAILED(pInstance->Create_Texture(pTag, _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClolr)))
+		Safe_Release(pInstance);
+
+	return pInstance;
+
+}
+
+
 void CRTT::Free()
 {
-	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pShaderCom);
 }

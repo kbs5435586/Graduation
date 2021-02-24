@@ -1,5 +1,10 @@
 #pragma once
 
+typedef struct tagPolygon32
+{
+	unsigned long		_0, _1, _2;
+}POLYGON32;
+
 typedef struct tagVertexCol
 {
 	XMFLOAT3 vPosition;
@@ -124,14 +129,14 @@ typedef struct tagProjection_Desc
 }PROJDESC;
 
 
-
 typedef struct tagMainPass
 {
-	XMMATRIX	matWorld;
-	XMMATRIX	matView;
-	XMMATRIX	matProj;
-	XMMATRIX	matWV;
-	XMMATRIX	matWVP;
+	XMFLOAT4X4	matWorld;
+	XMFLOAT4X4	matView;
+	XMFLOAT4X4	matProj;
+	XMFLOAT4X4	matWV;
+	XMFLOAT4X4	matWVP;
+	XMFLOAT4	vCamPos;
 }MAINPASS;
 
 typedef struct tagMaterial
@@ -141,8 +146,6 @@ typedef struct tagMaterial
 	XMFLOAT4		vMtrlAmb;
 	XMFLOAT4		vMtrlEmiv;
 }MATERIAL;
-
-
 
 typedef struct tagMtrInfo
 {
@@ -157,8 +160,6 @@ typedef struct tagMtrInfo
 	wstring			strSpec;
 }MTRLINFO;
 
-
-
 struct RenderInfo
 {
 	string						strNodeName;
@@ -170,37 +171,41 @@ struct RenderInfo
 };
 
 
-typedef struct tagLight
+typedef struct tagLightColor
 {
-	LIGHT_TYPE	eLightType;
 	XMFLOAT4	vDiffuse;
 	XMFLOAT4	vSpecular;
 	XMFLOAT4	vAmbient;
-	XMFLOAT4	vDirection;
+}LIGHTCOLOR;
+
+typedef struct tagLight
+{
+	LIGHTCOLOR	tLightColor;
+	_vec4		vLightPos;
+	_vec4		vLightDir;
+	int			iLightType;
 	float		fRange;
-	float		fPower;
-	tagLight() { }
-	tagLight(LIGHT_TYPE eType, XMFLOAT4 vDiff, XMFLOAT4 vSpec, XMFLOAT4 vAmbi, XMFLOAT4 vDir, float fRan)
-	{
-		eLightType = eType;
-		vDiffuse = vDiff;
-		vSpecular = vSpec;
-		vAmbient = vAmbi;
-		vDirection = vDir;
-		fRange = fRan;
-	}
-	tagLight(tagLight* tOther)
-	{
-		eLightType = tOther->eLightType;
-		vDiffuse = tOther->vDiffuse;
-		vSpecular = tOther->vSpecular;
-		vAmbient = tOther->vAmbient;
-		vDirection = tOther->vDirection;
-		fRange = tOther->fRange;
-		fPower = tOther->fPower;
-	}
+	float		fAngle;
+	int			iPadding;
 
 }LIGHT;
 
+typedef struct tagLightInfo
+{
+	LIGHT			arrLight[100];
+	int				iCurLightCnt;
+	_vec3			vPadding;
+}LIGHTINFO;
+
+typedef struct tagRenderTarget
+{
+	ID3D12Resource*		pTarget;
+	XMFLOAT4			fClear_Color;
+}RENDERTARGER;
+
+typedef struct tagReflect
+{
+	XMFLOAT4X4	matReflect;
+}REFLECT;
 
 

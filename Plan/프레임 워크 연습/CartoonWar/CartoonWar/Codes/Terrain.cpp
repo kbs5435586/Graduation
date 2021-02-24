@@ -25,9 +25,6 @@ HRESULT CTerrain::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//터레인 헤이트말고 여기가 바닥 터레인
-	//터레인 각도 변경
-	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 
 	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
@@ -63,9 +60,9 @@ void CTerrain::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-	_uint iOffeset = pManagement->GetConstantBuffer(0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), 0, TEXTURE_REGISTER::t0);
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData(&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 	m_pBufferCom->Render_VIBuffer();
@@ -150,19 +147,10 @@ HRESULT CTerrain::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-
-	//원래 풀
-	//m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
-	//NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-	//	return E_FAIL;
-
-	//벽돌 텍스쳐
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Brick");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
-
 
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);

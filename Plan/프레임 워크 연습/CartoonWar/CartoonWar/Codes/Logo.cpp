@@ -19,15 +19,15 @@ HRESULT CLogo::Ready_Prototype()
 
 HRESULT CLogo::Ready_GameObject(void* pArg)
 {
-	if (FAILED(Ready_Component()))
+ 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
 	
-	m_pTransformCom->Scaling(_vec3(2.f,2.f,1.f));
+	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
 
-	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
+	_vec3 vPos = _vec3(0.f, -0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	return S_OK;
 }
@@ -61,12 +61,19 @@ void CLogo::Render_GameObject()
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = Matrix_::Identity();
 
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), 0, TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), 1, TEXTURE_REGISTER::t1);
+
+	//_matrix matWorld = Matrix_::Identity();
+	//_matrix matView = Matrix_::Identity();
+	//_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData(&tMainPass);
+
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), 
+		iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -80,7 +87,7 @@ HRESULT CLogo::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;

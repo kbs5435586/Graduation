@@ -2,17 +2,22 @@
 #include "Scene_Stage.h"
 #include "Management.h"
 
+// Shape
 #include "MyRect.h"
 #include "Cube.h"
+#include "Cube_Texture.h"
 #include "SkyBox.h"
 #include "Debug_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
 
+// Mesh
 #include "Orc01.h"
-
+// UI
 #include "UI_Loading.h"
-#include "UI_StatusBar.h"
+//#include "MyUI.h"
+
+#include "Circle.h"
 
 CScene_Stage::CScene_Stage()
 {
@@ -20,6 +25,7 @@ CScene_Stage::CScene_Stage()
 
 HRESULT CScene_Stage::Ready_Scene()
 {
+	m_eSceneID = SCENEID::SCENE_STAGE;
 	CManagement* pManagement = CManagement::GetInstance();
 
 	if (nullptr == pManagement)
@@ -46,8 +52,7 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
-	//
-
+	
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -77,50 +82,33 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc01", COrc01::Create())))
 		return E_FAIL;
-
-	//UI
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Loading", CUI_Loading::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube_Texture", CCube_Texture::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_StatusBar", CUI_StatusBar::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Circle", CCircle::Create())))
 		return E_FAIL;
+	
 	return S_OK;
 }
 
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera_Debug", pManagement)))
-		return E_FAIL;
 
-	// 이상한 색 배경 > 이동해도 가까워지는 느낌은 안난다
 	//if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 	//	return E_FAIL;
 
-	//for (int i = 0; i < 100; ++i)
-	//{
-	//	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-	//		return E_FAIL;
-	//}
-	
-
+	//if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
+	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
-
+	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
 
-	//_vec3 vPosOne = { 500.f ,500.f, 0.f };
-	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosOne)))
-	//	return E_FAIL;
-	//_vec3 vPosTwo = { 10.f ,10.f, 0.f };
-	//_vec3 vSizeTwo = { 10.f ,10.f, 0.f };
-	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement, &vPosTwo)))
-	//	return E_FAIL;
-	//
-	//_vec3 vPosThree = { 10.f ,0.f, 10.f };
-	//if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement, &vPosThree)))
-	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -129,14 +117,16 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.eLightType = LIGHT_TYPE::LIGHT_DIRECTIONAL;
-	tLightInfo.vDiffuse = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vSpecular = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vDirection = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.fRange = 100.f;
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(100.f, 0.f, 0.f, 1.f);
 
-	if(FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
+
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;
 
 	return S_OK;
@@ -144,7 +134,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -191,36 +181,46 @@ HRESULT CScene_Stage::Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* 
 
 HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement, void* pArg)
+HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc01", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement, void* pArg)
+HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_StatusBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pArg)))
+	//GameObject_UI_Diffuse
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;	
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Light", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Specular", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Reflect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_CMyUI", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	
+	
 
 	return S_OK;
 }
-
-HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement)
-{
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Particle", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-	return S_OK;
-}
-
-
 
 CScene_Stage* CScene_Stage::Create()
 {

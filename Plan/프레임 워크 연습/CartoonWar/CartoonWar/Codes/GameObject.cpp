@@ -25,11 +25,6 @@ HRESULT CGameObject::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-//HRESULT CGameObject::Ready_GameObject(void* pArg, void* pSize)
-//{
-//	return S_OK;
-//}
-
 _int CGameObject::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
@@ -78,11 +73,6 @@ CGameObject* CGameObject::Clone_GameObject(void* pArg)
 {
 	return nullptr;
 }
-
-//CGameObject* CGameObject::Clone_GameObject(void* pArg, void* pSize)
-//{
-//	return nullptr;
-//}
 
 void CGameObject::Free()
 {

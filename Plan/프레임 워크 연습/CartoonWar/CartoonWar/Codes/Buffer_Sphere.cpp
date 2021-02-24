@@ -1,33 +1,27 @@
 #include "framework.h"
-#include "Buffer_SphereCol.h"
-#include <cmath>
-#define _USE_MATH_DEFINES
+#include "Buffer_Sphere.h"
+#include "Management.h"
 
-
-CBuffer_SphereCol::CBuffer_SphereCol()
+CBuffer_Sphere::CBuffer_Sphere()
 	: CVIBuffer()
 {
 }
 
-CBuffer_SphereCol::CBuffer_SphereCol(const CBuffer_SphereCol& rhs)
+CBuffer_Sphere::CBuffer_Sphere(const CBuffer_Sphere& rhs)
 	: CVIBuffer(rhs)
 {
 }
 
-HRESULT CBuffer_SphereCol::Ready_VIBuffer()
+HRESULT CBuffer_Sphere::Ready_VIBuffer()
 {
-	//10   100   111
-	//6    36    43    7
-	//5    25    31    6
-	//정점 개수
-	m_iNumVertices = 31;
-	//한 정점 벡터의 크기?
 	m_iStride = sizeof(VTXCOL);
 
 	const float PI = acos(-1);
-	const int M = 5;
-	const int N = 5;
+	const int M = 10;
+	const int N = 10;
 	float rad = 1.f;
+
+	m_iNumVertices = M * N + N + 1;
 
 	float delta_phi = (float)(PI / M);
 	float delta_theta = (float)(2 * PI / N);
@@ -45,11 +39,11 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 			float phi = delta_phi * i - (float)(PI / 2);
 			float theta = delta_theta * j;
 
-			vecVertices[(N*i) + j] = VTXCOL(XMFLOAT3(
+			vecVertices[(N * i) + j] = VTXCOL(XMFLOAT3(
 				(rad * cosf(phi)) * cosf(theta),
 				(rad * cosf(phi)) * (float)sinf(theta)
-				, (rad * sinf(phi))), 
-				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));		
+				, (rad * sinf(phi))),
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
 		}
 	}
 
@@ -71,11 +65,10 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 			vecIndices[index++] = N * i + (j + 1);
 			vecIndices[index++] = N * (i + 1) + j;
 			vecIndices[index++] = N * (i + 1) + (j + 1);
+
 		}
 	}
 
-
-	////////////////////////////////////////////////////////////////////////////////////
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 
@@ -105,20 +98,20 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 	}
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices);
-	
-	
+
+
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
 			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))
 			return E_FAIL;
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
 			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pIndexUploadBuffer))))
 			return E_FAIL;
-	
+
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = (void*)(vecIndices.data());
 		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
 		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
-	
+
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
 		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
@@ -138,24 +131,23 @@ HRESULT CBuffer_SphereCol::Ready_VIBuffer()
 	return S_OK;
 }
 
-CBuffer_SphereCol* CBuffer_SphereCol::Create()
-{
-	CBuffer_SphereCol* pInstance = new CBuffer_SphereCol();
 
+
+CBuffer_Sphere* CBuffer_Sphere::Create()
+{
+	CBuffer_Sphere* pInstance = new CBuffer_Sphere();
 	if (FAILED(pInstance->Ready_VIBuffer()))
-	{
-		MessageBox(0, L"CBuffer_SphereCol Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
-	}
+
 	return pInstance;
 }
 
-CComponent* CBuffer_SphereCol::Clone_Component(void* pArg)
+CComponent* CBuffer_Sphere::Clone_Component(void* pArg)
 {
-	return new CBuffer_SphereCol(*this);
+	return new CBuffer_Sphere(*this);
 }
 
-void CBuffer_SphereCol::Free()
+void CBuffer_Sphere::Free()
 {
 	CVIBuffer::Free();
 }

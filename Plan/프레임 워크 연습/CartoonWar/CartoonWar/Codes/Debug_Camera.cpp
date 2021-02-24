@@ -24,7 +24,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(30.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -35,7 +35,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
 
@@ -60,7 +60,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
 	}
-	
+
 	
 	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 	{

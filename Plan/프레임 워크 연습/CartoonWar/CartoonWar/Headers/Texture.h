@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "DirectXTex.h"
 #include "../Codes/DirectXTex.inl"
+
 class CTexture :
     public CComponent
 {

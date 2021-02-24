@@ -12,6 +12,8 @@ public:
     const _matrix           GetMatProj() { return m_matProj; }
     const _matrix           GetMatOrtho() { return m_matOrtho; }
 public:
+    _matrix                 Get_ReflectMatrix(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx, const _float& fHeight);
+public:
     void                    SetMatView(_matrix matView) { m_matView = matView; }
     void                    SetMatProj(_matrix matProj) { m_matProj = matProj; }
     void                    SetMatOrtho(_matrix matOrtho) { m_matOrtho = matOrtho; }

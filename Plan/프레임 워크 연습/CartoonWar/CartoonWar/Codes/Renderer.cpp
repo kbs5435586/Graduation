@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Renderer.h"
 #include "GameObject.h"
+#include "Management.h"
+#include "MRT.h"
 
 CRenderer::CRenderer()
 {
@@ -10,6 +12,7 @@ CRenderer::CRenderer()
 HRESULT CRenderer::Ready_Renderer()
 {
 
+	
 	return S_OK;
 }
 
@@ -30,11 +33,27 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eGroup, CGameObject* pGameObject)
 
 HRESULT CRenderer::Render_RenderGroup()
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+	pManagement->AddRef();
+
+
+	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
+
+
+	Render_Deffered(pManagement, iSwapChainIdx);
+	Render_Light(pManagement, iSwapChainIdx);
+	Render_Blend(pManagement, iSwapChainIdx);
+
 	Render_Priority();
-	Render_NoneAlpha();
 	Render_Alpha();
+
 	Render_UI();
 
+
+	Safe_Release(pManagement);
 	return S_OK;
 }
 
@@ -88,6 +107,38 @@ void CRenderer::Render_UI()
 		}
 	}
 	m_RenderList[RENDER_UI].clear();
+}
+
+void CRenderer::Render_Deffered(CManagement* pManagement, _uint iSwapChainIdx)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
+
+	Render_NoneAlpha();
+
+	/*Defferd To Forward*/
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+}
+
+void CRenderer::Render_Light(CManagement* pManagement, _uint iSwapChainIdx)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->OM_Set();
+
+	// 여기서 Normal Tex랑 각 Light 클래스 내부에 있는 LightDir을 쉐이더에 넘겨줘서 
+	// 렌더링을 진행함
+
+	//pManagement->Render_Light();
+
+
+	/*Defferd To Forward*/
+	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+}
+
+void CRenderer::Render_Blend(CManagement* pManagement, _uint iSwapChainidx)
+{
+
+
 }
 
 

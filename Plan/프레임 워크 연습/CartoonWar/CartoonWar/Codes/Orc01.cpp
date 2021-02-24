@@ -22,11 +22,9 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = *(_vec3*)pArg;
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	
 	return S_OK;
 }
@@ -48,22 +46,22 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (pManagement->Key_Pressing(KEY_UP))
 	{
-		//_vec3 vLook = {};
-		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		//vLook = Vector3_::Normalize(vLook);
-		//
-		//
-		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-		//_vec3 vSlide = {};
-		//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-		//{
-		//	m_pTransformCom->BackWard(fTimeDelta);
-		//}
-		//else
-		//{
-		//	m_pTransformCom->Go_There(vSlide);
-		//}
-		m_pTransformCom->BackWard(fTimeDelta);
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		_vec3 vSlide = {};
+		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		{
+			m_pTransformCom->BackWard(fTimeDelta);
+		}
+		else
+		{
+			m_pTransformCom->Go_There(vSlide);
+		}
+
 
 	}
 	if (pManagement->Key_Pressing(KEY_DOWN))
@@ -94,8 +92,6 @@ _int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void COrc01::Render_GameObject()
 {
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
@@ -106,7 +102,7 @@ void COrc01::Render_GameObject()
 		return ;*/
 
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
-		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc");
+		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc_01");
 
 	Safe_Release(pManagement);
 }
@@ -130,7 +126,6 @@ HRESULT COrc01::CreateInputLayout()
 COrc01* COrc01::Create()
 {
 	COrc01* pInstance = new COrc01();
-
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
@@ -142,8 +137,7 @@ COrc01* COrc01::Create()
 CGameObject* COrc01::Clone_GameObject(void* pArg)
 {
 	COrc01* pInstance = new COrc01(*this);
-
-	if (FAILED(pInstance->Ready_GameObject(pArg)))
+	if (FAILED(pInstance->Ready_GameObject()))
 	{
 		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
@@ -190,7 +184,7 @@ HRESULT COrc01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
@@ -218,7 +212,7 @@ HRESULT COrc01::Ready_Light(MAINPASS& tPass)
 		return E_FAIL;
 	pLight_Manager->AddRef();
 
-	LIGHT tLight = pLight_Manager->GetLight(L"Light_Default");
+	//LIGHT tLight = pLight_Manager->GetLight(L"Light_Default");
 
 	/*tPass.vMaterialDiffuse = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlDiff;
 	tPass.vMaterialSpecular = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlSpec;

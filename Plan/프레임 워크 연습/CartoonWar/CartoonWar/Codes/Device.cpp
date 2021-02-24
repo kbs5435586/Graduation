@@ -1,6 +1,9 @@
 #include "framework.h"
 #include "..\Headers\Device.h"
 #include "Texture.h"
+#include "Management.h"
+#include "MRT.h"
+#include "RTT.h"
 
 _IMPLEMENT_SINGLETON(CDevice)
 
@@ -76,8 +79,8 @@ const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
 HRESULT CDevice::Initialize()
 {
 	UINT iFlag = 0;
-	//m_currentSwapChainBitDepth = _8;
-	m_CurrentSwapChainBitDepth = SwapChainBitDepth::_16;
+
+	m_CurrentSwapChainBitDepth = SwapChainBitDepth::_8;
 	m_swapChainFormats[0] = { DXGI_FORMAT_R8G8B8A8_UNORM };
 	m_swapChainFormats[1] = { DXGI_FORMAT_R10G10B10A2_UNORM };
 	m_swapChainFormats[2] = { DXGI_FORMAT_R16G16B16A16_FLOAT };
@@ -144,15 +147,15 @@ HRESULT CDevice::Initialize()
 
 	if (m_IsHDRSupport)
 	{
-		if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
-			m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
-			return E_FAIL;
+		//if (FAILED(SetHDRMetaData(m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][0],
+		//	m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][1],
+		//	m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][2],
+		//	m_fHDRMetaDataPool[m_iHDRMetaDataPoolIdx][3])))
+		//	return E_FAIL;
 	}
 
-	if (FAILED(Create_View()))
-		return E_FAIL;
+	//if (FAILED(Create_View()))
+	//	return E_FAIL;
 	if (FAILED(Create_ViewPort()))
 		return E_FAIL;
 	if (FAILED(Create_RootSignature()))
@@ -265,7 +268,7 @@ HRESULT CDevice::SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _f
 	return S_OK;
 }
 
-void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, _uint iTextureIdx, TEXTURE_REGISTER eRegisterNum)
+void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc,  TEXTURE_REGISTER eRegisterNum)
 {
 	_uint			iDestRange = 1;
 	_uint			iSrcRange = 1;
@@ -287,13 +290,13 @@ void CDevice::SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _
 	UINT iSrcRange = 1;
 	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_vecDummyDescriptor[m_iCurrentDummyIdx]->GetCPUDescriptorHandleForHeapStart();
-	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+	D3D12_CPU_DESCRIPTOR_HANDLE hDestHandle = m_vecDummyDescriptor[m_iCurrentDummyIdx]->GetCPUDescriptorHandleForHeapStart();
+	hDestHandle.ptr += iSize * (UINT)eRegisterNum;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pConstantBuffer->GetCPUDescriptorHandleForHeapStart();
 	hSrcHandle.ptr += iOffset * iSize;
 
-	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
@@ -303,22 +306,22 @@ void CDevice::SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuf
 	UINT iSrcRange = 1;
 	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pInitDescriptor->GetCPUDescriptorHandleForHeapStart();
-	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+	D3D12_CPU_DESCRIPTOR_HANDLE hDestHandle = m_pInitDescriptor->GetCPUDescriptorHandleForHeapStart();
+	hDestHandle.ptr += iSize * (UINT)eRegisterNum;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pConstantBuffer->GetCPUDescriptorHandleForHeapStart();
 	hSrcHandle.ptr += iOffset * iSize;
 
-	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void CDevice::UpdateTable()
 {
-	ID3D12DescriptorHeap* pDescriptor = m_vecDummyDescriptor[m_iCurrentDummyIdx].Get();
-	m_pCmdListGraphic->SetDescriptorHeaps(1, &pDescriptor);
+	ID3D12DescriptorHeap* pDestriptor = m_vecDummyDescriptor[m_iCurrentDummyIdx].Get();
+	m_pCmdListGraphic->SetDescriptorHeaps(1, &pDestriptor);
 
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuhandle = pDescriptor->GetGPUDescriptorHandleForHeapStart();
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuhandle = pDestriptor->GetGPUDescriptorHandleForHeapStart();
 	m_pCmdListGraphic->SetGraphicsRootDescriptorTable(0, gpuhandle);
 
 	++m_iCurrentDummyIdx;
@@ -327,8 +330,8 @@ void CDevice::UpdateTable()
 
 void CDevice::ClearDummyDesc(_uint iIdx)
 {
-	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_vecDummyDescriptor[iIdx]->GetCPUDescriptorHandleForHeapStart();
-	hDescHandle.ptr;
+	D3D12_CPU_DESCRIPTOR_HANDLE hDestHandle = m_vecDummyDescriptor[iIdx]->GetCPUDescriptorHandleForHeapStart();
+	hDestHandle.ptr;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = m_pInitDescriptor->GetCPUDescriptorHandleForHeapStart();
 	hSrcHandle.ptr;
@@ -336,7 +339,7 @@ void CDevice::ClearDummyDesc(_uint iIdx)
 	UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
 	UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
 
-	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange, 1
+	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange, 1
 		, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 }
@@ -661,26 +664,17 @@ HRESULT CDevice::Create_View()
 		m_pDevice->CreateDepthStencilView(m_pDSBuffer.Get(), nullptr, hDsvHandle);
 	}
 	
-	// ConstantBufferView
-	{
-		m_iSRVHeapSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		D3D12_DESCRIPTOR_HEAP_DESC tHeap_Desc = {};
-		tHeap_Desc.NumDescriptors = 1;
-		tHeap_Desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		tHeap_Desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		tHeap_Desc.NodeMask = 0;
-		if (FAILED(m_pDevice->CreateDescriptorHeap(&tHeap_Desc, IID_PPV_ARGS(&m_pCbv))))
-			return E_FAIL;
 
-		D3D12_CPU_DESCRIPTOR_HANDLE hCbvHeap = m_pCbv->GetCPUDescriptorHandleForHeapStart();
-
-	}
 
 	return S_OK;
 }
 
-void CDevice::Render_Begin(float(&_arrFloat)[4])
+void CDevice::Render_Begin()
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+
 	m_iCurrentDummyIdx = 0;
 	m_pCmdAlloc->Reset();
 	Open();
@@ -693,31 +687,43 @@ void CDevice::Render_Begin(float(&_arrFloat)[4])
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
-	barrier.Transition.pResource = m_RenderTargets[m_iCurTargetIdx].Get();
+	//barrier.Transition.pResource = m_RenderTargets[m_iCurTargetIdx].Get();
+
+	barrier.Transition.pResource = pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(m_iCurTargetIdx)->pRtt->GetTex2D().Get();
+
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;		// 출력에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 다시 백버퍼로 지정
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE		hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle (m_pDSV->GetCPUDescriptorHandleForHeapStart());
+	//D3D12_CPU_DESCRIPTOR_HANDLE		hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
+	//CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle(m_pDSV->GetCPUDescriptorHandleForHeapStart());
+	//
+	//hRTVHandle.ptr += (m_iCurTargetIdx * m_iRTVHeapSize);
+	//m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
+	//m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
+	//m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	hRTVHandle.ptr += (m_iCurTargetIdx * m_iRTVHeapSize);
-	m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
-	m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
-	m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	ClearDummyDesc(0);
 }
 
 void CDevice::Render_End()
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+
 	// Indicate that the back buffer will now be used to present.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
-	barrier.Transition.pResource = m_RenderTargets[m_iCurTargetIdx].Get();
+	//barrier.Transition.pResource = m_RenderTargets[m_iCurTargetIdx].Get();
+	barrier.Transition.pResource = pManagement->Get_RTT(
+		(_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(m_iCurTargetIdx)->pRtt->GetTex2D().Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 백버퍼에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;			// 다시 출력으로 지정
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 

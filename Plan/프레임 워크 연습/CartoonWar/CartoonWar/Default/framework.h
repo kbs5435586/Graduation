@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#define _XM_NO_INTRINSICS_
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일
@@ -21,7 +21,6 @@
 #include <array>
 #include <fbxsdk.h>
 #include <wincodec.h>
-#include <random>
 
 
 using namespace std;
@@ -42,7 +41,6 @@ using namespace std;
 #include <fstream>
 #include <string>
 #include <wrl/client.h>
-#include <math.h>
 
 
 
@@ -60,6 +58,7 @@ using namespace std;
 #pragma comment(lib, "DInput8.lib")
 #pragma comment(lib, "DXGuid.lib")
 
+
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex_debug.lib")
 #else
@@ -69,23 +68,20 @@ using namespace std;
 #pragma warning(push)
 #pragma warning(disable: 4267)
 #pragma warning(disable: 4244)
+#pragma warning(disable: 4099)
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
-
 using namespace DirectX::SimpleMath;
 
-
-
 #include "d3dx12.h"
-
 #include "Define.h"
 #include "Enum.h"
 #include "Extern.h"
 #include "Function.h"
-#include "Struct.h"
 #include "Typedef.h"
+#include "Struct.h"
 #include "Funtor.h"
 #include "Hash.h"
 #include "Constant.h"
@@ -93,6 +89,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
+
 
 
 

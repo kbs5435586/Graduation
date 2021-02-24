@@ -98,7 +98,6 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
-//입력한 좌표값으로 이동?
 void CTransform::Go_There( const _vec3& vPos)
 {
 	m_matWorld._41 -= (vPos.x );
@@ -283,6 +282,27 @@ void CTransform::Scaling(const _vec3& vScale)
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
 }
 
+void CTransform::Scaling(const _float& fx, const _float& fy, const _float& fz)
+{
+	_vec3		vDir[3];
+
+	for (size_t i = 0; i < 3; ++i)
+	{
+		vDir[i] = *Get_StateInfo(STATE(i));
+		vDir[i] = Vector3_::Normalize(vDir[i]);
+	}
+
+	_vec3 vScale = _vec3(fx,fy,fz);
+	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], vScale.x, false);
+	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], vScale.y, false);
+	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], vScale.z, false);
+
+
+	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
+	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
+	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+}
+
 void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)
 {
 	_vec3		vLook, vPosition;
@@ -309,7 +329,6 @@ CTransform* CTransform::Create()
 
 CComponent* CTransform::Clone_Component(void* pArg)
 {
-
 	return new CTransform(*this);
 }
 

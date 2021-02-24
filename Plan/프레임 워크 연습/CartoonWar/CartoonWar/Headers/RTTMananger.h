@@ -1,6 +1,9 @@
 #pragma once
 #include "Base.h"
-#include "RTT.h"
+
+class CMRT;
+class CRTT;
+
 class CRTTMananger :
     public CBase
 {
@@ -9,15 +12,15 @@ private:
     CRTTMananger();
     virtual ~CRTTMananger() = default;
 public:
-    HRESULT                         Ready_RTTMananger(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight);
-    void                            Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
-    CRTT*                           Get_RTT(const _tchar* pRTT_Tag);
+    HRESULT                                 Ready_RTTMananger();
+    void                                    Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
+    CMRT*                                   Get_RTT(const _uint& iIdx) { return m_vecMRT[iIdx]; }
 public:
-    static CRTTMananger*            Create(const _tchar* pRTT_Tag, _uint iTextureWidth, _uint iTextureHeight);
+    static CRTTMananger*                    Create();
+    virtual void                            Free();
 private:
-    virtual void                    Free();
-private:
-    map<const _tchar*, CRTT*>       m_mapRTT;
+    vector<CMRT*>                           m_vecMRT;
+    _uint                                   m_iSize = 0;
 
 };
 

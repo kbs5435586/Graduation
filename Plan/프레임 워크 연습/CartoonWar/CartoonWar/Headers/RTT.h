@@ -1,33 +1,41 @@
 #pragma once
 #include "Base.h"
-class CBuffer_RectTex;
-class CShader;
+
 class CRTT :
     public CBase
 {
 private:
     CRTT();
     virtual ~CRTT() = default;
+
 public:
-    HRESULT                                     Ready_RTT(_uint iTextureWidth, _uint iTextureHeight);
-    void                                        Set_RenderTarget(ID3D12DescriptorHeap* pDsv);
-private:
-    HRESULT                                     Ready_Component();
-    HRESULT                                     Crate_InputLayOut();
+    HRESULT                         CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTex2D);
+    HRESULT                         Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+                                                    , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
+                                                    , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr);
 public:
-    static CRTT*                                Create(_uint iTextureWidth, _uint iTextureHeight);
+    ComPtr<ID3D12Resource>          GetTex2D()  { return m_pTexture; }
+    ComPtr<ID3D12DescriptorHeap>    GetSRV()    { return m_pSRV; }
+    ComPtr<ID3D12DescriptorHeap>    GetRTV()    { return m_pRTV; }
+    ComPtr<ID3D12DescriptorHeap>    GetDSV()    { return m_pDSV; }
+
+public:
+    static CRTT*                    Create(const _tchar* pTag, ComPtr<ID3D12Resource> _pTex2D);
+    static CRTT*                    Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+                                            , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
+                                            , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr = _vec4());
+    const _tchar*                   Get_MRT_Tag() { return m_pTag; }
+public:
 private:
-    virtual void                                Free();
+    virtual void                    Free();
 private:
-    ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
-    ComPtr<ID3D12DescriptorHeap>				m_pSRV = nullptr;
-    ComPtr<ID3D12Resource>                      m_pTexture = nullptr;
-    _uint                                       m_iTextureWidth = 0;
-    _uint                                       m_iTextureHeight = 0;
+    D3D12_RESOURCE_DESC             m_tDesc;
+    ComPtr<ID3D12Resource>		    m_pTexture;
+    ComPtr<ID3D12DescriptorHeap>    m_pSRV;
+    ComPtr<ID3D12DescriptorHeap>    m_pRTV;
+    ComPtr<ID3D12DescriptorHeap>    m_pDSV;
 private:
-    CBuffer_RectTex*                            m_pBufferCom = nullptr;
-    CShader*                                    m_pShaderCom = nullptr;
-private:
-    _float                                      m_fClearColor[4] = {0.f,0.f,1.f,1.f};
+    _tchar                          m_pTag[128] = {};
+
 };
 

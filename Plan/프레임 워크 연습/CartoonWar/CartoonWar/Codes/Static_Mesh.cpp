@@ -69,13 +69,13 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
 	if (pInfo->strNodeName.find("Body") != string::npos)
 	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag,1), 0, TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3), 0, TEXTURE_REGISTER::t1);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag,1),  TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3),  TEXTURE_REGISTER::t1);
 	}
 	else
 	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0), 0, TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2), 0, TEXTURE_REGISTER::t1);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0),  TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2),  TEXTURE_REGISTER::t1);
 	}
 
 	CManagement* pManagement = CManagement::GetInstance();
@@ -83,7 +83,7 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 		return;
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tPass);
 
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 	CDevice::GetInstance()->UpdateTable();
 
