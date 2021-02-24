@@ -341,7 +341,9 @@ void Server::event_player_move(int player_id, int npc_id)
     if (g_clients[player_id].m_x == g_clients[npc_id].m_x)
     {
         if (g_clients[player_id].m_y == g_clients[npc_id].m_y)
-            API_send_message(myid, player, "HELLO");
+        {
+            send_chat_packet(player_id, npc_id, "HELLO");
+        }
     }
 }
 
@@ -673,18 +675,9 @@ void Server::worker_thread()
             break;
         case FUNC_PLAYER_MOVE_FOR_NPC: // API_Send_message È£Ãâ¿ë
         {
-            int my_id = (int)lua_tointeger(L, -3);
-            int user_id = (int)lua_tointeger(L, -2);
-            char mess = "HELLO";
-
-            event_player_move(overEx->player_id);
-                if (API_get_x(user_id) == API_get_x(my_id)) then
-                    if API_get_y(user_id) == API_get_y(my_id) then
-                        API_send_message(myid, player, "HELLO");
-
-            event_player_move(user_id)
-
-            send_chat_packet(user_id, my_id, mess);
+            int npc_id = id;
+            int player_id = overEx->player_id;
+            event_player_move(player_id, npc_id);
 
             delete overEx;
         }
