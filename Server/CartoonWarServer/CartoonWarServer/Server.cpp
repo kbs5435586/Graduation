@@ -126,22 +126,22 @@ void Server::do_move(int user_id, char direction)
 
     switch (direction)
     {
-    case D_UP:
+    case GO_UP:
         if (y > 0)
             y--;
         break;
 
-    case D_DOWN:
+    case GO_DOWN:
         if (y < WORLD_HEIGHT-1)
             y++;
         break;
 
-    case D_LEFT:
+    case GO_LEFT:
         if (x > 0)
             x--;
         break;
 
-    case D_RIGHT:
+    case GO_RIGHT:
         if (x < WORLD_WIDTH - 1)
             x++;
         break;
@@ -169,10 +169,10 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (c.second.m_id == user_id)
             continue;
-        if (false == is_player(c.second.m_id)) // 플레이어가 아닌 npc이면
+        if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
         {
             OverEx* overEx = new OverEx;
-            overEx->function = FUNC_PLAYER_MOVE;
+            overEx->function = FUNC_PLAYER_MOVE_FOR_NPC; // NPC에게 주변 플레이어가 움직였다는걸 알림
             overEx->player_id = user_id;
             PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
         }
@@ -333,7 +333,16 @@ void Server::activate_npc(int npc_id)
     ENUM_STATUS old_status = ST_SLEEP;
     if (true == atomic_compare_exchange_strong(&g_clients[npc_id].m_status, &old_status, ST_ACTIVE)) // m_status가 슬립에서 엑티브로 바뀐 경우에만
         // 동시에 두 클라가 접근하면 ACTIVE 로 2번 바뀌고 타이머가 2번 발동하는걸 방지하기 위한 용도
-        add_timer(npc_id, FUNC_RANDMOVE, 1000);
+        add_timer(npc_id, FUNC_NPC_RANDMOVE, 1000);
+}
+
+void Server::event_player_move(int player_id, int npc_id)
+{
+    if (g_clients[player_id].m_x == g_clients[npc_id].m_x)
+    {
+        if (g_clients[player_id].m_y == g_clients[npc_id].m_y)
+            API_send_message(myid, player, "HELLO");
+    }
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
@@ -374,7 +383,7 @@ void Server::do_timer()
 
             switch (event.event_id)
             {
-            case FUNC_RANDMOVE:
+            case FUNC_NPC_RANDMOVE:
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
                 PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
@@ -457,18 +466,19 @@ void Server::initalize_NPC()
         g_clients[i].m_y = rand() % WORLD_HEIGHT;
         //g_clients[i].m_last_move_time = high_resolution_clock::now();
         //add_timer(i, FUNC_RANDMOVE, 1000);
-        lua_State* L = g_clients[i].m_lua = luaL_newstate();
-        luaL_openlibs(L);
-        luaL_loadfile(L, "NPC.LUA"); // NPC.LUA 파일 불러오기
-        lua_pcall(L, 0, 0, 0);
-        lua_getglobal(L, "set_uid"); // set_uid 함수를 스텍에 로딩
-        lua_pushnumber(L, i);
-        lua_pcall(L, 1, 0, 0);
-        lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
 
-        lua_register(L, "API_send_message", API_SendMessage);
-        lua_register(L, "API_get_x", API_get_x);
-        lua_register(L, "API_get_y", API_get_y);
+        //lua_State* L = g_clients[i].m_lua = luaL_newstate();
+        //luaL_openlibs(L);
+        //luaL_loadfile(L, "NPC.LUA"); // NPC.LUA 파일 불러오기
+        //lua_pcall(L, 0, 0, 0);
+        //lua_getglobal(L, "set_uid"); // set_uid 함수를 스텍에 로딩
+        //lua_pushnumber(L, i);
+        //lua_pcall(L, 1, 0, 0);
+        //lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
+
+        //lua_register(L, "API_send_message", API_SendMessage);
+        //lua_register(L, "API_get_x", API_get_x);
+        //lua_register(L, "API_get_y", API_get_y);
     }
 }
 
@@ -554,35 +564,6 @@ bool Server::is_player(int id)
     return id < NPC_ID_START;
 }
 
-int Server::API_SendMessage(lua_State* L)
-{
-    int my_id = (int)lua_tointeger(L, -3);
-    int user_id = (int)lua_tointeger(L, -2);
-    char* mess = (char*)lua_tostring(L, -1);
-
-    send_chat_packet(user_id, my_id, mess);
-    lua_pop(L, 3);
-    return 0;
-}
-
-int Server::API_get_x(lua_State* L)
-{
-    int obj_id = (int)lua_tointeger(L, -1);
-    lua_pop(L, 2);
-    int x = g_clients[obj_id].m_x;
-    lua_pushnumber(L, x);
-    return 1;
-}
-
-int Server::API_get_y(lua_State* L)
-{
-    int obj_id = (int)lua_tointeger(L, -1);
-    lua_pop(L, 2);
-    int y = g_clients[obj_id].m_y;
-    lua_pushnumber(L, y);
-    return 1;
-}
-
 void Server::worker_thread()
 {
     while (true)
@@ -666,7 +647,7 @@ void Server::worker_thread()
                 sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &overEx->over);
         }
         break;
-        case FUNC_RANDMOVE:
+        case FUNC_NPC_RANDMOVE:
         {
             random_move_npc(id);
             bool keep_alive = false;
@@ -683,26 +664,30 @@ void Server::worker_thread()
             }
 
             if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
-                add_timer(id, FUNC_RANDMOVE, 1000);
+                add_timer(id, FUNC_NPC_RANDMOVE, 1000);
             else
                 g_clients[id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
 
             delete overEx;
         }
             break;
-        case FUNC_PLAYER_MOVE:
+        case FUNC_PLAYER_MOVE_FOR_NPC: // API_Send_message 호출용
         {
-            g_clients[id].m_lLock.lock();
-            lua_State* L = g_clients[id].m_lua;
-            lua_getglobal(L, "event_player_move");
-            lua_pushnumber(L, overEx->player_id);
-            lua_pcall(L, 1, 0, 0);
-            lua_pop(L, 1);
-            g_clients[id].m_lLock.unlock();
+            int my_id = (int)lua_tointeger(L, -3);
+            int user_id = (int)lua_tointeger(L, -2);
+            char mess = "HELLO";
+
+            event_player_move(overEx->player_id);
+                if (API_get_x(user_id) == API_get_x(my_id)) then
+                    if API_get_y(user_id) == API_get_y(my_id) then
+                        API_send_message(myid, player, "HELLO");
+
+            event_player_move(user_id)
+
+            send_chat_packet(user_id, my_id, mess);
+
             delete overEx;
         }
-
-
         default:
             cout << "Unknown Operation in Worker_Thread\n";
             while (true);
@@ -748,7 +733,7 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < 4; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < 6; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
@@ -765,3 +750,32 @@ void Server::mainServer()
     closesocket(listenSocket);
     WSACleanup();
 }
+
+//int Server::API_SendMessage(lua_State* L)
+//{
+//    int my_id = (int)lua_tointeger(L, -3);
+//    int user_id = (int)lua_tointeger(L, -2);
+//    char* mess = (char*)lua_tostring(L, -1);
+//
+//    send_chat_packet(user_id, my_id, mess);
+//    lua_pop(L, 3);
+//    return 0;
+//}
+//
+//int Server::API_get_x(lua_State* L)
+//{
+//    int obj_id = (int)lua_tointeger(L, -1);
+//    lua_pop(L, 2);
+//    int x = g_clients[obj_id].m_x;
+//    lua_pushnumber(L, x);
+//    return 1;
+//}
+//
+//int Server::API_get_y(lua_State* L)
+//{
+//    int obj_id = (int)lua_tointeger(L, -1);
+//    lua_pop(L, 2);
+//    int y = g_clients[obj_id].m_y;
+//    lua_pushnumber(L, y);
+//    return 1;
+//}

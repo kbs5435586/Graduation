@@ -32,7 +32,7 @@ struct sc_packet_login_ok
 	char size;
 	char type;
 	int id;
-	short x, y;
+	short x, y, z;
 	short hp;
 	short level;
 	int	exp;
@@ -43,7 +43,7 @@ struct sc_packet_move
 	char size;
 	char type;
 	int id;
-	short x, y;
+	short x, y, z;
 	unsigned move_time; // unsigned int¶û °°À½
 };
 
@@ -58,7 +58,7 @@ struct sc_packet_enter
 	int id;
 	char name[MAX_ID_LEN];
 	char o_type;
-	short x, y;
+	short x, y, z;
 };
 
 struct sc_packet_leave 
@@ -83,10 +83,10 @@ struct cs_packet_login
 	char	name[MAX_ID_LEN];
 };
 
-constexpr unsigned char D_UP = 0;
-constexpr unsigned char D_DOWN = 1;
-constexpr unsigned char D_LEFT = 2;
-constexpr unsigned char D_RIGHT = 3;
+constexpr unsigned char GO_UP = 0;
+constexpr unsigned char GO_DOWN = 1;
+constexpr unsigned char GO_LEFT = 2;
+constexpr unsigned char GO_RIGHT = 3;
 
 struct cs_packet_move 
 {
@@ -95,5 +95,10 @@ struct cs_packet_move
 	char	direction;
 	unsigned move_time;
 };
+
+constexpr unsigned char DO_ATTACK = 0;
+constexpr unsigned char DO_DEFENCE = 1;
+constexpr unsigned char DO_HOLD = 2;
+constexpr unsigned char DO_FOLLOW = 3;
 
 #pragma pack (pop)

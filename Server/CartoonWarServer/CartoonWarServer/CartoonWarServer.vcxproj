@@ -144,20 +144,11 @@
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="API.h" />
-    <ClInclude Include="lauxlib.h" />
-    <ClInclude Include="lua.h" />
-    <ClInclude Include="lua.hpp" />
-    <ClInclude Include="luaconf.h" />
-    <ClInclude Include="lualib.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Struct.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lua54.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NPC.LUA" />

@@ -7,12 +7,12 @@ constexpr unsigned int MAX_BUF_SIZE = 1024;
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 255;
 
-constexpr int MAX_USER = 10'000;
-constexpr int NPC_ID_START = 10'000;
-constexpr int MAX_NPC = 10'000;
+constexpr int MAX_USER = 1;
+constexpr int NPC_ID_START = 2;
+constexpr int MAX_NPC = 10;
 
-constexpr int WORLD_WIDTH = 800;
-constexpr int WORLD_HEIGHT = 800;
+constexpr int WORLD_WIDTH = 8;
+constexpr int WORLD_HEIGHT = 8;
 
 constexpr int SERVER_PORT = 9000;
 

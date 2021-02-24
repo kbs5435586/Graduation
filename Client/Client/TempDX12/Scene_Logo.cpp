@@ -191,6 +191,9 @@ HRESULT CScene_Logo::Ready_Layer_Cube(const _tchar* pLayerTag)
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+
 	Safe_Release(pManagement);
 	return S_OK;
 }

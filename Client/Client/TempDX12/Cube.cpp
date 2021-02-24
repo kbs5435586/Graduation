@@ -44,6 +44,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	if (nullptr == server)
 		return E_FAIL;
 
+
 	if (GetAsyncKeyState('T') & 0x8000)
 	{
 		server->AddRef();

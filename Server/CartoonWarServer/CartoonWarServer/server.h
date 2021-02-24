@@ -42,6 +42,7 @@ public:
 	void do_AI();
 	void random_move_npc(int npc_id);
 	void activate_npc(int npc_id);
+	void event_player_move(int player_id, int npc_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();
@@ -49,8 +50,8 @@ public:
 	bool is_near(int a, int b);
 	bool is_player(int id);
 
-	int API_SendMessage(lua_State* L);
-	int API_get_x(lua_State* L);
-	int API_get_y(lua_State* L);
+	//int API_SendMessage(lua_State* L);
+	//int API_get_x(lua_State* L);
+	//int API_get_y(lua_State* L);
 };
 

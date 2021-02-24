@@ -40,11 +40,12 @@ void CServer_Manager::MainServer(CManagement* managment)
 
 	
 
-	// Layer_Basic 안에 있는 0번째 객체에 접근
-	CGameObject* pCube = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_BasicShape", 0);
+	// Layer_Cube 안에 있는 0번째 객체에 접근
+	CGameObject* pCube = managment->Get_GameObject((_uint)SCENEID::SCENE_LOGO, L"Layer_Cube", 0);
 
-
-
+	CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+		L"Layer_Cube", L"Com_Transform", 0);
+	_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
 	CGameObject* pTerrain = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
 	CTransform* pTransform_Terrain = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -123,26 +124,31 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_enter* my_packet = reinterpret_cast<sc_packet_enter*>(ptr);
 		int recv_id = my_packet->id;
 
-		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_BasicShape", L"Com_Transform", 0);
-		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+		if (recv_id == m_myid) 
+		{
+			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", 0);
+			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
-		if (recv_id == m_myid) {
 			vPos.x = my_packet->x;
 			vPos.y = my_packet->y;
 			m_player.showCharacter = true;
 			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
-		//else {
-		//	if (id < NPC_ID_START)
-		//	    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
-		//	else
-		//	    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
-		//	strcpy_s(m_npcs[recv_id].name, my_packet->name);
-		//	m_npcs[recv_id].x = my_packet->x;
-		//	m_npcs[recv_id].y = my_packet->y;
-		//	m_npcs[recv_id].showCharacter = true;
-		//}
+		else {
+			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", 1);
+			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+			//if (id < NPC_ID_START)
+			//    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
+			//else
+			//    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
+			strcpy_s(m_npcs[recv_id].name, my_packet->name);
+			vPos.x = my_packet->x;
+			vPos.y = my_packet->y;
+			m_npcs[recv_id].showCharacter = true;
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		}
 
 		Safe_Release(managment);
 	}
@@ -157,23 +163,31 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
 
-		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_BasicShape", L"Com_Transform", 0);
+		if (recv_id == m_myid) 
+		{
+			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", 0);
 
-		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
-		if (recv_id == m_myid) {
 			vPos.x = my_packet->x;
 			vPos.y = my_packet->y;
 			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
-		//else { // NPC
-		//	if (0 != m_npcs.count(recv_id))
-		//	{
-		//		m_npcs[recv_id].x = my_packet->x;
-		//		m_npcs[recv_id].y = my_packet->y;
-		//	}
-		//}
+		else // NPC 
+		{ 
+			if (0 != m_npcs.count(recv_id))
+			{
+				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Cube", L"Com_Transform", 1);
+
+				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+
+				vPos.x = my_packet->x;
+				vPos.y = my_packet->y;
+				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			}
+		}
 		Safe_Release(managment);
 	}
 	break;
