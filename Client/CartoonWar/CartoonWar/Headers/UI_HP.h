@@ -5,23 +5,25 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Light :
+class CObserver;
+
+class CUI_HP :
     public CUI
 {
 private:
-    CUI_Light();
-    CUI_Light(const CUI_Light& rhs);
-    virtual ~CUI_Light() = default;
+	CUI_HP();
+	CUI_HP(const CUI_HP& rhs);
+	virtual ~CUI_HP() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float& fTimeDelta);
-	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
+	virtual _int							Update_GameObject(const _float & fTimeDelta);
+	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Light*						Create();
+	static CUI_HP*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -31,6 +33,9 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
+	CObserver*								m_pObserverCom = nullptr;
+
 
 };
 

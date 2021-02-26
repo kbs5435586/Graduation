@@ -9,8 +9,9 @@ private:
     virtual ~CObserver() = default;
 public:
     HRESULT                 Ready_Observer();
-
     void                    Update_Observer(DATA_TYPE eType, void* pData);
+public:
+    INFO                    GetInfo() { return m_tInfo; }
 public:
     static CObserver*       Create();
     virtual CComponent*     Clone_Component(void* pArg);

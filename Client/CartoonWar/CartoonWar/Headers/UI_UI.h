@@ -1,18 +1,18 @@
 #pragma once
-#include "GameObject.h"
+#include "UI.h"
 class CTransform;
 class CRenderer;
+class CBuffer_RectTex;
 class CShader;
-class CBuffer_CubeCol;
-class CCollider;
+class CTexture;
 
-class CCube :
-    public CGameObject
+class CUI_UI :
+    public CUI
 {
 private:
-    CCube();
-    CCube(const CCube& rhs);
-    virtual ~CCube() = default;
+    CUI_UI();
+    CUI_UI(const CUI_UI& rhs);
+    virtual ~CUI_UI() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +22,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CCube*							Create();
+	static CUI_UI*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -30,8 +30,8 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_CubeCol*						m_pBufferCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CCollider*								m_pColliderCom[3] = { nullptr };
+
 };
 

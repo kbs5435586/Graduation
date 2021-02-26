@@ -65,6 +65,8 @@ HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Tree",
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/Tree/", L"tree_1.x"))))
 		return E_FAIL;
+
+
 	return S_OK;
 }
 

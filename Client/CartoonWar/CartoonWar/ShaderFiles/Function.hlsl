@@ -48,4 +48,19 @@ LIGHT Calculate_Light(int _iLightIdx, float3 _vNormal, float4 _vWorldPos)
 
 }
 
+float4 Calculate_Shade(float4 vNormal)
+{
+	float4	vTotalShade;
+	//float4	vNormal = float4(In_vNormal.xyz * 2.f - 1.f, 0.f);
+
+	//for (int i = 0; i < iNumLight; ++i)
+	//{
+	//	float4	vLightDir = normalize(tLight[i].vLightDir);
+	//	vTotalShade += saturate(dot(-vLightDir, normalize(vNormal)));
+	//	
+	//}
+	float4	vLightDir = normalize(tLight[0].vLightDir);
+	vTotalShade = max(dot(-vLightDir, normalize(vNormal)),0.f);
+	return vTotalShade;
+}
 #endif

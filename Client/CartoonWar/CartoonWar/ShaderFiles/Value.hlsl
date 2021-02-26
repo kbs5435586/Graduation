@@ -81,4 +81,5 @@ int HasTex(in Texture2D _tex)
 	return 1;
 }
 
+
 #endif

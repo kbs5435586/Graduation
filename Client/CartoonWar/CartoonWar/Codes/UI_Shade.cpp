@@ -1,23 +1,23 @@
 #include "framework.h"
-#include "UI_Position.h"
+#include "UI_Shade.h"
 #include "Management.h"
 
-CUI_Position::CUI_Position()
+CUI_Shade::CUI_Shade()
 	: CUI()
 {
 }
 
-CUI_Position::CUI_Position(const CUI_Position& rhs)
+CUI_Shade::CUI_Shade(const CUI_Shade& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Position::Ready_Prototype()
+HRESULT CUI_Shade::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Position::Ready_GameObject(void* pArg)
+HRESULT CUI_Shade::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -32,12 +32,12 @@ HRESULT CUI_Position::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-_int CUI_Position::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Shade::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Position::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Shade::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -47,7 +47,7 @@ _int CUI_Position::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Position::Render_GameObject()
+void CUI_Shade::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -72,9 +72,9 @@ void CUI_Position::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -82,21 +82,21 @@ void CUI_Position::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Position::CreateInputLayout()
+HRESULT CUI_Shade::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CUI_Position* CUI_Position::Create()
+CUI_Shade* CUI_Shade::Create()
 {
-	CUI_Position* pInstance = new CUI_Position();
+	CUI_Shade* pInstance = new CUI_Shade();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -104,9 +104,9 @@ CUI_Position* CUI_Position::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Position::Clone_GameObject(void* pArg)
+CGameObject* CUI_Shade::Clone_GameObject(void* pArg)
 {
-	CUI_Position* pInstance = new CUI_Position();
+	CUI_Shade* pInstance = new CUI_Shade();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -114,19 +114,16 @@ CGameObject* CUI_Position::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Position::Free()
+void CUI_Shade::Free()
 {
-
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-
-
 	CUI::Free();
 }
 
-HRESULT CUI_Position::Ready_Component()
+HRESULT CUI_Shade::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);

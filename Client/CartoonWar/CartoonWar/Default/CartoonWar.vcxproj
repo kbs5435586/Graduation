@@ -190,6 +190,7 @@
     <ClInclude Include="..\Headers\Light.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Line.h" />
+    <ClInclude Include="..\Headers\LoadManager.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
@@ -221,13 +222,15 @@
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
-    <ClInclude Include="..\Headers\UI_Light.h" />
+    <ClInclude Include="..\Headers\UI_HP.h" />
+    <ClInclude Include="..\Headers\UI_MP.h" />
+    <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
-    <ClInclude Include="..\Headers\UI_Position.h" />
     <ClInclude Include="..\Headers\UI_Reflect.h" />
     <ClInclude Include="..\Headers\UI_Specular.h" />
+    <ClInclude Include="..\Headers\UI_UI.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
@@ -269,6 +272,7 @@
     <ClCompile Include="..\Codes\Light.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Line.cpp" />
+    <ClCompile Include="..\Codes\LoadManager.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
@@ -297,13 +301,15 @@
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
-    <ClCompile Include="..\Codes\UI_Light.cpp" />
+    <ClCompile Include="..\Codes\UI_HP.cpp" />
+    <ClCompile Include="..\Codes\UI_MP.cpp" />
+    <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
-    <ClCompile Include="..\Codes\UI_Position.cpp" />
     <ClCompile Include="..\Codes\UI_Reflect.cpp" />
     <ClCompile Include="..\Codes\UI_Specular.cpp" />
+    <ClCompile Include="..\Codes\UI_UI.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>
@@ -363,13 +369,13 @@
     <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Collider.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

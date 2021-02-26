@@ -62,7 +62,13 @@ CObserverManager* CObserverManager::Create()
 
 void CObserverManager::Free()
 {
-
+	for (auto& iter : m_lstSubject)
+	{
+		if (iter)
+		{
+			Safe_Release(iter);
+		}
+	}
 }
 
 void CObserverManager::Subscribe(CObserver* pObserver)
@@ -72,7 +78,7 @@ void CObserverManager::Subscribe(CObserver* pObserver)
 
 void CObserverManager::UnSubscribe(CObserver* pObserver)
 {
-	list<CObserver*>::iterator iter = m_lstSubject.begin();
+	auto iter = m_lstSubject.begin();
 
 	for (; iter != m_lstSubject.end();)
 	{

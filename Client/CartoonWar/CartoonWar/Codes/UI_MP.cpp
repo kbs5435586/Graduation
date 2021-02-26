@@ -1,53 +1,59 @@
 #include "framework.h"
-#include "UI_Light.h"
+#include "UI_MP.h"
 #include "Management.h"
 
-CUI_Light::CUI_Light()
+CUI_MP::CUI_MP()
 	: CUI()
 {
 }
 
-CUI_Light::CUI_Light(const CUI_Light& rhs)
+CUI_MP::CUI_MP(const CUI_MP& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Light::Ready_Prototype()
+HRESULT CUI_MP::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Light::Ready_GameObject(void* pArg)
+HRESULT CUI_MP::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 225.f;
-	m_fY = 225.f;
+
+	m_fX = 600.f;
+	m_fY = 200.f;
 
 	m_fSizeX = 150.f;
 	m_fSizeY = 150.f;
+
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+
 	return S_OK;
 }
 
-_int CUI_Light::Update_GameObject(const _float& fTimeDelta)
+_int CUI_MP::Update_GameObject(const _float& fTimeDelta)
 {
+	m_tInfo = m_pObserverCom->GetInfo();
 	return _int();
 }
 
-_int CUI_Light::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_MP::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 			return E_FAIL;
 	}
+
 	return _int();
 }
 
-void CUI_Light::Render_GameObject()
+void CUI_MP::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -71,10 +77,8 @@ void CUI_Light::Render_GameObject()
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
-
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -82,21 +86,21 @@ void CUI_Light::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Light::CreateInputLayout()
+HRESULT CUI_MP::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc/*, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED*/)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CUI_Light* CUI_Light::Create()
+CUI_MP* CUI_MP::Create()
 {
-	CUI_Light* pInstance = new CUI_Light();
+	CUI_MP* pInstance = new CUI_MP();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -104,9 +108,9 @@ CUI_Light* CUI_Light::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Light::Clone_GameObject(void* pArg)
+CGameObject* CUI_MP::Clone_GameObject(void* pArg)
 {
-	CUI_Light* pInstance = new CUI_Light();
+	CUI_MP* pInstance = new CUI_MP();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -114,16 +118,22 @@ CGameObject* CUI_Light::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Light::Free()
+void CUI_MP::Free()
 {
+	//CManagement::GetInstance()->UnSubscribe(m_pObserverCom);
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
+	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
-	CUI::Free();
+	Safe_Release(m_pObserverCom);
+
+
+	CGameObject::Free();
 }
 
-HRESULT CUI_Light::Ready_Component()
+HRESULT CUI_MP::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -144,11 +154,20 @@ HRESULT CUI_Light::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
+
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

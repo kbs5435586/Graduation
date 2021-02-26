@@ -1,30 +1,28 @@
 #include "framework.h"
-#include "UI_Reflect.h"
+#include "UI_UI.h"
 #include "Management.h"
 
-CUI_Reflect::CUI_Reflect()
-	: CUI()
+CUI_UI::CUI_UI()
 {
 }
 
-CUI_Reflect::CUI_Reflect(const CUI_Reflect& rhs)
-	: CUI(rhs)
+CUI_UI::CUI_UI(const CUI_UI& rhs)
 {
 }
 
-HRESULT CUI_Reflect::Ready_Prototype()
+HRESULT CUI_UI::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Reflect::Ready_GameObject(void* pArg)
+HRESULT CUI_UI::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 75.f;
+	m_fX = 225.f;
 	m_fY = 375.f;
 
 	m_fSizeX = 150.f;
@@ -32,12 +30,12 @@ HRESULT CUI_Reflect::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-_int CUI_Reflect::Update_GameObject(const _float& fTimeDelta)
+_int CUI_UI::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Reflect::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_UI::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -47,7 +45,7 @@ _int CUI_Reflect::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Reflect::Render_GameObject()
+void CUI_UI::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -72,7 +70,7 @@ void CUI_Reflect::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
@@ -82,7 +80,7 @@ void CUI_Reflect::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Reflect::CreateInputLayout()
+HRESULT CUI_UI::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -94,9 +92,9 @@ HRESULT CUI_Reflect::CreateInputLayout()
 	return S_OK;
 }
 
-CUI_Reflect* CUI_Reflect::Create()
+CUI_UI* CUI_UI::Create()
 {
-	CUI_Reflect* pInstance = new CUI_Reflect();
+	CUI_UI* pInstance = new CUI_UI();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -104,9 +102,9 @@ CUI_Reflect* CUI_Reflect::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Reflect::Clone_GameObject(void* pArg)
+CGameObject* CUI_UI::Clone_GameObject(void* pArg)
 {
-	CUI_Reflect* pInstance = new CUI_Reflect();
+	CUI_UI* pInstance = new CUI_UI();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -114,7 +112,7 @@ CGameObject* CUI_Reflect::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Reflect::Free()
+void CUI_UI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -123,7 +121,7 @@ void CUI_Reflect::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_Reflect::Ready_Component()
+HRESULT CUI_UI::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);

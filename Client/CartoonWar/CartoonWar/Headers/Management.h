@@ -6,6 +6,7 @@
 #include "ObserverManager.h"
 #include "RTTMananger.h"
 #include "KeyManager.h"
+#include "LoadManager.h"
 #include "FBXLoader.h"
 
 #include "MRT.h"
@@ -58,6 +59,8 @@ public://Observer_Manager
 	void                        Subscribe(CObserver* pObserver);
 	void                        UnSubscribe(CObserver* pObserver);
 	void                        Notify(DATA_TYPE eType, void* pData = nullptr);
+public://Load_Manager
+	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -77,5 +80,6 @@ private:
 	CRTTMananger*				m_pRTT_Mananger = nullptr;
 	CKeyManager*				m_pKey_Manager = nullptr;
 	CObserverManager*			m_pObserver_Manager = nullptr;
+	CLoadManager*				m_pLoad_Manager = nullptr;
 };
 

@@ -5,13 +5,13 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Position :
+class CUI_Shade :
     public CUI
 {
 private:
-	CUI_Position();
-	CUI_Position(const CUI_Position& rhs);
-    virtual ~CUI_Position() = default;
+    CUI_Shade();
+    CUI_Shade(const CUI_Shade& rhs);
+    virtual ~CUI_Shade() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Position*					Create();
+	static CUI_Shade*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();

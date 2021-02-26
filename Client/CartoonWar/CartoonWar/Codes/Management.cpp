@@ -16,6 +16,7 @@ CManagement::CManagement()
 	, m_pRTT_Mananger(CRTTMananger::GetInstance())
 	, m_pKey_Manager(CKeyManager::GetInstance())
 	, m_pObserver_Manager(CObserverManager::GetInstance())
+	, m_pLoad_Manager(CLoadManager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
@@ -24,6 +25,7 @@ CManagement::CManagement()
 	m_pRTT_Mananger->AddRef();
 	m_pKey_Manager->AddRef();
 	m_pObserver_Manager->AddRef();
+	m_pLoad_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -152,6 +154,11 @@ void CManagement::Notify(DATA_TYPE eType, void* pData)
 	return m_pObserver_Manager->Notify(eType, pData);
 }
 
+HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
+{
+	return m_pLoad_Manager->Load_File(pFilePath, pArg);
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -241,8 +248,8 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CLight_Manager Release Failed");
 
-	if (dwRefCnt = CKeyManager::GetInstance()->DestroyInstance())
-		_MSG_BOX("CKeyManager Release Failed");
+	if (dwRefCnt = CLoadManager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CLoadManager Release Failed");
 
 	if (dwRefCnt = CRTTMananger::GetInstance()->DestroyInstance())
 		_MSG_BOX("CRTTMananger Release Failed");
@@ -300,5 +307,6 @@ void CManagement::Free()
 	Safe_Release(m_pRTT_Mananger);
 	Safe_Release(m_pKey_Manager);
 	Safe_Release(m_pObserver_Manager);
+	Safe_Release(m_pLoad_Manager);
 	Safe_Release(m_pScene);
 }

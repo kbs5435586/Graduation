@@ -26,6 +26,8 @@ enum class RS_TYPE
 enum class BLEND_TYPE
 {
 	DEFAULT,
+	ALPHABLEND,
+	ONEBLEND,
 	END,
 };
 
