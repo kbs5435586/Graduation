@@ -38,7 +38,7 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-_int CCube::Update_GameObject(const _float& fTimeDelta, const _tchar* pLayerTag) // 서버 보낼값 결과값
+_int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 {
 	CServer_Manager* pServer = CServer_Manager::GetInstance();
 	if (nullptr == pServer)

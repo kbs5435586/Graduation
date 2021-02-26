@@ -506,18 +506,6 @@ void Server::initalize_NPC(int player_id)
             g_clients[i].m_y = g_clients[player_id].m_y;
             g_clients[i].m_z = g_clients[player_id].m_z;
 
-            //lua_State* L = g_clients[i].m_lua = luaL_newstate();
-            //luaL_openlibs(L);
-            //luaL_loadfile(L, "NPC.LUA"); // NPC.LUA 파일 불러오기
-            //lua_pcall(L, 0, 0, 0);
-            //lua_getglobal(L, "set_uid"); // set_uid 함수를 스텍에 로딩
-            //lua_pushnumber(L, i);
-            //lua_pcall(L, 1, 0, 0);
-            //lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
-
-            //lua_register(L, "API_send_message", API_SendMessage);
-            //lua_register(L, "API_get_x", API_get_x);
-            //lua_register(L, "API_get_y", API_get_y);
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
             break;
         }

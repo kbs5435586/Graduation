@@ -137,32 +137,32 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_player.showCharacter = true;
 			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
-		else 
+		else
 		{
-			if (recv_id < NPC_ID_START) // 다른 플레이어 일때
-			{
-				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", recv_id);
-				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-				strcpy_s(m_npcs[recv_id].name, my_packet->name);
-				vPos.x = m_npcs[recv_id].x = my_packet->x;
-				vPos.y = m_npcs[recv_id].y = my_packet->y;
-				vPos.z = m_npcs[recv_id].z = my_packet->z;
-				m_npcs[recv_id].showCharacter = true;
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-			}
-			else // NPC 일때
-			{
-				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Rect", L"Com_Transform", recv_id);
-				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-				strcpy_s(m_npcs[recv_id].name, my_packet->name);
-				vPos.x = m_npcs[recv_id].x = my_packet->x;
-				vPos.y = m_npcs[recv_id].y = my_packet->y;
-				vPos.z = m_npcs[recv_id].z = my_packet->z;
-				m_npcs[recv_id].showCharacter = true;
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-			}
+			//if (recv_id < NPC_ID_START) // 다른 플레이어 일때
+			//{
+			//	CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+			//		L"Layer_Cube", L"Com_Transform", recv_id);
+			//	_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+			//	strcpy_s(m_npcs[recv_id].name, my_packet->name);
+			//	vPos.x = m_npcs[recv_id].x = my_packet->x;
+			//	vPos.y = m_npcs[recv_id].y = my_packet->y;
+			//	vPos.z = m_npcs[recv_id].z = my_packet->z;
+			//	m_npcs[recv_id].showCharacter = true;
+			//	pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			//}
+			//else // NPC 일때
+			//{
+			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Rect", L"Com_Transform", recv_id - 30);
+			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+			strcpy_s(m_npcs[recv_id].name, my_packet->name);
+			vPos.x = m_npcs[recv_id].x = my_packet->x;
+			vPos.y = m_npcs[recv_id].y = my_packet->y;
+			vPos.z = m_npcs[recv_id].z = my_packet->z;
+			m_npcs[recv_id - 30].showCharacter = true;
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			/*	}*/
 		}
 		Safe_Release(managment);
 	}
@@ -180,7 +180,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		if (recv_id == m_myid) 
 		{
 			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", 0);
+				L"Layer_Cube", L"Com_Transform", recv_id);
 
 			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -194,7 +194,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			if (0 != m_npcs.count(recv_id))
 			{
 				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", 1);
+					L"Layer_Rect", L"Com_Transform", 1);
 
 				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
