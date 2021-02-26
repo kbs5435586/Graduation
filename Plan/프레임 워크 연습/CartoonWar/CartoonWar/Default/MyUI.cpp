@@ -23,12 +23,12 @@ HRESULT CMyUI::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-
-	m_fX = 225.f;
-	m_fY = 375.f;
+	Invisible = FALSE;
+	m_fX = 275.f;
+	m_fY = 525.f;
 
 	m_fSizeX = 300.f;
-	m_fSizeY = 300.f;
+	m_fSizeY = 150.f;
 	//_vec3 vPos = _vec3(10.f, 5.f, 10.f);
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
@@ -38,6 +38,32 @@ HRESULT CMyUI::Ready_GameObject(void* pArg)
 
 _int CMyUI::Update_GameObject(const _float& fTimeDelta)
 {
+	CManagement* pManagement = CManagement::GetInstance();
+
+	if (nullptr == pManagement)
+		return -1;
+	pManagement->AddRef();
+
+
+	if (pManagement->Key_Down(KEY_RIGHT))
+	{
+		Invisible = !Invisible;
+	}
+	if (Invisible)
+	{
+		if (pManagement->Key_Pressing(KEY_LBUTTON))
+		{
+			GetCursorPos(&MousePos);
+			ScreenToClient(g_hWnd, &MousePos);
+
+			m_fX = (_float)MousePos.x;
+			m_fY = (_float)MousePos.y;
+		}
+	}
+	
+
+
+	Safe_Release(pManagement);
 	return _int();
 }
 
@@ -59,31 +85,34 @@ void CMyUI::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
+	
+		MAINPASS tMainPass = {};
 
-	MAINPASS tMainPass = {};
+		_matrix matWorld = Matrix_::Identity();
+		_matrix matView = Matrix_::Identity();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
-	_matrix matWorld = Matrix_::Identity();
-	_matrix matView = Matrix_::Identity();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+		matWorld._11 = m_fSizeX;
+		matWorld._22 = m_fSizeY;
 
-	matWorld._11 = m_fSizeX;
-	matWorld._22 = m_fSizeY;
-
-	matWorld._41 = m_fX - (WINCX >> 1);
-	matWorld._42 = -m_fY + (WINCY >> 1);
-
-
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		matWorld._41 = m_fX - (WINCX >> 1);
+		matWorld._42 = -m_fY + (WINCY >> 1);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->UpdateTable();
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	m_pBufferCom->Render_VIBuffer();
+		ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+		CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->UpdateTable();
+
+	if (Invisible)
+	{
+		m_pBufferCom->Render_VIBuffer();
+	}
+	
 	Safe_Release(pManagement);
 }
 
@@ -156,6 +185,8 @@ HRESULT CMyUI::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
+	//Component_Shader_Deffered
+	//Component_Shader_Reflect
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))

@@ -34,6 +34,8 @@ private:
 	CBuffer_UITex*							m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
-
+private:
+	POINT MousePos{};
+	_bool Invisible;
 };
 

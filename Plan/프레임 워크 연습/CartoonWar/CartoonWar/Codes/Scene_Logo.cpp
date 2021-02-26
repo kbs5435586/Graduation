@@ -181,6 +181,12 @@ HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManag
 		return E_FAIL; 
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Light", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Specular", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Reflect", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 
