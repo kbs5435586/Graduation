@@ -82,6 +82,9 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[2]->Update_Collider(m_pTransformCom);
+
+	pManagement->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+
 	Safe_Release(pManagement);
 
 	return _int();
