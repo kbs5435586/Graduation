@@ -81,6 +81,14 @@ void Server::process_packet(int user_id, char* buf)
 		do_move(user_id, packet->direction);
 	}
 	break;
+    case CS_PACKET_ADD_NPC:
+    {
+        cs_packet_add_npc* packet = reinterpret_cast<cs_packet_add_npc*>(buf);
+        cout << "NPC Init Start\n";
+        initalize_NPC(packet->id);
+        cout << "NPC Init Finish\n";
+    }
+    break;
 	default:
 		cout << "Unknown Packet Type Error\n";
 		DebugBreak();
@@ -99,6 +107,7 @@ void Server::send_login_ok_packet(int user_id)
 	packet.type = SC_PACKET_LOGIN_OK;
 	packet.x = g_clients[user_id].m_x;
 	packet.y = g_clients[user_id].m_y;
+    packet.z = g_clients[user_id].m_z;
 
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -123,6 +132,7 @@ void Server::do_move(int user_id, char direction)
 {
     int x = g_clients[user_id].m_x;
     int y = g_clients[user_id].m_y;
+    int z = g_clients[user_id].m_z;
 
     switch (direction)
     {
@@ -142,8 +152,18 @@ void Server::do_move(int user_id, char direction)
         break;
 
     case GO_RIGHT:
-        if (x < WORLD_WIDTH - 1)
+        if (x < WORLD_HORIZONTAL - 1)
             x++;
+        break;
+
+    case GO_FORWARD:
+        if (z > 0)
+            z--;
+        break;
+
+    case GO_BACK:
+        if (z < WORLD_VERTICAL - 1)
+            z++;
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
@@ -152,6 +172,7 @@ void Server::do_move(int user_id, char direction)
     }
     g_clients[user_id].m_x = x;
     g_clients[user_id].m_y = y;
+    g_clients[user_id].m_z = z;
 
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
@@ -270,10 +291,11 @@ void Server::random_move_npc(int npc_id)
 {
     int x = g_clients[npc_id].m_x;
     int y = g_clients[npc_id].m_y;
+    int z = g_clients[npc_id].m_z;
     switch (rand() % 4)
     {
     case MV_RIGHT: 
-        if (x < (WORLD_WIDTH - 1))
+        if (x < (WORLD_HORIZONTAL - 1))
             x++;
         break;
     case MV_LEFT:
@@ -288,10 +310,19 @@ void Server::random_move_npc(int npc_id)
         if (y > 0)
             y--;
         break;
+    case MV_FORWARD:
+        if (z < (WORLD_VERTICAL - 1))
+            z++;
+        break;
+    case MV_BACK:
+        if (z > 0)
+            z--;
+        break;
     }
 
     g_clients[npc_id].m_x = x;
     g_clients[npc_id].m_y = y;
+    g_clients[npc_id].m_z = z;
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -342,7 +373,11 @@ void Server::event_player_move(int player_id, int npc_id)
     {
         if (g_clients[player_id].m_y == g_clients[npc_id].m_y)
         {
-            send_chat_packet(player_id, npc_id, "HELLO");
+            if (g_clients[player_id].m_z == g_clients[npc_id].m_z)
+            {
+                char m[10] = "HELLO";
+                send_chat_packet(player_id, npc_id, m);
+            }
         }
     }
 }
@@ -408,6 +443,7 @@ void Server::send_move_packet(int user_id, int mover)
     packet.type = SC_PACKET_MOVE;
     packet.x = g_clients[mover].m_x;
     packet.y = g_clients[mover].m_y; // 이동한 플레이어의 정보 담기
+    packet.z = g_clients[mover].m_z; // 이동한 플레이어의 정보 담기
     packet.move_time = g_clients[mover].m_move_time;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
@@ -456,31 +492,40 @@ void Server::initalize_clients()
     }
 }
 
-void Server::initalize_NPC()
+void Server::initalize_NPC(int player_id)
 {
-    for (int i = NPC_ID_START; i < NPC_ID_START + MAX_NPC; ++i)
+    for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); ++i)
     {
-        g_clients[i].m_socket = 0;
-        g_clients[i].m_id = i;
-        sprintf_s(g_clients[i].m_name, "NPC %d", i);
-        g_clients[i].m_status = ST_SLEEP;
-        g_clients[i].m_x = rand() % WORLD_WIDTH;
-        g_clients[i].m_y = rand() % WORLD_HEIGHT;
-        //g_clients[i].m_last_move_time = high_resolution_clock::now();
-        //add_timer(i, FUNC_RANDMOVE, 1000);
+        if (ST_ACTIVE != g_clients[i].m_status)
+        {
+            g_clients[i].m_socket = 0;
+            g_clients[i].m_id = i;
+            sprintf_s(g_clients[i].m_name, "NPC %d", i);
+            g_clients[i].m_status = ST_SLEEP;
+            g_clients[i].m_x = g_clients[player_id].m_x;
+            g_clients[i].m_y = g_clients[player_id].m_y;
+            g_clients[i].m_z = g_clients[player_id].m_z;
 
-        //lua_State* L = g_clients[i].m_lua = luaL_newstate();
-        //luaL_openlibs(L);
-        //luaL_loadfile(L, "NPC.LUA"); // NPC.LUA 파일 불러오기
-        //lua_pcall(L, 0, 0, 0);
-        //lua_getglobal(L, "set_uid"); // set_uid 함수를 스텍에 로딩
-        //lua_pushnumber(L, i);
-        //lua_pcall(L, 1, 0, 0);
-        //lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
+            //lua_State* L = g_clients[i].m_lua = luaL_newstate();
+            //luaL_openlibs(L);
+            //luaL_loadfile(L, "NPC.LUA"); // NPC.LUA 파일 불러오기
+            //lua_pcall(L, 0, 0, 0);
+            //lua_getglobal(L, "set_uid"); // set_uid 함수를 스텍에 로딩
+            //lua_pushnumber(L, i);
+            //lua_pcall(L, 1, 0, 0);
+            //lua_pop(L, 1); // 함수 호출 끝나면 팝 해서 lua_getglobal로 호출한거 날리기
 
-        //lua_register(L, "API_send_message", API_SendMessage);
-        //lua_register(L, "API_get_x", API_get_x);
-        //lua_register(L, "API_get_y", API_get_y);
+            //lua_register(L, "API_send_message", API_SendMessage);
+            //lua_register(L, "API_get_x", API_get_x);
+            //lua_register(L, "API_get_y", API_get_y);
+            cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
+            break;
+        }
+        else
+        {
+            cout << "All Owned NPC Spawned !\n";
+            break;
+        }
     }
 }
 
@@ -492,6 +537,7 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.type = SC_PACKET_ENTER;
     packet.x = g_clients[other_id].m_x;
     packet.y = g_clients[other_id].m_y;
+    packet.z = g_clients[other_id].m_z;
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 
@@ -552,9 +598,9 @@ void Server::disconnect(int user_id)
 
 bool Server::is_near(int a, int b)
 {
-    if (abs(g_clients[a].m_x - g_clients[b].m_x) > VIEW_RADIUS) // abs = 절대값
-        return false;
-    if (abs(g_clients[a].m_y - g_clients[b].m_y) > VIEW_RADIUS)
+    if (sqrt((g_clients[a].m_x - g_clients[b].m_x) ^ 2+
+        (g_clients[a].m_y - g_clients[b].m_y) ^ 2+
+        (g_clients[a].m_z - g_clients[b].m_z) ^ 2) > VIEW_RADIUS) // abs = 절대값
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
     // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
@@ -632,8 +678,9 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
-                g_clients[user_id].m_x = rand() % WORLD_WIDTH;
+                g_clients[user_id].m_x = rand() % WORLD_HORIZONTAL;
                 g_clients[user_id].m_y = rand() % WORLD_HEIGHT;
+                g_clients[user_id].m_z = rand() % WORLD_VERTICAL;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;
@@ -681,6 +728,7 @@ void Server::worker_thread()
 
             delete overEx;
         }
+        break;
         default:
             cout << "Unknown Operation in Worker_Thread\n";
             while (true);
@@ -695,10 +743,9 @@ void Server::mainServer()
     WSADATA WSAData;
     WSAStartup(MAKEWORD(2, 2), &WSAData);
 
-    cout << "NPC Init Start\n";
+    /*cout << "NPC Init Start\n";
     initalize_NPC();
-    cout << "NPC Init Finish\n";
-
+    cout << "NPC Init Finish\n";*/
 
     listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 

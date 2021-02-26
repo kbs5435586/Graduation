@@ -102,11 +102,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_myid = my_packet->id;
 
 		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-			L"Layer_Cube", L"Com_Transform", 0);
+			L"Layer_Cube", L"Com_Transform", m_myid);
 		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
-		vPos.x = my_packet->x;
-		vPos.y = my_packet->y;
+		vPos.x = m_player.x = my_packet->x;
+		vPos.y = m_player.y = my_packet->y;
+		vPos.z = m_player.z = my_packet->z;
 		pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		m_player.showCharacter = true;
 
@@ -127,29 +128,42 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		if (recv_id == m_myid) 
 		{
 			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", 0);
+				L"Layer_Cube", L"Com_Transform", recv_id);
 			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
-			vPos.x = my_packet->x;
-			vPos.y = my_packet->y;
+			vPos.x = m_player.x = my_packet->x;
+			vPos.y = m_player.y = my_packet->y;
+			vPos.z = m_player.z = my_packet->z;
 			m_player.showCharacter = true;
 			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
-		else {
-			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", 1);
-			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-			//if (id < NPC_ID_START)
-			//    npcs[id] = OBJECT{ *pieces, 64, 0, 64, 64 };
-			//else
-			//    npcs[id] = OBJECT{ *pieces, 0, 0, 64, 64 };
-			strcpy_s(m_npcs[recv_id].name, my_packet->name);
-			vPos.x = my_packet->x;
-			vPos.y = my_packet->y;
-			m_npcs[recv_id].showCharacter = true;
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		else 
+		{
+			if (recv_id < NPC_ID_START) // 다른 플레이어 일때
+			{
+				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Cube", L"Com_Transform", recv_id);
+				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+				strcpy_s(m_npcs[recv_id].name, my_packet->name);
+				vPos.x = m_npcs[recv_id].x = my_packet->x;
+				vPos.y = m_npcs[recv_id].y = my_packet->y;
+				vPos.z = m_npcs[recv_id].z = my_packet->z;
+				m_npcs[recv_id].showCharacter = true;
+				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			}
+			else // NPC 일때
+			{
+				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Rect", L"Com_Transform", recv_id);
+				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+				strcpy_s(m_npcs[recv_id].name, my_packet->name);
+				vPos.x = m_npcs[recv_id].x = my_packet->x;
+				vPos.y = m_npcs[recv_id].y = my_packet->y;
+				vPos.z = m_npcs[recv_id].z = my_packet->z;
+				m_npcs[recv_id].showCharacter = true;
+				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			}
 		}
-
 		Safe_Release(managment);
 	}
 	break;
@@ -172,6 +186,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 			vPos.x = my_packet->x;
 			vPos.y = my_packet->y;
+			vPos.z = my_packet->z;
 			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
 		else // NPC 
@@ -185,6 +200,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 				vPos.x = my_packet->x;
 				vPos.y = my_packet->y;
+				vPos.z = my_packet->z;
 				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 			}
 		}
@@ -321,6 +337,18 @@ void CServer_Manager::send_login_ok_packet()
 	send_packet(&l_packet);
 }
 
+void CServer_Manager::send_add_npc_packet()
+{
+	if (m_myid < NPC_ID_START)
+	{
+		cs_packet_add_npc l_packet;
+		l_packet.size = sizeof(l_packet);
+		l_packet.type = CS_PACKET_ADD_NPC;
+		l_packet.id = m_myid;
+		send_packet(&l_packet);
+	}
+}
+
 void CServer_Manager::disconnect()
 {
 	if (m_cSocket)
@@ -335,4 +363,14 @@ void CServer_Manager::disconnect()
 void CServer_Manager::Free() // 여기에 소켓, 윈속 종료
 {
 	disconnect();
+}
+
+bool CServer_Manager::Get_ShowPlayer()
+{
+	return m_player.showCharacter;
+}
+
+bool CServer_Manager::Get_ShowNPC()
+{
+	return m_npcs[m_myid].showCharacter;
 }

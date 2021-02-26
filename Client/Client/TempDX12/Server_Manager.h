@@ -28,7 +28,10 @@ public:
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);
     void send_login_ok_packet();
+    void send_add_npc_packet();
 
+    bool Get_ShowPlayer();
+    bool Get_ShowNPC();
     void err_quit(const char* msg);
     void disconnect();
 

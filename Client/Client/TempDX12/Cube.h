@@ -14,7 +14,7 @@ private:
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float& fTimeDelta);
+	virtual _int							Update_GameObject(const _float& fTimeDelta, const _tchar* pLayerTag);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 public:

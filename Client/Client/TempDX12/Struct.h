@@ -189,10 +189,11 @@ typedef struct tagLight
 
 struct Player_Info
 {
-	bool showCharacter;
-	char name[MAX_ID_LEN + 1];
-	int x = 0;
-	int y = 0;
+	int		x;
+	int		y;
+	int		z;
+	char	name[MAX_ID_LEN + 1];
+	bool	showCharacter;
 };
 
 

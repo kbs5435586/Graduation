@@ -38,7 +38,7 @@ public:
 	void initalize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
 
-	void initalize_NPC();
+	void initalize_NPC(int player_id);
 	void do_AI();
 	void random_move_npc(int npc_id);
 	void activate_npc(int npc_id);

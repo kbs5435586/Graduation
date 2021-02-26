@@ -38,36 +38,41 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-_int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
+_int CCube::Update_GameObject(const _float& fTimeDelta, const _tchar* pLayerTag) // 서버 보낼값 결과값
 {
-	CServer_Manager* server = CServer_Manager::GetInstance();
-	if (nullptr == server)
+	CServer_Manager* pServer = CServer_Manager::GetInstance();
+	if (nullptr == pServer)
 		return E_FAIL;
 
-
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_add_npc_packet();
+		Safe_Release(pServer);
+	}
 	if (GetAsyncKeyState('T') & 0x8000)
 	{
-		server->AddRef();
-		server->send_move_packet(D_UP);
-		Safe_Release(server);
+		pServer->AddRef();
+		pServer->send_move_packet(GO_UP);
+		Safe_Release(pServer);
 	}
 	if (GetAsyncKeyState('F') & 0x8000)
 	{
-		server->AddRef();
-		server->send_move_packet(D_LEFT);
-		Safe_Release(server);
+		pServer->AddRef();
+		pServer->send_move_packet(GO_LEFT);
+		Safe_Release(pServer);
 	}
 	if (GetAsyncKeyState('G') & 0x8000)
 	{
-		server->AddRef();
-		server->send_move_packet(D_DOWN);
-		Safe_Release(server);
+		pServer->AddRef();
+		pServer->send_move_packet(GO_DOWN);
+		Safe_Release(pServer);
 	}
 	if (GetAsyncKeyState('H') & 0x8000)
 	{
-		server->AddRef();
-		server->send_move_packet(D_RIGHT);
-		Safe_Release(server);
+		pServer->AddRef();
+		pServer->send_move_packet(GO_RIGHT);
+		Safe_Release(pServer);
 	}
 	return _int();
 }
@@ -76,8 +81,18 @@ _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
 		return -1;
+	server->AddRef();
+	if (true == server->Get_ShowPlayer())
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
+
+	Safe_Release(server);
 	return _int();
 }
 void CCube::Render_GameObject()

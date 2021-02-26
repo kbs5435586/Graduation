@@ -119,6 +119,8 @@ HRESULT CScene_Logo::Ready_Layer()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Cube(L"Layer_Cube")))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Rect(L"Layer_Rect")))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -188,11 +190,11 @@ HRESULT CScene_Logo::Ready_Layer_Cube(const _tchar* pLayerTag)
 
 	pManagement->AddRef();
 
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
+			return E_FAIL;
+	}
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -207,8 +209,11 @@ HRESULT CScene_Logo::Ready_Layer_Rect(const _tchar* pLayerTag)
 
 	pManagement->AddRef();
 
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
+	for (int i = NPC_ID_START; i < MAX_NPC; i++)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, pLayerTag)))
+			return E_FAIL;
+	}
 
 	Safe_Release(pManagement);
 	return S_OK;

@@ -420,10 +420,10 @@
     <ClInclude Include="SimpleMath.h">
       <Filter>98. Headers</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
+    <ClInclude Include="Server_Manager.h">
       <Filter>97. Server</Filter>
     </ClInclude>
-    <ClInclude Include="Server_Manager.h">
+    <ClInclude Include="protocol.h">
       <Filter>97. Server</Filter>
     </ClInclude>
   </ItemGroup>
