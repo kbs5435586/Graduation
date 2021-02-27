@@ -69,6 +69,8 @@ public:
 	_tchar*					m_pDynamicLayerTag = L"";
 	_tchar*					m_pDynamicObjectTag = L"";
 public:
+	_tchar*					m_pComponentTag = L"";
+public:
 	void	Update_Mode();
 
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

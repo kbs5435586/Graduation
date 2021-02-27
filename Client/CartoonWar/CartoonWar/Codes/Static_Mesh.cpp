@@ -67,16 +67,22 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 	if (FAILED(pShaderCom->SetUp_OnShader_FbxMesh(FbxMatrixToMatrix(&fbxMatrixTransform), matView, matProj, tPass)))
 		return ;
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
-	if (pInfo->strNodeName.find("Body") != string::npos)
+
+	if (nullptr != pTexture)
 	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag,1),  TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3),  TEXTURE_REGISTER::t1);
+		if (pInfo->strNodeName.find("Body") != string::npos)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 1), TEXTURE_REGISTER::t0);
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3), TEXTURE_REGISTER::t1);
+		}
+		else
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0), TEXTURE_REGISTER::t0);
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2), TEXTURE_REGISTER::t1);
+		}
 	}
-	else
-	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0),  TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2),  TEXTURE_REGISTER::t1);
-	}
+
+
 
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -165,7 +171,7 @@ CComponent* CStatic_Mesh::Clone_Component(void* pArg)
 
 void CStatic_Mesh::Free()
 {
-	if(m_IsClone)
+	//if(m_IsClone)
 		Safe_Release(m_pLoader);
 	CComponent::Free();
 }

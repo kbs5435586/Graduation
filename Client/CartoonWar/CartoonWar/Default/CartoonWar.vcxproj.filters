@@ -307,6 +307,48 @@
     <Filter Include="02. GameObject\97. UI\02. UI_MP">
       <UniqueIdentifier>{dab807ce-103d-426f-bb80-ae549604c02d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment">
+      <UniqueIdentifier>{d9d86630-a1f8-431e-b2d8-3cb98fc9d482}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock">
+      <UniqueIdentifier>{79e45fc5-d449-400e-9806-303f5fc6b5eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01">
+      <UniqueIdentifier>{dad4d162-2f17-4cc8-b4e9-8cc75a005941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\01. Rock01_A">
+      <UniqueIdentifier>{d6ff298f-dcfc-49f9-ac69-4e1f1dd22b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\02. Rock01_B">
+      <UniqueIdentifier>{bbf6b4da-19f7-4d38-a61a-dded38048e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\03. Rock01_C">
+      <UniqueIdentifier>{1598d3fc-38cd-41e5-bf0d-11e3530c09fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\00. Rock01">
+      <UniqueIdentifier>{df6a80ce-3bd2-4ff3-a177-1a704ae9ea74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\04. Rock01_D">
+      <UniqueIdentifier>{6c35dc31-1ee0-4fd7-af71-222973a10721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02">
+      <UniqueIdentifier>{e5da6bb9-221e-49fc-9929-b1ea9326b1e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03">
+      <UniqueIdentifier>{d1e330e2-f255-4132-965c-cc58c667f07d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\00. Rock02">
+      <UniqueIdentifier>{8205e59d-a730-476f-86d0-5b1ac229e8a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\01. Rock02_A">
+      <UniqueIdentifier>{b5ee4be0-9725-4e58-a740-2eb96248b192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\02. Rock02_B">
+      <UniqueIdentifier>{4b5d3b8a-59e9-4999-bc9c-85d2e1b3f283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03\00. Rock03">
+      <UniqueIdentifier>{67a1b2b7-821d-435b-a555-71b574c518f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -570,6 +612,21 @@
     <ClInclude Include="..\Headers\UI_MP.h">
       <Filter>02. GameObject\97. UI\02. UI_MP</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Rock01_A.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\01. Rock01_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock01_B.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\02. Rock01_B</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock01_C.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\03. Rock01_C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock01.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\00. Rock01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock01_D.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\04. Rock01_D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -807,6 +864,21 @@
     <ClCompile Include="..\Codes\UI_MP.cpp">
       <Filter>02. GameObject\97. UI\02. UI_MP</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Rock01_A.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\01. Rock01_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock01_B.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\02. Rock01_B</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock01_C.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\03. Rock01_C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock01.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\00. Rock01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock01_D.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\04. Rock01_D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -847,6 +919,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Toon.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Environment.hlsl">
+      <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

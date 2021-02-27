@@ -27,6 +27,7 @@ public:
 	HRESULT						SetUp_ScenePointer(CScene* pNewScenePointer);
 	_int						Update_Management(const _float& fTimeDelta);
 	void						Render_Management();
+
 public://ComponentManager
 	CComponent*					Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex = 0);
 	HRESULT						Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent);
@@ -34,6 +35,7 @@ public://ComponentManager
 public://GameObjectManager
 	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
+	CGameObject*				Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag);
 public://LightManager
 	LIGHT						Get_Light(const _tchar* pLightTag);
 	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);

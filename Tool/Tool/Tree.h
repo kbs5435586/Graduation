@@ -24,7 +24,7 @@ public:
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 private:
-	HRESULT					Ready_Component();
+	HRESULT					Ready_Component(const _tchar* pComponentTag);
 	HRESULT					SetUp_ConstantTable(LPD3DXEFFECT pEffect, const _uint& iAttributeID);
 private:
 	CTransform*				m_pTransformCom = nullptr;

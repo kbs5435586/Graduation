@@ -235,9 +235,6 @@
     <Filter Include="01. GameApp\02. GameObject\98. Test">
       <UniqueIdentifier>{23715dd7-1af7-4510-a2ec-618abc42a77f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. GameApp\02. GameObject\98. Test\00. TestElf">
-      <UniqueIdentifier>{0fe2f9e0-f304-4b4b-8493-b7c1f209a75e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. GameApp\02. GameObject\98. Test\01. Tree">
       <UniqueIdentifier>{fda82830-6bee-4189-858f-88c75eef854a}</UniqueIdentifier>
     </Filter>

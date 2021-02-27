@@ -209,8 +209,9 @@ void CToolView::Mode_Unit(CMainFrame* pMainFrm, CSecondWnd* pSecondWnd)
 				m_IsCheckListBox = false;
 				if (pSecondWnd->m_pUnitTool->m_IsStatic)
 				{
+					TEMP tTemp = TEMP(pSecondWnd->m_pUnitTool->m_pComponentTag, vPos);
 					if (FAILED(pManagement->Add_GameObjectToLayer(pSecondWnd->m_pUnitTool->m_pGameObjectTag,
-						SCENE_LOGO, pSecondWnd->m_pUnitTool->m_pLayerTag, (void*)&vPos)))
+						SCENE_LOGO, pSecondWnd->m_pUnitTool->m_pLayerTag, (void*)&tTemp)))
 						return;
 				}
 				else
@@ -381,14 +382,16 @@ void CToolView::Mode_Unit_Drag(CMainFrame * pMainFrm, CSecondWnd * pSecondWnd)
 				//m_IsCheckListBox = false;
 				if (pSecondWnd->m_pUnitTool->m_IsStatic)
 				{
+					TEMP tTemp = TEMP(pSecondWnd->m_pUnitTool->m_pComponentTag, vPos);
 					if (FAILED(pManagement->Add_GameObjectToLayer(pSecondWnd->m_pUnitTool->m_pGameObjectTag,
-						SCENE_LOGO, L"Layer_Drag", (void*)&vPos)))
+						SCENE_LOGO, L"Layer_Drag", (void*)&tTemp)))
 						return;
 				}
 				else
 				{
+					TEMP tTemp = TEMP(pSecondWnd->m_pUnitTool->m_pComponentTag, vPos);
 					if (FAILED(pManagement->Add_GameObjectToLayer(pSecondWnd->m_pUnitTool->m_pDynamicObjectTag,
-						SCENE_LOGO, L"Layer_Drag", (void*)&vPos)))
+						SCENE_LOGO, L"Layer_Drag", (void*)&tTemp)))
 						return;
 				}
 
@@ -397,9 +400,10 @@ void CToolView::Mode_Unit_Drag(CMainFrame * pMainFrm, CSecondWnd * pSecondWnd)
 			{
 				if (pManagement->Get_ObjectList(SCENE_LOGO, L"Layer_Drag")->size() == 0)
 				{
+					TEMP tTemp = TEMP(pSecondWnd->m_pUnitTool->m_pComponentTag, vPos);
 					if (pSecondWnd->m_pUnitTool->m_IsStatic)
 					{
-						pManagement->Add_GameObjectToLayer(pSecondWnd->m_pUnitTool->m_pGameObjectTag, SCENE_LOGO, L"Layer_Drag", (void*)&vPos);
+						pManagement->Add_GameObjectToLayer(pSecondWnd->m_pUnitTool->m_pGameObjectTag, SCENE_LOGO, L"Layer_Drag", (void*)&tTemp);
 						CTransform* pTransformDrag = (CTransform*)pManagement->Get_ComponentPointer(SCENE_LOGO, L"Layer_Drag", L"Com_Transform");
 						pTransformDrag->Set_StateInfo(STATE_POSITION, &vPos);
 					}

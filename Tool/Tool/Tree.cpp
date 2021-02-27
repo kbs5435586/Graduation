@@ -20,16 +20,19 @@ HRESULT CTree::Ready_Prototype()
 
 HRESULT CTree::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Ready_Component()))
+	TEMP tTemp = *(TEMP*)pArg;
+
+	if (FAILED(Ready_Component(tTemp.lstrComponentTag)))
 		return E_FAIL;
 
 	if (nullptr != pArg)
 	{
-		_vec3 vPos = *(_vec3*)pArg;
-		m_pTransformCom->Set_StateInfo(STATE_POSITION, &vPos);
+		//_vec3 vPos = *(_vec3*)pArg;
+		m_pTransformCom->Set_StateInfo(STATE_POSITION, &tTemp.vPos);
 	}
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
+
 
 	return S_OK;
 }
@@ -129,7 +132,7 @@ void CTree::Free()
 	CGameObject::Free();
 }
 
-HRESULT CTree::Ready_Component()
+HRESULT CTree::Ready_Component(const _tchar* pComponentTag)
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (pManagement == nullptr)
@@ -152,7 +155,7 @@ HRESULT CTree::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Picking", m_pPickingCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CStatic_Mesh*)pManagement->Clone_Component(SCENE_LOGO, L"Component_StaticMesh_Tree");
+	m_pMeshCom = (CStatic_Mesh*)pManagement->Clone_Component(SCENE_LOGO, pComponentTag);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 

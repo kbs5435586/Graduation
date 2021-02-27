@@ -14,11 +14,13 @@ public: // Getter
 	_vec3					Get_Scale();
 	_matrix					Get_Matrix_Inverse() const;
 	_matrix					Get_Matrix() { return m_matWorld; }
+	const _float			Get_Add_PosY() { return m_fAdd_PosY; }
 public:
 	void					Set_Matrix(_matrix matWorld) { m_matWorld = matWorld; }
 public: // Setter
 	void					Set_StateInfo(STATE eState, const _vec3* pInfo);
 	void					Set_PositionY(const _float& fY) {	m_matWorld.m[3][1] = fY;}
+	void					Set_Add_PosY(_float fY) { m_fAdd_PosY = fY; }
 public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();
@@ -44,6 +46,7 @@ private:
 	_matrix					m_matWorld={}; // °´Ã¼ÀÇ »óÅÂ.
 	_float					m_fSpeed_Move = 0.f;
 	_float					m_fSpeed_Rotation=0.f;
+	_float					m_fAdd_PosY = 0.f;
 public:
 	static CTransform*		Create();
 	virtual CComponent*		Clone_Component(void* pArg = nullptr);

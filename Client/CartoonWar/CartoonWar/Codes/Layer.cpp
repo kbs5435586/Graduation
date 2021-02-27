@@ -62,6 +62,11 @@ _int CLayer::LastUpdate_Object(const _float& fTimeDelta)
 	return _int();
 }
 
+CGameObject* CLayer::Get_BackObject()
+{
+	return m_ObjectList.back();
+}
+
 CLayer* CLayer::Create()
 {
 	CLayer* pInstance = new CLayer();

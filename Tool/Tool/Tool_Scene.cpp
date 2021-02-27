@@ -28,8 +28,8 @@ HRESULT CTool_Scene::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(Ready_SkyBox_Layer(L"Layer_SkyBox")))
 		return E_FAIL;
-	if (FAILED(Ready_Player_Layer(L"Layer_Player")))
-		return E_FAIL;
+	//if (FAILED(Ready_Player_Layer(L"Layer_Player")))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -66,6 +66,36 @@ HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/Tree/", L"tree_1.x"))))
 		return E_FAIL;
 
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks01_A",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks01_A.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks01_B",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks01_B.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks01_C",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks01_C.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks01_D",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks01_D.x"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks02",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks02.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks02_A",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks02_A.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks02_B",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks02_B.x"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks03",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainsRocks03.x"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -131,7 +161,7 @@ HRESULT CTool_Scene::Ready_Prototype_GameObject()
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create(m_pGraphic_Device))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Tree", CTree::Create(m_pGraphic_Device))))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Temp", CTree::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -245,7 +275,7 @@ HRESULT CTool_Scene::Ready_Player_Layer(const _tchar * pLayerTag)
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Tree", SCENE_LOGO, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Temp", SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
 	Safe_Release(pManagement);
 	return S_OK;

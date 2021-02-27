@@ -118,320 +118,47 @@ BOOL CUnitTool::OnInitDialog()
 	if (iter_find != m_mapGameObject.end())
 		return FALSE;
 
-	for (_int i = 0; i < 78; ++i)
+	for (_int i = 0; i < 9; ++i)
 	{
+	
 		if (i == 0)
 		{
-			strName = L"Cliff0";
+			strName = L"MountainRock01";
 		}
 		else if (i == 1)
 		{
-			strName = L"Cliff1";
+			strName = L"MountainRock01_A";
 		}
 		else if (i == 2)
 		{
-			strName = L"Cliff2";
+			strName = L"MountainRock01_B";
 		}
 		else if (i == 3)
 		{
-			strName = L"Cliff3";
+			strName = L"MountainRock01_C";
 		}
 		else if (i == 4)
 		{
-			strName = L"Cliff4";
+			strName = L"MountainRock01_D";
 		}
 		else if (i == 5)
 		{
-			strName = L"Fence0";
+			strName = L"MountainRock02";
 		}
 		else if (i == 6)
 		{
-			strName = L"Fence1";
+			strName = L"MountainRock02_A";
 		}
 		else if (i == 7)
 		{
-			strName = L"Fence2";
+			strName = L"MountainRock02_B";
 		}
 		else if (i == 8)
 		{
-			strName = L"Fence3";
+			strName = L"MountainRock03";
 		}
-		else if (i == 9)
-		{
-			strName = L"Fence4";
-		}
-		else if (i == 10)
-		{
-			strName = L"Fence5";
-		}
-		else if (i == 11)
-		{
-			strName = L"Fence6";
-		}
-		else if (i == 12)
-		{
-			strName = L"Fence7";
-		}
-		else if (i == 13)
-		{
-			strName = L"Flower0";
-		}
-		else if (i == 14)
-		{
-			strName = L"Flower1";
-		}
-		else if (i == 15)
-		{
-			strName = L"Flower2";
-		}
-		else if (i == 16)
-		{
-			strName = L"Flower3";
-		}
-		else if (i == 17)
-		{
-			strName = L"Flower4";
-		}
-		else if (i == 18)
-		{
-			strName = L"Flower5";
-		}
-		else if (i == 19)
-		{
-			strName = L"Flower6";
-		}
-		else if (i == 20)
-		{
-			strName = L"Flower7";
-		}
-		else if (i == 21)
-		{
-			strName = L"Flower8";
-		}
-		else if (i == 22)
-		{
-			strName = L"Flower9";
-		}
-		else if (i == 23)
-		{
-			strName = L"Flower10";
-		}
-		else if (i == 24)
-		{
-			strName = L"Grass0";
-		}
-		else if (i == 25)
-		{
-			strName = L"Grass1";
-		}
-		else if (i == 26)
-		{
-			strName = L"Grass2";
-		}
-		else if (i == 27)
-		{
-			strName = L"Grass3";
-		}
-		else if (i == 28)
-		{
-			strName = L"Grass4";
-		}
-		else if (i == 29)
-		{
-			strName = L"Grass5";
-		}
-		else if (i == 30)
-		{
-			strName = L"Grass6";
-		}
-		else if (i == 31)
-		{
-			strName = L"Grass7";
-		}
-		else if (i == 32)
-		{
-			strName = L"Grass8";
-		}
-		else if (i == 33)
-		{
-			strName = L"Grass9";
-		}
-		else if (i == 34)
-		{
-			strName = L"Grass10";
-		}
-		else if (i == 35)
-		{
-			strName = L"Grass11";
-		}
-		else if (i == 36)
-		{
-			strName = L"Grass12";
-		}
-		else if (i == 37)
-		{
-			strName = L"Grass13";
-		}
-		else if (i == 38)
-		{
-			strName = L"Grass14";
-		}
-		else if (i == 39)
-		{
-			strName = L"Grass15";
-		}
-		else if (i == 40)
-		{
-			strName = L"Grass16";
-		}
-		else if (i == 41)
-		{
-			strName = L"Grass17";
-		}
-		else if (i == 42)
-		{
-			strName = L"Grass18";
-		}
-		else if (i == 43)
-		{
-			strName = L"Grass19";
-		}
-		else if (i == 44)
-		{
-			strName = L"Hill0";
-		}
-		else if (i == 45)
-		{
-			strName = L"Hill1";
-		}
-		else if (i == 46)
-		{
-			strName = L"Hill2";
-		}
-		else if (i == 47)
-		{
-			strName = L"House0";
-		}
-		else if (i == 48)
-		{
-			strName = L"Rock0";
-		}
-		else if (i == 49)
-		{
-			strName = L"Rock1";
-		}
-		else if (i == 50)
-		{
-			strName = L"Rock2";
-		}
-		else if (i == 51)
-		{
-			strName = L"Rock3";
-		}
-		else if (i == 52)
-		{
-			strName = L"Rock4";
-		}
-		else if (i == 53)
-		{
-			strName = L"Rock5";
-		}
-		else if (i == 54)
-		{
-			strName = L"Rock6";
-		}
-		else if (i == 55)
-		{
-			strName = L"Tree0";
-		}
-		else if (i == 56)
-		{
-			strName = L"Tree1";
-		}
-		else if (i == 57)
-		{
-			strName = L"Tree2";
-		}
-		else if (i == 58)
-		{
-			strName = L"Tree3";
-		}
-		else if (i == 59)
-		{
-			strName = L"Tree4";
-		}
-		else if (i == 60)
-		{
-			strName = L"Tree5";
-		}
-		else if (i == 61)
-		{
-			strName = L"Tree6";
-		}
-		else if (i == 62)
-		{
-			strName = L"Tree7";
-		}
-		else if (i == 63)
-		{
-			strName = L"Tree8";
-		}
-		else if (i == 64)
-		{
-			strName = L"Wall0";
-		}
-		else if (i == 65)
-		{
-			strName = L"Wall1";
-		}
-		else if (i == 66)
-		{
-			strName = L"Wall2";
-		}
-		else if (i == 67)
-		{
-			strName = L"Wall3";
-		}
-		else if (i == 68)
-		{
-			strName = L"Wall4";
-		}
-		else if (i == 69)
-		{
-			strName = L"Wall5";
-		}
-		else if (i == 70)
-		{
-			strName = L"Wall6";
-		}
-		else if (i == 71)
-		{
-			strName = L"Wall7";
-		}
-		else if (i == 72)
-		{
-			strName = L"Wall8";
-		}
-		else if (i == 73)
-		{
-			strName = L"Wall9";
-		}
-		else if (i == 74)
-		{
-			strName = L"Wall10";
-		}
-		else if (i == 75)
-		{
-			strName = L"SkHouse0";
-		}
-		else if (i == 76)
-		{
-			strName = L"SkHouse1";
-		}
-		else if (i == 77)
-		{
-			strName = L"SkHouse2";
-		}
+		
+
 		m_mapGameObject.insert({ strName, i });
 		m_ListBox_Static.AddString(strName);
 	}
@@ -1070,406 +797,55 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 
 	if (iSelect == -1)
 		return;
-	//Cliff
+
 	if (iSelect == 0)
 	{
-		m_pLayerTag = L"Layer_Cliff0";
-		m_pGameObjectTag = L"GameObject_Cliff0";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks01";
+		m_pLayerTag = L"Layer_MountainRock01";
 	}
 	else if (iSelect == 1)
 	{
-		m_pLayerTag = L"Layer_Cliff1";
-		m_pGameObjectTag = L"GameObject_Cliff1";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks01_A";
+		m_pLayerTag = L"Layer_MountainRock01_A";
 	}
 	else if (iSelect == 2)
 	{
-		m_pLayerTag = L"Layer_Cliff2";
-		m_pGameObjectTag = L"GameObject_Cliff2";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks01_B";
+		m_pLayerTag = L"Layer_MountainRock01_B";
 	}
 	else if (iSelect == 3)
 	{
-		m_pLayerTag = L"Layer_Cliff3";
-		m_pGameObjectTag = L"GameObject_Cliff3";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks01_C";
+		m_pLayerTag = L"Layer_MountainRock01_C";
 	}
 	else if (iSelect == 4)
 	{
-		m_pLayerTag = L"Layer_Cliff4";
-		m_pGameObjectTag = L"GameObject_Cliff4";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks01_D";
+		m_pLayerTag = L"Layer_MountainRock01_D";
 	}
-	//Fence
 	else if (iSelect == 5)
 	{
-		m_pLayerTag = L"Layer_Fence0";
-		m_pGameObjectTag = L"GameObject_Fence0";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks02";
+		m_pLayerTag = L"Layer_MountainRock02";
 	}
 	else if (iSelect == 6)
 	{
-		m_pLayerTag = L"Layer_Fence1";
-		m_pGameObjectTag = L"GameObject_Fence1";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks02_A";
+		m_pLayerTag = L"Layer_MountainRock02_A";
 	}
 	else if (iSelect == 7)
 	{
-		m_pLayerTag = L"Layer_Fence2";
-		m_pGameObjectTag = L"GameObject_Fence2";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks02_B";
+		m_pLayerTag = L"Layer_MountainRock02_B";
 	}
 	else if (iSelect == 8)
 	{
-		m_pLayerTag = L"Layer_Fence3";
-		m_pGameObjectTag = L"GameObject_Fence3";
+		m_pComponentTag = L"Component_StaticMesh_MountainRocks03";
+		m_pLayerTag = L"Layer_MountainRock03";
 	}
-	else if (iSelect == 9)
-	{
-		m_pLayerTag = L"Layer_Fence4";
-		m_pGameObjectTag = L"GameObject_Fence4";
-	}
-	else if (iSelect == 10)
-	{
-		m_pLayerTag = L"Layer_Fence5";
-		m_pGameObjectTag = L"GameObject_Fence5";
-	}
-	else if (iSelect == 11)
-	{
-		m_pLayerTag = L"Layer_Fence6";
-		m_pGameObjectTag = L"GameObject_Fence6";
-	}
-	else if (iSelect == 12)
-	{
-		m_pLayerTag = L"Layer_Fence7";
-		m_pGameObjectTag = L"GameObject_Fence7";
-	}
-	//Flower
-	else if (iSelect == 13)
-	{
-		m_pLayerTag = L"Layer_Flower0";
-		m_pGameObjectTag = L"GameObject_Flower0";
-	}
-	else if (iSelect == 14)
-	{
-		m_pLayerTag = L"Layer_Flower1";
-		m_pGameObjectTag = L"GameObject_Flower1";
-	}
-	else if (iSelect == 15)
-	{
-		m_pLayerTag = L"Layer_Flower2";
-		m_pGameObjectTag = L"GameObject_Flower2";
-	}
-	else if (iSelect == 16)
-	{
-		m_pLayerTag = L"Layer_Flower3";
-		m_pGameObjectTag = L"GameObject_Flower3";
-	}
-	else if (iSelect == 17)
-	{
-		m_pLayerTag = L"Layer_Flower4";
-		m_pGameObjectTag = L"GameObject_Flower4";
-	}
-	else if (iSelect == 18)
-	{
-		m_pLayerTag = L"Layer_Flower5";
-		m_pGameObjectTag = L"GameObject_Flower5";
-	}
-	else if (iSelect == 19)
-	{
-		m_pLayerTag = L"Layer_Flower6";
-		m_pGameObjectTag = L"GameObject_Flower6";
 
-	}
-	else if (iSelect == 20)
-	{
-		m_pLayerTag = L"Layer_Flower7";
-		m_pGameObjectTag = L"GameObject_Flower7";
-	}
-	else if (iSelect == 21)
-	{
-		m_pLayerTag = L"Layer_Flower8";
-		m_pGameObjectTag = L"GameObject_Flower8";
-	}
-	else if (iSelect == 22)
-	{
-		m_pLayerTag = L"Layer_Flower9";
-		m_pGameObjectTag = L"GameObject_Flower9";
-	}
-	else if (iSelect == 23)
-	{
-		m_pLayerTag = L"Layer_Flower10";
-		m_pGameObjectTag = L"GameObject_Flower10";
-	}
-	//Grass
-	else if (iSelect == 24)
-	{
-		m_pLayerTag = L"Layer_Grass0";
-		m_pGameObjectTag = L"GameObject_Grass0";
-	}
-	else if (iSelect == 25)
-	{
-		m_pLayerTag = L"Layer_Grass1";
-		m_pGameObjectTag = L"GameObject_Grass1";
-	}
-	else if (iSelect == 26)
-	{
-		m_pLayerTag = L"Layer_Grass2";
-		m_pGameObjectTag = L"GameObject_Grass2";
-	}
-	else if (iSelect == 27)
-	{
-		m_pLayerTag = L"Layer_Grass3";
-		m_pGameObjectTag = L"GameObject_Grass3";
-	}
-	else if (iSelect == 28)
-	{
-		m_pLayerTag = L"Layer_Grass4";
-		m_pGameObjectTag = L"GameObject_Grass4";
-	}
-	else if (iSelect == 29)
-	{
-		m_pLayerTag = L"Layer_Grass5";
-		m_pGameObjectTag = L"GameObject_Grass5";
-	}
-	else if (iSelect == 30)
-	{
-		m_pLayerTag = L"Layer_Grass6";
-		m_pGameObjectTag = L"GameObject_Grass6";
-	}
-	else if (iSelect == 31)
-	{
-		m_pLayerTag = L"Layer_Grass7";
-		m_pGameObjectTag = L"GameObject_Grass7";
-	}
-	else if (iSelect == 32)
-	{
-		m_pLayerTag = L"Layer_Grass8";
-		m_pGameObjectTag = L"GameObject_Grass8";
-	}
-	else if (iSelect == 33)
-	{
-		m_pLayerTag = L"Layer_Grass9";
-		m_pGameObjectTag = L"GameObject_Grass9";
-	}
-	else if (iSelect == 34)
-	{
-		m_pLayerTag = L"Layer_Grass10";
-		m_pGameObjectTag = L"GameObject_Grass10";
-	}
-	else if (iSelect == 35)
-	{
-		m_pLayerTag = L"Layer_Grass11";
-		m_pGameObjectTag = L"GameObject_Grass11";
-	}
-	else if (iSelect == 36)
-	{
-		m_pLayerTag = L"Layer_Grass12";
-		m_pGameObjectTag = L"GameObject_Grass12";
-	}
-	else if (iSelect == 37)
-	{
-		m_pLayerTag = L"Layer_Grass13";
-		m_pGameObjectTag = L"GameObject_Grass13";
-	}
-	else if (iSelect == 38)
-	{
-		m_pLayerTag = L"Layer_Grass14";
-		m_pGameObjectTag = L"GameObject_Grass14";
-	}
-	else if (iSelect == 39)
-	{
-		m_pLayerTag = L"Layer_Grass15";
-		m_pGameObjectTag = L"GameObject_Grass15";
-	}
-	else if (iSelect == 40)
-	{
-		m_pLayerTag = L"Layer_Grass16";
-		m_pGameObjectTag = L"GameObject_Grass16";
-	}
-	else if (iSelect == 41)
-	{
-		m_pLayerTag = L"Layer_Grass17";
-		m_pGameObjectTag = L"GameObject_Grass17";
-	}
-	else if (iSelect == 42)
-	{
-		m_pLayerTag = L"Layer_Grass18";
-		m_pGameObjectTag = L"GameObject_Grass18";
-	}
-	else if (iSelect == 43)
-	{
-		m_pLayerTag = L"Layer_Grass19";
-		m_pGameObjectTag = L"GameObject_Grass19";
-	}
-	//Hill
-	else if (iSelect == 44)
-	{
-		m_pLayerTag = L"Layer_Hill0";
-		m_pGameObjectTag = L"GameObject_Hill0";
-	}
-	else if (iSelect == 45)
-	{
-		m_pLayerTag = L"Layer_Hill1";
-		m_pGameObjectTag = L"GameObject_Hill1";
-	}
-	else if (iSelect == 46)
-	{
-		m_pLayerTag = L"Layer_Hill2";
-		m_pGameObjectTag = L"GameObject_Hill2";
-	}
-	//House
-	else if (iSelect == 47)
-	{
-		m_pLayerTag = L"Layer_House0";
-		m_pGameObjectTag = L"GameObject_House0";
-	}
-	//Rock
-	else if (iSelect == 48)
-	{
-		m_pLayerTag = L"Layer_Rock0";
-		m_pGameObjectTag = L"GameObject_Rock0";
-	}
-	else if (iSelect == 49)
-	{
-		m_pLayerTag = L"Layer_Rock1";
-		m_pGameObjectTag = L"GameObject_Rock1";
-	}
-	else if (iSelect == 50)
-	{
-		m_pLayerTag = L"Layer_Rock2";
-		m_pGameObjectTag = L"GameObject_Rock2";
-	}
-	else if (iSelect == 51)
-	{
-		m_pLayerTag = L"Layer_Rock3";
-		m_pGameObjectTag = L"GameObject_Rock3";
-	}
-	else if (iSelect == 52)
-	{
-		m_pLayerTag = L"Layer_Rock4";
-		m_pGameObjectTag = L"GameObject_Rock4";
-	}
-	else if (iSelect == 53)
-	{
-		m_pLayerTag = L"Layer_Rock5";
-		m_pGameObjectTag = L"GameObject_Rock5";
-	}
-	else if (iSelect == 54)
-	{
-		m_pLayerTag = L"Layer_Rock6";
-		m_pGameObjectTag = L"GameObject_Rock6";
-	}
-	//Tree
-	else if (iSelect == 55)
-	{
-		m_pLayerTag = L"Layer_Tree0";
-		m_pGameObjectTag = L"GameObject_Tree0";
-	}
-	else if (iSelect == 56)
-	{
-		m_pLayerTag = L"Layer_Tree1";
-		m_pGameObjectTag = L"GameObject_Tree1";
-	}
-	else if (iSelect == 57)
-	{
-		m_pLayerTag = L"Layer_Tree2";
-		m_pGameObjectTag = L"GameObject_Tree2";
-	}
-	else if (iSelect == 58)
-	{
-		m_pLayerTag = L"Layer_Tree3";
-		m_pGameObjectTag = L"GameObject_Tree3";
-	}
-	else if (iSelect == 59)
-	{
-		m_pLayerTag = L"Layer_Tree4";
-		m_pGameObjectTag = L"GameObject_Tree4";
-	}
-	else if (iSelect == 60)
-	{
-		m_pLayerTag = L"Layer_Tree5";
-		m_pGameObjectTag = L"GameObject_Tree5";
-	}
-	else if (iSelect == 61)
-	{
-		m_pLayerTag = L"Layer_Tree6";
-		m_pGameObjectTag = L"GameObject_Tree6";
-	}
-	else if (iSelect == 62)
-	{
-		m_pLayerTag = L"Layer_Tree7";
-		m_pGameObjectTag = L"GameObject_Tree7";
-	}
-	else if (iSelect == 63)
-	{
-		m_pLayerTag = L"Layer_Tree8";
-		m_pGameObjectTag = L"GameObject_Tree8";
-	}
-	//Wall
-	else if (iSelect == 64)
-	{
-		m_pLayerTag = L"Layer_Wall0";
-		m_pGameObjectTag = L"GameObject_Wall0";
-	}
-	else if (iSelect == 65)
-	{
-		m_pLayerTag = L"Layer_Wall1";
-		m_pGameObjectTag = L"GameObject_Wall1";
-	}
-	else if (iSelect == 66)
-	{
-		m_pLayerTag = L"Layer_Wall2";
-		m_pGameObjectTag = L"GameObject_Wall2";
-	}
-	else if (iSelect == 67)
-	{
-		m_pLayerTag = L"Layer_Wall3";
-		m_pGameObjectTag = L"GameObject_Wall3";
-	}
-	else if (iSelect == 68)
-	{
-		m_pLayerTag = L"Layer_Wall4";
-		m_pGameObjectTag = L"GameObject_Wall4";
-	}
-	else if (iSelect == 69)
-	{
-		m_pLayerTag = L"Layer_Wall5";
-		m_pGameObjectTag = L"GameObject_Wall5";
-	}
-	else if (iSelect == 70)
-	{
-		m_pLayerTag = L"Layer_Wall6";
-		m_pGameObjectTag = L"GameObject_Wall6";
-	}
-	else if (iSelect == 71)
-	{
-		m_pLayerTag = L"Layer_Wall7";
-		m_pGameObjectTag = L"GameObject_Wall7";
-	}
-	else if (iSelect == 72)
-	{
-		m_pLayerTag = L"Layer_Wall8";
-		m_pGameObjectTag = L"GameObject_Wall8";
-	}
-	else if (iSelect == 73)
-	{
-		m_pLayerTag = L"Layer_Wall9";
-		m_pGameObjectTag = L"GameObject_Wall9";
-	}
-	else if (iSelect == 74)
-	{
-		m_pLayerTag = L"Layer_Wall10";
-		m_pGameObjectTag = L"GameObject_Wall10";
-	}
-	else if (iSelect == 75)
-	{
-		m_pLayerTag = L"Layer_SkHouse0";
-		m_pGameObjectTag = L"GameObject_SkHouse0";
-	}
-	else if (iSelect == 76)
-	{
-		m_pLayerTag = L"Layer_SkHouse1";
-		m_pGameObjectTag = L"GameObject_SkHouse1";
-	}
-	else if (iSelect == 77)
-	{
-		m_pLayerTag = L"Layer_SkHouse2";
-		m_pGameObjectTag = L"GameObject_SkHouse2";
-	}
+
+	m_pGameObjectTag = L"GameObject_Temp";
 	m_IsCheckListBox = true;
 	m_gLayerTag = m_pLayerTag;
 }

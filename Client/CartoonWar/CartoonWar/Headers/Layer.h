@@ -17,6 +17,8 @@ public:
 	_int						Update_Object(const _float& fTimeDelta);
 	_int						LastUpdate_Object(const _float& fTimeDelta);
 public:
+	CGameObject*				Get_BackObject();
+public:
 	static CLayer*				Create();
 	virtual void				Free();
 public:

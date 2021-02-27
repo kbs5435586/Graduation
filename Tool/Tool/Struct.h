@@ -115,3 +115,16 @@ typedef struct tagColliderInfo
 		, pBoneMatrix(pInBoneMatrix), pWorldMatrix(pInWorldMatrix)
 	{ }
 }COLLIDER_INFO;
+
+
+typedef struct temp
+{
+	temp() {}
+	temp(const wchar_t* pTag, D3DXVECTOR3 _vPos)
+	{
+		lstrcpy(lstrComponentTag, pTag);
+		vPos = _vPos;
+	}
+	wchar_t		lstrComponentTag[512];
+	D3DXVECTOR3	vPos;
+}TEMP;

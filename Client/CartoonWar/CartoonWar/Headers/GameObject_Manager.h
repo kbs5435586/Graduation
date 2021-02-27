@@ -21,6 +21,8 @@ public:
 	_int										LastUpdate_GameObject_Manager(const _float& fTimeDelta);
 	HRESULT										Clear_Layers(const _uint& iSceneID);
 public:
+	CGameObject*								Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag);
+public:
 	CGameObject*								Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx);
 	list<CGameObject*>							Get_GameObjectLst(const _uint& iSceneID, const _tchar* pLayerTag);
 private:

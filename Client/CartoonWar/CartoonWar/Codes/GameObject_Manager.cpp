@@ -144,6 +144,16 @@ HRESULT CGameObject_Manager::Clear_Layers(const _uint& iSceneID)
 	return S_OK;
 }
 
+CGameObject* CGameObject_Manager::Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iSceneID, pLayerTag);
+
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_BackObject();
+}
+
 CGameObject* CGameObject_Manager::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
 {
 	if (nullptr == m_pMapLayers)
