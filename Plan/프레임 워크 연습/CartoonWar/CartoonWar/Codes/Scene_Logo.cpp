@@ -6,12 +6,17 @@
 // Defferd UI
 #include "UI_Diffuse.h"
 #include "UI_Normal.h"
-#include "UI_Position.h"
 #include "UI_Main.h"
-#include "UI_Light.h"
+#include "UI_Shade.h"
 #include "UI_Specular.h"
 #include "UI_Reflect.h"
-#include "MyUI.h"
+#include "UI_UI.h"
+
+#include "Item.h"
+
+//
+#include "UI_Inventory.h"
+#include "UI_InventorySpace.h"
 // New Scene
 #include "Scene_Stage.h"
 
@@ -117,19 +122,26 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Normal", CUI_Normal::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Position", CUI_Position::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Main", CUI_Main::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Light", CUI_Light::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Shade", CUI_Shade::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Specular", CUI_Specular::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Reflect", CUI_Reflect::Create())))
 		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_CMyUI", CMyUI::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_UI", CUI_UI::Create())))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Inventory", CUI_Inventory::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_InventorySpace", CUI_InventorySpace::Create())))
+		return E_FAIL;
+
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Item", CItem::Create())))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -177,16 +189,8 @@ HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-		return E_FAIL; 
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Light", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Specular", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Reflect", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
+	//	return E_FAIL; 
 	return S_OK;
 }
 
@@ -214,8 +218,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
 		CBuffer_Sphere::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_UITex",
-		CBuffer_UITex::Create())))
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
@@ -230,6 +232,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_SPHERE",
 		CCollider::Create(COLLIDER_TYPE::COLLIDER_SPHERE))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer",
+		CObserver::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -314,9 +319,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon",
 		CShader::Create(L"../ShaderFiles/Shader_Toon.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Test",
-		CShader::Create(L"../ShaderFiles/Shader_Test.hlsl", "VS_Main", "PS_Main"))))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered",
 		CShader::Create(L"../ShaderFiles/Shader_UI_Deffered.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
@@ -326,7 +328,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflect",
 		CShader::Create(L"../ShaderFiles/Shader_Reflect.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI",
+		CShader::Create(L"../ShaderFiles/Shader_UI.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	return S_OK;
 }
 CScene_Logo* CScene_Logo::Create()

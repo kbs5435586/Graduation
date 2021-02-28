@@ -9,6 +9,7 @@
 #include "Navigation.h"
 #include "Collider.h"
 #include "Static_Mesh.h"
+#include "Observer.h"
 
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"
@@ -17,7 +18,6 @@
 #include "Buffer_Terrain.h"
 #include "Buffer_Terrain_Height.h"
 #include "Buffer_Sphere.h"
-#include "Buffer_UITex.h"
 
 class CComponent;
 class CComponent_Manager :

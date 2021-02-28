@@ -41,7 +41,7 @@ _int CUI_Main::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this)))
 			return E_FAIL;
 	}
 	return _int();
@@ -72,21 +72,21 @@ void CUI_Main::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-
-
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc1 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc2 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc3 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc4 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc5 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc1.Get(), TEXTURE_REGISTER::t1);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc2.Get(), TEXTURE_REGISTER::t2);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc3.Get(), TEXTURE_REGISTER::t3);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc4.Get(), TEXTURE_REGISTER::t4);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc5.Get(), TEXTURE_REGISTER::t5);
+	ComPtr<ID3D12DescriptorHeap>	pDiffuseTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pNormalex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pSpecTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pReflectTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pUITex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
+
+	CDevice::GetInstance()->SetTextureToShader(pDiffuseTex.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pNormalex.Get(), TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(pShadeTex.Get(), TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(pSpecTex.Get(), TEXTURE_REGISTER::t3);
+	CDevice::GetInstance()->SetTextureToShader(pReflectTex.Get(), TEXTURE_REGISTER::t4);
+	CDevice::GetInstance()->SetTextureToShader(pUITex.Get(), TEXTURE_REGISTER::t5);
+
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -100,7 +100,7 @@ HRESULT CUI_Main::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD)))
 		return E_FAIL;
 
 	return S_OK;

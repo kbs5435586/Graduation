@@ -13,7 +13,7 @@ struct VS_OUT
 };
 struct PS_OUT
 {
-	float4 vTarget0			: SV_TARGET0;
+	float4 vDiffuseTex			: SV_TARGET0;
 };
 VS_OUT	VS_Main(VS_IN vIn)
 {
@@ -27,7 +27,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	vOut.vTarget0 = vIn.vColor;
+	vOut.vDiffuseTex = vIn.vColor;
 	return vOut;
 }
 

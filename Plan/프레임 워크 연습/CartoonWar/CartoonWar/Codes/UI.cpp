@@ -18,5 +18,6 @@ CGameObject* CUI::Clone_GameObject(void* pArg)
 
 void CUI::Free()
 {
+
 	CGameObject::Free();
 }

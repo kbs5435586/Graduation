@@ -190,10 +190,12 @@
     <ClInclude Include="..\Headers\Light.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Line.h" />
+    <ClInclude Include="..\Headers\LoadManager.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
+    <ClInclude Include="..\Headers\Observer.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\RTT.h" />
@@ -209,6 +211,7 @@
     <ClInclude Include="..\Headers\SkyBox.h" />
     <ClInclude Include="..\Headers\Static_Mesh.h" />
     <ClInclude Include="..\Headers\Struct.h" />
+    <ClInclude Include="..\Headers\ObserverManager.h" />
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
@@ -219,20 +222,23 @@
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
-    <ClInclude Include="..\Headers\UI_Light.h" />
+    <ClInclude Include="..\Headers\UI_HP.h" />
+    <ClInclude Include="..\Headers\UI_MP.h" />
+    <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
-    <ClInclude Include="..\Headers\UI_Position.h" />
     <ClInclude Include="..\Headers\UI_Reflect.h" />
     <ClInclude Include="..\Headers\UI_Specular.h" />
+    <ClInclude Include="..\Headers\UI_UI.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
-    <ClInclude Include="Buffer_UITex.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MyUI.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI_Inventory.h" />
+    <ClInclude Include="UI_InventorySpace.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
@@ -269,10 +275,12 @@
     <ClCompile Include="..\Codes\Light.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Line.cpp" />
+    <ClCompile Include="..\Codes\LoadManager.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />
+    <ClCompile Include="..\Codes\Observer.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
@@ -286,6 +294,7 @@
     <ClCompile Include="..\Codes\Shader.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\Static_Mesh.cpp" />
+    <ClCompile Include="..\Codes\ObserverManager.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
@@ -295,17 +304,20 @@
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
-    <ClCompile Include="..\Codes\UI_Light.cpp" />
+    <ClCompile Include="..\Codes\UI_HP.cpp" />
+    <ClCompile Include="..\Codes\UI_MP.cpp" />
+    <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
-    <ClCompile Include="..\Codes\UI_Position.cpp" />
     <ClCompile Include="..\Codes\UI_Reflect.cpp" />
     <ClCompile Include="..\Codes\UI_Specular.cpp" />
+    <ClCompile Include="..\Codes\UI_UI.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
-    <ClCompile Include="Buffer_UITex.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
-    <ClCompile Include="MyUI.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="UI_Inventory.cpp" />
+    <ClCompile Include="UI_InventorySpace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
@@ -363,13 +375,13 @@
     <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Collider.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

@@ -39,11 +39,12 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 			float phi = delta_phi * i - (float)(PI / 2);
 			float theta = delta_theta * j;
 
-			vecVertices[(N * i) + j] = VTXCOL(XMFLOAT3(
-				(rad * cosf(phi)) * cosf(theta),
-				(rad * cosf(phi)) * (float)sinf(theta)
-				, (rad * sinf(phi))),
-				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+			vecVertices[(N * i) + j] = VTXCOL
+			(
+				XMFLOAT3((rad * cosf(phi)) * cosf(theta),(rad * cosf(phi)) * (float)sinf(theta), (rad * sinf(phi))),
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f),
+				XMFLOAT3((rad * cosf(phi)) * cosf(theta), (rad * cosf(phi)) * (float)sinf(theta), (rad * sinf(phi)))
+			);
 		}
 	}
 

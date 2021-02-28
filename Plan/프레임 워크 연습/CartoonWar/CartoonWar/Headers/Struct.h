@@ -9,14 +9,16 @@ typedef struct tagVertexCol
 {
 	XMFLOAT3 vPosition;
 	XMFLOAT4 vColor;
+	XMFLOAT3 vNormal;
 	tagVertexCol()
 	{
 
 	}
-	tagVertexCol(XMFLOAT3 vPos, XMFLOAT4 vColor_)
+	tagVertexCol(XMFLOAT3 vPos, XMFLOAT4 vColor_, XMFLOAT3 vNormal_)
 	{
 		vPosition = vPos;
 		vColor = vColor_;
+		vNormal = vNormal_;
 	}
 }VTXCOL;
 
@@ -208,4 +210,13 @@ typedef struct tagReflect
 	XMFLOAT4X4	matReflect;
 }REFLECT;
 
+
+
+typedef struct tagInfo
+{
+	float	fHP = 0;
+	float	fMP = 0;
+	float	fAtt = 0;
+	float	fDef = 0;
+}INFO;
 

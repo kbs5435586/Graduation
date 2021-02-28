@@ -86,8 +86,11 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[5].pRtt == nullptr)
 			return E_FAIL;
 
+
 		CMRT* pMRT = CMRT::Create(6, arrRT, pDsTex);
 		m_vecMRT.push_back(pMRT);
+
+
 	}
 
 	// Light MRT

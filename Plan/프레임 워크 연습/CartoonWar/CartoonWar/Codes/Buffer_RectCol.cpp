@@ -20,10 +20,10 @@ HRESULT CBuffer_RectCol::Ready_VIBuffer()
 	vector<VTXCOL>	vecVertices;
 	vecVertices.resize(m_iNumVertices);
 
-	vecVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[1] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[2] = VTXCOL(XMFLOAT3(0.5f, -0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
-	vecVertices[3] = VTXCOL(XMFLOAT3(0.5f, 0.5f, 0.f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f));
+	vecVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f), XMFLOAT3(-0.5f, 0.5f, 0.f));
+	vecVertices[1] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f), XMFLOAT3(-0.5f, -0.5f, 0.f));
+	vecVertices[2] = VTXCOL(XMFLOAT3(0.5f, -0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f), XMFLOAT3(0.5f, -0.5f, 0.f));
+	vecVertices[3] = VTXCOL(XMFLOAT3(0.5f, 0.5f, 0.f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.f), XMFLOAT3(0.5f, 0.5f, 0.f));
 
 	m_iNumIndices = 6;
 	vector<_uint>	vecIndices;

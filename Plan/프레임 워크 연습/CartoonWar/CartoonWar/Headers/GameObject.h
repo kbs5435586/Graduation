@@ -17,6 +17,8 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 public:
+	INFO&									GetInfo(){return m_tInfo;}
+public:
 	virtual HRESULT							CreateInputLayout();
 protected:
 	HRESULT									Add_Component(const _tchar* pComponentTag, CComponent* pComponent);
@@ -27,6 +29,7 @@ public:
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;
 	typedef map<const _tchar*, CComponent*>	MAPCOMPONENT;
-
+protected:
+	INFO									m_tInfo = {};
 };
 

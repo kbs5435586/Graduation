@@ -38,6 +38,11 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[2]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+
+
+	m_tInfo = {10.f,10.f,10.f,10.f};
+
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
 	return S_OK;
 }
 
@@ -63,6 +68,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
+		m_tInfo.fHP -= 1.f;
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
 
@@ -76,6 +82,9 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[2]->Update_Collider(m_pTransformCom);
+
+	pManagement->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+
 	Safe_Release(pManagement);
 
 	return _int();
@@ -90,6 +99,8 @@ _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 
 
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+	
 	return _int();
 }
 
@@ -125,6 +136,7 @@ HRESULT CCube::CreateInputLayout()
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
@@ -162,6 +174,7 @@ void CCube::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+
 	Safe_Release(m_pColliderCom[0]);
 	Safe_Release(m_pColliderCom[1]);
 	Safe_Release(m_pColliderCom[2]);
@@ -209,6 +222,8 @@ HRESULT CCube::Ready_Component()
 	NULL_CHECK_VAL(m_pColliderCom[2], E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_2", m_pColliderCom[2])))
 		return E_FAIL;
+
+
 
 	Safe_Release(pManagement);
 

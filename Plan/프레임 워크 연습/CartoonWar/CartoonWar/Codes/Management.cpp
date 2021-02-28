@@ -15,6 +15,8 @@ CManagement::CManagement()
 	, m_pConstant_Buffer_Manager(CConstant_Buffer_Manager::GetInstance())
 	, m_pRTT_Mananger(CRTTMananger::GetInstance())
 	, m_pKey_Manager(CKeyManager::GetInstance())
+	, m_pObserver_Manager(CObserverManager::GetInstance())
+	, m_pLoad_Manager(CLoadManager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
@@ -22,6 +24,8 @@ CManagement::CManagement()
 	m_pConstant_Buffer_Manager->AddRef();
 	m_pRTT_Mananger->AddRef();
 	m_pKey_Manager->AddRef();
+	m_pObserver_Manager->AddRef();
+	m_pLoad_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -72,10 +76,7 @@ void CManagement::SetUp_OnShader_Light()
 	return m_pLight_Manager->SetUp_OnShader();
 }
 
-void CManagement::Render_Light()
-{
-	return m_pLight_Manager->Render_Light();
-}
+
 
 HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal)
 {
@@ -121,6 +122,41 @@ _bool CManagement::Key_Pressing(DWORD dwKey)
 _bool CManagement::Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey)
 {
 	return m_pKey_Manager->Key_Combine(dwFirstKey, dwSecondKey);
+}
+
+list<void*>* CManagement::Get_List(DATA_TYPE eType)
+{
+	return m_pObserver_Manager->Get_List(eType);
+}
+
+void CManagement::Add_Data(DATA_TYPE eType, void* pData)
+{
+	return m_pObserver_Manager->Add_Data(eType, pData);
+}
+
+void CManagement::Remove_Data(DATA_TYPE eType, void* pData)
+{
+	return m_pObserver_Manager->Remove_Data(eType, pData);
+}
+
+void CManagement::Subscribe(CObserver* pObserver)
+{
+	return m_pObserver_Manager->Subscribe(pObserver);
+}
+
+void CManagement::UnSubscribe(CObserver* pObserver)
+{
+	return m_pObserver_Manager->UnSubscribe(pObserver);
+}
+
+void CManagement::Notify(DATA_TYPE eType, void* pData)
+{
+	return m_pObserver_Manager->Notify(eType, pData);
+}
+
+HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
+{
+	return m_pLoad_Manager->Load_File(pFilePath, pArg);
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
@@ -206,11 +242,14 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CObserverManager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CObserverManager Release Failed");
+
 	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CLight_Manager Release Failed");
 
-	if (dwRefCnt = CKeyManager::GetInstance()->DestroyInstance())
-		_MSG_BOX("CKeyManager Release Failed");
+	if (dwRefCnt = CLoadManager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CLoadManager Release Failed");
 
 	if (dwRefCnt = CRTTMananger::GetInstance()->DestroyInstance())
 		_MSG_BOX("CRTTMananger Release Failed");
@@ -267,5 +306,7 @@ void CManagement::Free()
 	Safe_Release(m_pConstant_Buffer_Manager);
 	Safe_Release(m_pRTT_Mananger);
 	Safe_Release(m_pKey_Manager);
+	Safe_Release(m_pObserver_Manager);
+	Safe_Release(m_pLoad_Manager);
 	Safe_Release(m_pScene);
 }

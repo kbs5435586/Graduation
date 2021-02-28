@@ -26,15 +26,15 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	float4	vTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	float4	vTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV);
-	float4	vTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV);
-	float4	vTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV);
-	float4	vTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV);
-	float4	vTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV);
+	float4	vDiffuseTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4	vNormalTex	= g_texture1.Sample(Sampler0, vIn.vTexUV);
+	float4	vShadeTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
+	float4	vSpecTex	= g_texture3.Sample(Sampler0, vIn.vTexUV);
+	float4	vReflectTex	= g_texture4.Sample(Sampler0, vIn.vTexUV);
+	float4	vUITex		= g_texture5.Sample(Sampler0, vIn.vTexUV);
+	
+	float4	vTexMerge = vDiffuseTex * vShadeTex + vSpecTex+ vUITex;
 
-	float4	vTexMerge = vTex0 * vTex3 + vTex4;
-
-	return vTexMerge;
+	return  vTexMerge;
 }
 

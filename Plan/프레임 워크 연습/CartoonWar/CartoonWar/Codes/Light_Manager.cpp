@@ -32,13 +32,7 @@ HRESULT CLight_Manager::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo
 	return S_OK;
 }
 
-void CLight_Manager::Render_Light()
-{
-	for (auto& iter : m_mapLightInfo)
-	{
-		iter.second->Render_Light();
-	}
-}
+
 
 void CLight_Manager::SetUp_OnShader()
 {
