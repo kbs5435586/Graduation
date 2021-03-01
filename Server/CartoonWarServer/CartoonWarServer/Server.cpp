@@ -89,6 +89,12 @@ void Server::process_packet(int user_id, char* buf)
         cout << "NPC Init Finish\n";
     }
     break;
+    case CS_PACKET_NPC_ACT:
+    {
+        cs_packet_npc_act* packet = reinterpret_cast<cs_packet_npc_act*>(buf);
+        finite_state_machine(packet->id, packet->act);
+    }
+    break;
 	default:
 		cout << "Unknown Packet Type Error\n";
 		DebugBreak();
@@ -184,8 +190,8 @@ void Server::do_move(int user_id, char direction)
     {
         if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-            activate_npc(c.second.m_id);
+        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+        //    activate_npc(c.second.m_id, FUNC_NPC_HOLD);
         if (ST_ACTIVE != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
@@ -269,24 +275,6 @@ void Server::do_move(int user_id, char direction)
     }
 }
 
-void Server::do_AI()
-{
-    while (true)
-    {
-        auto ai_start_time = high_resolution_clock::now();
-        for (int i = NPC_ID_START; i < NPC_ID_START + MAX_NPC; ++i)
-        {
-            if ((high_resolution_clock::now() - g_clients[i].m_last_move_time) > 1s) // 지금에서 마지막으로 움직인 시간이 1초가 되면 다시 이동
-            {
-                random_move_npc(i);
-                g_clients[i].m_last_move_time = high_resolution_clock::now();
-            }
-        }
-        auto ai_finish_time = high_resolution_clock::now() - ai_start_time;
-        cout << "all AI move time : " << duration_cast<milliseconds>(ai_finish_time).count() << "ms\n"; // 여기 검색해보기
-    }
-}
-
 void Server::random_move_npc(int npc_id)
 {
     int x = g_clients[npc_id].m_x;
@@ -359,12 +347,12 @@ void Server::random_move_npc(int npc_id)
     // 근데 이제 플레이어가 문제임, 플레이어 뷰 리스트 관리할때 npc까지 고려해서 뷰 리스트 관리해줘야 되므로 처음부터 끝까지 뷰리스트 다 살펴봐야함
 }
 
-void Server::activate_npc(int npc_id)
+void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
 {
     ENUM_STATUS old_status = ST_SLEEP;
     if (true == atomic_compare_exchange_strong(&g_clients[npc_id].m_status, &old_status, ST_ACTIVE)) // m_status가 슬립에서 엑티브로 바뀐 경우에만
         // 동시에 두 클라가 접근하면 ACTIVE 로 2번 바뀌고 타이머가 2번 발동하는걸 방지하기 위한 용도
-        add_timer(npc_id, FUNC_NPC_RANDMOVE, 1000);
+        add_timer(npc_id, op_type, 1000);
 }
 
 void Server::event_player_move(int player_id, int npc_id)
@@ -379,6 +367,43 @@ void Server::event_player_move(int player_id, int npc_id)
                 send_chat_packet(player_id, npc_id, m);
             }
         }
+    }
+}
+
+void Server::finite_state_machine(int player_id, int event_id)
+{
+    //OverEx* overEx = new OverEx;
+    //overEx->function = FUNC_PLAYER_MOVE_FOR_NPC; // NPC에게 주변 플레이어가 움직였다는걸 알림
+    //overEx->player_id = user_id;
+    //PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
+    switch (event_id) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
+    {
+    case DO_ATTACK:
+    {
+
+    }
+    break;
+    case DO_DEFENCE:
+    {
+
+    }
+    break;
+    case DO_HOLD:
+    {
+
+    }
+    break;
+    case DO_FOLLOW:
+    {
+
+    }
+    break;
+    case DO_RANDMOVE:
+    {
+
+    }
+    break;
+    default:
     }
 }
 
@@ -429,6 +454,11 @@ void Server::do_timer()
                 // 타이머 쓰레드에서 움직이는거 처리까지 다 하면 과부화가 심하다
                 // PostQueuedCompletionStatus 이걸로 worket thread에 작업 넘겨주고 여기선 어떤 이벤트인지만 알려줌
                 // 오버랩 구조체 따로 초기화 안해줘도 되는게 PostQueuedCompletionStatus 자체가 진짜 넣어주는값 그대로 GetQueued에 넘겨줘서 괜찮음
+                break;
+            case FUNC_NPC_FOLLOW:
+                OverEx* over = new OverEx;
+                over->function = (ENUM_FUNCTION)event.event_id;
+                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
                 break;
             }
         }
@@ -494,7 +524,7 @@ void Server::initalize_clients()
 
 void Server::initalize_NPC(int player_id)
 {
-    for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); ++i)
+    for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
     {
         if (ST_ACTIVE != g_clients[i].m_status)
         {
@@ -511,8 +541,7 @@ void Server::initalize_NPC(int player_id)
         }
         else
         {
-            cout << "All Owned NPC Spawned !\n";
-            break;
+            continue; // 여기 수정할것 (임시방편), 모든 플레이어의 npc active일때 더이상 추가 안되게 처리
         }
     }
 }
@@ -701,7 +730,7 @@ void Server::worker_thread()
             }
 
             if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
-                add_timer(id, FUNC_NPC_RANDMOVE, 1000);
+                add_timer(id, FUNC_NPC_RANDMOVE, 250); // 생성 이후 타이머 간격
             else
                 g_clients[id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
 
@@ -715,6 +744,15 @@ void Server::worker_thread()
             event_player_move(player_id, npc_id);
 
             delete overEx;
+        }
+        break;
+        case FUNC_NPC_FOLLOW: // API_Send_message 호출용
+        {
+          /*  int npc_id = id;
+            int player_id = overEx->player_id;
+            event_player_move(player_id, npc_id);
+
+            delete overEx;*/
         }
         break;
         default:

@@ -17,6 +17,9 @@
     <Filter Include="98. Header">
       <UniqueIdentifier>{68debbfc-a50e-427b-bcd3-d3ef0ba03f73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Flock Control">
+      <UniqueIdentifier>{0f000bbf-f0ab-4171-8163-e022b6723ccc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,6 +30,9 @@
     </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>97. Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Flock_Management.cpp">
+      <Filter>02. Flock Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="Server.h">
       <Filter>97. Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Flock_Management.h">
+      <Filter>02. Flock Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

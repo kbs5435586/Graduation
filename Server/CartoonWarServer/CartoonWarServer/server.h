@@ -39,10 +39,10 @@ public:
 	void disconnect(int user_id);
 
 	void initalize_NPC(int player_id);
-	void do_AI();
 	void random_move_npc(int npc_id);
-	void activate_npc(int npc_id);
+	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
+	void finite_state_machine(int player_id,int event_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();
@@ -53,5 +53,9 @@ public:
 	//int API_SendMessage(lua_State* L);
 	//int API_get_x(lua_State* L);
 	//int API_get_y(lua_State* L);
+public:
+	void init_flock();
+	void get_player_pos();
+	void calculate_next_pos();
 };
 

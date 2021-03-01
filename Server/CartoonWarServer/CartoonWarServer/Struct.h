@@ -1,5 +1,10 @@
 #pragma once
-enum ENUM_FUNCTION { FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_NPC_RANDMOVE, FUNC_PLAYER_MOVE_FOR_NPC, FUNC_END };
+enum ENUM_FUNCTION 
+{
+	FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_NPC_RANDMOVE,
+	FUNC_PLAYER_MOVE_FOR_NPC, FUNC_NPC_ATTACK, FUNC_NPC_DEFENCE, 
+	FUNC_NPC_HOLD, FUNC_NPC_FOLLOW, FUNC_END
+};
 enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
@@ -57,4 +62,11 @@ struct event_type
 	{
 		return (wakeup_time > left.wakeup_time); // 순서대로 저장하는 용도
 	}
+};
+
+struct Vec3
+{
+	float x;
+	float y;
+	float z;
 };

@@ -194,7 +194,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			if (0 != m_npcs.count(recv_id))
 			{
 				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Rect", L"Com_Transform", 1);
+					L"Layer_Rect", L"Com_Transform", recv_id - 30);
 
 				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 

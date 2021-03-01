@@ -10,6 +10,8 @@
 #include <atomic>
 #include <chrono>
 #include <queue>
+#include <vector>
+#include "directxmath.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
