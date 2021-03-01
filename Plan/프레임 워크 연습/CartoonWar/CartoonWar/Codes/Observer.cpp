@@ -36,6 +36,9 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 		break;
 	case DATA_TYPE::DATA_MATRIX:
 		break;
+	case DATA_TYPE::DATA_UI_INFO:
+		m_Point = *reinterpret_cast<POINT*>(*iter_find);
+		break;
 	}
 
 }

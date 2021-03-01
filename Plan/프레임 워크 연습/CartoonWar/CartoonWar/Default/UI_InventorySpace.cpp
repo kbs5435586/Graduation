@@ -28,16 +28,45 @@ HRESULT CUI_InventorySpace::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-
+	//float cellX[3]{ 300.f , 360.f , 420.f }, cellY[3]{ 300.f ,360.f, 420.f };
 	//m_fX = 200.0f;
 	//m_fY = 100.0f;
 
-	_vec3 vPos = *(_vec3*)pArg;
-	m_fX = vPos.x;
-	m_fY = vPos.y;
+	Pos = *(POINT*)pArg;
+
+	if(Pos.x == 0)
+	{ 
+		m_fX = 300;
+	}
+	else if (Pos.x == 1)
+	{
+		m_fX = 360;
+	}
+	else if (Pos.x == 2)
+	{
+		m_fX = 420;
+	}
+
+	if (Pos.y == 0)
+	{
+		m_fY = 300.f;
+	}
+	else if (Pos.y == 1)
+	{
+		m_fY = 360.f;
+	}
+	else if (Pos.y == 2)
+	{
+		m_fY = 420.f;
+	}
+
+	//m_fX = Pos.x;
+	//m_fY = Pos.y;
 
 	m_fSizeX = 50.0f;
 	m_fSizeY = 50.0f;
+
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return S_OK;
 }
@@ -45,47 +74,54 @@ HRESULT CUI_InventorySpace::Ready_GameObject(void* pArg)
 _int CUI_InventorySpace::Update_GameObject(const _float& fTimeDelta)
 {
 	CManagement* pManagement = CManagement::GetInstance();
-
 	if (nullptr == pManagement)
 		return -1;
 	pManagement->AddRef();
-
 	
-
 	_vec3 vPos = _vec3(m_fX, m_fY, 0.f);
 	
-	if (pManagement->Key_Down(KEY_LBUTTON))
+	if (pManagement->Key_Pressing(KEY_LBUTTON))
 	{
 		GetCursorPos(&MousePos);
 		ScreenToClient(g_hWnd, &MousePos);
 	
+	
+		m_Point = m_pObserverCom->GetUIInfo();
+		if (Pos.x == 0)
+		{
+			m_fX = (_float)m_Point.x - 100;
+		}
+		if (Pos.y == 0)
+		{
+			m_fY = (_float)m_Point.y - 100;
+		}
+		else
+		{
+			m_fY = (_float)m_Point.y - 40;
+		}
+		
+
 		if (MousePos.x > m_fX - (25.f) && MousePos.x < m_fX + (25.f))
 		{
 			if (MousePos.y > m_fY - (25.f) && MousePos.y < m_fY + (25.f))
 			{
-				if (cell.size() < 1)
-				{
-					m_fX = (_float)MousePos.x;
-					m_fY = (_float)MousePos.y;
-
+				//if (cell.size() < 2)
+				//{
+					m_fX = (_float)MousePos.x - 100;
+					m_fY = (_float)MousePos.y - 100;
+		
 					if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Item", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &vPos)))
 						return E_FAIL;
-
+					
 					CItem myitem;
 					cell.emplace_back(myitem);
-				}
-				
-				cell.front();
+				//}
 			}
 		}
 	}
 
-
-
-
 	Safe_Release(pManagement);
 	return _int();
-
 }
 
 _int CUI_InventorySpace::LastUpdate_GameObject(const _float& fTimeDelta)
@@ -171,6 +207,7 @@ void CUI_InventorySpace::Free()
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pObserverCom);
 
 
 	CGameObject::Free();
@@ -205,6 +242,11 @@ HRESULT CUI_InventorySpace::Ready_Component()
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
+
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

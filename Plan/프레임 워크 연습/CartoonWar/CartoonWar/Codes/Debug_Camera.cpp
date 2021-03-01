@@ -1,5 +1,6 @@
 #include "framework.h"
 #include "Debug_Camera.h"
+#include "Management.h"
 
 CDebug_Camera::CDebug_Camera( )
 	: CCamera()
@@ -21,6 +22,8 @@ HRESULT CDebug_Camera::Ready_Prototype()
 
 HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 {
+	if (FAILED(CDebug_Camera::Ready_Component()))
+		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
@@ -30,12 +33,14 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+
 	return NOERROR;
 }
 
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
-	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
 
@@ -106,7 +111,25 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
+HRESULT CDebug_Camera::Ready_Component()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	NULL_CHECK_VAL(pManagement, E_FAIL);
+	pManagement->AddRef();
+
+
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+	return S_OK;
+}
+
 void CDebug_Camera::Free()
 {
+	Safe_Release(m_pObserverCom);
+
 	CCamera::Free();
 }

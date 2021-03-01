@@ -12,6 +12,7 @@ public:
     void                    Update_Observer(DATA_TYPE eType, void* pData);
 public:
     INFO                    GetInfo() { return m_tInfo; }
+    POINT                   GetUIInfo() { return m_Point; }
 public:
     static CObserver*       Create();
     virtual CComponent*     Clone_Component(void* pArg);
@@ -19,6 +20,7 @@ private:
     virtual void            Free();
 private:
     INFO                    m_tInfo = {};
+    POINT                   m_Point = {};
 
 
 };

@@ -5,6 +5,7 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
+class CObserver;
 
 class CItem;
 
@@ -36,9 +37,12 @@ private:
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
+	CObserver* m_pObserverCom = nullptr;
 
 private:
 	POINT MousePos;
+	POINT Pos;
+	POINT m_Point;
 	vector<CItem> cell;
 };
 

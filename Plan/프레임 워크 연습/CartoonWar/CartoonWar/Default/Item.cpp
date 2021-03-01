@@ -9,7 +9,7 @@ CItem::CItem()
 }
 
 CItem::CItem(const CItem& rhs)
-	: CGameObject(rhs),
+	: CUI(rhs),
 	HP(100),
 	MP(100)
 {
@@ -36,17 +36,15 @@ HRESULT CItem::Ready_GameObject(void* pArg)
 	m_fX = vPos.x;
 	m_fY = vPos.y;
 
-	m_fSizeX = 80.0f;
-	m_fSizeY = 80.0f;
+	m_fSizeX = 30.0f;
+	m_fSizeY = 30.0f;
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return S_OK;
 }
 
 _int CItem::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tInfo = m_pObserverCom->GetInfo();
 	return _int();
 }
 
@@ -100,7 +98,7 @@ HRESULT CItem::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc/*, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED*/)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_EQUAL, SHADER_TYPE::SHADER_FORWARD)))
 		return E_FAIL;
 
 	return S_OK;
@@ -135,7 +133,7 @@ void CItem::Free()
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 
 
 	CGameObject::Free();
@@ -172,10 +170,10 @@ HRESULT CItem::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

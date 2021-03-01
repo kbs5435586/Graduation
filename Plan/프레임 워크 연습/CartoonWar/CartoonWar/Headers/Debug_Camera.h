@@ -1,5 +1,7 @@
 #pragma once
 #include "Camera.h"
+class CObserver;
+
 class CDebug_Camera :
     public CCamera
 {
@@ -16,9 +18,13 @@ public:
 public:
 	static CDebug_Camera*		Create();
 	virtual CGameObject*		Clone_GameObject(void* pArg = nullptr);
+
+	HRESULT						Ready_Component();
 protected:
 	virtual void				Free();
 private:
 	POINT					m_ptMouse;
+
+	CObserver* m_pObserverCom = nullptr;
 };
 

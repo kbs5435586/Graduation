@@ -32,6 +32,14 @@ public:
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
-
+private:
+	CTransform* m_pTransformCom = nullptr;
+	CRenderer* m_pRendererCom = nullptr;
+	CBuffer_RectTex* m_pBufferCom = nullptr;
+	CShader* m_pShaderCom = nullptr;
+	CTexture* m_pTextureCom = nullptr;
+private:
+	POINT MousePos;
+	POINT Pos;
 };
 

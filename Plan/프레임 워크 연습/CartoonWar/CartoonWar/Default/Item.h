@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+#include "UI.h"
 class CTransform;
 class CRenderer;
 class CBuffer_RectTex;
@@ -8,7 +8,7 @@ class CTexture;
 class CObserver;
 
 class CItem :
-    public CGameObject
+    public CUI
 {
 public:
 	CItem();
@@ -34,7 +34,7 @@ private:
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
-	CObserver* m_pObserverCom = nullptr;
+	//CObserver* m_pObserverCom = nullptr;
 
 private:
 	_float m_fX, m_fY;

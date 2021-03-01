@@ -238,7 +238,9 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI_Inventory.h" />
-    <ClInclude Include="UI_InventorySpace.h" />
+    <ClInclude Include="UI_InventorySpace.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
@@ -317,7 +319,9 @@
     <ClCompile Include="CartoonWar.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="UI_Inventory.cpp" />
-    <ClCompile Include="UI_InventorySpace.cpp" />
+    <ClCompile Include="UI_InventorySpace.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
