@@ -130,6 +130,13 @@ typedef struct tagProjection_Desc
 	float		fFar;
 }PROJDESC;
 
+typedef struct tagTextureInfo
+{
+	float		fFrameTime;
+	XMFLOAT3	vScrollSpeed;
+	XMFLOAT3	vScale;
+	float		fPadding;
+}TEXINFO;
 
 typedef struct tagMainPass
 {
@@ -219,4 +226,14 @@ typedef struct tagInfo
 	float	fAtt = 0;
 	float	fDef = 0;
 }INFO;
+
+
+typedef struct tagDistortion
+{
+	XMFLOAT2	fDistortion1;
+	XMFLOAT2	fDistortion2;
+	XMFLOAT2	fDistortion3;
+	float		fDistortionScale;
+	float		fDistortionBias;
+}DISTORTION;
 

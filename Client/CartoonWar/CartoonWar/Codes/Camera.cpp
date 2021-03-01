@@ -79,19 +79,7 @@ _matrix CCamera::Calculate_RelfectMatrix(const _float& fHeight)
 	m_vLook.y = m_vPos.y;
 	m_vLook.z = cosf(0.f) + m_vPos.z;
 
-
-	m_vRight = Vector3_::CrossProduct(m_vUp, m_vLook);
-	m_vRight = Vector3_::Normalize(m_vRight);
-
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_RIGHT, &m_vRight);
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_UP, &m_vUp);
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_LOOK, &m_vLook);
-	m_pTransform_Reflect->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
-
-	m_matReflect = m_pTransform_Reflect->Get_Matrix_Inverse();
-
-	// 마지막으로 세 개의 업데이트 된 벡터에서 뷰 행렬을 만듭니다.
-	//m_matReflect = Matrix_::LookAtLH(m_vPos, m_vLook, m_vUp);
+	m_matReflect = Matrix_::LookAtLH(m_vPos, m_vLook, m_vUp);
 
 
 	return m_matReflect;

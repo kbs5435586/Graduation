@@ -24,7 +24,7 @@ CDevice::CDevice()
 
 array<const CD3DX12_STATIC_SAMPLER_DESC, 6> CDevice::GetStaticSamplers()
 {
-const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+	const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
 		0, // shaderRegister
 		D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
 		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
@@ -367,8 +367,8 @@ HRESULT CDevice::Create_RootSignature()
 
 	D3D12_DESCRIPTOR_RANGE range = {};
 
-	range.BaseShaderRegister = 0;  // b0 에서
-	range.NumDescriptors = 5;	   // b4 까지 5개 상수레지스터 사용여부 
+	range.BaseShaderRegister = 0;
+	range.NumDescriptors =6;	  
 	range.OffsetInDescriptorsFromTableStart = -1;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -377,7 +377,7 @@ HRESULT CDevice::Create_RootSignature()
 	range = {};
 	range.BaseShaderRegister = 0;  // t0 에서
 	range.NumDescriptors = 13;	   // t12 까지 13 개 텍스쳐 레지스터 사용여부 
-	range.OffsetInDescriptorsFromTableStart = 5;
+	range.OffsetInDescriptorsFromTableStart = 6;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	vecRange.push_back(range);
@@ -465,6 +465,12 @@ HRESULT CDevice::Create_SamplerDesc()
 
 
 	m_vecSamplerDesc.push_back(sampler);
+
+
+
+
+
+
 	return S_OK;
 }
 

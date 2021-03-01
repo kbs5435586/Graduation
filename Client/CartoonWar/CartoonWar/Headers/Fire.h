@@ -1,29 +1,28 @@
 #pragma once
-#include "UI.h"
+#include "GameObject.h"
+
 class CTransform;
 class CRenderer;
 class CBuffer_RectTex;
-class CShader;
 class CTexture;
-class CObserver;
-
-class CUI_HP :
-    public CUI
+class CShader;
+class CFire :
+    public CGameObject
 {
 private:
-	CUI_HP();
-	CUI_HP(const CUI_HP& rhs);
-	virtual ~CUI_HP() = default;
+    CFire();
+    CFire(const CFire& rhs);
+    virtual ~CFire() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float & fTimeDelta);
-	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
+	virtual _int							Update_GameObject(const _float& fTimeDelta);
+	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_HP*							Create();
+	static CFire*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
@@ -33,7 +32,8 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
-	CObserver*								m_pObserverCom = nullptr;
+	CTexture*								m_pTextureCom[3] = {nullptr};
+private:
+	TEXINFO									m_tTexInfo = {};
 };
 

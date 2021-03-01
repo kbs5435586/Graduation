@@ -17,8 +17,10 @@
 #include "UI_Loading.h"
 #include "UI_HP.h"
 #include "UI_MP.h"
+// Environment
+#include "Fire.h"
 
-
+#include "TestCube.h"
 
 
 CScene_Stage::CScene_Stage()
@@ -78,6 +80,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestCube", CTestCube::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
@@ -93,6 +97,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_HP", CUI_HP::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_MP", CUI_MP::Create())))
+		return E_FAIL;
+	if(FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
 
 
@@ -120,6 +126,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -141,12 +149,25 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	if (FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
 		return E_FAIL;
 
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.15f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(0.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.f, 0.f, 0.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(15.f, 5.5f, 15.f, 1.f);
+	tLightInfo.fRange = 15.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Default", tLightInfo)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestCube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -228,12 +249,22 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Reflect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_UI", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnUI", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Test", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement)
+{
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 

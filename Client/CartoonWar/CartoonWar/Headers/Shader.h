@@ -12,7 +12,8 @@ public:
 											const char*HSEntry = nullptr, const char* DSEntry = nullptr, const char* GSEntry = nullptr);
 	HRESULT								Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType = RS_TYPE::DEFAULT, 
 													DEPTH_STENCIL_TYPE eDepthType = DEPTH_STENCIL_TYPE::LESS, 
-													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD);
+													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD,
+													BLEND_TYPE eBlendType = BLEND_TYPE::DEFAULT);
 public:
 	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, 
 											_matrix matProj, MAINPASS& output);

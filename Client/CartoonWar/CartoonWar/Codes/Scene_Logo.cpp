@@ -11,6 +11,7 @@
 #include "UI_Specular.h"
 #include "UI_Reflect.h"
 #include "UI_UI.h"
+#include "UI_Test.h"
 // New Scene
 #include "Scene_Stage.h"
 
@@ -124,7 +125,9 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Reflect", CUI_Reflect::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_UI", CUI_UI::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnUI", CUI_UI::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Test", CUI_Test::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -300,6 +303,15 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox",
 		CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha",
+		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firefire",
+		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_fire%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firenoise",
+		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_noise%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+		return E_FAIL;
 
 	//PNG
 	//	if(FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo",
@@ -346,6 +358,10 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Environment",
 		CShader::Create(L"../ShaderFiles/Shader_Environment.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Fire",
+		CShader::Create(L"../ShaderFiles/Shader_Fire.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	return S_OK;
 }

@@ -259,9 +259,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
       <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. BaseShape\04. Circle">
-      <UniqueIdentifier>{f7d5b165-b434-4c03-9277-08f928bfa167}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
       <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
     </Filter>
@@ -348,6 +345,15 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03\00. Rock03">
       <UniqueIdentifier>{67a1b2b7-821d-435b-a555-71b574c518f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\01. Fire">
+      <UniqueIdentifier>{00419c05-814e-458b-9453-ecd79fbbc126}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\99. TestCube">
+      <UniqueIdentifier>{55a038b2-c642-4bf1-a715-87909179b3f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Test">
+      <UniqueIdentifier>{732327b6-bbd6-4861-a668-db50590ba3ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -582,9 +588,6 @@
     <ClInclude Include="..\Headers\Buffer_Sphere.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Circle.h">
-      <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Observer.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\09. Observer</Filter>
     </ClInclude>
@@ -626,6 +629,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Rock01_D.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\04. Rock01_D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fire.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\01. Fire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\TestCube.h">
+      <Filter>02. GameObject\99. BaseShape\99. TestCube</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Test.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -834,9 +846,6 @@
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Circle.cpp">
-      <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Observer.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\09. Observer</Filter>
     </ClCompile>
@@ -878,6 +887,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Rock01_D.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\00. Rock01\04. Rock01_D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fire.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\01. Fire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TestCube.cpp">
+      <Filter>02. GameObject\99. BaseShape\99. TestCube</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Test.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -921,6 +939,9 @@
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Environment.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Fire.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>

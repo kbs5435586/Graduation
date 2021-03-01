@@ -3,16 +3,17 @@
 
 struct VS_IN
 {
-	float3	vPosition			: POSITION;
-	float2	vTexUV				: TEXCOORD0;
+	float3	vPosition	: POSITION;
+	float4	vColor		: COLOR;
+	float3  vNormal		: NORMAL;
 };
 
 struct VS_OUT
 {
-	float4	vPosition			: SV_POSITION;
-	float2	vTexUV				: TEXCOORD0;
-	float4  vWorldPos			: TEXCOORD1;
-	float4	vReflectPosition	: TEXCOORD2;
+	float4	vPosition	: SV_POSITION;
+	float4	vColor		: COLOR;
+	float4  vNormal		: NORMAL;
+	float4	vReflectionPosition : TEXCOORD0;
 };
 struct PS_OUT
 {
@@ -23,9 +24,12 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut;
 
-	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld);
-	vOut.vTexUV = vIn.vTexUV;
+	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWorld);
+	vOut.vPosition = mul(vOut.vPosition, matView);
+	vOut.vPosition = mul(vOut.vPosition, matProj);
+
+
+	vOut.vColor = vIn.vColor;
 
 	return vOut;
 }
@@ -34,7 +38,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	vOut.vReflectTex = float4(0.f,0.f,1.f,1.f);
+	vOut.vReflectTex = vIn.vColor;
 	return vOut;
 }
 

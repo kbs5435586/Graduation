@@ -54,6 +54,23 @@ cbuffer REFLECT : register(b3)
 	row_major matrix	matReflect;
 };
 
+cbuffer TEXINFO : register(b4)
+{
+	float	fFrameTime;
+	float3	vScrollSpeed;
+	float3	vScale;
+	float	fPadding;
+}
+
+cbuffer DISTORTION : register(b5)
+{
+	float2		fDistortion1;
+	float2		fDistortion2;
+	float2		fDistortion3;
+	float		fDistortionScale;
+	float		fDistortionBias;
+}
+
 
 
 Texture2D	g_texture0		: register(t0);
@@ -67,6 +84,8 @@ TextureCube g_textureCube	: register(t7);
 
 SamplerState Sampler0		: register(s0);
 SamplerState Sampler1		: register(s1);
+SamplerState Sampler2		: register(s2);
+SamplerState Sampler3		: register(s3);
 
 int HasTex(in Texture2D _tex)
 {

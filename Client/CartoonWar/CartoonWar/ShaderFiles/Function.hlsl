@@ -26,7 +26,16 @@ LIGHT Calculate_Light(int _iLightIdx, float3 _vNormal, float4 _vWorldPos)
 	}
 	else if (tLight[_iLightIdx].iLightType == 1)
 	{
+		float4	vWorldLightPos = mul(tLight[_iLightIdx].vLightPos, matWorld);
 
+		vLightDir = normalize(_vWorldPos - vWorldLightPos);
+		fDiffusePower = saturate(dot(-vLightDir, _vNormal));
+
+		float fDistance = distance(_vWorldPos, vWorldLightPos);
+		if (0.f == tLight[_iLightIdx].fRange)
+			fRatio = 0.f;
+		else
+			fRatio = saturate(1.f - fDistance / tLight[_iLightIdx].fRange);
 
 	}
 	else
@@ -56,8 +65,8 @@ float4 Calculate_Shade(float4 vNormal)
 	//for (int i = 0; i < iNumLight; ++i)
 	//{
 	//	float4	vLightDir = normalize(tLight[i].vLightDir);
-	//	vTotalShade += saturate(dot(-vLightDir, normalize(vNormal)));
-	//	
+	//	//vTotalShade += saturate(dot(-vLightDir, normalize(vNormal)));
+	//	vTotalShade += max(dot(-vLightDir, normalize(vNormal)), 0.f);
 	//}
 	float4	vLightDir = normalize(tLight[0].vLightDir);
 	vTotalShade = max(dot(-vLightDir, normalize(vNormal)),0.f);

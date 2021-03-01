@@ -51,13 +51,13 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	return S_OK;
 }
 
-HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, DEPTH_STENCIL_TYPE eDepthType, SHADER_TYPE eShaderType)
+HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, DEPTH_STENCIL_TYPE eDepthType, SHADER_TYPE eShaderType, BLEND_TYPE eBlendType)
 {
 	m_tPipeline.InputLayout = { vecDesc.data(), (_uint)vecDesc.size() };
 	m_tPipeline.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get();
 
 	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)eType];
-	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)BLEND_TYPE::DEFAULT];
+	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)eBlendType];
 
 	m_tPipeline.DepthStencilState = g_arrDepthStencilDesc[(UINT)eDepthType];
 
@@ -76,6 +76,8 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	m_tPipeline.DepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
 
 
+
+
 	m_tPipeline.SampleMask = UINT_MAX;
 	m_tPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	m_tPipeline.SampleDesc.Count = 1;
@@ -87,13 +89,14 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
 		break;
 	case SHADER_TYPE::SHADER_DEFFERED:
-		m_tPipeline.NumRenderTargets = 6;
+		m_tPipeline.NumRenderTargets = 7;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[5] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[6] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		//m_tPipeline.NumRenderTargets = 1;
 		//m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
