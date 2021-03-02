@@ -236,8 +236,8 @@
     <ClInclude Include="..\Headers\UI_Normal.h" />
     <ClInclude Include="..\Headers\UI_Reflect.h" />
     <ClInclude Include="..\Headers\UI_Specular.h" />
-    <ClInclude Include="..\Headers\UI_Test.h" />
-    <ClInclude Include="..\Headers\UI_UI.h" />
+    <ClInclude Include="..\Headers\UI_Depth.h" />
+    <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
@@ -322,8 +322,8 @@
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
     <ClCompile Include="..\Codes\UI_Reflect.cpp" />
     <ClCompile Include="..\Codes\UI_Specular.cpp" />
-    <ClCompile Include="..\Codes\UI_Test.cpp" />
-    <ClCompile Include="..\Codes\UI_UI.cpp" />
+    <ClCompile Include="..\Codes\UI_Depth.cpp" />
+    <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>

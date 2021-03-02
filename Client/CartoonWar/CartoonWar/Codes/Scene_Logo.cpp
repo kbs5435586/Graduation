@@ -10,8 +10,8 @@
 #include "UI_Shade.h"
 #include "UI_Specular.h"
 #include "UI_Reflect.h"
-#include "UI_UI.h"
-#include "UI_Test.h"
+#include "UI_PointLight.h"
+#include "UI_Depth.h"
 // New Scene
 #include "Scene_Stage.h"
 
@@ -125,9 +125,9 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Reflect", CUI_Reflect::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnUI", CUI_UI::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_PointLight", CUI_PointLight::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Test", CUI_Test::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Depth", CUI_Depth::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -362,6 +362,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Fire",
 		CShader::Create(L"../ShaderFiles/Shader_Fire.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Light",
+		CShader::Create(L"../ShaderFiles/Shader_UI_Light.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	return S_OK;
 }

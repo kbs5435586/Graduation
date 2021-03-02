@@ -8,6 +8,14 @@ struct LIGHT
 	float4				vSpecular;
 	float4				vAmbient;
 };
+struct AD_Light
+{
+	float4				vDiffuse;
+	float4				vSpecular;
+	float4				vAmbient;
+	float4				vShade;
+};
+
 
 struct LIGHTINFO
 {
@@ -29,7 +37,8 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 
 	row_major matrix	matWV;
 	row_major matrix	matWVP;
-
+	row_major matrix	matProjInv;
+	row_major matrix	matViewInv;
 
 	float4				vCamPos;
 };
@@ -42,7 +51,7 @@ cbuffer MATERIAL : register (b1)
 	float4				vMaterial_Emissive;
 };
 
-cbuffer LIGHT :register(b2)
+cbuffer LIGHT_ :register(b2)
 {
 	LIGHTINFO			tLight[100];
 	int					iNumLight;

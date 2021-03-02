@@ -289,9 +289,6 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\04. UI_Reflect">
       <UniqueIdentifier>{262ab305-0494-4602-9919-a43527480650}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\05. UI_OnUI">
-      <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. ShaderFiles\03. Tool">
       <UniqueIdentifier>{4fca9aa0-5ffb-4dae-84c1-16b0595edf82}</UniqueIdentifier>
     </Filter>
@@ -352,7 +349,10 @@
     <Filter Include="02. GameObject\99. BaseShape\99. TestCube">
       <UniqueIdentifier>{55a038b2-c642-4bf1-a715-87909179b3f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Test">
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\05. UI_PointLight">
+      <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth">
       <UniqueIdentifier>{732327b6-bbd6-4861-a668-db50590ba3ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -600,9 +600,6 @@
     <ClInclude Include="..\Headers\UI_HP.h">
       <Filter>02. GameObject\97. UI\01. UI_HP</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_UI.h">
-      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_OnUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\UI_Reflect.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Reflect</Filter>
     </ClInclude>
@@ -636,8 +633,11 @@
     <ClInclude Include="..\Headers\TestCube.h">
       <Filter>02. GameObject\99. BaseShape\99. TestCube</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Test.h">
-      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Test</Filter>
+    <ClInclude Include="..\Headers\UI_PointLight.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_PointLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Depth.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -858,9 +858,6 @@
     <ClCompile Include="..\Codes\UI_HP.cpp">
       <Filter>02. GameObject\97. UI\01. UI_HP</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_UI.cpp">
-      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_OnUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\UI_Reflect.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Reflect</Filter>
     </ClCompile>
@@ -894,8 +891,11 @@
     <ClCompile Include="..\Codes\TestCube.cpp">
       <Filter>02. GameObject\99. BaseShape\99. TestCube</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_Test.cpp">
-      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Test</Filter>
+    <ClCompile Include="..\Codes\UI_PointLight.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_PointLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Depth.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

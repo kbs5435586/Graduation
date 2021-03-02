@@ -49,7 +49,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	vOut.vDiffuseTex = float4(0.f,0.f,0.f,1.f);
 	vOut.vNormalTex  = vNormal;
-	vOut.vShadeTex	 = Calculate_Shade(vNormal);
+	vOut.vShadeTex = Calculate_Shade(vNormal, vIn.vWorldPos);
 
 	return vOut;
 }

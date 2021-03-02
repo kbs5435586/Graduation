@@ -26,6 +26,7 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	_vec3 vPos = { 15.f, 5.5f, 15.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->Scaling(2.f, 2.f, 2.f);
 	return S_OK;
 }
 

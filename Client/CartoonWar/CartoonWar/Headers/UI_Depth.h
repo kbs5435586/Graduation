@@ -6,13 +6,13 @@ class CBuffer_RectTex;
 class CShader;
 class CTexture;
 
-class CUI_UI :
-    public CUI
+class CUI_Depth :
+	public CUI
 {
 private:
-    CUI_UI();
-    CUI_UI(const CUI_UI& rhs);
-    virtual ~CUI_UI() = default;
+	CUI_Depth();
+	CUI_Depth(const CUI_Depth& rhs);
+	virtual ~CUI_Depth() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,16 +22,16 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_UI*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	static CUI_Depth* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
-	CTransform*								m_pTransformCom = nullptr;
-	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
-	CShader*								m_pShaderCom = nullptr;
+	CTransform* m_pTransformCom = nullptr;
+	CRenderer* m_pRendererCom = nullptr;
+	CBuffer_RectTex* m_pBufferCom = nullptr;
+	CShader* m_pShaderCom = nullptr;
 
 };
 

@@ -1,41 +1,41 @@
 #include "framework.h"
-#include "UI_Test.h"
+#include "UI_PointLight.h"
 #include "Management.h"
 
-CUI_Test::CUI_Test()
+CUI_PointLight::CUI_PointLight()
 {
 }
 
-CUI_Test::CUI_Test(const CUI_Test& rhs)
+CUI_PointLight::CUI_PointLight(const CUI_PointLight& rhs)
 {
 }
 
-HRESULT CUI_Test::Ready_Prototype()
+HRESULT CUI_PointLight::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Test::Ready_GameObject(void* pArg)
+HRESULT CUI_PointLight::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 75.f;
-	m_fY = 525.f;
+	m_fX = 225.f;
+	m_fY = 375.f;
 
 	m_fSizeX = 150.f;
 	m_fSizeY = 150.f;
 	return S_OK;
 }
 
-_int CUI_Test::Update_GameObject(const _float& fTimeDelta)
+_int CUI_PointLight::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Test::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_PointLight::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -45,7 +45,7 @@ _int CUI_Test::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Test::Render_GameObject()
+void CUI_PointLight::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -71,7 +71,7 @@ void CUI_Test::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(6)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
@@ -80,7 +80,7 @@ void CUI_Test::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Test::CreateInputLayout()
+HRESULT CUI_PointLight::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -92,9 +92,9 @@ HRESULT CUI_Test::CreateInputLayout()
 	return S_OK;
 }
 
-CUI_Test* CUI_Test::Create()
+CUI_PointLight* CUI_PointLight::Create()
 {
-	CUI_Test* pInstance = new CUI_Test();
+	CUI_PointLight* pInstance = new CUI_PointLight();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -102,9 +102,9 @@ CUI_Test* CUI_Test::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Test::Clone_GameObject(void* pArg)
+CGameObject* CUI_PointLight::Clone_GameObject(void* pArg)
 {
-	CUI_Test* pInstance = new CUI_Test();
+	CUI_PointLight* pInstance = new CUI_PointLight();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -112,7 +112,7 @@ CGameObject* CUI_Test::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CUI_Test::Free()
+void CUI_PointLight::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -121,7 +121,7 @@ void CUI_Test::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_Test::Ready_Component()
+HRESULT CUI_PointLight::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
