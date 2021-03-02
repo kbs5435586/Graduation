@@ -113,7 +113,7 @@ void CCamera::Invalidate_ViewProjMatrix()
 	CCamera_Manager::GetInstance()->SetMatView(m_matView);
 	CCamera_Manager::GetInstance()->SetMatProj(m_matProj);
 	CCamera_Manager::GetInstance()->SetMatOrtho(matOrtho);
-	
+	//
 } 
 
 HRESULT CCamera::SetUp_ViewProjMatrices()

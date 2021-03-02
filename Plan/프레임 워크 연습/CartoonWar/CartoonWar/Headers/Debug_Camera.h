@@ -24,7 +24,7 @@ protected:
 	virtual void				Free();
 private:
 	POINT					m_ptMouse;
-
+	//_vec3					m_vPos;
 	CObserver* m_pObserverCom = nullptr;
 };
 

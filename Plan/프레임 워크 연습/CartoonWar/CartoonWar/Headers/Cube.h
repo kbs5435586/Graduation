@@ -33,5 +33,7 @@ private:
 	CBuffer_CubeCol*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CCollider*								m_pColliderCom[3] = { nullptr };
+
+	_vec3 m;
 };
 

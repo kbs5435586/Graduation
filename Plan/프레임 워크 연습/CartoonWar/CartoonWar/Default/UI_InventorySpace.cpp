@@ -65,6 +65,8 @@ HRESULT CUI_InventorySpace::Ready_GameObject(void* pArg)
 
 	m_fSizeX = 50.0f;
 	m_fSizeY = 50.0f;
+	m_fISizeX = 30.0f;
+	m_fISizeY = 30.0f;
 
 	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
@@ -109,12 +111,18 @@ _int CUI_InventorySpace::Update_GameObject(const _float& fTimeDelta)
 				//{
 					m_fX = (_float)MousePos.x - 100;
 					m_fY = (_float)MousePos.y - 100;
-		
-					if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Item", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &vPos)))
-						return E_FAIL;
 					
-					CItem myitem;
-					cell.emplace_back(myitem);
+
+					m_pItemTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
+					NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+					if (FAILED(Add_Component(L"Com_Texture", m_pItemTextureCom)))
+						return E_FAIL;
+
+					//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Item", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &vPos)))
+					//	return E_FAIL;
+					
+					//CItem myitem;
+					//cell.emplace_back(myitem);
 				//}
 			}
 		}
@@ -161,7 +169,32 @@ void CUI_InventorySpace::Render_GameObject()
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	
+
+
+	if (m_pItemTextureCom != nullptr)
+	{
+	
+		matWorld._11 = m_fISizeX;
+		matWorld._22 = m_fISizeY;
+
+	
+
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+		//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(m_pItemTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	}
+
+
+
 	CDevice::GetInstance()->UpdateTable();
+
+
+
+
 
 
 	m_pBufferCom->Render_VIBuffer();
@@ -206,6 +239,7 @@ void CUI_InventorySpace::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pItemTextureCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pObserverCom);
 
@@ -243,6 +277,8 @@ HRESULT CUI_InventorySpace::Ready_Component()
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+
+	
 
 	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
 	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);

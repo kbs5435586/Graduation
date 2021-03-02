@@ -26,7 +26,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
-
+	
 	m_pTransform->SetUp_Speed(30.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
@@ -34,12 +34,25 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
 	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-
+	
 	return NOERROR;
 }
 
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
+	
+	//
+	
+	//
+	//_vec3		vUp;
+	//vUp = Vector3_::CrossProduct(vLook, vRight);
+	//vUp = Vector3_::Normalize(vUp);
+
+	//
+	//m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	
+
+	//m_pTransform->Set_Matrix(m_pObserverCom->GetMatInfo());
 	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
@@ -54,7 +67,8 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
 	{
-		m_pTransform->Go_Left(fTimeDelta);
+		//m_pTransform->Rotation_Y(fTimeDelta * 0.5f);
+		m_pTransform->Go_Left(5 * fTimeDelta);
 	}
 	if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
 	{
@@ -63,15 +77,42 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	_long	MouseMove = 0;
 	if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
 	{
+		//m_pTransform->Go_Left(fTimeDelta * 0.5f);
+		//m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+		if (MouseMove > 0)
+		{
+			m_pTransform->Go_Right(MouseMove * fTimeDelta * 0.5f);
+		}
+		else
+		{
+			m_pTransform->Go_Right(-MouseMove * fTimeDelta * 0.5f);
+		}
+		
 		m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
 	}
-
 	
 	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 	{
-		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		//m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 	}
 
+	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
+
+	_vec3		vLook;
+	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));
+	vLook = Vector3_::Normalize(vLook);
+	
+	_vec3		vRight;
+	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
+	vRight = Vector3_::Normalize(vRight);
+	
+	_vec3		vUp;
+	vUp = Vector3_::CrossProduct(vLook, vRight);
+	vUp = Vector3_::Normalize(vUp);
+
+	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
 	return _int();
 }

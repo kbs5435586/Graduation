@@ -78,7 +78,7 @@ void CTransform::Go_Left(const _float& fTimeDelta)
 
 	vRight = *Get_StateInfo(STATE_RIGHT);
 	vPosition = *Get_StateInfo(STATE_POSITION);
-
+	
 	vRight = Vector3_::Normalize(vRight);
 	vRight = Vector3_::ScalarProduct(vRight, m_fSpeed_Move * -fTimeDelta, false);
 	vPosition = Vector3_::Add(vPosition, vRight);

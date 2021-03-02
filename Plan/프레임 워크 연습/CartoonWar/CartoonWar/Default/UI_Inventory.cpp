@@ -87,11 +87,11 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 				m_fX = (_float)MousePos.x;
 				m_fY = (_float)MousePos.y;
 				Pos = { (LONG)m_fX ,(LONG)m_fY };
-				
+				pManagement->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
 			}
 		}
 	}
-	pManagement->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
+	
 
 	Safe_Release(pManagement);
 	return _int();

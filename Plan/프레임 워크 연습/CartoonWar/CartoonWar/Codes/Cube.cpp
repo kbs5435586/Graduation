@@ -41,8 +41,10 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 
 
 	m_tInfo = {10.f,10.f,10.f,10.f};
-
+	
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
 	return S_OK;
 }
 
@@ -83,7 +85,9 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[2]->Update_Collider(m_pTransformCom);
 
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	pManagement->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+	pManagement->Notify(DATA_TYPE::DATA_VECTOR, &m);
 
 	Safe_Release(pManagement);
 
@@ -98,8 +102,9 @@ _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
-
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 	
 	return _int();
 }

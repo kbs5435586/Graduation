@@ -39,10 +39,19 @@ private:
 	CTexture* m_pTextureCom = nullptr;
 	CObserver* m_pObserverCom = nullptr;
 
+	//
+	CTexture* m_pItemTextureCom = nullptr;
+
 private:
 	POINT MousePos;
 	POINT Pos;
 	POINT m_Point;
-	vector<CItem> cell;
+
+	_float m_fISizeX, m_fISizeY;
+
+	//획득한 아이템
+	CItem* cell;
+	//아이템 개수
+	//아이템의 이미지
 };
 
