@@ -368,7 +368,7 @@ HRESULT CDevice::Create_RootSignature()
 	D3D12_DESCRIPTOR_RANGE range = {};
 
 	range.BaseShaderRegister = 0;
-	range.NumDescriptors =6;	  
+	range.NumDescriptors =11;	  
 	range.OffsetInDescriptorsFromTableStart = -1;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -377,7 +377,7 @@ HRESULT CDevice::Create_RootSignature()
 	range = {};
 	range.BaseShaderRegister = 0;  // t0 에서
 	range.NumDescriptors = 13;	   // t12 까지 13 개 텍스쳐 레지스터 사용여부 
-	range.OffsetInDescriptorsFromTableStart = 6;
+	range.OffsetInDescriptorsFromTableStart = 11;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	vecRange.push_back(range);

@@ -66,10 +66,17 @@ void CTerrain_Height::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
+	FOG tFog = {0.f, 5.f};
+
 
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b6)->SetData((void*)&tFog);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b6)->GetCBV().Get(), iOffeset, CONST_REGISTER::b6);
+
+
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 

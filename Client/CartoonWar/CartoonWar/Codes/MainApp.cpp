@@ -42,6 +42,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(DISTORTION), 512, CONST_REGISTER::b5)))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(FOG), 512, CONST_REGISTER::b6)))
+		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_RTT_Manager()))
 		return E_FAIL;
 

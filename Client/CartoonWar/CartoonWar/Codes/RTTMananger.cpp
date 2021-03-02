@@ -79,7 +79,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[4].pRtt == nullptr)
 			return E_FAIL;
 
-		arrRT[5].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[5].vClear_Color = { 0.5f,0.5f,0.5f,1.f };
 		arrRT[5].pRtt = CRTT::Create(L"ReflectTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[5].vClear_Color);

@@ -38,6 +38,18 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 
 	pManagement->AddRef();
 
+	_matrix		matView = CCamera_Manager::GetInstance()->GetMatView();
+
+	matView = Matrix_::Inverse(matView);
+	_vec3		vRight, vUp, vLook;
+
+	vRight = *(_vec3*)&matView.m[0][0] * m_pTransformCom->Get_Scale().x;
+	vUp = *(_vec3*)&matView.m[1][0] * m_pTransformCom->Get_Scale().y;
+	vLook = *(_vec3*)&matView.m[2][0] * m_pTransformCom->Get_Scale().z;
+
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;

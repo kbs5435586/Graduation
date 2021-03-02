@@ -35,6 +35,8 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 
 _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 {
+
+
 	return _int();
 }
 

@@ -80,6 +80,11 @@ cbuffer DISTORTION : register(b5)
 	float		fDistortionBias;
 }
 
+cbuffer FOG : register(b6)
+{
+	float		fFogStart;
+	float		fFogEnd;
+}
 
 
 Texture2D	g_texture0		: register(t0);

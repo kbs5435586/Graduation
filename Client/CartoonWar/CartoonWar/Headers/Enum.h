@@ -77,6 +77,11 @@ enum class CONST_REGISTER
 	b3 = 3,
 	b4 = 4,
 	b5 = 5,
+	b6 = 6,
+	b7 = 7,
+	b8 = 8,
+	b9 = 9,
+	b10 = 10,
 
 	END,
 };

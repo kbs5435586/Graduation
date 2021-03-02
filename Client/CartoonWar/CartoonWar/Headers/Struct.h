@@ -239,3 +239,10 @@ typedef struct tagDistortion
 	float		fDistortionBias;
 }DISTORTION;
 
+
+
+typedef struct tagFog
+{
+	float	fFogStart;
+	float	fFogEnd;
+}FOG;
