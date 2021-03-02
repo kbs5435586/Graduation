@@ -121,10 +121,10 @@ struct cs_packet_npc_act
 	char	act;
 };
 
-constexpr unsigned char DO_ATTACK = 0;
-constexpr unsigned char DO_DEFENCE = 1;
-constexpr unsigned char DO_HOLD = 2;
-constexpr unsigned char DO_FOLLOW = 3;
-constexpr unsigned char DO_RANDMOVE = 4;
+constexpr unsigned char DO_ATTACK = 1;
+constexpr unsigned char DO_DEFENCE = 2;
+constexpr unsigned char DO_HOLD = 3;
+constexpr unsigned char DO_FOLLOW = 4;
+constexpr unsigned char DO_RANDMOVE = 5;
 
 #pragma pack (pop)

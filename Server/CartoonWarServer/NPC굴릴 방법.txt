@@ -1,3 +1,53 @@
 클라에서 1,2,3,4,5 키 입력을 받으면 그걸
-cs_packet_npc_act 안의 act에 저장, 본인의 my_id와 함께 전송
+cs_packet_npc_act 안의 act에 저장, 본인의 my_id를 id에 저장해 함께 전송
 
+서버에서 그걸 받음, process_packet 통해서 CS_PACKET_NPC_ACT인걸
+읽고 finite_state_machine에 패킷 안의 id(플레이어 아이디)와 act를 넘겨줌
+
+finite_state_machine에서 act에 따라 DO_0000 시리즈로 나뉘어짐
+
+따라가기:
+https://stackoverflow.com/questions/2625021/game-enemy-move-towards-player
+
+--------------------
+
+do_timer함수 : 어떤 npc 행동을 할지 func를 worker_thread에 넘겨줌
+
+add_timer 함수에 돌려줄 객체 번호랑 FUNC 넘버랑 시간(밀리세컨드)
+넣어주면 그 밀리세컨드마다 반복해서 돌아감
+
+activate_npc 함수는 sleep 상태는 npc를 깨워줌, 매개 변수로 객체 번호랑
+이벤트 번호 넣어주면 된다
+
+worker_thread에서 모든 func 처리하게 -> worker_thread에 FSM을 조져야하나?
+
+--------------------
+
+<서버 수신 순서>
+
+1. Worker_thread에서 GetQueuedCompletionStatus를 통해 FUNC_RECV 신호를 읽고 내부에서 
+recv_packet_construct 함수를 탐
+
+2. recv_packet_construct 함수 내부에서 process_packet을 통해 패킷 첫번째에 저장되어있는
+buf[1]를 통해 CS_PACKET_0000 신호를 읽음
+
+3. 해당 기능에 따라 그 기능을 하는 함수를 탐, CS_PACKET_MOVE 신호를 읽으면 do_move,
+CS_PACKET_LOGIN 신호를 읽으면 enter_game을 탐
+
+4. 해당 함수 안에서 기능처리를 해준 결과를 그 결과전송패킷으로 만들어 그 함수 내부에서
+send_packet 함수 호출, send_packet 함수 내부에서 send를 통해 최종적으로 보냄
+
+----------------------
+
+<전체적인 서버 구성>
+
+main에서 모든 최초 npc, 윈속, IOCP객체 초기화 -> 첫 비동기 accept 호출 -> Worker_Thread 코어
+수만큼 생성 및 타이머 쓰레드 1개 생성
+
+Worker_Thread -> 사실상 모든 서버의 실행 기능 담당, accept ,recv-send 처리 및 타이머 이벤트 처리
+
+Timer Thread -> do_timer라는 함수를 계속 돌리는 스레드 -> do_timer 함수는 timer_queue에 들어있는 이벤트들을
+하나씩 pop 해서 어떤 이벤트인지 PostQueuedCompletionStatus 이용해 worker_thread에 이벤트타입을 넘겨주는 역할
+
+activate_npc(객체 번호, 이벤트타입)를 해주면 그 객체가 만약 sleep 상태이면 해당 이벤트 타입으로 activate 상태로 바꿔주고
+add_timer 함수를 통해 해당 이벤트 타입으로 타이머에 등록시켜줌

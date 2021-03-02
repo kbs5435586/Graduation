@@ -91,8 +91,47 @@ void Server::process_packet(int user_id, char* buf)
     break;
     case CS_PACKET_NPC_ACT:
     {
+        cout << "recived CS_PACKET_NPC_ACT\n";
         cs_packet_npc_act* packet = reinterpret_cast<cs_packet_npc_act*>(buf);
-        finite_state_machine(packet->id, packet->act);
+        int p_id = packet->id;
+        switch (packet->act)
+        {
+        case DO_ATTACK:
+            break;
+        case DO_DEFENCE:
+            break;
+        case DO_HOLD:
+            break;
+        case DO_FOLLOW:
+            for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
+            {
+                if (ST_SLEEP == g_clients[i].m_status)
+                {
+                    continue;
+                }
+                else
+                {
+                    activate_npc(i, FUNC_NPC_FOLLOW);
+                }
+            }
+            break;
+        case DO_RANDMOVE:
+            cout << "recv DO_RANDMOVE\n";
+            for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
+            {
+                if (ST_SLEEP == g_clients[i].m_status)
+                {
+                    cout << i << " is continue\n";
+                    continue;
+                }
+                else
+                {
+                    cout << i << " is activate\n";
+                    activate_npc(i, FUNC_NPC_RANDMOVE);
+                }
+            }
+            break;
+        }
     }
     break;
 	default:
@@ -370,40 +409,67 @@ void Server::event_player_move(int player_id, int npc_id)
     }
 }
 
-void Server::finite_state_machine(int player_id, int event_id)
+void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id, OverEx* over_ex)
 {
     //OverEx* overEx = new OverEx;
     //overEx->function = FUNC_PLAYER_MOVE_FOR_NPC; // NPC에게 주변 플레이어가 움직였다는걸 알림
     //overEx->player_id = user_id;
     //PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
-    switch (event_id) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
+
+    // 하나의 NPC의 행동 관련된 것들을 작성할 것
+
+    // 현재 상태 과거 상태 2개의 변수 비교해서 비교가 일어났을때만 상태머신 타게 구현
+    // 커다란 과거 현재 비교하는 if문 내부터 switch 상태머신 돌리고 switch 끝나면
+    // 과거는 = 현재 해주고 과거 현재 비교하는 if문 닫기
+
+    // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교
+
+    switch (func_id) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
     {
-    case DO_ATTACK:
+    case FUNC_NPC_ATTACK:
     {
 
     }
     break;
-    case DO_DEFENCE:
+    case FUNC_NPC_DEFENCE:
     {
 
     }
     break;
-    case DO_HOLD:
+    case FUNC_NPC_HOLD:
     {
 
     }
     break;
-    case DO_FOLLOW:
+    case FUNC_NPC_FOLLOW:
     {
 
     }
     break;
-    case DO_RANDMOVE:
+    case FUNC_NPC_RANDMOVE:
     {
+        random_move_npc(npc_id);
+        bool keep_alive = false;
+        for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+        {
+            if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
+            {
+                if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+                {
+                    keep_alive = true; // npc가 활성화 되어있다
+                    break;
+                }
+            }
+        }
 
+        if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
+            add_timer(npc_id, FUNC_NPC_RANDMOVE, 250); // 생성 이후 반복 간격
+        else
+            g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+
+        delete over_ex;
     }
     break;
-    default:
     }
 }
 
@@ -422,7 +488,7 @@ void Server::do_timer()
     while (true)
     {
         //Sleep(1); // 윈도우에서만 가능함
-        this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1초마다 검사해라, 계속 하고있지 말고
+        this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1밀리초마다 검사해라, 계속 하고있지 말고
         while (true) // 실행 시간이 된게 있으면 계속 실행해주는 용
         {
             timer_lock.lock();
@@ -431,13 +497,13 @@ void Server::do_timer()
                 timer_lock.unlock();
                 break; // 실행 시간이 안됐으면 루프 나가서 1초 쉬고옴
             }
-            if (timer_queue.top().wakeup_time > high_resolution_clock::now()) // wakeup_time이 지금보다 크면 아직 큐에서 꺼낼때가 아니다
+            if (timer_queue.top().wakeup_time > high_resolution_clock::now()) // 현재 시간이 일어날시간보다 적으면 아직 일어날때가 아니다
+                // 아직 큐에서 꺼낼때가 아니다           
             {
-                // 근데 이렇게 돌려버리면 <busy waiting : 조건이 성립할 때까지 반복문을 실행하며 기다리는 방법> 발생함
+                // 근데 [ < busy waiting ]이렇게 돌려버리면 : 조건이 성립할 때까지 반복문을 실행하며 기다리는 방법> 발생함
                 timer_lock.unlock();
                 break; // 실행 시간이 안됐으면 루프 나가서 1초 쉬고옴
             }
-
             event_type event = timer_queue.top(); // 이렇게 하면 메모리 복사 일어남, 오버헤드 커짐, 그래서 큐의 자료형을 포인터로 받을것
             // 그렇게 해서 발생하는 new 자체가 오버헤드 아니냐, 맞음, 그래서 free list 써서 재사용 해줘야함 -> 알아서 할것
             timer_queue.pop();
@@ -446,6 +512,7 @@ void Server::do_timer()
             switch (event.event_id)
             {
             case FUNC_NPC_RANDMOVE:
+            {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
                 PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
@@ -455,11 +522,35 @@ void Server::do_timer()
                 // PostQueuedCompletionStatus 이걸로 worket thread에 작업 넘겨주고 여기선 어떤 이벤트인지만 알려줌
                 // 오버랩 구조체 따로 초기화 안해줘도 되는게 PostQueuedCompletionStatus 자체가 진짜 넣어주는값 그대로 GetQueued에 넘겨줘서 괜찮음
                 break;
-            case FUNC_NPC_FOLLOW:
+            }
+            case FUNC_NPC_ATTACK:
+            {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
                 PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
                 break;
+            }
+            case FUNC_NPC_DEFENCE:
+            {
+                OverEx* over = new OverEx;
+                over->function = (ENUM_FUNCTION)event.event_id;
+                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
+                break;
+            }
+            case FUNC_NPC_HOLD:
+            {
+                OverEx* over = new OverEx;
+                over->function = (ENUM_FUNCTION)event.event_id;
+                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
+                break;
+            }
+            case FUNC_NPC_FOLLOW:
+            {
+                OverEx* over = new OverEx;
+                over->function = (ENUM_FUNCTION)event.event_id;
+                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
+                break;
+            }
             }
         }
     }
@@ -500,7 +591,7 @@ void Server::enter_game(int user_id, char name[])
             //g_clients[i].m_cLock.lock();
             if (ST_SLEEP == g_clients[i].m_status)
             {
-                activate_npc(i);
+                activate_npc(i, FUNC_NPC_HOLD);
             }
             if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
@@ -714,28 +805,7 @@ void Server::worker_thread()
         }
         break;
         case FUNC_NPC_RANDMOVE:
-        {
-            random_move_npc(id);
-            bool keep_alive = false;
-            for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
-            {
-                if (true == is_near(id, i)) // 플레이어 시야범위 안에 있고
-                {
-                    if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
-                    {
-                        keep_alive = true; // npc가 활성화 되어있다
-                        break;
-                    }
-                }
-            }
-
-            if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
-                add_timer(id, FUNC_NPC_RANDMOVE, 250); // 생성 이후 타이머 간격
-            else
-                g_clients[id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
-
-            delete overEx;
-        }
+            finite_state_machine(id, FUNC_NPC_RANDMOVE, overEx);
             break;
         case FUNC_PLAYER_MOVE_FOR_NPC: // API_Send_message 호출용
         {

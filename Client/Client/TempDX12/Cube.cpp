@@ -44,6 +44,36 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	if (nullptr == pServer)
 		return E_FAIL;
 
+	if (GetAsyncKeyState('1') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_npc_act_packet(DO_ATTACK);
+		Safe_Release(pServer);
+	}
+	if (GetAsyncKeyState('2') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_npc_act_packet(DO_DEFENCE);
+		Safe_Release(pServer);
+	}
+	if (GetAsyncKeyState('3') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_npc_act_packet(DO_HOLD);
+		Safe_Release(pServer);
+	}
+	if (GetAsyncKeyState('4') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_npc_act_packet(DO_FOLLOW);
+		Safe_Release(pServer);
+	}
+	if (GetAsyncKeyState('5') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_npc_act_packet(DO_RANDMOVE);
+		Safe_Release(pServer);
+	}
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		pServer->AddRef();

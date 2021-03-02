@@ -349,6 +349,19 @@ void CServer_Manager::send_add_npc_packet()
 	}
 }
 
+void CServer_Manager::send_npc_act_packet(unsigned char act)
+{
+	if (m_myid < NPC_ID_START)
+	{
+		cs_packet_npc_act l_packet;
+		l_packet.size = sizeof(l_packet);
+		l_packet.type = CS_PACKET_NPC_ACT;
+		l_packet.id = m_myid;
+		l_packet.act = act;
+		send_packet(&l_packet);
+	}
+}
+
 void CServer_Manager::disconnect()
 {
 	if (m_cSocket)

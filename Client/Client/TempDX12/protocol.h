@@ -24,6 +24,7 @@ constexpr int SERVER_PORT = 9000;
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
 constexpr char CS_PACKET_ADD_NPC = 3;
+constexpr char CS_PACKET_NPC_ACT = 4;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -112,9 +113,18 @@ struct cs_packet_add_npc
 	int		id;
 };
 
-constexpr unsigned char DO_ATTACK = 0;
-constexpr unsigned char DO_DEFENCE = 1;
-constexpr unsigned char DO_HOLD = 2;
-constexpr unsigned char DO_FOLLOW = 3;
+struct cs_packet_npc_act
+{
+	char	size;
+	char	type;
+	int		id;
+	char	act;
+};
+
+constexpr unsigned char DO_ATTACK = 1;
+constexpr unsigned char DO_DEFENCE = 2;
+constexpr unsigned char DO_HOLD = 3;
+constexpr unsigned char DO_FOLLOW = 4;
+constexpr unsigned char DO_RANDMOVE = 5;
 
 #pragma pack (pop)
