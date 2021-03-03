@@ -11,6 +11,7 @@ private:
 	map <int, ClientInfo> g_clients;
 	priority_queue<event_type> timer_queue;
 	mutex timer_lock;
+	ENUM_FUNCTION old_machine;
 
 	SOCKET listenSocket;
 	HANDLE g_iocp;
@@ -39,7 +40,8 @@ public:
 	void disconnect(int user_id);
 
 	void initalize_NPC(int player_id);
-	void random_move_npc(int npc_id);
+	void do_random_move(int npc_id);
+	void do_follow(int npc_id);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id, OverEx* over_ex);

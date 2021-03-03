@@ -91,7 +91,6 @@ void Server::process_packet(int user_id, char* buf)
     break;
     case CS_PACKET_NPC_ACT:
     {
-        cout << "recived CS_PACKET_NPC_ACT\n";
         cs_packet_npc_act* packet = reinterpret_cast<cs_packet_npc_act*>(buf);
         int p_id = packet->id;
         switch (packet->act)
@@ -105,29 +104,30 @@ void Server::process_packet(int user_id, char* buf)
         case DO_FOLLOW:
             for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
             {
-                if (ST_SLEEP == g_clients[i].m_status)
-                {
-                    continue;
-                }
-                else
-                {
-                    activate_npc(i, FUNC_NPC_FOLLOW);
-                }
-            }
-            break;
-        case DO_RANDMOVE:
-            cout << "recv DO_RANDMOVE\n";
-            for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
-            {
-                if (ST_SLEEP == g_clients[i].m_status)
+                if (ST_SLEEP == g_clients[i].m_status || ST_FREE == g_clients[i].m_status)
                 {
                     cout << i << " is continue\n";
                     continue;
                 }
                 else
                 {
-                    cout << i << " is activate\n";
-                    activate_npc(i, FUNC_NPC_RANDMOVE);
+                    cout << i << " is DO_FOLLOW\n";
+                    add_timer(i, FUNC_NPC_FOLLOW, REPEAT_TIME);
+                }
+            }
+            break;
+        case DO_RANDMOVE:
+            for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
+            {
+                if (ST_SLEEP == g_clients[i].m_status || ST_FREE == g_clients[i].m_status)
+                {
+                    cout << i << " is continue\n";
+                    continue;
+                }
+                else
+                {
+                    cout << i << " is DO_RANDMOVE\n";
+                    add_timer(i, FUNC_NPC_RANDMOVE, REPEAT_TIME);
                 }
             }
             break;
@@ -314,7 +314,7 @@ void Server::do_move(int user_id, char direction)
     }
 }
 
-void Server::random_move_npc(int npc_id)
+void Server::do_random_move(int npc_id)
 {
     int x = g_clients[npc_id].m_x;
     int y = g_clients[npc_id].m_y;
@@ -386,12 +386,66 @@ void Server::random_move_npc(int npc_id)
     // 근데 이제 플레이어가 문제임, 플레이어 뷰 리스트 관리할때 npc까지 고려해서 뷰 리스트 관리해줘야 되므로 처음부터 끝까지 뷰리스트 다 살펴봐야함
 }
 
+void Server::do_follow(int npc_id)
+{
+    float dirX = 0, dirY = 0, dirZ = 0;
+    int player_id = g_clients[npc_id].m_owner_id;
+
+    dirX = g_clients[player_id].m_x - g_clients[npc_id].m_x;
+    dirY = g_clients[player_id].m_y - g_clients[npc_id].m_y;
+    dirZ = g_clients[player_id].m_z - g_clients[npc_id].m_z;
+
+    float hyp = sqrtf(dirX * dirX + dirY * dirY + dirZ * dirZ);
+
+    dirX /= hyp;
+    dirY /= hyp;
+    dirZ /= hyp;
+
+    g_clients[npc_id].m_x += dirX * NPC_SPEED;
+    g_clients[npc_id].m_y += dirY * NPC_SPEED;
+    g_clients[npc_id].m_z += dirZ * NPC_SPEED;
+
+    cout << npc_id << "의 위치 : " << g_clients[npc_id].m_x << " , " << g_clients[npc_id].m_y << endl;
+
+    for (int i = 0; i < NPC_ID_START; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+
+        if (true == is_near(i, npc_id))
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock();
+                send_move_packet(i, npc_id);
+            }
+            else
+            {
+                g_clients[i].m_cLock.unlock();
+                send_enter_packet(i, npc_id);
+            }
+        }
+        else
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                send_leave_packet(i, npc_id);
+            }
+            else
+                g_clients[i].m_cLock.unlock();
+        }
+    }
+}
+
 void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
 {
     ENUM_STATUS old_status = ST_SLEEP;
     if (true == atomic_compare_exchange_strong(&g_clients[npc_id].m_status, &old_status, ST_ACTIVE)) // m_status가 슬립에서 엑티브로 바뀐 경우에만
         // 동시에 두 클라가 접근하면 ACTIVE 로 2번 바뀌고 타이머가 2번 발동하는걸 방지하기 위한 용도
-        add_timer(npc_id, op_type, 1000);
+        add_timer(npc_id, op_type, REPEAT_TIME);
 }
 
 void Server::event_player_move(int player_id, int npc_id)
@@ -423,54 +477,80 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id, OverEx* ove
     // 과거는 = 현재 해주고 과거 현재 비교하는 if문 닫기
 
     // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교
+    ENUM_FUNCTION new_machine = func_id;
 
-    switch (func_id) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
-    {
-    case FUNC_NPC_ATTACK:
-    {
-
-    }
-    break;
-    case FUNC_NPC_DEFENCE:
-    {
-
-    }
-    break;
-    case FUNC_NPC_HOLD:
-    {
-
-    }
-    break;
-    case FUNC_NPC_FOLLOW:
-    {
-
-    }
-    break;
-    case FUNC_NPC_RANDMOVE:
-    {
-        random_move_npc(npc_id);
-        bool keep_alive = false;
-        for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+    //if (old_machine != new_machine)
+    //{
+        switch (new_machine) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
         {
-            if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
+        case FUNC_NPC_ATTACK:
+        {
+
+        }
+        break;
+        case FUNC_NPC_DEFENCE:
+        {
+
+        }
+        break;
+        case FUNC_NPC_HOLD:
+        {
+
+        }
+        break;
+        case FUNC_NPC_FOLLOW:
+        {
+            do_follow(npc_id);
+            bool keep_alive = false;
+            for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
             {
-                if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+                if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
                 {
-                    keep_alive = true; // npc가 활성화 되어있다
-                    break;
+                    if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+                    {
+                        keep_alive = true; // npc가 활성화 되어있다
+                        break;
+                    }
                 }
             }
+
+            if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
+                add_timer(npc_id, FUNC_NPC_FOLLOW, REPEAT_TIME); // 생성 이후 반복 간격
+            else
+                g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+
+            delete over_ex;
+        }
+        break;
+        case FUNC_NPC_RANDMOVE:
+        {
+            do_random_move(npc_id);
+            bool keep_alive = false;
+            for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+            {
+                if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
+                {
+                    if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+                    {
+                        keep_alive = true; // npc가 활성화 되어있다
+                        break;
+                    }
+                }
+            }
+
+            if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
+                add_timer(npc_id, FUNC_NPC_RANDMOVE, REPEAT_TIME); // 생성 이후 반복 간격
+            else
+                g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+
+            delete over_ex;
         }
 
-        if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
-            add_timer(npc_id, FUNC_NPC_RANDMOVE, 250); // 생성 이후 반복 간격
-        else
-            g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+        break;
+        }
 
-        delete over_ex;
-    }
-    break;
-    }
+        old_machine = new_machine;
+    //}
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
@@ -609,6 +689,7 @@ void Server::initalize_clients()
     for (int i = 0; i < MAX_USER; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
+        g_clients[i].m_owner_id = i; // 유저 등록
         g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
     }
 }
@@ -621,13 +702,14 @@ void Server::initalize_NPC(int player_id)
         {
             g_clients[i].m_socket = 0;
             g_clients[i].m_id = i;
+            g_clients[i].m_owner_id = player_id;
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
             g_clients[i].m_x = g_clients[player_id].m_x;
             g_clients[i].m_y = g_clients[player_id].m_y;
             g_clients[i].m_z = g_clients[player_id].m_z;
-
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
+            activate_npc(i, FUNC_NPC_HOLD);
             break;
         }
         else
@@ -706,9 +788,10 @@ void Server::disconnect(int user_id)
 
 bool Server::is_near(int a, int b)
 {
-    if (sqrt((g_clients[a].m_x - g_clients[b].m_x) ^ 2+
-        (g_clients[a].m_y - g_clients[b].m_y) ^ 2+
-        (g_clients[a].m_z - g_clients[b].m_z) ^ 2) > VIEW_RADIUS) // abs = 절대값
+    if (sqrt((g_clients[a].m_x - g_clients[b].m_x) * (g_clients[a].m_x - g_clients[b].m_x) +
+        (g_clients[a].m_y - g_clients[b].m_y) * (g_clients[a].m_y - g_clients[b].m_y) +
+        (g_clients[a].m_z - g_clients[b].m_z) * (g_clients[a].m_z - g_clients[b].m_z)) > VIEW_RADIUS)
+        // abs = 절대값
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
     // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
@@ -804,9 +887,6 @@ void Server::worker_thread()
                 sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &overEx->over);
         }
         break;
-        case FUNC_NPC_RANDMOVE:
-            finite_state_machine(id, FUNC_NPC_RANDMOVE, overEx);
-            break;
         case FUNC_PLAYER_MOVE_FOR_NPC: // API_Send_message 호출용
         {
             int npc_id = id;
@@ -816,14 +896,21 @@ void Server::worker_thread()
             delete overEx;
         }
         break;
+        case FUNC_NPC_ATTACK: // API_Send_message 호출용
+            finite_state_machine(id, FUNC_NPC_ATTACK, overEx);
+            break;
+        case FUNC_NPC_DEFENCE: // API_Send_message 호출용
+            finite_state_machine(id, FUNC_NPC_DEFENCE, overEx);
+            break;
+        case FUNC_NPC_HOLD: // API_Send_message 호출용
+            finite_state_machine(id, FUNC_NPC_HOLD, overEx);
+            break;
         case FUNC_NPC_FOLLOW: // API_Send_message 호출용
-        {
-          /*  int npc_id = id;
-            int player_id = overEx->player_id;
-            event_player_move(player_id, npc_id);
-
-            delete overEx;*/
-        }
+            finite_state_machine(id, FUNC_NPC_FOLLOW, overEx);
+            break;
+        case FUNC_NPC_RANDMOVE:
+            finite_state_machine(id, FUNC_NPC_RANDMOVE, overEx);
+            break;
         break;
         default:
             cout << "Unknown Operation in Worker_Thread\n";
@@ -856,6 +943,7 @@ void Server::mainServer()
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initalize_clients(); // 클라이언트 정보들 초기화
+    old_machine = FUNC_END;
 
      // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록

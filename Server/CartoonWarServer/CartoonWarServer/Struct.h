@@ -34,12 +34,13 @@ struct ClientInfo // 클라이언트 정보
 	mutex m_cLock;
 	SOCKET m_socket;
 	int m_id;
+	int m_owner_id;
 	OverEx m_recv_over;
 	int m_prev_size; // 잘린 파일의 경우 이전에 저장해둔 버퍼 크기
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
 	atomic <ENUM_STATUS> m_status;
 
-	short m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
+	float m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
 	char m_name[MAX_ID_LEN + 1]; // +1은 아이디가 50 꽉차서 오면 안되긴 하지만 혹시라도 꽉 차서 왔을때 대비
 	// m_isConnected가 true일때 m_name가 의미있음, true인데 m_name에 값이 없는 경우가 없어야함
 	char m_message[MAX_CHAT_LEN];

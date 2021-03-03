@@ -10,6 +10,8 @@ constexpr unsigned int MAX_BUF_SIZE = 1024;
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
+constexpr int REPEAT_TIME = 250;
+constexpr float NPC_SPEED = 0.3;
 
 constexpr int MAX_USER = 29;
 constexpr int NPC_ID_START = 30;
@@ -40,7 +42,7 @@ struct sc_packet_login_ok
 	char size;
 	char type;
 	int id;
-	short x, y, z;
+	float x, y, z;
 	short hp;
 	short level;
 	int	exp;
@@ -51,7 +53,7 @@ struct sc_packet_move
 	char size;
 	char type;
 	int id;
-	short x, y, z;
+	float x, y, z;
 	unsigned move_time; // unsigned int¶û °°À½
 };
 
@@ -66,7 +68,7 @@ struct sc_packet_enter
 	int id;
 	char name[MAX_ID_LEN];
 	char o_type;
-	short x, y, z;
+	float x, y, z;
 };
 
 struct sc_packet_leave 
