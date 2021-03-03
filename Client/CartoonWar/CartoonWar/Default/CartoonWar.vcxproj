@@ -221,6 +221,7 @@
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
     <ClInclude Include="..\Headers\TestCube.h" />
+    <ClInclude Include="..\Headers\TestMesh.h" />
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\TimerManager.h" />
@@ -308,6 +309,7 @@
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\TestCube.cpp" />
+    <ClCompile Include="..\Codes\TestMesh.cpp" />
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\TimerManager.cpp" />
@@ -396,6 +398,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Fire.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Hatch.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

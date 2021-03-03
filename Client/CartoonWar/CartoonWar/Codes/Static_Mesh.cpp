@@ -68,20 +68,22 @@ void CStatic_Mesh::Render_Mesh(CShader* pShaderCom, FbxMesh* pMesh, FbxAMatrix& 
 		return ;
 	RenderInfo* pInfo = (RenderInfo*)pMesh->GetUserDataPtr();
 
-	if (nullptr != pTexture)
-	{
-		if (pInfo->strNodeName.find("Body") != string::npos)
-		{
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 1), TEXTURE_REGISTER::t0);
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3), TEXTURE_REGISTER::t1);
-		}
-		else
-		{
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0), TEXTURE_REGISTER::t0);
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2), TEXTURE_REGISTER::t1);
-		}
-	}
+	//if (nullptr != pTexture)
+	//{
+	//	if (pInfo->strNodeName.find("Body") != string::npos)
+	//	{
+	//		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 1), TEXTURE_REGISTER::t0);
+	//		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 3), TEXTURE_REGISTER::t1);
+	//	}
+	//	else
+	//	{
+	//		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 0), TEXTURE_REGISTER::t0);
+	//		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV(pTextureTag, 2), TEXTURE_REGISTER::t1);
+	//	}
+	//}
 
+	//CDevice::GetInstance()->SetTextureToShader(pTexture[0].GetSRV(), TEXTURE_REGISTER::t0);
+	//CDevice::GetInstance()->SetTextureToShader(pTexture[1].GetSRV(), TEXTURE_REGISTER::t1);
 
 
 	CManagement* pManagement = CManagement::GetInstance();

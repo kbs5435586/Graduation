@@ -23,8 +23,6 @@ public:
 	virtual void							Render_GameObject();
 private:
 	HRESULT									Ready_Component();
-	HRESULT									Ready_Light(MAINPASS& tPass);
-private:
 	virtual HRESULT							CreateInputLayout();
 public:
     static COrc01*							Create();
@@ -39,6 +37,8 @@ private:
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
+private:
+	CTexture*								m_pTexture_Hatch[2]={nullptr};
 
 };
 

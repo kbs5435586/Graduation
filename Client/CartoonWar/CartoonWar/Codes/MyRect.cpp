@@ -26,10 +26,11 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(10.f, 5.f, 10.f);
+	_vec3 vPos = _vec3(0.f, -1.5f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(_vec3(5.f, 5.f, 5.f));
+	m_pTransformCom->Scaling(4.f, 4.f,1.f);
+
 	return S_OK;
 }
 
@@ -65,11 +66,14 @@ void CMyRect::Render_GameObject()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 	_matrix matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
 
-	m_pShaderCom->SetUp_OnShader(matWorld, matReflect, matProj, tMainPass);
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -82,6 +86,8 @@ HRESULT CMyRect::CreateInputLayout()
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	//vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
@@ -147,7 +153,7 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflect");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

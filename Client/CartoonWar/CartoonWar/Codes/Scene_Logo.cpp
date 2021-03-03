@@ -146,8 +146,8 @@ HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Add_Prototype_NaviMesh(pManagement)))
 		return E_FAIL;	
- 	//if (FAILED(Ready_Add_Prototype_Mesh(pManagement)))
-	//	return E_FAIL;
+ 	if (FAILED(Ready_Add_Prototype_Mesh(pManagement)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -262,36 +262,40 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
 	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01.FBX"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_A.FBX"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_B",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_B.FBX"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_C",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_C.FBX"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_D",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_D.FBX"))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01.FBX"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_A.FBX"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_B",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_B.FBX"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_C",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_C.FBX"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_D",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_D.FBX"))))
+	//	return E_FAIL;
+	//
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks02.FBX"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_A",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks02_A.FBX"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_B",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks02_B.FBX"))))
+	//	return E_FAIL;
+	//
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock03",
+	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainsRocks03.FBX"))))
+	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks02.FBX"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_A",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks02_A.FBX"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_B",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks02_B.FBX"))))
-		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock03",
-		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainsRocks03.FBX"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Stone",
+		CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock01.FBX"))))
 		return E_FAIL;
-
 	return S_OK;
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
@@ -311,6 +315,13 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firenoise",
 		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_noise%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123",
+		CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch123_%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456",
+		CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch456_%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 		return E_FAIL;
 
 	//PNG
@@ -365,6 +376,10 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Light",
 		CShader::Create(L"../ShaderFiles/Shader_UI_Light.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching",
+		CShader::Create(L"../ShaderFiles/Shader_Hatch.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	return S_OK;
 }

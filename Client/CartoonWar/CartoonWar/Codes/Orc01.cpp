@@ -23,7 +23,7 @@ HRESULT COrc01::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
+	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	
 	return S_OK;
@@ -68,7 +68,13 @@ _int COrc01::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
 
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+	m_pTransformCom->Set_PositionY(fY+0.5f);
 
 
 	Safe_Release(pManagement);
@@ -92,19 +98,41 @@ _int COrc01::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void COrc01::Render_GameObject()
 {
+
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
 
-	MAINPASS tPass = {};
-	/*if (FAILED(Ready_Light(tPass)))
-		return ;*/
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+	FOG tFog = { 0.f, 5.f };
+
+
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTexture_Hatch[0]->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTexture_Hatch[1]->GetSRV(), TEXTURE_REGISTER::t1);
 
 	m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
-		m_pShaderCom, m_pTransformCom->Get_Matrix(), tPass, m_pTextureCom,L"Texture_Orc_01");
+		m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, *m_pTexture_Hatch, L"Texture_Orc_01");
+
+	CDevice::GetInstance()->UpdateTable();
+
+
+
 
 	Safe_Release(pManagement);
+
 }
 
 HRESULT COrc01::CreateInputLayout()
@@ -114,10 +142,10 @@ HRESULT COrc01::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BINORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::COUNTERCLOCK)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::COUNTERCLOCK, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;
@@ -154,6 +182,9 @@ void COrc01::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
+	Safe_Release(m_pTexture_Hatch[0]);
+	Safe_Release(m_pTexture_Hatch[1]);
+
 
 	CGameObject::Free();
 }
@@ -179,7 +210,7 @@ HRESULT COrc01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
@@ -201,25 +232,18 @@ HRESULT COrc01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
 
+	m_pTexture_Hatch[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123");
+	NULL_CHECK_VAL(m_pTexture_Hatch[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture_Hatch_123", m_pTexture_Hatch[0])))
+		return E_FAIL;
+	m_pTexture_Hatch[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456");
+	NULL_CHECK_VAL(m_pTexture_Hatch[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture_Hatch_456", m_pTexture_Hatch[1])))
+		return E_FAIL;
+
+
+
 	Safe_Release(pManagement);
 	return S_OK;
 }
 
-HRESULT COrc01::Ready_Light(MAINPASS& tPass)
-{
-	CLight_Manager* pLight_Manager = CLight_Manager::GetInstance();
-	if (nullptr == pLight_Manager)
-		return E_FAIL;
-	pLight_Manager->AddRef();
-
-	//LIGHT tLight = pLight_Manager->GetLight(L"Light_Default");
-
-	/*tPass.vMaterialDiffuse = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlDiff;
-	tPass.vMaterialSpecular = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlSpec;
-	tPass.vMaterialAmbient = m_pMeshCom->GetLoader()->GetRenderInfo()[0]->vecMtrlInfo[0].vMtrlAmb;*/
-
-	///tPass.vCameraPos = (_vec4)CCamera_Manager::GetInstance()->GetMatView().m[3];
-
-	Safe_Release(pLight_Manager);
-	return S_OK;
-}

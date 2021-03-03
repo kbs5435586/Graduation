@@ -30,7 +30,7 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 
 
 
-	_vec3 vPos = _vec3(5.f,5.f, 5.f);
+	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 
@@ -78,7 +78,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(fY+0.5f);
+	//sm_pTransformCom->Set_PositionY(fY+0.5f);
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[2]->Update_Collider(m_pTransformCom);

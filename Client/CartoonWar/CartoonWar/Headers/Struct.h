@@ -24,8 +24,8 @@ typedef struct tagVertexCol
 
 typedef struct tagVertexTex
 {
-	XMFLOAT3 vPosition;
-	XMFLOAT2 vTex;
+	XMFLOAT3	vPosition;
+	XMFLOAT2	vTex;
 	tagVertexTex()
 	{
 
@@ -51,6 +51,40 @@ typedef struct tagVertexTexCube
 		vTex = vTex_;
 	}
 }VTXTEXCUBE;
+
+typedef struct tagVertexTexNorCube
+{
+	XMFLOAT3	vPosition;
+	XMFLOAT3	vTex;
+	XMFLOAT3	vNormal;
+	tagVertexTexNorCube()
+	{
+
+	}
+	tagVertexTexNorCube(XMFLOAT3 vPos, XMFLOAT3 vTex_, XMFLOAT3 vNor_)
+	{
+		vPosition = vPos;
+		vTex = vTex_;
+		vNormal = vNor_;
+	}
+}VTXTEXCUBENOR;
+
+typedef struct tagVertexTex2NorCube
+{
+	XMFLOAT3	vPosition;
+	XMFLOAT2	vTex;
+	XMFLOAT3	vNormal;
+	tagVertexTex2NorCube()
+	{
+
+	}
+	tagVertexTex2NorCube(XMFLOAT3 vPos, XMFLOAT2 vTex_, XMFLOAT3 vNor_)
+	{
+		vPosition = vPos;
+		vTex = vTex_;
+		vNormal = vNor_;
+	}
+}VTXTEX2CUBENOR;
 
 typedef struct tagVertexTexNor
 {
@@ -246,3 +280,9 @@ typedef struct tagFog
 	float	fFogStart;
 	float	fFogEnd;
 }FOG;
+
+
+typedef struct tagTime
+{
+	float		fTime;
+}TIME;

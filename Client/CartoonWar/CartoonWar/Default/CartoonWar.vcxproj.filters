@@ -355,6 +355,9 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth">
       <UniqueIdentifier>{732327b6-bbd6-4861-a668-db50590ba3ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. TestMesh">
+      <UniqueIdentifier>{22975039-a9a6-464c-a97e-9721ea9c2be6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -564,9 +567,6 @@
     <ClInclude Include="..\Headers\UI_Diffuse.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\00. UI_Diffuse</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI.h">
-      <Filter>02. GameObject\97. UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\UI_Normal.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\01. UI_Normal</Filter>
     </ClInclude>
@@ -638,6 +638,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Depth.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI.h">
+      <Filter>02. GameObject\97. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\TestMesh.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. TestMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -822,9 +828,6 @@
     <ClCompile Include="..\Codes\UI_Diffuse.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\00. UI_Diffuse</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI.cpp">
-      <Filter>02. GameObject\97. UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\UI_Normal.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\01. UI_Normal</Filter>
     </ClCompile>
@@ -897,6 +900,12 @@
     <ClCompile Include="..\Codes\UI_Depth.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI.cpp">
+      <Filter>02. GameObject\97. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TestMesh.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. TestMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -943,6 +952,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Fire.hlsl">
       <Filter>96. ShaderFiles</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Hatch.hlsl">
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

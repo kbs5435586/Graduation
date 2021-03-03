@@ -30,7 +30,7 @@ HRESULT CTestCube::Ready_GameObject(void* pArg)
 
 
 
-	_vec3 vPos = _vec3(5.f, 5.f, 5.f);
+	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 
@@ -52,8 +52,10 @@ _int CTestCube::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pTerrainBuffer)
 		return -1;
 
+	
+
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY + 0.5f);
+	//m_pTransformCom->Set_PositionY(fY + 0.5f);
 
 	Safe_Release(pManagement);
 
@@ -67,10 +69,6 @@ _int CTestCube::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-
-
-	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
-
 	return _int();
 }
 
