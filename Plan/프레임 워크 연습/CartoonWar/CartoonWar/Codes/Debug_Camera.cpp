@@ -2,7 +2,7 @@
 #include "Debug_Camera.h"
 #include "Management.h"
 
-CDebug_Camera::CDebug_Camera( )
+CDebug_Camera::CDebug_Camera()
 	: CCamera()
 {
 }
@@ -22,41 +22,41 @@ HRESULT CDebug_Camera::Ready_Prototype()
 
 HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 {
-	if (FAILED(CDebug_Camera::Ready_Component()))
-		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
-	
-	m_pTransform->SetUp_Speed(30.f, XMConvertToRadians(90.f));
+
+	CManagement::GetInstance()->whatCam = 0;
+
+	m_pTransform->SetUp_Speed(20.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-	
 	return NOERROR;
 }
 
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
-	
-	//
-	
-	//
-	//_vec3		vUp;
-	//vUp = Vector3_::CrossProduct(vLook, vRight);
-	//vUp = Vector3_::Normalize(vUp);
 
-	//
-	//m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+	pManagement->AddRef();
 
-	//m_pTransform->Set_Matrix(m_pObserverCom->GetMatInfo());
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
+	if (pManagement->Key_Down(KEY_LBUTTON))
+	{
+		int i = 0;
 
+		//if (CManagement::GetInstance()->whatCam == 0)
+		//{
+		//CManagement::GetInstance()->whatCam = 1;
+		//}
+	}
 	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 	{
 		m_pTransform->Go_Straight(fTimeDelta);
@@ -67,8 +67,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
 	{
-		//m_pTransform->Rotation_Y(fTimeDelta * 0.5f);
-		m_pTransform->Go_Left(5 * fTimeDelta);
+		m_pTransform->Go_Left(fTimeDelta);
 	}
 	if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
 	{
@@ -77,49 +76,23 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	_long	MouseMove = 0;
 	if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
 	{
-		//m_pTransform->Go_Left(fTimeDelta * 0.5f);
-		//m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		if (MouseMove > 0)
-		{
-			m_pTransform->Go_Right(MouseMove * fTimeDelta * 0.5f);
-		}
-		else
-		{
-			m_pTransform->Go_Right(-MouseMove * fTimeDelta * 0.5f);
-		}
-		
 		m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
 	}
-	
+
+
 	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 	{
-		//m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 	}
 
-	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
-
-	_vec3		vLook;
-	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));
-	vLook = Vector3_::Normalize(vLook);
-	
-	_vec3		vRight;
-	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
-	vRight = Vector3_::Normalize(vRight);
-	
-	_vec3		vUp;
-	vUp = Vector3_::CrossProduct(vLook, vRight);
-	vUp = Vector3_::Normalize(vUp);
-
-	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-
+	Safe_Release(pManagement);
 	return _int();
 }
 
 _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	Invalidate_ViewProjMatrix();
+	if(CManagement::GetInstance()->whatCam == 0 )
+		Invalidate_ViewProjMatrix(CManagement::GetInstance()->whatCam);
 
 	return _int();
 }
@@ -152,25 +125,7 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-HRESULT CDebug_Camera::Ready_Component()
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	NULL_CHECK_VAL(pManagement, E_FAIL);
-	pManagement->AddRef();
-
-
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
-
-	Safe_Release(pManagement);
-	return S_OK;
-}
-
 void CDebug_Camera::Free()
 {
-	Safe_Release(m_pObserverCom);
-
 	CCamera::Free();
 }

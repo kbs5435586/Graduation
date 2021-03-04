@@ -18,6 +18,7 @@
 #include "UI_MP.h"
 #include "UI_Inventory.h"
 
+#include "Inventory_Camera.h"
 
 #include "Circle.h"
 
@@ -75,6 +76,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Inventory", CInventory_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
@@ -147,7 +150,7 @@ HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagemen
 HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	CDebug_Camera* pCameraObject = nullptr;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 		(CGameObject**)&pCameraObject)))
 		return E_FAIL;
 
@@ -166,6 +169,28 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
 
+
+	CDebug_Camera* pICameraObject = nullptr;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
+		(CGameObject**)&pICameraObject)))
+		return E_FAIL;
+
+	CAMERADESC		tICameraDesc;
+	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
+	tICameraDesc.vEye = _vec3(0.f, 0.f, -5.f);
+	tICameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+	PROJDESC		tIProjDesc;
+	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+	tIProjDesc.fFovY = XMConvertToRadians(60.f);
+	tIProjDesc.fAspect = _float(WINCX) / WINCY;
+	tIProjDesc.fNear = g_Near;
+	tIProjDesc.fFar = g_Far;
+
+	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc)))
+		return E_FAIL;
+	//CCamera_Manager::GetInstance()->SetMatView(pICameraObject.);
+	//CCamera_Manager::GetInstance()->SetMatProj();
 
 	return S_OK;
 }
@@ -225,7 +250,9 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_UI", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+
+	_vec4 pos = _vec4{ 400,300,800,600 };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, &pos)))
 		return E_FAIL;
 
 
