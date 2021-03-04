@@ -234,6 +234,7 @@
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Inventory_Camera.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\Codes\UI_UI.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
+    <ClCompile Include="Inventory_Camera.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="UI_Inventory.cpp" />
     <ClCompile Include="UI_InventorySpace.cpp">
