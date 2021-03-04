@@ -463,25 +463,31 @@ void Server::event_player_move(int player_id, int npc_id)
     }
 }
 
-void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id, OverEx* over_ex)
+void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 {
-    //OverEx* overEx = new OverEx;
-    //overEx->function = FUNC_PLAYER_MOVE_FOR_NPC; // NPC에게 주변 플레이어가 움직였다는걸 알림
-    //overEx->player_id = user_id;
-    //PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
-
     // 하나의 NPC의 행동 관련된 것들을 작성할 것
 
     // 현재 상태 과거 상태 2개의 변수 비교해서 비교가 일어났을때만 상태머신 타게 구현
     // 커다란 과거 현재 비교하는 if문 내부터 switch 상태머신 돌리고 switch 끝나면
     // 과거는 = 현재 해주고 과거 현재 비교하는 if문 닫기
+    // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교 => 클라쪽에서 명령 자체를 못보내게 처리
 
-    // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교
-    ENUM_FUNCTION new_machine = func_id;
+    bool keep_alive = false;
+    for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+    {
+        if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
+        {
+            if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+            {
+                keep_alive = true; // 처음 시야범위 안에 들어온 플레이어 기준으로 npc가 활성화
+                break;
+            }
+        }
+    }
 
-    //if (old_machine != new_machine)
-    //{
-        switch (new_machine) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
+    if (true == keep_alive) // 처음 만난 플레이어 기준으로 이미 활성화 되어있는 상태라면
+    {
+        switch (func_id)
         {
         case FUNC_NPC_ATTACK:
         {
@@ -501,56 +507,21 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id, OverEx* ove
         case FUNC_NPC_FOLLOW:
         {
             do_follow(npc_id);
-            bool keep_alive = false;
-            for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
-            {
-                if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
-                {
-                    if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
-                    {
-                        keep_alive = true; // npc가 활성화 되어있다
-                        break;
-                    }
-                }
-            }
-
-            if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
-                add_timer(npc_id, FUNC_NPC_FOLLOW, REPEAT_TIME); // 생성 이후 반복 간격
-            else
-                g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
-
-            delete over_ex;
+            add_timer(npc_id, FUNC_NPC_FOLLOW, REPEAT_TIME); // 생성 이후 반복 간격
         }
         break;
         case FUNC_NPC_RANDMOVE:
         {
             do_random_move(npc_id);
-            bool keep_alive = false;
-            for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
-            {
-                if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
-                {
-                    if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
-                    {
-                        keep_alive = true; // npc가 활성화 되어있다
-                        break;
-                    }
-                }
-            }
-
-            if (true == keep_alive) // 처음 만난 플레이어 기준으로 활성화 중복 방지
-                add_timer(npc_id, FUNC_NPC_RANDMOVE, REPEAT_TIME); // 생성 이후 반복 간격
-            else
-                g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
-
-            delete over_ex;
+            add_timer(npc_id, FUNC_NPC_RANDMOVE, REPEAT_TIME); // 생성 이후 반복 간격
         }
-
         break;
         }
-
-        old_machine = new_machine;
-    //}
+    }
+    else
+    {
+        g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+    }
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
@@ -897,19 +868,24 @@ void Server::worker_thread()
         }
         break;
         case FUNC_NPC_ATTACK: // API_Send_message 호출용
-            finite_state_machine(id, FUNC_NPC_ATTACK, overEx);
+            finite_state_machine(id, FUNC_NPC_ATTACK);
+            delete overEx;
             break;
         case FUNC_NPC_DEFENCE: // API_Send_message 호출용
-            finite_state_machine(id, FUNC_NPC_DEFENCE, overEx);
+            finite_state_machine(id, FUNC_NPC_DEFENCE);
+            delete overEx;
             break;
         case FUNC_NPC_HOLD: // API_Send_message 호출용
-            finite_state_machine(id, FUNC_NPC_HOLD, overEx);
+            finite_state_machine(id, FUNC_NPC_HOLD);
+            delete overEx;
             break;
         case FUNC_NPC_FOLLOW: // API_Send_message 호출용
-            finite_state_machine(id, FUNC_NPC_FOLLOW, overEx);
+            finite_state_machine(id, FUNC_NPC_FOLLOW);
+            delete overEx;
             break;
         case FUNC_NPC_RANDMOVE:
-            finite_state_machine(id, FUNC_NPC_RANDMOVE, overEx);
+            finite_state_machine(id, FUNC_NPC_RANDMOVE);
+            delete overEx;
             break;
         break;
         default:

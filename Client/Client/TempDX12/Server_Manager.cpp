@@ -109,6 +109,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		vPos.y = m_player.y = my_packet->y;
 		vPos.z = m_player.z = my_packet->z;
 		pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		cool_time = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		m_player.showCharacter = true;
 
 		Safe_Release(managment);
@@ -386,4 +387,24 @@ bool CServer_Manager::Get_ShowPlayer()
 bool CServer_Manager::Get_ShowNPC()
 {
 	return m_npcs[m_myid].showCharacter;
+}
+
+char CServer_Manager::Get_Lastorder()
+{
+	return last_order;
+}
+
+void CServer_Manager::Set_LastOrder(char order)
+{
+	last_order = order;
+}
+
+high_resolution_clock::time_point CServer_Manager::Get_Cooltime()
+{
+	return cool_time;
+}
+
+void CServer_Manager::Set_CoolTime(high_resolution_clock::time_point ct)
+{
+	cool_time = ct;
 }

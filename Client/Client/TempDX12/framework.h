@@ -23,8 +23,10 @@
 #include <array>
 #include <wincodec.h>
 #include <fbxsdk.h>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <d3d12.h>

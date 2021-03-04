@@ -64,10 +64,3 @@ struct event_type
 		return (wakeup_time > left.wakeup_time); // 순서대로 저장하는 용도
 	}
 };
-
-struct Vec3
-{
-	float x;
-	float y;
-	float z;
-};

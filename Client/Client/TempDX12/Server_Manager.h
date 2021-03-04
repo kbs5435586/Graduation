@@ -10,13 +10,19 @@ private:
     virtual ~CServer_Manager() = default;
 
 private:
-    int m_myid;
+    CManagement* managment;
+
     Player_Info m_player;
     unordered_map <int, Player_Info> m_npcs;
+
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
     short PORT = 3500;
-    CManagement* managment;
+
+    int m_myid;
+    char last_order;
+    high_resolution_clock::time_point cool_time;
+
 public:
     void MainServer(CManagement* managment);
     BOOL InitServer(HWND hWnd);
@@ -33,6 +39,11 @@ public:
 
     bool Get_ShowPlayer();
     bool Get_ShowNPC();
+    char Get_Lastorder();
+    void Set_LastOrder(char order);
+    high_resolution_clock::time_point Get_Cooltime();
+    void Set_CoolTime(high_resolution_clock::time_point ct);
+
     void err_quit(const char* msg);
     void disconnect();
 
