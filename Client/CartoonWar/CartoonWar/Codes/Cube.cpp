@@ -54,23 +54,23 @@ _int CCube::Update_GameObject(const _float& fTimeDelta)
 
 	pManagement->AddRef();
 
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-	{
-		m_pTransformCom->BackWard(fTimeDelta);
-	}
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-	{
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
-	}
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-	{
-		m_tInfo.fHP -= 1.f;
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
+	//if (GetAsyncKeyState(VK_UP) & 0x8000)
+	//{
+	//	m_pTransformCom->Go_Straight(fTimeDelta);
+	//}
+	//if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	//{
+	//	m_pTransformCom->BackWard(fTimeDelta);
+	//}
+	//if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	//{
+	//	m_pTransformCom->Rotation_Y(-fTimeDelta);
+	//}
+	//if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	//{
+	//	m_tInfo.fHP -= 1.f;
+	//	m_pTransformCom->Rotation_Y(fTimeDelta);
+	//}
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)

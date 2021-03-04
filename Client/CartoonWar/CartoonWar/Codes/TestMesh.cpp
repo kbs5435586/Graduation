@@ -26,7 +26,9 @@ HRESULT CTestMesh::Ready_GameObject(void* pArg)
 
 	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
-	//m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+
+	return S_OK;
 }
 
 _int CTestMesh::Update_GameObject(const _float& fTimeDelta)
@@ -34,6 +36,24 @@ _int CTestMesh::Update_GameObject(const _float& fTimeDelta)
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return -1;
+
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	{
+		m_pTransformCom->BackWard(fTimeDelta);
+	}
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	{
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	{
+		m_tInfo.fHP -= 1.f;
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
@@ -82,8 +102,6 @@ void CTestMesh::Render_GameObject()
 		m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, *m_pTexture_Hatch, L"Texture_Orc_01");
 
 	CDevice::GetInstance()->UpdateTable();
-
-
 
 
 	Safe_Release(pManagement);
@@ -151,7 +169,7 @@ CTestMesh* CTestMesh::Create()
 	CTestMesh* pInstance = new CTestMesh();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTestMesh Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -162,7 +180,7 @@ CGameObject* CTestMesh::Clone_GameObject(void* pArg)
 	CTestMesh* pInstance = new CTestMesh(*this);
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTestMesh Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
