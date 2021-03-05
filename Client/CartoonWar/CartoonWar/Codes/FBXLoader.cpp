@@ -35,7 +35,7 @@ HRESULT CFBXLoader::Ready_FbxLoader(string strFilePath)
 	FbxGeometryConverter		FbxGeomConverter(g_FbxManager);
 	FbxGeomConverter.Triangulate(m_pScene, TRUE);
 
-	m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::eDirectX);
+	m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
 
 
 
