@@ -133,24 +133,6 @@ void CCube::Render_GameObject()
 	m_pColliderCom[0]->Render_Collider();
 	m_pColliderCom[1]->Render_Collider();
 	m_pColliderCom[2]->Render_Collider();
-
-	//MAINPASS tIMainPass = {};
-	//_matrix matIWorld = m_pTransformCom->Get_Matrix();
-	//_matrix matIView = CCamera_Manager::GetInstance()->GetMatView();
-	//_matrix matIProj = CCamera_Manager::GetInstance()->GetMatProj();
-	//
-	//m_pShaderCom->SetUp_OnShader(matIWorld, matIView, matIProj, tIMainPass);
-	//
-	//_uint iIOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b1)->SetData((void*)&tIMainPass);
-	//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b1)->GetCBV().Get(), iIOffeset, CONST_REGISTER::b1);
-	//CDevice::GetInstance()->UpdateTable();
-	//
-	//
-	//m_pBufferCom->Render_VIBuffer();
-	//m_pColliderCom[0]->Render_Collider();
-	//m_pColliderCom[1]->Render_Collider();
-	//m_pColliderCom[2]->Render_Collider();
-
 	Safe_Release(pManagement);
 }
 

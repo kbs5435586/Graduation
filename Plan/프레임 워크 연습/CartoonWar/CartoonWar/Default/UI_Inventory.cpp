@@ -32,8 +32,8 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 	m_fX = 400.f;
 	m_fY = 300.f;
 
-	m_fSizeX = 800.f;
-	m_fSizeY = 600.f;
+	m_fSizeX = 400.f;
+	m_fSizeY = 400.f;
 
 	MousePos = {0 , 0};
 
@@ -42,15 +42,11 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 
 	int X[3]{ 0,1,2 }, Y[3]{ 0,1,2 };
 
-	//Pos = POINT{ X[0],Y[0] };
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
-	//	return E_FAIL;
-	//Pos = POINT{ X[0],Y[1] };
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
-	//	return E_FAIL;
-
-	_vec4 pos = _vec4{ 400,300,300,215 };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI",nullptr, &pos)))
+	Pos = POINT{ X[0],Y[0] };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
+		return E_FAIL;
+	Pos = POINT{ X[0],Y[1] };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
 		return E_FAIL;
 
 	//for (int i = 0; i < 3; ++i)
@@ -120,29 +116,29 @@ void CUI_Inventory::Render_GameObject()
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
-	
-	
+
+
 	MAINPASS tMainPass = {};
-	
+
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-	
+
 	matWorld._11 = m_fSizeX;
 	matWorld._22 = m_fSizeY;
-	
+
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
-	
-	
+
+
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	
+
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
-	
-	
+
+
 	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }

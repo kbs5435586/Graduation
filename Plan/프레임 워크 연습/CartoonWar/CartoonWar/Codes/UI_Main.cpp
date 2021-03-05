@@ -24,18 +24,11 @@ HRESULT CUI_Main::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec4 Pos = *(_vec4*)pArg;
-	
-	m_fX = Pos.x;
-	m_fY = Pos.y;
+	m_fX = 400.f;
+	m_fY = 300.f;
 
-	m_fSizeX = Pos.z;
-	m_fSizeY = Pos.w;
-	//m_fX = 400.f;
-	//m_fY = 300.f;
-	//
-	//m_fSizeX = 800.f;
-	//m_fSizeY = 600.f;
+	m_fSizeX = 800.f;
+	m_fSizeY = 600.f;
 	return S_OK;
 }
 
@@ -48,7 +41,7 @@ _int CUI_Main::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this)))
 			return E_FAIL;
 	}
 	return _int();

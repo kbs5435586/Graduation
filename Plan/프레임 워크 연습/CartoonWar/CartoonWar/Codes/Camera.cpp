@@ -106,24 +106,14 @@ HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDE
 	return S_OK;
 }
 
-void CCamera::Invalidate_ViewProjMatrix(int what)
+void CCamera::Invalidate_ViewProjMatrix()
 {
 	m_matView = m_pTransform->Get_Matrix_Inverse();
 	_matrix matOrtho = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 0.f, 1.f);
-
-	if (what == 0)
-	{
-		CCamera_Manager::GetInstance()->SetMatView(m_matView);
-		CCamera_Manager::GetInstance()->SetMatProj(m_matProj);
-		CCamera_Manager::GetInstance()->SetMatOrtho(matOrtho);
-	}
-	else if (what == 1)
-	{
-		CCamera_Manager::GetInstance()->SetMatView(m_matView);
-		CCamera_Manager::GetInstance()->SetMatProj(m_matProj);
-		CCamera_Manager::GetInstance()->SetMatOrtho(matOrtho);
-	}
-	
+	CCamera_Manager::GetInstance()->SetMatView(m_matView);
+	CCamera_Manager::GetInstance()->SetMatProj(m_matProj);
+	CCamera_Manager::GetInstance()->SetMatOrtho(matOrtho);
+	//
 } 
 
 HRESULT CCamera::SetUp_ViewProjMatrices()
@@ -152,7 +142,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices()
 	m_matProj._34 = 1.f;
 	m_matProj._44 = 0.0f;
 
-	Invalidate_ViewProjMatrix(whatCam);
+	Invalidate_ViewProjMatrix();
 	return S_OK;
 }
 

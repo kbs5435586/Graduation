@@ -81,8 +81,5 @@ private:
 	CKeyManager*				m_pKey_Manager = nullptr;
 	CObserverManager*			m_pObserver_Manager = nullptr;
 	CLoadManager*				m_pLoad_Manager = nullptr;
-
-public:
-	int whatCam;
 };
 

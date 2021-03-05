@@ -313,12 +313,6 @@
     <Filter Include="02. GameObject\97. UI\03. UI_Inventory\00. UI_InventorySpace">
       <UniqueIdentifier>{7681a538-3a99-40ad-8223-3fc592c4f7f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\98. Camera\01. Inventory_Camera">
-      <UniqueIdentifier>{f0035b8d-9be7-4270-a313-7a5f57abe9ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\NewFilter1">
-      <UniqueIdentifier>{d2f96e4b-68b5-4fef-8f51-881023cb170c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -591,9 +585,6 @@
     <ClInclude Include="Item.h">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory_Camera.h">
-      <Filter>02. GameObject\98. Camera\01. Inventory_Camera</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -839,9 +830,6 @@
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="Inventory_Camera.cpp">
-      <Filter>02. GameObject\98. Camera\01. Inventory_Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
