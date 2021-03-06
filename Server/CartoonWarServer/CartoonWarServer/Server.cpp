@@ -85,7 +85,7 @@ void Server::process_packet(int user_id, char* buf)
     {
         cs_packet_add_npc* packet = reinterpret_cast<cs_packet_add_npc*>(buf);
         cout << "NPC Init Start\n";
-        initalize_NPC(packet->id);
+        initialize_NPC(packet->id);
         cout << "NPC Init Finish\n";
     }
     break;
@@ -229,8 +229,8 @@ void Server::do_move(int user_id, char direction)
     {
         if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-        //    activate_npc(c.second.m_id, FUNC_NPC_HOLD);
+        if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+            activate_npc(c.second.m_id, c.second.m_last_order);
         if (ST_ACTIVE != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
@@ -324,26 +324,38 @@ void Server::do_random_move(int npc_id)
     case MV_RIGHT: 
         if (x < (WORLD_HORIZONTAL - 1))
             x++;
+        else if (x > (WORLD_HORIZONTAL - 1))
+            x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
         if (x > 0)
             x--;
+        else if (x < 0)
+            x = 0;
         break;
     case MV_DOWN:
         if (y < (WORLD_HEIGHT - 1))
             y++;
+        else if (y > (WORLD_HEIGHT - 1))
+            y = WORLD_HEIGHT - 1;
         break;
     case MV_UP:
         if (y > 0)
             y--;
+        else if (y < 0)
+            y = 0;
         break;
     case MV_FORWARD:
         if (z < (WORLD_VERTICAL - 1))
             z++;
+        else if (z > (WORLD_VERTICAL - 1))
+            z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (z > 0)
             z--;
+        else if (z < 0)
+            z = 0;
         break;
     }
 
@@ -485,42 +497,51 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         }
     }
 
-    if (true == keep_alive) // 처음 만난 플레이어 기준으로 이미 활성화 되어있는 상태라면
+    switch (func_id)
     {
-        switch (func_id)
-        {
-        case FUNC_NPC_ATTACK:
-        {
+    case FUNC_NPC_ATTACK:
+    {
 
-        }
-        break;
-        case FUNC_NPC_DEFENCE:
-        {
+    }
+    break;
+    case FUNC_NPC_DEFENCE:
+    {
 
-        }
-        break;
-        case FUNC_NPC_HOLD:
-        {
+    }
+    break;
+    case FUNC_NPC_HOLD:
+    {
 
-        }
-        break;
-        case FUNC_NPC_FOLLOW:
+    }
+    break;
+    case FUNC_NPC_FOLLOW:
+    {
+        do_follow(npc_id);
+        g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
+        if (true == keep_alive) // 처음 만난 플레이어 기준으로 이미 활성화 되어있는 상태라면
         {
-            do_follow(npc_id);
             add_timer(npc_id, FUNC_NPC_FOLLOW, REPEAT_TIME); // 생성 이후 반복 간격
         }
-        break;
-        case FUNC_NPC_RANDMOVE:
+        else // 활성화 되어있지 않을때
         {
-            do_random_move(npc_id);
-            add_timer(npc_id, FUNC_NPC_RANDMOVE, REPEAT_TIME); // 생성 이후 반복 간격
-        }
-        break;
+            g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
         }
     }
-    else
+    break;
+    case FUNC_NPC_RANDMOVE:
     {
-        g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+        do_random_move(npc_id);
+        g_clients[npc_id].m_last_order = FUNC_NPC_RANDMOVE;
+        if (true == keep_alive) // 처음 만난 플레이어 기준으로 이미 활성화 되어있는 상태라면
+        {
+            add_timer(npc_id, FUNC_NPC_RANDMOVE, REPEAT_TIME); // 생성 이후 반복 간격
+        }
+        else // 활성화 되어있지 않을때
+        {
+            g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+        }
+    }
+    break;
     }
 }
 
@@ -655,17 +676,18 @@ void Server::enter_game(int user_id, char name[])
     }
 }
 
-void Server::initalize_clients()
+void Server::initialize_clients()
 {
     for (int i = 0; i < MAX_USER; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
         g_clients[i].m_owner_id = i; // 유저 등록
+        g_clients[i].m_last_order = FUNC_END;
         g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
     }
 }
 
-void Server::initalize_NPC(int player_id)
+void Server::initialize_NPC(int player_id)
 {
     for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
     {
@@ -674,13 +696,14 @@ void Server::initalize_NPC(int player_id)
             g_clients[i].m_socket = 0;
             g_clients[i].m_id = i;
             g_clients[i].m_owner_id = player_id;
+            g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
             g_clients[i].m_x = g_clients[player_id].m_x;
             g_clients[i].m_y = g_clients[player_id].m_y;
             g_clients[i].m_z = g_clients[player_id].m_z;
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
-            activate_npc(i, FUNC_NPC_HOLD);
+            activate_npc(i, g_clients[i].m_last_order);
             break;
         }
         else
@@ -918,7 +941,7 @@ void Server::mainServer()
     listen(listenSocket, SOMAXCONN);
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
-    initalize_clients(); // 클라이언트 정보들 초기화
+    initialize_clients(); // 클라이언트 정보들 초기화
     old_machine = FUNC_END;
 
      // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함

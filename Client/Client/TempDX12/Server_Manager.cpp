@@ -281,7 +281,7 @@ void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 		if (recv_result == SOCKET_ERROR)
 		{
 			//Free();
-			//wcout << L"Recv 에러!";
+			//wcout << L"Recv 에러!";pc
 			while (true);
 		}
 		else if (recv_result == 0)

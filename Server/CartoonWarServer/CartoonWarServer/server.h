@@ -35,10 +35,10 @@ public:
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
-	void initalize_clients(); // 객체 연결 성공시 초기화
+	void initialize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
 
-	void initalize_NPC(int player_id);
+	void initialize_NPC(int player_id);
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);

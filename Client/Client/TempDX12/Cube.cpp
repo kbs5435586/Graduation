@@ -44,40 +44,34 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	if (nullptr == pServer)
 		return E_FAIL;
 
-	if ((GetAsyncKeyState('1') & 0x8000) && pServer->Get_Lastorder() != '1')
+	if ((GetAsyncKeyState('1') & 0x8000))
 	{
 		pServer->AddRef();
 		pServer->send_npc_act_packet(DO_ATTACK);
-		pServer->Set_LastOrder('1');
-
 		Safe_Release(pServer);
 	}
-	if ((GetAsyncKeyState('2') & 0x8000) && pServer->Get_Lastorder() != '2')
+	if ((GetAsyncKeyState('2') & 0x8000))
 	{
 		pServer->AddRef();
 		pServer->send_npc_act_packet(DO_DEFENCE);
-		pServer->Set_LastOrder('2');
 		Safe_Release(pServer);
 	}
-	if ((GetAsyncKeyState('3') & 0x8000) && pServer->Get_Lastorder() != '3')
+	if ((GetAsyncKeyState('3') & 0x8000))
 	{
 		pServer->AddRef();
 		pServer->send_npc_act_packet(DO_HOLD);
-		pServer->Set_LastOrder('3');
 		Safe_Release(pServer);
 	}
-	if ((GetAsyncKeyState('4') & 0x8000) && pServer->Get_Lastorder() != '4')
+	if ((GetAsyncKeyState('4') & 0x8000))
 	{
 		pServer->AddRef();
 		pServer->send_npc_act_packet(DO_FOLLOW);
-		pServer->Set_LastOrder('4');
 		Safe_Release(pServer);
 	}
-	if ((GetAsyncKeyState('5') & 0x8000) && pServer->Get_Lastorder() != '5')
+	if ((GetAsyncKeyState('5') & 0x8000))
 	{
 		pServer->AddRef();
 		pServer->send_npc_act_packet(DO_RANDMOVE);
-		pServer->Set_LastOrder('5');
 		Safe_Release(pServer);
 	}
 

@@ -10,7 +10,7 @@ constexpr unsigned int MAX_BUF_SIZE = 1024;
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
-constexpr int REPEAT_TIME = 250;
+constexpr int REPEAT_TIME = 250; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 constexpr float NPC_SPEED = 0.3;
 
 constexpr int MAX_USER = 29;
