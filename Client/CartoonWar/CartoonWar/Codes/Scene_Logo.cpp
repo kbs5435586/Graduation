@@ -259,7 +259,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_House",
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
 		CMesh::Create(L"../Bin/Resource/Mesh/Static/House/House.fbx"))))
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01",
@@ -270,7 +270,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01.FBX"))))
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
-	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_A.FBX"))))
+	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks01_A.FBX"))))
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_B",
 	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Static/Rock/MountainRocks01_B.FBX"))))

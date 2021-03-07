@@ -2,7 +2,7 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CStatic_Mesh;
+class CMesh;
 class CShader;
 
 class CRock01_A :
@@ -29,7 +29,7 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CStatic_Mesh*							m_pMeshCom = nullptr;
+	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 
 };

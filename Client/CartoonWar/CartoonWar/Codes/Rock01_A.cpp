@@ -57,17 +57,24 @@ void CRock01_A::Render_GameObject()
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	//m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	m_pMeshCom->SetUp_Texture();
 	CDevice::GetInstance()->UpdateTable();
 
 
-	//m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
-	//	m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, nullptr, L"Texture_Orc_01");
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+
+		m_pMeshCom->Render_Mesh(i);
+
+	}
+
 	Safe_Release(pManagement);
 }
 
@@ -113,7 +120,7 @@ CGameObject* CRock01_A::Clone_GameObject(void* pArg)
 
 void CRock01_A::Free()
 {
-	//Safe_Release(m_pMeshCom);
+	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
@@ -136,12 +143,12 @@ HRESULT CRock01_A::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	//m_pMeshCom = (CStatic_Mesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
-	//NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
-	//	return E_FAIL;
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
+	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Environment");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
