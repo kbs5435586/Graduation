@@ -112,7 +112,8 @@ void Server::process_packet(int user_id, char* buf)
                 else
                 {
                     cout << i << " is DO_FOLLOW\n";
-                    add_timer(i, FUNC_NPC_FOLLOW, REPEAT_TIME);
+                    g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
+                    activate_npc(i, g_clients[i].m_last_order);
                 }
             }
             break;
@@ -127,7 +128,8 @@ void Server::process_packet(int user_id, char* buf)
                 else
                 {
                     cout << i << " is DO_RANDMOVE\n";
-                    add_timer(i, FUNC_NPC_RANDMOVE, REPEAT_TIME);
+                    g_clients[i].m_last_order = FUNC_NPC_RANDMOVE;
+                    activate_npc(i, g_clients[i].m_last_order);
                 }
             }
             break;
@@ -150,9 +152,9 @@ void Server::send_login_ok_packet(int user_id)
 	packet.level = 0;
 	packet.size = sizeof(packet);
 	packet.type = SC_PACKET_LOGIN_OK;
-	packet.x = g_clients[user_id].m_x;
-	packet.y = g_clients[user_id].m_y;
-    packet.z = g_clients[user_id].m_z;
+	packet.x = g_clients[user_id].m_pos.x;
+	packet.y = g_clients[user_id].m_pos.y;
+    packet.z = g_clients[user_id].m_pos.z;
 
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -175,49 +177,45 @@ void Server::send_packet(int user_id, void* packet)
 
 void Server::do_move(int user_id, char direction)
 {
-    int x = g_clients[user_id].m_x;
-    int y = g_clients[user_id].m_y;
-    int z = g_clients[user_id].m_z;
+    Vec3 temp = g_clients[user_id].m_pos;
 
     switch (direction)
     {
     case GO_UP:
-        if (y > 0)
-            y--;
+        if (temp.y > 0)
+            temp.y--;
         break;
 
     case GO_DOWN:
-        if (y < WORLD_HEIGHT-1)
-            y++;
+        if (temp.y < WORLD_HEIGHT-1)
+            temp.y++;
         break;
 
     case GO_LEFT:
-        if (x > 0)
-            x--;
+        if (temp.x > 0)
+            temp.x--;
         break;
 
     case GO_RIGHT:
-        if (x < WORLD_HORIZONTAL - 1)
-            x++;
+        if (temp.x < WORLD_HORIZONTAL - 1)
+            temp.x++;
         break;
 
     case GO_FORWARD:
-        if (z > 0)
-            z--;
+        if (temp.z > 0)
+            temp.z--;
         break;
 
     case GO_BACK:
-        if (z < WORLD_VERTICAL - 1)
-            z++;
+        if (temp.z < WORLD_VERTICAL - 1)
+            temp.z++;
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
         DebugBreak();
         exit(-1);
     }
-    g_clients[user_id].m_x = x;
-    g_clients[user_id].m_y = y;
-    g_clients[user_id].m_z = z;
+    g_clients[user_id].m_pos = temp;
 
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
@@ -229,8 +227,8 @@ void Server::do_move(int user_id, char direction)
     {
         if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-            activate_npc(c.second.m_id, c.second.m_last_order);
+        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+        //    activate_npc(c.second.m_id, c.second.m_last_order);
         if (ST_ACTIVE != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
@@ -316,52 +314,49 @@ void Server::do_move(int user_id, char direction)
 
 void Server::do_random_move(int npc_id)
 {
-    int x = g_clients[npc_id].m_x;
-    int y = g_clients[npc_id].m_y;
-    int z = g_clients[npc_id].m_z;
+    Vec3 temp = g_clients[npc_id].m_pos;
+
     switch (rand() % 4)
     {
     case MV_RIGHT: 
-        if (x < (WORLD_HORIZONTAL - 1))
-            x++;
-        else if (x > (WORLD_HORIZONTAL - 1))
-            x = WORLD_HORIZONTAL - 1;
+        if (temp.x < (WORLD_HORIZONTAL - 1))
+            temp.x++;
+        else if (temp.x > (WORLD_HORIZONTAL - 1))
+            temp.x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
-        if (x > 0)
-            x--;
-        else if (x < 0)
-            x = 0;
+        if (temp.x > 0)
+            temp.x--;
+        else if (temp.x < 0)
+            temp.x = 0;
         break;
     case MV_DOWN:
-        if (y < (WORLD_HEIGHT - 1))
-            y++;
-        else if (y > (WORLD_HEIGHT - 1))
-            y = WORLD_HEIGHT - 1;
+        if (temp.y < (WORLD_HEIGHT - 1))
+            temp.y++;
+        else if (temp.y > (WORLD_HEIGHT - 1))
+            temp.y = WORLD_HEIGHT - 1;
         break;
     case MV_UP:
-        if (y > 0)
-            y--;
-        else if (y < 0)
-            y = 0;
+        if (temp.y > 0)
+            temp.y--;
+        else if (temp.y < 0)
+            temp.y = 0;
         break;
     case MV_FORWARD:
-        if (z < (WORLD_VERTICAL - 1))
-            z++;
-        else if (z > (WORLD_VERTICAL - 1))
-            z = WORLD_VERTICAL - 1;
+        if (temp.z < (WORLD_VERTICAL - 1))
+            temp.z++;
+        else if (temp.z > (WORLD_VERTICAL - 1))
+            temp.z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
-        if (z > 0)
-            z--;
-        else if (z < 0)
-            z = 0;
+        if (temp.z > 0)
+            temp.z--;
+        else if (temp.z < 0)
+            temp.z = 0;
         break;
     }
 
-    g_clients[npc_id].m_x = x;
-    g_clients[npc_id].m_y = y;
-    g_clients[npc_id].m_z = z;
+    g_clients[npc_id].m_pos = temp;
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -400,54 +395,51 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
-    float dirX = 0, dirY = 0, dirZ = 0;
+    Vec3 Dir = { 0,0,0 };
     int player_id = g_clients[npc_id].m_owner_id;
 
-    dirX = g_clients[player_id].m_x - g_clients[npc_id].m_x;
-    dirY = g_clients[player_id].m_y - g_clients[npc_id].m_y;
-    dirZ = g_clients[player_id].m_z - g_clients[npc_id].m_z;
-
-    float hyp = sqrtf(dirX * dirX + dirY * dirY + dirZ * dirZ);
-
-    dirX /= hyp;
-    dirY /= hyp;
-    dirZ /= hyp;
-
-    g_clients[npc_id].m_x += dirX * NPC_SPEED;
-    g_clients[npc_id].m_y += dirY * NPC_SPEED;
-    g_clients[npc_id].m_z += dirZ * NPC_SPEED;
-
-    cout << npc_id << "의 위치 : " << g_clients[npc_id].m_x << " , " << g_clients[npc_id].m_y << endl;
-
-    for (int i = 0; i < NPC_ID_START; ++i)
+    Dir = g_clients[player_id].m_pos - g_clients[npc_id].m_pos;
+    float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
+    if (0 != distance_square)
     {
-        if (ST_ACTIVE != g_clients[i].m_status)
-            continue;
+        float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
-        if (true == is_near(i, npc_id))
+        Dir = Dir / hyp;
+        Dir = Dir * NPC_SPEED;
+        g_clients[npc_id].m_pos = g_clients[npc_id].m_pos + Dir;
+
+        cout << npc_id << "의 위치 : " << g_clients[npc_id].m_pos.x << " , " << g_clients[npc_id].m_pos.y << endl;
+
+        for (int i = 0; i < NPC_ID_START; ++i)
         {
-            g_clients[i].m_cLock.lock();
-            if (0 != g_clients[i].m_view_list.count(npc_id))
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+
+            if (true == is_near(i, npc_id))
             {
-                g_clients[i].m_cLock.unlock();
-                send_move_packet(i, npc_id);
+                g_clients[i].m_cLock.lock();
+                if (0 != g_clients[i].m_view_list.count(npc_id))
+                {
+                    g_clients[i].m_cLock.unlock();
+                    send_move_packet(i, npc_id);
+                }
+                else
+                {
+                    g_clients[i].m_cLock.unlock();
+                    send_enter_packet(i, npc_id);
+                }
             }
             else
             {
-                g_clients[i].m_cLock.unlock();
-                send_enter_packet(i, npc_id);
+                g_clients[i].m_cLock.lock();
+                if (0 != g_clients[i].m_view_list.count(npc_id))
+                {
+                    g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                    send_leave_packet(i, npc_id);
+                }
+                else
+                    g_clients[i].m_cLock.unlock();
             }
-        }
-        else
-        {
-            g_clients[i].m_cLock.lock();
-            if (0 != g_clients[i].m_view_list.count(npc_id))
-            {
-                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                send_leave_packet(i, npc_id);
-            }
-            else
-                g_clients[i].m_cLock.unlock();
         }
     }
 }
@@ -462,11 +454,11 @@ void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
 
 void Server::event_player_move(int player_id, int npc_id)
 {
-    if (g_clients[player_id].m_x == g_clients[npc_id].m_x)
+    if (g_clients[player_id].m_pos.x == g_clients[npc_id].m_pos.x)
     {
-        if (g_clients[player_id].m_y == g_clients[npc_id].m_y)
+        if (g_clients[player_id].m_pos.y == g_clients[npc_id].m_pos.y)
         {
-            if (g_clients[player_id].m_z == g_clients[npc_id].m_z)
+            if (g_clients[player_id].m_pos.z == g_clients[npc_id].m_pos.z)
             {
                 char m[10] = "HELLO";
                 send_chat_packet(player_id, npc_id, m);
@@ -484,65 +476,51 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     // 과거는 = 현재 해주고 과거 현재 비교하는 if문 닫기
     // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교 => 클라쪽에서 명령 자체를 못보내게 처리
 
-    bool keep_alive = false;
-    for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
-    {
-        if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
-        {
-            if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
-            {
-                keep_alive = true; // 처음 시야범위 안에 들어온 플레이어 기준으로 npc가 활성화
-                break;
-            }
-        }
-    }
+    //bool keep_alive = false;
+    //for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+    //{
+    //    if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
+    //    {
+    //        if (ST_ACTIVE == g_clients[i].m_status) // 접속해있는 플레이어일때
+    //        {
+    //            keep_alive = true; // 처음 시야범위 안에 들어온 플레이어 기준으로 npc가 활성화
+    //            break;
+    //        }
+    //    }
+    //}
 
-    switch (func_id)
+    if (ST_ACTIVE == g_clients[g_clients[npc_id].m_owner_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
     {
-    case FUNC_NPC_ATTACK:
-    {
+        switch (func_id)
+        {
+        case FUNC_NPC_ATTACK:
+        {
 
-    }
-    break;
-    case FUNC_NPC_DEFENCE:
-    {
+        }
+        break;
+        case FUNC_NPC_DEFENCE:
+        {
 
-    }
-    break;
-    case FUNC_NPC_HOLD:
-    {
+        }
+        break;
+        case FUNC_NPC_HOLD:
+        {
 
-    }
-    break;
-    case FUNC_NPC_FOLLOW:
-    {
-        do_follow(npc_id);
-        g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
-        if (true == keep_alive) // 처음 만난 플레이어 기준으로 이미 활성화 되어있는 상태라면
-        {
-            add_timer(npc_id, FUNC_NPC_FOLLOW, REPEAT_TIME); // 생성 이후 반복 간격
         }
-        else // 활성화 되어있지 않을때
+        break;
+        case FUNC_NPC_FOLLOW:
         {
-            g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+            do_follow(npc_id);
         }
-    }
-    break;
-    case FUNC_NPC_RANDMOVE:
-    {
-        do_random_move(npc_id);
-        g_clients[npc_id].m_last_order = FUNC_NPC_RANDMOVE;
-        if (true == keep_alive) // 처음 만난 플레이어 기준으로 이미 활성화 되어있는 상태라면
+        break;
+        case FUNC_NPC_RANDMOVE:
         {
-            add_timer(npc_id, FUNC_NPC_RANDMOVE, REPEAT_TIME); // 생성 이후 반복 간격
+            do_random_move(npc_id);
         }
-        else // 활성화 되어있지 않을때
-        {
-            g_clients[npc_id].m_status = ST_SLEEP; // 주변에 플레이어 없으면 다시 슬립 상태
+        break;
         }
     }
-    break;
-    }
+        add_timer(npc_id, g_clients[npc_id].m_last_order, REPEAT_TIME); // 생성 이후 반복 간격
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
@@ -634,9 +612,9 @@ void Server::send_move_packet(int user_id, int mover)
     packet.id = mover;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_MOVE;
-    packet.x = g_clients[mover].m_x;
-    packet.y = g_clients[mover].m_y; // 이동한 플레이어의 정보 담기
-    packet.z = g_clients[mover].m_z; // 이동한 플레이어의 정보 담기
+    packet.x = g_clients[mover].m_pos.x;  // 이동한 플레이어의 정보 담기
+    packet.y = g_clients[mover].m_pos.y;
+    packet.z = g_clients[mover].m_pos.z;
     packet.move_time = g_clients[mover].m_move_time;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
@@ -699,9 +677,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
-            g_clients[i].m_x = g_clients[player_id].m_x;
-            g_clients[i].m_y = g_clients[player_id].m_y;
-            g_clients[i].m_z = g_clients[player_id].m_z;
+            g_clients[i].m_pos = g_clients[player_id].m_pos;
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
             activate_npc(i, g_clients[i].m_last_order);
             break;
@@ -719,9 +695,9 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
-    packet.x = g_clients[other_id].m_x;
-    packet.y = g_clients[other_id].m_y;
-    packet.z = g_clients[other_id].m_z;
+    packet.x = g_clients[other_id].m_pos.x;
+    packet.y = g_clients[other_id].m_pos.y;
+    packet.z = g_clients[other_id].m_pos.z;
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 
@@ -764,6 +740,12 @@ void Server::disconnect(int user_id)
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
 
+    for (int i = MY_NPC_START(user_id); i <= MY_NPC_END(user_id); i++)
+    {
+        g_clients[i].m_last_order = FUNC_END;
+        g_clients[i].m_status = ST_SLEEP;
+    }
+
     for (int i = 0; i < NPC_ID_START; ++i)
     {
         if (user_id == g_clients[i].m_id)
@@ -782,9 +764,9 @@ void Server::disconnect(int user_id)
 
 bool Server::is_near(int a, int b)
 {
-    if (sqrt((g_clients[a].m_x - g_clients[b].m_x) * (g_clients[a].m_x - g_clients[b].m_x) +
-        (g_clients[a].m_y - g_clients[b].m_y) * (g_clients[a].m_y - g_clients[b].m_y) +
-        (g_clients[a].m_z - g_clients[b].m_z) * (g_clients[a].m_z - g_clients[b].m_z)) > VIEW_RADIUS)
+    if (sqrt((g_clients[a].m_pos.x - g_clients[b].m_pos.x) * (g_clients[a].m_pos.x - g_clients[b].m_pos.x) +
+        (g_clients[a].m_pos.y - g_clients[b].m_pos.y) * (g_clients[a].m_pos.y - g_clients[b].m_pos.y) +
+        (g_clients[a].m_pos.z - g_clients[b].m_pos.z) * (g_clients[a].m_pos.z - g_clients[b].m_pos.z)) > VIEW_RADIUS)
         // abs = 절대값
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
@@ -863,9 +845,9 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
-                g_clients[user_id].m_x = rand() % WORLD_HORIZONTAL;
-                g_clients[user_id].m_y = rand() % WORLD_HEIGHT;
-                g_clients[user_id].m_z = rand() % WORLD_VERTICAL;
+                g_clients[user_id].m_pos.x = rand() % WORLD_HORIZONTAL;
+                g_clients[user_id].m_pos.y = rand() % WORLD_HEIGHT;
+                g_clients[user_id].m_pos.z = rand() % WORLD_VERTICAL;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;
