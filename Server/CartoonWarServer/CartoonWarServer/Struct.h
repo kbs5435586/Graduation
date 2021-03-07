@@ -22,6 +22,38 @@ struct OverEx // 확장 오버랩 구조체
 	};
 };
 
+struct Vec3
+{
+	float x;
+	float y;
+	float z;
+
+	Vec3 operator+(Vec3& num)
+	{
+		return { x + num.x, y + num.y, z + num.z };
+	}
+	Vec3 operator-(Vec3& num)
+	{
+		return { x - num.x, y - num.y, z - num.z };
+	}
+	Vec3 operator*(Vec3& num)
+	{
+		return { x * num.x, y * num.y, z * num.z };
+	}
+	Vec3 operator*(float num)
+	{
+		return { x * num, y * num, z * num };
+	}
+	Vec3 operator/(Vec3& num)
+	{
+		return { x / num.x, y / num.y, z / num.z };
+	}
+	Vec3 operator/(float num)
+	{
+		return { x / num, y / num, z / num };
+	}
+};
+
 /*
 OverEx에 그냥 SOCKET 자료형 변수를 추가해도 상관없는데
 OverEx 자체가 엄청 자주 사용하는 자료구조이므로 오버헤드 발생 가능
@@ -41,7 +73,8 @@ struct ClientInfo // 클라이언트 정보
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
 	atomic <ENUM_STATUS> m_status;
 
-	float m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
+	Vec3 m_pos;
+	//float m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
 	char m_name[MAX_ID_LEN + 1]; // +1은 아이디가 50 꽉차서 오면 안되긴 하지만 혹시라도 꽉 차서 왔을때 대비
 	// m_isConnected가 true일때 m_name가 의미있음, true인데 m_name에 값이 없는 경우가 없어야함
 	char m_message[MAX_CHAT_LEN];
