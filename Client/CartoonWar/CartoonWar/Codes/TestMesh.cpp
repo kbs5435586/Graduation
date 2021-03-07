@@ -90,8 +90,6 @@ void CTestMesh::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-
-
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	m_pMeshCom->SetUp_Texture();
@@ -132,15 +130,6 @@ HRESULT CTestMesh::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
-		return E_FAIL;
-
-	m_pTexture_Hatch[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123");
-	NULL_CHECK_VAL(m_pTexture_Hatch[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Hatch_123", m_pTexture_Hatch[0])))
-		return E_FAIL;
-	m_pTexture_Hatch[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456");
-	NULL_CHECK_VAL(m_pTexture_Hatch[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Hatch_456", m_pTexture_Hatch[1])))
 		return E_FAIL;
 
 
@@ -193,8 +182,7 @@ void CTestMesh::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pTexture_Hatch[0]);
-	Safe_Release(m_pTexture_Hatch[1]);
+
 
 
 	CGameObject::Free();

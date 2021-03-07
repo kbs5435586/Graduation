@@ -3,7 +3,7 @@
 class CTransform;
 class CRenderer;
 class CShader;
-class CTexture;
+
 class CMesh;
 class CTestMesh :
     public CGameObject
@@ -31,7 +31,5 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
-private:
-	CTexture*								m_pTexture_Hatch[2] = { nullptr };
 };
 
