@@ -22,7 +22,7 @@ struct PS_OUT
 	float4	vShadeTex			: SV_TARGET2;
 	float4	vSpecularTex		: SV_TARGET3;
 	float4	vPointLightTex		: SV_TARGET5;
-	float4	vDepthTex			: SV_TARGET6;
+	float4	vPositionTex		: SV_TARGET6;
 };
 VS_OUT	VS_Main(VS_IN vIn)
 {
@@ -51,7 +51,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;
 	vOut.vSpecularTex = tLight_Point.vSpecular + tLight_Default.vSpecular;
 	vOut.vPointLightTex = tLight_Point.vDiffuse;
-	vOut.vDepthTex = float4(vIn.vProjPos.z / vIn.vProjPos.w, vIn.vProjPos.w / 500.0f, 0.f, 0.f);
+	vOut.vPositionTex = vIn.vWorldPos;
 	return vOut;
 }
 

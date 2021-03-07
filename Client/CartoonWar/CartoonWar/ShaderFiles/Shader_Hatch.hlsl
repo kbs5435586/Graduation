@@ -29,7 +29,7 @@ struct PS_OUT
 	float4 vShadeTex			: SV_TARGET2;
 	float4 vSpecularTex			: SV_TARGET3;
 	float4 vPointLightTex		: SV_TARGET5;
-	float4 vDepthTex			: SV_TARGET6;
+	float4 vPositionTex			: SV_TARGET6;
 };
 
 float4 GetInverseColor(float4 srcColor)
@@ -101,7 +101,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = g_texture0.Sample(Sampler0, vIn.vTexUV0);
 	vOut.vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV0);
 	vOut.vShadeTex = g_texture0.Sample(Sampler0, vIn.vTexUV0);
-
+	vOut.vPositionTex = vIn.vWorldPos;
 
 	return vOut;
 }

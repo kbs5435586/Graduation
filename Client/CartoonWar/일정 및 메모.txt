@@ -12,6 +12,7 @@
 3: specular
 4: reflect
 5: Point Light
+6. Position
 
 
 
@@ -24,3 +25,12 @@
 
 
 텍스쳐 읽어온 파일 이름으로 Diff Norm Spac 비교 검사하기 
+
+
+
+데칼 쉐이더를 하기 위해서 해당 픽셀의 WorldPosition 좌표가 있고 그 행렬에 World Inv 행렬을 곱하면 해당 픽셀의 Local 정점이 나옴
+이를 이용해 범위 밖으로 나간 픽셀의 범위를 지정할 수 있음
+
+
+리소스 전용 CommandList 만들기
+ComputeShader 전용 CommandList만들기
