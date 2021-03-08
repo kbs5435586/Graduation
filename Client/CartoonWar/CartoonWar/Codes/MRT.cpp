@@ -45,11 +45,11 @@ HRESULT CMRT::Ready_MRT(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		barrier.Transition.pResource = m_tArr[i].pRtt->GetTex2D().Get();
 		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 타겟에서
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;			// 일반 리소스로
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;			// 일반 리소스로
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		m_TargetToRes[i] = barrier;
 
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;		// 리소스
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;		// 리소스
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 렌더 타겟으로
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		m_ResToTarget[i] = barrier;
@@ -78,16 +78,21 @@ void CMRT::OM_Set()
 	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(m_iRTCnt, &hRTVHandle, TRUE/*DescHeap 에 연속적으로 있다*/, &hDSVHandle);
 }
 
+
 void CMRT::Clear()
 {
-	ResToTargetBarrier();
+	//ResToTargetBarrier();
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	for (UINT i = 0; i < m_iRTCnt; ++i)
 	{
 		D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
 		hRTVHandle.ptr += iRTVSize * i;
-		float arrClearColor[4] = { m_tArr[i].vClear_Color.x,m_tArr[i].vClear_Color.y, m_tArr[i].vClear_Color.z, m_tArr[i].vClear_Color.w };
+		float arrClearColor[4] = { 
+			m_tArr[i].vClear_Color.x,
+			m_tArr[i].vClear_Color.y,
+			m_tArr[i].vClear_Color.z,
+			m_tArr[i].vClear_Color.w };
 		CDevice::GetInstance()->GetCmdLst()->ClearRenderTargetView(hRTVHandle, arrClearColor, 0, nullptr);
 	}
 
@@ -97,7 +102,6 @@ void CMRT::Clear()
 		CDevice::GetInstance()->GetCmdLst()->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 	}
 }
-
 void CMRT::Clear(_uint iRtIdx)
 {
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);

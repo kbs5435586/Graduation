@@ -22,8 +22,8 @@ private:
 	void							Render_UI_DEFFERED();
 	void							Render_Blend();
 private:
-	void							Render_Deffered(CManagement* pManagement, _uint iSwapChainIdx);
-	void							Render_Light(CManagement* pManagement, _uint iSwapChainIdx);
+	void							Render_Deffered(CManagement* pManagement);
+	void							Render_Light(CManagement* pManagement);
 public:
 	static CRenderer*				Create(); 
 	virtual CComponent*				Clone_Component(void* pArg = nullptr); 

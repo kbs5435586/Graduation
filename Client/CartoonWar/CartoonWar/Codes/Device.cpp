@@ -137,6 +137,8 @@ HRESULT CDevice::Initialize()
 	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_pCsCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCsCmdList));
 
 	m_pCmdListGraphic->Close();
+	m_pResCmdList->Close();
+	m_pCsCmdList->Close();
 
 	// SwapChain ¸¸µé±â
 	if (FAILED(Create_SwapChain(true)))
@@ -162,8 +164,6 @@ HRESULT CDevice::Initialize()
 		//	return E_FAIL;
 	}
 
-	//if (FAILED(Create_View()))
-	//	return E_FAIL;
 	if (FAILED(Create_ViewPort()))
 		return E_FAIL;
 	if (FAILED(Create_RootSignature()))
@@ -386,6 +386,7 @@ void CDevice::ClearDummyDesc(_uint iIdx)
 void CDevice::Free()
 {
 	WaitForFenceEvent();
+	WaitForFenceEvent_CS();
 	CloseHandle(m_hFenceEvent);
 }
 
