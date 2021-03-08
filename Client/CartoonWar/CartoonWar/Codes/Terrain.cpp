@@ -62,7 +62,7 @@ void CTerrain::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData(&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 	m_pBufferCom->Render_VIBuffer();

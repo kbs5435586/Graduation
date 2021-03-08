@@ -116,9 +116,9 @@ void CFire::Render_GameObject()
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b5)->SetData((void*)&tDistortion);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b5)->GetCBV().Get(), iOffeset, CONST_REGISTER::b5);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0]->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1]->GetSRV(), TEXTURE_REGISTER::t1);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[2]->GetSRV(), TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[2], TEXTURE_REGISTER::t2);
 	CDevice::GetInstance()->UpdateTable();
 
 

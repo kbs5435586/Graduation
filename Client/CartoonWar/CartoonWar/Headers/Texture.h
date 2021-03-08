@@ -28,21 +28,18 @@ private:
     TEXTURE_TYPE                                        m_eType = TEXTURE_TYPE::TEXTURE_TYPE_END;
     _uint                                               m_iTexuterIdx = 0;
 public:
-   ID3D12DescriptorHeap*                                GetSRV(const _uint& iTextureIdx=0) { return m_vecDescriptorHeap[iTextureIdx]; }
-   ID3D12DescriptorHeap*                                GetSRV(const _tchar* pTag, const _uint& iTextureIdx);
+   ID3D12DescriptorHeap*                                GetSRV(const _uint& iTextureIdx=0) { return m_vecSRV[iTextureIdx]; }
 private:
     vector<ID3D12Resource*>                             m_vecTexture;
     vector<ID3D12Resource*>                             m_vecTextureUpload;
-    vector<ID3D12DescriptorHeap*>                       m_vecDescriptorHeap;
+    vector<ID3D12DescriptorHeap*>                       m_vecSRV;
+    vector<ID3D12DescriptorHeap*>                      m_vecUAV;
     vector<_uint>                                       m_vecSrvDescriptorIncrementSize;
 private:
     map<const _tchar*, vector<ID3D12DescriptorHeap*>>   m_mapSrvDescHeap;
 private:
     vector<ID3D12DescriptorHeap*>                       m_vecDummyTextureDesc;
     ID3D12DescriptorHeap*                               m_pInitTextureDesc = nullptr;
-
-private:
-    _bool                                               m_IsClone = false;
 private:
     ScratchImage			 	                        m_Image;
 

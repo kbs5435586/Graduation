@@ -12,7 +12,8 @@ CTexture::CTexture(const CTexture& rhs)
 	, m_vecSrvDescriptorIncrementSize(rhs.m_vecSrvDescriptorIncrementSize)
 	, m_vecTextureUpload(rhs.m_vecTextureUpload)
 	, m_vecTexture(rhs.m_vecTexture)
-	, m_vecDescriptorHeap(rhs.m_vecDescriptorHeap)
+	, m_vecSRV(rhs.m_vecSRV)
+	, m_vecUAV(rhs.m_vecUAV)
 	, m_mapSrvDescHeap(rhs.m_mapSrvDescHeap)
 {
 	m_IsClone = true;
@@ -20,7 +21,9 @@ CTexture::CTexture(const CTexture& rhs)
 		iter->AddRef();
 	for (auto& iter : m_vecTextureUpload)
 		iter->AddRef();
-	for (auto& iter : m_vecDescriptorHeap)
+	for (auto& iter : m_vecSRV)
+		iter->AddRef();
+	for (auto& iter : m_vecUAV)
 		iter->AddRef();
 	for (auto& iter : m_mapSrvDescHeap)
 	{
@@ -114,7 +117,7 @@ HRESULT CTexture::Ready_Texture(const _tchar* pTag, const _tchar* pFilePath)
 			return E_FAIL;
 	}
 
-	if (FAILED(Create_ShaderResourceView(m_Image, m_vecDescriptorHeap)))
+	if (FAILED(Create_ShaderResourceView(m_Image, m_vecSRV)))
 		return E_FAIL;
 	
 	CDevice::GetInstance()->Close();
@@ -123,11 +126,11 @@ HRESULT CTexture::Ready_Texture(const _tchar* pTag, const _tchar* pFilePath)
 	auto iter = m_mapSrvDescHeap.find(pTag);
 	if (iter == m_mapSrvDescHeap.end())
 	{		
-		m_mapSrvDescHeap.insert({pTag, m_vecDescriptorHeap });
+		m_mapSrvDescHeap.insert({pTag, m_vecSRV });
 	}
 	else
 	{
-		iter->second.push_back(m_vecDescriptorHeap.back());
+		iter->second.push_back(m_vecSRV.back());
 	}
 
 	return S_OK;
@@ -218,7 +221,7 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 
 	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(pTexture, &srvDesc, handle);
 
-	m_vecDescriptorHeap.push_back(pDescHeap);
+	m_vecSRV.push_back(pDescHeap);
 	m_vecTexture.push_back(pTexture);
 	m_vecTextureUpload.push_back(pTextureUpload);
 	m_vecSrvDescriptorIncrementSize.push_back(iSize);
@@ -286,13 +289,13 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, vector<ID3D12De
 }
 HRESULT CTexture::SetUp_OnShader(_int iIdx, TEXTURE_REGISTER eRegister)	//0 t1
 {
-	if (m_vecDescriptorHeap.size() <= iIdx)
+	if (m_vecSRV.size() <= iIdx)
 		return E_FAIL;
 
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE hTexture
 	(
-		m_vecDescriptorHeap[iIdx]->GetGPUDescriptorHandleForHeapStart()
+		m_vecSRV[iIdx]->GetGPUDescriptorHandleForHeapStart()
 	);
 
 	//hTexture가 DescHeap위치를 참조 못함
@@ -300,7 +303,7 @@ HRESULT CTexture::SetUp_OnShader(_int iIdx, TEXTURE_REGISTER eRegister)	//0 t1
 
  	hTexture.Offset(m_vecSrvDescriptorIncrementSize[iIdx]*(_uint)eRegister);
 
-	CDevice::GetInstance()->GetCmdLst()->SetDescriptorHeaps(1, &m_vecDescriptorHeap[iIdx]);
+	CDevice::GetInstance()->GetCmdLst()->SetDescriptorHeaps(1, &m_vecSRV[iIdx]);
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootDescriptorTable(0, hTexture);
 
 	return S_OK;
@@ -315,7 +318,9 @@ void CTexture::Free()
 		Safe_Release(iter);
 	for (auto& iter : m_vecTextureUpload)
 		Safe_Release(iter);
-	for (auto& iter : m_vecDescriptorHeap)
+	for (auto& iter : m_vecSRV)
+		Safe_Release(iter);
+	for (auto& iter : m_vecUAV)
 		Safe_Release(iter);
 
 	for (auto& iter : m_mapSrvDescHeap)
@@ -324,21 +329,14 @@ void CTexture::Free()
 
 	m_vecTexture.clear();
 	m_vecTextureUpload.clear();
-	m_vecDescriptorHeap.clear();
+	m_vecSRV.clear();
 	m_mapSrvDescHeap.clear();
 
 	m_vecTexture.shrink_to_fit();
 	m_vecTextureUpload.shrink_to_fit();
-	m_vecDescriptorHeap.shrink_to_fit();
+	m_vecSRV.shrink_to_fit();
+	m_vecUAV.shrink_to_fit();
 	
 
 	CComponent::Free();
-}
-ID3D12DescriptorHeap* CTexture::GetSRV(const _tchar* pTag, const _uint& iTextureIdx)
-{
-	auto iter = m_mapSrvDescHeap.find(pTag);
-	if(iter == m_mapSrvDescHeap.end())
-		return nullptr;
-
-	return iter->second[iTextureIdx];
 }

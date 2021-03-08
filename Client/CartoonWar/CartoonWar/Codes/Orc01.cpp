@@ -120,8 +120,8 @@ void COrc01::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTexture_Hatch[0]->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTexture_Hatch[1]->GetSRV(), TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(m_pTexture_Hatch[0], TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTexture_Hatch[1], TEXTURE_REGISTER::t1);
 
 	//m_pMeshCom->Render_Hierachy_Mesh(m_pMeshCom->GetLoader()->GetScene()->GetRootNode(),
 	//	m_pShaderCom, m_pTransformCom->Get_Matrix(), tMainPass, *m_pTexture_Hatch, L"Texture_Orc_01");

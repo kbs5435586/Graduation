@@ -4,6 +4,7 @@
 #include "Management.h"
 #include "MRT.h"
 #include "RTT.h"
+#include "Texture.h"
 
 _IMPLEMENT_SINGLETON(CDevice)
 
@@ -307,7 +308,7 @@ HRESULT CDevice::SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _f
 	return S_OK;
 }
 
-void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc,  TEXTURE_REGISTER eRegisterNum)
+void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegisterNum, const _uint& iIdx)
 {
 	_uint			iDestRange = 1;
 	_uint			iSrcRange = 1;
@@ -316,6 +317,22 @@ void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc,  TEXTURE_RE
 	D3D12_CPU_DESCRIPTOR_HANDLE	hDestHandle = m_vecDummyDescriptor[m_iCurrentDummyIdx]->GetCPUDescriptorHandleForHeapStart();
 
 	hDestHandle.ptr += (iSize* (_uint)eRegisterNum);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pTextureCom->GetSRV(iIdx)->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum)
+{
+	_uint			iDestRange = 1;
+	_uint			iSrcRange = 1;
+
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	D3D12_CPU_DESCRIPTOR_HANDLE	hDestHandle = m_vecDummyDescriptor[m_iCurrentDummyIdx]->GetCPUDescriptorHandleForHeapStart();
+
+	hDestHandle.ptr += (iSize * (_uint)eRegisterNum);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pTextureDesc->GetCPUDescriptorHandleForHeapStart();
 
@@ -353,6 +370,58 @@ void CDevice::SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuf
 
 	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetUpContantBufferToShader_CS(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pCsDummyDesciptor->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pConstantBuffer->GetCPUDescriptorHandleForHeapStart();
+	hSrcHandle.ptr += iOffset * iSize;
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetTextureToShader_CS(CTexture* pTextureCom, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pCsDummyDesciptor->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pTextureCom->GetSRV(iIdx)->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetTextureToShader_CS(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pCsDummyDesciptor->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegisterNum;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pTextureDesc->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetUpUAVToRegister(ID3D12DescriptorHeap* pTextureDesc, UAV_REGISTER eRegister)
+{
+	
 }
 
 void CDevice::UpdateTable()
@@ -467,6 +536,48 @@ HRESULT CDevice::Create_RootSignature()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
 
+
+
+
+	// Create ComputeShader RootSignature
+
+	range = {};
+	range.BaseShaderRegister = 0;  // u0 에서
+	range.NumDescriptors = 4;	   // u3 까지 4 개 UAV 레지스터 사용여부 
+	range.OffsetInDescriptorsFromTableStart = (UINT)TEXTURE_REGISTER::END;
+	range.RegisterSpace = 0;
+	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+
+	vecRange.push_back(range);
+
+
+	slotParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	slotParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	slotParam.DescriptorTable.NumDescriptorRanges = (UINT)vecRange.size();
+	slotParam.DescriptorTable.pDescriptorRanges = &vecRange[0];
+
+
+	sigDesc = {};
+	sigDesc.NumParameters = 1;
+	sigDesc.pParameters = &slotParam;
+	sigDesc.NumStaticSamplers = 0;
+	sigDesc.pStaticSamplers = nullptr; // 컴퓨트 쉐이더에서는 Sampler 사용 불가능
+	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE; // 컴퓨트 쉐이더용 Signature 는 기본 플래그 값으로 설정
+
+	pSignature = nullptr;
+	pError = nullptr;
+
+	hr = D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSignature, &pError);
+	m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize()
+		, IID_PPV_ARGS(&m_ArrRootSignature[(UINT)ROOT_SIG_TYPE::COMPUTE]));
+
+
+	m_pCsCmdList->SetComputeRootSignature(m_ArrRootSignature[(UINT)ROOT_SIG_TYPE::COMPUTE].Get());
+
+	cbvHeapDesc.NumDescriptors += range.NumDescriptors; // UAV 만큼 추가
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCsDummyDesciptor));
 	return S_OK;
 }
 

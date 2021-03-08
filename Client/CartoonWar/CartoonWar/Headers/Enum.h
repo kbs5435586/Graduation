@@ -104,6 +104,15 @@ enum class TEXTURE_REGISTER
 	END,
 };
 
+enum class UAV_REGISTER
+{
+	u0 = (UINT)TEXTURE_REGISTER::END,
+	u1,
+	u2,
+	u3,
+	END,
+};
+
 
 
 

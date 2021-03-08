@@ -45,6 +45,8 @@ private:
 	vector<ComPtr<ID3D12DescriptorHeap>>		m_vecDummyDescriptor;
 	vector<D3D12_STATIC_SAMPLER_DESC>			m_vecSamplerDesc;
 private:
+	ComPtr<ID3D12DescriptorHeap>				m_pCsDummyDesciptor = nullptr;
+private:
 	ComPtr<ID3D12DescriptorHeap>				m_pRTV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pDSV = nullptr;
 	ComPtr<ID3D12DescriptorHeap>				m_pInitDescriptor = nullptr;
@@ -124,10 +126,17 @@ private:
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
 public:
+	void										SetTextureToShader(CTexture* pTextureCom, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx=0);
 	void										SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum);
 	void										SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
 	void										SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
-
+public:
+	void										SetUpContantBufferToShader_CS(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
+	void										SetTextureToShader_CS(CTexture* pTextureCom, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx = 0);
+	void										SetTextureToShader_CS(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum);
+public:
+	void										SetUpUAVToRegister(ID3D12DescriptorHeap* pTextureDesc, UAV_REGISTER eRegister);
+public:
 	void										UpdateTable();
 private:
 	void										ClearDummyDesc(_uint iIdx);

@@ -243,9 +243,9 @@ HRESULT CMesh::SetUp_Texture()
 		m_iCurTexNum = 0;
 	}
 
- 	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum]->GetSRV(), (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
-	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum +1]->GetSRV(), (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
-	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum +2]->GetSRV(), (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
+ 	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
+	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum +1], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
+	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum +2], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
 
 
 	//m_iCurTexNum+=3;
