@@ -2,24 +2,44 @@
 #include "Base.h"
 class CTexture;
 class CDevice :
-    public CBase
+	public CBase
 {
-    _DECLARE_SINGLETON(CDevice)
+	_DECLARE_SINGLETON(CDevice)
 private:
-    CDevice();
-    virtual ~CDevice() = default;
+	CDevice();
+	virtual ~CDevice() = default;
 private:
-	ComPtr<ID3D12Device>						m_pDevice = nullptr;
 	ComPtr<ID3D12CommandQueue>					m_pCmdQueue = nullptr;
+	ComPtr<ID3D12CommandQueue>					m_pCsCmdQueue = nullptr;
+private:
 	ComPtr<ID3D12CommandAllocator>				m_pCmdAlloc = nullptr;
 	ComPtr<ID3D12GraphicsCommandList>			m_pCmdListGraphic = nullptr;
+
+	ComPtr<ID3D12CommandAllocator>				m_pResCmdAlloc = nullptr;
+	ComPtr<ID3D12GraphicsCommandList>			m_pResCmdList = nullptr;
+
+	ComPtr<ID3D12CommandAllocator>				m_pCsCmdAlloc = nullptr;
+	ComPtr<ID3D12GraphicsCommandList>			m_pCsCmdList = nullptr;
+public:
+	ComPtr<ID3D12GraphicsCommandList>			GetCmdLst() { return m_pCmdListGraphic; }
+	ComPtr<ID3D12GraphicsCommandList>			GetResCmdLst() { return m_pResCmdList; }
+	ComPtr<ID3D12GraphicsCommandList>			GetCsCmdLst() { return m_pCsCmdList; }
+public:
+	ComPtr<ID3D12CommandQueue>					GetCmdQueue() { return m_pCmdQueue; }
+	ComPtr<ID3D12CommandQueue>					GetCsCmdQueue() { return m_pCsCmdQueue; }
+
+private:
+	ComPtr<ID3D12Device>						m_pDevice = nullptr;
+
+
 	ComPtr<ID3D12Fence>							m_pFence = nullptr;
+	ComPtr<ID3D12Fence>							m_pFenceCS = nullptr;
 	ComPtr<IDXGIFactory4>						m_pFactory = nullptr;
 	ComPtr<ID3D12Debug>							m_pDbgCtrl = nullptr;
 	ComPtr<IDXGISwapChain4>						m_pSwapChain = nullptr;
-	ComPtr<ID3D12Resource>						m_RenderTargets[2] = {nullptr};
+	ComPtr<ID3D12Resource>						m_RenderTargets[2] = { nullptr };
 private:
-	ComPtr<ID3D12Resource>						m_pConstantBuffer=nullptr;
+	ComPtr<ID3D12Resource>						m_pConstantBuffer = nullptr;
 	ComPtr<ID3D12Resource>						m_pDSBuffer = nullptr;
 private:
 	vector<ComPtr<ID3D12DescriptorHeap>>		m_vecDummyDescriptor;
@@ -30,8 +50,7 @@ private:
 	ComPtr<ID3D12DescriptorHeap>				m_pInitDescriptor = nullptr;
 public:
 	ComPtr<ID3D12Device>						GetDevice() { return m_pDevice; }
-	ComPtr<ID3D12GraphicsCommandList>			GetCmdLst() { return m_pCmdListGraphic; }
-	ComPtr<ID3D12CommandQueue>					GetCmdQueue() { return m_pCmdQueue; }
+
 	ComPtr<ID3D12RootSignature>					GetRootSignature(ROOT_SIG_TYPE _eType) { return m_ArrRootSignature[(UINT)_eType]; }
 	vector<ComPtr<ID3D12DescriptorHeap>>		GetDummyDesc() { return m_vecDummyDescriptor; }
 	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
@@ -41,7 +60,7 @@ public:
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 public:
-	_uint&										GetHDRMetaDataIdx() { return m_iHDRMetaDataPoolIdx; }
+	_uint& GetHDRMetaDataIdx() { return m_iHDRMetaDataPoolIdx; }
 private:
 	ComPtr<ID3D12RootSignature>					m_ArrRootSignature[(_uint)ROOT_SIG_TYPE::END];
 private:
@@ -58,9 +77,9 @@ public:
 private:
 	HANDLE										m_hFenceEvent = 0;
 	_uint										m_iFenceValue = 0;
-	_uint										m_iCurTargetIdx=0;
+	_uint										m_iCurTargetIdx = 0;
 private:
-	_uint										m_iRTVHeapSize=0;
+	_uint										m_iRTVHeapSize = 0;
 	_uint										m_iSRVHeapSize = 0;
 	_uint										m_iDSVHeapSize = 0;
 	_uint										m_iHDRMetaDataPoolIdx = 0;;
@@ -68,11 +87,11 @@ private:
 private:
 	_uint										m_iRootConstant[(_uint)RootConstants::RootConstantsCount];
 private:
-	_bool										m_IsHDRSupport= false;
+	_bool										m_IsHDRSupport = false;
 	_bool										m_IsEnableST2084 = false;
 	_bool										m_IsTearingSupport = true;
 private:
-	_uint										m_iFactoryFlags=0;
+	_uint										m_iFactoryFlags = 0;
 public:
 	static _float								m_fHDRMetaDataPool[4][4];
 public:
@@ -80,9 +99,16 @@ public:
 	void										Render_Begin();
 	void										Render_End();
 	void										WaitForFenceEvent();
+	void										WaitForFenceEvent_CS();
 public:
 	void										Open();
 	void										Close();
+public:
+	void										ResCmdOpen();
+	void										ResCmdClose();
+public:
+	void										CsCmdOpen();
+	void										CsCmdClose();
 private:
 	HRESULT										Create_SwapChain(_bool IsWindowed);
 	HRESULT										Create_View();
@@ -93,7 +119,7 @@ private:
 	HRESULT										CheckHDRSupport();
 	HRESULT										CheckSupportTearing();
 	_int										ComputeIntersectionArea(_int ax1, _int ay1, _int ax2, _int ay2,
-																		_int bx1, _int by1, _int bx2, _int by2);
+		_int bx1, _int by1, _int bx2, _int by2);
 	HRESULT										EnsureSwapChainColorSpace(SwapChainBitDepth swapChainBitDepth, _bool enableST);
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
@@ -106,6 +132,6 @@ public:
 private:
 	void										ClearDummyDesc(_uint iIdx);
 private:
-    virtual void								Free();
+	virtual void								Free();
 };
 

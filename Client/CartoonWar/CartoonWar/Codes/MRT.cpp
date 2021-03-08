@@ -38,6 +38,22 @@ HRESULT CMRT::Ready_MRT(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)
 			, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	}
 
+	for (_uint i = 0; i < m_iRTCnt; ++i)
+	{
+		D3D12_RESOURCE_BARRIER barrier = {};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = m_tArr[i].pRtt->GetTex2D().Get();
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 타겟에서
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;			// 일반 리소스로
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		m_TargetToRes[i] = barrier;
+
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;		// 리소스
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 렌더 타겟으로
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		m_ResToTarget[i] = barrier;
+	}
 	return S_OK;
 }
 
@@ -64,6 +80,7 @@ void CMRT::OM_Set()
 
 void CMRT::Clear()
 {
+	ResToTargetBarrier();
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	for (UINT i = 0; i < m_iRTCnt; ++i)
@@ -100,6 +117,16 @@ void CMRT::Clear(_uint iRtIdx)
 		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDsTex->GetDSV()->GetCPUDescriptorHandleForHeapStart();
 		CDevice::GetInstance()->GetCmdLst()->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 	}
+}
+
+void CMRT::TargetToResBarrier()
+{
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(m_iRTCnt, m_TargetToRes);
+}
+
+void CMRT::ResToTargetBarrier()
+{
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(m_iRTCnt, m_ResToTarget);
 }
 
 CMRT* CMRT::Create(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)

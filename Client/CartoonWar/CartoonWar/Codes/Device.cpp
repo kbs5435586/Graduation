@@ -105,6 +105,7 @@ HRESULT CDevice::Initialize()
 
 	// CreateFence
 	m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFence));
+	m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFenceCS));
 	m_iFenceValue = 1;
 
 	// Create an event handle to use for frame synchronization.
@@ -121,12 +122,19 @@ HRESULT CDevice::Initialize()
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	m_pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_pCmdQueue));
 
+	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
+	m_pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_pCsCmdQueue));
+
 	// Create Command Allocator
 	m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_pCmdAlloc));
+	m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_pResCmdAlloc));
+	m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COMPUTE, IID_PPV_ARGS(&m_pCsCmdAlloc));
 
 	// Create the command list.
-	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT
-		, m_pCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListGraphic));
+	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListGraphic));
+	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pResCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pResCmdList));
+	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_pCsCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCsCmdList));
 
 	m_pCmdListGraphic->Close();
 
@@ -198,6 +206,7 @@ HRESULT CDevice::Create_SwapChain(_bool IsWindowed)
 
 void CDevice::Open()
 {
+	m_pCmdAlloc->Reset();
 	m_pCmdListGraphic->Reset(m_pCmdAlloc.Get(), nullptr);
 }
 
@@ -207,6 +216,36 @@ void CDevice::Close()
 	// 커맨드 리스트 수행	
 	ID3D12CommandList* ppCommandLists[] = { m_pCmdListGraphic.Get() };
 	m_pCmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+}
+
+void CDevice::ResCmdOpen()
+{
+	m_pResCmdAlloc->Reset();
+	m_pResCmdList->Reset(m_pResCmdAlloc.Get(), nullptr);
+}
+
+void CDevice::ResCmdClose()
+{
+	m_pResCmdList->Close();
+	// 커맨드 리스트 수행	
+	ID3D12CommandList* ppCommandLists[] = { m_pResCmdList.Get() };
+	m_pCmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+	WaitForFenceEvent();
+}
+
+void CDevice::CsCmdOpen()
+{
+	m_pCsCmdAlloc->Reset();
+	m_pCsCmdList->Reset(m_pCsCmdAlloc.Get(), nullptr);
+}
+
+void CDevice::CsCmdClose()
+{
+	m_pCsCmdList->Close();
+	// 커맨드 리스트 수행	
+	ID3D12CommandList* ppCommandLists[] = { m_pCsCmdList.Get() };
+	m_pCsCmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+	WaitForFenceEvent_CS();
 }
 
 HRESULT CDevice::SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall)
@@ -682,8 +721,10 @@ void CDevice::Render_Begin()
 		return;
 
 	m_iCurrentDummyIdx = 0;
-	m_pCmdAlloc->Reset();
+
 	Open();
+	ResCmdOpen();
+	CsCmdOpen();
 
 	// 필요한 상태 설정	
 	m_pCmdListGraphic->RSSetViewports(1, &m_tViewPort);
@@ -702,14 +743,6 @@ void CDevice::Render_Begin()
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
-
-	//D3D12_CPU_DESCRIPTOR_HANDLE		hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	//CD3DX12_CPU_DESCRIPTOR_HANDLE	hDSVHandle(m_pDSV->GetCPUDescriptorHandleForHeapStart());
-	//
-	//hRTVHandle.ptr += (m_iCurTargetIdx * m_iRTVHeapSize);
-	//m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
-	//m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
-	//m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	ClearDummyDesc(0);
 }
@@ -734,6 +767,8 @@ void CDevice::Render_End()
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
 	Close();
+	ResCmdClose();
+	CsCmdClose();
 	// Present the frame.
 	m_pSwapChain->Present(0, 0);
 
@@ -755,6 +790,23 @@ void CDevice::WaitForFenceEvent()
 	if (a < fence)
 	{
 		m_pFence->SetEventOnCompletion(fence, m_hFenceEvent);
+		WaitForSingleObject(m_hFenceEvent, INFINITE);
+	}
+}
+
+void CDevice::WaitForFenceEvent_CS()
+{
+	static int iFenceValue = 0;
+
+	const size_t fence = iFenceValue;
+	m_pCsCmdQueue->Signal(m_pFenceCS.Get(), fence);
+	iFenceValue++;
+
+	size_t a = m_pFenceCS->GetCompletedValue();
+	// Wait until the previous frame is finished.
+	if (a < fence)
+	{
+		m_pFenceCS->SetEventOnCompletion(fence, m_hFenceEvent);
 		WaitForSingleObject(m_hFenceEvent, INFINITE);
 	}
 }

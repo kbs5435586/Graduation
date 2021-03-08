@@ -142,6 +142,7 @@ void CRenderer::Render_Deffered(CManagement* pManagement, _uint iSwapChainIdx)
 	Render_NoneAlpha();
 	Render_UI_DEFFERED();
 
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 	/*Defferd To Forward*/
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 }
@@ -156,7 +157,7 @@ void CRenderer::Render_Light(CManagement* pManagement, _uint iSwapChainIdx)
 
 	//pManagement->Render_Light();
 
-
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->TargetToResBarrier();
 	/*Defferd To Forward*/
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 }
