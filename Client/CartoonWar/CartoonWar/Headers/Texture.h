@@ -33,7 +33,7 @@ private:
     vector<ID3D12Resource*>                             m_vecTexture;
     vector<ID3D12Resource*>                             m_vecTextureUpload;
     vector<ID3D12DescriptorHeap*>                       m_vecSRV;
-    vector<ID3D12DescriptorHeap*>                      m_vecUAV;
+    vector<ID3D12DescriptorHeap*>                       m_vecUAV;
     vector<_uint>                                       m_vecSrvDescriptorIncrementSize;
 private:
     map<const _tchar*, vector<ID3D12DescriptorHeap*>>   m_mapSrvDescHeap;

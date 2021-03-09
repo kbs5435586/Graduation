@@ -298,9 +298,6 @@ HRESULT CTexture::SetUp_OnShader(_int iIdx, TEXTURE_REGISTER eRegister)	//0 t1
 		m_vecSRV[iIdx]->GetGPUDescriptorHandleForHeapStart()
 	);
 
-	//hTexture가 DescHeap위치를 참조 못함
-	//이유: Gpu핸들의 ptr증가가 아니라 Cpu 핸들을 증가시킨뒤 그 값으로 gpu핸들의 값 유추
-
  	hTexture.Offset(m_vecSrvDescriptorIncrementSize[iIdx]*(_uint)eRegister);
 
 	CDevice::GetInstance()->GetCmdLst()->SetDescriptorHeaps(1, &m_vecSRV[iIdx]);
