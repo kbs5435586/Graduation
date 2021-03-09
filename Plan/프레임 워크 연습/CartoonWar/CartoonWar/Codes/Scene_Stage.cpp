@@ -8,6 +8,7 @@
 #include "Cube_Texture.h"
 #include "SkyBox.h"
 #include "Debug_Camera.h"
+#include "Inventory_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
 // Mesh
@@ -75,6 +76,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Inventory", CInventory_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
@@ -164,6 +167,23 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFar = g_Far;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
+		return E_FAIL;
+
+
+	/////////////////////
+	
+	CInventory_Camera* pICameraObject = nullptr;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
+		(CGameObject**)&pICameraObject)))
+		return E_FAIL;
+
+	CAMERADESC		tICameraDesc;
+	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
+	tICameraDesc.vEye = _vec3(0.f, 0.f, -5.f);
+	tICameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+
+	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tProjDesc)))
 		return E_FAIL;
 
 

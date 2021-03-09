@@ -368,7 +368,8 @@ HRESULT CDevice::Create_RootSignature()
 	D3D12_DESCRIPTOR_RANGE range = {};
 
 	range.BaseShaderRegister = 0;  // b0 에서
-	range.NumDescriptors = 5;	   // b4 까지 5개 상수레지스터 사용여부 
+	//range.NumDescriptors = 5;	   // b4 까지 5개 상수레지스터 사용여부 
+	range.NumDescriptors = 5;
 	range.OffsetInDescriptorsFromTableStart = -1;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;

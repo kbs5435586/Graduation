@@ -54,6 +54,19 @@ cbuffer REFLECT : register(b3)
 	row_major matrix	matReflect;
 };
 
+cbuffer	ITRANSFORM_MATRIX : register (b4)
+{
+	row_major matrix	matIWorld;
+	row_major matrix	matIView;
+	row_major matrix	matIProj;
+
+	row_major matrix	matIWV;
+	row_major matrix	matIWVP;
+
+
+	float4				vICamPos;
+};
+
 
 
 Texture2D	g_texture0		: register(t0);
