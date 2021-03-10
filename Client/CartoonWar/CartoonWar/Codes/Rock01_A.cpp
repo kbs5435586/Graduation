@@ -106,7 +106,7 @@ CRock01_A* CRock01_A::Create()
 	return pInstance;
 }
 
-CGameObject* CRock01_A::Clone_GameObject(void* pArg)
+CGameObject* CRock01_A::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CRock01_A* pInstance = new CRock01_A(*this);
 
@@ -115,6 +115,7 @@ CGameObject* CRock01_A::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CRock01_A Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

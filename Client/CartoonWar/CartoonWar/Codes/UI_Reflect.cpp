@@ -104,13 +104,14 @@ CUI_Reflect* CUI_Reflect::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Reflect::Clone_GameObject(void* pArg)
+CGameObject* CUI_Reflect::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CUI_Reflect* pInstance = new CUI_Reflect();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

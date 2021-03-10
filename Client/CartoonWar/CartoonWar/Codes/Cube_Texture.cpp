@@ -118,7 +118,7 @@ CCube_Texture* CCube_Texture::Create()
 	return pInstance;
 }
 
-CGameObject* CCube_Texture::Clone_GameObject(void* pArg)
+CGameObject* CCube_Texture::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CCube_Texture* pInstance = new CCube_Texture(*this);
 
@@ -127,6 +127,7 @@ CGameObject* CCube_Texture::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CCube Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

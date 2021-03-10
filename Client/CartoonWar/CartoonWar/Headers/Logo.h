@@ -22,7 +22,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CLogo*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

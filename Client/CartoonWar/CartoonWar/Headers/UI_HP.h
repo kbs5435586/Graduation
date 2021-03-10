@@ -24,7 +24,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CUI_HP*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

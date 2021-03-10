@@ -105,7 +105,7 @@ CLogo* CLogo::Create()
 	return pInstance;
 }
 
-CGameObject* CLogo::Clone_GameObject(void* pArg)
+CGameObject* CLogo::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CLogo* pInstance = new CLogo(*this);
 
@@ -114,6 +114,7 @@ CGameObject* CLogo::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CLogo Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

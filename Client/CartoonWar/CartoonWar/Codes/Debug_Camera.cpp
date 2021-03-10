@@ -94,7 +94,7 @@ CDebug_Camera* CDebug_Camera::Create()
 	return pInstance;
 }
 
-CGameObject* CDebug_Camera::Clone_GameObject(void* pArg)
+CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CDebug_Camera* pInstance = new CDebug_Camera(*this);
 
@@ -103,6 +103,7 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CCamera_Debug Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

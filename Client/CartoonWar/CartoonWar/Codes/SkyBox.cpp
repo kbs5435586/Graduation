@@ -98,7 +98,7 @@ CSkyBox* CSkyBox::Create()
 	return pInstance;
 }
 
-CGameObject* CSkyBox::Clone_GameObject(void* pArg)
+CGameObject* CSkyBox::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CSkyBox* pInstance = new CSkyBox(*this);
 
@@ -107,6 +107,7 @@ CGameObject* CSkyBox::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CSkyBox Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

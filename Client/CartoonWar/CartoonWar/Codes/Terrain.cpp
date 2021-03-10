@@ -97,7 +97,7 @@ CTerrain* CTerrain::Create()
 	return pInstance;
 }
 
-CGameObject* CTerrain::Clone_GameObject(void* pArg)
+CGameObject* CTerrain::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CTerrain* pInstance = new CTerrain(*this);
 
@@ -106,6 +106,7 @@ CGameObject* CTerrain::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTerrain Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

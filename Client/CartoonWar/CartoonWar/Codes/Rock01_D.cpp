@@ -44,7 +44,7 @@ CRock01_D* CRock01_D::Create()
 	return nullptr;
 }
 
-CGameObject* CRock01_D::Clone_GameObject(void* pArg)
+CGameObject* CRock01_D::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	return nullptr;
 }

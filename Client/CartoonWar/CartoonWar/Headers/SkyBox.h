@@ -20,10 +20,9 @@ public:
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
-	HRESULT									CreateConstantBuffer();
 public:
 	static CSkyBox*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

@@ -108,13 +108,14 @@ CUI_HP* CUI_HP::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_HP::Clone_GameObject(void* pArg)
+CGameObject* CUI_HP::Clone_GameObject(void* pArg, const _uint& iIdx )
 {
 	CUI_HP* pInstance = new CUI_HP();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

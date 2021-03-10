@@ -104,13 +104,14 @@ CUI_Specular* CUI_Specular::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Specular::Clone_GameObject(void* pArg)
+CGameObject* CUI_Specular::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CUI_Specular* pInstance = new CUI_Specular();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

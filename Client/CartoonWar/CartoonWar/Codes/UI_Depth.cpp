@@ -102,13 +102,14 @@ CUI_Depth* CUI_Depth::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Depth::Clone_GameObject(void* pArg)
+CGameObject* CUI_Depth::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CUI_Depth* pInstance = new CUI_Depth();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

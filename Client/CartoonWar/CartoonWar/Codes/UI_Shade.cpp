@@ -104,13 +104,14 @@ CUI_Shade* CUI_Shade::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Shade::Clone_GameObject(void* pArg)
+CGameObject* CUI_Shade::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CUI_Shade* pInstance = new CUI_Shade();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

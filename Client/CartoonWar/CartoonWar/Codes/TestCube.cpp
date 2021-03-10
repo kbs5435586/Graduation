@@ -126,10 +126,11 @@ CTestCube* CTestCube::Create()
 		MessageBox(0, L"CTestCube Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
-CGameObject* CTestCube::Clone_GameObject(void* pArg)
+CGameObject* CTestCube::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CTestCube* pInstance = new CTestCube(*this);
 
@@ -138,6 +139,7 @@ CGameObject* CTestCube::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTestCube Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

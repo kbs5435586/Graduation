@@ -149,10 +149,11 @@ CFire* CFire::Create()
 		MessageBox(0, L"CFire Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
-CGameObject* CFire::Clone_GameObject(void* pArg)
+CGameObject* CFire::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CFire* pInstance = new CFire(*this);
 
@@ -161,6 +162,7 @@ CGameObject* CFire::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CFire Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

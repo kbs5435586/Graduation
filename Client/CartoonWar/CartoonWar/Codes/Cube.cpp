@@ -166,7 +166,7 @@ CCube* CCube::Create()
 	return pInstance;
 }
 
-CGameObject* CCube::Clone_GameObject(void* pArg)
+CGameObject* CCube::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CCube* pInstance = new CCube(*this);
 
@@ -175,6 +175,7 @@ CGameObject* CCube::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CCube Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

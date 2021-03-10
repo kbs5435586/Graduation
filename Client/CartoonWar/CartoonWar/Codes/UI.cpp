@@ -11,7 +11,7 @@ CUI::CUI(const CUI& rhs)
 {
 }
 
-CGameObject* CUI::Clone_GameObject(void* pArg)
+CGameObject* CUI::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	return nullptr;
 }

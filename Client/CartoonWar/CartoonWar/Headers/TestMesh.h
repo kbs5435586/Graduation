@@ -23,7 +23,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CTestMesh*						Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg);
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx);
 private:
 	virtual void							Free();
 private:

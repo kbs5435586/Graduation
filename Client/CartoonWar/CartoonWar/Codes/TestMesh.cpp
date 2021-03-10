@@ -165,7 +165,7 @@ CTestMesh* CTestMesh::Create()
 	return pInstance;
 }
 
-CGameObject* CTestMesh::Clone_GameObject(void* pArg)
+CGameObject* CTestMesh::Clone_GameObject(void* pArg, const _uint& iIdx )
 {
 	CTestMesh* pInstance = new CTestMesh(*this);
 	if (FAILED(pInstance->Ready_GameObject()))
@@ -173,6 +173,7 @@ CGameObject* CTestMesh::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTestMesh Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

@@ -162,7 +162,7 @@ COrc01* COrc01::Create()
 	return pInstance;
 }
 
-CGameObject* COrc01::Clone_GameObject(void* pArg)
+CGameObject* COrc01::Clone_GameObject(void* pArg, const _uint& iIdx )
 {
 	COrc01* pInstance = new COrc01(*this);
 	if (FAILED(pInstance->Ready_GameObject()))
@@ -170,6 +170,7 @@ CGameObject* COrc01::Clone_GameObject(void* pArg)
 		MessageBox(0, L"COrc01 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

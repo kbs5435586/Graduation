@@ -118,7 +118,7 @@ CTerrain_Height* CTerrain_Height::Create()
 	return pInstance;
 }
 
-CGameObject* CTerrain_Height::Clone_GameObject(void* pArg)
+CGameObject* CTerrain_Height::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CTerrain_Height* pInstance = new CTerrain_Height(*this);
 
@@ -127,6 +127,7 @@ CGameObject* CTerrain_Height::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTerrain_Height Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

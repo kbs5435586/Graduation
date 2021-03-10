@@ -108,7 +108,7 @@ CMyRect* CMyRect::Create()
 	return pInstance;
 }
 
-CGameObject* CMyRect::Clone_GameObject(void* pArg)
+CGameObject* CMyRect::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CMyRect* pInstance = new CMyRect(*this);
 
@@ -117,6 +117,7 @@ CGameObject* CMyRect::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CMyRect Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

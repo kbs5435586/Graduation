@@ -107,13 +107,14 @@ CUI_Loading* CUI_Loading::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Loading::Clone_GameObject(void* pArg)
+CGameObject* CUI_Loading::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CUI_Loading* pInstance = new CUI_Loading();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
