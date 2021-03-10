@@ -8,6 +8,7 @@
 #include "KeyManager.h"
 #include "LoadManager.h"
 #include "FBXLoader.h"
+#include "UAVManager.h"
 
 #include "MRT.h"
 #include "Base.h"
@@ -36,6 +37,7 @@ public://GameObjectManager
 	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 	CGameObject*				Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag);
+	CLayer*						Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag);
 public://LightManager
 	LIGHT						Get_Light(const _tchar* pLightTag);
 	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);
@@ -63,6 +65,8 @@ public://Observer_Manager
 	void                        Notify(DATA_TYPE eType, void* pData = nullptr);
 public://Load_Manager
 	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
+public://UAV_Manager
+	HRESULT						Ready_UAV_Manager();
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -83,5 +87,6 @@ private:
 	CKeyManager*				m_pKey_Manager = nullptr;
 	CObserverManager*			m_pObserver_Manager = nullptr;
 	CLoadManager*				m_pLoad_Manager = nullptr;
+	CUAVManager*				m_pUAV_Manager = nullptr;
 };
 

@@ -352,6 +352,18 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\05. Mesh">
       <UniqueIdentifier>{ff41a37a-4038-47ac-a58d-1bbd9e97d687}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\09. UAVManager">
+      <UniqueIdentifier>{b9728a88-b093-4683-afcd-860f48e71848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\09. UAVManager\00. UAV">
+      <UniqueIdentifier>{45e77893-7eb7-4cd4-b638-2f0d9371df16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\09. UAVManager\01. UAVManager">
+      <UniqueIdentifier>{4a5c22e6-04d9-4cde-9aeb-255a6b89ecc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ShaderFiles\99. Compute">
+      <UniqueIdentifier>{9ce81e86-2c50-4511-8f0e-c94497ce7450}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -639,6 +651,12 @@
     <ClInclude Include="..\Headers\Mesh.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UAV.h">
+      <Filter>97. Engine\01. Utility\09. UAVManager\00. UAV</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UAVManager.h">
+      <Filter>97. Engine\01. Utility\09. UAVManager\01. UAVManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -900,6 +918,12 @@
     <ClCompile Include="..\Codes\Mesh.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UAV.cpp">
+      <Filter>97. Engine\01. Utility\09. UAVManager\00. UAV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UAVManager.cpp">
+      <Filter>97. Engine\01. Utility\09. UAVManager\01. UAVManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -949,6 +973,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Hatch.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

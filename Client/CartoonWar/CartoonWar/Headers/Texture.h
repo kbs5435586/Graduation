@@ -29,12 +29,18 @@ private:
     _uint                                               m_iTexuterIdx = 0;
 public:
    ID3D12DescriptorHeap*                                GetSRV(const _uint& iTextureIdx=0) { return m_vecSRV[iTextureIdx]; }
+   ID3D12DescriptorHeap*                                GetUAV(const _uint& iIdx=0){return m_vecUAV[iIdx]; }
+public:
+    D3D12_RESOURCE_STATES                               GetState() { return m_eState; }
+    void                                                SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }
 private:
     vector<ID3D12Resource*>                             m_vecTexture;
     vector<ID3D12Resource*>                             m_vecTextureUpload;
     vector<ID3D12DescriptorHeap*>                       m_vecSRV;
     vector<ID3D12DescriptorHeap*>                       m_vecUAV;
     vector<_uint>                                       m_vecSrvDescriptorIncrementSize;
+private:
+    D3D12_RESOURCE_STATES                               m_eState = {};
 private:
     map<const _tchar*, vector<ID3D12DescriptorHeap*>>   m_mapSrvDescHeap;
 private:

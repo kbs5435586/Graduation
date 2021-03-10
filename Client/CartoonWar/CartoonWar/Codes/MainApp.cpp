@@ -46,9 +46,12 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(TIME), 512, CONST_REGISTER::b7)))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(REP), 512, CONST_REGISTER::b8)))
+		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_RTT_Manager()))
 		return E_FAIL;
-
+	if (FAILED(m_pManagement->Ready_UAV_Manager()))
+		return E_FAIL;
 
 
 	srand(unsigned(time(NULL)));

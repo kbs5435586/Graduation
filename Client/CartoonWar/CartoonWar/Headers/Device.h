@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 class CTexture;
+class CUAV;
 class CDevice :
 	public CBase
 {
@@ -62,7 +63,7 @@ public:
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 public:
-	_uint& GetHDRMetaDataIdx() { return m_iHDRMetaDataPoolIdx; }
+	_uint&										GetHDRMetaDataIdx() { return m_iHDRMetaDataPoolIdx; }
 private:
 	ComPtr<ID3D12RootSignature>					m_ArrRootSignature[(_uint)ROOT_SIG_TYPE::END];
 private:
@@ -121,7 +122,7 @@ private:
 	HRESULT										CheckHDRSupport();
 	HRESULT										CheckSupportTearing();
 	_int										ComputeIntersectionArea(_int ax1, _int ay1, _int ax2, _int ay2,
-		_int bx1, _int by1, _int bx2, _int by2);
+																		_int bx1, _int by1, _int bx2, _int by2);
 	HRESULT										EnsureSwapChainColorSpace(SwapChainBitDepth swapChainBitDepth, _bool enableST);
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
@@ -132,14 +133,16 @@ public:
 	void										SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
 public:
 	void										SetUpContantBufferToShader_CS(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
-	void										SetTextureToShader_CS(CTexture* pTextureCom, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx = 0);
+	void										SetTextureToShader_CS(CUAV* pUAV, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx = 0);
 	void										SetTextureToShader_CS(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum);
 public:
-	void										SetUpUAVToRegister(ID3D12DescriptorHeap* pTextureDesc, UAV_REGISTER eRegister);
+	void										SetUpUAVToRegister(CUAV* pUAV, UAV_REGISTER eRegister);
 public:
 	void										UpdateTable();
+	void										UpdateTable_CS();
 private:
 	void										ClearDummyDesc(_uint iIdx);
+	void										ClearDummyDesc_CS();
 private:
 	virtual void								Free();
 };

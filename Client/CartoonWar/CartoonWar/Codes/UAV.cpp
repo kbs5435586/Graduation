@@ -1,76 +1,16 @@
 #include "framework.h"
-#include "RTT.h"
-#include "Management.h"
+#include "UAV.h"
 
-CRTT::CRTT()
+
+
+CUAV::CUAV()
 {
-
 }
 
-
-HRESULT CRTT::CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTex2D)
+HRESULT CUAV::Ready_UAV( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+	, const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
+	, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
 {
-	lstrcpy(m_pTag, pTag);
-	m_pTexture = _pTex2D;
-	m_tDesc = _pTex2D->GetDesc();
-
-	HRESULT hr = S_OK;
-	if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
-		tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		tDesc.NumDescriptors = 1;
-		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		tDesc.NodeMask = 0;
-		hr = CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV));
-
-		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
-		CDevice::GetInstance()->GetDevice()->CreateDepthStencilView(m_pTexture.Get(), nullptr, hDSVHandle);
-	}
-	else
-	{
-		if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET)
-		{
-			// RenderTargetView 만들기	
-			D3D12_DESCRIPTOR_HEAP_DESC tDesc = {};
-			tDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-			tDesc.NumDescriptors = 1;
-			tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-			tDesc.NodeMask = 0;
-			
-			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pRTV));
-			D3D12_CPU_DESCRIPTOR_HANDLE hRTVHeap = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-
-			CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), nullptr, hRTVHeap);
-		}
-
-		if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE)
-		{
-			// SRV 를 저장할 DescriptorHeap Create
-			D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-			srvHeapDesc.NumDescriptors = 1;
-			srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-			srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSRV));
-
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pSRV->GetCPUDescriptorHandleForHeapStart();
-
-			D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-			//srvDesc.Format = m_Image.GetMetadata().format;
-			srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-			srvDesc.Texture2D.MipLevels = 1;
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, 
-	const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
-{
-	lstrcpy(m_pTag, pTag);
 	m_tDesc.MipLevels = 1;
 	m_tDesc.Format = _eFormat;
 	m_tDesc.Width = _iWidth;
@@ -86,7 +26,6 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	m_tDesc.Alignment = 0;
 	m_tDesc.DepthOrArraySize = 1;
 	m_tDesc.MipLevels = 1;
-
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;
 	m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
@@ -104,9 +43,7 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(_eFormat, arrFloat);
 		pValue = &depthOptimizedClearValue;
 	}
-
-
-	if(FAILED(CDevice ::GetInstance()->GetDevice()->
+	if (FAILED(CDevice::GetInstance()->GetDevice()->
 		CreateCommittedResource(&_HeapProperty, _eHeapFlag, &m_tDesc, m_eState, pValue, IID_PPV_ARGS(&m_pTexture))))
 		return E_FAIL;
 
@@ -140,6 +77,23 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 			CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), nullptr, hRTVHeap);
 		}
 
+		else if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
+		{
+			D3D12_DESCRIPTOR_HEAP_DESC uavHeapDesc = {};
+			uavHeapDesc.NumDescriptors = 1;
+			uavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+			uavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+			CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&uavHeapDesc, IID_PPV_ARGS(&m_pUAV));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pUAV->GetCPUDescriptorHandleForHeapStart();
+
+			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+			uavDesc.Format = _eFormat;
+			uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+
+			CDevice::GetInstance()->GetDevice()->CreateUnorderedAccessView(m_pTexture.Get(), nullptr, &uavDesc, handle);
+		}
+
 		// SRV 를 저장할 DescriptorHeap Create
 		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 		srvHeapDesc.NumDescriptors = 1;
@@ -161,28 +115,17 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	return S_OK;
 }
 
-CRTT* CRTT::Create(const _tchar* pTag, ComPtr<ID3D12Resource> _pTex2D)
+CUAV* CUAV::Create( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+	, const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
+	, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClol)
 {
-	CRTT* pInstance = new CRTT;
-	if (FAILED(pInstance->CreateFromResource(pTag, _pTex2D)))
+	CUAV* pInstance = new CUAV();
+	if (FAILED(pInstance->Ready_UAV( _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClol)))
 		Safe_Release(pInstance);
 
 	return pInstance;
 }
 
-
-CRTT* CRTT::Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty,
-					D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr)
-{
-	CRTT* pInstance = new CRTT;
-	if (FAILED(pInstance->Create_Texture(pTag, _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClolr)))
-		Safe_Release(pInstance);
-
-	return pInstance;
-
-}
-
-
-void CRTT::Free()
+void CUAV::Free()
 {
 }

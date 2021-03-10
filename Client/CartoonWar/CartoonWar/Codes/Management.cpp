@@ -17,6 +17,7 @@ CManagement::CManagement()
 	, m_pKey_Manager(CKeyManager::GetInstance())
 	, m_pObserver_Manager(CObserverManager::GetInstance())
 	, m_pLoad_Manager(CLoadManager::GetInstance())
+	, m_pUAV_Manager(CUAVManager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
@@ -26,6 +27,7 @@ CManagement::CManagement()
 	m_pKey_Manager->AddRef();
 	m_pObserver_Manager->AddRef();
 	m_pLoad_Manager->AddRef();
+	m_pUAV_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -64,6 +66,11 @@ HRESULT CManagement::Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGam
 CGameObject* CManagement::Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag)
 {
 	return m_pObject_Manager->Get_BackObject(iSceneID, pLayerTag);
+}
+
+CLayer* CManagement::Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag)
+{
+	return m_pObject_Manager->Find_Layer(iSceneID, pLayerTag);
 }
 
 LIGHT CManagement::Get_Light(const _tchar* pLightTag)
@@ -164,6 +171,11 @@ HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
 	return m_pLoad_Manager->Load_File(pFilePath, pArg);
 }
 
+HRESULT CManagement::Ready_UAV_Manager()
+{
+	return m_pUAV_Manager->Ready_UAVManager();
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -249,6 +261,8 @@ void CManagement::Release_Engine()
 
 	if (dwRefCnt = CObserverManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CObserverManager Release Failed");
+	if (dwRefCnt = CUAVManager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CUAVManager Release Failed");
 
 	if (dwRefCnt = CLight_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CLight_Manager Release Failed");
@@ -306,6 +320,7 @@ list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
+	Safe_Release(m_pUAV_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pConstant_Buffer_Manager);

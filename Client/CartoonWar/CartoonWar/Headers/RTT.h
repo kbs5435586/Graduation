@@ -14,6 +14,9 @@ public:
                                                     , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
                                                     , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr);
 public:
+    D3D12_RESOURCE_STATES           GetState() { return m_eState; }
+    void                            SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }
+public:
     ComPtr<ID3D12Resource>          GetTex2D()  { return m_pTexture; }
     ComPtr<ID3D12DescriptorHeap>    GetSRV()    { return m_pSRV; }
     ComPtr<ID3D12DescriptorHeap>    GetRTV()    { return m_pRTV; }
@@ -36,6 +39,7 @@ private:
     ComPtr<ID3D12DescriptorHeap>    m_pDSV;
 private:
     _tchar                          m_pTag[128] = {};
+    D3D12_RESOURCE_STATES           m_eState = {};
 
 };
 

@@ -15,6 +15,8 @@ CShader::CShader(const CShader& rhs)
 	, m_pCSBlob(rhs.m_pCSBlob)
 	, m_pGSBlob(rhs.m_pGSBlob)
 	, m_tPipeline(rhs.m_tPipeline)
+	, m_tPipeline_CS(rhs.m_tPipeline_CS)
+	, m_pPilelineState_CS()
 {
 }
 
@@ -107,6 +109,9 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
+	case SHADER_TYPE::SHADER_COMPUTE:
+		m_tPipeline.NumRenderTargets = 0;
+		break;
 	}
 
 
@@ -116,6 +121,29 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	{
 		return E_FAIL;
 	}
+	return S_OK;
+}
+
+HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* CSEntry)
+{
+	char* pErr = nullptr;
+	ZeroMemory(&m_tPipeline, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+
+	if (CSEntry)
+	{
+		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, CSEntry, "vs_5_1", 0, 0, &m_pCSBlob, &m_pErrBlob)))
+		{
+			pErr = (char*)m_pErrBlob->GetBufferPointer();
+			MessageBoxA(nullptr, pErr, "CS_Shader Create Failed !!!", MB_OK);
+			return E_FAIL;
+		}
+		m_tPipeline_CS.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get();
+		m_tPipeline_CS.CS = { m_pCSBlob->GetBufferPointer(), m_pCSBlob->GetBufferSize() };
+
+		CDevice::GetInstance()->GetDevice()->CreateComputePipelineState(&m_tPipeline_CS, IID_PPV_ARGS(&m_pPilelineState_CS));
+	}
+
 	return S_OK;
 }
 
@@ -161,6 +189,18 @@ CShader* CShader::Create(const _tchar* pFilepath, const char* VSEntry, const cha
 	CShader* pInstance = new CShader();
 
 	if (FAILED(pInstance->Ready_Shader(pFilepath, VSEntry, PSEntry)))
+	{
+		MessageBox(0, L"CShader Created Failed", L"System Error", MB_OK);
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CShader* CShader::Create(const _tchar* pFilePath, const char* CSEntry)
+{
+	CShader* pInstance = new CShader();
+
+	if (FAILED(pInstance->Ready_Shader(pFilePath, CSEntry)))
 	{
 		MessageBox(0, L"CShader Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);

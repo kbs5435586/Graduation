@@ -14,6 +14,7 @@ public:
 													DEPTH_STENCIL_TYPE eDepthType = DEPTH_STENCIL_TYPE::LESS, 
 													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD,
 													BLEND_TYPE eBlendType = BLEND_TYPE::DEFAULT);
+	HRESULT								Ready_Shader(const _tchar* pFilePath, const char* CSEntry);
 public:
 	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, 
 											_matrix matProj, MAINPASS& output);
@@ -26,14 +27,18 @@ private:
 	ComPtr<ID3DBlob>					m_pDSBlob = nullptr;
 	ComPtr<ID3DBlob>					m_pGSBlob = nullptr;
 	ComPtr<ID3DBlob>					m_pPSBlob = nullptr;
-	ComPtr<ID3DBlob>					m_pErrBlob = nullptr;
 	ComPtr<ID3DBlob>					m_pCSBlob = nullptr;
+	ComPtr<ID3DBlob>					m_pErrBlob = nullptr;
 private:
 	ComPtr<ID3D12PipelineState>			m_pPipeLineState = nullptr;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC  m_tPipeline = {};
+private:
+	ComPtr<ID3D12PipelineState>			m_pPilelineState_CS;
+	D3D12_COMPUTE_PIPELINE_STATE_DESC   m_tPipeline_CS;
 public:
 	static CShader*						Create(const _tchar* pFilepath, const char* VSEntry,
 											const char* PSEntry, const char* HSEntry = nullptr, const char* DSEntry = nullptr, const char* GSEntry = nullptr);
+	static CShader*						Create(const _tchar* pFilePath, const char* CSEntry);
 	virtual CComponent*					Clone_Component(void* pArg = nullptr);
 private:
 	virtual void						Free();
