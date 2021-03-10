@@ -155,6 +155,11 @@ void CManagement::Release_Engine()
 		_MSG_BOX("CGraphic_Device Release Failed");
 }
 
+CLayer* CManagement::Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag)
+{
+	return m_pObject_Manager->Find_Layer(iSceneID, pLayerTag);
+}
+
 CGameObject* CManagement::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
 {
 	if (nullptr == m_pObject_Manager)

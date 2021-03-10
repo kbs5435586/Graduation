@@ -156,6 +156,7 @@ void Server::send_login_ok_packet(int user_id)
 	packet.y = g_clients[user_id].m_pos.y;
     packet.z = g_clients[user_id].m_pos.z;
 
+
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
@@ -395,6 +396,46 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
+    Vec3 Dir = cal_dist_to_Player(npc_id);
+    g_clients[npc_id].m_pos = g_clients[npc_id].m_pos + Dir;
+
+    cout << npc_id << "의 위치 : " << g_clients[npc_id].m_pos.x << " , " << g_clients[npc_id].m_pos.y << endl;
+
+    for (int i = 0; i < NPC_ID_START; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+
+        if (true == is_near(i, npc_id))
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock();
+                send_move_packet(i, npc_id);
+            }
+            else
+            {
+                g_clients[i].m_cLock.unlock();
+                send_enter_packet(i, npc_id);
+            }
+        }
+        else
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                send_leave_packet(i, npc_id);
+            }
+            else
+                g_clients[i].m_cLock.unlock();
+        }
+    }
+}
+
+Vec3 Server::cal_dist_to_Player(int npc_id)
+{
     Vec3 Dir = { 0,0,0 };
     int player_id = g_clients[npc_id].m_owner_id;
 
@@ -406,42 +447,8 @@ void Server::do_follow(int npc_id)
 
         Dir = Dir / hyp;
         Dir = Dir * NPC_SPEED;
-        g_clients[npc_id].m_pos = g_clients[npc_id].m_pos + Dir;
-
-        cout << npc_id << "의 위치 : " << g_clients[npc_id].m_pos.x << " , " << g_clients[npc_id].m_pos.y << endl;
-
-        for (int i = 0; i < NPC_ID_START; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status)
-                continue;
-
-            if (true == is_near(i, npc_id))
-            {
-                g_clients[i].m_cLock.lock();
-                if (0 != g_clients[i].m_view_list.count(npc_id))
-                {
-                    g_clients[i].m_cLock.unlock();
-                    send_move_packet(i, npc_id);
-                }
-                else
-                {
-                    g_clients[i].m_cLock.unlock();
-                    send_enter_packet(i, npc_id);
-                }
-            }
-            else
-            {
-                g_clients[i].m_cLock.lock();
-                if (0 != g_clients[i].m_view_list.count(npc_id))
-                {
-                    g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                    send_leave_packet(i, npc_id);
-                }
-                else
-                    g_clients[i].m_cLock.unlock();
-            }
-        }
     }
+    return Dir;
 }
 
 void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
@@ -659,8 +666,6 @@ void Server::initialize_clients()
     for (int i = 0; i < MAX_USER; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
-        g_clients[i].m_owner_id = i; // 유저 등록
-        g_clients[i].m_last_order = FUNC_END;
         g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
     }
 }
@@ -678,6 +683,7 @@ void Server::initialize_NPC(int player_id)
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
             g_clients[i].m_pos = g_clients[player_id].m_pos;
+            g_clients[i].m_speed = NPC_SPEED;
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
             activate_npc(i, g_clients[i].m_last_order);
             break;
@@ -779,6 +785,24 @@ bool Server::is_player(int id)
     return id < NPC_ID_START;
 }
 
+void Server::flock_boid(int player_id)
+{
+    ClientInfo& c = g_clients[player_id];
+    Vec3 player_pos = c.m_pos;
+    float velocity = NPC_SPEED;
+    float avg_vel = 0;
+    float all_vel = 0;
+
+    if (c.Boid.size() > 0)
+    {
+        for (auto& b : c.Boid)
+        {
+            all_vel += b.m_speed;
+        }
+        avg_vel = all_vel / c.Boid.size(); // 군집의 전체 평균 속도
+    }
+}
+
 void Server::worker_thread()
 {
     while (true)
@@ -848,6 +872,9 @@ void Server::worker_thread()
                 g_clients[user_id].m_pos.x = rand() % WORLD_HORIZONTAL;
                 g_clients[user_id].m_pos.y = rand() % WORLD_HEIGHT;
                 g_clients[user_id].m_pos.z = rand() % WORLD_VERTICAL;
+                g_clients[user_id].m_speed = NPC_SPEED;
+                g_clients[user_id].m_owner_id = user_id; // 유저 등록
+                g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;
@@ -924,7 +951,6 @@ void Server::mainServer()
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initialize_clients(); // 클라이언트 정보들 초기화
-    old_machine = FUNC_END;
 
      // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록

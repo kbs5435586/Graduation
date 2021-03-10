@@ -8,15 +8,15 @@ public:
 	~Server();
 
 private:
-	map <int, ClientInfo> g_clients;
+	unordered_map <int, ClientInfo> g_clients;
 	priority_queue<event_type> timer_queue;
 	mutex timer_lock;
-	ENUM_FUNCTION old_machine;
 
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
-	int VIEW_RADIUS = 6;
+	int VIEW_RADIUS = 12; // 데이터 보내줄 시야 범위
+	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 
 public:
 	void mainServer(); // 메인 서버
@@ -44,6 +44,7 @@ public:
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
+	Vec3 cal_dist_to_Player(int npc_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();
@@ -55,7 +56,7 @@ public:
 	//int API_get_x(lua_State* L);
 	//int API_get_y(lua_State* L);
 public:
-	void init_flock();
+	void flock_boid(int player_id);
 	void get_player_pos();
 	void calculate_next_pos();
 };
