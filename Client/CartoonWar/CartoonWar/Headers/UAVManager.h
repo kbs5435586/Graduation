@@ -14,7 +14,7 @@ private:
     map<const _tchar*, CUAV*>   m_mapUAV;
 public:
     CUAV*                       GetUAV(const _tchar* pTag);
-    HRESULT                     SetUp_Shader(const _tchar* pTag);
+   // HRESULT                     SetUp_Shader(const _tchar* pTag, SHADER_PARAM eParam, UAV_REGISTER eRegister, const _tchar* pShaderTag);
 public:
     static CUAVManager*         Create();
 private:

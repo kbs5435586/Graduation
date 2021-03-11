@@ -26,9 +26,9 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(0.f, -1.5f, 0.f);
+	_vec3 vPos = _vec3(0.f, 10.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(4.f, 4.f,1.f);
 
 	return S_OK;

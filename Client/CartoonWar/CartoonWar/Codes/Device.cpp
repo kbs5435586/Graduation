@@ -138,9 +138,6 @@ HRESULT CDevice::Initialize()
 	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pResCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pResCmdList));
 	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_pCsCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCsCmdList));
 
-	m_pCmdListGraphic->Close();
-	m_pResCmdList->Close();
-	m_pCsCmdList->Close();
 
 	// SwapChain 만들기
 	if (FAILED(Create_SwapChain(true)))
@@ -172,6 +169,11 @@ HRESULT CDevice::Initialize()
 		return E_FAIL;
 
 	
+	m_pCmdListGraphic->Close();
+	m_pResCmdList->Close();
+	m_pCsCmdList->Close();
+
+
 	return S_OK;
 	
 }
@@ -968,4 +970,22 @@ void CDevice::WaitForFenceEvent_CS()
 		m_pFenceCS->SetEventOnCompletion(fence, m_hFenceEvent);
 		WaitForSingleObject(m_hFenceEvent, INFINITE);
 	}
+}
+
+void CDevice::ExcuteComputeShader()
+{
+	m_pCsCmdList->Close();
+
+	// 커맨드 리스트 수행	
+	ID3D12CommandList* ppCommandLists[] = { m_pCsCmdList.Get() };
+	m_pCsCmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+	WaitForFenceEvent_CS();
+
+	// 다시 활성화
+	m_pCsCmdAlloc->Reset();
+	m_pCsCmdList->Reset(m_pCsCmdAlloc.Get(), nullptr);
+
+	// 루트서명 등록
+	m_pCsCmdList->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }

@@ -67,6 +67,7 @@ public://Load_Manager
 	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
 public://UAV_Manager
 	HRESULT						Ready_UAV_Manager();
+	CUAV*						Get_UAV(const _tchar* pUAVTag);
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	

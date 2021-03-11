@@ -127,12 +127,12 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* CSEntry)
 {
 	char* pErr = nullptr;
-	ZeroMemory(&m_tPipeline, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	ZeroMemory(&m_tPipeline_CS, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
 
 	if (CSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, CSEntry, "vs_5_1", 0, 0, &m_pCSBlob, &m_pErrBlob)))
+			, CSEntry, "cs_5_0", 0, 0, &m_pCSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "CS_Shader Create Failed !!!", MB_OK);

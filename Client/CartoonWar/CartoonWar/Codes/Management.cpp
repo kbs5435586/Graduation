@@ -176,6 +176,11 @@ HRESULT CManagement::Ready_UAV_Manager()
 	return m_pUAV_Manager->Ready_UAVManager();
 }
 
+CUAV* CManagement::Get_UAV(const _tchar* pUAVTag)
+{
+	return m_pUAV_Manager->GetUAV(pUAVTag);
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)

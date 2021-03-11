@@ -104,6 +104,8 @@ public:
 	void										WaitForFenceEvent();
 	void										WaitForFenceEvent_CS();
 public:
+	void										ExcuteComputeShader();
+public:
 	void										Open();
 	void										Close();
 public:
