@@ -288,7 +288,7 @@ CTextureRect* CTextureRect::Create(ID3D12Device* pGraphic_Device)
 	}
 	return pInstance;
 }
-CGameObject* CTextureRect::Clone_GameObject(void* pArg)
+CGameObject* CTextureRect::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CTextureRect* pInstance = new CTextureRect(*this);
 
@@ -297,6 +297,9 @@ CGameObject* CTextureRect::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTextureRect Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
+	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 void CTextureRect::Free()

@@ -3,23 +3,20 @@
 #define MY_NPC_START(p) 30 + (14 * p)
 #define MY_NPC_END(p) 43 + (14 * p)
 
-
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
-constexpr int REPEAT_TIME = 250;
-constexpr int NPC_SPEED = 0.3;
 
 constexpr int MAX_USER = 29;
 constexpr int NPC_ID_START = 30;
 constexpr int MAX_NPC = 420;
 
-constexpr int WORLD_HORIZONTAL = 10; // 월드 가로 x
-constexpr int WORLD_HEIGHT = 10; // 월드 높이 y
-constexpr int WORLD_VERTICAL = 10; // 월드 세로 z
+constexpr int WORLD_HORIZONTAL = 20; // 월드 가로 x
+constexpr int WORLD_HEIGHT = 20; // 월드 높이 y
+constexpr int WORLD_VERTICAL = 20; // 월드 세로 z
 
 constexpr int SERVER_PORT = 9000;
 

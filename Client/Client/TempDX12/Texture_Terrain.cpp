@@ -231,10 +231,11 @@ CTexture_Terrain* CTexture_Terrain::Create(ID3D12Device* pGraphic_Device)
 		MessageBox(0, L"CTexture_Terrain Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
-CGameObject* CTexture_Terrain::Clone_GameObject(void* pArg)
+CGameObject* CTexture_Terrain::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CTexture_Terrain* pInstance = new CTexture_Terrain(*this);
 
@@ -243,6 +244,9 @@ CGameObject* CTexture_Terrain::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTexture_Terrain Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
+	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 HRESULT CTexture_Terrain::Ready_Component(void* pArg)

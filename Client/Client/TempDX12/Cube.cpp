@@ -321,7 +321,7 @@ CCube* CCube::Create(ID3D12Device* pGraphic_Device)
 	}
 	return pInstance;
 }
-CGameObject* CCube::Clone_GameObject(void* pArg)
+CGameObject* CCube::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CCube* pInstance = new CCube(*this);
 
@@ -330,6 +330,9 @@ CGameObject* CCube::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CBack_Logo Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
+	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 void CCube::Free()

@@ -56,7 +56,7 @@ _int CRect::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	if (true == server->Get_ShowNPC())
+	if (true == server->Get_ShowNPC(m_iLayerIdx))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
@@ -235,7 +235,7 @@ CRect* CRect::Create(ID3D12Device* pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject* CRect::Clone_GameObject(void* pArg)
+CGameObject* CRect::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CRect* pInstance = new CRect(*this);
 
@@ -244,6 +244,9 @@ CGameObject* CRect::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CRect Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
+	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 

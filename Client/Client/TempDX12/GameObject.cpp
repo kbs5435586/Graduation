@@ -93,7 +93,7 @@ CComponent* CGameObject::Find_Component(const _tchar* pComponentTag)
 	return iter->second;
 }
 
-CGameObject* CGameObject::Clone_GameObject(void* pArg)
+CGameObject* CGameObject::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	return nullptr;
 }

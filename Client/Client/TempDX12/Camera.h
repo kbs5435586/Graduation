@@ -21,7 +21,7 @@ public:
 private:
 	HRESULT						SetUp_ViewProjMatrices();
 public:
-	virtual CGameObject*		Clone_GameObject(void* pArg = nullptr) = 0;
+	virtual CGameObject*		Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0) = 0;
 protected:
 	virtual void				Free();
 protected:

@@ -445,8 +445,8 @@ Vec3 Server::cal_dist_to_Player(int npc_id)
     {
         float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
-        Dir = Dir / hyp;
-        Dir = Dir * NPC_SPEED;
+        Dir = Dir / hyp; // 여기가 노멀값
+        Dir = Dir * NPC_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
     }
     return Dir;
 }
@@ -672,25 +672,29 @@ void Server::initialize_clients()
 
 void Server::initialize_NPC(int player_id)
 {
-    for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
+    for (int i = 0; i < 3; ++i)
     {
-        if (ST_ACTIVE != g_clients[i].m_status)
+        for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
         {
-            g_clients[i].m_socket = 0;
-            g_clients[i].m_id = i;
-            g_clients[i].m_owner_id = player_id;
-            g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
-            sprintf_s(g_clients[i].m_name, "NPC %d", i);
-            g_clients[i].m_status = ST_SLEEP;
-            g_clients[i].m_pos = g_clients[player_id].m_pos;
-            g_clients[i].m_speed = NPC_SPEED;
-            cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
-            activate_npc(i, g_clients[i].m_last_order);
-            break;
-        }
-        else
-        {
-            continue; // 여기 수정할것 (임시방편), 모든 플레이어의 npc active일때 더이상 추가 안되게 처리
+            if (ST_ACTIVE != g_clients[i].m_status)
+            {
+                g_clients[i].m_socket = 0;
+                g_clients[i].m_id = i;
+                g_clients[i].m_owner_id = player_id;
+                g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
+                sprintf_s(g_clients[i].m_name, "NPC %d", i);
+                g_clients[i].m_status = ST_SLEEP;
+                g_clients[i].m_pos = g_clients[player_id].m_pos;
+                g_clients[i].m_speed = NPC_SPEED;
+                g_clients[player_id].m_boid.push_back(&g_clients[i]);
+                cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
+                activate_npc(i, g_clients[i].m_last_order);
+                break;
+            }
+            else
+            {
+                continue; // 여기 수정할것 (임시방편), 모든 플레이어의 npc active일때 더이상 추가 안되게 처리
+            }
         }
     }
 }
@@ -793,13 +797,13 @@ void Server::flock_boid(int player_id)
     float avg_vel = 0;
     float all_vel = 0;
 
-    if (c.Boid.size() > 0)
+    if (c.m_boid.size() > 0)
     {
-        for (auto& b : c.Boid)
+        for (auto& b : c.m_boid)
         {
-            all_vel += b.m_speed;
+            all_vel += b->m_speed;
         }
-        avg_vel = all_vel / c.Boid.size(); // 군집의 전체 평균 속도
+        avg_vel = all_vel / c.m_boid.size(); // 군집의 전체 평균 속도
     }
 }
 

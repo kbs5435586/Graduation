@@ -189,6 +189,7 @@ typedef struct tagLight
 
 struct Player_Info
 {
+	int		id;
 	int		x;
 	int		y;
 	int		z;

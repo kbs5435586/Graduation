@@ -276,7 +276,7 @@ CTempStaticMesh2* CTempStaticMesh2::Create(ID3D12Device* pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject* CTempStaticMesh2::Clone_GameObject(void* pArg)
+CGameObject* CTempStaticMesh2::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CTempStaticMesh2* pInstance = new CTempStaticMesh2(*this);
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
@@ -284,6 +284,9 @@ CGameObject* CTempStaticMesh2::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CTempMesh Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
+	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 

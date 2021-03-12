@@ -18,9 +18,6 @@ private:
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
     short PORT = 3500;
-
-    int m_myid;
-    char last_order;
     high_resolution_clock::time_point cool_time;
 
 public:
@@ -38,9 +35,7 @@ public:
     void send_npc_act_packet(unsigned char act);
 
     bool Get_ShowPlayer();
-    bool Get_ShowNPC();
-    char Get_Lastorder();
-    void Set_LastOrder(char order);
+    bool Get_ShowNPC(int npc_index);
     high_resolution_clock::time_point Get_Cooltime();
     void Set_CoolTime(high_resolution_clock::time_point ct);
 

@@ -21,7 +21,7 @@ public:
 	HRESULT					Ready_Management(const _uint& iNumScene);
 	HRESULT					Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 	HRESULT					Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent);
-	HRESULT					Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr);
+	HRESULT					Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr, const _uint& iIdx = 0);
 public:
 	CComponent*				Clone_Component(const _uint& iSceneID, const _tchar* pComponentTag, void* pArg = nullptr);
 	HRESULT					SetUp_ScenePointer(CScene* pNewScenePointer);

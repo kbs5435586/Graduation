@@ -265,7 +265,7 @@ CHeight_Terrain* CHeight_Terrain::Create(ID3D12Device* pGraphic_Device)
 	}
 	return pInstance;
 }
-CGameObject* CHeight_Terrain::Clone_GameObject(void* pArg)
+CGameObject* CHeight_Terrain::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CHeight_Terrain* pInstance = new CHeight_Terrain(*this);
 
@@ -274,6 +274,9 @@ CGameObject* CHeight_Terrain::Clone_GameObject(void* pArg)
 		MessageBox(0, L"CHeight_Terrain Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
+	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 HRESULT CHeight_Terrain::Ready_Component(void* pArg)

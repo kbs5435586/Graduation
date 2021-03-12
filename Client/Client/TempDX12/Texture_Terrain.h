@@ -30,7 +30,7 @@ private:
 	HRESULT									CreateConstantBuffer();
 public:
 	static CTexture_Terrain*				Create(ID3D12Device* pGraphic_Device);
-	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component(void* pArg);

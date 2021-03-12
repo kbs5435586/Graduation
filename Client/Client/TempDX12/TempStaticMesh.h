@@ -32,7 +32,7 @@ private:
 	HRESULT									CreateConstantBuffer();
 public:
 	static CTempStaticMesh*					Create(ID3D12Device* pGraphic_Device);
-	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

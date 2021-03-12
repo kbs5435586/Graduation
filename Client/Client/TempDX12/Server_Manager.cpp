@@ -99,10 +99,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		managment->AddRef();
 
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
-		m_myid = my_packet->id;
+		m_player.id = my_packet->id;
 
 		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-			L"Layer_Cube", L"Com_Transform", m_myid);
+			L"Layer_Cube", L"Com_Transform", m_player.id);
 		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
 
 		vPos.x = m_player.x = my_packet->x;
@@ -126,7 +126,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_enter* my_packet = reinterpret_cast<sc_packet_enter*>(ptr);
 		int recv_id = my_packet->id;
 
-		if (recv_id == m_myid) 
+		if (recv_id == m_player.id)
 		{
 			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
 				L"Layer_Cube", L"Com_Transform", recv_id);
@@ -154,15 +154,15 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			//}
 			//else // NPC ÀÏ¶§
 			//{
-			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Rect", L"Com_Transform", recv_id - 30);
-			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+			CTransform* pTransform_Rect = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Rect", L"Com_Transform", ID_TO_IDX(recv_id));
+			_vec3 vPos = *pTransform_Rect->Get_StateInfo(CTransform::STATE_POSITION);
 			strcpy_s(m_npcs[recv_id].name, my_packet->name);
 			vPos.x = m_npcs[recv_id].x = my_packet->x;
 			vPos.y = m_npcs[recv_id].y = my_packet->y;
 			vPos.z = m_npcs[recv_id].z = my_packet->z;
-			m_npcs[recv_id - 30].showCharacter = true;
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			m_npcs[recv_id].showCharacter = true;
+			pTransform_Rect->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 			/*	}*/
 		}
 		Safe_Release(managment);
@@ -178,7 +178,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
 
-		if (recv_id == m_myid) 
+		if (recv_id == m_player.id)
 		{
 			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
 				L"Layer_Cube", L"Com_Transform", recv_id);
@@ -212,25 +212,17 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_leave* my_packet = reinterpret_cast<sc_packet_leave*>(ptr);
 		int other_id = my_packet->id;
-		if (other_id == m_myid) {
+		if (other_id == m_player.id)
+		{
 			m_player.showCharacter = false;
 		}
-		else {
+		else 
+		{
 			if (0 != m_npcs.count(other_id))
 				m_npcs[other_id].showCharacter = false;
 		}
 	}
 	break;
-	//case SC_PACKET_CHAT:
-	//{
-	//	sc_packet_chat* my_packet = reinterpret_cast<sc_packet_chat*>(ptr);
-	//	int o_id = my_packet->id;
-	//	if (0 != m_npcs.count(o_id))
-	//	{
-	//		m_npcs[o_id].add_chat(my_packet->message);
-	//	}
-	//}
-	//break;
 	default:
 		printf("Unknown PACKET type [%d]\n", ptr[1]);
 	}
@@ -340,24 +332,24 @@ void CServer_Manager::send_login_ok_packet()
 
 void CServer_Manager::send_add_npc_packet()
 {
-	if (m_myid < NPC_ID_START)
+	if (m_player.id < NPC_ID_START)
 	{
 		cs_packet_add_npc l_packet;
 		l_packet.size = sizeof(l_packet);
 		l_packet.type = CS_PACKET_ADD_NPC;
-		l_packet.id = m_myid;
+		l_packet.id = m_player.id;
 		send_packet(&l_packet);
 	}
 }
 
 void CServer_Manager::send_npc_act_packet(unsigned char act)
 {
-	if (m_myid < NPC_ID_START)
+	if (m_player.id < NPC_ID_START)
 	{
 		cs_packet_npc_act l_packet;
 		l_packet.size = sizeof(l_packet);
 		l_packet.type = CS_PACKET_NPC_ACT;
-		l_packet.id = m_myid;
+		l_packet.id = m_player.id;
 		l_packet.act = act;
 		send_packet(&l_packet);
 	}
@@ -384,19 +376,9 @@ bool CServer_Manager::Get_ShowPlayer()
 	return m_player.showCharacter;
 }
 
-bool CServer_Manager::Get_ShowNPC()
+bool CServer_Manager::Get_ShowNPC(int npc_index)
 {
-	return m_npcs[m_myid].showCharacter;
-}
-
-char CServer_Manager::Get_Lastorder()
-{
-	return last_order;
-}
-
-void CServer_Manager::Set_LastOrder(char order)
-{
-	last_order = order;
+	return m_npcs[IDX_TO_ID(npc_index)].showCharacter;
 }
 
 high_resolution_clock::time_point CServer_Manager::Get_Cooltime()
