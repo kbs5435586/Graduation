@@ -16,7 +16,7 @@ CShader::CShader(const CShader& rhs)
 	, m_pGSBlob(rhs.m_pGSBlob)
 	, m_tPipeline(rhs.m_tPipeline)
 	, m_tPipeline_CS(rhs.m_tPipeline_CS)
-	, m_pPilelineState_CS()
+	, m_pPilelineState_CS(rhs.m_pPilelineState_CS)
 {
 }
 
@@ -182,6 +182,13 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 	tPass.matWVP	= tPass.matWV * matProj;
 	tPass.vCamPos = (_vec4)&matTemp.m[3][0];
 	return S_OK;
+}
+
+void CShader::UpdateData_CS()
+{
+	CDevice::GetInstance()->ClearDummyDesc_CS();
+	CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(m_pPilelineState_CS.Get());
+	CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }
 
 CShader* CShader::Create(const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, const char* HSEntry, const char* DSEntry, const char* GSEntry)

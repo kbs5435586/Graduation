@@ -144,6 +144,7 @@ public:
 	void										UpdateTable_CS();
 private:
 	void										ClearDummyDesc(_uint iIdx);
+	public:
 	void										ClearDummyDesc_CS();
 private:
 	virtual void								Free();

@@ -126,6 +126,14 @@ CUAV* CUAV::Create( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 	return pInstance;
 }
 
+void CUAV::Dispatch(_uint x, _uint y, _uint z)
+{
+
+	CDevice::GetInstance()->UpdateTable_CS();
+	CDevice::GetInstance()->GetCsCmdLst()->Dispatch(x, y, z);
+	CDevice::GetInstance()->ExcuteComputeShader();
+}
+
 void CUAV::Free()
 {
 }

@@ -31,7 +31,7 @@ private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
-	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pShaderCom[2] = {nullptr};
 	CTexture*								m_pTextureCom = nullptr;
 
 };

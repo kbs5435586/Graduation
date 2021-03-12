@@ -143,7 +143,7 @@ void CRenderer::Render_Deffered(CManagement* pManagement)
 	Render_NoneAlpha();
 	Render_UI_DEFFERED();
 
-	//pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
+	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }
 
 void CRenderer::Render_Light(CManagement* pManagement)
@@ -152,7 +152,7 @@ void CRenderer::Render_Light(CManagement* pManagement)
 
 
 
-	//pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->TargetToResBarrier();
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->TargetToResBarrier();
 
 }
 

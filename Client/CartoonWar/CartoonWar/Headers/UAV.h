@@ -18,6 +18,9 @@ public:
     D3D12_RESOURCE_STATES                   GetState() { return m_eState; }
     void                                    SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }
 public:
+    void                                    Dispatch(_uint x, _uint y, _uint z);
+public:
+    ComPtr<ID3D12DescriptorHeap>            GetSRV() { return m_pSRV; }
     ComPtr<ID3D12DescriptorHeap>            GetUAV() { return m_pUAV; }
     ComPtr<ID3D12Resource>                  GetTexture() { return m_pTexture; }
 private:

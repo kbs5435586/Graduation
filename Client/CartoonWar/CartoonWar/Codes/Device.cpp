@@ -170,8 +170,8 @@ HRESULT CDevice::Initialize()
 
 	
 	m_pCmdListGraphic->Close();
-	m_pResCmdList->Close();
-	m_pCsCmdList->Close();
+	//m_pResCmdList->Close();
+	//m_pCsCmdList->Close();
 
 
 	return S_OK;
@@ -325,6 +325,15 @@ void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegis
 
 	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	if (pTextureCom->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	{
+		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pTextureCom->GetTexture(iIdx)
+			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+		m_pCsCmdList->ResourceBarrier(1, &temp);
+		pTextureCom->SetState(D3D12_RESOURCE_STATE_COMMON);
+	}
+
 }
 
 void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum)
@@ -437,14 +446,14 @@ void CDevice::SetUpUAVToRegister(CUAV* pUAV, UAV_REGISTER eRegister)
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// 리소스 상태 변경
-	if (pUAV->GetState() == D3D12_RESOURCE_STATE_COMMON)
-	{
-		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pUAV->GetTexture().Get()
-			, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-		m_pCsCmdList->ResourceBarrier(1, &temp);
+	//if (pUAV->GetState() == D3D12_RESOURCE_STATE_COMMON)
+	//{
+	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pUAV->GetTexture().Get()
+	//		, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	//	m_pCsCmdList->ResourceBarrier(1, &temp);
 
-		pUAV->SetState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	}
+	//	pUAV->SetState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	//}
 }
 
 void CDevice::UpdateTable()
@@ -884,8 +893,7 @@ void CDevice::Render_Begin()
 	m_iCurrentDummyIdx = 0;
 
 	Open();
-	ResCmdOpen();
-	CsCmdOpen();
+
 
 	// 필요한 상태 설정	
 	m_pCmdListGraphic->RSSetViewports(1, &m_tViewPort);
@@ -914,22 +922,18 @@ void CDevice::Render_End()
 	if (nullptr == pManagement)
 		return;
 
-	// Indicate that the back buffer will now be used to present.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
-	//barrier.Transition.pResource = m_RenderTargets[m_iCurTargetIdx].Get();
 	barrier.Transition.pResource = pManagement->Get_RTT(
 		(_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(m_iCurTargetIdx)->pRtt->GetTex2D().Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 백버퍼에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;			// 다시 출력으로 지정
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
 
 	Close();
-	ResCmdClose();
-	CsCmdClose();
+
 	// Present the frame.
 	m_pSwapChain->Present(0, 0);
 
@@ -987,5 +991,5 @@ void CDevice::ExcuteComputeShader()
 	m_pCsCmdList->Reset(m_pCsCmdAlloc.Get(), nullptr);
 
 	// 루트서명 등록
-	m_pCsCmdList->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
+
 }

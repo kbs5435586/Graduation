@@ -30,6 +30,7 @@ private:
 public:
    ID3D12DescriptorHeap*                                GetSRV(const _uint& iTextureIdx=0) { return m_vecSRV[iTextureIdx]; }
    ID3D12DescriptorHeap*                                GetUAV(const _uint& iIdx=0){return m_vecUAV[iIdx]; }
+   ID3D12Resource*                                      GetTexture(const _uint& iTextureID=0){return m_vecTexture[iTextureID];}
 public:
     D3D12_RESOURCE_STATES                               GetState() { return m_eState; }
     void                                                SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }

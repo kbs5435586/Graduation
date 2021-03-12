@@ -81,7 +81,7 @@ void CMRT::OM_Set()
 
 void CMRT::Clear()
 {
-	//ResToTargetBarrier();
+	ResToTargetBarrier();
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	for (UINT i = 0; i < m_iRTCnt; ++i)

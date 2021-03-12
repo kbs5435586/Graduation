@@ -20,6 +20,8 @@ public:
 											_matrix matProj, MAINPASS& output);
 	HRESULT								SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass);
 public:
+	void								UpdateData_CS();
+public:
 	ComPtr<ID3D12PipelineState>			GetPipeLine() { return m_pPipeLineState; }
 private:
 	ComPtr<ID3DBlob>					m_pVSBlob = nullptr;
