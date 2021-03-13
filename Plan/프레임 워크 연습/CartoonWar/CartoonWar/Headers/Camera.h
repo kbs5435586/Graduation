@@ -19,7 +19,8 @@ public:
 	_matrix						Calculate_RelfectMatrix(const _float& fHeight);
 public:
 	HRESULT						SetUp_CameraProjDesc(const CAMERADESC & CameraDesc, const PROJDESC & ProjDesc);
-	void						Invalidate_ViewProjMatrix();
+	void						Invalidate_ViewProjMatrix(int n);
+	void						Invalidate_IViewProjMatrix();
 private:
 	HRESULT						SetUp_ViewProjMatrices();
 public:
@@ -32,9 +33,11 @@ protected:
 	CTransform*					m_pTransform = nullptr;
 	CTransform*					m_pTransform_Reflect = nullptr;
 	_matrix						m_matView;
+	_matrix						m_ImatView;
 	CAMERADESC					m_tCameraDesc;
 protected:
 	_matrix						m_matProj;
+	_matrix						m_ImatProj;
 	PROJDESC					m_tProjDesc;
 protected:
 	_matrix						m_matReflect;

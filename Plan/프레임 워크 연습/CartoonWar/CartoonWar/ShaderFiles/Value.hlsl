@@ -30,8 +30,15 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	row_major matrix	matWV;
 	row_major matrix	matWVP;
 
-
 	float4				vCamPos;
+
+	row_major matrix	I_matView;
+	row_major matrix	I_matProj;
+
+	row_major matrix	I_matWV;
+	row_major matrix	I_matWVP;
+
+	float4				I_vCamPos;
 };
 
 cbuffer MATERIAL : register (b1)
@@ -53,20 +60,6 @@ cbuffer REFLECT : register(b3)
 {
 	row_major matrix	matReflect;
 };
-
-cbuffer	ITRANSFORM_MATRIX : register (b4)
-{
-	row_major matrix	matIWorld;
-	row_major matrix	matIView;
-	row_major matrix	matIProj;
-
-	row_major matrix	matIWV;
-	row_major matrix	matIWVP;
-
-
-	float4				vICamPos;
-};
-
 
 
 Texture2D	g_texture0		: register(t0);

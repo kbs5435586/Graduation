@@ -61,8 +61,8 @@ void CTerrain_Height::Render_GameObject()
 
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+	_matrix matView = CCamera_Manager::GetInstance()->GetIMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetIMatProj();
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 

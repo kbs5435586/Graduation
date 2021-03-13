@@ -40,60 +40,47 @@ HRESULT CInventory_Camera::Ready_GameObject(void* pArg)
 
 _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 {
-
-	//
-
-	//
-	//_vec3		vUp;
-	//vUp = Vector3_::CrossProduct(vLook, vRight);
-	//vUp = Vector3_::Normalize(vUp);
-
-	//
-	//m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-
-
-	//m_pTransform->Set_Matrix(m_pObserverCom->GetMatInfo());
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
-
-	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
-	{
-		m_pTransform->Go_Straight(fTimeDelta);
-	}
-	if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
-	{
-		m_pTransform->BackWard(fTimeDelta);
-	}
-	if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
-	{
-		//m_pTransform->Rotation_Y(fTimeDelta * 0.5f);
-		m_pTransform->Go_Left(5 * fTimeDelta);
-	}
-	if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
-	{
-		m_pTransform->Go_Right(fTimeDelta);
-	}
+	//
+	//if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+	//{
+	//	m_pTransform->Go_Straight(fTimeDelta);
+	//}
+	//if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
+	//{
+	//	m_pTransform->BackWard(fTimeDelta);
+	//}
+	//if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
+	//{
+	//	//m_pTransform->Rotation_Y(fTimeDelta * 0.5f);
+	//	m_pTransform->Go_Left(5 * fTimeDelta);
+	//}
+	//if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
+	//{
+	//	m_pTransform->Go_Right(fTimeDelta);
+	//}
 	_long	MouseMove = 0;
 	if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
 	{
-		//m_pTransform->Go_Left(fTimeDelta * 0.5f);
-		//m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		if (MouseMove > 0)
-		{
-			m_pTransform->Go_Right(MouseMove * fTimeDelta * 0.5f);
-		}
-		else
-		{
-			m_pTransform->Go_Right(-MouseMove * fTimeDelta * 0.5f);
-		}
-
+		m_pTransform->Go_Left(fTimeDelta * 0.5f);
 		m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+		//if (MouseMove > 0)
+		//{
+		//	m_pTransform->Go_Right(MouseMove * fTimeDelta * 0.5f);
+		//}
+		//else
+		//{
+		//	m_pTransform->Go_Right(-MouseMove * fTimeDelta * 0.5f);
+		//}
+		//
+		//m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
 	}
 
 	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 	{
-		//m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 	}
 
 	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
@@ -119,8 +106,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 _int CInventory_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	//Invalidate_ViewProjMatrix();
-
+	Invalidate_ViewProjMatrix(1);
 	return _int();
 }
 

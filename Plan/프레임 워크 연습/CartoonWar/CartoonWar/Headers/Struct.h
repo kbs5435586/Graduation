@@ -130,7 +130,7 @@ typedef struct tagProjection_Desc
 	float		fFar;
 }PROJDESC;
 
-
+//¼ø¼­
 typedef struct tagMainPass
 {
 	XMFLOAT4X4	matWorld;
@@ -139,6 +139,12 @@ typedef struct tagMainPass
 	XMFLOAT4X4	matWV;
 	XMFLOAT4X4	matWVP;
 	XMFLOAT4	vCamPos;
+	////
+	XMFLOAT4X4	I_matView;
+	XMFLOAT4X4	I_matProj;
+	XMFLOAT4X4	I_matWV;
+	XMFLOAT4X4	I_matWVP;
+	XMFLOAT4	v_ICamPos; 
 }MAINPASS;
 
 typedef struct tagMaterial

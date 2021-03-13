@@ -10,6 +10,7 @@ struct VS_IN
 struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
+	float4	I_vPosition : TEXCOORD;
 	float4	vColor		: COLOR;
 	float4  vNormal		: NORMAL;
 };
@@ -24,6 +25,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT	vOut;
 
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.I_vPosition = mul(float4(vIn.vPosition, 1.f), I_matWVP);
 	vOut.vColor = vIn.vColor;
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWorld));
 	return vOut;

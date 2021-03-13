@@ -153,7 +153,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 		(CGameObject**)&pCameraObject)))
 		return E_FAIL;
-
+	
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
 	tCameraDesc.vEye = _vec3(0.f, 0.f, -5.f);
@@ -165,7 +165,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
 	tProjDesc.fFar = g_Far;
-
+	
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
 
@@ -178,12 +178,19 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 		return E_FAIL;
 
 	CAMERADESC		tICameraDesc;
-	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
+	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
 	tICameraDesc.vEye = _vec3(0.f, 0.f, -5.f);
 	tICameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
-	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tProjDesc)))
+	PROJDESC		tIProjDesc;
+	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+	tIProjDesc.fFovY = XMConvertToRadians(60.f);
+	tIProjDesc.fAspect = _float(WINCX) / WINCY;
+	tIProjDesc.fNear = g_Near;
+	tIProjDesc.fFar = g_Far;
+
+	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc)))
 		return E_FAIL;
 
 
@@ -243,8 +250,8 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Reflect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_UI", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_UI", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 

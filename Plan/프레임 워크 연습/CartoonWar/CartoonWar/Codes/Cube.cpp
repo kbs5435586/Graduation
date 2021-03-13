@@ -116,13 +116,17 @@ void CCube::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
-
+	// 
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
+	_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
+
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, I_matView, I_matProj, tMainPass);
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
@@ -130,9 +134,24 @@ void CCube::Render_GameObject()
 
 
 	m_pBufferCom->Render_VIBuffer();
-	m_pColliderCom[0]->Render_Collider();
-	m_pColliderCom[1]->Render_Collider();
-	m_pColliderCom[2]->Render_Collider();
+
+
+	//MAINPASS tIMainPass = {};
+	//matWorld = m_pTransformCom->Get_Matrix();
+	//matView = CCamera_Manager::GetInstance()->GetMatView();
+	//matProj = CCamera_Manager::GetInstance()->GetMatProj();
+	//
+	//m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tIMainPass);
+	//
+	//iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tIMainPass);
+	//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	//CDevice::GetInstance()->UpdateTable();
+
+
+	//m_pBufferCom->Render_VIBuffer();
+	//m_pColliderCom[0]->Render_Collider();
+	//m_pColliderCom[1]->Render_Collider();
+	//m_pColliderCom[2]->Render_Collider();
 	Safe_Release(pManagement);
 }
 

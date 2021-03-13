@@ -87,13 +87,14 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
 		break;
 	case SHADER_TYPE::SHADER_DEFFERED:
-		m_tPipeline.NumRenderTargets = 6;
+		m_tPipeline.NumRenderTargets = 7;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[5] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[6] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		//m_tPipeline.NumRenderTargets = 1;
 		//m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -123,14 +124,47 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	_matrix	matTemp		= matView;
 	matTemp = Matrix_::Inverse(matTemp);
 
-
+	// 다른 카메라의 월드 뷰 프로젝션을 넘겨준다
 	output.matWorld		= matWorld;
 	output.matView		= matView;
 	output.matProj		= matProj;
 	output.matWV		= matWorld * matView;
 	output.matWVP		= output.matWV * matProj;
 	output.vCamPos		= (_vec4)&matTemp.m[3][0];
+	//output
+	//	output
+	//	output
+	//	output
+	//	output
+	//	output
 	return S_OK;
+}
+
+HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matProj, _matrix I_matView, _matrix I_matProj, MAINPASS& output)
+{
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+	
+	_matrix	matTemp = matView;
+	matTemp = Matrix_::Inverse(matTemp);
+	_matrix	I_matTemp = I_matView;
+	I_matTemp = Matrix_::Inverse(I_matTemp);
+
+	// 다른 카메라의 월드 뷰 프로젝션을 넘겨준다
+	output.matWorld = matWorld;
+	output.matView = matView;
+	output.matProj = matProj;
+	output.matWV = matWorld * matView;
+	output.matWVP = output.matWV * matProj;
+	output.vCamPos = (_vec4)&matTemp.m[3][0];
+
+	output.I_matView = I_matView;
+	output.I_matProj = I_matProj;
+	output.I_matWV = matWorld * I_matView;
+	output.I_matWVP = output.I_matWV * I_matProj;
+	output.v_ICamPos = (_vec4)&I_matTemp.m[3][0];
+
+	return E_NOTIMPL;
 }
 
 HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass)
