@@ -458,3 +458,33 @@ typedef struct tagReplenishment
 	XMFLOAT4		m_arrVec4[(UINT)SHADER_PARAM::VEC4_END - (UINT)SHADER_PARAM::VEC4_0];
 	Matrix			m_arrMat[(UINT)SHADER_PARAM::MATRIX_END - (UINT)SHADER_PARAM::MATRIX_0];
 }REP;
+
+
+
+
+typedef struct tagParticle
+{
+	XMFLOAT3 vWorldPos;		// 위치	
+	XMFLOAT3 vWorldDir;		// 이동 방향
+
+	float m_fCurTime;	// 현재 시간
+	float m_fLifeTime;	// 최대 생명주기
+
+	int  iAlive;
+	int  arrPading[3];
+}PARTICLE;
+
+typedef struct tagParticleShared
+{
+	int iAddCount;
+	int arrPading[3];
+}PARTICLESHARED;
+
+
+typedef struct tagGlobal
+{
+	int		iWincx;
+	int		iWincy;
+	float	fTimeDelta;
+	float	fAccTime;
+}GLOBAL;

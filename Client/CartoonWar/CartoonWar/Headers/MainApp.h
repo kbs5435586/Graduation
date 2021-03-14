@@ -17,6 +17,8 @@ private:
     HRESULT                     Ready_Device();
     HRESULT                     Ready_Start_Scene(SCENEID eID);
 private:
+    HRESULT                     SetUp_OnShader(const _float& fTimeDelta);
+private:
     void                        Compute_Frame();
 private:
     HRESULT                     Create_FbxManager();
@@ -29,6 +31,9 @@ private:
 private:
     CManagement*                m_pManagement = nullptr;
     CRenderer*                  m_pRenderer = nullptr;
+    GLOBAL                      m_tGlobal;
+private:
+    _float                      m_fTimeDelta=0.f;
 public:
     static				        CMainApp* Create();
 private:

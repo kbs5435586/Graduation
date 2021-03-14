@@ -2,6 +2,7 @@
 #include "Base.h"
 class CTexture;
 class CUAV;
+class CStructedBuffer;
 class CDevice :
 	public CBase
 {
@@ -63,7 +64,7 @@ public:
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 public:
-	_uint&										GetHDRMetaDataIdx() { return m_iHDRMetaDataPoolIdx; }
+	_uint& GetHDRMetaDataIdx() { return m_iHDRMetaDataPoolIdx; }
 private:
 	ComPtr<ID3D12RootSignature>					m_ArrRootSignature[(_uint)ROOT_SIG_TYPE::END];
 private:
@@ -124,12 +125,12 @@ private:
 	HRESULT										CheckHDRSupport();
 	HRESULT										CheckSupportTearing();
 	_int										ComputeIntersectionArea(_int ax1, _int ay1, _int ax2, _int ay2,
-																		_int bx1, _int by1, _int bx2, _int by2);
+		_int bx1, _int by1, _int bx2, _int by2);
 	HRESULT										EnsureSwapChainColorSpace(SwapChainBitDepth swapChainBitDepth, _bool enableST);
 public:
 	HRESULT										SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _float fMaxCLL, _float fMaxFall);
 public:
-	void										SetTextureToShader(CTexture* pTextureCom, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx=0);
+	void										SetTextureToShader(CTexture* pTextureCom, TEXTURE_REGISTER eRegisterNum, const _uint& iIdx = 0);
 	void										SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum);
 	void										SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
 	void										SetGlobalConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum);
@@ -139,12 +140,17 @@ public:
 	void										SetTextureToShader_CS(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum);
 public:
 	void										SetUpUAVToRegister(CUAV* pUAV, UAV_REGISTER eRegister);
+	void										SetUpUAVToRegister_CS(CStructedBuffer* pBuffer, UAV_REGISTER eRegister);
+public:
+	void										SetBufferToRegister(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister);
+	void										SetBufferToRegister_CS(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister);
+
 public:
 	void										UpdateTable();
 	void										UpdateTable_CS();
 private:
 	void										ClearDummyDesc(_uint iIdx);
-	public:
+public:
 	void										ClearDummyDesc_CS();
 private:
 	virtual void								Free();

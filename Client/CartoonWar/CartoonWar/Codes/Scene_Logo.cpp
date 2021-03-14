@@ -178,8 +178,6 @@ HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-	//	return E_FAIL; 
 	return S_OK;
 }
 
@@ -224,6 +222,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer",
 		CObserver::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Particle",
+		CParticle::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -333,6 +334,13 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//	CTexture::Create(L"../Bin/Resource/Texture/Logo/Logo%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 	//	return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Noise",
+		CTexture::Create(L"../Bin/Resource/Texture/Noise/Noise%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke",
+		CTexture::Create(L"../Bin/Resource/Texture/Particle/CartoonSmoke%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+		return E_FAIL;
+
 	//TGA
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
 		CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
@@ -389,6 +397,16 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default",
 		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_Default.hlsl", "CS_Main"))))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Particle",
+		CShader::Create(L"../ShaderFiles/Shader_Compute_Particle.hlsl", "CS_Main"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Particle",
+		CShader::Create(L"../ShaderFiles/Shader_Particle.hlsl", "VS_Main", "PS_Main", "GS_Main"))))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 CScene_Logo* CScene_Logo::Create()

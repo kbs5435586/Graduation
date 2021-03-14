@@ -11,6 +11,7 @@ public:
 	HRESULT						Ready_VIBuffer();
 public:
 	virtual void				Render_VIBuffer();
+	virtual void				Render_VIBuffer(const _uint& iMaxParticleCnt);
 public:
 	virtual CComponent*			Clone_Component(void* pArg = nullptr) = 0;
 protected:

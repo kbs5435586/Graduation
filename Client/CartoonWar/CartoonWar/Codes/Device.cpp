@@ -6,6 +6,7 @@
 #include "RTT.h"
 #include "Texture.h"
 #include "UAV.h"
+#include "StructedBuffer.h"
 
 _IMPLEMENT_SINGLETON(CDevice)
 
@@ -454,6 +455,81 @@ void CDevice::SetUpUAVToRegister(CUAV* pUAV, UAV_REGISTER eRegister)
 
 	//	pUAV->SetState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	//}
+}
+
+void CDevice::SetUpUAVToRegister_CS(CStructedBuffer* pBuffer, UAV_REGISTER eRegister)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pCsDummyDesciptor->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegister;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pBuffer->GetUAV()->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	// 리소스 상태 변경
+	if (pBuffer->GetState() == D3D12_RESOURCE_STATE_COMMON)
+	{
+		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
+			, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+		m_pCsCmdList->ResourceBarrier(1, &temp);
+
+		pBuffer->SetState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	}
+}
+
+void CDevice::SetBufferToRegister(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_vecDummyDescriptor[m_iCurrentDummyIdx]->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegister;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pBuffer->GetSRV()->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); 
+
+	// 리소스 상태 변경
+	if (pBuffer->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	{
+		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
+			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+
+		m_pCmdListGraphic->ResourceBarrier(1, &temp);
+		pBuffer->SetState(D3D12_RESOURCE_STATE_COMMON);
+	}
+}
+
+void CDevice::SetBufferToRegister_CS(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pCsDummyDesciptor->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += iSize * (UINT)eRegister;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = pBuffer->GetSRV()->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	// 리소스 상태 변경
+	if (pBuffer->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	{
+		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
+			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+		m_pCmdListGraphic->ResourceBarrier(1, &temp);
+		pBuffer->SetState(D3D12_RESOURCE_STATE_COMMON);
+	}
 }
 
 void CDevice::UpdateTable()

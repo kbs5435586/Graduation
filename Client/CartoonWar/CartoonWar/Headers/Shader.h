@@ -9,7 +9,8 @@ private:
     virtual ~CShader() = default;
 public:
 	HRESULT								Ready_Shader(const _tchar* pFilePath, const char* VSEntry, const char* PSEntry,
-											const char*HSEntry = nullptr, const char* DSEntry = nullptr, const char* GSEntry = nullptr);
+											const char* GSEntry = nullptr, const char* DSEntry = nullptr, const char* HSEntry = nullptr);
+
 	HRESULT								Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType = RS_TYPE::DEFAULT, 
 													DEPTH_STENCIL_TYPE eDepthType = DEPTH_STENCIL_TYPE::LESS, 
 													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD,
@@ -39,7 +40,7 @@ private:
 	D3D12_COMPUTE_PIPELINE_STATE_DESC   m_tPipeline_CS;
 public:
 	static CShader*						Create(const _tchar* pFilepath, const char* VSEntry,
-											const char* PSEntry, const char* HSEntry = nullptr, const char* DSEntry = nullptr, const char* GSEntry = nullptr);
+											const char* PSEntry, const char* GSEntry = nullptr, const char* DSEntry = nullptr, const char* HSEntry = nullptr);
 	static CShader*						Create(const _tchar* pFilePath, const char* CSEntry);
 	virtual CComponent*					Clone_Component(void* pArg = nullptr);
 private:

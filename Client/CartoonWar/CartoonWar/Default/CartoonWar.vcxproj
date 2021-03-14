@@ -198,6 +198,8 @@
     <ClInclude Include="..\Headers\Navigation.h" />
     <ClInclude Include="..\Headers\Observer.h" />
     <ClInclude Include="..\Headers\Orc01.h" />
+    <ClInclude Include="..\Headers\Particle.h" />
+    <ClInclude Include="..\Headers\Particle_Default.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\Rock01.h" />
     <ClInclude Include="..\Headers\Rock01_A.h" />
@@ -217,6 +219,7 @@
     <ClInclude Include="..\Headers\SkyBox.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\ObserverManager.h" />
+    <ClInclude Include="..\Headers\StructedBuffer.h" />
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
@@ -290,6 +293,8 @@
     <ClCompile Include="..\Codes\Navigation.cpp" />
     <ClCompile Include="..\Codes\Observer.cpp" />
     <ClCompile Include="..\Codes\Orc01.cpp" />
+    <ClCompile Include="..\Codes\Particle.cpp" />
+    <ClCompile Include="..\Codes\Particle_Default.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\Rock01.cpp" />
     <ClCompile Include="..\Codes\Rock01_A.cpp" />
@@ -307,6 +312,7 @@
     <ClCompile Include="..\Codes\Shader.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\ObserverManager.cpp" />
+    <ClCompile Include="..\Codes\StructedBuffer.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
@@ -408,6 +414,12 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Hatch.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Particle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Compute_Particle.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

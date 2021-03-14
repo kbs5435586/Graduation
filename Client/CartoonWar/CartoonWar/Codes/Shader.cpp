@@ -21,7 +21,7 @@ CShader::CShader(const CShader& rhs)
 }
 
 HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry, 
-	const char* PSEntry, const char* HSEntry, const char* DSEntry, const char* GSEntry)
+	const char* PSEntry, const char* GSEntry, const char* DSEntry, const char* HSEntry)
 {
 	char* pErr = nullptr;
 	ZeroMemory(&m_tPipeline, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -48,6 +48,17 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 			return E_FAIL;
 		}
 		m_tPipeline.PS = { m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize() };
+	}
+	if (GSEntry)
+	{
+		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, GSEntry, "gs_5_1", 0, 0, &m_pGSBlob, &m_pErrBlob)))
+		{
+			pErr = (char*)m_pErrBlob->GetBufferPointer();
+			MessageBoxA(nullptr, pErr, "GS_Shader Create Failed !!!", MB_OK);
+			return E_FAIL;
+		}
+		m_tPipeline.GS = { m_pGSBlob->GetBufferPointer(), m_pGSBlob->GetBufferSize() };
 	}
 
 	return S_OK;
@@ -191,11 +202,11 @@ void CShader::UpdateData_CS()
 	CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }
 
-CShader* CShader::Create(const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, const char* HSEntry, const char* DSEntry, const char* GSEntry)
+CShader* CShader::Create(const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, const char* GSEntry, const char* DSEntry, const char* HSEntry)
 {
 	CShader* pInstance = new CShader();
 
-	if (FAILED(pInstance->Ready_Shader(pFilepath, VSEntry, PSEntry)))
+	if (FAILED(pInstance->Ready_Shader(pFilepath, VSEntry, PSEntry, GSEntry, DSEntry, HSEntry)))
 	{
 		MessageBox(0, L"CShader Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);

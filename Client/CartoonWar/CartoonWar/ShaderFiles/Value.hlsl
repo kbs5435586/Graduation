@@ -149,4 +149,33 @@ int HasTex(in Texture2D _tex)
 }
 
 
+
+struct tParticle
+{
+	float3 vWorldPos; // 위치	
+	float3 vWorldDir; // 이동 방향
+
+	float m_fCurTime; // 현재 시간
+	float m_fLifeTime; // 최대 생명주기
+
+	int iAlive;
+	int arrPading[3]; // 16 바이트 배수 패딩 바이트
+};
+
+struct tParticleShared
+{
+	int iAddCount;
+	int iCurCount;
+	float fRange; // 랜덤 범위
+	int arrPading;
+};
+
+cbuffer GLOBAL : register(b9)
+{
+	int		wincx;
+	int		wincy;
+	float   g_fDT;
+	float   g_fAccTime;
+}
+
 #endif

@@ -10,7 +10,7 @@
 #include "Collider.h"
 #include "Observer.h"
 #include "Mesh.h"
-
+#include "Particle.h"
 
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"

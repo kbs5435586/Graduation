@@ -253,9 +253,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\09. Observer">
       <UniqueIdentifier>{750f9af0-9d7b-4a72-9092-c2934bbabc8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\08. LoadManager">
-      <UniqueIdentifier>{623aa108-42e7-4d8f-9c8b-c69b102cd648}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\07. ObserverManager">
       <UniqueIdentifier>{bf1f5867-e5e7-4ca6-a5b5-9701b69ce1e1}</UniqueIdentifier>
     </Filter>
@@ -363,6 +360,24 @@
     </Filter>
     <Filter Include="96. ShaderFiles\99. Compute">
       <UniqueIdentifier>{9ce81e86-2c50-4511-8f0e-c94497ce7450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\10. Particle">
+      <UniqueIdentifier>{00f11d05-5e56-44d1-b3af-1cde2783f419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\08. LoadManager">
+      <UniqueIdentifier>{623aa108-42e7-4d8f-9c8b-c69b102cd648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\10. StructedBuffer">
+      <UniqueIdentifier>{a14a0ba2-a075-4b88-9bc8-e01fe6ba9e96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\96. Particle">
+      <UniqueIdentifier>{a49518f6-dc3b-464a-8d38-a14ae6241d3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\96. Particle\99. Particle_Default">
+      <UniqueIdentifier>{2b7b9969-cef9-4c87-b9a2-850fd61891e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ShaderFiles\06. Particle">
+      <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -657,6 +672,15 @@
     <ClInclude Include="..\Headers\UAVManager.h">
       <Filter>97. Engine\01. Utility\09. UAVManager\01. UAVManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Particle.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\10. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StructedBuffer.h">
+      <Filter>97. Engine\01. Utility\10. StructedBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Particle_Default.h">
+      <Filter>02. GameObject\96. Particle\99. Particle_Default</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -924,6 +948,15 @@
     <ClCompile Include="..\Codes\UAVManager.cpp">
       <Filter>97. Engine\01. Utility\09. UAVManager\01. UAVManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Particle.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\10. Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StructedBuffer.cpp">
+      <Filter>97. Engine\01. Utility\10. StructedBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Particle_Default.cpp">
+      <Filter>02. GameObject\96. Particle\99. Particle_Default</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -976,6 +1009,12 @@
     </None>
     <None Include="..\ShaderFiles\Compute\Shader_Compute_Default.hlsl">
       <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Particle.hlsl">
+      <Filter>96. ShaderFiles\06. Particle</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Compute_Particle.hlsl">
+      <Filter>96. ShaderFiles\06. Particle</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

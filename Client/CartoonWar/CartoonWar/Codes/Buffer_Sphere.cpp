@@ -19,7 +19,7 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 	const float PI = acos(-1);
 	const int M = 10;
 	const int N = 10;
-	float rad = 1.f;
+	float rad = 0.5f;
 
 	m_iNumVertices = M * N + N + 1;
 

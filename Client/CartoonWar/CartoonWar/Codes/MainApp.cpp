@@ -48,6 +48,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(REP), 512, CONST_REGISTER::b8)))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(GLOBAL), 1, CONST_REGISTER::b9, true)))
+		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_RTT_Manager()))
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_UAV_Manager()))
@@ -64,13 +66,16 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 		return - 1;
 	m_fTimeAcc += fTimeDelta;
 	CInput::GetInstance()->SetUp_InputState();
+	m_fTimeDelta = fTimeDelta;
+
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
 void CMainApp::Render_MainApp()
 {
 	CDevice::GetInstance()->Render_Begin();
-
+	if (FAILED(SetUp_OnShader(m_fTimeDelta)))
+		return ;
 	m_pManagement->SetUp_OnShader_Light();
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Render_RenderGroup();
@@ -116,6 +121,19 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eID)
 		return E_FAIL;
 
 	Safe_Release(pScene);
+
+	return S_OK;
+}
+
+HRESULT CMainApp::SetUp_OnShader(const _float& fTimeDelta)
+{
+	m_tGlobal.fTimeDelta = fTimeDelta;
+	m_tGlobal.fAccTime += fTimeDelta;
+	m_tGlobal.iWincx = WINCX;
+	m_tGlobal.iWincy = WINCY;
+
+	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->SetData(&m_tGlobal);
+	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->GetCBV().Get(), iOffset, CONST_REGISTER::b9);
 
 	return S_OK;
 }

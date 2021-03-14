@@ -171,4 +171,49 @@ AD_Light Calculate_Light_Upgrade(int LightType, float4 _vNormal, float4 vWorldPo
 	return tColor;
 }
 
+
+static float gaussian5x5[25] =
+{
+	0.003765, 0.015019, 0.023792, 0.015019, 0.003765,
+	0.015019, 0.059912, 0.094907, 0.059912, 0.015019,
+	0.023792, 0.094907, 0.150342, 0.094907, 0.023792,
+	0.015019, 0.059912, 0.094907, 0.059912, 0.015019,
+	0.003765, 0.015019, 0.023792, 0.015019, 0.003765,
+};
+
+static float gaussian3x3[9] =
+{
+	0.035f, 0.16f, 0.035f,
+	0.16f, 0.22f, 0.16f,
+	0.035f, 0.16f, 0.035f,
+};
+
+float4 gaussian3x3Sample(in int2 _uv, in RWTexture2D<float4> _tex)
+{
+	float4 fOut = (float4) 0.f;
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			fOut += _tex[_uv + int2(i - 1, j - 1)] * gaussian3x3[i * 3 + j];
+		}
+	}
+	return fOut;
+}
+
+
+float gaussian5x5Sample(in int2 _uv, in Texture2D _tex)
+{
+	float4 fOut = (float4) 0.f;
+	for (int i = 0; i < 5; ++i)
+	{
+		for (int j = 0; j < 5; ++j)
+		{
+			fOut += _tex[_uv + int2(i - 2, j - 2)] * gaussian5x5[i * 5 + j];
+		}
+	}
+	return fOut.x;
+}
+
+
 #endif
