@@ -83,11 +83,12 @@ struct sc_packet_chat
 	char message[MAX_STR_LEN];
 };
 
-struct cs_packet_login
+struct sc_packet_npc_add_ok
 {
 	char	size;
 	char	type;
-	char	name[MAX_ID_LEN];
+	int		id;
+	char	act;
 };
 
 constexpr unsigned char GO_UP = 0;
@@ -96,6 +97,13 @@ constexpr unsigned char GO_LEFT = 2;
 constexpr unsigned char GO_RIGHT = 3;
 constexpr unsigned char GO_FORWARD = 4;
 constexpr unsigned char GO_BACK = 5;
+
+struct cs_packet_login
+{
+	char	size;
+	char	type;
+	char	name[MAX_ID_LEN];
+};
 
 struct cs_packet_move
 {

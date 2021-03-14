@@ -209,7 +209,7 @@ HRESULT CScene_Logo::Ready_Layer_Rect(const _tchar* pLayerTag)
 
 	for (int i = NPC_ID_START; i < MAX_NPC; i++)
 	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, pLayerTag)))
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, pLayerTag, nullptr, nullptr, ID_TO_IDX(i))))
 			return E_FAIL;
 
 	}

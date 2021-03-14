@@ -223,6 +223,23 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 	}
 	break;
+	case SC_PACKET_ADD_NPC_OK:
+	{
+		sc_packet_npc_add_ok* my_packet = reinterpret_cast<sc_packet_npc_add_ok*>(ptr);
+		int npc_id = my_packet->id;
+
+		//if (0 != m_npcs.count(npc_id))
+		//{
+		//	CManagement* pManagement = CManagement::GetInstance();
+		//	if (nullptr == pManagement)
+		//		return;
+		//	pManagement->AddRef();
+		//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, L"Layer_Rect", nullptr, nullptr, ID_TO_IDX(npc_id))))
+		//		return;
+		//	Safe_Release(pManagement);
+		//}
+	}
+	break;
 	default:
 		printf("Unknown PACKET type [%d]\n", ptr[1]);
 	}

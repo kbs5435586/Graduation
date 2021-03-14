@@ -32,6 +32,7 @@ public:
 	void send_enter_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
+	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림

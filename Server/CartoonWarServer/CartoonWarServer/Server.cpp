@@ -672,29 +672,27 @@ void Server::initialize_clients()
 
 void Server::initialize_NPC(int player_id)
 {
-    for (int i = 0; i < 3; ++i)
+    for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
     {
-        for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
+        if (ST_ACTIVE != g_clients[i].m_status)
         {
-            if (ST_ACTIVE != g_clients[i].m_status)
-            {
-                g_clients[i].m_socket = 0;
-                g_clients[i].m_id = i;
-                g_clients[i].m_owner_id = player_id;
-                g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
-                sprintf_s(g_clients[i].m_name, "NPC %d", i);
-                g_clients[i].m_status = ST_SLEEP;
-                g_clients[i].m_pos = g_clients[player_id].m_pos;
-                g_clients[i].m_speed = NPC_SPEED;
-                g_clients[player_id].m_boid.push_back(&g_clients[i]);
-                cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
-                activate_npc(i, g_clients[i].m_last_order);
-                break;
-            }
-            else
-            {
-                continue; // 여기 수정할것 (임시방편), 모든 플레이어의 npc active일때 더이상 추가 안되게 처리
-            }
+            g_clients[i].m_socket = 0;
+            g_clients[i].m_id = i;
+            g_clients[i].m_owner_id = player_id;
+            g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
+            sprintf_s(g_clients[i].m_name, "NPC %d", i);
+            g_clients[i].m_status = ST_SLEEP;
+            g_clients[i].m_pos = g_clients[player_id].m_pos;
+            g_clients[i].m_speed = NPC_SPEED;
+            g_clients[player_id].m_boid.push_back(&g_clients[i]);
+            cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
+            //send_npc_add_ok_packet(player_id, i);
+            activate_npc(i, g_clients[i].m_last_order);
+            break;
+        }
+        else
+        {
+            continue; // 여기 수정할것 (임시방편), 모든 플레이어의 npc active일때 더이상 추가 안되게 처리
         }
     }
 }
@@ -741,6 +739,20 @@ void Server::send_chat_packet(int listen_id, int chatter_id, char mess[])
     strcpy_s(packet.message, mess);
 
     send_packet(listen_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_npc_add_ok_packet(int user_id, int other_id)
+{
+    sc_packet_enter packet;
+    packet.id = other_id; // 추가된 npc 아이디
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ADD_NPC_OK;
+
+    g_clients[user_id].m_cLock.lock();
+    g_clients[user_id].m_view_list.insert(other_id);
+    g_clients[user_id].m_cLock.unlock();
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
 void Server::disconnect(int user_id)

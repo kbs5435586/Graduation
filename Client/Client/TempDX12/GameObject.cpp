@@ -10,6 +10,7 @@ CGameObject::CGameObject(ID3D12Device* pGraphic_Device)
 
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pGraphic_Device(rhs.m_pGraphic_Device)
+	, m_iLayerIdx(rhs.m_iLayerIdx)
 {
 	m_pGraphic_Device->AddRef();
 }
