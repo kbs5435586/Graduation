@@ -74,6 +74,12 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 		pServer->send_npc_act_packet(DO_RANDMOVE);
 		Safe_Release(pServer);
 	}
+	if ((GetAsyncKeyState('6') & 0x8000))
+	{
+		pServer->AddRef();
+		pServer->send_npc_act_packet(DO_FORMATION);
+		Safe_Release(pServer);
+	}
 
 	if (GetAsyncKeyState('M') & 0x8000)
 	{

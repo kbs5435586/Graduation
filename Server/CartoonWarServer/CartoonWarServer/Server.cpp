@@ -84,56 +84,58 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ADD_NPC:
     {
         cs_packet_add_npc* packet = reinterpret_cast<cs_packet_add_npc*>(buf);
-        cout << "NPC Init Start\n";
-        initialize_NPC(packet->id);
-        cout << "NPC Init Finish\n";
+        initialize_NPC(user_id);
     }
     break;
     case CS_PACKET_NPC_ACT:
     {
         cs_packet_npc_act* packet = reinterpret_cast<cs_packet_npc_act*>(buf);
         int p_id = packet->id;
-        switch (packet->act)
+        char p_act = packet->act;
+
+        for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
         {
-        case DO_ATTACK:
-            break;
-        case DO_DEFENCE:
-            break;
-        case DO_HOLD:
-            break;
-        case DO_FOLLOW:
-            for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
+            if (ST_SLEEP == g_clients[i].m_status || ST_FREE == g_clients[i].m_status)
             {
-                if (ST_SLEEP == g_clients[i].m_status || ST_FREE == g_clients[i].m_status)
+                cout << i << " is continue\n";
+                continue;
+            }
+            else
+            {
+                if (DO_ATTACK == p_act)
                 {
-                    cout << i << " is continue\n";
-                    continue;
+                    cout << i << " is DO_ATTACK\n";
+                    g_clients[i].m_last_order = FUNC_NPC_ATTACK;
                 }
-                else
+                if (DO_DEFENCE == p_act)
+                {
+                    cout << i << " is DO_DEFENCE\n";
+                    g_clients[i].m_last_order = FUNC_NPC_DEFENCE;
+                }
+                if (DO_HOLD == p_act)
+                {
+                    cout << i << " is DO_HOLD\n";
+                    g_clients[i].m_last_order = FUNC_NPC_HOLD;
+                }
+                if (DO_FOLLOW == p_act)
                 {
                     cout << i << " is DO_FOLLOW\n";
                     g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
-                    activate_npc(i, g_clients[i].m_last_order);
                 }
-            }
-            break;
-        case DO_RANDMOVE:
-            for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
-            {
-                if (ST_SLEEP == g_clients[i].m_status || ST_FREE == g_clients[i].m_status)
-                {
-                    cout << i << " is continue\n";
-                    continue;
-                }
-                else
+                if (DO_RANDMOVE == p_act)
                 {
                     cout << i << " is DO_RANDMOVE\n";
                     g_clients[i].m_last_order = FUNC_NPC_RANDMOVE;
-                    activate_npc(i, g_clients[i].m_last_order);
                 }
+                activate_npc(i, g_clients[i].m_last_order);
             }
-            break;
         }
+    }
+    break;
+    case CS_PACKET_CHANGE_FORMATION:
+    {
+        cs_packet_change_formation* packet = reinterpret_cast<cs_packet_change_formation*>(buf);
+        do_change_formation(user_id);
     }
     break;
 	default:
@@ -434,6 +436,39 @@ void Server::do_follow(int npc_id)
     }
 }
 
+void Server::do_change_formation(int player_id)
+{
+    ClientInfo& c = g_clients[player_id];
+    c.m_formation = ENUM_FORMATION(c.m_formation + 1);
+    if (FM_END == c.m_formation)
+        c.m_formation = FM_FLOCK;
+
+    switch (c.m_formation)
+    {
+    case FM_FLOCK:
+    {
+
+    }
+        break;
+    case FM_SQUARE:
+    {
+
+    }
+    break;
+    case FM_PIRAMID:
+    {
+
+    }
+    break;
+    case FM_CIRCLE:
+    {
+
+    }
+    break;
+    }
+
+}
+
 Vec3 Server::cal_dist_to_Player(int npc_id)
 {
     Vec3 Dir = { 0,0,0 };
@@ -569,6 +604,10 @@ void Server::do_timer()
             switch (event.event_id)
             {
             case FUNC_NPC_RANDMOVE:
+            case FUNC_NPC_ATTACK:
+            case FUNC_NPC_DEFENCE:
+            case FUNC_NPC_HOLD:
+            case FUNC_NPC_FOLLOW:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -578,34 +617,6 @@ void Server::do_timer()
                 // 타이머 쓰레드에서 움직이는거 처리까지 다 하면 과부화가 심하다
                 // PostQueuedCompletionStatus 이걸로 worket thread에 작업 넘겨주고 여기선 어떤 이벤트인지만 알려줌
                 // 오버랩 구조체 따로 초기화 안해줘도 되는게 PostQueuedCompletionStatus 자체가 진짜 넣어주는값 그대로 GetQueued에 넘겨줘서 괜찮음
-                break;
-            }
-            case FUNC_NPC_ATTACK:
-            {
-                OverEx* over = new OverEx;
-                over->function = (ENUM_FUNCTION)event.event_id;
-                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
-                break;
-            }
-            case FUNC_NPC_DEFENCE:
-            {
-                OverEx* over = new OverEx;
-                over->function = (ENUM_FUNCTION)event.event_id;
-                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
-                break;
-            }
-            case FUNC_NPC_HOLD:
-            {
-                OverEx* over = new OverEx;
-                over->function = (ENUM_FUNCTION)event.event_id;
-                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
-                break;
-            }
-            case FUNC_NPC_FOLLOW:
-            {
-                OverEx* over = new OverEx;
-                over->function = (ENUM_FUNCTION)event.event_id;
-                PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
                 break;
             }
             }
@@ -891,6 +902,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_speed = NPC_SPEED;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
+                g_clients[user_id].m_formation = FM_FLOCK;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
 
                 DWORD flags = 0;

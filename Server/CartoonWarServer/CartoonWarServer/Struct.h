@@ -6,6 +6,7 @@ enum ENUM_FUNCTION
 	FUNC_NPC_HOLD, FUNC_NPC_FOLLOW, FUNC_END
 };
 enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_END };
+enum ENUM_FORMATION { FM_FLOCK, FM_SQUARE, FM_PIRAMID, FM_CIRCLE, FM_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
 
@@ -75,6 +76,7 @@ struct ClientInfo // 클라이언트 정보
 
 	float m_speed;
 	vector <ClientInfo*> m_boid;
+	ENUM_FORMATION m_formation;
 
 	Vec3 m_pos;
 	//float m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음

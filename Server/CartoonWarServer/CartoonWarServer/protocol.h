@@ -24,6 +24,7 @@ constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
 constexpr char CS_PACKET_ADD_NPC = 3;
 constexpr char CS_PACKET_NPC_ACT = 4;
+constexpr char CS_PACKET_CHANGE_FORMATION = 5;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -117,7 +118,6 @@ struct cs_packet_add_npc
 {
 	char	size;
 	char	type;
-	int		id;
 };
 
 struct cs_packet_npc_act
@@ -126,6 +126,12 @@ struct cs_packet_npc_act
 	char	type;
 	int		id;
 	char	act;
+};
+
+struct cs_packet_change_formation
+{
+	char	size;
+	char	type;
 };
 
 constexpr unsigned char DO_ATTACK = 1;

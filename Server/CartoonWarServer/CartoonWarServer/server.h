@@ -42,6 +42,7 @@ public:
 	void initialize_NPC(int player_id);
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
+	void do_change_formation(int player_id);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
