@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Particle_Default.h"
 #include "Management.h"
+#include "UAV.h"
 
 CParticle_Default::CParticle_Default()
 	: CGameObject()
@@ -62,11 +63,16 @@ _int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PARTICLE, this)))
 		return -1;
+
+	m_pParticleCom->Update_Particle(fTimeDelta);
 	return _int();
 }
 
 void CParticle_Default::Render_GameObject()
 {
+	// Shader0 is Particle Basic Shader
+	// Shader1 is Particle Update Shader
+
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
@@ -81,16 +87,26 @@ void CParticle_Default::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	REP		tRep_Basic;
+	REP		tRep1_Update;
+	m_pParticleCom->SetUp_OnShader(tRep_Basic, tRep1_Update);
+
 	CDevice::GetInstance()->UpdateTable();
 
 
-	REP		tRep0;
-	REP		tRep1;
-
-	m_pParticleCom->SetUp_OnShader(tRep0, tRep1);
 
 
 
+	// Update Particle
+	m_pShaderCom[1]->UpdateData_CS();
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep1_Update);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+	m_pParticleCom->Update_Particle_Shader();
+	m_pParticleCom->DisPatch(1, 1, 1);
+	//m_pParticleCom->Update_Particle()
+	//CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
+	//pManagement->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
 
 
 	m_pBufferCom->Render_VIBuffer(m_pParticleCom->GetMaxParticle());
@@ -103,7 +119,7 @@ HRESULT CParticle_Default::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_PARTICLE)))
 		return E_FAIL;
 
 

@@ -23,6 +23,9 @@
 #include "TestCube.h"
 #include "TestMesh.h"
 
+//Particle
+#include "Particle_Default.h"
+
 
 CScene_Stage::CScene_Stage()
 {
@@ -107,6 +110,9 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -130,6 +136,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 		return E_FAIL;
 
 
@@ -268,6 +276,13 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 {
 
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

@@ -13,6 +13,9 @@ public:
     void                        Update_Particle(const _float& fTimeDelta);
     void                        Render_Particle();
     HRESULT                     SetUp_OnShader(REP& tRep0, REP& tRep1);
+public:
+    void                        DisPatch(_int x, _int y, _int z);
+    void                        Update_Particle_Shader();
 private:
     CStructedBuffer*            m_pParticleBuffer = nullptr;
     CStructedBuffer*            m_pShadedBuffer = nullptr;

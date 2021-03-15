@@ -53,10 +53,12 @@ void CParticle::Update_Particle(const _float& fTimeDelta)
 	m_pParticleBuffer->Update_RWData(UAV_REGISTER::u0);
 	m_pShadedBuffer->Update_RWData(UAV_REGISTER::u1);
 
+
 }
 
 void CParticle::Render_Particle()
 {
+
 }
 
 HRESULT CParticle::SetUp_OnShader(REP& tRep0, REP& tRep1)
@@ -75,7 +77,21 @@ HRESULT CParticle::SetUp_OnShader(REP& tRep0, REP& tRep1)
 	tRep1.m_arrFloat[2] = m_fMinSpeed;
 	tRep1.m_arrFloat[3] = m_fMaxSpeed;
 
+	m_pParticleBuffer->Update_Data(TEXTURE_REGISTER::t10);
 	return S_OK;
+}
+
+void CParticle::DisPatch(_int x, _int y, _int z)
+{
+	CDevice::GetInstance()->UpdateTable_CS();
+	CDevice::GetInstance()->GetCsCmdLst()->Dispatch(x, y, z);
+	CDevice::GetInstance()->ExcuteComputeShader();
+}
+
+void CParticle::Update_Particle_Shader()
+{
+	m_pParticleBuffer->Update_RWData(UAV_REGISTER::u0);
+	m_pShadedBuffer->Update_RWData(UAV_REGISTER::u1);
 }
 
 CParticle* CParticle::Create()

@@ -26,6 +26,7 @@ private:
 	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement);
 public:
 	static CScene_Stage*	Create();
 protected:
