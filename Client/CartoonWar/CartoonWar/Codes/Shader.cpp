@@ -20,7 +20,7 @@ CShader::CShader(const CShader& rhs)
 {
 }
 
-HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry, 
+HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	const char* PSEntry, const char* GSEntry, const char* DSEntry, const char* HSEntry)
 {
 	char* pErr = nullptr;
@@ -64,7 +64,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	return S_OK;
 }
 
-HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, DEPTH_STENCIL_TYPE eDepthType, SHADER_TYPE eShaderType, BLEND_TYPE eBlendType)
+HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYPE eType, DEPTH_STENCIL_TYPE eDepthType, SHADER_TYPE eShaderType, BLEND_TYPE eBlendType, D3D_PRIMITIVE_TOPOLOGY eTopology)
 {
 	m_tPipeline.InputLayout = { vecDesc.data(), (_uint)vecDesc.size() };
 	m_tPipeline.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get();
@@ -94,6 +94,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	m_tPipeline.SampleMask = UINT_MAX;
 	m_tPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	m_tPipeline.SampleDesc.Count = 1;
+
 
 	switch (eShaderType)
 	{
@@ -129,8 +130,60 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		break;
 	}
 
-
-	m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	switch (eTopology)
+	{
+	case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		break;
+	case D3D_PRIMITIVE_TOPOLOGY_LINELIST:
+	case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP:
+	case D3D_PRIMITIVE_TOPOLOGY_LINELIST_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+		break;
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		break;
+	case D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_5_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_6_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_7_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_8_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_9_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_10_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_13_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_14_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_15_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_17_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_18_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_19_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_20_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_21_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_22_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_23_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_24_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_25_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_26_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_27_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_28_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_29_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_30_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_31_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_32_CONTROL_POINT_PATCHLIST:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		break;
+	default:
+		assert(nullptr);
+	}
 
 	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&m_tPipeline, IID_PPV_ARGS(&m_pPipeLineState))))
 	{
@@ -166,19 +219,19 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
-	_matrix	matTemp		= matView;
+	_matrix	matTemp = matView;
 	matTemp = Matrix_::Inverse(matTemp);
 
 
-	output.matWorld		= matWorld;
-	output.matView		= matView;
-	output.matProj		= matProj;
-	output.matWV		= matWorld * matView;
-	output.matWVP		= output.matWV * matProj;
-	output.vCamPos		= (_vec4)&matTemp.m[3][0];
+	output.matWorld = matWorld;
+	output.matView = matView;
+	output.matProj = matProj;
+	output.matWV = matWorld * matView;
+	output.matWVP = output.matWV * matProj;
+	output.vCamPos = (_vec4)&matTemp.m[3][0];
 
-	output.matViewInv	= Matrix_::Inverse(matView);
-	output.matProjInv	= Matrix_::Inverse(matProj);
+	output.matViewInv = Matrix_::Inverse(matView);
+	output.matProjInv = Matrix_::Inverse(matProj);
 	return S_OK;
 }
 
@@ -190,11 +243,11 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 	_matrix	matTemp = matView;
 	matTemp = Matrix_::Inverse(matTemp);
 
-	tPass.matWorld	= matWorld;
-	tPass.matView	= matView;
-	tPass.matProj	= matProj;
-	tPass.matWV		= matWorld * matView;
-	tPass.matWVP	= tPass.matWV * matProj;
+	tPass.matWorld = matWorld;
+	tPass.matView = matView;
+	tPass.matProj = matProj;
+	tPass.matWV = matWorld * matView;
+	tPass.matWVP = tPass.matWV * matProj;
 	tPass.vCamPos = (_vec4)&matTemp.m[3][0];
 	return S_OK;
 }

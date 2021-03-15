@@ -36,6 +36,5 @@ private:
 	CTexture*								m_pTextureCom = nullptr;
 	CTexture*								m_pTextureCom_Noise = nullptr;
 	CParticle*								m_pParticleCom = nullptr;
-
 };
 

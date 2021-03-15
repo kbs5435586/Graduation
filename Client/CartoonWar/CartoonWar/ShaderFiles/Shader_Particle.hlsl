@@ -96,7 +96,7 @@ void GS_Main(point VS_OUT _in[1], inout TriangleStream<GS_OUT> OutputStream)
 
 
 
-PS_OUT	PS_Main(GS_OUT _in)
+PS_OUT	PS_Main(GS_OUT _in) 
 {
 	PS_OUT vOut = (PS_OUT)0;
 

@@ -50,7 +50,7 @@ HRESULT CRenderer::Render_RenderGroup()
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 
 	Render_Alpha();
-	Render_Particle();
+
 	Render_UI();
 	Render_Blend();
 
@@ -142,7 +142,7 @@ void CRenderer::Render_Deffered(CManagement* pManagement)
 
 	Render_Priority();
 	Render_NoneAlpha();
-
+	Render_Particle();
 
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }

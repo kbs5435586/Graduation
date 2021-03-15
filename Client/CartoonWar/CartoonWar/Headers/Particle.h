@@ -12,7 +12,8 @@ public:
     HRESULT                     Ready_Particle();
     void                        Update_Particle(const _float& fTimeDelta);
     void                        Render_Particle();
-    HRESULT                     SetUp_OnShader(REP& tRep0, REP& tRep1);
+    HRESULT                     SetUp_OnShader(REP& tRep);
+    HRESULT                     SetUp_OnUpdateShader(REP& tRep);
 public:
     void                        DisPatch(_int x, _int y, _int z);
     void                        Update_Particle_Shader();

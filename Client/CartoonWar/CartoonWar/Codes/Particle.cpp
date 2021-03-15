@@ -49,33 +49,36 @@ void CParticle::Update_Particle(const _float& fTimeDelta)
 		m_fAccTime -= m_fFrequency;
 		m_iAddCnt = 1;
 	}
-
-	m_pParticleBuffer->Update_RWData(UAV_REGISTER::u0);
-	m_pShadedBuffer->Update_RWData(UAV_REGISTER::u1);
-
-
 }
 
 void CParticle::Render_Particle()
 {
-
+	m_pParticleBuffer->Update_RWData(UAV_REGISTER::u0);
+	m_pShadedBuffer->Update_RWData(UAV_REGISTER::u1);
 }
 
-HRESULT CParticle::SetUp_OnShader(REP& tRep0, REP& tRep1)
+HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 {
-	tRep0.m_arrVec4[0]	= m_vStartColor;
-	tRep0.m_arrVec4[1]	= m_vEndColor;
 
-	tRep0.m_arrFloat[0] = m_fStartScale;
-	tRep0.m_arrFloat[1] = m_fEndScale;
+	tRep.m_arrInt[0] = m_iMaxParticle;
+	tRep.m_arrInt[1] = m_iAddCnt;
+	tRep.m_arrFloat[0] = m_fMinLifeTime;
+	tRep.m_arrFloat[1] = m_fMinLifeTime;
+	tRep.m_arrFloat[2] = m_fMinSpeed;
+	tRep.m_arrFloat[3] = m_fMaxSpeed;
+
+	return E_NOTIMPL;
+}
+
+HRESULT CParticle::SetUp_OnShader(REP& tRep)
+{
+	tRep.m_arrVec4[0]	= m_vStartColor;
+	tRep.m_arrVec4[1]	= m_vEndColor;
+
+	tRep.m_arrFloat[0] = m_fStartScale;
+	tRep.m_arrFloat[1] = m_fEndScale;
 
 
-	tRep1.m_arrInt[0]	= m_iMaxParticle;
-	tRep1.m_arrInt[1]	= m_iAddCnt;
-	tRep1.m_arrFloat[0] = m_fMinLifeTime;
-	tRep1.m_arrFloat[1] = m_fMinLifeTime;
-	tRep1.m_arrFloat[2] = m_fMinSpeed;
-	tRep1.m_arrFloat[3] = m_fMaxSpeed;
 
 	m_pParticleBuffer->Update_Data(TEXTURE_REGISTER::t10);
 	return S_OK;
@@ -97,7 +100,7 @@ void CParticle::Update_Particle_Shader()
 CParticle* CParticle::Create()
 {
 	CParticle* pInstnace = new CParticle;
-	if (FAILED(pInstnace->Ready_Component()))
+	if (FAILED(pInstnace->Ready_Particle()))
 		Safe_Release(pInstnace);
 	return pInstnace;
 }

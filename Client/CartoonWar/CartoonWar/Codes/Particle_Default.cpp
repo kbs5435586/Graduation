@@ -26,9 +26,10 @@ HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(0.f, 0.f, 5.f);
+	_vec3 vPos = _vec3(0.f, 5.f, 5.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
+	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
 
 	return S_OK;
 }
@@ -65,6 +66,7 @@ _int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 
 	m_pParticleCom->Update_Particle(fTimeDelta);
+
 	return _int();
 }
 
@@ -78,6 +80,17 @@ void CParticle_Default::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
+	// Update Particle
+	REP		tRep_Update;
+	m_pShaderCom[1]->UpdateData_CS();
+	m_pParticleCom->SetUp_OnUpdateShader(tRep_Update);
+	m_pParticleCom->Update_Particle_Shader();
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+	m_pParticleCom->DisPatch(1, 1, 1);
+
+
+
 
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
@@ -85,12 +98,17 @@ void CParticle_Default::Render_GameObject()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 	m_pShaderCom[0]->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+
 
 	REP		tRep_Basic;
-	REP		tRep1_Update;
-	m_pParticleCom->SetUp_OnShader(tRep_Basic, tRep1_Update);
+
+	m_pParticleCom->SetUp_OnShader(tRep_Basic);
+	m_pParticleCom->Render_Particle();
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Basic);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 	CDevice::GetInstance()->UpdateTable();
 
@@ -98,16 +116,7 @@ void CParticle_Default::Render_GameObject()
 
 
 
-	// Update Particle
-	m_pShaderCom[1]->UpdateData_CS();
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep1_Update);
-	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-	m_pParticleCom->Update_Particle_Shader();
-	m_pParticleCom->DisPatch(1, 1, 1);
-	//m_pParticleCom->Update_Particle()
-	//CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
-	//pManagement->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
-
+	
 
 	m_pBufferCom->Render_VIBuffer(m_pParticleCom->GetMaxParticle());
 	Safe_Release(pManagement);
@@ -119,7 +128,7 @@ HRESULT CParticle_Default::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_PARTICLE)))
+	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_POINTLIST)))
 		return E_FAIL;
 
 

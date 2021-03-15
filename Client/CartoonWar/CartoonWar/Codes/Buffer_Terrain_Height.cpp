@@ -187,9 +187,9 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 
 
 
-	m_pQuadTree = CQuadTree::Create(m_pPosition, m_iNumVerticesX, m_iNumVerticesZ);
-	if (nullptr == m_pQuadTree)
-		return E_FAIL;
+	//m_pQuadTree = CQuadTree::Create(m_pPosition, m_iNumVerticesX, m_iNumVerticesZ);
+	//if (nullptr == m_pQuadTree)
+	//	return E_FAIL;
 
 	return S_OK;
 }	
@@ -299,7 +299,7 @@ void CBuffer_Terrain_Height::Free()
 		Safe_Delete_Array(m_pPixel);
 		Safe_Delete_Array(m_pPolygonVertexIndex);
 	}
-	Safe_Release(m_pQuadTree);
+	//Safe_Release(m_pQuadTree);
 	
 	CVIBuffer::Free();
 }

@@ -486,5 +486,5 @@ typedef struct tagGlobal
 	int		iWincx;
 	int		iWincy;
 	float	fTimeDelta;
-	float	fAccTime;
+	float	fAccTime=0.f;
 }GLOBAL;
