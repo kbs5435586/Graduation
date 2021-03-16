@@ -18,7 +18,8 @@ private:
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
     short PORT = 3500;
-    high_resolution_clock::time_point cool_time;
+    high_resolution_clock::time_point add_npc_ct;
+    high_resolution_clock::time_point change_formation_ct;
 
 public:
     void MainServer(CManagement* managment);
@@ -33,11 +34,14 @@ public:
     void send_login_ok_packet();
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
+    void send_change_formation_packet();
 
     bool Get_ShowPlayer();
     bool Get_ShowNPC(int npc_index);
-    high_resolution_clock::time_point Get_Cooltime();
-    void Set_CoolTime(high_resolution_clock::time_point ct);
+    high_resolution_clock::time_point Get_AddNPC_Cooltime();
+    high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
+    void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
+    void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
 
     void err_quit(const char* msg);
     void disconnect();

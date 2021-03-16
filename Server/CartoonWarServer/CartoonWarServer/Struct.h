@@ -83,9 +83,6 @@ struct ClientInfo // 클라이언트 정보
 	char m_name[MAX_ID_LEN + 1]; // +1은 아이디가 50 꽉차서 오면 안되긴 하지만 혹시라도 꽉 차서 왔을때 대비
 	// m_isConnected가 true일때 m_name가 의미있음, true인데 m_name에 값이 없는 경우가 없어야함
 	char m_message[MAX_CHAT_LEN];
-	unsigned m_move_time;
-	high_resolution_clock::time_point m_last_move_time;
-
 
 	unordered_set <int> m_view_list;
 	// 그냥 set은 iter 돌렸을때 순서대로 나오지만 unordered_set은 순서대로 안나옴, 근데 뷰리스트 자체가 순서상관X
