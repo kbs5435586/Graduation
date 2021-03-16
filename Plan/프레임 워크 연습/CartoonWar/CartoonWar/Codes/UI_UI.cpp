@@ -79,7 +79,7 @@ void CUI_UI::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	ComPtr<ID3D12DescriptorHeap>	pUITex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(6)->pRtt->GetSRV().Get();
 
-	CDevice::GetInstance()->SetTextureToShader(pUITex.Get(), TEXTURE_REGISTER::t6);
+	CDevice::GetInstance()->SetTextureToShader(pUITex.Get(), TEXTURE_REGISTER::t0);
 
 	CDevice::GetInstance()->UpdateTable();
 
@@ -151,7 +151,7 @@ HRESULT CUI_UI::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

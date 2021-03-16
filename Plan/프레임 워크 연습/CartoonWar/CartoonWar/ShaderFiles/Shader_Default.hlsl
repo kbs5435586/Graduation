@@ -10,7 +10,7 @@ struct VS_IN
 struct VS_OUT
 {
 	float4	vPosition	: SV_POSITION;
-	float4	I_vPosition : TEXCOORD;
+	float4	I_vPosition : POSITION;
 	float4	vColor		: COLOR;
 	float4  vNormal		: NORMAL;
 };
@@ -19,6 +19,7 @@ struct PS_OUT
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vShadeTex			: SV_TARGET2;
+	float4 vUITex				: SV_TARGET6;
 };
 VS_OUT	VS_Main(VS_IN vIn)
 {
@@ -39,7 +40,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = vIn.vColor;
 	vOut.vNormalTex  = vNormal;
 	vOut.vShadeTex	 = Calculate_Shade(vNormal);
-
+	vOut.vUITex = vIn.I_vPosition;
 	return vOut;
 }
 

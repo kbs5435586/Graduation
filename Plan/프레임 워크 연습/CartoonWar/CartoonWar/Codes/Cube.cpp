@@ -118,6 +118,7 @@ void CCube::Render_GameObject()
 
 	// 
 	MAINPASS tMainPass = {};
+	MAINPASS tMainPassT = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
@@ -125,13 +126,12 @@ void CCube::Render_GameObject()
 	_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
 	_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
 
-
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, I_matView, I_matProj, tMainPass);
-
+	m_pShaderCom->SetUp_OnShader(matWorld, I_matView, I_matProj,  matView, matProj, tMainPass);
+	////m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, I_matView, I_matProj, tMainPass);
+		
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);	
 	CDevice::GetInstance()->UpdateTable();
-
 
 	m_pBufferCom->Render_VIBuffer();
 
