@@ -24,6 +24,9 @@ HRESULT CTestMesh::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	_vec3 vPos = { 5.f,0.f,5.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+
 	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
@@ -92,7 +95,16 @@ void CTestMesh::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	m_pMeshCom->SetUp_Texture();
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0);
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t1);
+
+
+	//m_pMeshCom->SetUp_Texture();
+	//Component_Texture_Hatch_123
+	//Component_Texture_Hatch_456
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -122,9 +134,19 @@ HRESULT CTestMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_House");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+		return E_FAIL;
+
+	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123");
+	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
+		return E_FAIL;
+
+	m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456");
+	NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture1", m_pTextureCom[1])))
 		return E_FAIL;
 
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");

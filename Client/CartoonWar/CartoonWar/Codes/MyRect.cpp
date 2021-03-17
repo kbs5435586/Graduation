@@ -68,9 +68,7 @@ void CMyRect::Render_GameObject()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 	_matrix matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
 
-	REP tRef = {};
-	tRef.m_arrInt[0] = 1;
-
+	
 
 
 	m_pShaderCom[0]->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
@@ -82,6 +80,8 @@ void CMyRect::Render_GameObject()
 
 	m_pBufferCom->Render_VIBuffer();
 
+	REP tRef = {};
+	tRef.m_arrInt[0] = 1;
 
 
 	m_pShaderCom[1]->UpdateData_CS();

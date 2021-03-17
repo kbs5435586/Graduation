@@ -172,6 +172,9 @@ AD_Light Calculate_Light_Upgrade(int LightType, float4 _vNormal, float4 vWorldPo
 }
 
 
+
+
+
 static float gaussian5x5[25] =
 {
 	0.003765, 0.015019, 0.023792, 0.015019, 0.003765,

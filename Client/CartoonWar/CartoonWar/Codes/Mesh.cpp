@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "..\Headers\Mesh.h"
 #include "Texture.h"
+#include "StructedBuffer.h"
 
 
 CMesh::CMesh()
@@ -14,12 +15,16 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_iSubsetNum(rhs.m_iSubsetNum)
 	, m_vecTexture(rhs.m_vecTexture)
 	, m_iMaxTexNum(rhs.m_iMaxTexNum)
-	
+	, m_vecMTBone(rhs.m_vecMTBone)
+	, m_vecMTAnimClip(rhs.m_vecMTAnimClip)
+	, m_pBoneFrameData(rhs.m_pBoneFrameData)
+	, m_pBoneOffset(rhs.m_pBoneOffset)
+
 {
 
 	m_IsClone = true;
 
-	
+
 }
 
 HRESULT CMesh::Ready_Mesh(const wstring& pFilePath)
@@ -70,7 +75,7 @@ HRESULT CMesh::Ready_Mesh(const wstring& pFilePath)
 
 
 
-	if(FAILED(Ready_MeshData(&m_vecContainer[0])))
+	if (FAILED(Ready_MeshData(&m_vecContainer[0])))
 		return E_FAIL;
 	Load_Texture();
 
@@ -139,7 +144,7 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 	m_iSubsetNum = iMtrlCnt;
 	pContainer.vecIdx.resize(iMtrlCnt);
 
-	 
+
 
 	FbxGeometryElementMaterial* pMtrl = pMesh->GetElementMaterial();
 
@@ -221,15 +226,26 @@ void CMesh::Load_Texture()
 			wstring strFileName;
 
 			strPath = (m_vecContainer[i].vecMtrl[j].strDiff.c_str());
+			if (!strPath.empty())
+			{
+				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
+				m_vecTexture.push_back(pTexture);
+			}
 
-			pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
-			m_vecTexture.push_back(pTexture);
 			strPath = (m_vecContainer[i].vecMtrl[j].strNormal.c_str());
-			pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
-			m_vecTexture.push_back(pTexture);
+			if (!strPath.empty())
+			{
+				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
+				m_vecTexture.push_back(pTexture);
+
+			}
+
 			strPath = (m_vecContainer[i].vecMtrl[j].strSpec.c_str());
-			pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
-			m_vecTexture.push_back(pTexture);
+			if (!strPath.empty())
+			{
+				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
+				m_vecTexture.push_back(pTexture);
+			}
 		}
 	}
 
@@ -243,9 +259,9 @@ HRESULT CMesh::SetUp_Texture()
 		m_iCurTexNum = 0;
 	}
 
- 	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
-	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum +1], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
-	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum +2], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
+	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
+	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 1], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
+	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 2], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
 
 
 	//m_iCurTexNum+=3;
@@ -279,7 +295,7 @@ void CMesh::Load_Skeleton_(FbxNode* pNode, _int iDepth, _int iIdx, _int iParentI
 	{
 		Load_Skeleton_(pNode->GetChild(i), iDepth, (int)m_vecBone.size(), iIdx);
 	}
-	
+
 }
 
 void CMesh::Load_AnimationClip()
@@ -337,7 +353,7 @@ void CMesh::GetTangent(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int i
 		assert(NULL); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
 
 	// 탄젠트 data 의 시작 주소
-	FbxGeometryElementTangent* pTangent =pMesh ->GetElementTangent();
+	FbxGeometryElementTangent* pTangent = pMesh->GetElementTangent();
 	UINT iTangentIdx = 0;
 
 	if (pTangent->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
@@ -600,6 +616,11 @@ FbxAMatrix CMesh::GetTransform(FbxNode* _pNode)
 	return FbxAMatrix(vT, vR, vS);
 }
 
+_bool CMesh::IsAnimation()
+{
+	return !m_vecMTAnimClip.empty();
+}
+
 void CMesh::CheckWeightAndIndices(FbxMesh* _pMesh, tContainer* _pContainer)
 {
 	vector<vector<tWeightsAndIndices>>::iterator iter = _pContainer->vecWI.begin();
@@ -814,6 +835,98 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 	}
 
 
+
+	if (!pContainer->bAnimation)
+		return S_OK;
+
+	m_vecBone;
+	_uint iFrameCnt = 0;
+
+	for (_uint i = 0; i < m_vecBone.size(); ++i)
+	{
+		tMTBone bone = {};
+
+		bone.iDepth = m_vecBone[i]->iDepth;
+		bone.iParentIndx = m_vecBone[i]->iParentIndx;
+		bone.matBone = GetMatrix(m_vecBone[i]->matBone);
+		bone.matOffset = GetMatrix(m_vecBone[i]->matOffset);
+		bone.strBoneName = m_vecBone[i]->strBoneName;
+
+		for (UINT j = 0; j < m_vecBone[i]->vecKeyFrame.size(); ++j)
+		{
+			tMTKeyFrame tKeyframe = {};
+			tKeyframe.dTime = m_vecBone[i]->vecKeyFrame[j].dTime;
+			tKeyframe.iFrame = j;
+			tKeyframe.vTranslate.x = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetT().mData[0];
+			tKeyframe.vTranslate.y = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetT().mData[1];
+			tKeyframe.vTranslate.z = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetT().mData[2];
+
+			tKeyframe.vScale.x = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetS().mData[0];
+			tKeyframe.vScale.y = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetS().mData[1];
+			tKeyframe.vScale.z = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetS().mData[2];
+
+			tKeyframe.qRot.x = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[0];
+			tKeyframe.qRot.y = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[1];
+			tKeyframe.qRot.z = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[2];
+			tKeyframe.qRot.w = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[3];
+
+			bone.vecKeyFrame.push_back(tKeyframe);
+		}
+		iFrameCnt = (UINT)max(iFrameCnt, bone.vecKeyFrame.size());
+
+		m_vecMTBone.push_back(bone);
+	}
+
+	for (_uint i = 0; i < m_vecAnimClip.size(); ++i)
+	{
+		tMTAnimClip tClip = {};
+
+		tClip.strAnimName = m_vecAnimClip[i]->strName;
+		tClip.dStartTime = m_vecAnimClip[i]->tStartTime.GetSecondDouble();
+		tClip.dEndTime = m_vecAnimClip[i]->tEndTime.GetSecondDouble();
+		tClip.dTimeLength = tClip.dEndTime - tClip.dStartTime;
+
+		tClip.iStartFrame = (int)m_vecAnimClip[i]->tStartTime.GetFrameCount(m_vecAnimClip[i]->eMode);
+		tClip.iEndFrame = (int)m_vecAnimClip[i]->tEndTime.GetFrameCount(m_vecAnimClip[i]->eMode);
+		tClip.iFrameLength = tClip.iEndFrame - tClip.iStartFrame;
+		tClip.eMode = m_vecAnimClip[i]->eMode;
+
+		m_vecMTAnimClip.push_back(tClip);
+	}
+
+
+
+	if (IsAnimation())
+	{
+		vector<_matrix> vecOffset;
+		vector<tFrameTrans> vecFrameTrans;
+		vecFrameTrans.resize((UINT)m_vecMTBone.size() * iFrameCnt);
+
+		for (size_t i = 0; i < m_vecMTBone.size(); ++i)
+		{
+			vecOffset.push_back(m_vecMTBone[i].matOffset);
+
+			for (size_t j = 0; j < m_vecMTBone[i].vecKeyFrame.size(); ++j)
+			{
+				_vec4 vecTemp = _vec4(m_vecMTBone[i].vecKeyFrame[j].vTranslate.x, m_vecMTBone[i].vecKeyFrame[j].vTranslate.y, m_vecMTBone[i].vecKeyFrame[j].vTranslate.z, 0.f);
+				_vec4 vecTemp_ = _vec4(m_vecMTBone[i].vecKeyFrame[j].vScale.x, m_vecMTBone[i].vecKeyFrame[j].vScale.y, m_vecMTBone[i].vecKeyFrame[j].vScale.z, 0.f);
+				vecFrameTrans[(UINT)m_vecMTBone.size() * j + i]
+					= tFrameTrans{ vecTemp,vecTemp_,
+					m_vecMTBone[i].vecKeyFrame[j].qRot
+				};
+			}
+		}
+
+		m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)vecOffset.size(), vecOffset.data());
+		m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans)
+			, (UINT)vecOffset.size() * iFrameCnt
+			, vecFrameTrans.data());
+
+
+	}
+
+
+
 	return S_OK;
 }
 
@@ -845,7 +958,7 @@ void CMesh::Free()
 	if (m_pScene)
 	{
 		m_pScene->Destroy();
-		
+
 	}
 	for (size_t i = 0; i < m_vecBone.size(); ++i)
 	{
@@ -868,6 +981,9 @@ void CMesh::Free()
 				Safe_Delete(m_tRenderInfo.vecIndices[i].pSystem);
 		}
 	}
+
+	Safe_Release(m_pBoneFrameData);
+	Safe_Release(m_pBoneOffset);
 
 	for (auto& iter : m_vecTexture)
 		Safe_Release(iter);

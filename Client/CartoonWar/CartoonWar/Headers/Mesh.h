@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+class CStructedBuffer;
 class CTexture;
 class CMesh :
     public CComponent
@@ -38,7 +39,27 @@ private:
     private:
     int                             FindBoneIndex(string _strBoneName);
     FbxAMatrix                      GetTransform(FbxNode* _pNode);
+public:
+    const   vector<tMTBone>* GetBones() { return &m_vecMTBone; }
+    const vector<tMTAnimClip>* GetAnimClip() { return &m_vecMTAnimClip; }
 private:
+    _bool                           IsAnimation();
+private:
+    _matrix                         GetMatrix(FbxAMatrix& _mat)
+    {
+        _matrix mat;
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                mat.m[i][j] = (float)_mat.Get(i, j);
+            }
+        }
+        return mat;
+    }
+public:
+    UINT                            GetBoneCount() { return (UINT)m_vecMTBone.size(); }
+private:    
     void                            CheckWeightAndIndices(FbxMesh* _pMesh, tContainer* _pContainer);
 private:
     _vec4                           GetMtrlData(FbxSurfaceMaterial* _pSurface, const char* _pMtrlName, const char* _pMtrlFactorName);
@@ -47,6 +68,9 @@ private:
     HRESULT                         Ready_MeshData(tContainer* pContainer);
 public:
     void                            Render_Mesh(_uint iIdx);
+public:
+    CStructedBuffer*                GetBoneFrameData(){return m_pBoneFrameData;}
+    CStructedBuffer*                GetBoneOffset(){return m_pBoneOffset;}
 private:
     RenderInfo                      m_tRenderInfo = {};
 public:
@@ -60,15 +84,20 @@ private:
     vector<tContainer>              m_vecContainer;
     FbxArray<FbxString*>			m_arrAnimName;
 private:
+    vector<tMTAnimClip>			    m_vecMTAnimClip;
+    vector<tMTBone>                 m_vecMTBone;
+private:
     vector<CTexture*>               m_vecTexture;
 private:
     _uint                           m_iSubsetNum = 0;
     _uint                           m_iCurTexNum = 0;
     _uint                           m_iMaxTexNum = 0;
+private:
+    CStructedBuffer*                m_pBoneFrameData; // 전체 본 프레임 정보
+    CStructedBuffer*                m_pBoneOffset;	   // 각 뼈의 offset 행렬
 public:
     const _uint&                    GetSubsetNum(){return m_iSubsetNum;}
-    vector<CTexture*>               GetTexture() { return m_vecTexture; }
 private:
-    virtual void        Free();
+    virtual void                    Free();
 };
 

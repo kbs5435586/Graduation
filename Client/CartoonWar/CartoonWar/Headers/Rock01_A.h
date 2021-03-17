@@ -4,6 +4,7 @@ class CTransform;
 class CRenderer;
 class CMesh;
 class CShader;
+class CAnimator;
 
 class CRock01_A :
     public CGameObject
@@ -31,6 +32,8 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pComputeShaderCom = nullptr;
+	CAnimator*								m_pAnimCom = nullptr;
 
 };
 

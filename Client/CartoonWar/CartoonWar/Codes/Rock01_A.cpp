@@ -25,12 +25,21 @@ HRESULT CRock01_A::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
+ 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+
+
+	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
+	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	return S_OK;
 }
 
 _int CRock01_A::Update_GameObject(const _float& fTimeDelta)
 {
+	if (GetAsyncKeyState(VK_LEFT))
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	if (GetAsyncKeyState(VK_RIGHT))
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
 	return _int();
 }
 
@@ -41,6 +50,7 @@ _int CRock01_A::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
+	m_pAnimCom->Update(fTimeDelta);
 	return _int();
 }
 
@@ -59,20 +69,19 @@ void CRock01_A::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-
-
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	m_pMeshCom->SetUp_Texture();
 	CDevice::GetInstance()->UpdateTable();
 
+	m_pComputeShaderCom->UpdateData_CS();
+	m_pAnimCom->UpdateData(m_pMeshCom);
+	
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
-
 		m_pMeshCom->Render_Mesh(i);
-
 	}
 
 	Safe_Release(pManagement);
@@ -125,6 +134,8 @@ void CRock01_A::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pComputeShaderCom);
+	Safe_Release(m_pAnimCom);
 	CGameObject::Free();
 }
 
@@ -149,11 +160,20 @@ HRESULT CRock01_A::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pComputeShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Animation");
+	NULL_CHECK_VAL(m_pComputeShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ComputeShader", m_pComputeShaderCom)))
+		return E_FAIL;
+
+	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

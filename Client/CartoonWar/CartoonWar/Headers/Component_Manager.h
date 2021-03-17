@@ -11,6 +11,7 @@
 #include "Observer.h"
 #include "Mesh.h"
 #include "Particle.h"
+#include "Animator.h"
 
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"

@@ -31,6 +31,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	//vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
 
+	// -0.5f, 0.5f, 0.f,1.f
 	vOut.vColor = vIn.vColor;
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWorld));
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld);

@@ -83,6 +83,11 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	return S_OK;
 }
 
+HRESULT CStructedBuffer::Ready_StructedBuffer()
+{
+	return S_OK;
+}
+
 void CStructedBuffer::Update_Data(TEXTURE_REGISTER eRegister)
 {
 	CDevice::GetInstance()->SetBufferToRegister(this, eRegister);
@@ -102,6 +107,16 @@ CStructedBuffer* CStructedBuffer::Create(_uint iElementSize, _uint iElementCnt, 
 {
 	CStructedBuffer* pInstance = new CStructedBuffer;
 	if (FAILED(pInstance->Ready_StructedBuffer(iElementSize, iElementCnt, pArg)))
+	{
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CStructedBuffer* CStructedBuffer::Create()
+{
+	CStructedBuffer* pInstance = new CStructedBuffer;
+	if (FAILED(pInstance->Ready_StructedBuffer()))
 	{
 		Safe_Release(pInstance);
 	}

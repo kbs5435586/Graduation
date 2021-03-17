@@ -8,6 +8,7 @@ private:
     virtual ~CStructedBuffer() = default;
 public:
     HRESULT                         Ready_StructedBuffer(_uint iElementSize, _uint iElementCnt, void* pArg);
+    HRESULT                         Ready_StructedBuffer();
     void                            Update_Data(TEXTURE_REGISTER eRegister);
     void                            Update_Data_CS(TEXTURE_REGISTER eRegister);
     void                            Update_RWData(UAV_REGISTER eRegister);
@@ -20,6 +21,7 @@ public:
     void                            SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }
 public:
     static CStructedBuffer*         Create(_uint iElementSize, _uint iElementCnt, void* pArg = nullptr);
+    static CStructedBuffer*         Create();
 private:
     virtual void                    Free();
 private:
@@ -30,5 +32,7 @@ private:
     _uint                           m_iElementSize=0;
     _uint                           m_iElementCnt=0;
     D3D12_RESOURCE_STATES           m_eState = D3D12_RESOURCE_STATE_COMMON;
+public:
+    _uint                           GetElementCount() { return m_iElementCnt; }
 };
 

@@ -379,6 +379,9 @@
     <Filter Include="96. ShaderFiles\06. Particle">
       <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
+      <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -681,6 +684,9 @@
     <ClInclude Include="..\Headers\Particle_Default.h">
       <Filter>02. GameObject\96. Particle\99. Particle_Default</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Animator.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\11. Animator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -957,6 +963,9 @@
     <ClCompile Include="..\Codes\Particle_Default.cpp">
       <Filter>02. GameObject\96. Particle\99. Particle_Default</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Animator.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\11. Animator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1015,6 +1024,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Compute_Particle.hlsl">
       <Filter>96. ShaderFiles\06. Particle</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Animation.hlsl">
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,15 @@ struct VS_OUT
 	float4  vWorldPos	: TEXCOORD1;
 };
 
+struct PS_OUT
+{
+	float4 vDiffuseTex			: SV_TARGET0;
+	float4 vNormalTex			: SV_TARGET1;
+	float4 vShadeTex			: SV_TARGET2;
+	float4 vSpecularTex			: SV_TARGET3;
+	float4 vPointLightTex		: SV_TARGET5;
+	float4 vPositionTex			: SV_TARGET6;
+};
 
 VS_OUT	VS_Main(VS_IN vIn)
 {
@@ -36,70 +45,90 @@ VS_OUT	VS_Main(VS_IN vIn)
 }
 
 
-float4	PS_Main(VS_OUT vIn) : SV_Target
+PS_OUT	PS_Main(VS_OUT vIn) 
 {
-	//float4	vOutColor = g_texture.Sample(DiffuseSampler, vIn.vTexUV) ;
+	PS_OUT vOut;
 
+	float4 vTempNormal = float4(vIn.vNormal, 0.f);
+	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vTempNormal, vIn.vWorldPos);
+	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vTempNormal, vIn.vWorldPos);
 
-	/*float fDot = max(0, dot(vIn.vNormal, vLightDirection));
+	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV) ;
+	float4	vOutColor_ = g_texture0.Sample(Sampler0, vIn.vTexUV) ;
+
+	float4	vLightDir = normalize(tLight[0].vLightDir);
+
+	float fDot = max(0, dot(vTempNormal, vLightDir));
 
 	fDot = (ceil(fDot * 3.f) / 3.f);
 
-	float4	vMtrlDif = vLightDiffuse * vMaterialDiffuse * fDot;
-	float4	vMtrlAmb = vLightAmbient * vMaterialAmbient * fDot;
+	float4	vMtrlDif = tLight[0].tColor.vDiffuse *  fDot;
+	float4	vMtrlAmb = tLight[0].tColor.vAmbient * fDot;
 
 
 	float3	fRimColor = float3(-2.f,-2.f,-2.f);
-	float	fRim = saturate(dot(vIn.vNormal, vCamPos));
+	float	fRim = saturate(dot(vTempNormal, vCamPos));
 	float	fRimPower = 2.f;
 	if (fRim > 0.3f)
 		fRim = 1.f;
 	else
 		fRim = -1.f;
 
-	vector	vReflect = reflect(normalize(vLightDirection), normalize(vIn.vNormal));
+	vector	vReflect = reflect(normalize(vLightDir), normalize(vTempNormal));
 	vector	vLook = vIn.vWorldPos - vCamPos;
-	float4	vSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), fPower);
-	float4	vMtrlSpec = (vLightSpecular * vLightSpecular) * vSpecular;
+	float4	vSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 10.f);
+	float4	vMtrlSpec = (tLight[0].tColor.vSpecular * tLight[0].tColor.vSpecular) * vSpecular;
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower)*fRimColor,1.f);
 
 	vOutColor = vOutColor*(vMtrlDif + vMtrlAmb+ vMtrlSpec +vMtrlEmiv);
 
-	return vOutColor;*/
+	vOut.vDiffuseTex = vOutColor_;
+	vOut.vNormalTex = vOutColor;
+	//vOut.vShadeTex = vOutColor;
+	//vOut.vSpecularTex = vOutColor;
+	vOut.vPointLightTex = vOutColor;
+	vOut.vPositionTex = vOutColor;
+	//vOut.vNormalTex = vTempNormal;
+	//vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;
+	//vOut.vSpecularTex= tLight_Point.vSpecular + tLight_Default.vSpecular;
+	//vOut.vPointLightTex= tLight_Point.vDiffuse;
+	//vOut.vPositionTex= vIn.vWorldPos;
+
+	return vOut;
 
 
+	{
+		// Normal Mapping
+//float4	vTexture = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
+//float4	vNormalMap = g_Normal_Texture.Sample(DiffuseSampler, vIn.vTexUV);
+//float4	vOutColor;
+//float3	vLightDir;
+//float4	vDiffuseColor = float4(1.f,1.f,1.f,1.f);
+//float	fLightIntendity = 0.f;
+
+//vNormalMap = (vNormalMap * 2.f) - 1.f;
+
+//float3 vBumpNormal = (vIn.vNormal.xyz + vNormalMap.x) * (vIn.vTangent.xyz + vNormalMap.y) * vIn.vBinormal.xyz;
+
+//vBumpNormal = normalize(vBumpNormal);
+
+//vLightDir = -vLightDirection.xyz;
+//fLightIntendity = saturate(dot(vBumpNormal, vLightDir));
 
 
+//vOutColor = saturate(vDiffuseColor * fLightIntendity);
 
-	// Normal Mapping
-	//float4	vTexture = g_texture.Sample(DiffuseSampler, vIn.vTexUV);
-	//float4	vNormalMap = g_Normal_Texture.Sample(DiffuseSampler, vIn.vTexUV);
-	//float4	vOutColor;
-	//float3	vLightDir;
-	//float4	vDiffuseColor = float4(1.f,1.f,1.f,1.f);
-	//float	fLightIntendity = 0.f;
+//vOutColor = vOutColor * vTexture;
 
-	//vNormalMap = (vNormalMap * 2.f) - 1.f;
+//return vOutColor;
 
-	//float3 vBumpNormal = (vIn.vNormal.xyz + vNormalMap.x) * (vIn.vTangent.xyz + vNormalMap.y) * vIn.vBinormal.xyz;
-
-	//vBumpNormal = normalize(vBumpNormal);
-
-	//vLightDir = -vLightDirection.xyz;
-	//fLightIntendity = saturate(dot(vBumpNormal, vLightDir));
-
-
-	//vOutColor = saturate(vDiffuseColor * fLightIntendity);
-
-	//vOutColor = vOutColor * vTexture;
-
-	//return vOutColor;
+	}
 
 
 
 	//Default
-	return g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//return g_texture0.Sample(Sampler0, vIn.vTexUV);
 
 
 }

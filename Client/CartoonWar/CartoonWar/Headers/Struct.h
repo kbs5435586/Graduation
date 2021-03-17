@@ -488,3 +488,11 @@ typedef struct tagGlobal
 	float	fTimeDelta;
 	float	fAccTime=0.f;
 }GLOBAL;
+
+
+struct tFrameTrans
+{
+	XMFLOAT4	vTranslate;
+	XMFLOAT4	vScale;
+	XMFLOAT4	qRot;
+};
