@@ -109,7 +109,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		vPos.y = m_player.y = my_packet->y;
 		vPos.z = m_player.z = my_packet->z;
 		pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		cool_time = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
+		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
+		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		m_player.showCharacter = true;
 
 		Safe_Release(managment);
@@ -349,14 +350,18 @@ void CServer_Manager::send_login_ok_packet()
 
 void CServer_Manager::send_add_npc_packet()
 {
-	if (m_player.id < NPC_ID_START)
-	{
-		cs_packet_add_npc l_packet;
-		l_packet.size = sizeof(l_packet);
-		l_packet.type = CS_PACKET_ADD_NPC;
-		l_packet.id = m_player.id;
-		send_packet(&l_packet);
-	}
+	cs_packet_add_npc l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_ADD_NPC;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_change_formation_packet()
+{
+	cs_packet_change_formation l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_CHANGE_FORMATION;
+	send_packet(&l_packet);
 }
 
 void CServer_Manager::send_npc_act_packet(unsigned char act)
@@ -398,12 +403,22 @@ bool CServer_Manager::Get_ShowNPC(int npc_index)
 	return m_npcs[IDX_TO_ID(npc_index)].showCharacter;
 }
 
-high_resolution_clock::time_point CServer_Manager::Get_Cooltime()
+high_resolution_clock::time_point CServer_Manager::Get_ChangeFormation_Cooltime()
 {
-	return cool_time;
+	return change_formation_ct;
 }
 
-void CServer_Manager::Set_CoolTime(high_resolution_clock::time_point ct)
+high_resolution_clock::time_point CServer_Manager::Get_AddNPC_Cooltime()
 {
-	cool_time = ct;
+	return add_npc_ct;
+}
+
+void CServer_Manager::Set_AddNPC_CoolTime(high_resolution_clock::time_point ct)
+{
+	add_npc_ct = ct;
+}
+
+void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct)
+{
+	change_formation_ct = ct;
 }

@@ -34,6 +34,8 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CCollider*								m_pColliderCom[3] = { nullptr };
 
+	CShader* m_pShaderComT = nullptr;
+
 	_vec3 m;
 };
 

@@ -52,7 +52,6 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
-	unsigned move_time; // unsigned int¶û °°À½
 };
 
 constexpr unsigned char O_HUMAN = 0;

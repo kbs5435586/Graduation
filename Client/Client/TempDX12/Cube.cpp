@@ -76,19 +76,26 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	}
 	if ((GetAsyncKeyState('6') & 0x8000))
 	{
-		pServer->AddRef();
-		pServer->send_npc_act_packet(DO_FORMATION);
-		Safe_Release(pServer);
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- pServer->Get_ChangeFormation_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			pServer->AddRef();
+			pServer->send_change_formation_packet();
+			pServer->Set_ChangeFormation_CoolTime(high_resolution_clock::now());
+			Safe_Release(pServer);
+		}
 	}
 
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()- pServer->Get_Cooltime());
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- pServer->Get_AddNPC_Cooltime());
 		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			pServer->AddRef();
 			pServer->send_add_npc_packet();
-			pServer->Set_CoolTime(high_resolution_clock::now());
+			pServer->Set_AddNPC_CoolTime(high_resolution_clock::now());
 			Safe_Release(pServer);
 		}
 	}
