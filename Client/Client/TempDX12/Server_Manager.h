@@ -31,6 +31,7 @@ public:
 
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);
+    void send_look_packet(float x, float y, float z);
     void send_login_ok_packet();
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
@@ -38,6 +39,7 @@ public:
 
     bool Get_ShowPlayer();
     bool Get_ShowNPC(int npc_index);
+    short Get_PlayerID();
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);

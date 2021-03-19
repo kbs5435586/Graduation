@@ -124,6 +124,21 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 		pServer->send_move_packet(GO_RIGHT);
 		Safe_Release(pServer);
 	}
+	if (GetAsyncKeyState('O') & 0x8000)
+	{
+		pServer->AddRef();
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta);
+		_vec3* vLook = m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		//pServer->send_look_packet(vLook->x, vLook->y, vLook->z);
+		Safe_Release(pServer);
+	}
+	if (GetAsyncKeyState('P') & 0x8000)
+	{
+		pServer->AddRef();
+		pServer->send_move_packet(GO_RIGHT);
+		Safe_Release(pServer);
+	}
 	return _int();
 }
 

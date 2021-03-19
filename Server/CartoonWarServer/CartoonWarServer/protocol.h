@@ -18,13 +18,14 @@ constexpr int WORLD_HORIZONTAL = 20; // 월드 가로 x
 constexpr int WORLD_HEIGHT = 20; // 월드 높이 y
 constexpr int WORLD_VERTICAL = 20; // 월드 세로 z
 
-constexpr int SERVER_PORT =	9000;
+constexpr int SERVER_PORT = 9000;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
-constexpr char CS_PACKET_ADD_NPC = 3;
-constexpr char CS_PACKET_NPC_ACT = 4;
-constexpr char CS_PACKET_CHANGE_FORMATION = 5;
+constexpr char CS_PACKET_LOOK = 3;
+constexpr char CS_PACKET_ADD_NPC = 4;
+constexpr char CS_PACKET_NPC_ACT = 5;
+constexpr char CS_PACKET_CHANGE_FORMATION = 6;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -35,7 +36,7 @@ constexpr char SC_PACKET_ADD_NPC_OK = 6;
 
 #pragma pack(push ,1)
 
-struct sc_packet_login_ok 
+struct sc_packet_login_ok
 {
 	char size;
 	char type;
@@ -46,12 +47,13 @@ struct sc_packet_login_ok
 	int	exp;
 };
 
-struct sc_packet_move 
+struct sc_packet_move
 {
 	char size;
 	char type;
 	int id;
 	float x, y, z;
+	unsigned move_time; // unsigned int랑 같음
 };
 
 constexpr unsigned char O_HUMAN = 0;
@@ -68,7 +70,7 @@ struct sc_packet_enter
 	float x, y, z;
 };
 
-struct sc_packet_leave 
+struct sc_packet_leave
 {
 	char size;
 	char type;
@@ -105,12 +107,18 @@ struct cs_packet_login
 	char	name[MAX_ID_LEN];
 };
 
-struct cs_packet_move 
+struct cs_packet_move
 {
 	char	size;
 	char	type;
 	char	direction;
-	unsigned move_time;
+};
+
+struct cs_packet_look
+{
+	char	size;
+	char	type;
+	float	x, y, z;
 };
 
 struct cs_packet_add_npc

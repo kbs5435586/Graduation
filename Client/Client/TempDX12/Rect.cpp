@@ -56,7 +56,7 @@ _int CRect::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	if (true == server->Get_ShowNPC(m_iLayerIdx))
+	if (0 != m_iLayerIdx && true == server->Get_ShowNPC(m_iLayerIdx))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;

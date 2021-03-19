@@ -22,9 +22,10 @@ constexpr int SERVER_PORT = 9000;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
-constexpr char CS_PACKET_ADD_NPC = 3;
-constexpr char CS_PACKET_NPC_ACT = 4;
-constexpr char CS_PACKET_CHANGE_FORMATION = 5;
+constexpr char CS_PACKET_LOOK = 3;
+constexpr char CS_PACKET_ADD_NPC = 4;
+constexpr char CS_PACKET_NPC_ACT = 5;
+constexpr char CS_PACKET_CHANGE_FORMATION = 6;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -111,7 +112,13 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
-	unsigned move_time;
+};
+
+struct cs_packet_look
+{
+	char	size;
+	char	type;
+	float	x, y, z;
 };
 
 struct cs_packet_add_npc

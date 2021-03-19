@@ -153,9 +153,9 @@ void Server::send_login_ok_packet(int user_id)
 	packet.level = 0;
 	packet.size = sizeof(packet);
 	packet.type = SC_PACKET_LOGIN_OK;
-	packet.x = g_clients[user_id].m_pos.x;
-	packet.y = g_clients[user_id].m_pos.y;
-    packet.z = g_clients[user_id].m_pos.z;
+    packet.x = g_clients[user_id].m_matrix.pos.x;
+	packet.y = g_clients[user_id].m_matrix.pos.y;
+    packet.z = g_clients[user_id].m_matrix.pos.z;
 
 
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
@@ -179,7 +179,7 @@ void Server::send_packet(int user_id, void* packet)
 
 void Server::do_move(int user_id, char direction)
 {
-    Vec3 temp = g_clients[user_id].m_pos;
+    Vec3 temp = g_clients[user_id].m_matrix.pos;
 
     switch (direction)
     {
@@ -217,7 +217,7 @@ void Server::do_move(int user_id, char direction)
         DebugBreak();
         exit(-1);
     }
-    g_clients[user_id].m_pos = temp;
+    g_clients[user_id].m_matrix.pos = temp;
 
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
@@ -316,7 +316,7 @@ void Server::do_move(int user_id, char direction)
 
 void Server::do_random_move(int npc_id)
 {
-    Vec3 temp = g_clients[npc_id].m_pos;
+    Vec3 temp = g_clients[npc_id].m_matrix.pos;
 
     switch (rand() % 4)
     {
@@ -358,7 +358,7 @@ void Server::do_random_move(int npc_id)
         break;
     }
 
-    g_clients[npc_id].m_pos = temp;
+    g_clients[npc_id].m_matrix.pos = temp;
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -398,9 +398,9 @@ void Server::do_random_move(int npc_id)
 void Server::do_follow(int npc_id)
 {
     Vec3 Dir = cal_dist_to_Player(npc_id);
-    g_clients[npc_id].m_pos = g_clients[npc_id].m_pos + Dir;
+    g_clients[npc_id].m_matrix.pos = g_clients[npc_id].m_matrix.pos + Dir;
 
-    cout << npc_id << "의 위치 : " << g_clients[npc_id].m_pos.x << " , " << g_clients[npc_id].m_pos.y << endl;
+    cout << npc_id << "의 위치 : " << g_clients[npc_id].m_matrix.pos.x << " , " << g_clients[npc_id].m_matrix.pos.y << endl;
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -473,7 +473,7 @@ Vec3 Server::cal_dist_to_Player(int npc_id)
     Vec3 Dir = { 0,0,0 };
     int player_id = g_clients[npc_id].m_owner_id;
 
-    Dir = g_clients[player_id].m_pos - g_clients[npc_id].m_pos;
+    Dir = g_clients[player_id].m_matrix.pos - g_clients[npc_id].m_matrix.pos;
     float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
     if (0 != distance_square)
     {
@@ -495,11 +495,11 @@ void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
 
 void Server::event_player_move(int player_id, int npc_id)
 {
-    if (g_clients[player_id].m_pos.x == g_clients[npc_id].m_pos.x)
+    if (g_clients[player_id].m_matrix.pos.x == g_clients[npc_id].m_matrix.pos.x)
     {
-        if (g_clients[player_id].m_pos.y == g_clients[npc_id].m_pos.y)
+        if (g_clients[player_id].m_matrix.pos.y == g_clients[npc_id].m_matrix.pos.y)
         {
-            if (g_clients[player_id].m_pos.z == g_clients[npc_id].m_pos.z)
+            if (g_clients[player_id].m_matrix.pos.z == g_clients[npc_id].m_matrix.pos.z)
             {
                 char m[10] = "HELLO";
                 send_chat_packet(player_id, npc_id, m);
@@ -561,6 +561,9 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         break;
         }
     }
+    if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
+        add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
+    else
         add_timer(npc_id, g_clients[npc_id].m_last_order, REPEAT_TIME); // 생성 이후 반복 간격
 }
 
@@ -611,7 +614,7 @@ void Server::do_timer()
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
                 PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
-                //random_move_npc(event.obj_id); 
+                //random_move_npc(event.obj_id);
                 //add_timer(event.obj_id, (ENUM_FUNCTION)event.event_id, 1000);
                 // 타이머 쓰레드에서 움직이는거 처리까지 다 하면 과부화가 심하다
                 // PostQueuedCompletionStatus 이걸로 worket thread에 작업 넘겨주고 여기선 어떤 이벤트인지만 알려줌
@@ -629,9 +632,9 @@ void Server::send_move_packet(int user_id, int mover)
     packet.id = mover;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_MOVE;
-    packet.x = g_clients[mover].m_pos.x;  // 이동한 플레이어의 정보 담기
-    packet.y = g_clients[mover].m_pos.y;
-    packet.z = g_clients[mover].m_pos.z;
+    packet.x = g_clients[mover].m_matrix.pos.x;  // 이동한 플레이어의 정보 담기
+    packet.y = g_clients[mover].m_matrix.pos.y;
+    packet.z = g_clients[mover].m_matrix.pos.z;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -691,7 +694,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
-            g_clients[i].m_pos = g_clients[player_id].m_pos;
+            g_clients[i].m_matrix.pos = g_clients[player_id].m_matrix.pos;
             g_clients[i].m_speed = NPC_SPEED;
             g_clients[player_id].m_boid.push_back(&g_clients[i]);
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
@@ -712,9 +715,9 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
-    packet.x = g_clients[other_id].m_pos.x;
-    packet.y = g_clients[other_id].m_pos.y;
-    packet.z = g_clients[other_id].m_pos.z;
+    packet.x = g_clients[other_id].m_matrix.pos.x;
+    packet.y = g_clients[other_id].m_matrix.pos.y;
+    packet.z = g_clients[other_id].m_matrix.pos.z;
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 
@@ -782,7 +785,7 @@ void Server::disconnect(int user_id)
         if (user_id == g_clients[i].m_id)
             continue;
 
-        //c.second.m_cLock.lock();
+        // c.second.m_cLock.lock();
         if (ST_ACTIVE == g_clients[i].m_status)
         {
             send_leave_packet(g_clients[i].m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
@@ -795,9 +798,12 @@ void Server::disconnect(int user_id)
 
 bool Server::is_near(int a, int b)
 {
-    if (sqrt((g_clients[a].m_pos.x - g_clients[b].m_pos.x) * (g_clients[a].m_pos.x - g_clients[b].m_pos.x) +
-        (g_clients[a].m_pos.y - g_clients[b].m_pos.y) * (g_clients[a].m_pos.y - g_clients[b].m_pos.y) +
-        (g_clients[a].m_pos.z - g_clients[b].m_pos.z) * (g_clients[a].m_pos.z - g_clients[b].m_pos.z)) > VIEW_RADIUS)
+    if (sqrt((g_clients[a].m_matrix.pos.x - g_clients[b].m_matrix.pos.x) *
+        (g_clients[a].m_matrix.pos.x - g_clients[b].m_matrix.pos.x) +
+        (g_clients[a].m_matrix.pos.y - g_clients[b].m_matrix.pos.y) * 
+        (g_clients[a].m_matrix.pos.y - g_clients[b].m_matrix.pos.y) +
+        (g_clients[a].m_matrix.pos.z - g_clients[b].m_matrix.pos.z) *
+        (g_clients[a].m_matrix.pos.z - g_clients[b].m_matrix.pos.z)) > VIEW_RADIUS)
         // abs = 절대값
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
@@ -813,7 +819,7 @@ bool Server::is_player(int id)
 void Server::flock_boid(int player_id)
 {
     ClientInfo& c = g_clients[player_id];
-    Vec3 player_pos = c.m_pos;
+    Vec3 player_pos = c.m_matrix.pos;
     float velocity = NPC_SPEED;
     float avg_vel = 0;
     float all_vel = 0;
@@ -836,7 +842,7 @@ void Server::worker_thread()
         ULONG_PTR key;
         WSAOVERLAPPED* over;
         GetQueuedCompletionStatus(g_iocp, &io_byte, &key, &over, INFINITE); // recv 결과 IOCP에 저장
-        // io_byte가 0인 경우 = 한 클라가 소켓을 종료했기 때문에 0바이트가 전송된다 
+        // io_byte가 0인 경우 = 한 클라가 소켓을 종료했기 때문에 0바이트가 전송된다
         OverEx* overEx = reinterpret_cast<OverEx*>(over); // 임시 확장 오버랩 구조체에 IOCP에 저장된 값 대입
         int id = static_cast<int>(key); // 임시 아이디에 IOCP 키값(클라 id값) 대입
 
@@ -894,9 +900,9 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
-                g_clients[user_id].m_pos.x = rand() % WORLD_HORIZONTAL;
-                g_clients[user_id].m_pos.y = rand() % WORLD_HEIGHT;
-                g_clients[user_id].m_pos.z = rand() % WORLD_VERTICAL;
+                g_clients[user_id].m_matrix.pos.x = rand() % WORLD_HORIZONTAL;
+                g_clients[user_id].m_matrix.pos.y = rand() % WORLD_HEIGHT;
+                g_clients[user_id].m_matrix.pos.z = rand() % WORLD_VERTICAL;
                 g_clients[user_id].m_speed = NPC_SPEED;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
