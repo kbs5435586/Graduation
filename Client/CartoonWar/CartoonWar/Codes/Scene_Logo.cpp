@@ -263,9 +263,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock01.FBX"))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
+	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock01.FBX"))))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
 		CMesh::Create(L"../Bin/Resource/Mesh/Static/House/Monster.fbx"))))
 		return E_FAIL;

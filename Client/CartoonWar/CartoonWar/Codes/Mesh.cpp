@@ -525,6 +525,7 @@ void CMesh::LoadWeightsAndIndices(FbxCluster* _pCluster, int _iBoneIdx, tContain
 
 		_pContainer->vecWI[iVtxIdx].push_back(tWI);
 	}
+	_int i = 0;
 }
 
 void CMesh::LoadOffsetMatrix(FbxCluster* _pCluster, const FbxAMatrix& _matNodeTransform, int _iBoneIdx, tContainer* _pContainer)
@@ -671,6 +672,7 @@ void CMesh::CheckWeightAndIndices(FbxMesh* _pMesh, tContainer* _pContainer)
 		memcpy(&_pContainer->vecWeights[iVtxIdx], fWeights, sizeof(_vec4));
 		memcpy(&_pContainer->vecIndices[iVtxIdx], fIndices, sizeof(_vec4));
 	}
+	_int i = 0;
 }
 
 _vec4 CMesh::GetMtrlData(FbxSurfaceMaterial* _pSurface, const char* _pMtrlName, const char* _pMtrlFactorName)
@@ -716,7 +718,16 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 	ComPtr<ID3D12Resource> pVB = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW tVtxView = {};
 	UINT iVtxCount = (UINT)pContainer->vecPos.size();
-	UINT iVtxSize = sizeof(VTX);
+	UINT iVtxSize = sizeof(MESH);
+
+	//XMFLOAT3		vPosition;
+	//XMFLOAT4		vColor;
+	//XMFLOAT2		vUV;
+	//XMFLOAT3		vNormal;
+	//XMFLOAT3		vTangent;
+	//XMFLOAT3		vBinormal;
+	//XMFLOAT4		vWeight;
+	//XMFLOAT4		vIndices;
 
 	//VTX* pSysMem = new VTX[iVtxCount];
 	vector<MESH>		vecMesh;
@@ -724,8 +735,8 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 	for (UINT i = 0; i < iVtxCount; ++i)
 	{
 		vecMesh[i].vPosition = pContainer->vecPos[i];
-		vecMesh[i].vUV = pContainer->vecUV[i];
 		vecMesh[i].vColor = _vec4(1.f, 0.f, 1.f, 1.f);
+		vecMesh[i].vUV = pContainer->vecUV[i];
 		vecMesh[i].vNormal = pContainer->vecNormal[i];
 		vecMesh[i].vTangent = pContainer->vecTangent[i];
 		vecMesh[i].vBinormal = pContainer->vecBinormal[i];
@@ -769,7 +780,7 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 	pVB->Unmap(0, nullptr);
 
 	tVtxView.BufferLocation = pVB->GetGPUVirtualAddress();
-	tVtxView.StrideInBytes = sizeof(VTX);
+	tVtxView.StrideInBytes = sizeof(MESH);
 	tVtxView.SizeInBytes = (UINT)tResDesc.Width;
 
 	m_tRenderInfo.pVB = pVB;

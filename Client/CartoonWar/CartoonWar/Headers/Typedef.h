@@ -24,3 +24,5 @@ typedef Vector3					_vec3;
 typedef Vector4					_vec4;
 
 typedef Matrix					_matrix;
+
+

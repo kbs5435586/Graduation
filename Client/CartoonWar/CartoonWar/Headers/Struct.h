@@ -123,11 +123,11 @@ typedef struct tagMesh
 		vBinormal = Binormal;
 	}
 	XMFLOAT3		vPosition;
-	XMFLOAT3		vNormal;
+	XMFLOAT4		vColor;
 	XMFLOAT2		vUV;
+	XMFLOAT3		vNormal;
 	XMFLOAT3		vTangent;
 	XMFLOAT3		vBinormal;
-	XMFLOAT4		vColor;
 	XMFLOAT4		vWeight;
 	XMFLOAT4		vIndices;
 

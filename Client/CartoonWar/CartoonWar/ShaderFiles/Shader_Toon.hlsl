@@ -1,12 +1,25 @@
 #include "Value.hlsl"
 #include "Function.hlsl"
+
+//XMFLOAT3		vPosition;
+//XMFLOAT4		vColor;
+//XMFLOAT2		vUV;
+//XMFLOAT3		vNormal;
+//XMFLOAT3		vTangent;
+//XMFLOAT3		vBinormal;
+//XMFLOAT4		vWeight;
+//XMFLOAT4		vIndices;
+
 struct VS_IN
 {
 	float3	vPosition	: POSITION;
-	float3	vNormal		: NORMAL;
+	float4	vColor		: COLOR;
 	float2	vTexUV		: TEXCOORD;
+	float3	vNormal		: NORMAL;
 	float3	vTangent	: TANGENT;
 	float3	vBinormal	: BINORMAL;
+	float4	vWeight		: BLENDWEIGHT;
+	float4	vIndices	: BLENDINDICES;
 };
 
 struct VS_OUT
@@ -17,6 +30,8 @@ struct VS_OUT
 	float3	vBinormal	: BINORMAL;
 	float2	vTexUV		: TEXCOORD0;
 	float4  vWorldPos	: TEXCOORD1;
+	float4	vTemp		: TEXCOORD2;
+
 };
 
 struct PS_OUT
@@ -33,12 +48,16 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
 
+	Skinning(vIn.vPosition, vIn.vTangent
+		, vIn.vBinormal, vIn.vNormal
+		, vIn.vWeight, vIn.vIndices, 0);
+
 	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);
-	vOut.vNormal	= normalize(mul(float4(vIn.vNormal, 0.f), matWV).xyz);
-	vOut.vTangent	= normalize(mul(float4(vIn.vTangent, 0.f), matWV).xyz);
-	vOut.vBinormal	= normalize(mul(float4(vIn.vBinormal, 0.f), matWV).xyz);
-
+	vOut.vNormal	= normalize(mul(float4(vIn.vNormal, 0.f), matWVP).xyz);
+	vOut.vTangent	= normalize(mul(float4(vIn.vTangent, 0.f), matWVP).xyz);
+	vOut.vBinormal	= normalize(mul(float4(vIn.vBinormal, 0.f), matWVP).xyz);
+	vOut.vTemp = vIn.vWeight;
 
 	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
@@ -48,6 +67,8 @@ VS_OUT	VS_Main(VS_IN vIn)
 PS_OUT	PS_Main(VS_OUT vIn) 
 {
 	PS_OUT vOut;
+
+
 
 	float4 vTempNormal = float4(vIn.vNormal, 0.f);
 	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vTempNormal, vIn.vWorldPos);
@@ -85,8 +106,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	vOut.vDiffuseTex = vOutColor_;
 	vOut.vNormalTex = vOutColor;
-	//vOut.vShadeTex = vOutColor;
-	//vOut.vSpecularTex = vOutColor;
+	//vOut.vShadeTex = vIn.vTemp;
+	vOut.vSpecularTex = vIn.vTemp;
 	vOut.vPointLightTex = vOutColor;
 	vOut.vPositionTex = vOutColor;
 	//vOut.vNormalTex = vTempNormal;
@@ -129,7 +150,5 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	//Default
 	//return g_texture0.Sample(Sampler0, vIn.vTexUV);
-
-
 }
 

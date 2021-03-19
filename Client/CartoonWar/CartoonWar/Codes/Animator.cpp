@@ -73,8 +73,8 @@ void CAnimator::UpdateData(CMesh* pMesh)
 		m_IsFinalMatUpdate = true;
 	}
 
-	// t7 레지스터에 최종행렬 데이터(구조버퍼) 바인딩
-	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t7);
+	// t12 레지스터에 최종행렬 데이터(구조버퍼) 바인딩
+	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t12);
 }
 
 void CAnimator::Dispatch(int x, int y, int z)

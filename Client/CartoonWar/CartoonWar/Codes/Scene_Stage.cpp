@@ -182,8 +182,8 @@ HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagemen
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestCube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -238,8 +238,8 @@ HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pMan
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_MountainRocks01_A", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestMesh", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestMesh", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
