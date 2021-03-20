@@ -14,6 +14,9 @@
     <Filter Include="98. Header">
       <UniqueIdentifier>{68debbfc-a50e-427b-bcd3-d3ef0ba03f73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96. Transform">
+      <UniqueIdentifier>{3748aae6-695f-48e4-a7a0-8820a476fbda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,6 +24,9 @@
     </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>97. Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>96. Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +40,15 @@
       <Filter>97. Server</Filter>
     </ClInclude>
     <ClInclude Include="protocol.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>96. Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dmath.h">
       <Filter>98. Header</Filter>
     </ClInclude>
   </ItemGroup>

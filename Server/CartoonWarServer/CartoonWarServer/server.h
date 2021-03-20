@@ -46,7 +46,7 @@ public:
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
-	Vec3 cal_dist_to_Player(int npc_id);
+	_vec3 move_to_player(int npc_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();

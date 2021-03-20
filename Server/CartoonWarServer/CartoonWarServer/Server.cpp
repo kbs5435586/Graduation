@@ -153,9 +153,10 @@ void Server::send_login_ok_packet(int user_id)
 	packet.level = 0;
 	packet.size = sizeof(packet);
 	packet.type = SC_PACKET_LOGIN_OK;
-    packet.x = g_clients[user_id].m_matrix.pos.x;
-	packet.y = g_clients[user_id].m_matrix.pos.y;
-    packet.z = g_clients[user_id].m_matrix.pos.z;
+    _vec3* pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    packet.x = pos->x;
+	packet.y = pos->y;
+    packet.z = pos->z;
 
 
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
@@ -179,45 +180,45 @@ void Server::send_packet(int user_id, void* packet)
 
 void Server::do_move(int user_id, char direction)
 {
-    Vec3 temp = g_clients[user_id].m_matrix.pos;
+    _vec3* pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     switch (direction)
     {
     case GO_UP:
-        if (temp.y > 0)
-            temp.y--;
+        if (pos->y > 0)
+            pos->y--;
         break;
 
     case GO_DOWN:
-        if (temp.y < WORLD_HEIGHT-1)
-            temp.y++;
+        if (pos->y < WORLD_HEIGHT-1)
+            pos->y++;
         break;
 
     case GO_LEFT:
-        if (temp.x > 0)
-            temp.x--;
+        if (pos->x > 0)
+            pos->x--;
         break;
 
     case GO_RIGHT:
-        if (temp.x < WORLD_HORIZONTAL - 1)
-            temp.x++;
+        if (pos->x < WORLD_HORIZONTAL - 1)
+            pos->x++;
         break;
 
     case GO_FORWARD:
-        if (temp.z > 0)
-            temp.z--;
+        if (pos->z > 0)
+            pos->z--;
         break;
 
     case GO_BACK:
-        if (temp.z < WORLD_VERTICAL - 1)
-            temp.z++;
+        if (pos->z < WORLD_VERTICAL - 1)
+            pos->z++;
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
         DebugBreak();
         exit(-1);
     }
-    g_clients[user_id].m_matrix.pos = temp;
+    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
@@ -316,49 +317,49 @@ void Server::do_move(int user_id, char direction)
 
 void Server::do_random_move(int npc_id)
 {
-    Vec3 temp = g_clients[npc_id].m_matrix.pos;
+    _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     switch (rand() % 4)
     {
     case MV_RIGHT: 
-        if (temp.x < (WORLD_HORIZONTAL - 1))
-            temp.x++;
-        else if (temp.x > (WORLD_HORIZONTAL - 1))
-            temp.x = WORLD_HORIZONTAL - 1;
+        if (pos->x < (WORLD_HORIZONTAL - 1))
+            pos->x++;
+        else if (pos->x > (WORLD_HORIZONTAL - 1))
+            pos->x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
-        if (temp.x > 0)
-            temp.x--;
-        else if (temp.x < 0)
-            temp.x = 0;
+        if (pos->x > 0)
+            pos->x--;
+        else if (pos->x < 0)
+            pos->x = 0;
         break;
     case MV_DOWN:
-        if (temp.y < (WORLD_HEIGHT - 1))
-            temp.y++;
-        else if (temp.y > (WORLD_HEIGHT - 1))
-            temp.y = WORLD_HEIGHT - 1;
+        if (pos->y < (WORLD_HEIGHT - 1))
+            pos->y++;
+        else if (pos->y > (WORLD_HEIGHT - 1))
+            pos->y = WORLD_HEIGHT - 1;
         break;
     case MV_UP:
-        if (temp.y > 0)
-            temp.y--;
-        else if (temp.y < 0)
-            temp.y = 0;
+        if (pos->y > 0)
+            pos->y--;
+        else if (pos->y < 0)
+            pos->y = 0;
         break;
     case MV_FORWARD:
-        if (temp.z < (WORLD_VERTICAL - 1))
-            temp.z++;
-        else if (temp.z > (WORLD_VERTICAL - 1))
-            temp.z = WORLD_VERTICAL - 1;
+        if (pos->z < (WORLD_VERTICAL - 1))
+            pos->z++;
+        else if (pos->z > (WORLD_VERTICAL - 1))
+            pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
-        if (temp.z > 0)
-            temp.z--;
-        else if (temp.z < 0)
-            temp.z = 0;
+        if (pos->z > 0)
+            pos->z--;
+        else if (pos->z < 0)
+            pos->z = 0;
         break;
     }
 
-    g_clients[npc_id].m_matrix.pos = temp;
+    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -397,10 +398,12 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
-    Vec3 Dir = cal_dist_to_Player(npc_id);
-    g_clients[npc_id].m_matrix.pos = g_clients[npc_id].m_matrix.pos + Dir;
+    _vec3 Dir = move_to_player(npc_id);
+    _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 new_pos = *pos + Dir;
+    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-    cout << npc_id << "의 위치 : " << g_clients[npc_id].m_matrix.pos.x << " , " << g_clients[npc_id].m_matrix.pos.y << endl;
+    cout << npc_id << "의 위치 : " << pos->x << " , " << pos->y << endl;
 
     for (int i = 0; i < NPC_ID_START; ++i)
     {
@@ -468,12 +471,15 @@ void Server::do_change_formation(int player_id)
 
 }
 
-Vec3 Server::cal_dist_to_Player(int npc_id)
+_vec3 Server::move_to_player(int npc_id)
 {
-    Vec3 Dir = { 0,0,0 };
     int player_id = g_clients[npc_id].m_owner_id;
 
-    Dir = g_clients[player_id].m_matrix.pos - g_clients[npc_id].m_matrix.pos;
+    _vec3* p_pos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* n_pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 Dir = { 0,0,0 };
+    
+    Dir = *p_pos - *n_pos;
     float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
     if (0 != distance_square)
     {
@@ -495,11 +501,14 @@ void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
 
 void Server::event_player_move(int player_id, int npc_id)
 {
-    if (g_clients[player_id].m_matrix.pos.x == g_clients[npc_id].m_matrix.pos.x)
+    _vec3* p_pos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* n_pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    if (p_pos->x == n_pos->x)
     {
-        if (g_clients[player_id].m_matrix.pos.y == g_clients[npc_id].m_matrix.pos.y)
+        if (p_pos->y == n_pos->y)
         {
-            if (g_clients[player_id].m_matrix.pos.z == g_clients[npc_id].m_matrix.pos.z)
+            if (p_pos->z == n_pos->z)
             {
                 char m[10] = "HELLO";
                 send_chat_packet(player_id, npc_id, m);
@@ -632,9 +641,10 @@ void Server::send_move_packet(int user_id, int mover)
     packet.id = mover;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_MOVE;
-    packet.x = g_clients[mover].m_matrix.pos.x;  // 이동한 플레이어의 정보 담기
-    packet.y = g_clients[mover].m_matrix.pos.y;
-    packet.z = g_clients[mover].m_matrix.pos.z;
+    _vec3* pos = g_clients[mover].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    packet.x = pos->x;  // 이동한 플레이어의 정보 담기
+    packet.y = pos->y;
+    packet.z = pos->z;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -694,7 +704,15 @@ void Server::initialize_NPC(int player_id)
             g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
-            g_clients[i].m_matrix.pos = g_clients[player_id].m_matrix.pos;
+            g_clients[i].m_transform.Ready_Transform();
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_UP,
+                g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
+                g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
+                g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
+                g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
             g_clients[i].m_speed = NPC_SPEED;
             g_clients[player_id].m_boid.push_back(&g_clients[i]);
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
@@ -715,9 +733,10 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
-    packet.x = g_clients[other_id].m_matrix.pos.x;
-    packet.y = g_clients[other_id].m_matrix.pos.y;
-    packet.z = g_clients[other_id].m_matrix.pos.z;
+    _vec3* pos = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    packet.x = pos->x;
+    packet.y = pos->y;
+    packet.z = pos->z;
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 
@@ -798,12 +817,15 @@ void Server::disconnect(int user_id)
 
 bool Server::is_near(int a, int b)
 {
-    if (sqrt((g_clients[a].m_matrix.pos.x - g_clients[b].m_matrix.pos.x) *
-        (g_clients[a].m_matrix.pos.x - g_clients[b].m_matrix.pos.x) +
-        (g_clients[a].m_matrix.pos.y - g_clients[b].m_matrix.pos.y) * 
-        (g_clients[a].m_matrix.pos.y - g_clients[b].m_matrix.pos.y) +
-        (g_clients[a].m_matrix.pos.z - g_clients[b].m_matrix.pos.z) *
-        (g_clients[a].m_matrix.pos.z - g_clients[b].m_matrix.pos.z)) > VIEW_RADIUS)
+    _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    if (sqrt((a_pos->x - b_pos->x) *
+        (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) * 
+        (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) *
+        (a_pos->z - b_pos->z)) > VIEW_RADIUS)
         // abs = 절대값
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
@@ -819,7 +841,7 @@ bool Server::is_player(int id)
 void Server::flock_boid(int player_id)
 {
     ClientInfo& c = g_clients[player_id];
-    Vec3 player_pos = c.m_matrix.pos;
+    _vec3* p_pos = c.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     float velocity = NPC_SPEED;
     float avg_vel = 0;
     float all_vel = 0;
@@ -900,9 +922,9 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
-                g_clients[user_id].m_matrix.pos.x = rand() % WORLD_HORIZONTAL;
-                g_clients[user_id].m_matrix.pos.y = rand() % WORLD_HEIGHT;
-                g_clients[user_id].m_matrix.pos.z = rand() % WORLD_VERTICAL;
+                g_clients[user_id].m_transform.Ready_Transform();
+                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),(float)(rand() % WORLD_HEIGHT),(float)(rand() % WORLD_VERTICAL) };
+                g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 g_clients[user_id].m_speed = NPC_SPEED;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
