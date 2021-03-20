@@ -24,6 +24,9 @@ private:
 public:
 	static CCube*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	bool f = true;
+	bool getbool() { return f; };
+	
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -34,7 +37,7 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CCollider*								m_pColliderCom[3] = { nullptr };
 
-	CShader* m_pShaderComT = nullptr;
+	CShader*								m_pShaderComT = nullptr;
 
 	_vec3 m;
 };

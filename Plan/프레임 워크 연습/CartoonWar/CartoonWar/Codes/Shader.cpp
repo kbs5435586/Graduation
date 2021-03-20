@@ -140,10 +140,12 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	return S_OK;
 }
 
-HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matProj, _matrix I_matView, _matrix I_matProj, MAINPASS& output)
+HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matProj, _matrix I_matView, _matrix I_matProj, MAINPASS& output, bool ff)
 {
-	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
-	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+		CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+		CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+
+	
 	
 	_matrix	matTemp = matView;
 	matTemp = Matrix_::Inverse(matTemp);

@@ -125,16 +125,23 @@ void CCube::Render_GameObject()
 
 	_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
 	_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
-
-	m_pShaderCom->SetUp_OnShader(matWorld, I_matView, I_matProj,  matView, matProj, tMainPass);
-	////m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, I_matView, I_matProj, tMainPass);
+	f = true;
+	m_pShaderCom->SetUp_OnShader(matWorld, I_matView, I_matProj,  matView, matProj, tMainPass,f);
+	f = false;
+	m_pShaderComT->SetUp_OnShader(matWorld, matView, matProj, I_matView, I_matProj, tMainPassT,f);
 		
+
+	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
+	CDevice::GetInstance()->UpdateTable();
+
+	//m_pBufferCom->Render_VIBuffer();
+
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);	
 	CDevice::GetInstance()->UpdateTable();
 
 	m_pBufferCom->Render_VIBuffer();
-
 
 	//MAINPASS tIMainPass = {};
 	//matWorld = m_pTransformCom->Get_Matrix();
@@ -163,6 +170,9 @@ HRESULT CCube::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderComT->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -198,6 +208,7 @@ void CCube::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderComT);
 
 	Safe_Release(m_pColliderCom[0]);
 	Safe_Release(m_pColliderCom[1]);
@@ -230,6 +241,11 @@ HRESULT CCube::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Default");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+
+	m_pShaderComT = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	NULL_CHECK_VAL(m_pShaderComT, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader_0", m_pShaderComT)))
 		return E_FAIL;
 
 	m_pColliderCom[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
