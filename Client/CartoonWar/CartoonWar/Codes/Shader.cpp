@@ -254,7 +254,7 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 
 void CShader::UpdateData_CS()
 {
-	CDevice::GetInstance()->ClearDummyDesc_CS();
+	//CDevice::GetInstance()->ClearDummyDesc_CS();
 	CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(m_pPilelineState_CS.Get());
 	CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }

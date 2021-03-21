@@ -19,6 +19,7 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_vecMTAnimClip(rhs.m_vecMTAnimClip)
 	, m_pBoneFrameData(rhs.m_pBoneFrameData)
 	, m_pBoneOffset(rhs.m_pBoneOffset)
+	, m_vecContainer(rhs.m_vecContainer)
 
 {
 

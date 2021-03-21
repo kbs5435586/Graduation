@@ -48,9 +48,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
 
-	Skinning(vIn.vPosition, vIn.vTangent
-		, vIn.vBinormal, vIn.vNormal
-		, vIn.vWeight, vIn.vIndices, 0);
+	Skinning(vIn.vPosition, vIn.vTangent, vIn.vBinormal, vIn.vNormal , vIn.vWeight, vIn.vIndices, 0);
 
 	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);
@@ -107,7 +105,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = vOutColor_;
 	vOut.vNormalTex = vOutColor;
 	//vOut.vShadeTex = vIn.vTemp;
-	vOut.vSpecularTex = vIn.vTemp;
+	//vOut.vSpecularTex = vIn.vTemp;
 	vOut.vPointLightTex = vOutColor;
 	vOut.vPositionTex = vOutColor;
 	//vOut.vNormalTex = vTempNormal;

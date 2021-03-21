@@ -473,14 +473,14 @@ void CDevice::SetUpUAVToRegister_CS(CStructedBuffer* pBuffer, UAV_REGISTER eRegi
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// 리소스 상태 변경
-	if (pBuffer->GetState() == D3D12_RESOURCE_STATE_COMMON)
-	{
-		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
-			, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-		m_pCsCmdList->ResourceBarrier(1, &temp);
+	//if (pBuffer->GetState() == D3D12_RESOURCE_STATE_COMMON)
+	//{
+	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
+	//		, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	//	m_pCsCmdList->ResourceBarrier(1, &temp);
 
-		pBuffer->SetState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	}
+	//	pBuffer->SetState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	//}
 }
 
 void CDevice::SetBufferToRegister(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister)
@@ -498,14 +498,14 @@ void CDevice::SetBufferToRegister(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRe
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); 
 
 	// 리소스 상태 변경
-	if (pBuffer->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
-	{
-		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
-			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+	//if (pBuffer->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	//{
+	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
+	//		, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
 
-		m_pCmdListGraphic->ResourceBarrier(1, &temp);
-		pBuffer->SetState(D3D12_RESOURCE_STATE_COMMON);
-	}
+	//	m_pCmdListGraphic->ResourceBarrier(1, &temp);
+	//	pBuffer->SetState(D3D12_RESOURCE_STATE_COMMON);
+	//}
 }
 
 void CDevice::SetBufferToRegister_CS(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister)
@@ -523,13 +523,13 @@ void CDevice::SetBufferToRegister_CS(CStructedBuffer* pBuffer, TEXTURE_REGISTER 
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// 리소스 상태 변경
-	if (pBuffer->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
-	{
-		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
-			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
-		m_pCmdListGraphic->ResourceBarrier(1, &temp);
-		pBuffer->SetState(D3D12_RESOURCE_STATE_COMMON);
-	}
+	//if (pBuffer->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	//{
+	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
+	//		, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+	//	m_pCmdListGraphic->ResourceBarrier(1, &temp);
+	//	pBuffer->SetState(D3D12_RESOURCE_STATE_COMMON);
+	//}
 }
 
 void CDevice::UpdateTable()
@@ -620,7 +620,7 @@ HRESULT CDevice::Create_RootSignature()
 	range = {};
 	range.BaseShaderRegister = 0;  // t0 에서
 	range.NumDescriptors = 13;	   // t12 까지 13 개 텍스쳐 레지스터 사용여부 
-	range.OffsetInDescriptorsFromTableStart = 11;
+	range.OffsetInDescriptorsFromTableStart = (UINT)CONST_REGISTER::END;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	vecRange.push_back(range);
@@ -1066,6 +1066,5 @@ void CDevice::ExcuteComputeShader()
 	m_pCsCmdAlloc->Reset();
 	m_pCsCmdList->Reset(m_pCsCmdAlloc.Get(), nullptr);
 
-	// 루트서명 등록
-
+	CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }

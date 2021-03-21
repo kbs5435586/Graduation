@@ -45,7 +45,7 @@ void CAnimator::Update(const _float& fTimeDelta)
 	m_IsFinalMatUpdate = false;
 }
 
-void CAnimator::UpdateData(CMesh* pMesh)
+void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 {
 	if (!m_IsFinalMatUpdate)
 	{
@@ -66,22 +66,24 @@ void CAnimator::UpdateData(CMesh* pMesh)
 		int iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 		CDevice::GetInstance()->SetUpContantBufferToShader_CS(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
-
 		UINT iGrounX = (iBoneCount / 256) + 1;
-
+		
+		CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(pShader->GetCSPipeLine().Get());
 		Dispatch(iGrounX, 1, 1);
 		m_IsFinalMatUpdate = true;
 	}
 
 	// t12 레지스터에 최종행렬 데이터(구조버퍼) 바인딩
-	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t12);
+	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t7);
 }
 
 void CAnimator::Dispatch(int x, int y, int z)
 {
+
 	CDevice::GetInstance()->UpdateTable_CS();
 	CDevice::GetInstance()->GetCsCmdLst()->Dispatch(x, y, z);
 	CDevice::GetInstance()->ExcuteComputeShader();
+	CDevice::GetInstance()->ClearDummyDesc_CS();
 }
 
 void CAnimator::CheckMesh(CMesh* pMesh)

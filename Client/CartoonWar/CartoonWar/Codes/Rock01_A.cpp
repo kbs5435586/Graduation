@@ -64,8 +64,7 @@ void CRock01_A::Render_GameObject()
 	pManagement->AddRef();
 
 	
-	m_pComputeShaderCom->UpdateData_CS();
-	m_pAnimCom->UpdateData(m_pMeshCom);
+
 
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
@@ -77,12 +76,14 @@ void CRock01_A::Render_GameObject()
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	m_pMeshCom->SetUp_Texture();
+
+
+
+	//m_pComputeShaderCom->UpdateData_CS();
+	m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+
+
 	CDevice::GetInstance()->UpdateTable();
-
-
-	
-
-
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{

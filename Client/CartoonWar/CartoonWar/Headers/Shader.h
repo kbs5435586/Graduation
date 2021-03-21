@@ -24,6 +24,7 @@ public:
 	void								UpdateData_CS();
 public:
 	ComPtr<ID3D12PipelineState>			GetPipeLine() { return m_pPipeLineState; }
+	ComPtr<ID3D12PipelineState>			GetCSPipeLine() { return m_pPilelineState_CS; }
 private:
 	ComPtr<ID3DBlob>					m_pVSBlob = nullptr;
 	ComPtr<ID3DBlob>					m_pHSBlob = nullptr;

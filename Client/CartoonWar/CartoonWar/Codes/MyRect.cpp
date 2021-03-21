@@ -74,21 +74,24 @@ void CMyRect::Render_GameObject()
 	m_pShaderCom[0]->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-
 	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default")->GetSRV().Get(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->UpdateTable();
 
-	m_pBufferCom->Render_VIBuffer();
+
+
 
 	REP tRef = {};
 	tRef.m_arrInt[0] = 1;
-
 
 	m_pShaderCom[1]->UpdateData_CS();
 	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
 	pManagement->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
+
 
 
 	Safe_Release(pManagement);

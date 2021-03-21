@@ -20,11 +20,11 @@ HRESULT CUAVManager::Ready_UAVManager()
 
 CUAV* CUAVManager::GetUAV(const _tchar* pTag)
 {
-	auto iter_find = m_mapUAV.find(pTag);
-	if (iter_find == m_mapUAV.end())
+	auto iter = find_if(m_mapUAV.begin(), m_mapUAV.end(), CFinder_Tag(pTag));
+	if (iter == m_mapUAV.end())
 		return nullptr;
 
-	return iter_find->second;
+	return iter->second;
 }
 
 CUAVManager* CUAVManager::Create()

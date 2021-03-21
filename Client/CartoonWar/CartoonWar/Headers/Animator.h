@@ -2,6 +2,7 @@
 #include "Component.h"
 class CStructedBuffer;
 class CMesh;
+class CShader;
 class CAnimator :
     public CComponent
 {
@@ -29,7 +30,7 @@ public:
     void                            SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip);
 public:
     void                            Update(const _float& fTimeDelta);
-    void                            UpdateData(CMesh* pMesh);
+    void                            UpdateData(CMesh* pMesh, CShader* pShader);
     void                            SetClipTime(int _iClipIdx, float _fTime) { m_vecClipUpdateTime[_iClipIdx] = _fTime; }
     vector<_matrix>&                GetFinalBoneMat() { return m_vecFinalBoneMat; }
 private:
