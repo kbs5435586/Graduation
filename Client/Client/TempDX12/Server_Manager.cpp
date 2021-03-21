@@ -209,6 +209,53 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 		Safe_Release(managment);
 	}
+	case SC_PACKET_ROTATE:
+	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+
+		sc_packet_rotate* my_packet = reinterpret_cast<sc_packet_rotate*>(ptr);
+		int recv_id = my_packet->id;
+
+		if (recv_id == m_player.id)
+		{
+			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", recv_id);
+			_vec3 rPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_RIGHT);
+			_vec3 uPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_UP);
+			_vec3 lPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_LOOK);
+
+			rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+			uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+			lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_UP, &uPos);
+			pTransform_Cube->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+		}
+		else // NPC 
+		{
+			if (0 != m_npcs.count(recv_id))
+			{
+				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Rect", L"Com_Transform", ID_TO_IDX(recv_id));
+				_vec3 rPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_RIGHT);
+				_vec3 uPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_UP);
+				_vec3 lPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_LOOK);
+
+				rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+				uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+				lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+
+				pTransform_Cube->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+				pTransform_Cube->Set_StateInfo(CTransform::STATE_UP, &uPos);
+				pTransform_Cube->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+			}
+		}
+		Safe_Release(managment);
+	}
 	break;
 	case SC_PACKET_LEAVE:
 	{
@@ -338,14 +385,11 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	send_packet(&m_packet);
 }
 
-void CServer_Manager::send_look_packet(float x, float y, float z)
+void CServer_Manager::send_rotate_packet()
 {
-	cs_packet_look m_packet;
-	m_packet.type = CS_PACKET_LOOK;
+	cs_packet_rotate m_packet;
+	m_packet.type = CS_PACKET_ROTATE;
 	m_packet.size = sizeof(m_packet);
-	m_packet.x = x;
-	m_packet.y = y;
-	m_packet.z = z;
 	send_packet(&m_packet);
 }
 

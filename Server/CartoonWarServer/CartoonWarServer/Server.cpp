@@ -80,6 +80,12 @@ void Server::process_packet(int user_id, char* buf)
 		do_move(user_id, packet->direction);
 	}
 	break;
+    case CS_PACKET_ROTATE:
+    {
+        cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+        do_rotate(user_id);
+    }
+    break;
     case CS_PACKET_ADD_NPC:
     {
         cs_packet_add_npc* packet = reinterpret_cast<cs_packet_add_npc*>(buf);
@@ -187,37 +193,45 @@ void Server::do_move(int user_id, char direction)
     case GO_UP:
         if (pos->y > 0)
             pos->y--;
+        else if (pos->y < 0)
+            pos->y = 0;
         break;
-
     case GO_DOWN:
-        if (pos->y < WORLD_HEIGHT-1)
+        if (pos->y < (WORLD_HEIGHT - 1))
             pos->y++;
+        else if (pos->y > (WORLD_HEIGHT - 1))
+            pos->y = WORLD_HEIGHT - 1;
         break;
-
     case GO_LEFT:
         if (pos->x > 0)
-            pos->x--;
+            g_clients[user_id].m_transform.Go_Left(REPEAT_TIME);
+        else if (pos->x < 0)
+            pos->x = 0;
         break;
-
     case GO_RIGHT:
-        if (pos->x < WORLD_HORIZONTAL - 1)
-            pos->x++;
+        if (pos->x < (WORLD_HORIZONTAL - 1))
+            g_clients[user_id].m_transform.Go_Right(REPEAT_TIME);
+        else if (pos->x > (WORLD_HORIZONTAL - 1))
+            pos->x = WORLD_HORIZONTAL - 1;
         break;
-
     case GO_FORWARD:
-        if (pos->z > 0)
-            pos->z--;
+        if (pos->z < (WORLD_VERTICAL - 1))
+            g_clients[user_id].m_transform.Go_Straight(REPEAT_TIME);
+        else if (pos->z > (WORLD_VERTICAL - 1))
+            pos->z = WORLD_VERTICAL - 1;
         break;
-
     case GO_BACK:
-        if (pos->z < WORLD_VERTICAL - 1)
-            pos->z++;
+        if (pos->z > 0)
+            g_clients[user_id].m_transform.BackWard(REPEAT_TIME);
+        else if (pos->z < 0)
+            pos->z = 0;
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
         DebugBreak();
         exit(-1);
     }
+    cout << pos->x << "," << pos->y << "," << pos->z << endl;
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
     g_clients[user_id].m_cLock.lock();
@@ -315,6 +329,14 @@ void Server::do_move(int user_id, char direction)
     }
 }
 
+void Server::do_rotate(int user_id)
+{
+    g_clients[user_id].m_transform.Rotation_Y(REPEAT_TIME);
+    // 회전 예외처리
+
+    send_rotate_packet(user_id);
+}
+
 void Server::do_random_move(int npc_id)
 {
     _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
@@ -323,13 +345,13 @@ void Server::do_random_move(int npc_id)
     {
     case MV_RIGHT: 
         if (pos->x < (WORLD_HORIZONTAL - 1))
-            pos->x++;
+            g_clients[npc_id].m_transform.Go_Right(REPEAT_TIME);
         else if (pos->x > (WORLD_HORIZONTAL - 1))
             pos->x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
         if (pos->x > 0)
-            pos->x--;
+            g_clients[npc_id].m_transform.Go_Left(REPEAT_TIME);
         else if (pos->x < 0)
             pos->x = 0;
         break;
@@ -347,13 +369,13 @@ void Server::do_random_move(int npc_id)
         break;
     case MV_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            pos->z++;
+            g_clients[npc_id].m_transform.Go_Straight(REPEAT_TIME);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (pos->z > 0)
-            pos->z--;
+            g_clients[npc_id].m_transform.BackWard(REPEAT_TIME);
         else if (pos->z < 0)
             pos->z = 0;
         break;
@@ -645,6 +667,31 @@ void Server::send_move_packet(int user_id, int mover)
     packet.x = pos->x;  // 이동한 플레이어의 정보 담기
     packet.y = pos->y;
     packet.z = pos->z;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_rotate_packet(int user_id)
+{
+    sc_packet_rotate packet;
+    packet.id = user_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ROTATE;
+
+    _vec3* r_pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT);
+    packet.r_x = r_pos->x;
+    packet.r_y = r_pos->y;
+    packet.r_z = r_pos->z;
+
+    _vec3* u_pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_UP);
+    packet.u_x = u_pos->x;
+    packet.u_y = u_pos->y;
+    packet.u_z = u_pos->z;
+
+    _vec3* l_pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    packet.l_x = l_pos->x;
+    packet.l_y = l_pos->y;
+    packet.l_z = l_pos->z;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }

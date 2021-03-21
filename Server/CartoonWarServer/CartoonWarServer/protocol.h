@@ -22,17 +22,18 @@ constexpr int SERVER_PORT = 9000;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
-constexpr char CS_PACKET_LOOK = 3;
+constexpr char CS_PACKET_ROTATE = 3;
 constexpr char CS_PACKET_ADD_NPC = 4;
 constexpr char CS_PACKET_NPC_ACT = 5;
 constexpr char CS_PACKET_CHANGE_FORMATION = 6;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
-constexpr char SC_PACKET_ENTER = 3;
-constexpr char SC_PACKET_LEAVE = 4;
-constexpr char SC_PACKET_CHAT = 5;
-constexpr char SC_PACKET_ADD_NPC_OK = 6;
+constexpr char SC_PACKET_ROTATE = 3;
+constexpr char SC_PACKET_ENTER = 4;
+constexpr char SC_PACKET_LEAVE = 5;
+constexpr char SC_PACKET_CHAT = 6;
+constexpr char SC_PACKET_ADD_NPC_OK = 7;
 
 #pragma pack(push ,1)
 
@@ -53,8 +54,18 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
-	unsigned move_time; // unsigned int¶û °°À½
 };
+
+struct sc_packet_rotate
+{
+	char size;
+	char type;
+	int id;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
+};
+
 
 constexpr unsigned char O_HUMAN = 0;
 constexpr unsigned char O_ELF = 1;
@@ -114,11 +125,10 @@ struct cs_packet_move
 	char	direction;
 };
 
-struct cs_packet_look
+struct cs_packet_rotate
 {
 	char	size;
 	char	type;
-	float	x, y, z;
 };
 
 struct cs_packet_add_npc
