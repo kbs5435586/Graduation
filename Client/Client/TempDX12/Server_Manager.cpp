@@ -209,6 +209,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 		Safe_Release(managment);
 	}
+	break;
 	case SC_PACKET_ROTATE:
 	{
 		managment = CManagement::GetInstance();

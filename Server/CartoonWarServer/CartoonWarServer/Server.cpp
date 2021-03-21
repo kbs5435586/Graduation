@@ -204,25 +204,25 @@ void Server::do_move(int user_id, char direction)
         break;
     case GO_LEFT:
         if (pos->x > 0)
-            g_clients[user_id].m_transform.Go_Left(REPEAT_TIME);
+            g_clients[user_id].m_transform.Go_Left(1.f);
         else if (pos->x < 0)
             pos->x = 0;
         break;
     case GO_RIGHT:
         if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[user_id].m_transform.Go_Right(REPEAT_TIME);
+            g_clients[user_id].m_transform.Go_Right(1.f);
         else if (pos->x > (WORLD_HORIZONTAL - 1))
             pos->x = WORLD_HORIZONTAL - 1;
         break;
     case GO_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[user_id].m_transform.Go_Straight(REPEAT_TIME);
+            g_clients[user_id].m_transform.Go_Straight(1.f);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case GO_BACK:
         if (pos->z > 0)
-            g_clients[user_id].m_transform.BackWard(REPEAT_TIME);
+            g_clients[user_id].m_transform.BackWard(1.f);
         else if (pos->z < 0)
             pos->z = 0;
         break;
@@ -343,17 +343,11 @@ void Server::do_random_move(int npc_id)
 
     switch (rand() % 4)
     {
-    case MV_RIGHT: 
-        if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[npc_id].m_transform.Go_Right(REPEAT_TIME);
-        else if (pos->x > (WORLD_HORIZONTAL - 1))
-            pos->x = WORLD_HORIZONTAL - 1;
-        break;
-    case MV_LEFT:
-        if (pos->x > 0)
-            g_clients[npc_id].m_transform.Go_Left(REPEAT_TIME);
-        else if (pos->x < 0)
-            pos->x = 0;
+    case MV_UP:
+        if (pos->y > 0)
+            pos->y--;
+        else if (pos->y < 0)
+            pos->y = 0;
         break;
     case MV_DOWN:
         if (pos->y < (WORLD_HEIGHT - 1))
@@ -361,21 +355,27 @@ void Server::do_random_move(int npc_id)
         else if (pos->y > (WORLD_HEIGHT - 1))
             pos->y = WORLD_HEIGHT - 1;
         break;
-    case MV_UP:
-        if (pos->y > 0)
-            pos->y--;
-        else if (pos->y < 0)
-            pos->y = 0;
+    case MV_RIGHT: 
+        if (pos->x < (WORLD_HORIZONTAL - 1))
+            g_clients[npc_id].m_transform.Go_Right(1.f);
+        else if (pos->x > (WORLD_HORIZONTAL - 1))
+            pos->x = WORLD_HORIZONTAL - 1;
+        break;
+    case MV_LEFT:
+        if (pos->x > 0)
+            g_clients[npc_id].m_transform.Go_Left(1.f);
+        else if (pos->x < 0)
+            pos->x = 0;
         break;
     case MV_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[npc_id].m_transform.Go_Straight(REPEAT_TIME);
+            g_clients[npc_id].m_transform.Go_Straight(1.f);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (pos->z > 0)
-            g_clients[npc_id].m_transform.BackWard(REPEAT_TIME);
+            g_clients[npc_id].m_transform.BackWard(1.f);
         else if (pos->z < 0)
             pos->z = 0;
         break;
