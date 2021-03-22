@@ -87,6 +87,9 @@ void CUI_Main::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(pReflectTex.Get(), TEXTURE_REGISTER::t4);
 	CDevice::GetInstance()->SetTextureToShader(pUITex.Get(), TEXTURE_REGISTER::t5);
 
+
+
+
 	CDevice::GetInstance()->UpdateTable();
 
 

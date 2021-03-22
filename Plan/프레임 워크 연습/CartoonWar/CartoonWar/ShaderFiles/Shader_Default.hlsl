@@ -26,11 +26,13 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT	vOut;
 
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.I_vPosition = mul(float4(vIn.vPosition, 1.f), I_matWVP);
+	//vOut.I_vPosition = mul(float4(vIn.vPosition, 1.f), I_matWVP);
 	vOut.vColor = vIn.vColor;
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWorld));
 	return vOut;
 }
+
+
 PS_OUT	PS_Main(VS_OUT vIn) 
 {
 	PS_OUT vOut = (PS_OUT)0;
@@ -40,7 +42,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = vIn.vColor;
 	vOut.vNormalTex  = vNormal;
 	vOut.vShadeTex	 = Calculate_Shade(vNormal);
-	vOut.vUITex = vIn.I_vPosition;
+	//vOut.vUITex = vIn.I_vPosition;
 	return vOut;
 }
 

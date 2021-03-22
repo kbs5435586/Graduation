@@ -61,6 +61,26 @@ cbuffer REFLECT : register(b3)
 	row_major matrix	matReflect;
 };
 
+cbuffer	TRANSFORM_MATRIX : register (b4)
+{
+	row_major matrix	TmatWorld;
+	row_major matrix	TmatView;
+	row_major matrix	TmatProj;
+						
+	row_major matrix	TmatWV;
+	row_major matrix	TmatWVP;
+						
+	float4				TvCamPos;
+						
+	row_major matrix	TI_matView;
+	row_major matrix	TI_matProj;
+						
+	row_major matrix	TI_matWV;
+	row_major matrix	TI_matWVP;
+						
+	float4				TI_vCamPos;
+};
+
 
 Texture2D	g_texture0		: register(t0);
 Texture2D	g_texture1		: register(t1);
