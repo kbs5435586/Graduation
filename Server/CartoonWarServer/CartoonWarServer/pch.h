@@ -31,6 +31,7 @@ using namespace chrono;
 #include "protocol.h"
 #include "Struct.h"
 
-constexpr float NPC_SPEED = 0.3;
+constexpr float MOVE_TIMEDELTA = 0.3f;
+constexpr float ROTATE_TIMEDELTA = 0.3f;
 constexpr int REPEAT_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 

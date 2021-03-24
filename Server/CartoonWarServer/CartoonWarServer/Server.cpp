@@ -191,46 +191,48 @@ void Server::do_move(int user_id, char direction)
     switch (direction)
     {
     case GO_UP:
-        if (pos->y > 0)
+        if (pos->y >= 0)
             pos->y--;
-        else if (pos->y < 0)
-            pos->y = 0;
         break;
     case GO_DOWN:
-        if (pos->y < (WORLD_HEIGHT - 1))
+        if (pos->y < WORLD_HEIGHT)
             pos->y++;
-        else if (pos->y > (WORLD_HEIGHT - 1))
-            pos->y = WORLD_HEIGHT - 1;
         break;
     case GO_LEFT:
-        if (pos->x > 0)
-            g_clients[user_id].m_transform.Go_Left(1.f);
-        else if (pos->x < 0)
-            pos->x = 0;
+        if (pos->x >= 0)
+            g_clients[user_id].m_transform.Go_Left(MOVE_TIMEDELTA);
         break;
     case GO_RIGHT:
-        if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[user_id].m_transform.Go_Right(1.f);
-        else if (pos->x > (WORLD_HORIZONTAL - 1))
-            pos->x = WORLD_HORIZONTAL - 1;
+        if (pos->x < WORLD_HORIZONTAL)
+            g_clients[user_id].m_transform.Go_Right(MOVE_TIMEDELTA);
         break;
     case GO_FORWARD:
-        if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[user_id].m_transform.Go_Straight(1.f);
-        else if (pos->z > (WORLD_VERTICAL - 1))
-            pos->z = WORLD_VERTICAL - 1;
+        if (pos->z < WORLD_VERTICAL)
+            g_clients[user_id].m_transform.Go_Straight(MOVE_TIMEDELTA);
         break;
     case GO_BACK:
-        if (pos->z > 0)
-            g_clients[user_id].m_transform.BackWard(1.f);
-        else if (pos->z < 0)
-            pos->z = 0;
+        if (pos->z >= 0)
+            g_clients[user_id].m_transform.BackWard(MOVE_TIMEDELTA);
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
         DebugBreak();
         exit(-1);
     }
+
+    if (pos->y < 0)
+        pos->y = 0;
+    if (pos->y >= (WORLD_HEIGHT - 1))
+        pos->y = WORLD_HEIGHT - 1;
+    if (pos->x < 0)
+        pos->x = 0;
+    if (pos->x >= (WORLD_HORIZONTAL - 1))
+        pos->x = WORLD_HORIZONTAL - 1;
+    if (pos->z >= (WORLD_VERTICAL - 1))
+        pos->z = WORLD_VERTICAL - 1;
+    if (pos->z < 0)
+        pos->z = 0;
+
     cout << pos->x << "," << pos->y << "," << pos->z << endl;
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
@@ -257,7 +259,7 @@ void Server::do_move(int user_id, char direction)
             overEx->player_id = user_id;
             PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
         }
-        
+
         new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
 
@@ -331,7 +333,7 @@ void Server::do_move(int user_id, char direction)
 
 void Server::do_rotate(int user_id)
 {
-    g_clients[user_id].m_transform.Rotation_Y(REPEAT_TIME);
+    g_clients[user_id].m_transform.Rotation_Y(ROTATE_TIMEDELTA);
     // 회전 예외처리
 
     send_rotate_packet(user_id);
@@ -357,25 +359,25 @@ void Server::do_random_move(int npc_id)
         break;
     case MV_RIGHT: 
         if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[npc_id].m_transform.Go_Right(1.f);
+            g_clients[npc_id].m_transform.Go_Right(MOVE_TIMEDELTA);
         else if (pos->x > (WORLD_HORIZONTAL - 1))
             pos->x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
         if (pos->x > 0)
-            g_clients[npc_id].m_transform.Go_Left(1.f);
+            g_clients[npc_id].m_transform.Go_Left(MOVE_TIMEDELTA);
         else if (pos->x < 0)
             pos->x = 0;
         break;
     case MV_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[npc_id].m_transform.Go_Straight(1.f);
+            g_clients[npc_id].m_transform.Go_Straight(MOVE_TIMEDELTA);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (pos->z > 0)
-            g_clients[npc_id].m_transform.BackWard(1.f);
+            g_clients[npc_id].m_transform.BackWard(MOVE_TIMEDELTA);
         else if (pos->z < 0)
             pos->z = 0;
         break;
@@ -508,7 +510,7 @@ _vec3 Server::move_to_player(int npc_id)
         float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
         Dir = Dir / hyp; // 여기가 노멀값
-        Dir = Dir * NPC_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
+        Dir = Dir * MOVE_TIMEDELTA; // 노멀값 방향으로 얼만큼 갈지 계산
     }
     return Dir;
 }
@@ -760,7 +762,7 @@ void Server::initialize_NPC(int player_id)
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
             g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
-            g_clients[i].m_speed = NPC_SPEED;
+            g_clients[i].m_speed = MOVE_TIMEDELTA;
             g_clients[player_id].m_boid.push_back(&g_clients[i]);
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
             //send_npc_add_ok_packet(player_id, i);
@@ -889,7 +891,7 @@ void Server::flock_boid(int player_id)
 {
     ClientInfo& c = g_clients[player_id];
     _vec3* p_pos = c.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    float velocity = NPC_SPEED;
+    float velocity = MOVE_TIMEDELTA;
     float avg_vel = 0;
     float all_vel = 0;
 
@@ -972,7 +974,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_transform.Ready_Transform();
                 _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),(float)(rand() % WORLD_HEIGHT),(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-                g_clients[user_id].m_speed = NPC_SPEED;
+                g_clients[user_id].m_speed = MOVE_TIMEDELTA;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;

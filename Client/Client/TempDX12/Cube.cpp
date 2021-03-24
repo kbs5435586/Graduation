@@ -103,7 +103,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	if (GetAsyncKeyState('T') & 0x8000)
 	{
 		pServer->AddRef();
-		pServer->send_move_packet(GO_UP);
+		pServer->send_move_packet(GO_FORWARD);
 		Safe_Release(pServer);
 	}
 	if (GetAsyncKeyState('F') & 0x8000)
@@ -115,7 +115,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	if (GetAsyncKeyState('G') & 0x8000)
 	{
 		pServer->AddRef();
-		pServer->send_move_packet(GO_DOWN);
+		pServer->send_move_packet(GO_BACK);
 		Safe_Release(pServer);
 	}
 	if (GetAsyncKeyState('H') & 0x8000)
