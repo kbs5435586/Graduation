@@ -233,6 +233,8 @@ void Server::do_move(int user_id, char direction)
     if (pos->z < 0)
         pos->z = 0;
 
+
+
     cout << pos->x << "," << pos->y << "," << pos->z << endl;
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
@@ -252,6 +254,10 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (c.second.m_id == user_id)
             continue;
+        if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
+        {
+
+        }
         if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
         {
             OverEx* overEx = new OverEx;
@@ -334,9 +340,84 @@ void Server::do_move(int user_id, char direction)
 void Server::do_rotate(int user_id)
 {
     g_clients[user_id].m_transform.Rotation_Y(ROTATE_TIMEDELTA);
-    // 회전 예외처리
+    
+    for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
+    {
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애면 보내지도 마라
+            continue;
+        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+        //    activate_npc(c.second.m_id, c.second.m_last_order);
+        if (ST_ACTIVE != c.second.m_status)
+            continue;
+        if (c.second.m_id == user_id)
+            continue;
+    }
 
-    send_rotate_packet(user_id);
+    g_clients[user_id].m_cLock.lock();
+    unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
+    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
+    g_clients[user_id].m_cLock.unlock();
+
+    send_rotate_packet(user_id, user_id); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
+    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+    {
+        send_rotate_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+    }
+}
+
+void Server::do_formation(int user_id)
+{
+    SESSION& c = g_clients[user_id];
+    CTransform set_pos;
+    _matrix temp = c.m_transform.Get_Matrix();
+    set_pos.Set_Matrix(&temp);
+
+    float velocity = MOVE_TIMEDELTA;
+    float avg_vel = 0;
+    float all_vel = 0;
+
+    if (c.m_boid.size() > 0)
+    {
+        for (auto& b : c.m_boid)
+        {
+            all_vel += b->m_speed;
+        }
+        avg_vel = all_vel / c.m_boid.size(); // 군집의 전체 평균 속도
+    }
+
+    switch (c.m_formation)
+    {
+    case FM_FLOCK:
+    {
+        if (2 == c.m_boid.size())
+        {
+            set_pos.Go_Left(MOVE_TIMEDELTA * 10);
+            _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+            c.m_boid[0]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos);
+
+            set_pos.Go_Right(MOVE_TIMEDELTA * 10);
+            new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+            c.m_boid[1]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos);
+        }
+    }
+    break;
+    case FM_SQUARE:
+    {
+
+    }
+    break;
+    case FM_PIRAMID:
+    {
+
+    }
+    break;
+    case FM_CIRCLE:
+    {
+
+    }
+    break;
+    }
 }
 
 void Server::do_random_move(int npc_id)
@@ -464,35 +545,9 @@ void Server::do_follow(int npc_id)
 
 void Server::do_change_formation(int player_id)
 {
-    ClientInfo& c = g_clients[player_id];
-    c.m_formation = ENUM_FORMATION(c.m_formation + 1);
-    if (FM_END == c.m_formation)
-        c.m_formation = FM_FLOCK;
-
-    switch (c.m_formation)
-    {
-    case FM_FLOCK:
-    {
-
-    }
-        break;
-    case FM_SQUARE:
-    {
-
-    }
-    break;
-    case FM_PIRAMID:
-    {
-
-    }
-    break;
-    case FM_CIRCLE:
-    {
-
-    }
-    break;
-    }
-
+    g_clients[player_id].m_formation = ENUM_FORMATION(g_clients[player_id].m_formation + 1);
+    if (FM_END == g_clients[player_id].m_formation)
+        g_clients[player_id].m_formation = FM_FLOCK;
 }
 
 _vec3 Server::move_to_player(int npc_id)
@@ -673,24 +728,24 @@ void Server::send_move_packet(int user_id, int mover)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
-void Server::send_rotate_packet(int user_id)
+void Server::send_rotate_packet(int user_id, int mover)
 {
     sc_packet_rotate packet;
-    packet.id = user_id;
+    packet.id = mover;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ROTATE;
 
-    _vec3* r_pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT);
+    _vec3* r_pos = g_clients[mover].m_transform.Get_StateInfo(CTransform::STATE_RIGHT);
     packet.r_x = r_pos->x;
     packet.r_y = r_pos->y;
     packet.r_z = r_pos->z;
 
-    _vec3* u_pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_UP);
+    _vec3* u_pos = g_clients[mover].m_transform.Get_StateInfo(CTransform::STATE_UP);
     packet.u_x = u_pos->x;
     packet.u_y = u_pos->y;
     packet.u_z = u_pos->z;
 
-    _vec3* l_pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    _vec3* l_pos = g_clients[mover].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
     packet.l_x = l_pos->x;
     packet.l_y = l_pos->y;
     packet.l_z = l_pos->z;
@@ -753,7 +808,6 @@ void Server::initialize_NPC(int player_id)
             g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
             sprintf_s(g_clients[i].m_name, "NPC %d", i);
             g_clients[i].m_status = ST_SLEEP;
-            g_clients[i].m_transform.Ready_Transform();
             g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
             g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
@@ -887,24 +941,6 @@ bool Server::is_player(int id)
     return id < NPC_ID_START;
 }
 
-void Server::flock_boid(int player_id)
-{
-    ClientInfo& c = g_clients[player_id];
-    _vec3* p_pos = c.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    float velocity = MOVE_TIMEDELTA;
-    float avg_vel = 0;
-    float all_vel = 0;
-
-    if (c.m_boid.size() > 0)
-    {
-        for (auto& b : c.m_boid)
-        {
-            all_vel += b->m_speed;
-        }
-        avg_vel = all_vel / c.m_boid.size(); // 군집의 전체 평균 속도
-    }
-}
-
 void Server::worker_thread()
 {
     while (true)
@@ -971,7 +1007,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.buf = g_clients[user_id].m_recv_over.io_buf; // WSA 버퍼 위치 설정
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
-                g_clients[user_id].m_transform.Ready_Transform();
+                //g_clients[user_id].m_transform.Ready_Transform();
                 _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),(float)(rand() % WORLD_HEIGHT),(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 g_clients[user_id].m_speed = MOVE_TIMEDELTA;
@@ -1113,3 +1149,15 @@ void Server::mainServer()
 //    lua_pushnumber(L, y);
 //    return 1;
 //}
+
+bool Server::check_collision(int a, int b)
+{
+    _vec3* p1 = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* p2 = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    float* r1 = &g_clients[a].m_collision.sphere_r;
+    float* r2 = &g_clients[b].m_collision.sphere_r;
+
+    return fabs((p1->x - p2->x) * (p1->x - p2->x) + (p1->y - p2->y) * (p1->y - p2->y) + (p1->z - p2->z) * (p1->z - p2->z)
+        <= (*r1 + *r2) * (*r1 + *r2));
+}

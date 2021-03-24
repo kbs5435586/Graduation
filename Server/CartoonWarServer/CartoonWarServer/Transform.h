@@ -5,7 +5,7 @@ public:
 	enum STATE { STATE_RIGHT, STATE_UP, STATE_LOOK, STATE_POSITION, STATE_END };
 public:
 	CTransform();
-	virtual ~CTransform() = default;
+	~CTransform();
 public: // Getter
 	_vec3*					Get_StateInfo(STATE eState);
 	_vec3					Get_Scale();
@@ -13,9 +13,8 @@ public: // Getter
 	_matrix					Get_Matrix() { return m_matWorld; }
 public: // Setter
 	void					Set_StateInfo(STATE eState, const _vec3* pInfo);
-	void Set_PositionY(const _float& fY) {
-		m_matWorld.m[3][1] = fY;
-	}
+	void					Set_PositionY(const _float& fY) { m_matWorld.m[3][1] = fY; }
+	void					Set_Matrix(_matrix* mat);
 public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();
