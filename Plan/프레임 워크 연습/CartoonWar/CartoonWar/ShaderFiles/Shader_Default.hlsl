@@ -19,7 +19,6 @@ struct PS_OUT
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vShadeTex			: SV_TARGET2;
-	float4 vUITex				: SV_TARGET6;
 };
 VS_OUT	VS_Main(VS_IN vIn)
 {

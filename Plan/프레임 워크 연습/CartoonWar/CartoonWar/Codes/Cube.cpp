@@ -119,31 +119,26 @@ void CCube::Render_GameObject()
 	// 
 	MAINPASS tMainPass = {};
 	MAINPASS tMainPassT = {};
-	MAINPASS tMainPassTT = {};
+	
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
 	_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
 	_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
-	f = true;
 
-	m_pShaderCom->SetUp_OnShader(matWorld, I_matView, I_matProj,  matView, matProj, tMainPassT,f);
-	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
+	
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
-	//ComPtr<ID3D12DescriptorHeap>	pDiffuseTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	//CDevice::GetInstance()->SetTextureToShader(pDiffuseTex.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
 
-	m_pShaderComT->SetUp_OnShader(matWorld, matView, matProj, I_matView, I_matProj, tMainPass, f);
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	m_pShaderComT->SetUp_OnShader(matWorld, I_matView, I_matProj, tMainPassT);
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	//ComPtr<ID3D12DescriptorHeap>	pNormalex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
-	//CDevice::GetInstance()->SetTextureToShader(pNormalex.Get(), TEXTURE_REGISTER::t3);
 	CDevice::GetInstance()->UpdateTable();
-
 	m_pBufferCom->Render_VIBuffer();
 
 

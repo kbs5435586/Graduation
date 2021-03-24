@@ -60,19 +60,34 @@ void CTerrain_Height::Render_GameObject()
 
 
 	MAINPASS tMainPass = {};
+	MAINPASS tMainPassT = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetIMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetIMatProj();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+	_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
+	_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-
+	
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(),  TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+	m_pNaviCom->Render_Navigation();
+
+
+
+	m_pShaderComT->SetUp_OnShader(matWorld, I_matView, I_matProj, tMainPassT);
+	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
+	ComPtr<ID3D12DescriptorHeap>	pTextureDescT = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pTextureDescT.Get(), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -92,6 +107,9 @@ HRESULT CTerrain_Height::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderComT->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;
@@ -127,6 +145,7 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderComT);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
@@ -158,6 +177,11 @@ HRESULT CTerrain_Height::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+
+	m_pShaderComT = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_TerrainT");
+	NULL_CHECK_VAL(m_pShaderComT, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ShaderT", m_pShaderComT)))
 		return E_FAIL;
 
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
