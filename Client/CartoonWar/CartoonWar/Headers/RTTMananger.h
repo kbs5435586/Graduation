@@ -21,6 +21,7 @@ public:
 private:
     vector<CMRT*>                           m_vecMRT;
     _uint                                   m_iSize = 0;
+    CRTT*                                   m_pDsTex = nullptr;
 
 };
 

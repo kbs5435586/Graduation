@@ -218,7 +218,8 @@ void CMesh::Laod_Material(FbxSurfaceMaterial* _pMtrlSur)
 void CMesh::Load_Texture()
 {
 	// Texture Load
-	for (UINT i = 0; i < m_vecContainer.size(); ++i)
+
+	/*for (UINT i = 0; i < m_vecContainer.size(); ++i)
 	{
 		for (UINT j = 0; j < m_vecContainer[i].vecMtrl.size(); ++j)
 		{
@@ -250,7 +251,7 @@ void CMesh::Load_Texture()
 		}
 	}
 
-	m_iMaxTexNum = m_vecTexture.size();
+	m_iMaxTexNum = m_vecTexture.size();*/
 }
 
 HRESULT CMesh::SetUp_Texture()
@@ -260,7 +261,7 @@ HRESULT CMesh::SetUp_Texture()
 		m_iCurTexNum = 0;
 	}
 
-	CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
+	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
 	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 1], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
 	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 2], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
 
@@ -992,13 +993,15 @@ void CMesh::Free()
 			if (m_tRenderInfo.vecIndices[i].pSystem)
 				Safe_Delete(m_tRenderInfo.vecIndices[i].pSystem);
 		}
+
+		Safe_Release(m_pBoneFrameData);
+		Safe_Release(m_pBoneOffset);
 	}
 
-	Safe_Release(m_pBoneFrameData);
-	Safe_Release(m_pBoneOffset);
 
-	for (auto& iter : m_vecTexture)
-		Safe_Release(iter);
+
+	//for (auto& iter : m_vecTexture)
+	//	Safe_Release(iter);
 
 
 	CComponent::Free();

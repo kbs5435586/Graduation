@@ -147,5 +147,5 @@ void CMRT::Free()
 	{
 		Safe_Release(iter.pRtt);
 	}
-	Safe_Release(m_pDsTex);
+	//Safe_Release(m_pDsTex);
 }

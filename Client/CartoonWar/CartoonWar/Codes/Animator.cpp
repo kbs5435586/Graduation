@@ -13,6 +13,7 @@ CAnimator::CAnimator(const CAnimator& rhs)
 	: CComponent(rhs)
 	, m_pBoneFinalMat(rhs.m_pBoneFinalMat)
 {
+	m_IsClone = true;
 }
 
 HRESULT CAnimator::Ready_Animator()
@@ -110,6 +111,7 @@ CComponent* CAnimator::Clone_Component(void* pArg)
 
 void CAnimator::Free()
 {
-	Safe_Release(m_pBoneFinalMat);
+	if(!m_IsClone)
+		Safe_Release(m_pBoneFinalMat);
 	CComponent::Free();
 }

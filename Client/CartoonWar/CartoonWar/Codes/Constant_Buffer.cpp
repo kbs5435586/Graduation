@@ -98,4 +98,5 @@ void CConstant_Buffer::ResetCount()
 
 void CConstant_Buffer::Free()
 {
+	_int i = 0;
 }

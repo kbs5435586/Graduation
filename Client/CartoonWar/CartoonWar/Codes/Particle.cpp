@@ -23,7 +23,7 @@ CParticle::CParticle(const CParticle& rhs)
 	, m_vStartColor(rhs.m_vStartColor)
 	, m_vEndColor(rhs.m_vEndColor)
 {
-
+	m_IsClone = true;
 }
 
 HRESULT CParticle::Ready_Particle()
@@ -35,7 +35,7 @@ HRESULT CParticle::Ready_Particle()
 	if (nullptr == m_pShadedBuffer)
 		return E_FAIL;
 
-	
+
 	return S_OK;
 }
 
@@ -72,8 +72,8 @@ HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 
 HRESULT CParticle::SetUp_OnShader(REP& tRep)
 {
-	tRep.m_arrVec4[0]	= m_vStartColor;
-	tRep.m_arrVec4[1]	= m_vEndColor;
+	tRep.m_arrVec4[0] = m_vStartColor;
+	tRep.m_arrVec4[1] = m_vEndColor;
 
 	tRep.m_arrFloat[0] = m_fStartScale;
 	tRep.m_arrFloat[1] = m_fEndScale;
@@ -107,12 +107,16 @@ CParticle* CParticle::Create()
 
 CComponent* CParticle::Clone_Component(void* pArg)
 {
-	return new CParticle (*this);
+	return new CParticle(*this);
 }
 
 void CParticle::Free()
 {
-	Safe_Release(m_pParticleBuffer);
-	Safe_Release(m_pShadedBuffer);
+	if (!m_IsClone)
+	{
+		Safe_Release(m_pParticleBuffer);
+		Safe_Release(m_pShadedBuffer);
+
+	}
 	CComponent::Free();
 }

@@ -28,16 +28,16 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			return E_FAIL;
 	}
 
-	CRTT* pDsTex  = CRTT::Create(L"DepthStencilTex"
+	m_pDsTex = CRTT::Create(L"DepthStencilTex"
 		, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D24_UNORM_S8_UINT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
 		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-	if (pDsTex == nullptr)
+	if (m_pDsTex == nullptr)
 		return E_FAIL;
 
 	//DXGI_FORMAT_D24_UNORM_S8_UINT
 
 	// SwapChain MRT
-	CMRT* pMRT = CMRT::Create(2, arrRT, pDsTex);
+	CMRT* pMRT = CMRT::Create(2, arrRT, m_pDsTex);
 	m_vecMRT.push_back(pMRT);
 
 
@@ -93,7 +93,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[6].pRtt == nullptr)
 			return E_FAIL;
 
-		CMRT* pMRT = CMRT::Create(7, arrRT, pDsTex);
+		CMRT* pMRT = CMRT::Create(7, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
 
 
@@ -112,7 +112,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
 
-		CMRT* pMRT = CMRT::Create(2, arrRT, pDsTex);
+		CMRT* pMRT = CMRT::Create(2, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
 
 	}
@@ -141,4 +141,5 @@ void CRTTMananger::Free()
 	{
 		Safe_Release(iter);
 	}
+	Safe_Release(m_pDsTex);
 }
