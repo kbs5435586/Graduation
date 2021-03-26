@@ -31,7 +31,7 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	_vec3 vPos = _vec3(0.f, 10.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(4.f, 4.f,1.f);
+	m_pTransformCom->Scaling(4.f, 4.f, 1.f);
 
 	return S_OK;
 }
@@ -66,9 +66,9 @@ void CMyRect::Render_GameObject()
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-	_matrix matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
+	//_matrix matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
 
-	
+
 
 
 	m_pShaderCom[0]->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
@@ -86,7 +86,11 @@ void CMyRect::Render_GameObject()
 	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
-	pManagement->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+	if (!m_IsTemp)
+	{
+		pManagement->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+		m_IsTemp = true;
+	}
 
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
@@ -103,7 +107,7 @@ HRESULT CMyRect::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	//vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	
+
 
 	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
