@@ -6,6 +6,10 @@ CTransform::CTransform()
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());
 }
 
+CTransform::~CTransform()
+{
+}
+
 HRESULT CTransform::Ready_Transform()
 {
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());
@@ -45,6 +49,11 @@ void CTransform::Set_StateInfo(STATE eState, const _vec3* pInfo)
 	memcpy(&m_matWorld.m[eState][0], pInfo, sizeof(_vec3));
 }
 
+
+void CTransform::Set_Matrix(_matrix* mat)
+{
+	memcpy(&m_matWorld, mat, sizeof(_matrix));
+}
 
 void CTransform::SetUp_Speed(const _float& fMovePerSec, const _float& fRotationPerSec)
 {

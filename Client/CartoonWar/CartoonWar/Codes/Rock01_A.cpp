@@ -95,7 +95,6 @@ void CRock01_A::Render_GameObject()
 
 HRESULT CRock01_A::CreateInputLayout()
 {
-
 	//XMFLOAT3		vPosition;
 	//XMFLOAT4		vColor;
 	//XMFLOAT2		vUV;
@@ -104,8 +103,6 @@ HRESULT CRock01_A::CreateInputLayout()
 	//XMFLOAT3		vBinormal;
 	//XMFLOAT4		vWeight;
 	//XMFLOAT4		vIndices;
-
-
 
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;

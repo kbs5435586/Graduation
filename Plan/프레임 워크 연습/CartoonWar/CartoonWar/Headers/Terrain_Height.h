@@ -34,6 +34,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_Terrain_Height*					m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pShaderComT = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;

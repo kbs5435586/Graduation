@@ -884,6 +884,9 @@
     <None Include="..\ShaderFiles\Shader_UUU.hlsl">
       <Filter>96. ShaderFiles</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_TerrainT.hlsl">
+      <Filter>96. ShaderFiles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

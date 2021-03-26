@@ -8,7 +8,7 @@ public:
 	~Server();
 
 private:
-	unordered_map <int, ClientInfo> g_clients;
+	unordered_map <int, SESSION> g_clients;
 	priority_queue<event_type> timer_queue;
 	mutex timer_lock;
 
@@ -29,7 +29,7 @@ public:
 	void send_packet(int user_id, void* packet); // 보낼 패킷의 버퍼와 사이즈 설정
 	void send_login_ok_packet(int user_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 	void send_move_packet(int user_id, int mover); // 변경된 위치값 설정
-	void send_rotate_packet(int user_id); // 변경된 위치값 설정
+	void send_rotate_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
@@ -37,6 +37,7 @@ public:
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void do_rotate(int user_id);
+	void do_formation(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initialize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
@@ -55,12 +56,12 @@ public:
 
 	bool is_near(int a, int b);
 	bool is_player(int id);
+	bool check_collision(int a, int b);
 
 	//int API_SendMessage(lua_State* L);
 	//int API_get_x(lua_State* L);
 	//int API_get_y(lua_State* L);
 public:
-	void flock_boid(int player_id);
 	void get_player_pos();
 	void calculate_next_pos();
 };

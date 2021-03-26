@@ -18,6 +18,7 @@ struct VS_OUT
 struct PS_OUT
 {
 	float4 vUITex			: SV_TARGET5;
+	float4 vShadeTex		: SV_TARGET6;
 };
 
 
@@ -38,8 +39,8 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	float4 vNormal = float4((vIn.vNormal.xyz * 2.f) - 1.f, 0.f);
-
 	
+	vOut.vShadeTex = Calculate_Shade(vNormal);	
 	vOut.vUITex = vIn.vColor;
 	return vOut;
 }
