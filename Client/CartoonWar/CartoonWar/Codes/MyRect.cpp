@@ -82,9 +82,10 @@ void CMyRect::Render_GameObject()
 	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
+
 	if (!m_IsTemp)
 	{
-		pManagement->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+		pManagement->Get_UAV(L"UAV_Default")->Dispatch(1024, 1, 1);
 		m_IsTemp = true;
 	}
 
