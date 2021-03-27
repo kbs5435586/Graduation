@@ -21,11 +21,7 @@ HRESULT CUAV::Ready_UAV( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 	m_tDesc.SampleDesc.Quality = 0;
 	m_tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	m_tDesc.SampleDesc.Count = 1;
-	m_tDesc.SampleDesc.Quality = 0;
-	m_tDesc.Alignment = 0;
-	m_tDesc.DepthOrArraySize = 1;
-	m_tDesc.MipLevels = 1;
+
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;
 	m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
@@ -101,12 +97,12 @@ HRESULT CUAV::Ready_UAV( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSRV));
 
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pSRV->GetCPUDescriptorHandleForHeapStart();
+		//D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pSRV->GetCPUDescriptorHandleForHeapStart();
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		//srvDesc.Format = m_Image.GetMetadata().format;
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.Format =  DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = 1;
 		CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pSRV->GetCPUDescriptorHandleForHeapStart());
@@ -128,10 +124,11 @@ CUAV* CUAV::Create( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 
 void CUAV::Dispatch(_uint x, _uint y, _uint z)
 {
+	
+
 	CDevice::GetInstance()->UpdateTable_CS();
 	CDevice::GetInstance()->GetCsCmdLst()->Dispatch(x, y, z);
 	CDevice::GetInstance()->ExcuteComputeShader();
-	CDevice::GetInstance()->ClearDummyDesc_CS();
 }
 
 void CUAV::Free()

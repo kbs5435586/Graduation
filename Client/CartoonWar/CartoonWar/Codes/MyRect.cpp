@@ -33,6 +33,25 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(4.f, 4.f, 1.f);
 
+
+
+
+	REP tRef = {};
+	tRef.m_arrInt[0] = 1;
+	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), 
+		iOffset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetUpUAVToRegister(CManagement::GetInstance()->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
+
+	if (!m_IsTemp)
+	{
+		CDevice::GetInstance()->ClearDummyDesc_CS();
+		m_pShaderCom[1]->UpdateData_CS();
+		CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+		m_IsTemp = true;
+	}
+
+
 	return S_OK;
 }
 
@@ -73,27 +92,8 @@ void CMyRect::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default")->GetSRV().Get(), TEXTURE_REGISTER::t0);
 
 
-
-
-	REP tRef = {};
-	tRef.m_arrInt[0] = 1;
-
-	m_pShaderCom[1]->UpdateData_CS();
-	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
-	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
-	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
-
-	if (!m_IsTemp)
-	{
-		pManagement->Get_UAV(L"UAV_Default")->Dispatch(1024, 1, 1);
-		m_IsTemp = true;
-	}
-
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
-
-
-
 
 	Safe_Release(pManagement);
 }

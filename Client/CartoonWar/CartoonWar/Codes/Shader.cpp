@@ -200,7 +200,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* CSEntry)
 	if (CSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, CSEntry, "cs_5_0", 0, 0, &m_pCSBlob, &m_pErrBlob)))
+			, CSEntry, "cs_5_1", 0, 0, &m_pCSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "CS_Shader Create Failed !!!", MB_OK);
@@ -256,7 +256,7 @@ void CShader::UpdateData_CS()
 {
 	//CDevice::GetInstance()->ClearDummyDesc_CS();
 	CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(m_pPilelineState_CS.Get());
-	CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
+	//CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }
 
 CShader* CShader::Create(const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, const char* GSEntry, const char* DSEntry, const char* HSEntry)

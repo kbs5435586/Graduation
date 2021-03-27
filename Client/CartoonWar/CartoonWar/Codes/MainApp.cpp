@@ -24,8 +24,13 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
-	if (FAILED(Ready_Start_Scene(SCENEID::SCENE_LOGO)))
+
+
+	if (FAILED(m_pManagement->Ready_RTT_Manager()))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Ready_UAV_Manager()))
+		return E_FAIL;
+	
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
 
@@ -50,11 +55,10 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(GLOBAL), 1, CONST_REGISTER::b9, true)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Ready_RTT_Manager()))
-		return E_FAIL;
-	if (FAILED(m_pManagement->Ready_UAV_Manager()))
-		return E_FAIL;
 
+
+	if (FAILED(Ready_Start_Scene(SCENEID::SCENE_LOGO)))
+		return E_FAIL;
 
 	srand(unsigned(time(NULL)));
 	return S_OK;
