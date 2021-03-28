@@ -36,20 +36,6 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 
 
 
-	REP tRef = {};
-	tRef.m_arrInt[0] = 1;
-	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
-	CDevice::GetInstance()->SetUpContantBufferToShader_CS(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), 
-		iOffset, CONST_REGISTER::b8);
-	CDevice::GetInstance()->SetUpUAVToRegister(CManagement::GetInstance()->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
-
-	if (!m_IsTemp)
-	{
-		CDevice::GetInstance()->ClearDummyDesc_CS();
-		m_pShaderCom[1]->UpdateData_CS();
-		CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
-		m_IsTemp = true;
-	}
 
 
 	return S_OK;
@@ -90,6 +76,25 @@ void CMyRect::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default")->GetSRV().Get(), TEXTURE_REGISTER::t0);
+
+	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(0), TEXTURE_REGISTER::t0);
+
+
+
+	REP tRef = {};
+	tRef.m_arrInt[0] = 1;
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(),
+		iOffset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetUpUAVToRegister(CManagement::GetInstance()->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
+
+	if (!m_IsTemp)
+	{
+		CDevice::GetInstance()->ClearDummyDesc_CS();
+		m_pShaderCom[1]->UpdateData_CS();
+		CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+		//m_IsTemp = true;
+	}
 
 
 	CDevice::GetInstance()->UpdateTable();
@@ -167,7 +172,7 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectCol");
+	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;

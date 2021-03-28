@@ -21,7 +21,11 @@ HRESULT CUAV::Ready_UAV( UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 	m_tDesc.SampleDesc.Quality = 0;
 	m_tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-
+	m_tDesc.SampleDesc.Count = 1;
+	m_tDesc.SampleDesc.Quality = 0;
+	m_tDesc.Alignment = 0;
+	m_tDesc.DepthOrArraySize = 1;
+	m_tDesc.MipLevels = 1;
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;
 	m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;

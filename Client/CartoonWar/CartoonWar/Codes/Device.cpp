@@ -327,13 +327,13 @@ void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegis
 	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	if (pTextureCom->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
-	{
-		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pTextureCom->GetTexture(iIdx)
-			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
-		m_pCsCmdList->ResourceBarrier(1, &temp);
-		pTextureCom->SetState(D3D12_RESOURCE_STATE_COMMON);
-	}
+	//if (pTextureCom->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	//{
+	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pTextureCom->GetTexture(iIdx)
+	//		, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+	//	m_pCsCmdList->ResourceBarrier(1, &temp);
+	//	pTextureCom->SetState(D3D12_RESOURCE_STATE_COMMON);
+	//}
 
 }
 
