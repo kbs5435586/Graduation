@@ -51,7 +51,7 @@ _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	//m_pTransformCom->Set_PositionY(fY + 0.5f);
 
-	m_pParticleCom->Update_Particle(fTimeDelta);
+	//m_pParticleCom->Update_Particle(fTimeDelta);
 	Safe_Release(pManagement);
 
 	return _int();
@@ -80,6 +80,8 @@ void CParticle_Default::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
+
+	CDevice::GetInstance()->ClearDummyDesc_CS();
 	// Update Particle
 	REP		tRep_Update;
 	m_pShaderCom[1]->UpdateData_CS();
@@ -87,6 +89,7 @@ void CParticle_Default::Render_GameObject()
 	m_pParticleCom->Update_Particle_Shader();
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetTextureToShader_CS(m_pTextureCom_Noise->GetSRV(), TEXTURE_REGISTER::t0);
 	m_pParticleCom->DisPatch(1, 1, 1);
 
 
@@ -104,19 +107,12 @@ void CParticle_Default::Render_GameObject()
 
 
 	REP		tRep_Basic;
-
 	m_pParticleCom->SetUp_OnShader(tRep_Basic);
 	m_pParticleCom->Render_Particle();
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Basic);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 	CDevice::GetInstance()->UpdateTable();
-
-
-
-
-
-	
 
 	m_pBufferCom->Render_VIBuffer(m_pParticleCom->GetMaxParticle());
 	Safe_Release(pManagement);
