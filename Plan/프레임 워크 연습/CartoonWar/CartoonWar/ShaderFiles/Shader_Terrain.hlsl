@@ -53,8 +53,10 @@ PS_OUT PS_Main(VS_OUT vIn)
 		tCol.vAmbient	+= tCurCol.vAmbient;
 		tCol.vSpecular	+= tCurCol.vSpecular;
 	}
-	float4 vOutColor	 = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	float4 vNormal		 = float4((vIn.vNormal.xyz*2.f) - 1.f, 0.f);
+	float4 vOutColor = g_texture1.Sample(Sampler0, vIn.vTexUV);
+	float4 vNormal = float4((vIn.vNormal.xyz * 2.f) - 1.f, 0.f);
+	//float4 vOutColor	 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//float4 vNormal		 = float4((vIn.vNormal.xyz*2.f) - 1.f, 0.f);
 
 	vOut.vDiffuseTex	= vOutColor;
 	vOut.vNormalTex		= vNormal;

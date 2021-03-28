@@ -68,28 +68,23 @@ void CTerrain_Height::Render_GameObject()
 	_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-	
-
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	//ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(),  TEXTURE_REGISTER::t1);
+	//CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(),  TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 	m_pNaviCom->Render_Navigation();
 
 
-
 	m_pShaderComT->SetUp_OnShader(matWorld, I_matView, I_matProj, tMainPassT);
 	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
-	ComPtr<ID3D12DescriptorHeap>	pTextureDescT = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDescT.Get(), TEXTURE_REGISTER::t1);
+	//ComPtr<ID3D12DescriptorHeap>	pTextureDescT = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t2);
+	//CDevice::GetInstance()->SetTextureToShader(pTextureDescT.Get(), TEXTURE_REGISTER::t3);
 	CDevice::GetInstance()->UpdateTable();
-
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pNaviCom->Render_Navigation();

@@ -19,9 +19,9 @@ struct VS_OUT
 struct PS_OUT
 {
 	float4 vDiffuseTex			: SV_TARGET5;
-	float4 vNormalTex			: SV_TARGET1;
+	float4 vNormalTex			: SV_TARGET4;
 	float4 vShadeTex			: SV_TARGET6;
-	float4 vSpecularTex			: SV_TARGET3;
+	float4 vSpecularTex			: SV_TARGET7;
 
 };
 
@@ -52,8 +52,10 @@ PS_OUT PS_Main(VS_OUT vIn)
 		tCol.vAmbient += tCurCol.vAmbient;
 		tCol.vSpecular += tCurCol.vSpecular;
 	}
-	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4 vOutColor = g_texture2.Sample(Sampler0, vIn.vTexUV);
 	float4 vNormal = float4((vIn.vNormal.xyz * 2.f) - 1.f, 0.f);
+	//float4 vOutColor = g_texture2.Sample(Sampler0, vIn.vTexUV);
+	//float4 vNormal = float4((vIn.vNormal.xyz * 2.f) - 1.f, 0.f);
 
 	vOut.vDiffuseTex = vOutColor;
 	vOut.vNormalTex = vNormal;
