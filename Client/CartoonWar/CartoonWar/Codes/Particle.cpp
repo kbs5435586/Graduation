@@ -67,7 +67,7 @@ HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 	tRep.m_arrFloat[2] = m_fMinSpeed;
 	tRep.m_arrFloat[3] = m_fMaxSpeed;
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CParticle::SetUp_OnShader(REP& tRep)

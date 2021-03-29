@@ -26,7 +26,7 @@ HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(0.f, 5.f, 5.f);
+	_vec3 vPos = _vec3(5.f, 5.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
@@ -84,12 +84,14 @@ void CParticle_Default::Render_GameObject()
 	CDevice::GetInstance()->ClearDummyDesc_CS();
 	// Update Particle
 	REP		tRep_Update;
-	m_pShaderCom[1]->UpdateData_CS();
-	m_pParticleCom->SetUp_OnUpdateShader(tRep_Update);
+	
+	if (FAILED(m_pParticleCom->SetUp_OnUpdateShader(tRep_Update)))
+		return;
 	m_pParticleCom->Update_Particle_Shader();
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetTextureToShader_CS(m_pTextureCom_Noise->GetSRV(), TEXTURE_REGISTER::t0);
+	m_pShaderCom[1]->UpdateData_CS();
 	m_pParticleCom->DisPatch(1, 1, 1);
 
 
@@ -108,7 +110,6 @@ void CParticle_Default::Render_GameObject()
 
 	REP		tRep_Basic;
 	m_pParticleCom->SetUp_OnShader(tRep_Basic);
-	m_pParticleCom->Render_Particle();
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Basic);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
