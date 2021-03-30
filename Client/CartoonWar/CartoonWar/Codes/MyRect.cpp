@@ -79,11 +79,7 @@ void CMyRect::Render_GameObject()
 
 	CDevice::GetInstance()->UpdateTable();
 
-	
 
-
-
-	
 	REP tRef = {};
 	tRef.m_arrInt[0] = 1;
 

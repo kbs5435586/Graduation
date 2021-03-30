@@ -11,7 +11,6 @@ private:
 public:
     HRESULT                     Ready_Particle();
     void                        Update_Particle(const _float& fTimeDelta);
-    void                        Render_Particle();
     HRESULT                     SetUp_OnShader(REP& tRep);
     HRESULT                     SetUp_OnUpdateShader(REP& tRep);
 public:

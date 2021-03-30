@@ -22,16 +22,17 @@ CParticle::CParticle(const CParticle& rhs)
 	, m_fEndScale(rhs.m_fEndScale)
 	, m_vStartColor(rhs.m_vStartColor)
 	, m_vEndColor(rhs.m_vEndColor)
+	, m_iAddCnt(rhs.m_iAddCnt)
 {
 	m_IsClone = true;
 }
 
 HRESULT CParticle::Ready_Particle()
 {
-	m_pParticleBuffer = CStructedBuffer::Create(sizeof(PARTICLE), m_iMaxParticle);
+	m_pParticleBuffer = CStructedBuffer::Create(sizeof(PARTICLE), m_iMaxParticle,nullptr);
 	if (nullptr == m_pParticleBuffer)
 		return E_FAIL;
-	m_pShadedBuffer = CStructedBuffer::Create(sizeof(PARTICLESHARED), 1);
+	m_pShadedBuffer = CStructedBuffer::Create(sizeof(PARTICLESHARED), 1, nullptr);
 	if (nullptr == m_pShadedBuffer)
 		return E_FAIL;
 
@@ -49,12 +50,7 @@ void CParticle::Update_Particle(const _float& fTimeDelta)
 		m_fAccTime -= m_fFrequency;
 		m_iAddCnt = 1;
 	}
-}
 
-void CParticle::Render_Particle()
-{
-	m_pParticleBuffer->Update_RWData(UAV_REGISTER::u0);
-	m_pShadedBuffer->Update_RWData(UAV_REGISTER::u1);
 }
 
 HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
@@ -67,7 +63,7 @@ HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 	tRep.m_arrFloat[2] = m_fMinSpeed;
 	tRep.m_arrFloat[3] = m_fMaxSpeed;
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CParticle::SetUp_OnShader(REP& tRep)

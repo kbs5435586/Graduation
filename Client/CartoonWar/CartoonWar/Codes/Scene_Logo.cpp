@@ -223,9 +223,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer",
 		CObserver::Create())))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Particle",
-	//	CParticle::Create())))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Particle",
+		CParticle::Create())))
+		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation",
 		CAnimator::Create())))
@@ -234,22 +234,22 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01",
-		m_pTextureCom = CTexture::Create(L"Texture_Orc_01", L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Albedo.tga"))))
-		return E_FAIL;
-	if (nullptr == m_pTextureCom)
-		return E_FAIL;
-	m_pTextureCom->AddRef();
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01",
+	//	m_pTextureCom = CTexture::Create(L"Texture_Orc_01", L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Albedo.tga"))))
+	//	return E_FAIL;
+	//if (nullptr == m_pTextureCom)
+	//	return E_FAIL;
+	//m_pTextureCom->AddRef();
 
-	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
-		L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Albedo.tga")))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
-		L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Normals.tga")))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
-		L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Normals.tga")))
-		return E_FAIL;
+	//if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
+	//	L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Albedo.tga")))
+	//	return E_FAIL;
+	//if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
+	//	L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Normals.tga")))
+	//	return E_FAIL;
+	//if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
+	//	L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Normals.tga")))
+	//	return E_FAIL;
 
 
 	return S_OK;
@@ -338,12 +338,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//	CTexture::Create(L"../Bin/Resource/Texture/Logo/Logo%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 	//	return E_FAIL;
 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Noise",
-	//	CTexture::Create(L"../Bin/Resource/Texture/Noise/Noise%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke",
-	//	CTexture::Create(L"../Bin/Resource/Texture/Particle/CartoonSmoke%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Noise",
+		CTexture::Create(L"../Bin/Resource/Texture/Noise/Noise%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke",
+		CTexture::Create(L"../Bin/Resource/Texture/Particle/CartoonSmoke%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+		return E_FAIL;
 
 	//TGA
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
@@ -439,6 +439,6 @@ void CScene_Logo::Free()
 	Safe_Release(pManagement);
 
 
-	Safe_Release(m_pTextureCom);
+	//Safe_Release(m_pTextureCom);
 	CScene::Free();
 }
