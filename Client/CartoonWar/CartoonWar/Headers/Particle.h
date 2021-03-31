@@ -33,7 +33,7 @@ private:
     _float                      m_fEndScale = 10.f;
 private:
     _vec4                       m_vStartColor= _vec4(0.2f, 0.2f, 0.8f, 1.4f);
-    _vec4                       m_vEndColor= _vec4(0.2f, 0.2f, 0.8f, 1.4f);
+    _vec4                       m_vEndColor= _vec4(0.6f, 0.6f, 0.8f, 1.0f);
 private:
     _uint                       m_iAddCnt = 0;
 public:

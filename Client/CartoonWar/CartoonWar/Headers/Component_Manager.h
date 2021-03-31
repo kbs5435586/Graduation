@@ -20,6 +20,7 @@
 #include "Buffer_Terrain.h"
 #include "Buffer_Terrain_Height.h"
 #include "Buffer_Sphere.h"
+#include "Buffer_Point.h"
 
 class CComponent;
 class CComponent_Manager :

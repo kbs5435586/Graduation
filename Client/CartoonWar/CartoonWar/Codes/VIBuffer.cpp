@@ -12,6 +12,7 @@ CVIBuffer::CVIBuffer(const CVIBuffer& rhs)
 	, m_tIndexBufferView(rhs.m_tIndexBufferView)
 	, m_iNumIndices(rhs.m_iNumIndices)
 	, m_iNumVertices(rhs.m_iNumVertices)
+	, m_PrimitiveTopology(rhs.m_PrimitiveTopology)
 {
 
 }
@@ -31,7 +32,7 @@ void CVIBuffer::Render_VIBuffer()
 
 void CVIBuffer::Render_VIBuffer(const _uint& iMaxParticleCnt)
 {
-	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(m_PrimitiveTopology);
 	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(m_iSlot, 1, &m_tVertexBufferView);
 	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_tIndexBufferView);
 	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_iNumIndices, iMaxParticleCnt, 0, 0, 0);

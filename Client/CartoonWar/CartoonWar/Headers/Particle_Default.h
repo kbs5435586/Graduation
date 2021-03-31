@@ -2,7 +2,7 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CBuffer_RectTex;
+class CBuffer_Point;
 class CShader;
 class CParticle;
 class CTexture;
@@ -31,7 +31,7 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CBuffer_Point*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom[2] = {nullptr};
 	CTexture*								m_pTextureCom = nullptr;
 	CTexture*								m_pTextureCom_Noise = nullptr;

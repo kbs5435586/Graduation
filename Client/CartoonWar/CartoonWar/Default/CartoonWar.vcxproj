@@ -155,6 +155,7 @@
     <ClInclude Include="..\Headers\Base.h" />
     <ClInclude Include="..\Headers\Buffer_CubeCol.h" />
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
+    <ClInclude Include="..\Headers\Buffer_Point.h" />
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
     <ClInclude Include="..\Headers\Buffer_RectTex.h" />
     <ClInclude Include="..\Headers\Buffer_Sphere.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Point.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />

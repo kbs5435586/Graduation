@@ -382,6 +382,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
       <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
+      <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -687,6 +690,9 @@
     <ClInclude Include="..\Headers\Animator.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\11. Animator</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_Point.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -965,6 +971,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Animator.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\11. Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Point.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

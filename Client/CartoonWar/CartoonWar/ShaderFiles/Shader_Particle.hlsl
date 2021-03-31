@@ -4,8 +4,8 @@
 
 
 StructuredBuffer<tParticle> tData : register(t10);
-RWStructuredBuffer<tParticle> tRWData : register(u0);
-RWStructuredBuffer<tParticleShared> tRWSharedData : register(u1);
+//RWStructuredBuffer<tParticle> tRWData : register(u0);
+//RWStructuredBuffer<tParticleShared> tRWSharedData : register(u1);
 
 struct VS_IN
 {

@@ -26,10 +26,10 @@ HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(5.f, 5.f, 0.f);
+	_vec3 vPos = _vec3(0.f, 0.f, 0.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
-	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+	//m_pTransformCom->Scaling(1.f, 10.f, 10.f);
 
 	return S_OK;
 }
@@ -81,9 +81,10 @@ void CParticle_Default::Render_GameObject()
 	pManagement->AddRef();
 
 
-	// Update Particle
+
+
 	REP		tRep_Update;
-//<<<<<<< HEAD
+	m_pParticleCom->Update_Particle_Shader();
 	m_pParticleCom->SetUp_OnUpdateShader(tRep_Update);
 
 
@@ -91,21 +92,13 @@ void CParticle_Default::Render_GameObject()
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetTextureToShader_CS(m_pTextureCom_Noise->GetSRV(), TEXTURE_REGISTER::t0);
-//=======
-//	
-//	if (FAILED(m_pParticleCom->SetUp_OnUpdateShader(tRep_Update)))
-//		return;
-//	m_pParticleCom->Update_Particle_Shader();
-//	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
-//	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-//	CDevice::GetInstance()->SetTextureToShader_CS(m_pTextureCom_Noise->GetSRV(), TEXTURE_REGISTER::t0);
-//	m_pShaderCom[1]->UpdateData_CS();
-//	m_pParticleCom->DisPatch(1, 1, 1);
-//>>>>>>> 1b1e74f02694864c038f52f9d25b050b194c96ac
-
-	m_pParticleCom->Update_Particle_Shader();
 	m_pShaderCom[1]->UpdateData_CS();
+
 	m_pParticleCom->DisPatch(1, 1, 1);
+
+
+
+
 
 
 
@@ -126,6 +119,12 @@ void CParticle_Default::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 	CDevice::GetInstance()->UpdateTable();
+
+
+
+
+
+
 
 	m_pBufferCom->Render_VIBuffer(m_pParticleCom->GetMaxParticle());
 	Safe_Release(pManagement);
@@ -199,7 +198,7 @@ HRESULT CParticle_Default::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex");
+	m_pBufferCom = (CBuffer_Point*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Point");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
