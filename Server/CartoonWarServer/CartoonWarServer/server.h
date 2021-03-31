@@ -37,7 +37,7 @@ public:
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void do_rotate(int user_id);
-	void do_formation(int user_id);
+	void set_formation(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initialize_clients(); // 객체 연결 성공시 초기화
 	void disconnect(int user_id);
@@ -49,7 +49,7 @@ public:
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
-	_vec3 move_to_player(int npc_id);
+	_vec3 move_to_spot(int id, _vec3* goto_pos);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();

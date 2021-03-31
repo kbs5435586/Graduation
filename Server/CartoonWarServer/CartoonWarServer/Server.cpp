@@ -200,19 +200,19 @@ void Server::do_move(int user_id, char direction)
         break;
     case GO_LEFT:
         if (pos->x >= 0)
-            g_clients[user_id].m_transform.Go_Left(MOVE_TIMEDELTA);
+            g_clients[user_id].m_transform.Go_Left(MOVE_SPEED);
         break;
     case GO_RIGHT:
         if (pos->x < WORLD_HORIZONTAL)
-            g_clients[user_id].m_transform.Go_Right(MOVE_TIMEDELTA);
+            g_clients[user_id].m_transform.Go_Right(MOVE_SPEED);
         break;
     case GO_FORWARD:
         if (pos->z < WORLD_VERTICAL)
-            g_clients[user_id].m_transform.Go_Straight(MOVE_TIMEDELTA);
+            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED);
         break;
     case GO_BACK:
         if (pos->z >= 0)
-            g_clients[user_id].m_transform.BackWard(MOVE_TIMEDELTA);
+            g_clients[user_id].m_transform.BackWard(MOVE_SPEED);
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
@@ -339,7 +339,7 @@ void Server::do_move(int user_id, char direction)
 
 void Server::do_rotate(int user_id)
 {
-    g_clients[user_id].m_transform.Rotation_Y(ROTATE_TIMEDELTA);
+    g_clients[user_id].m_transform.Rotation_Y(ROTATE_SPEED);
     
     for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
     {
@@ -366,39 +366,34 @@ void Server::do_rotate(int user_id)
     }
 }
 
-void Server::do_formation(int user_id)
+void Server::set_formation(int user_id)
 {
     SESSION& c = g_clients[user_id];
     CTransform set_pos;
     _matrix temp = c.m_transform.Get_Matrix();
-    set_pos.Set_Matrix(&temp);
-
-    float velocity = MOVE_TIMEDELTA;
-    float avg_vel = 0;
-    float all_vel = 0;
-
-    if (c.m_boid.size() > 0)
-    {
-        for (auto& b : c.m_boid)
-        {
-            all_vel += b->m_speed;
-        }
-        avg_vel = all_vel / c.m_boid.size(); // 군집의 전체 평균 속도
-    }
 
     switch (c.m_formation)
     {
     case FM_FLOCK:
     {
-        if (2 == c.m_boid.size())
+        if (1 == c.m_boid.size())
         {
-            set_pos.Go_Left(MOVE_TIMEDELTA * 10);
+            set_pos.Set_Matrix(&temp);
+            set_pos.Go_Left(MOVE_SPEED * 20);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos);
+        }
+        else if (2 == c.m_boid.size())
+        {
+            set_pos.Set_Matrix(&temp);
+            set_pos.Go_Left(MOVE_SPEED * 20);
+            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+            c.m_boid[0]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos1);
 
-            set_pos.Go_Right(MOVE_TIMEDELTA * 10);
-            new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos);
+            set_pos.Set_Matrix(&temp);
+            set_pos.Go_Right(MOVE_SPEED * 20);
+            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+            c.m_boid[1]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos2);
         }
     }
     break;
@@ -440,25 +435,25 @@ void Server::do_random_move(int npc_id)
         break;
     case MV_RIGHT: 
         if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[npc_id].m_transform.Go_Right(MOVE_TIMEDELTA);
+            g_clients[npc_id].m_transform.Go_Right(MOVE_SPEED);
         else if (pos->x > (WORLD_HORIZONTAL - 1))
             pos->x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
         if (pos->x > 0)
-            g_clients[npc_id].m_transform.Go_Left(MOVE_TIMEDELTA);
+            g_clients[npc_id].m_transform.Go_Left(MOVE_SPEED);
         else if (pos->x < 0)
             pos->x = 0;
         break;
     case MV_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[npc_id].m_transform.Go_Straight(MOVE_TIMEDELTA);
+            g_clients[npc_id].m_transform.Go_Straight(MOVE_SPEED);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (pos->z > 0)
-            g_clients[npc_id].m_transform.BackWard(MOVE_TIMEDELTA);
+            g_clients[npc_id].m_transform.BackWard(MOVE_SPEED);
         else if (pos->z < 0)
             pos->z = 0;
         break;
@@ -503,7 +498,9 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
-    _vec3 Dir = move_to_player(npc_id);
+    set_formation(g_clients[npc_id].m_owner_id);
+
+    _vec3 Dir = move_to_spot(npc_id, g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
     _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3 new_pos = *pos + Dir;
     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
@@ -550,22 +547,20 @@ void Server::do_change_formation(int player_id)
         g_clients[player_id].m_formation = FM_FLOCK;
 }
 
-_vec3 Server::move_to_player(int npc_id)
+_vec3 Server::move_to_spot(int id, _vec3* goto_pos)
 {
-    int player_id = g_clients[npc_id].m_owner_id;
-
-    _vec3* p_pos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* n_pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* new_pos = goto_pos;
+    _vec3* now_pos = g_clients[id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3 Dir = { 0,0,0 };
     
-    Dir = *p_pos - *n_pos;
+    Dir = *new_pos - *now_pos;
     float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
     if (0 != distance_square)
     {
         float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
         Dir = Dir / hyp; // 여기가 노멀값
-        Dir = Dir * MOVE_TIMEDELTA; // 노멀값 방향으로 얼만큼 갈지 계산
+        Dir = Dir * MOVE_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
     }
     return Dir;
 }
@@ -575,7 +570,7 @@ void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
     ENUM_STATUS old_status = ST_SLEEP;
     if (true == atomic_compare_exchange_strong(&g_clients[npc_id].m_status, &old_status, ST_ACTIVE)) // m_status가 슬립에서 엑티브로 바뀐 경우에만
         // 동시에 두 클라가 접근하면 ACTIVE 로 2번 바뀌고 타이머가 2번 발동하는걸 방지하기 위한 용도
-        add_timer(npc_id, op_type, REPEAT_TIME);
+        add_timer(npc_id, op_type, FRAME_TIME);
 }
 
 void Server::event_player_move(int player_id, int npc_id)
@@ -652,7 +647,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
         add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
     else
-        add_timer(npc_id, g_clients[npc_id].m_last_order, REPEAT_TIME); // 생성 이후 반복 간격
+        add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
@@ -814,9 +809,9 @@ void Server::initialize_NPC(int player_id)
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
             g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
-            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
-                g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
-            g_clients[i].m_speed = MOVE_TIMEDELTA;
+            //g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
+            //    g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
+            g_clients[i].m_speed = MOVE_SPEED;
             g_clients[player_id].m_boid.push_back(&g_clients[i]);
             cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
             //send_npc_add_ok_packet(player_id, i);
@@ -1010,7 +1005,7 @@ void Server::worker_thread()
                 //g_clients[user_id].m_transform.Ready_Transform();
                 _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),(float)(rand() % WORLD_HEIGHT),(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-                g_clients[user_id].m_speed = MOVE_TIMEDELTA;
+                g_clients[user_id].m_speed = MOVE_SPEED;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;
