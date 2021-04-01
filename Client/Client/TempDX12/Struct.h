@@ -1,5 +1,5 @@
 #pragma once
-#include "protocol.h"
+#include "\GitHub\Graduation\Server\CartoonWarServer\CartoonWarServer\protocol.h"
 
 typedef struct tagVertexCol
 {

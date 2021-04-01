@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Server\CartoonWarServer\CartoonWarServer\protocol.h" />
     <ClInclude Include="Animation_Controller.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="Buffer_CubeCol.h" />
@@ -195,7 +196,6 @@
     <ClInclude Include="MainApp.h" />
     <ClInclude Include="Management.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="protocol.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Resource.h" />

@@ -50,6 +50,7 @@ struct SESSION // 클라이언트 정보
 	float m_speed;
 	vector <SESSION*> m_boid;
 	ENUM_FORMATION m_formation;
+	_vec3 m_target_pos;
 
 	CTransform m_transform;
 	Collision m_collision;

@@ -71,7 +71,6 @@ using namespace DirectX::SimpleMath;
 #include "Struct.h"
 #include "Typedef.h"
 #include "Funtor.h"
-#include "protocol.h"
 
 #include "Device.h"
 

@@ -423,7 +423,7 @@
     <ClInclude Include="Server_Manager.h">
       <Filter>97. Server</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
+    <ClInclude Include="..\..\..\Server\CartoonWarServer\CartoonWarServer\protocol.h">
       <Filter>97. Server</Filter>
     </ClInclude>
   </ItemGroup>

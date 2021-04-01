@@ -98,44 +98,41 @@ void Server::process_packet(int user_id, char* buf)
         int p_id = packet->id;
         char p_act = packet->act;
 
-        if (0 != g_clients[p_id].m_boid.size())
+        for (int i = MY_NPC_START(p_id); i <= MY_NPC_END(p_id); i++)
         {
-            for (int i = 0; i < g_clients[p_id].m_boid.size(); i++)
+            if (ST_SLEEP == g_clients[i].m_status || ST_FREE == g_clients[i].m_status)
             {
-                if (ST_SLEEP == g_clients[p_id].m_boid[i]->m_status || ST_FREE == g_clients[p_id].m_boid[i]->m_status)
+                cout << i << " is continue\n";
+                continue;
+            }
+            else
+            {
+                if (DO_ATTACK == p_act)
                 {
-                    cout << i << " is continue\n";
-                    continue;
+                    cout << i << " is DO_ATTACK\n";
+                    g_clients[i].m_last_order = FUNC_NPC_ATTACK;
                 }
-                else
+                if (DO_DEFENCE == p_act)
                 {
-                    if (DO_ATTACK == p_act)
-                    {
-                        cout << i << " is DO_ATTACK\n";
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_ATTACK;
-                    }
-                    if (DO_DEFENCE == p_act)
-                    {
-                        cout << i << " is DO_DEFENCE\n";
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_DEFENCE;
-                    }
-                    if (DO_HOLD == p_act)
-                    {
-                        cout << i << " is DO_HOLD\n";
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_HOLD;
-                    }
-                    if (DO_FOLLOW == p_act)
-                    {
-                        cout << i << " is DO_FOLLOW\n";
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_FOLLOW;
-                    }
-                    if (DO_RANDMOVE == p_act)
-                    {
-                        cout << i << " is DO_RANDMOVE\n";
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_RANDMOVE;
-                    }
-                    activate_npc(i, g_clients[p_id].m_boid[i]->m_last_order);
+                    cout << i << " is DO_DEFENCE\n";
+                    g_clients[i].m_last_order = FUNC_NPC_DEFENCE;
                 }
+                if (DO_HOLD == p_act)
+                {
+                    cout << i << " is DO_HOLD\n";
+                    g_clients[i].m_last_order = FUNC_NPC_HOLD;
+                }
+                if (DO_FOLLOW == p_act)
+                {
+                    cout << i << " is DO_FOLLOW\n";
+                    g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
+                }
+                if (DO_RANDMOVE == p_act)
+                {
+                    cout << i << " is DO_RANDMOVE\n";
+                    g_clients[i].m_last_order = FUNC_NPC_RANDMOVE;
+                }
+                activate_npc(i, g_clients[i].m_last_order);
             }
         }
     }
@@ -240,8 +237,6 @@ void Server::do_move(int user_id, char direction)
 
     cout << pos->x << "," << pos->y << "," << pos->z << endl;
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
-
-    set_formation(user_id);
 
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
@@ -358,8 +353,6 @@ void Server::do_rotate(int user_id)
             continue;
     }
 
-    set_formation(user_id);
-
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
     // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
@@ -388,19 +381,19 @@ void Server::set_formation(int user_id)
             set_pos.Set_Matrix(&temp);
             set_pos.Go_Left(MOVE_SPEED * 20);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos;
+            c.m_boid[0]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos);
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
             set_pos.Go_Left(MOVE_SPEED * 20);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
+            c.m_boid[0]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos1);
 
             set_pos.Set_Matrix(&temp);
             set_pos.Go_Right(MOVE_SPEED * 20);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
+            c.m_boid[1]->m_transform.Set_StateInfo(CTransform::STATE_POSITION, new_pos2);
         }
     }
     break;
@@ -505,49 +498,44 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
-    for (int i = 0; i < g_clients[g_clients[npc_id].m_owner_id].m_boid.size(); ++i)
+    set_formation(g_clients[npc_id].m_owner_id);
+
+    _vec3 Dir = move_to_spot(npc_id, g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
+    _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 new_pos = *pos + Dir;
+    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+
+    cout << npc_id << "의 위치 : " << pos->x << " , " << pos->y << endl;
+
+    for (int i = 0; i < NPC_ID_START; ++i)
     {
-        if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+
+        if (true == is_near(i, npc_id))
         {
-            _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);
-            _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 new_pos = *pos + Dir;
-            g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
-
-            cout << npc_id << "의 위치 : " << pos->x << " , " << pos->y << endl;
-
-            for (int i = 0; i < NPC_ID_START; ++i)
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
             {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
-
-                if (true == is_near(i, npc_id))
-                {
-                    g_clients[i].m_cLock.lock();
-                    if (0 != g_clients[i].m_view_list.count(npc_id))
-                    {
-                        g_clients[i].m_cLock.unlock();
-                        send_move_packet(i, npc_id);
-                    }
-                    else
-                    {
-                        g_clients[i].m_cLock.unlock();
-                        send_enter_packet(i, npc_id);
-                    }
-                }
-                else
-                {
-                    g_clients[i].m_cLock.lock();
-                    if (0 != g_clients[i].m_view_list.count(npc_id))
-                    {
-                        g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                        send_leave_packet(i, npc_id);
-                    }
-                    else
-                        g_clients[i].m_cLock.unlock();
-                }
+                g_clients[i].m_cLock.unlock();
+                send_move_packet(i, npc_id);
             }
-            break;
+            else
+            {
+                g_clients[i].m_cLock.unlock();
+                send_enter_packet(i, npc_id);
+            }
+        }
+        else
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                send_leave_packet(i, npc_id);
+            }
+            else
+                g_clients[i].m_cLock.unlock();
         }
     }
 }
@@ -805,49 +793,29 @@ void Server::initialize_clients()
 
 void Server::initialize_NPC(int player_id)
 {
-    for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+    for (int i = MY_NPC_START(player_id); i <= MY_NPC_END(player_id); i++)
     {
-        if (ST_ACTIVE != g_clients[npc_id].m_status)
+        if (ST_ACTIVE != g_clients[i].m_status)
         {
-            g_clients[npc_id].m_socket = 0;
-            g_clients[npc_id].m_id = npc_id;
-            g_clients[npc_id].m_owner_id = player_id;
-            g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
-            sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
-            g_clients[npc_id].m_status = ST_SLEEP;
-            g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_UP,
+            g_clients[i].m_socket = 0;
+            g_clients[i].m_id = i;
+            g_clients[i].m_owner_id = player_id;
+            g_clients[i].m_last_order = FUNC_NPC_FOLLOW;
+            sprintf_s(g_clients[i].m_name, "NPC %d", i);
+            g_clients[i].m_status = ST_SLEEP;
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
-            g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
-            g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
-            g_clients[npc_id].m_speed = MOVE_SPEED;
-            g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
-            set_formation(player_id);
-            for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
-            {
-                if (g_clients[player_id].m_boid[j]->m_id == g_clients[npc_id].m_id)
-                {
-                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
-                        &g_clients[player_id].m_boid[j]->m_target_pos);
-                }
-            }
-            cout << "Init Player " << player_id << "'s " << npc_id << " NPC Complete\n";
-            
-            for (int i = 0; i < NPC_ID_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
-            {
-                if (true == is_near(npc_id, i))
-                {
-                    if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
-                    {
-                        if (true == is_player(i))
-                            send_enter_packet(i, npc_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
-                    }
-                    else
-                        continue;
-                }
-            }
-            activate_npc(npc_id, g_clients[npc_id].m_last_order);
+            //g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
+            //    g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION));
+            g_clients[i].m_speed = MOVE_SPEED;
+            g_clients[player_id].m_boid.push_back(&g_clients[i]);
+            cout << "Init Player " << player_id << "'s " << i << " NPC Complete\n";
+            //send_npc_add_ok_packet(player_id, i);
+            activate_npc(i, g_clients[i].m_last_order);
             break;
         }
         else
