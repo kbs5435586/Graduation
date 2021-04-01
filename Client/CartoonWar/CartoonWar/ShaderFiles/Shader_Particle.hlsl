@@ -36,8 +36,11 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut;
 
-	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld);
-	vOut.vWorldPos += float4(tData[vIn.iID].vWorldPos,1.f);
+
+	float3 vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld).xyz;
+	vWorldPos += tData[vIn.iID].vWorldPos;
+
+	vOut.vWorldPos = float4(vWorldPos, 1.f);
 	vOut.vUV = vIn.vUV;
 	vOut.iInstID = vIn.iID;
 
@@ -94,17 +97,32 @@ void GS_Main(point VS_OUT _in[1], inout TriangleStream<GS_OUT> OutputStream)
 }
 
 
-PS_OUT	PS_Main(GS_OUT _in) 
+float4 PS_Main(GS_OUT _in)	: SV_TARGET
 {
-	PS_OUT vOut = (PS_OUT)0;
 
 
 	float fRatio = tData[_in.iInstID].m_fCurTime / tData[_in.iInstID].m_fLifeTime;
 	float4 vCurColor = (g_vec4_1 - g_vec4_0) * fRatio + g_vec4_0;
-	 vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
 
-	vOut.vTarget = vCurColor;
+	
 
-	return vOut;
+
+
+	return vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);;
 }
 
+//
+//PS_OUT	PS_Main(GS_OUT _in) 
+//{
+//	PS_OUT vOut = (PS_OUT)0;
+//
+//
+//	float fRatio = tData[_in.iInstID].m_fCurTime / tData[_in.iInstID].m_fLifeTime;
+//	float4 vCurColor = (g_vec4_1 - g_vec4_0) * fRatio + g_vec4_0;
+//	 vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
+//
+//	vOut.vTarget = vCurColor;
+//
+//	return vOut;
+//}
+//

@@ -58,6 +58,7 @@ HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 
 	tRep.m_arrInt[0] = m_iMaxParticle;
 	tRep.m_arrInt[1] = m_iAddCnt;
+
 	tRep.m_arrFloat[0] = m_fMinLifeTime;
 	tRep.m_arrFloat[1] = m_fMaxLifeTime;
 	tRep.m_arrFloat[2] = m_fMinSpeed;

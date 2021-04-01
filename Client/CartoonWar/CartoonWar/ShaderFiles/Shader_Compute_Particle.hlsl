@@ -11,6 +11,7 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
 
     tRWSharedData[0].iAddCount = g_int_1;
 
+    //tRWData[_iThreadIdx.x].iAlive = 0;
     // Dead 파티클 살리기
     if (0 == tRWData[_iThreadIdx.x].iAlive)
     {

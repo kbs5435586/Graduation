@@ -477,7 +477,7 @@ typedef struct tagParticle
 typedef struct tagParticleShared
 {
 	int iAddCount;
-	int arrPading;
+	int arrPading[3];
 }PARTICLESHARED;
 
 

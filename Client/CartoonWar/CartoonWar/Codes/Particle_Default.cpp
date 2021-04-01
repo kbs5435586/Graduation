@@ -85,7 +85,8 @@ void CParticle_Default::Render_GameObject()
 
 	REP		tRep_Update;
 	m_pParticleCom->Update_Particle_Shader();
-	m_pParticleCom->SetUp_OnUpdateShader(tRep_Update);
+	if (FAILED(m_pParticleCom->SetUp_OnUpdateShader(tRep_Update)))
+		return;
 
 
 	CDevice::GetInstance()->ClearDummyDesc_CS();
@@ -113,7 +114,7 @@ void CParticle_Default::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 
 
-	REP		tRep_Basic;
+	REP		tRep_Basic; 
 	m_pParticleCom->SetUp_OnShader(tRep_Basic);
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Basic);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
@@ -136,7 +137,7 @@ HRESULT CParticle_Default::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_POINTLIST)))
+	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_POINTLIST)))
 		return E_FAIL;
 
 

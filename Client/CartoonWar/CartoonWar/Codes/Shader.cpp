@@ -75,19 +75,6 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	m_tPipeline.DepthStencilState = g_arrDepthStencilDesc[(UINT)eDepthType];
 
 
-	m_tPipeline.DepthStencilState.StencilEnable = FALSE;
-	m_tPipeline.DepthStencilState.StencilReadMask = 0x00;
-	m_tPipeline.DepthStencilState.StencilWriteMask = 0x00;
-
-	m_tPipeline.DepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	m_tPipeline.DepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	m_tPipeline.DepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	m_tPipeline.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
-	m_tPipeline.DepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	m_tPipeline.DepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	m_tPipeline.DepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	m_tPipeline.DepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
-
 
 
 
@@ -111,10 +98,6 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[5] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[6] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-
-		//m_tPipeline.NumRenderTargets = 1;
-		//m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-
 		break;
 	case SHADER_TYPE::SHADER_LIGHT:
 		m_tPipeline.NumRenderTargets = 2;
@@ -254,9 +237,7 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 
 void CShader::UpdateData_CS()
 {
-	//CDevice::GetInstance()->ClearDummyDesc_CS();
 	CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(m_pPilelineState_CS.Get());
-	//CDevice::GetInstance()->GetCsCmdLst()->SetComputeRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }
 
 CShader* CShader::Create(const _tchar* pFilepath, const char* VSEntry, const char* PSEntry, const char* GSEntry, const char* DSEntry, const char* HSEntry)
