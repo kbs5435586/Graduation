@@ -140,31 +140,20 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	return S_OK;
 }
 
-HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matProj, _matrix I_matView, _matrix I_matProj, MAINPASS& output, bool ff)
+HRESULT CShader::SetUp_OnShaderT(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output)
 {
-		CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
-		CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
-
-	
-	
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 	_matrix	matTemp = matView;
 	matTemp = Matrix_::Inverse(matTemp);
-	_matrix	I_matTemp = I_matView;
-	I_matTemp = Matrix_::Inverse(I_matTemp);
 
 	// 다른 카메라의 월드 뷰 프로젝션을 넘겨준다
-	output.matWorld = matWorld;
-	output.matView = matView;
-	output.matProj = matProj;
-	output.matWV = matWorld * matView;
-	output.matWVP = output.matWV * matProj;
+	output.I_matWorld = matWorld;
+	output.I_matView = matView;
+	output.I_matProj = matProj;
+	output.I_matWV = matWorld * matView;
+	output.I_matWVP = output.I_matWV * matProj;
 	output.vCamPos = (_vec4)&matTemp.m[3][0];
-
-	//output.I_matView = I_matView;
-	//output.I_matProj = I_matProj;
-	//output.I_matWV = matWorld * I_matView;
-	//output.I_matWVP = output.I_matWV * I_matProj;
-	//output.v_ICamPos = (_vec4)&I_matTemp.m[3][0];
 
 	return E_NOTIMPL;
 }

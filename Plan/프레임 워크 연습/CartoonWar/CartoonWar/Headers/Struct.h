@@ -140,11 +140,13 @@ typedef struct tagMainPass
 	XMFLOAT4X4	matWVP;
 	XMFLOAT4	vCamPos;
 	////
+
+	XMFLOAT4X4	I_matWorld;
 	XMFLOAT4X4	I_matView;
 	XMFLOAT4X4	I_matProj;
 	XMFLOAT4X4	I_matWV;
 	XMFLOAT4X4	I_matWVP;
-	XMFLOAT4	v_ICamPos; 
+	XMFLOAT4	I_vCamPos; 
 }MAINPASS;
 
 typedef struct tagMaterial

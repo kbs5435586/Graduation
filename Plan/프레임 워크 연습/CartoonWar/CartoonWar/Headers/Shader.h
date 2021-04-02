@@ -16,10 +16,8 @@ public:
 													DEPTH_STENCIL_TYPE eDepthType = DEPTH_STENCIL_TYPE::LESS, 
 													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD);
 public:
-	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, 
-											_matrix matProj, MAINPASS& output);
-	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView,_matrix matProj, 
-											_matrix I_matView, _matrix I_matProj,MAINPASS& output , bool ff);
+	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output);
+	HRESULT								SetUp_OnShaderT(_matrix matWorld, _matrix matView,_matrix matProj, MAINPASS& output);
 	HRESULT								SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass);
 public:
 	ComPtr<ID3D12PipelineState>			GetPipeLine() { return m_pPipeLineState; }

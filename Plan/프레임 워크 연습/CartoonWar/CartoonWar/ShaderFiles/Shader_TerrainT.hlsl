@@ -29,10 +29,10 @@ VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut =(VS_OUT)0;
 
-	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);
-	vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f), matWorld));
-	vOut.vTexUV		= vIn.vTexUV;
+	//vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
+	//vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);
+	//vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f), matWorld));
+	//vOut.vTexUV		= vIn.vTexUV;
 
 
 

@@ -135,7 +135,7 @@ void CCube::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 
 
-	m_pShaderComT->SetUp_OnShader(matWorld, I_matView, I_matProj, tMainPassT);
+	m_pShaderComT->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPassT);
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->UpdateTable();

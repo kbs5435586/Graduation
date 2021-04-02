@@ -40,7 +40,7 @@ HRESULT CInventory_Camera::Ready_GameObject(void* pArg)
 
 _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 {
-	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
 	//
