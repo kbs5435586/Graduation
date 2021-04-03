@@ -8,8 +8,16 @@ CStructedBuffer::CStructedBuffer()
 
 HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElementCnt, void* pArg)
 {
+
+	
 	m_iElementSize = iElementSize;
 	m_iElementCnt = iElementCnt;
+
+
+	if (pArg)
+		m_eState = D3D12_RESOURCE_STATE_COPY_DEST;
+	else
+		m_eState = D3D12_RESOURCE_STATE_COMMON;
 
 	D3D12_RESOURCE_DESC tBufferDesc = {};
 
@@ -33,6 +41,54 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 		m_eState,
 		nullptr,
 		IID_PPV_ARGS(&m_pBuffer));
+
+
+
+	if (pArg)
+	{
+		CDevice::GetInstance()->Open();
+		// 읽기 버퍼 생성
+		ComPtr<ID3D12Resource> pReadBuffer = nullptr;
+
+		// ReadBuffer Desc
+		D3D12_RESOURCE_DESC tReadBufferDesc = {};
+		tReadBufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		tReadBufferDesc.Width = m_iElementSize * m_iElementCnt;
+		tReadBufferDesc.Height = 1;
+		tReadBufferDesc.DepthOrArraySize = 1;
+		tReadBufferDesc.MipLevels = 1;
+		tReadBufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+		tReadBufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		tReadBufferDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		tReadBufferDesc.SampleDesc.Count = 1;
+		tReadBufferDesc.SampleDesc.Quality = 0;
+
+		CD3DX12_HEAP_PROPERTIES temp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+		// Buffer Create
+		CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
+			&temp,
+			D3D12_HEAP_FLAG_NONE,
+			&tReadBufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&pReadBuffer));
+
+		UINT8* pVertexDataBegin = nullptr;
+		D3D12_RANGE readRange{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+		pReadBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+		memcpy(pVertexDataBegin, pArg, (tReadBufferDesc.Width * tReadBufferDesc.Height));
+		pReadBuffer->Unmap(0, nullptr);
+
+		CD3DX12_RESOURCE_BARRIER _temp = CD3DX12_RESOURCE_BARRIER::Transition(m_pBuffer.Get()
+			, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
+		// Resource Copy
+		CDevice::GetInstance()->GetCmdLst()->CopyBufferRegion(m_pBuffer.Get(), 0, pReadBuffer.Get(), 0, m_iElementSize * m_iElementCnt);
+		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &_temp);
+		CDevice::GetInstance()->Close();
+		CDevice::GetInstance()->WaitForFenceEvent();
+
+		m_eState = D3D12_RESOURCE_STATE_COMMON;
+	}
 
 	// UAV 생성
 	// UAV 를 저장할 DescriptorHeap Create
@@ -81,8 +137,7 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pBuffer.Get(), &srvDesc, handle);
 
 	return S_OK;
-}
-
+}   
 HRESULT CStructedBuffer::Ready_StructedBuffer()
 {
 	return S_OK;

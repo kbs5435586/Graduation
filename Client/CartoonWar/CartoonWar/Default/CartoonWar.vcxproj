@@ -425,9 +425,6 @@
     <None Include="..\ShaderFiles\Shader_Particle.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Compute_Particle.hlsl">
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\ShaderFiles\Shader_Animation.hlsl">
       <FileType>Document</FileType>
     </None>

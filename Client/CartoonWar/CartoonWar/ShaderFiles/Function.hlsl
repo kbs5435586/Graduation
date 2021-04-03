@@ -242,8 +242,8 @@ void Skinning(inout float3 _vPos, inout float3 _vTangent, inout float3 _vBinorma
 		if (0.f == _vWeight[i])
 			continue;
 
-		matrix matBone = { float4(1.f,0.f,0.f,0.f), float4(0.f,1.f,0.f,0.f), float4(0.f,0.f,1.f,0.f), float4(0.f,0.f,0.f,1.f) };
-		//matrix matBone = GetBoneMat((int)_vIndices[i], _iRowIdx);
+		//matrix matBone = { float4(1.f,0.f,0.f,0.f), float4(0.f,1.f,0.f,0.f), float4(0.f,0.f,1.f,0.f), float4(0.f,0.f,0.f,1.f) };
+		matrix matBone = GetBoneMat((int)_vIndices[i], _iRowIdx);
 
 		info.vPos += (mul(float4(_vPos, 1.f), matBone) * _vWeight[i]).xyz;
 		info.vTangent += (mul(float4(_vTangent, 0.f), matBone) * _vWeight[i]).xyz;

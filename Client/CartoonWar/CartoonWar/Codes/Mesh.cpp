@@ -931,9 +931,7 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 		}
 
 		m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)vecOffset.size(), vecOffset.data());
-		m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans)
-			, (UINT)vecOffset.size() * iFrameCnt
-			, vecFrameTrans.data());
+		m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans), (UINT)vecOffset.size() * iFrameCnt , vecFrameTrans.data());
 
 
 	}

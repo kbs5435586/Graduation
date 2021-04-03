@@ -46,7 +46,8 @@ struct PS_OUT
 
 VS_OUT	VS_Main(VS_IN vIn)
 {
-	VS_OUT vOut;
+	VS_OUT vOut = (VS_OUT)0.f;
+	StructuredBuffer<float4x4> matTemp = g_arrFinalBoneMat;
 
 	Skinning(vIn.vPosition, vIn.vTangent, vIn.vBinormal, vIn.vNormal , vIn.vWeight, vIn.vIndices, 0);
 
@@ -55,7 +56,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	vOut.vNormal	= normalize(mul(float4(vIn.vNormal, 0.f), matWVP).xyz);
 	vOut.vTangent	= normalize(mul(float4(vIn.vTangent, 0.f), matWVP).xyz);
 	vOut.vBinormal	= normalize(mul(float4(vIn.vBinormal, 0.f), matWVP).xyz);
-	vOut.vTemp = vIn.vWeight;
+	vOut.vTemp		= vIn.vIndices;
 
 	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
@@ -73,7 +74,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vTempNormal, vIn.vWorldPos);
 
 	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV) ;
-	float4	vOutColor_ = g_texture0.Sample(Sampler0, vIn.vTexUV) ;
+	float4	vOutColor_ = vIn.vTemp;
 
 	float4	vLightDir = normalize(tLight[0].vLightDir);
 
@@ -102,11 +103,11 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	vOutColor = vOutColor*(vMtrlDif + vMtrlAmb+ vMtrlSpec +vMtrlEmiv);
 
-	vOut.vDiffuseTex = vOutColor_;
+	vOut.vDiffuseTex = vOutColor;
 	vOut.vNormalTex = vOutColor;
 	//vOut.vShadeTex = vIn.vTemp;
 	//vOut.vSpecularTex = vIn.vTemp;
-	vOut.vPointLightTex = vOutColor;
+	vOut.vPointLightTex = vOutColor_;
 	vOut.vPositionTex = vOutColor;
 	//vOut.vNormalTex = vTempNormal;
 	//vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;

@@ -104,7 +104,7 @@ D3D12_BLEND_DESC g_arrBlendDesc[(UINT)BLEND_TYPE::END] =
 			D3D12_COLOR_WRITE_ENABLE_ALL,
 		},
 	}
-};
+}; 
 
 
 

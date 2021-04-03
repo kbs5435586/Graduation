@@ -327,13 +327,13 @@ void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegis
 	m_pDevice->CopyDescriptors(1, &hDestHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	//if (pTextureCom->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
-	//{
-	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pTextureCom->GetTexture(iIdx)
-	//		, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
-	//	m_pCsCmdList->ResourceBarrier(1, &temp);
-	//	pTextureCom->SetState(D3D12_RESOURCE_STATE_COMMON);
-	//}
+	if (pTextureCom->GetState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS)
+	{
+		CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pTextureCom->GetTexture(iIdx)
+			, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+		m_pCsCmdList->ResourceBarrier(1, &temp);
+		pTextureCom->SetState(D3D12_RESOURCE_STATE_COMMON);
+	}
 
 }
 
@@ -446,7 +446,7 @@ void CDevice::SetUpUAVToRegister(CUAV* pUAV, UAV_REGISTER eRegister)
 	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	// 리소스 상태 변경
+	//// 리소스 상태 변경
 	//if (pUAV->GetState() == D3D12_RESOURCE_STATE_COMMON)
 	//{
 	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pUAV->GetTexture().Get()
@@ -472,7 +472,7 @@ void CDevice::SetUpUAVToRegister_CS(CStructedBuffer* pBuffer, UAV_REGISTER eRegi
 	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
 		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	// 리소스 상태 변경
+	//// 리소스 상태 변경
 	//if (pBuffer->GetState() == D3D12_RESOURCE_STATE_COMMON)
 	//{
 	//	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(pBuffer->GetBuffer().Get()
@@ -611,7 +611,7 @@ HRESULT CDevice::Create_RootSignature()
 	D3D12_DESCRIPTOR_RANGE range = {};
 
 	range.BaseShaderRegister = 0;
-	range.NumDescriptors =11;	  
+	range.NumDescriptors = (UINT)CONST_REGISTER::END;
 	range.OffsetInDescriptorsFromTableStart = -1;
 	range.RegisterSpace = 0;
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;

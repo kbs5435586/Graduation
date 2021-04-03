@@ -269,9 +269,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
 	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock01.FBX"))))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/House/Monster.fbx"))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
+		CMesh::Create(L"../Bin/Resource/Mesh/Static/House/Monster.fbx"))))
+		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc01",
 	//	CStatic_Mesh::Create("../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Mesh/Orc_01_Mesh.FBX"))))
 	//	return E_FAIL;
@@ -406,7 +406,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Particle",
-		CShader::Create(L"../ShaderFiles/Shader_Compute_Particle.hlsl", "CS_Main"))))
+		CShader::Create(L"../ShaderFiles/Shader_Particle.hlsl", "CS_Main"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Particle",

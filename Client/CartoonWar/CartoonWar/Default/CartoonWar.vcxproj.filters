@@ -1031,9 +1031,6 @@
     <None Include="..\ShaderFiles\Shader_Particle.hlsl">
       <Filter>96. ShaderFiles\06. Particle</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Compute_Particle.hlsl">
-      <Filter>96. ShaderFiles\06. Particle</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_Animation.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>

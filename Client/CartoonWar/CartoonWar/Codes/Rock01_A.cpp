@@ -25,7 +25,7 @@ HRESULT CRock01_A::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
- 	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 
@@ -63,30 +63,34 @@ void CRock01_A::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
-	
 
 
-	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	m_pMeshCom->SetUp_Texture();
 
 
 
 	//m_pComputeShaderCom->UpdateData_CS();
-	m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 
-	CDevice::GetInstance()->UpdateTable();
+
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
-	for (_uint i = 0; i < iSubsetNum; ++i)
+	for (_uint i = 0; i < 1; ++i)
 	{
+
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+		m_pMeshCom->SetUp_Texture();
+
+
+		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
 

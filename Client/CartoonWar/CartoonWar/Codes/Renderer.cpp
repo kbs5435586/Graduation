@@ -51,6 +51,8 @@ HRESULT CRenderer::Render_RenderGroup()
 
 	Render_Alpha();
 
+
+
 	Render_UI();
 	Render_Blend();
 

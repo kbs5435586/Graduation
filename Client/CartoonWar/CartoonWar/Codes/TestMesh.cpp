@@ -112,8 +112,6 @@ void CTestMesh::Render_GameObject()
 	{
 
 		m_pMeshCom->Render_Mesh(i);
-
-		_int ij = 0;
 	}
 
 	Safe_Release(pManagement);

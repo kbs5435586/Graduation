@@ -121,19 +121,19 @@ cbuffer MATERIAL_PARAM : register(b8)
 
 };
 
-Texture2D	g_texture0		: register(t0);
-Texture2D	g_texture1		: register(t1);
-Texture2D	g_texture2		: register(t2);
-Texture2D	g_texture3		: register(t3);
-Texture2D	g_texture4		: register(t4);
-Texture2D	g_texture5		: register(t5);
-TextureCube	g_textureCube	: register(t6);
-StructuredBuffer<matrix> g_arrFinalBoneMat : register(t7);
+Texture2D					g_texture0		: register(t0);
+Texture2D					g_texture1		: register(t1);
+Texture2D					g_texture2		: register(t2);
+Texture2D					g_texture3		: register(t3);
+Texture2D					g_texture4		: register(t4);
+Texture2D					g_texture5		: register(t5);
+TextureCube					g_textureCube	: register(t6);    
+StructuredBuffer<float4x4>	g_arrFinalBoneMat : register(t7);
 
-SamplerState Sampler0		: register(s0);
-SamplerState Sampler1		: register(s1);
-SamplerState Sampler2		: register(s2);
-SamplerState Sampler3		: register(s3);
+SamplerState				Sampler0		: register(s0);
+SamplerState				Sampler1		: register(s1);
+SamplerState				Sampler2		: register(s2);
+SamplerState				Sampler3		: register(s3);
 
 int HasTex(in Texture2D _tex)
 {
@@ -150,25 +150,6 @@ int HasTex(in Texture2D _tex)
 
 
 
-struct tParticle
-{
-	float3 vWorldPos; // 위치	
-	float3 vWorldDir; // 이동 방향
-
-	float m_fCurTime; // 현재 시간
-	float m_fLifeTime; // 최대 생명주기
-
-	int iAlive;
-	int arrPading[3]; // 16 바이트 배수 패딩 바이트
-};
-
-struct tParticleShared
-{
-	int iAddCount;
-	int iCurCount;
-	float fRange; // 랜덤 범위
-	int arrPading;
-};
 
 cbuffer GLOBAL : register(b9)
 {
