@@ -253,7 +253,7 @@ void Skinning(inout float3 _vPos, inout float3 _vTangent, inout float3 _vBinorma
 	
 	}
 
-	_vPos = normalize(info.vPos);
+	_vPos = (info.vPos);
 	_vTangent = normalize(info.vTangent);
 	_vBinormal = normalize(info.vBinormal);
 	_vNormal = normalize(info.vNormal);

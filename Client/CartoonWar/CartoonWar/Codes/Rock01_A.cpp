@@ -74,7 +74,7 @@ void CRock01_A::Render_GameObject()
 
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
-	for (_uint i = 0; i < 1; ++i)
+	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 
 		MAINPASS tMainPass = {};
@@ -88,7 +88,7 @@ void CRock01_A::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 		m_pMeshCom->SetUp_Texture();
 
-
+		 
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);

@@ -14,6 +14,7 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	m_iElementCnt = iElementCnt;
 
 
+
 	if (pArg)
 		m_eState = D3D12_RESOURCE_STATE_COPY_DEST;
 	else
@@ -31,7 +32,7 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	tBufferDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	tBufferDesc.SampleDesc.Count = 1;
 	tBufferDesc.SampleDesc.Quality = 0;
-
+	CDevice::GetInstance()->Open();
 	CD3DX12_HEAP_PROPERTIES temp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	// Buffer Create
 	CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
@@ -42,11 +43,13 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 		nullptr,
 		IID_PPV_ARGS(&m_pBuffer));
 
-
+	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
 
 	if (pArg)
 	{
 		CDevice::GetInstance()->Open();
+		
 		// 읽기 버퍼 생성
 		ComPtr<ID3D12Resource> pReadBuffer = nullptr;
 
@@ -84,11 +87,17 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 		// Resource Copy
 		CDevice::GetInstance()->GetCmdLst()->CopyBufferRegion(m_pBuffer.Get(), 0, pReadBuffer.Get(), 0, m_iElementSize * m_iElementCnt);
 		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &_temp);
-		CDevice::GetInstance()->Close();
-		CDevice::GetInstance()->WaitForFenceEvent();
+
+
+	
 
 		m_eState = D3D12_RESOURCE_STATE_COMMON;
+
+		CDevice::GetInstance()->Close();
+		CDevice::GetInstance()->WaitForFenceEvent();
 	}
+
+	CDevice::GetInstance()->Open();
 
 	// UAV 생성
 	// UAV 를 저장할 DescriptorHeap Create
@@ -135,7 +144,8 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pBuffer.Get(), &srvDesc, handle);
-
+	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
 	return S_OK;
 }   
 HRESULT CStructedBuffer::Ready_StructedBuffer()
