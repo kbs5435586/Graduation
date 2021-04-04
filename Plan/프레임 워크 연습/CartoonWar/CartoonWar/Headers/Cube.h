@@ -32,8 +32,10 @@ private:
 	HRESULT									Ready_Component();
 private:
 	CTransform*								m_pTransformCom = nullptr;
+	CTransform*								m_pTransformComT = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_CubeCol*						m_pBufferCom = nullptr;
+	CBuffer_CubeCol*						m_pBufferComT = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CCollider*								m_pColliderCom[3] = { nullptr };
 

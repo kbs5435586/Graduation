@@ -153,7 +153,7 @@ HRESULT CShader::SetUp_OnShaderT(_matrix matWorld, _matrix matView, _matrix matP
 	output.I_matProj = matProj;
 	output.I_matWV = matWorld * matView;
 	output.I_matWVP = output.I_matWV * matProj;
-	output.vCamPos = (_vec4)&matTemp.m[3][0];
+	output.I_vCamPos = (_vec4)&matTemp.m[3][0];
 
 	return E_NOTIMPL;
 }

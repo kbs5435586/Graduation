@@ -33,7 +33,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	//CManagement::GetInstance()->Subscribe(m_pObserverCom);
 	
 	return NOERROR;
 }
@@ -118,10 +118,10 @@ HRESULT CDebug_Camera::Ready_Component()
 	pManagement->AddRef();
 
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -129,7 +129,7 @@ HRESULT CDebug_Camera::Ready_Component()
 
 void CDebug_Camera::Free()
 {
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 
 	CCamera::Free();
 }
