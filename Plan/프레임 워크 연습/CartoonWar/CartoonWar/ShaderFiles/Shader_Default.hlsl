@@ -28,6 +28,9 @@ VS_OUT	VS_Main(VS_IN vIn)
 	//vOut.I_vPosition = mul(float4(vIn.vPosition, 1.f), I_matWVP);
 	vOut.vColor = vIn.vColor;
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWorld));
+		
+		//float4(1, 1, 1, 1);
+		//
 	return vOut;
 }
 
@@ -41,7 +44,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = vIn.vColor;
 	vOut.vNormalTex  = vNormal;
 	vOut.vShadeTex	 = Calculate_Shade(vNormal);
-	//vOut.vUITex = vIn.I_vPosition;
+
 	return vOut;
 }
 

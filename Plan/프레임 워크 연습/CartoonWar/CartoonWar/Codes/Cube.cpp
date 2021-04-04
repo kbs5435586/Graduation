@@ -34,6 +34,9 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 
+	//m_pTransformComT->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//m_pTransformComT->SetUp_Speed(10.f, XMConvertToRadians(30.f));
+
 	_vec3 vColliderSize = _vec3(2.f, 2.f, 2.f);
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
@@ -121,6 +124,7 @@ void CCube::Render_GameObject()
 	MAINPASS tMainPassT = {};
 	
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix I_matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
@@ -129,15 +133,15 @@ void CCube::Render_GameObject()
 
 	
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
 
 	m_pShaderComT->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPassT);
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
@@ -204,8 +208,10 @@ CGameObject* CCube::Clone_GameObject(void* pArg)
 void CCube::Free()
 {
 	Safe_Release(m_pBufferCom);
+	Safe_Release(m_pBufferComT);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pTransformComT);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderComT);
 
@@ -227,6 +233,11 @@ HRESULT CCube::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Transform", m_pTransformCom)))
 		return E_FAIL;
 
+	m_pTransformComT = (CTransform*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Transform");
+	NULL_CHECK_VAL(m_pTransformComT, E_FAIL);
+	if (FAILED(Add_Component(L"Com_TransformT", m_pTransformComT)))
+		return E_FAIL;
+
 	m_pRendererCom = (CRenderer*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer");
 	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
@@ -236,6 +247,11 @@ HRESULT CCube::Ready_Component()
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
+	m_pBufferComT = (CBuffer_CubeCol*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeCol");
+	NULL_CHECK_VAL(m_pBufferComT, E_FAIL);
+	if (FAILED(Add_Component(L"Com_BufferT", m_pBufferComT)))
+		return E_FAIL;
+
 
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Default");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);

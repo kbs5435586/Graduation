@@ -32,6 +32,8 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 
 	float4				vCamPos;
 
+
+	row_major matrix	I_matWorld;
 	row_major matrix	I_matView;
 	row_major matrix	I_matProj;
 

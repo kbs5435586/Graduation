@@ -25,6 +25,6 @@ protected:
 private:
 	POINT					m_ptMouse;
 	//_vec3					m_vPos;
-	CObserver* m_pObserverCom = nullptr;
+	//CObserver* m_pObserverCom = nullptr;
 };
 
