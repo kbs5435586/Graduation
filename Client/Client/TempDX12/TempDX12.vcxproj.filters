@@ -214,6 +214,9 @@
     <Filter Include="97. Server">
       <UniqueIdentifier>{d738c14c-8bd1-4a41-bc44-25f540a9ad5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Default\011.Wire">
+      <UniqueIdentifier>{985e3261-12ec-4317-a645-5926bf4258b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -426,6 +429,9 @@
     <ClInclude Include="..\..\..\Server\CartoonWarServer\CartoonWarServer\protocol.h">
       <Filter>97. Server</Filter>
     </ClInclude>
+    <ClInclude Include="Wire.h">
+      <Filter>02. GameObject\99. Default\011.Wire</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="TempDX12.ico">
@@ -614,6 +620,9 @@
     </ClCompile>
     <ClCompile Include="Server_Manager.cpp">
       <Filter>97. Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Wire.cpp">
+      <Filter>02. GameObject\99. Default\011.Wire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

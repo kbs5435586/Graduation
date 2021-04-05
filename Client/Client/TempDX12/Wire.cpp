@@ -1,24 +1,24 @@
 #include "framework.h"
-#include "Cube.h"
+#include "Wire.h"
 #include "Management.h"
 
-CCube::CCube(ID3D12Device* pGraphic_Device)
+CWire::CWire(ID3D12Device* pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 
 }
 
-CCube::CCube(const CCube& rhs)
+CWire::CWire(const CWire& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CCube::Ready_Prototype()
+HRESULT CWire::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CCube::Ready_GameObject(void* pArg)
+HRESULT CWire::Ready_GameObject(void* pArg)
 {
 	m_iPassSize = CalcConstantBufferByteSize(sizeof(MAINPASS));
 
@@ -38,7 +38,7 @@ HRESULT CCube::Ready_GameObject(void* pArg)
 	return S_OK;
 }
 
-_int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
+_int CWire::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 {
 	CServer_Manager* pServer = CServer_Manager::GetInstance();
 	if (nullptr == pServer)
@@ -128,7 +128,7 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	return _int();
 }
 
-_int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CWire::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -146,7 +146,7 @@ _int CCube::LastUpdate_GameObject(const _float& fTimeDelta)
 	Safe_Release(server);
 	return _int();
 }
-void CCube::Render_GameObject()
+void CWire::Render_GameObject()
 {
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
@@ -163,7 +163,7 @@ void CCube::Render_GameObject()
 		m_pBufferCom->Render_VIBuffer();
 	}
 }
-HRESULT CCube::CreatePipeLine(CShader* pShader)
+HRESULT CWire::CreatePipeLine(CShader* pShader)
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dPipelineStateDesc;
 	::ZeroMemory(&d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -194,11 +194,11 @@ HRESULT CCube::CreatePipeLine(CShader* pShader)
 
 	return S_OK;
 }
-D3D12_RASTERIZER_DESC CCube::CreateRaterizerState()
+D3D12_RASTERIZER_DESC CWire::CreateRaterizerState()
 {
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
 	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
 	d3dRasterizerDesc.DepthBias = 0;
@@ -211,7 +211,7 @@ D3D12_RASTERIZER_DESC CCube::CreateRaterizerState()
 	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 	return(d3dRasterizerDesc);
 }
-D3D12_DEPTH_STENCIL_DESC CCube::CreateDepthStencilState()
+D3D12_DEPTH_STENCIL_DESC CWire::CreateDepthStencilState()
 {
 	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
 	::ZeroMemory(&d3dDepthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
@@ -233,7 +233,7 @@ D3D12_DEPTH_STENCIL_DESC CCube::CreateDepthStencilState()
 	d3dDepthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
 	return(d3dDepthStencilDesc);
 }
-D3D12_BLEND_DESC CCube::CreateBlendState()
+D3D12_BLEND_DESC CWire::CreateBlendState()
 {
 	D3D12_BLEND_DESC d3dBlendDesc;
 	::ZeroMemory(&d3dBlendDesc, sizeof(D3D12_BLEND_DESC));
@@ -251,7 +251,7 @@ D3D12_BLEND_DESC CCube::CreateBlendState()
 	d3dBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	return(d3dBlendDesc);
 }
-D3D12_INPUT_LAYOUT_DESC CCube::CreateInputLayout()
+D3D12_INPUT_LAYOUT_DESC CWire::CreateInputLayout()
 {
 	UINT nInputElementDescs = 2;
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
@@ -262,7 +262,7 @@ D3D12_INPUT_LAYOUT_DESC CCube::CreateInputLayout()
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
 	return(d3dInputLayoutDesc);
 }
-HRESULT CCube::CreateConstantBuffer()
+HRESULT CWire::CreateConstantBuffer()
 {
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iPassSize);
@@ -295,7 +295,7 @@ HRESULT CCube::CreateConstantBuffer()
 
 	return S_OK;
 }
-HRESULT CCube::Ready_Component()
+HRESULT CWire::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -324,20 +324,20 @@ HRESULT CCube::Ready_Component()
 
 	return S_OK;
 }
-CCube* CCube::Create(ID3D12Device* pGraphic_Device)
+CWire* CWire::Create(ID3D12Device* pGraphic_Device)
 {
-	CCube* pInstance = new CCube(pGraphic_Device);
+	CWire* pInstance = new CWire(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CCube Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CWire Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
-CGameObject* CCube::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CWire::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
-	CCube* pInstance = new CCube(*this);
+	CWire* pInstance = new CWire(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
@@ -349,7 +349,7 @@ CGameObject* CCube::Clone_GameObject(void* pArg, const _uint& iIdx)
 
 	return pInstance;
 }
-void CCube::Free()
+void CWire::Free()
 {
 	if (m_pConstBuffer)
 		m_pConstBuffer->Release();

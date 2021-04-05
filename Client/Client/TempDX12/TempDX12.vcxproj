@@ -227,6 +227,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Typedef.h" />
     <ClInclude Include="VIBuffer.h" />
+    <ClInclude Include="Wire.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation_Controller.cpp" />
@@ -289,6 +290,7 @@
     <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VIBuffer.cpp" />
+    <ClCompile Include="Wire.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TempDX12.rc" />

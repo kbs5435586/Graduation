@@ -100,15 +100,23 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
 		m_player.id = my_packet->id;
-
-		CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-			L"Layer_Cube", L"Com_Transform", m_player.id);
-		_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+		CTransform* pTransform;
+		if (0 == m_player.id)
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", player_index(m_player.id));
+		}
+		else if (1 == m_player.id)
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Wire", L"Com_Transform", player_index(m_player.id));
+		}
+		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 
 		vPos.x = m_player.x = my_packet->x;
 		vPos.y = m_player.y = my_packet->y;
 		vPos.z = m_player.z = my_packet->z;
-		pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		m_player.showCharacter = true;
@@ -126,45 +134,42 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_enter* my_packet = reinterpret_cast<sc_packet_enter*>(ptr);
 		int recv_id = my_packet->id;
+		CTransform* pTransform;
 
 		if (recv_id == m_player.id)
 		{
-			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
 				L"Layer_Cube", L"Com_Transform", recv_id);
-			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 
 			vPos.x = m_player.x = my_packet->x;
 			vPos.y = m_player.y = my_packet->y;
 			vPos.z = m_player.z = my_packet->z;
 			m_player.showCharacter = true;
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
 		else
 		{
 			if (recv_id < NPC_ID_START) // 다른 플레이어 일때
 			{
-				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", recv_id);
-				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-				strcpy_s(m_npcs[recv_id].name, my_packet->name);
-				vPos.x = m_npcs[recv_id].x = my_packet->x;
-				vPos.y = m_npcs[recv_id].y = my_packet->y;
-				vPos.z = m_npcs[recv_id].z = my_packet->z;
-				m_npcs[recv_id].showCharacter = true;
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				if (1 == recv_id) // 다른 플레이어 일때
+				{
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+						L"Layer_Wire", L"Com_Transform", player_index(recv_id));
+				}
 			}
 			else // NPC 일때
 			{
-				CTransform* pTransform_Rect = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Rect", L"Com_Transform", ID_TO_IDX(recv_id));
-				_vec3 vPos = *pTransform_Rect->Get_StateInfo(CTransform::STATE_POSITION);
-				strcpy_s(m_npcs[recv_id].name, my_packet->name);
-				vPos.x = m_npcs[recv_id].x = my_packet->x;
-				vPos.y = m_npcs[recv_id].y = my_packet->y;
-				vPos.z = m_npcs[recv_id].z = my_packet->z;
-				m_npcs[recv_id].showCharacter = true;
-				pTransform_Rect->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Rect", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
+			_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+			strcpy_s(m_npcs[recv_id].name, my_packet->name);
+			vPos.x = m_npcs[recv_id].x = my_packet->x;
+			vPos.y = m_npcs[recv_id].y = my_packet->y;
+			vPos.z = m_npcs[recv_id].z = my_packet->z;
+			m_npcs[recv_id].showCharacter = true;
+			pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		}
 		Safe_Release(managment);
 	}
@@ -178,35 +183,30 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
-
+		CTransform* pTransform;
 		if (recv_id == m_player.id)
 		{
-			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", recv_id);
-
-			_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-			//_vec3 vLook = *pTransform_Cube->
-
-			vPos.x = my_packet->x;
-			vPos.y = my_packet->y;
-			vPos.z = my_packet->z;
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", player_index(recv_id));
+		}
+		else if (recv_id < NPC_ID_START) // 다른 플레이어
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Wire", L"Com_Transform", player_index(recv_id));
 		}
 		else // NPC 
 		{ 
 			if (0 != m_npcs.count(recv_id))
 			{
-				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Rect", L"Com_Transform", ID_TO_IDX(recv_id));
-
-				_vec3 vPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_POSITION);
-
-				vPos.x = my_packet->x;
-				vPos.y = my_packet->y;
-				vPos.z = my_packet->z;
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Rect", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
+		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		vPos.x = my_packet->x;
+		vPos.y = my_packet->y;
+		vPos.z = my_packet->z;
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		Safe_Release(managment);
 	}
 	break;
@@ -219,61 +219,40 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_rotate* my_packet = reinterpret_cast<sc_packet_rotate*>(ptr);
 		int recv_id = my_packet->id;
+		CTransform* pTransform;
 
 		if (recv_id == m_player.id)
 		{
-			CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", recv_id);
-			_vec3 rPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_RIGHT);
-			_vec3 uPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_UP);
-			_vec3 lPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_LOOK);
-
-			rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-			uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-			lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_UP, &uPos);
-			pTransform_Cube->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				L"Layer_Cube", L"Com_Transform", player_index(recv_id));
 		}
 		else // NPC 
 		{
 			if (recv_id < NPC_ID_START) // 다른 플레이어
 			{
-				CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", recv_id);
-				_vec3 rPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_RIGHT);
-				_vec3 uPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_UP);
-				_vec3 lPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_LOOK);
-
-				rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-				uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-				lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_UP, &uPos);
-				pTransform_Cube->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+					L"Layer_Wire", L"Com_Transform", player_index(recv_id));
 			}
 			else
 			{
 				if (0 != m_npcs.count(recv_id))
 				{
-					CTransform* pTransform_Cube = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-						L"Layer_Rect", L"Com_Transform", ID_TO_IDX(recv_id));
-					_vec3 rPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_RIGHT);
-					_vec3 uPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_UP);
-					_vec3 lPos = *pTransform_Cube->Get_StateInfo(CTransform::STATE_LOOK);
-
-					rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-					uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-					lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-
-					pTransform_Cube->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-					pTransform_Cube->Set_StateInfo(CTransform::STATE_UP, &uPos);
-					pTransform_Cube->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+						L"Layer_Rect", L"Com_Transform", npc_id_to_idx(recv_id));
 				}
 			}
 		}
+		_vec3 rPos = *pTransform->Get_StateInfo(CTransform::STATE_RIGHT);
+		_vec3 uPos = *pTransform->Get_StateInfo(CTransform::STATE_UP);
+		_vec3 lPos = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+
+		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+
+		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
+		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
 		Safe_Release(managment);
 	}
 	break;
@@ -296,17 +275,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_npc_add_ok* my_packet = reinterpret_cast<sc_packet_npc_add_ok*>(ptr);
 		int npc_id = my_packet->id;
-
-		//if (0 != m_npcs.count(npc_id))
-		//{
-		//	CManagement* pManagement = CManagement::GetInstance();
-		//	if (nullptr == pManagement)
-		//		return;
-		//	pManagement->AddRef();
-		//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, L"Layer_Rect", nullptr, nullptr, ID_TO_IDX(npc_id))))
-		//		return;
-		//	Safe_Release(pManagement);
-		//}
 	}
 	break;
 	default:
@@ -441,6 +409,21 @@ void CServer_Manager::send_change_formation_packet()
 	send_packet(&l_packet);
 }
 
+short CServer_Manager::player_index(unsigned short id)
+{
+	return 1;
+}
+
+short CServer_Manager::npc_idx_to_id(unsigned short id)
+{
+	return id + 29;
+}
+
+short CServer_Manager::npc_id_to_idx(unsigned short id)
+{
+	return id - 29;;
+}
+
 void CServer_Manager::send_npc_act_packet(unsigned char act)
 {
 	if (m_player.id < NPC_ID_START)
@@ -475,6 +458,11 @@ bool CServer_Manager::Get_ShowPlayer()
 	return m_player.showCharacter;
 }
 
+bool CServer_Manager::Get_SelectPlayer()
+{
+	return m_player.isSelected;
+}
+
 bool CServer_Manager::Get_ShowNPC(int npc_index)
 {
 	return m_npcs[IDX_TO_ID(npc_index)].showCharacter;
@@ -490,9 +478,19 @@ high_resolution_clock::time_point CServer_Manager::Get_ChangeFormation_Cooltime(
 	return change_formation_ct;
 }
 
+high_resolution_clock::time_point CServer_Manager::Get_Select_Cooltime()
+{
+	return select_ct;
+}
+
 high_resolution_clock::time_point CServer_Manager::Get_AddNPC_Cooltime()
 {
 	return add_npc_ct;
+}
+
+void CServer_Manager::Set_SelectPlayer(bool change)
+{
+	m_player.isSelected = change;
 }
 
 void CServer_Manager::Set_AddNPC_CoolTime(high_resolution_clock::time_point ct)
@@ -503,4 +501,9 @@ void CServer_Manager::Set_AddNPC_CoolTime(high_resolution_clock::time_point ct)
 void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct)
 {
 	change_formation_ct = ct;
+}
+
+void CServer_Manager::Set_Select_CoolTime(high_resolution_clock::time_point ct)
+{
+	select_ct = ct;
 }

@@ -20,6 +20,7 @@ private:
     short PORT = 3500;
     high_resolution_clock::time_point add_npc_ct;
     high_resolution_clock::time_point change_formation_ct;
+    high_resolution_clock::time_point select_ct;
 
 public:
     void MainServer(CManagement* managment);
@@ -37,13 +38,24 @@ public:
     void send_npc_act_packet(unsigned char act);
     void send_change_formation_packet();
 
+    short player_index(unsigned short id);
+    short npc_idx_to_id(unsigned short id);
+    short npc_id_to_idx(unsigned short id);
+
+
+
     bool Get_ShowPlayer();
+    bool Get_SelectPlayer();
     bool Get_ShowNPC(int npc_index);
     short Get_PlayerID();
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
+    high_resolution_clock::time_point Get_Select_Cooltime();
+
+    void Set_SelectPlayer(bool change);
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
+    void Set_Select_CoolTime(high_resolution_clock::time_point ct);
 
     void err_quit(const char* msg);
     void disconnect();

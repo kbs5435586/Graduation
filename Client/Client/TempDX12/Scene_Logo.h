@@ -20,6 +20,7 @@ private:
 private:
 	HRESULT					Ready_Layer_Camera(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_Cube(const _tchar* pLayerTag);
+	HRESULT					Ready_Layer_Wire(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_Rect(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_TextureRect(const _tchar* pLayerTag);
 	HRESULT					Ready_Layer_Terrain(const _tchar* pLayerTag);

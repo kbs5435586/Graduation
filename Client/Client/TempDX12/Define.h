@@ -56,8 +56,6 @@ const float g_Far = 1000.f;
 
 //------ Server
 #define WM_SOCKET (WM_USER+1)
-#define IDX_TO_ID(x) x + 29
-#define ID_TO_IDX(x) x - 29
 //------
 
 

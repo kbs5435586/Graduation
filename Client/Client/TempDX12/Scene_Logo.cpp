@@ -5,8 +5,7 @@
 
 #include "Cube.h"
 #include "Rect.h"
-//#include "Cube1.h"
-//#include "Rect1.h"
+#include "Wire.h"
 #include "TextureRect.h"
 #include "Terrain.h"
 #include "Texture_Terrain.h"
@@ -66,10 +65,8 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect", CRect::Create(m_pGraphic_Device))))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube1", CCube::Create(m_pGraphic_Device))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect1", CRect::Create(m_pGraphic_Device))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Wire", CWire::Create(m_pGraphic_Device))))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TextureRect", CTextureRect::Create(m_pGraphic_Device))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create(m_pGraphic_Device))))
@@ -127,10 +124,8 @@ HRESULT CScene_Logo::Ready_Layer()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Rect(L"Layer_Rect")))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Cube(L"Layer_Cube")))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Rect(L"Layer_Rect")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Wire(L"Layer_Wire")))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -199,11 +194,28 @@ HRESULT CScene_Logo::Ready_Layer_Cube(const _tchar* pLayerTag)
 		return E_FAIL;
 
 	pManagement->AddRef();
-	//for (int i = 0; i < MAX_USER; i++)
-	//{
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
+			return E_FAIL;
+	}
+	Safe_Release(pManagement);
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Ready_Layer_Wire(const _tchar* pLayerTag)
+{
+	CManagement* pManagement = CManagement::GetInstance();
+
+	if (nullptr == pManagement)
 		return E_FAIL;
-	//}
+
+	pManagement->AddRef();
+	for (int i = 0; i < MAX_USER; i++)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Wire", SCENE_LOGO, pLayerTag)))
+			return E_FAIL;
+	}
 	Safe_Release(pManagement);
 	return S_OK;
 }
