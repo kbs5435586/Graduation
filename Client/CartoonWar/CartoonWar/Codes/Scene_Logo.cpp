@@ -58,7 +58,7 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	if (FAILED(Ready_Prototype_Component(pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Prototype_GameObject(pManagement)))
+	if (FAILED(Ready_Prototype_GameObject(pManagement))) 
 		return E_FAIL;
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;

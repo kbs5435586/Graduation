@@ -793,7 +793,9 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 	m_tRenderInfo.VertexBufferView = tVtxView;
 	m_tRenderInfo.vecVertices = vecMesh;
 
+
 	UINT iIdxBufferCount = (UINT)pContainer->vecIdx.size();
+	//m_tRenderInfo.vecIdx = pContainer->vecIdx;
 
 	for (UINT i = 0; i < iIdxBufferCount; ++i)
 	{
@@ -848,8 +850,6 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 
 		m_tRenderInfo.vecIndices.push_back(tIndices);
 	}
-
-
 
 	if (!pContainer->bAnimation)
 		return S_OK;
@@ -937,6 +937,33 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 
 
 	}
+
+
+
+	return S_OK;
+}
+
+HRESULT CMesh::Save(const _tchar* pFilePath)
+{
+	FILE* pFile = nullptr;
+	errno_t err = _wfopen_s(&pFile, pFilePath, L"wb");
+	
+	UINT iVtxCount = (UINT)m_vecContainer[0].vecPos.size();
+	UINT iVtxSize = sizeof(MESH);
+	m_tRenderInfo.vecVertices;
+
+	fwrite(&iVtxCount, sizeof(int), 1, pFile);
+	fwrite(&iVtxSize, sizeof(int), 1, pFile);
+
+	_uint iByteSize = iVtxCount*iVtxSize;
+	fwrite(&iByteSize, sizeof(int), 1, pFile);
+	for (auto& iter : m_tRenderInfo.vecVertices)
+	{
+		fwrite(&iter, sizeof(MESH), 1, pFile);
+	}
+
+	m_tRenderInfo.vecIndices;
+
 
 
 

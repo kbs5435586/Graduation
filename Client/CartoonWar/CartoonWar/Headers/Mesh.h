@@ -68,6 +68,7 @@ private:
     wstring                         GetMtrlTextureName(FbxSurfaceMaterial* _pSurface, const char* _pMtrlProperty);
 private:
     HRESULT                         Ready_MeshData(tContainer* pContainer);
+    HRESULT                         Save(const _tchar* pFilePath);
 public:
     void                            Render_Mesh(_uint iIdx);
 public:

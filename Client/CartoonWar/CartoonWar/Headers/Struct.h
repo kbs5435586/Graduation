@@ -229,6 +229,7 @@ struct RenderInfo
 	int							iVtxSize;
 	vector<MESH>				vecVertices;
 	vector<Indices>				vecIndices;
+	vector<UINT>				vecIdx;
 
 };
 
