@@ -34,4 +34,4 @@ using namespace chrono;
 constexpr float MOVE_SPEED = 0.3f;
 constexpr float ROTATE_SPEED = 0.3f;
 constexpr int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
-
+constexpr float FORMATION_SPACE = 10.f;

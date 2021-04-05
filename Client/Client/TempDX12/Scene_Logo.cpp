@@ -5,6 +5,8 @@
 
 #include "Cube.h"
 #include "Rect.h"
+//#include "Cube1.h"
+//#include "Rect1.h"
 #include "TextureRect.h"
 #include "Terrain.h"
 #include "Texture_Terrain.h"
@@ -64,6 +66,10 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect", CRect::Create(m_pGraphic_Device))))
 		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube1", CCube::Create(m_pGraphic_Device))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect1", CRect::Create(m_pGraphic_Device))))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TextureRect", CTextureRect::Create(m_pGraphic_Device))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create(m_pGraphic_Device))))
@@ -121,6 +127,10 @@ HRESULT CScene_Logo::Ready_Layer()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Rect(L"Layer_Rect")))
 		return E_FAIL;
+	//if (FAILED(Ready_Layer_Cube(L"Layer_Cube")))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Rect(L"Layer_Rect")))
+	//	return E_FAIL;
 	return S_OK;
 }
 

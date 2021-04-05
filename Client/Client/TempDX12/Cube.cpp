@@ -127,13 +127,13 @@ _int CCube::Update_GameObject(const _float& fTimeDelta) // 서버 보낼값 결과값
 	if (GetAsyncKeyState('O') & 0x8000)
 	{
 		pServer->AddRef();
-		pServer->send_rotate_packet();
+		pServer->send_rotate_packet(TURN_LEFT);
 		Safe_Release(pServer);
 	}
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
 		pServer->AddRef();
-		pServer->send_move_packet(GO_RIGHT);
+		pServer->send_rotate_packet(TURN_RIGHT);
 		Safe_Release(pServer);
 	}
 	return _int();

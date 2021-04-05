@@ -405,11 +405,12 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	send_packet(&m_packet);
 }
 
-void CServer_Manager::send_rotate_packet()
+void CServer_Manager::send_rotate_packet(unsigned char dir)
 {
 	cs_packet_rotate m_packet;
 	m_packet.type = CS_PACKET_ROTATE;
 	m_packet.size = sizeof(m_packet);
+	m_packet.dir = dir;
 	send_packet(&m_packet);
 }
 

@@ -36,7 +36,7 @@ public:
 	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 	
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
-	void do_rotate(int user_id);
+	void do_rotate(int user_id, char dir);
 	void set_formation(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initialize_clients(); // 객체 연결 성공시 초기화

@@ -31,7 +31,7 @@ public:
 
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);
-    void send_rotate_packet();
+    void send_rotate_packet(unsigned char dir);
     void send_login_ok_packet();
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);

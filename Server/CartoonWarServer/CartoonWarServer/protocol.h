@@ -110,6 +110,8 @@ constexpr unsigned char GO_LEFT = 2;
 constexpr unsigned char GO_RIGHT = 3;
 constexpr unsigned char GO_FORWARD = 4;
 constexpr unsigned char GO_BACK = 5;
+constexpr unsigned char TURN_LEFT = 6;
+constexpr unsigned char TURN_RIGHT = 7;
 
 struct cs_packet_login
 {
@@ -129,6 +131,7 @@ struct cs_packet_rotate
 {
 	char	size;
 	char	type;
+	char	dir;
 };
 
 struct cs_packet_add_npc
