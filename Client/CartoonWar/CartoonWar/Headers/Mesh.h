@@ -10,7 +10,7 @@ private:
     CMesh(const CMesh& rhs);
     virtual ~CMesh() = default;
 public:
-    HRESULT                         Ready_Mesh(const wstring& pFilePath);
+    HRESULT                         Ready_Mesh(const wstring& pFilePath, const _tchar* pSaveFilePath);
 private:
     void                            Load_MeshFromNode(FbxNode* pNode);
     void                            Load_Mesh(FbxMesh* pMesh);
@@ -69,6 +69,7 @@ private:
 private:
     HRESULT                         Ready_MeshData(tContainer* pContainer);
     HRESULT                         Save(const _tchar* pFilePath);
+    HRESULT                         Load(const _tchar* pFilePath);
 public:
     void                            Render_Mesh(_uint iIdx);
 public:
@@ -77,7 +78,8 @@ public:
 private:
     RenderInfo                      m_tRenderInfo = {};
 public:
-    static CMesh*                   Create(const wstring& pFilePath);
+    static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
+    static CMesh*                   Create_Load(const _tchar* pFilePath);
     virtual CComponent*             Clone_Component(void* pArg);
 private:
     FbxScene*                       m_pScene = nullptr;

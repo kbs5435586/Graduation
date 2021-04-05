@@ -210,10 +210,10 @@ typedef struct tagMtrInfo
 
 struct Indices
 {
+	ComPtr<ID3D12Resource>		pIB;
 	int							iIndexCnt;
 	DXGI_FORMAT					eFormat;
 	void*						pSystem;
-	ComPtr<ID3D12Resource>		pIB;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
 };
 
@@ -229,8 +229,6 @@ struct RenderInfo
 	int							iVtxSize;
 	vector<MESH>				vecVertices;
 	vector<Indices>				vecIndices;
-	vector<UINT>				vecIdx;
-
 };
 
 
