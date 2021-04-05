@@ -81,6 +81,8 @@ HRESULT CMesh::Ready_Mesh(const wstring& pFilePath)
 	Load_Texture();
 
 
+
+
 	return S_OK;
 }
 
