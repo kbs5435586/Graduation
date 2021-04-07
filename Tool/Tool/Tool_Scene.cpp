@@ -62,11 +62,6 @@ HRESULT CTool_Scene::Ready_Component_Texture(CManagement* pManagement)
 
 HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Tree",
-		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/Tree/", L"tree_1.x"))))
-		return E_FAIL;
-
-
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks01",
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainRocks01.x"))))
 		return E_FAIL;
@@ -96,6 +91,52 @@ HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_MountainRocks03",
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"MountainsRocks03.x"))))
 		return E_FAIL;
+
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_tree_1",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"tree_1.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_tree_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_tree_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_tree_02",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_tree_02.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_tree_pine_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_tree_pine_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_flower_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_flower_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_flower_02",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_flower_02.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_flower_03",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_flower_03.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_plant_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_plant_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_plant_02",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_plant_02.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_rock_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_rock_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_rock_02",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_rock_02.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_rock_03",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_rock_03.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_rock_small_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_rock_small_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_rpgpp_lt_rock_small_02",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_rock_small_02.x"))))
+		return E_FAIL;
+
+
 
 	return S_OK;
 }

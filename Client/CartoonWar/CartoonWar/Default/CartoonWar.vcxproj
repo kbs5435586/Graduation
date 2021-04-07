@@ -212,6 +212,7 @@
     <ClInclude Include="..\Headers\Rock01_D.h" />
     <ClInclude Include="..\Headers\Rock02.h" />
     <ClInclude Include="..\Headers\Rock02_A.h" />
+    <ClInclude Include="..\Headers\Rock02_B.h" />
     <ClInclude Include="..\Headers\Rock03.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
@@ -230,7 +231,9 @@
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
+    <ClInclude Include="..\Headers\TestAnimMesh.h" />
     <ClInclude Include="..\Headers\TestCube.h" />
+    <ClInclude Include="..\Headers\TestHatchMesh.h" />
     <ClInclude Include="..\Headers\TestMesh.h" />
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
@@ -312,6 +315,7 @@
     <ClCompile Include="..\Codes\Rock01_D.cpp" />
     <ClCompile Include="..\Codes\Rock02.cpp" />
     <ClCompile Include="..\Codes\Rock02_A.cpp" />
+    <ClCompile Include="..\Codes\Rock02_B.cpp" />
     <ClCompile Include="..\Codes\Rock03.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
@@ -328,7 +332,9 @@
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
+    <ClCompile Include="..\Codes\TestAnimMesh.cpp" />
     <ClCompile Include="..\Codes\TestCube.cpp" />
+    <ClCompile Include="..\Codes\TestHatchMesh.cpp" />
     <ClCompile Include="..\Codes\TestMesh.cpp" />
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />

@@ -118,7 +118,7 @@ BOOL CUnitTool::OnInitDialog()
 	if (iter_find != m_mapGameObject.end())
 		return FALSE;
 
-	for (_int i = 0; i < 9; ++i)
+	for (_int i = 0; i < 23; ++i)
 	{
 	
 		if (i == 0)
@@ -156,6 +156,62 @@ BOOL CUnitTool::OnInitDialog()
 		else if (i == 8)
 		{
 			strName = L"MountainRock03";
+		}
+		else if (i == 9)
+		{
+			strName = L"tree_1";
+		}
+		else if (i == 10)
+		{
+			strName = L"rpgpp_lt_tree_01";
+		}
+		else if (i == 11)
+		{
+			strName = L"rpgpp_lt_tree_02";
+		}
+		else if (i == 12)
+		{
+			strName = L"rpgpp_lt_tree_pine_01";
+		}
+		else if (i == 13)
+		{
+			strName = L"rpgpp_lt_flower_01";
+		}
+		else if (i == 14)
+		{
+			strName = L"rpgpp_lt_flower_02";
+		}
+		else if (i == 15)
+		{
+			strName = L"rpgpp_lt_flower_03";
+		}
+		else if (i ==16)
+		{
+			strName = L"rpgpp_lt_plant_01";
+		}
+		else if (i == 17)
+		{
+			strName = L"rpgpp_lt_plant_02";
+		}
+		else if (i == 18)
+		{
+			strName = L"rpgpp_lt_rock_01";
+		}
+		else if (i == 19)
+		{
+			strName = L"rpgpp_lt_rock_02";
+		}
+		else if (i == 20)
+		{
+			strName = L"rpgpp_lt_rock_03";
+		}
+		else if (i == 21)
+		{
+			strName = L"rpgpp_lt_rock_small_01";
+		}
+		else if (i == 22)
+		{
+			strName = L"rpgpp_lt_rock_small_02";
 		}
 		
 
@@ -226,6 +282,77 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 		m_pComponentTag = L"Component_StaticMesh_MountainRocks03";
 		m_pLayerTag = L"Layer_MountainRock03";
 	}
+	else if (iSelect == 9)
+	{
+		m_pComponentTag = L"Component_StaticMesh_tree_1";
+		m_pLayerTag = L"Layer_tree_1";
+	}
+	else if (iSelect == 10)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_tree_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_tree_01";
+	}
+	else if (iSelect == 11)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_tree_02";
+		m_pLayerTag = L"Layer_rpgpp_lt_tree_02";
+	}
+	else if (iSelect == 12)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_tree_pine_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_tree_pine_01";
+	}
+	else if (iSelect == 13)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_flower_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_flower_01";
+	}
+	else if (iSelect == 14)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_flower_02";
+		m_pLayerTag = L"Layer_rpgpp_lt_flower_02";
+	}
+	else if (iSelect == 15)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_flower_03";
+		m_pLayerTag = L"Layer_rpgpp_lt_flower_03";
+	}
+	else if (iSelect == 16)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_plant_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_plant_01";
+	}
+	else if (iSelect == 17)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_plant_02";
+		m_pLayerTag = L"Layer_rpgpp_lt_plant_02";
+	}
+	else if (iSelect == 18)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_rock_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_rock_01";
+	}
+	else if (iSelect == 19)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_rock_02";
+		m_pLayerTag = L"Layer_rpgpp_lt_rock_02";
+	}
+	else if (iSelect == 20)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_rock_03";
+		m_pLayerTag = L"Layer_rpgpp_lt_rock_03";
+	}
+	else if (iSelect == 21)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_rock_small_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_rock_small_01";
+	}
+	else if (iSelect == 22)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_rock_small_02";
+		m_pLayerTag = L"Layer_rpgpp_lt_rock_small_02";
+	}
+	
 
 
 	m_pGameObjectTag = L"GameObject_Temp";

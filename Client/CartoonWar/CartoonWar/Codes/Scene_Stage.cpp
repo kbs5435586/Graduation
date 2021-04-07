@@ -26,7 +26,21 @@
 //Particle
 #include "Particle_Default.h"
 
+#include "Rock01.h"
 #include "Rock01_A.h"
+#include "Rock01_B.h"
+#include "Rock01_C.h"
+#include "Rock01_D.h"
+
+#include "Rock02.h"
+#include "Rock02_A.h"
+#include "Rock02_B.h"
+
+#include "Rock03.h"
+
+#include "TestAnimMesh.h"
+#include "TestHatchMesh.h"
+#include "TestMesh.h"
 
 
 CScene_Stage::CScene_Stage()

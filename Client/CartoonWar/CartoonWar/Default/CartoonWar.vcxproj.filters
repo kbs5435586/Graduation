@@ -340,9 +340,6 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\06. UI_Depth">
       <UniqueIdentifier>{732327b6-bbd6-4861-a668-db50590ba3ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. TestMesh">
-      <UniqueIdentifier>{22975039-a9a6-464c-a97e-9721ea9c2be6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="95. Loaders\00. FbxLoader">
       <UniqueIdentifier>{1d2a8cfd-33c9-48bf-addc-a759fdcbca13}</UniqueIdentifier>
     </Filter>
@@ -384,6 +381,21 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
       <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. Tree">
+      <UniqueIdentifier>{0dc0f715-195c-4e2e-bbde-c64ce2d63f0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test">
+      <UniqueIdentifier>{22b3d187-d2ab-4990-8ac3-9f4dd71ea498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test\99. TestMesh">
+      <UniqueIdentifier>{22975039-a9a6-464c-a97e-9721ea9c2be6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test\98. TestAnimMesh">
+      <UniqueIdentifier>{96030d62-0d11-4080-95f8-7376d27c2237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test\97. TestHatchMesh">
+      <UniqueIdentifier>{2aa04e3e-e525-45d1-b5f8-99ab695e1677}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -664,7 +676,7 @@
       <Filter>02. GameObject\97. UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\TestMesh.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. TestMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\99. TestMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\FbxLoader.h">
       <Filter>95. Loaders\00. FbxLoader</Filter>
@@ -701,6 +713,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Rock03.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03\00. Rock03</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\TestHatchMesh.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\97. TestHatchMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\TestAnimMesh.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\98. TestAnimMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock02_B.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\02. Rock02_B</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -955,7 +976,7 @@
       <Filter>02. GameObject\97. UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestMesh.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. TestMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\99. TestMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\FbxLoader.cpp">
       <Filter>95. Loaders\00. FbxLoader</Filter>
@@ -992,6 +1013,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Rock03.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03\00. Rock03</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TestHatchMesh.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\97. TestHatchMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TestAnimMesh.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\98. TestAnimMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock02_B.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\02. Rock02_B</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
