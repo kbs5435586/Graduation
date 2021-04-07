@@ -2,7 +2,9 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
+class CMesh;
 class CShader;
+class CAnimator;
 class CRock01_D :
     public CGameObject
 {

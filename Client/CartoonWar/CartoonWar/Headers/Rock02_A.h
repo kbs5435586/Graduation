@@ -5,13 +5,13 @@ class CRenderer;
 class CMesh;
 class CShader;
 class CAnimator;
-class CRock01_B :
+class CRock02_A :
     public CGameObject
 {
 private:
-	CRock01_B();
-	CRock01_B(const CRock01_B& rhs);
-	virtual ~CRock01_B() = default;
+	CRock02_A();
+	CRock02_A(const CRock02_A& rhs);
+	virtual ~CRock02_A() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CRock01_B*						Create();
+	static CRock02_A*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint & iIdx = 0) override;
 private:
 	virtual void							Free();

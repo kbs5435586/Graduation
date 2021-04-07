@@ -693,6 +693,15 @@
     <ClInclude Include="..\Headers\Buffer_Point.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Rock02.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\00. Rock02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock02_A.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\01. Rock02_A</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Rock03.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03\00. Rock03</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -974,6 +983,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Point.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock02.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\00. Rock02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock02_A.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\01. Rock02_A</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Rock03.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\02. Rock03\00. Rock03</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
