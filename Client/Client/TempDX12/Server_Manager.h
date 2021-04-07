@@ -37,6 +37,7 @@ public:
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
     void send_change_formation_packet();
+    void update_key_input();
 
     short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);

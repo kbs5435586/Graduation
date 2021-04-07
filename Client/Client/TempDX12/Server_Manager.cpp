@@ -104,12 +104,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		if (0 == m_player.id)
 		{
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", player_index(m_player.id));
+				L"Layer_Cube", L"Com_Transform", 0);
 		}
 		else if (1 == m_player.id)
 		{
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Wire", L"Com_Transform", player_index(m_player.id));
+				L"Layer_Wire", L"Com_Transform", 0);
 		}
 		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -152,10 +152,15 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (recv_id < NPC_ID_START) // 다른 플레이어 일때
 			{
+				if (0 == recv_id) // 다른 플레이어 일때
+				{
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+						L"Layer_Cube", L"Com_Transform", 0);
+				}
 				if (1 == recv_id) // 다른 플레이어 일때
 				{
 					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-						L"Layer_Wire", L"Com_Transform", player_index(recv_id));
+						L"Layer_Wire", L"Com_Transform", 0);
 				}
 			}
 			else // NPC 일때
@@ -187,12 +192,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		if (recv_id == m_player.id)
 		{
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", player_index(recv_id));
+				L"Layer_Cube", L"Com_Transform", 0);
 		}
 		else if (recv_id < NPC_ID_START) // 다른 플레이어
 		{
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Wire", L"Com_Transform", player_index(recv_id));
+				L"Layer_Wire", L"Com_Transform", 0);
 		}
 		else // NPC 
 		{ 
@@ -224,14 +229,14 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		if (recv_id == m_player.id)
 		{
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", player_index(recv_id));
+				L"Layer_Cube", L"Com_Transform", 0);
 		}
 		else // NPC 
 		{
 			if (recv_id < NPC_ID_START) // 다른 플레이어
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", player_index(recv_id));
+					L"Layer_Wire", L"Com_Transform", 0);
 			}
 			else
 			{
@@ -409,9 +414,91 @@ void CServer_Manager::send_change_formation_packet()
 	send_packet(&l_packet);
 }
 
+void CServer_Manager::update_key_input()
+{
+	if ((GetAsyncKeyState('1') & 0x8000))
+	{
+		send_npc_act_packet(DO_ATTACK);
+	}
+	if ((GetAsyncKeyState('2') & 0x8000))
+	{
+		send_npc_act_packet(DO_DEFENCE);
+	}
+	if ((GetAsyncKeyState('3') & 0x8000))
+	{
+		send_npc_act_packet(DO_HOLD);
+	}
+	if ((GetAsyncKeyState('4') & 0x8000))
+	{
+		send_npc_act_packet(DO_FOLLOW);
+	}
+	if ((GetAsyncKeyState('5') & 0x8000))
+	{
+		send_npc_act_packet(DO_RANDMOVE);
+	}
+	if ((GetAsyncKeyState('6') & 0x8000))
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- Get_ChangeFormation_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			send_change_formation_packet();
+			Set_ChangeFormation_CoolTime(high_resolution_clock::now());
+		}
+	}
+
+	if (GetAsyncKeyState('M') & 0x8000 && true == Get_SelectPlayer())
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- Get_AddNPC_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			send_add_npc_packet();
+			Set_AddNPC_CoolTime(high_resolution_clock::now());
+		}
+	}
+	if (GetAsyncKeyState('E') & 0x8000 && true == Get_SelectPlayer())
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- Get_Select_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			if (true == Get_SelectPlayer())
+				Set_SelectPlayer(false);
+			else if (false == Get_SelectPlayer())
+				Set_SelectPlayer(true);
+			Set_Select_CoolTime(high_resolution_clock::now());
+		}
+	}
+	if (GetAsyncKeyState('T') & 0x8000)
+	{
+		send_move_packet(GO_FORWARD);
+	}
+	if (GetAsyncKeyState('F') & 0x8000)
+	{
+		send_move_packet(GO_LEFT);
+	}
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		send_move_packet(GO_BACK);
+	}
+	if (GetAsyncKeyState('H') & 0x8000)
+	{
+		send_move_packet(GO_RIGHT);
+	}
+	if (GetAsyncKeyState('O') & 0x8000)
+	{
+		send_rotate_packet(TURN_LEFT);
+	}
+	if (GetAsyncKeyState('P') & 0x8000)
+	{
+		send_rotate_packet(TURN_RIGHT);
+	}
+}
+
 short CServer_Manager::player_index(unsigned short id)
 {
-	return 1;
+	return id - 30;
 }
 
 short CServer_Manager::npc_idx_to_id(unsigned short id)
@@ -465,7 +552,7 @@ bool CServer_Manager::Get_SelectPlayer()
 
 bool CServer_Manager::Get_ShowNPC(int npc_index)
 {
-	return m_npcs[IDX_TO_ID(npc_index)].showCharacter;
+	return m_npcs[npc_idx_to_id(npc_index)].showCharacter;
 }
 
 short CServer_Manager::Get_PlayerID()

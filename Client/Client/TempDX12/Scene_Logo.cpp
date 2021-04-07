@@ -194,11 +194,10 @@ HRESULT CScene_Logo::Ready_Layer_Cube(const _tchar* pLayerTag)
 		return E_FAIL;
 
 	pManagement->AddRef();
-	for (int i = 0; i < MAX_USER; i++)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
-			return E_FAIL;
-	}
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -211,11 +210,10 @@ HRESULT CScene_Logo::Ready_Layer_Wire(const _tchar* pLayerTag)
 		return E_FAIL;
 
 	pManagement->AddRef();
-	for (int i = 0; i < MAX_USER; i++)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Wire", SCENE_LOGO, pLayerTag)))
-			return E_FAIL;
-	}
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Wire", SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -229,12 +227,19 @@ HRESULT CScene_Logo::Ready_Layer_Rect(const _tchar* pLayerTag)
 
 	pManagement->AddRef();
 
+	CServer_Manager* pServer = CServer_Manager::GetInstance();
+	if (nullptr == pServer)
+		return E_FAIL;
+
+	pServer->AddRef();
+
 	for (int i = NPC_ID_START; i < MAX_NPC; i++)
 	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, pLayerTag, nullptr, nullptr, ID_TO_IDX(i))))
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", SCENE_LOGO, pLayerTag, nullptr, nullptr, pServer->npc_id_to_idx(i))))
 			return E_FAIL;
 
 	}
+	Safe_Release(pServer);
 	Safe_Release(pManagement);
 	return S_OK;
 }

@@ -11,9 +11,11 @@ _IMPLEMENT_SINGLETON(CManagement)
 CManagement::CManagement()
 	: m_pObject_Manager(CGameObject_Manager::GetInstance())
 	, m_pComponent_Manager(CComponent_Manager::GetInstance())
+	, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
+	m_pServer_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -93,6 +95,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 {
 	if (nullptr == m_pScene)
 		return -1;
+	m_pServer_Manager->update_key_input();
 
 	_int	iProcessCodes = 0;
 
@@ -181,5 +184,5 @@ void CManagement::Free()
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pScene);
-	//Safe_Release(m_pServer_Manager);
+	Safe_Release(m_pServer_Manager);
 }
