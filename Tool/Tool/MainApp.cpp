@@ -212,15 +212,6 @@ HRESULT CMainApp::Ready_Test_NaviMesh()
 
 HRESULT CMainApp::Create_FbxManager()
 {
-	if (nullptr != g_FbxManager && g_FbxIOSetting != nullptr)
-		return E_FAIL;
-	g_FbxManager = FbxManager::Create();
-
-	g_FbxIOSetting = FbxIOSettings::Create(g_FbxManager, IOSROOT);
-
-	g_FbxManager->SetIOSettings(g_FbxIOSetting);
-	FbxString	strFbxPath = FbxGetApplicationDirectory();
-	g_FbxManager->LoadPluginsDirectory(strFbxPath.Buffer());
 
 	return S_OK;
 }

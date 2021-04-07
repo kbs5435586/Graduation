@@ -10,6 +10,3 @@ extern _tchar*		m_gLayerTag;
 extern _bool		m_IsMouseClicked;
 extern _bool		IsWireFrame;
 extern _bool		IsPlay;
-
-extern FbxManager*		g_FbxManager;
-extern FbxIOSettings*	g_FbxIOSetting;

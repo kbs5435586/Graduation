@@ -9,29 +9,30 @@ class CRock01_B :
     public CGameObject
 {
 private:
-    CRock01_B();
-    CRock01_B(const CRock01_B& rhs);
-    virtual ~CRock01_B() = default;
+	CRock01_B();
+	CRock01_B(const CRock01_B& rhs);
+	virtual ~CRock01_B() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float& fTimeDelta);
-	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
+	virtual _int							Update_GameObject(const _float & fTimeDelta);
+	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CRock01_B*						Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint & iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CStatic_Mesh*							m_pMeshCom = nullptr;
+	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-
+	CShader*								m_pComputeShaderCom = nullptr;
+	CAnimator*								m_pAnimCom = nullptr;
 
 };
 

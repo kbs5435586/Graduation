@@ -68,8 +68,6 @@ _bool			m_IsMouseClicked = false;
 _bool			IsWireFrame = false;
 _bool			IsPlay = false;
 
-FbxManager*		g_FbxManager = nullptr;
-FbxIOSettings*	g_FbxIOSetting = nullptr;
 // CToolApp √ ±‚
 
 BOOL CToolApp::InitInstance()

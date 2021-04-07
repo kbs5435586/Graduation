@@ -64,15 +64,6 @@ void CRock01_A::Render_GameObject()
 	pManagement->AddRef();
 
 
-
-
-
-
-
-	//m_pComputeShaderCom->UpdateData_CS();
-
-
-
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{

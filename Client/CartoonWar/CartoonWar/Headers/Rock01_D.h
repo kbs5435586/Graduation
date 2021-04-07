@@ -27,7 +27,9 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	//CStatic_Mesh*							m_pMeshCom = nullptr;
+	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pComputeShaderCom = nullptr;
+	CAnimator*								m_pAnimCom = nullptr;
 };
 
