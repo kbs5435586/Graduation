@@ -25,8 +25,8 @@ HRESULT CUI_MP::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	m_fX = 600.f;
-	m_fY = 200.f;
+	m_fX = 700.f;
+	m_fY = 300.f;
 
 	m_fSizeX = 150.f;
 	m_fSizeY = 150.f;
@@ -154,7 +154,7 @@ HRESULT CUI_MP::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

@@ -30,10 +30,10 @@ VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut =(VS_OUT)0;
 
-	//vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
-	//vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);
-	//vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f), matWorld));
-	//vOut.vTexUV		= vIn.vTexUV;
+	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);
+	vOut.vNormal	= normalize(mul(float4(vIn.vNormal,0.f), matWorld));
+	vOut.vTexUV		= vIn.vTexUV;
 
 
 
@@ -43,29 +43,29 @@ VS_OUT VS_Main(VS_IN vIn)
 PS_OUT PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
-	//LIGHT tCol = (LIGHT)0.f;
-	//
-	////vNorm += normalize(mul(tLight[i].vLightDir, matWorld));
-	//for (int i = 0; i < iNumLight; ++i)
-	//{
-	//	//LIGHT tCurCol	 = Calculate_Light(i, vIn.vNormal, vIn.vWorldPos);
-	//	//tCol.vDiffuse	+= tCurCol.vDiffuse;
-	//	//tCol.vAmbient	+= tCurCol.vAmbient;
-	//	//tCol.vSpecular	+= tCurCol.vSpecular;
-	//}
-	//float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	//float4 vNormal = float4((vIn.vNormal.xyz * 2.f) - 1.f, 0.f);
-	////float4 vOutColor	 = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	////float4 vNormal		 = float4((vIn.vNormal.xyz*2.f) - 1.f, 0.f);
-	//
-	//vOut.vDiffuseTex	= vOutColor;
-	//vOut.vNormalTex		= vNormal;
-	//vOut.vShadeTex		= Calculate_Shade(vNormal);
-	//vOut.vSpecularTex	= tCol.vSpecular;
-	//
-	//
-	////vOut.vTarget2		 = tCol.vAmbient;
-	////vOut.vTarget4		 = tCol.vSpecular;
+	LIGHT tCol = (LIGHT)0.f;
+	
+	//vNorm += normalize(mul(tLight[i].vLightDir, matWorld));
+	for (int i = 0; i < iNumLight; ++i)
+	{
+		//LIGHT tCurCol	 = Calculate_Light(i, vIn.vNormal, vIn.vWorldPos);
+		//tCol.vDiffuse	+= tCurCol.vDiffuse;
+		//tCol.vAmbient	+= tCurCol.vAmbient;
+		//tCol.vSpecular	+= tCurCol.vSpecular;
+	}
+	float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4 vNormal = float4((vIn.vNormal.xyz * 2.f) - 1.f, 0.f);
+	//float4 vOutColor	 = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//float4 vNormal		 = float4((vIn.vNormal.xyz*2.f) - 1.f, 0.f);
+	
+	vOut.vDiffuseTex	= vOutColor;
+	vOut.vNormalTex		= vNormal;
+	vOut.vShadeTex		= Calculate_Shade(vNormal);
+	vOut.vSpecularTex	= tCol.vSpecular;
+	
+	
+	//vOut.vTarget2		 = tCol.vAmbient;
+	//vOut.vTarget4		 = tCol.vSpecular;
 
 	return vOut;
 }
