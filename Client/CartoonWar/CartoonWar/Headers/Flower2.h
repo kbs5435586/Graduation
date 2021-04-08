@@ -4,14 +4,13 @@ class CTransform;
 class CRenderer;
 class CMesh;
 class CShader;
-class CTexture;
-class CTestHatchMesh :
+class CFlower2 :
 	public CGameObject
 {
 private:
-	CTestHatchMesh();
-	CTestHatchMesh(const CTestHatchMesh& rhs);
-	virtual ~CTestHatchMesh() = default;
+	CFlower2();
+	CFlower2(const CFlower2& rhs);
+	virtual ~CFlower2() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,17 +20,17 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CTestHatchMesh*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	static CFlower2* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
-	CTransform*								m_pTransformCom = nullptr;
-	CRenderer*								m_pRendererCom = nullptr;
-	CMesh*									m_pMeshCom = nullptr;
-	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom[2] = {nullptr};
+	CTransform* m_pTransformCom = nullptr;
+	CRenderer* m_pRendererCom = nullptr;
+	CMesh* m_pMeshCom = nullptr;
+	CShader* m_pShaderCom = nullptr;
+
 
 };
 

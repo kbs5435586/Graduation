@@ -161,9 +161,13 @@
     <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
+    <ClInclude Include="..\Headers\Bush0.h" />
+    <ClInclude Include="..\Headers\Bush1.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
     <ClInclude Include="..\Headers\Cell.h" />
+    <ClInclude Include="..\Headers\Cloud0.h" />
+    <ClInclude Include="..\Headers\Cloud1.h" />
     <ClInclude Include="..\Headers\Collider.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
@@ -180,6 +184,9 @@
     <ClInclude Include="..\Headers\Extern.h" />
     <ClInclude Include="..\Headers\FbxLoader.h" />
     <ClInclude Include="..\Headers\Fire.h" />
+    <ClInclude Include="..\Headers\Flower0.h" />
+    <ClInclude Include="..\Headers\Flower1.h" />
+    <ClInclude Include="..\Headers\Flower2.h" />
     <ClInclude Include="..\Headers\Frame.h" />
     <ClInclude Include="..\Headers\FrameManager.h" />
     <ClInclude Include="..\Headers\Frustum.h" />
@@ -204,7 +211,10 @@
     <ClInclude Include="..\Headers\Orc01.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
+    <ClInclude Include="..\Headers\Plant0.h" />
+    <ClInclude Include="..\Headers\Plant1.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
+    <ClInclude Include="..\Headers\Rock0.h" />
     <ClInclude Include="..\Headers\Rock01.h" />
     <ClInclude Include="..\Headers\Rock01_A.h" />
     <ClInclude Include="..\Headers\Rock01_B.h" />
@@ -214,6 +224,11 @@
     <ClInclude Include="..\Headers\Rock02_A.h" />
     <ClInclude Include="..\Headers\Rock02_B.h" />
     <ClInclude Include="..\Headers\Rock03.h" />
+    <ClInclude Include="..\Headers\Rock1.h" />
+    <ClInclude Include="..\Headers\Rock2.h" />
+    <ClInclude Include="..\Headers\Rock3.h" />
+    <ClInclude Include="..\Headers\Rock4.h" />
+    <ClInclude Include="..\Headers\Rock5.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -239,6 +254,9 @@
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\TimerManager.h" />
     <ClInclude Include="..\Headers\Transform.h" />
+    <ClInclude Include="..\Headers\Tree0.h" />
+    <ClInclude Include="..\Headers\Tree1.h" />
+    <ClInclude Include="..\Headers\Tree2.h" />
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UAV.h" />
     <ClInclude Include="..\Headers\UAVManager.h" />
@@ -271,9 +289,13 @@
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
+    <ClCompile Include="..\Codes\Bush0.cpp" />
+    <ClCompile Include="..\Codes\Bush1.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
+    <ClCompile Include="..\Codes\Cloud0.cpp" />
+    <ClCompile Include="..\Codes\Cloud1.cpp" />
     <ClCompile Include="..\Codes\Collider.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
@@ -286,6 +308,9 @@
     <ClCompile Include="..\Codes\Device.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
+    <ClCompile Include="..\Codes\Flower0.cpp" />
+    <ClCompile Include="..\Codes\Flower1.cpp" />
+    <ClCompile Include="..\Codes\Flower2.cpp" />
     <ClCompile Include="..\Codes\Frame.cpp" />
     <ClCompile Include="..\Codes\FrameManager.cpp" />
     <ClCompile Include="..\Codes\Frustum.cpp" />
@@ -307,7 +332,10 @@
     <ClCompile Include="..\Codes\Orc01.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
+    <ClCompile Include="..\Codes\Plant0.cpp" />
+    <ClCompile Include="..\Codes\Plant1.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\Rock0.cpp" />
     <ClCompile Include="..\Codes\Rock01.cpp" />
     <ClCompile Include="..\Codes\Rock01_A.cpp" />
     <ClCompile Include="..\Codes\Rock01_B.cpp" />
@@ -317,6 +345,11 @@
     <ClCompile Include="..\Codes\Rock02_A.cpp" />
     <ClCompile Include="..\Codes\Rock02_B.cpp" />
     <ClCompile Include="..\Codes\Rock03.cpp" />
+    <ClCompile Include="..\Codes\Rock1.cpp" />
+    <ClCompile Include="..\Codes\Rock2.cpp" />
+    <ClCompile Include="..\Codes\Rock3.cpp" />
+    <ClCompile Include="..\Codes\Rock4.cpp" />
+    <ClCompile Include="..\Codes\Rock5.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
@@ -340,6 +373,9 @@
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\TimerManager.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
+    <ClCompile Include="..\Codes\Tree0.cpp" />
+    <ClCompile Include="..\Codes\Tree1.cpp" />
+    <ClCompile Include="..\Codes\Tree2.cpp" />
     <ClCompile Include="..\Codes\UAV.cpp" />
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
@@ -438,6 +474,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Animation.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Mesh_Default.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

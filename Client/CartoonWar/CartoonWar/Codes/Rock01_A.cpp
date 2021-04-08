@@ -36,10 +36,7 @@ HRESULT CRock01_A::Ready_GameObject(void* pArg)
 
 _int CRock01_A::Update_GameObject(const _float& fTimeDelta)
 {
-	if (GetAsyncKeyState(VK_LEFT))
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	if (GetAsyncKeyState(VK_RIGHT))
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
+
 
 	return _int();
 }

@@ -49,7 +49,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT vOut = (VS_OUT)0.f;
 	StructuredBuffer<float4x4> matTemp = g_arrFinalBoneMat;
 
-	Skinning(vIn.vPosition, vIn.vTangent, vIn.vBinormal, vIn.vNormal , vIn.vWeight, vIn.vIndices, 0);
+	//Skinning(vIn.vPosition, vIn.vTangent, vIn.vBinormal, vIn.vNormal , vIn.vWeight, vIn.vIndices, 0);
 
 	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vWorldPos  = mul(float4(vIn.vPosition, 1.f), matWorld);

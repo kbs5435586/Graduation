@@ -361,6 +361,8 @@ void CMesh::GetTangent(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int i
 	int iTangentCnt = pMesh->GetElementTangentCount();
 	if (1 != iTangentCnt)
 		assert(NULL); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
+	if (iTangentCnt == 0)
+		return;
 
 	// 탄젠트 data 의 시작 주소
 	FbxGeometryElementTangent* pTangent = pMesh->GetElementTangent();
@@ -390,7 +392,7 @@ void CMesh::GetTangent(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int i
 
 void CMesh::GetNormal(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int iVtxOrder)
 {
-	int iTangentCnt = pMesh->GetElementTangentCount();
+	int iTangentCnt = pMesh->GetNodeCount();
 	if (1 != iTangentCnt)
 		assert(NULL); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
 
@@ -425,6 +427,8 @@ void CMesh::GetBinormal(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int 
 	int iBinormalCnt = pMesh->GetElementBinormalCount();
 	if (1 != iBinormalCnt)
 		assert(NULL); // 정점 1개가 포함하는 종법선 정보가 2개 이상이다.
+	if (iBinormalCnt == 0)
+		return;
 
 	// 종법선 data 의 시작 주소
 	FbxGeometryElementBinormal* pBinormal = pMesh->GetElementBinormal();

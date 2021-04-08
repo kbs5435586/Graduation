@@ -4,14 +4,13 @@ class CTransform;
 class CRenderer;
 class CMesh;
 class CShader;
-class CTexture;
-class CTestHatchMesh :
+class CPlant1 :
 	public CGameObject
 {
 private:
-	CTestHatchMesh();
-	CTestHatchMesh(const CTestHatchMesh& rhs);
-	virtual ~CTestHatchMesh() = default;
+	CPlant1();
+	CPlant1(const CPlant1& rhs);
+	virtual ~CPlant1() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,17 +20,17 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CTestHatchMesh*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	static CPlant1* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
-	CTransform*								m_pTransformCom = nullptr;
-	CRenderer*								m_pRendererCom = nullptr;
-	CMesh*									m_pMeshCom = nullptr;
-	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom[2] = {nullptr};
+	CTransform* m_pTransformCom = nullptr;
+	CRenderer* m_pRendererCom = nullptr;
+	CMesh* m_pMeshCom = nullptr;
+	CShader* m_pShaderCom = nullptr;
+
 
 };
 

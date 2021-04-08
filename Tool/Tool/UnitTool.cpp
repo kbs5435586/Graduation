@@ -118,7 +118,7 @@ BOOL CUnitTool::OnInitDialog()
 	if (iter_find != m_mapGameObject.end())
 		return FALSE;
 
-	for (_int i = 0; i < 23; ++i)
+	for (_int i = 0; i < 25; ++i)
 	{
 	
 		if (i == 0)
@@ -212,6 +212,14 @@ BOOL CUnitTool::OnInitDialog()
 		else if (i == 22)
 		{
 			strName = L"rpgpp_lt_rock_small_02";
+		}
+		else if (i == 22)
+		{
+			strName = L"rpgpp_lt_bush_01";
+		}
+		else if (i == 22)
+		{
+			strName = L"rpgpp_lt_bush_02";
 		}
 		
 
@@ -351,6 +359,16 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 	{
 		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_rock_small_02";
 		m_pLayerTag = L"Layer_rpgpp_lt_rock_small_02";
+	}
+	else if (iSelect == 23)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_bush_01";
+		m_pLayerTag = L"Layer_rpgpp_lt_bush_01";
+	}
+	else if (iSelect == 24)
+	{
+		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_bush_02";
+		m_pLayerTag = L"Layer_rpgpp_lt_bush_02";
 	}
 	
 

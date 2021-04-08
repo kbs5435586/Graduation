@@ -1,23 +1,23 @@
 #include "framework.h"
 #include "Management.h"
-#include "TestHatchMesh.h"
+#include "Tree1.h"
 
-CTestHatchMesh::CTestHatchMesh()
+CTree1::CTree1()
 	: CGameObject()
 {
 }
 
-CTestHatchMesh::CTestHatchMesh(const CTestHatchMesh& rhs)
+CTree1::CTree1(const CTree1& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CTestHatchMesh::Ready_Prototype()
+HRESULT CTree1::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CTestHatchMesh::Ready_GameObject(void* pArg)
+HRESULT CTree1::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -25,27 +25,18 @@ HRESULT CTestHatchMesh::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 5.f,10.f,5.f };
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-
-	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	//m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-
 
 	return S_OK;
 }
 
-_int CTestHatchMesh::Update_GameObject(const _float& fTimeDelta)
+_int CTree1::Update_GameObject(const _float& fTimeDelta)
 {
-	if (GetAsyncKeyState(VK_LEFT))
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	if (GetAsyncKeyState(VK_RIGHT))
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
 	return _int();
 }
 
-_int CTestHatchMesh::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CTree1::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -55,7 +46,7 @@ _int CTestHatchMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CTestHatchMesh::Render_GameObject()
+void CTree1::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -74,8 +65,7 @@ void CTestHatchMesh::Render_GameObject()
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t1);
+		m_pMeshCom->SetUp_Texture();
 
 
 		CDevice::GetInstance()->UpdateTable();
@@ -85,7 +75,7 @@ void CTestHatchMesh::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CTestHatchMesh::CreateInputLayout()
+HRESULT CTree1::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -97,6 +87,8 @@ HRESULT CTestHatchMesh::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 88, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
@@ -104,43 +96,41 @@ HRESULT CTestHatchMesh::CreateInputLayout()
 	return S_OK;
 }
 
-CTestHatchMesh* CTestHatchMesh::Create()
+CTree1* CTree1::Create()
 {
-	CTestHatchMesh* pInstance = new CTestHatchMesh();
+	CTree1* pInstance = new CTree1();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CTestHatchMesh Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTree1 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CTestHatchMesh::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTree1::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
-	CTestHatchMesh* pInstance = new CTestHatchMesh(*this);
+	CTree1* pInstance = new CTree1(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"CTestHatchMesh Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CTree1 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
-void CTestHatchMesh::Free()
+void CTree1::Free()
 {
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom[0]);
-	Safe_Release(m_pTextureCom[1]);
 	CGameObject::Free();
 }
 
-HRESULT CTestHatchMesh::Ready_Component()
+HRESULT CTree1::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -156,24 +146,14 @@ HRESULT CTestHatchMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
-		return E_FAIL;
-
-	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123");
-	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
-		return E_FAIL;
-
-	m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456");
-	NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture1", m_pTextureCom[1])))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
