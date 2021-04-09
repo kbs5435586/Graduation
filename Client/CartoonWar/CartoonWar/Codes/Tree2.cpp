@@ -127,6 +127,7 @@ void CTree2::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
 	CGameObject::Free();
 }
 
@@ -154,6 +155,11 @@ HRESULT CTree2::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

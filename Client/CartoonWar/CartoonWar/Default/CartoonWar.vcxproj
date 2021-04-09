@@ -257,6 +257,8 @@
     <ClInclude Include="..\Headers\Tree0.h" />
     <ClInclude Include="..\Headers\Tree1.h" />
     <ClInclude Include="..\Headers\Tree2.h" />
+    <ClInclude Include="..\Headers\Tree3.h" />
+    <ClInclude Include="..\Headers\Tree4.h" />
     <ClInclude Include="..\Headers\Typedef.h" />
     <ClInclude Include="..\Headers\UAV.h" />
     <ClInclude Include="..\Headers\UAVManager.h" />
@@ -376,6 +378,8 @@
     <ClCompile Include="..\Codes\Tree0.cpp" />
     <ClCompile Include="..\Codes\Tree1.cpp" />
     <ClCompile Include="..\Codes\Tree2.cpp" />
+    <ClCompile Include="..\Codes\Tree3.cpp" />
+    <ClCompile Include="..\Codes\Tree4.cpp" />
     <ClCompile Include="..\Codes\UAV.cpp" />
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />

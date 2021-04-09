@@ -33,8 +33,8 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vReflectTex			= g_texture4.Sample(Sampler0, vIn.vTexUV);
 	float4	vPointLightTex		= g_texture5.Sample(Sampler0, vIn.vTexUV);
 	
-	//float4	vTexMerge = vDiffuseTex * vShadeTex + vSpecTex+ vPointLightTex;
-	float4	vTexMerge = vDiffuseTex;
+	float4	vTexMerge = vDiffuseTex * vShadeTex + vSpecTex+ vPointLightTex;
+	//float4	vTexMerge = vDiffuseTex;
 
 	return  vTexMerge;
 }

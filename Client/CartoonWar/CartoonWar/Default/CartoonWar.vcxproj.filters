@@ -469,6 +469,12 @@
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3">
+      <UniqueIdentifier>{6ffc7681-b1be-40bd-9677-d08150096a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4">
+      <UniqueIdentifier>{f604ba53-1190-4368-be0b-788f18be823a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -849,6 +855,12 @@
     <ClInclude Include="..\Headers\Tree2.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\02. Tree2</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Tree4.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Tree3.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1202,6 +1214,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Tree2.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\02. Tree2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Tree4.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Tree3.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -27,8 +27,8 @@ HRESULT CTestMesh::Ready_GameObject(void* pArg)
 	_vec3 vPos = { 5.f,10.f,5.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
-	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	//m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
+	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 	return S_OK;
@@ -105,7 +105,7 @@ HRESULT CTestMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -116,7 +116,7 @@ HRESULT CTestMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowTree_Cold");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

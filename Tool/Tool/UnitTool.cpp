@@ -213,15 +213,15 @@ BOOL CUnitTool::OnInitDialog()
 		{
 			strName = L"rpgpp_lt_rock_small_02";
 		}
-		else if (i == 22)
+		else if (i == 23)
 		{
 			strName = L"rpgpp_lt_bush_01";
 		}
-		else if (i == 22)
+		else if (i == 24)
 		{
 			strName = L"rpgpp_lt_bush_02";
 		}
-		
+
 
 		m_mapGameObject.insert({ strName, i });
 		m_ListBox_Static.AddString(strName);
@@ -370,7 +370,6 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_bush_02";
 		m_pLayerTag = L"Layer_rpgpp_lt_bush_02";
 	}
-	
 
 
 	m_pGameObjectTag = L"GameObject_Temp";

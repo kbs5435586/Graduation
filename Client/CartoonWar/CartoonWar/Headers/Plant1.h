@@ -4,6 +4,7 @@ class CTransform;
 class CRenderer;
 class CMesh;
 class CShader;
+class CTexture;
 class CPlant1 :
 	public CGameObject
 {
@@ -30,6 +31,7 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CMesh* m_pMeshCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
+	CTexture* m_pTextureCom = nullptr;
 
 
 };

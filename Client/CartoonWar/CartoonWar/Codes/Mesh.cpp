@@ -459,6 +459,8 @@ void CMesh::GetBinormal(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int 
 void CMesh::GetUV(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int iUVIndex)
 {
 	FbxGeometryElementUV* pUV = pMesh->GetElementUV();
+	if (nullptr == pUV)
+		return;
 
 	UINT iUVIdx = 0;
 	if (pUV->GetReferenceMode() == FbxGeometryElement::eDirect)
