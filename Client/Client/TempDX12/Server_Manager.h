@@ -18,6 +18,7 @@ private:
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
     short PORT = 3500;
+    WPARAM m_wparam;
     high_resolution_clock::time_point add_npc_ct;
     high_resolution_clock::time_point change_formation_ct;
     high_resolution_clock::time_point select_ct;
@@ -49,6 +50,7 @@ public:
     bool Get_SelectPlayer();
     bool Get_ShowNPC(int npc_index);
     short Get_PlayerID();
+    WPARAM Get_wParam();
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
     high_resolution_clock::time_point Get_Select_Cooltime();
@@ -57,6 +59,7 @@ public:
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
     void Set_Select_CoolTime(high_resolution_clock::time_point ct);
+    void Set_wParam(WPARAM p);
 
     void err_quit(const char* msg);
     void disconnect();

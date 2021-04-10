@@ -95,7 +95,9 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 {
 	if (nullptr == m_pScene)
 		return -1;
-	m_pServer_Manager->update_key_input();
+
+	if (LOWORD(m_pServer_Manager->Get_wParam()) != WA_INACTIVE) // 활성화 되어있을때
+		m_pServer_Manager->update_key_input();
 
 	_int	iProcessCodes = 0;
 

@@ -447,7 +447,7 @@ void CServer_Manager::update_key_input()
 		}
 	}
 
-	if (GetAsyncKeyState('M') & 0x8000 && true == Get_SelectPlayer())
+	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_AddNPC_Cooltime());
@@ -457,7 +457,7 @@ void CServer_Manager::update_key_input()
 			Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
-	if (GetAsyncKeyState('E') & 0x8000 && true == Get_SelectPlayer())
+	if (GetAsyncKeyState('E') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_Select_Cooltime());
@@ -493,6 +493,11 @@ void CServer_Manager::update_key_input()
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
 		send_rotate_packet(TURN_RIGHT);
+	}
+	if (GetAsyncKeyState('Q') & 0x8000)
+	{
+		disconnect();
+		PostQuitMessage(0);
 	}
 }
 
@@ -560,6 +565,11 @@ short CServer_Manager::Get_PlayerID()
 	return m_player.id;
 }
 
+WPARAM CServer_Manager::Get_wParam()
+{
+	return m_wparam;
+}
+
 high_resolution_clock::time_point CServer_Manager::Get_ChangeFormation_Cooltime()
 {
 	return change_formation_ct;
@@ -593,4 +603,9 @@ void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_p
 void CServer_Manager::Set_Select_CoolTime(high_resolution_clock::time_point ct)
 {
 	select_ct = ct;
+}
+
+void CServer_Manager::Set_wParam(WPARAM p)
+{
+	m_wparam = p;
 }
