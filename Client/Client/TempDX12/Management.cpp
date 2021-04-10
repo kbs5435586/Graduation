@@ -5,7 +5,6 @@
 #include "TimerManager.h"
 #include "FrameManager.h"
 #include "Device.h"
-#include "Server_Manager.h"
 
 _IMPLEMENT_SINGLETON(CManagement)
 CManagement::CManagement()
