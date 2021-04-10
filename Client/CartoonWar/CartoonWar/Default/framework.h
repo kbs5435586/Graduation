@@ -8,6 +8,8 @@
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일
 #include <windows.h>
+#include <WS2tcpip.h>
+#include <MSWSock.h>
 // C 런타임 헤더 파일입니다.
 #include <stdlib.h>
 #include <malloc.h>
@@ -21,9 +23,11 @@
 #include <array>
 #include <fbxsdk.h>
 #include <wincodec.h>
-
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
+
 #define DIRECTINPUT_VERSION 0x0800
 #include <d3d12.h>
 #include <DirectXMath.h>
@@ -59,6 +63,8 @@ using namespace std;
 #pragma comment(lib, "DInput8.lib")
 #pragma comment(lib, "DXGuid.lib")
 
+#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "MSWSock.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex_debug.lib")
@@ -90,6 +96,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
+#include "Server_Manager.h"
 
 
 

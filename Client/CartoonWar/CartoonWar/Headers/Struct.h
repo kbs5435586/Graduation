@@ -1,4 +1,5 @@
 #pragma once
+#include "\GitHub\Graduation\Server\CartoonWarServer\CartoonWarServer\protocol.h"
 
 typedef struct tagPolygon32
 {
@@ -494,4 +495,14 @@ struct tFrameTrans
 	XMFLOAT4	vTranslate;
 	XMFLOAT4	vScale;
 	XMFLOAT4	qRot;
+};
+
+struct Player_Info
+{
+	int		id;
+	float	x;
+	float	y;
+	float	z;
+	char	name[MAX_ID_LEN + 1];
+	bool	showCharacter;
 };
