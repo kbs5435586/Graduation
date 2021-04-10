@@ -140,7 +140,7 @@ HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Add_Prototype_Buffer(pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Add_Prototype_Texture(pManagement)))
+ 	if (FAILED(Ready_Add_Prototype_Texture(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Add_Prototype_Function(pManagement)))
 		return E_FAIL;
