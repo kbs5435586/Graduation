@@ -2,6 +2,12 @@
 // 서버 클라 같이 맞춰줘야 되는 모든건 프로토콜 헤더에
 #define MY_NPC_START(p) 30 + (14 * p)
 #define MY_NPC_END(p) 43 + (14 * p)
+enum Players {
+	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
+	ENUM_PLAYER9, ENUM_PLAYER10, ENUM_PLAYER11, ENUM_PLAYER12, ENUM_PLAYER13, ENUM_PLAYER14, ENUM_PLAYER15, ENUM_PLAYER16,
+	ENUM_PLAYER17, ENUM_PLAYER18, ENUM_PLAYER19, ENUM_PLAYER20, ENUM_PLAYER21, ENUM_PLAYER22, ENUM_PLAYER23, ENUM_PLAYER24,
+	ENUM_PLAYER25, ENUM_PLAYER26, ENUM_PLAYER27, ENUM_PLAYER28, ENUM_PLAYER29, ENUM_PLAYER30, ENUM_PLAYER_END
+};
 
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
@@ -78,7 +84,10 @@ struct sc_packet_enter
 	int id;
 	char name[MAX_ID_LEN];
 	char o_type;
-	float x, y, z;
+	float p_x, p_y, p_z;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
 };
 
 struct sc_packet_leave

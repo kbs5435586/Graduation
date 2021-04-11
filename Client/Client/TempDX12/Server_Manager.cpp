@@ -233,6 +233,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		if (0 != m_objects.count(other_id))
 			m_objects[other_id].showCharacter = false;
+
+		for (int i = MY_NPC_START(other_id); i <= MY_NPC_END(other_id); ++i)
+		{
+			if (0 != m_objects.count(i))
+				m_objects[i].showCharacter = false;
+		}
 	}
 	break;
 	case SC_PACKET_ADD_NPC_OK:
@@ -300,21 +306,13 @@ void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 			process_data(net_buf, recv_result);
 	}
 	// ProcessPacket(char* ptr);
-	sprintf(TempLog, "gSock FD_READ");
 	break;
 	case FD_WRITE:
-
-
-		sprintf(TempLog, "gSock FD_WRITE");
 		break;
-
 	case FD_CLOSE:
 		Free();
-		sprintf(TempLog, "gSock FD_CLOSE");
 		break;
-
 	default:
-		sprintf(TempLog, "gSock Unknown event received: %d", WSAGETSELECTEVENT(lParam));
 		break;
 	}
 }
