@@ -970,10 +970,20 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
-    _vec3* pos = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    packet.x = pos->x;
-    packet.y = pos->y;
-    packet.z = pos->z;
+    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_y = pos._42;
+    packet.p_z = pos._43;
+
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 

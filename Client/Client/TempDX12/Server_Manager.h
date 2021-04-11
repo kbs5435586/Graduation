@@ -11,9 +11,8 @@ private:
 
 private:
     CManagement* managment;
-
-    Player_Info m_player;
-    unordered_map <int, Player_Info> m_npcs;
+    unordered_map <int, Player_Info> m_objects;
+    short my_id;
 
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
@@ -21,10 +20,8 @@ private:
     WPARAM m_wparam;
     high_resolution_clock::time_point add_npc_ct;
     high_resolution_clock::time_point change_formation_ct;
-    high_resolution_clock::time_point select_ct;
 
 public:
-    void MainServer(CManagement* managment);
     BOOL InitServer(HWND hWnd);
 
     void ProcessPacket(char* ptr);
@@ -44,21 +41,17 @@ public:
     short npc_idx_to_id(unsigned short id);
     short npc_id_to_idx(unsigned short id);
 
-
-
     bool Get_ShowPlayer();
-    bool Get_SelectPlayer();
     bool Get_ShowNPC(int npc_index);
     short Get_PlayerID();
-    WPARAM Get_wParam();
+    short Get_ShowOtherPlayer(int id);
+
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
-    high_resolution_clock::time_point Get_Select_Cooltime();
+    WPARAM Get_wParam();
 
-    void Set_SelectPlayer(bool change);
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
-    void Set_Select_CoolTime(high_resolution_clock::time_point ct);
     void Set_wParam(WPARAM p);
 
     void err_quit(const char* msg);

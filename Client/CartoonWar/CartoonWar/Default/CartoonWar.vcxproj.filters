@@ -867,6 +867,9 @@
     <ClInclude Include="..\Headers\Server_Manager.h">
       <Filter>94. Server</Filter>
     </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>94. Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">

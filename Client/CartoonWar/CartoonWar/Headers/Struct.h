@@ -1,5 +1,5 @@
 #pragma once
-#include "\GitHub\Graduation\Server\CartoonWarServer\CartoonWarServer\protocol.h"
+#include "protocol.h"
 
 typedef struct tagPolygon32
 {

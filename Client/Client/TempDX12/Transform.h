@@ -19,6 +19,7 @@ public: // Setter
 	void Set_PositionY(const _float& fY) {
 		m_matWorld.m[3][1] = fY;
 	}
+	void					Set_Matrix(_matrix* mat);
 public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();

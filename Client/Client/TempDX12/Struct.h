@@ -195,7 +195,6 @@ struct Player_Info
 	int		z;
 	char	name[MAX_ID_LEN + 1];
 	bool	showCharacter = false;
-	bool	isSelected = true;
 };
 
 
