@@ -1,5 +1,5 @@
 #pragma once
-#include "protocol.h"
+//#include "protocol.h"
 
 typedef struct tagPolygon32
 {
@@ -498,12 +498,12 @@ struct tFrameTrans
 	XMFLOAT4	qRot;
 };
 
-struct Player_Info
-{
-	int		id;
-	float	x;
-	float	y;
-	float	z;
-	char	name[MAX_ID_LEN + 1];
-	bool	showCharacter;
-};
+//struct Player_Info
+//{
+//	int		id;
+//	float	x;
+//	float	y;
+//	float	z;
+//	char	name[MAX_ID_LEN + 1];
+//	bool	showCharacter;
+//};

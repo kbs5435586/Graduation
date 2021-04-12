@@ -6,6 +6,7 @@
 #define _XM_NO_INTRINSICS_
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 // Windows 헤더 파일
 #include <windows.h>
 #include <WS2tcpip.h>
@@ -96,7 +97,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
-#include "Server_Manager.h"
+//#include "Server_Manager.h"
 
 
 

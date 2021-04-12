@@ -239,7 +239,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			if (0 != m_objects.count(i))
 				m_objects[i].showCharacter = false;
 		}
-	}
+	}fkeh 
 	break;
 	case SC_PACKET_ADD_NPC_OK:
 	{
