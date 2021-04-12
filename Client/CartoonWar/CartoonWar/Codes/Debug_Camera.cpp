@@ -1,7 +1,8 @@
 #include "framework.h"
+#include "Management.h"
 #include "Debug_Camera.h"
 
-CDebug_Camera::CDebug_Camera( )
+CDebug_Camera::CDebug_Camera()
 	: CCamera()
 {
 }
@@ -30,6 +31,9 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
+
+
+
 	return NOERROR;
 }
 
@@ -39,9 +43,14 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pInput_Device)
 		return -1;
 
+	
 	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 	{
-		m_pTransform->Go_Straight(fTimeDelta);
+
+
+			m_pTransform->Go_Straight(fTimeDelta);
+
+
 	}
 	if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
 	{
@@ -55,16 +64,21 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransform->Go_Right(fTimeDelta);
 	}
+
+
+
+
+
 	_long	MouseMove = 0;
 	if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
 	{
 		m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
 	}
 
-	
+
 	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 	{
-		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 	}
 
 
@@ -109,5 +123,6 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, const _uint& iIdx)
 
 void CDebug_Camera::Free()
 {
+	Safe_Release(m_pNaviCom);
 	CCamera::Free();
 }

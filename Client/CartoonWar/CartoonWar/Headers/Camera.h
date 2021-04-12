@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Input.h"
 #include "Transform.h"
+
 class CCamera :
     public CGameObject
 {
@@ -30,14 +31,13 @@ protected:
 	CInput*						m_pInput_Device = nullptr;
 protected:
 	CTransform*					m_pTransform = nullptr;
-	CTransform*					m_pTransform_Reflect = nullptr;
+
 	_matrix						m_matView;
 	CAMERADESC					m_tCameraDesc;
 protected:
 	_matrix						m_matProj;
 	PROJDESC					m_tProjDesc;
-protected:
-	_matrix						m_matReflect;
+
 protected:
 	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
 

@@ -143,12 +143,6 @@ HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_bush_02.x"))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_oakTree",
-		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"oakTree.x"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_pineTree",
-		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"pineTree.x"))))
-		return E_FAIL;
 
 	return S_OK;
 }

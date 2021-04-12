@@ -5,6 +5,7 @@ class CRenderer;
 class CMesh;
 class CShader;
 class CAnimator;
+class CNavigation;
 class CTestAnimMesh :
     public CGameObject
 {
@@ -33,5 +34,9 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
+	CNavigation*							m_pNaviCom = nullptr;
+private:
+	vector<CTexture*>						m_vecTexture;
+	_bool									m_IsAnim = false;
 };
 

@@ -87,7 +87,6 @@ void CTestCube::Render_GameObject()
 
 	REFLECT	tReflect = {};
 
-	tReflect.matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
 
 	m_pShaderCom->SetUp_OnShader(matWorld, tReflect.matReflect, matProj, tMainPass);
 

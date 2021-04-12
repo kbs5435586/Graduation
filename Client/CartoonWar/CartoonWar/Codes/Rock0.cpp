@@ -33,6 +33,7 @@ HRESULT CRock0::Ready_GameObject(void* pArg)
 
 _int CRock0::Update_GameObject(const _float& fTimeDelta)
 {
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	return _int();
 }
 
@@ -66,7 +67,7 @@ void CRock0::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 		m_pMeshCom->SetUp_Texture();
-
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
@@ -147,7 +148,7 @@ HRESULT CRock0::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock1");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;

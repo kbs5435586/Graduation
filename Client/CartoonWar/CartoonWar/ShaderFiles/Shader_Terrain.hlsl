@@ -54,17 +54,17 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vIn.vNormal, vIn.vWorldPos);
-	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
+	AD_Light	tLight_Point_Red = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
 
 	float4	vOutColor	= g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vFogColor	= float4(0.5f, 0.5f, 0.5f, 1.f);
 
 	vOut.vDiffuseTex	= vOutColor;
 	vOut.vNormalTex		= vIn.vNormal;
-	vOut.vShadeTex		= tLight_Point.vShade + tLight_Default.vShade;
-	vOut.vSpecularTex	= tLight_Point.vSpecular + tLight_Default.vSpecular;
+	vOut.vShadeTex		= tLight_Point_Red.vShade + tLight_Default.vShade;
+	vOut.vSpecularTex	= tLight_Point_Red.vSpecular + tLight_Default.vSpecular;
 	//vOut.vPointLightTex = vIn.fFogFactor  * tLight_Point.vDiffuse + (1.f - vIn.fFogFactor)*vFogColor;
-	vOut.vPointLightTex = tLight_Point.vDiffuse;
+	vOut.vPointLightTex = tLight_Point_Red.vDiffuse;
 	vOut.vPositionTex = vIn.vWorldPos;
 
 

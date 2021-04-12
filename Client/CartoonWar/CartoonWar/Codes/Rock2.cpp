@@ -147,7 +147,7 @@ HRESULT CRock2::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock3");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;

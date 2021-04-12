@@ -59,6 +59,17 @@ HRESULT CGameObject::Add_Component(const _tchar* pComponentTag, CComponent* pCom
 	return S_OK;
 }
 
+HRESULT CGameObject::Delete_Component(const _tchar* pComponentTag, CComponent* pComponent)
+{
+	if(nullptr == pComponent)
+		return E_FAIL;
+
+	if (nullptr != Find_Component(pComponentTag))
+		m_mapComponent.erase(pComponentTag);
+	Safe_Release(pComponent);
+	return S_OK;
+}
+
 CComponent* CGameObject::Find_Component(const _tchar* pComponentTag)
 {
 	auto iter = find_if(m_mapComponent.begin(), m_mapComponent.end(), CFinder_Tag(pComponentTag));

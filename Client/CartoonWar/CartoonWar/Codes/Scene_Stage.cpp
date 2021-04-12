@@ -38,6 +38,34 @@
 
 #include "Rock03.h"
 
+
+#include "Bush0.h"
+#include "Bush1.h"
+
+#include "Cloud0.h"
+#include "Cloud1.h"
+
+#include "Flower0.h"
+#include "Flower1.h"
+#include "Flower2.h"
+
+#include "Plant0.h"
+#include "Plant1.h"
+
+#include "Rock0.h"
+#include "Rock1.h"
+#include "Rock2.h"
+#include "Rock3.h"
+#include "Rock4.h"
+#include "Rock5.h"
+
+#include "Tree0.h"
+#include "Tree1.h"
+#include "Tree2.h"
+#include "Tree3.h"
+#include "Tree4.h"
+
+
 #include "TestAnimMesh.h"
 #include "TestHatchMesh.h"
 #include "TestMesh.h"
@@ -69,8 +97,8 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Test.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Map_Demo.dat")))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -122,15 +150,81 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 
 
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_A", CRock01_A::Create())))
-		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMeshHatch", CTestHatchMesh::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestAnim", CTestAnimMesh::Create())))
+		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
 		return E_FAIL;
+
+
+
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01", CRock01::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_A", CRock01_A::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_B", CRock01_B::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_C", CRock01_C::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_D", CRock01_D::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks02", CRock02::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks02_A", CRock02_A::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks02_B", CRock02_B::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks03", CRock03::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_tree_1", CRock03::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_tree_01", CTree0::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_tree_02", CTree1::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_tree_pine_01", CTree2::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_flower_01", CFlower0::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_flower_02", CFlower1::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_flower_03", CFlower2::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_plant_01", CPlant0::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_plant_02", CPlant1::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_01", CRock0::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_02", CRock1::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_03", CRock2::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_small_01", CRock3::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_small_02", CRock4::Create())))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_bush_01", CBush0::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_bush_02", CBush1::Create())))
+		return E_FAIL;
+
+
+
 	return S_OK;
 }
 
@@ -140,8 +234,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-
-	if (FAILED(Ready_Layer_Orc(L"Layer_Orc", pManagement)))
+	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
@@ -153,12 +246,9 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
-		return E_FAIL;
+
 
 
 	return S_OK;
@@ -171,7 +261,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(100.f, 0.f, 0.f, 1.f);
 	tLightInfo.fRange = 100.f;
@@ -187,7 +277,29 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(15.f, 5.5f, 15.f, 1.f);
 	tLightInfo.fRange = 15.f;
-	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Default", tLightInfo)))
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Red", tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
+	tLightInfo.fRange = 15.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+	tLightInfo.fRange = 15.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
 		return E_FAIL;
 
 	return S_OK;
@@ -246,7 +358,7 @@ HRESULT CScene_Stage::Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* 
 
 HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -297,6 +409,14 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
+
+	for (int i = 0; i < 10; ++i)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_rpgpp_lt_tree_01", (_uint)SCENEID::SCENE_STAGE, L"Layer_rpgpp_lt_tree_01")))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -309,7 +429,7 @@ HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement*
 
 HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestMesh", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestAnim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

@@ -24,7 +24,7 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	_vec3 vPos = { 15.f, 5.5f, 15.f };
+	_vec3 vPos = { 15.f, 0.f, 15.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(2.f, 2.f, 2.f);
 	return S_OK;
@@ -50,13 +50,13 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return -1;
+	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	//if (nullptr == pTerrainBuffer)
+	//	return -1;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(fY + 0.8f);
+	//m_pTransformCom->Set_PositionY(fY + 0.8f);
 
 	Safe_Release(pManagement);
 

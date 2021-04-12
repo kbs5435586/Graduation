@@ -22,10 +22,21 @@ HRESULT CAnimator::Ready_Animator()
 	return S_OK;
 }
 
+void CAnimator::SetBones(const vector<tMTBone>* _vecBones)
+{
+	m_pVecBones = _vecBones; 
+	m_vecFinalBoneMat.resize(m_pVecBones->size());
+}
+
 void CAnimator::SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip)
 {
 	m_pVecClip = _vecAnimClip;
 	m_vecClipUpdateTime.resize(m_pVecClip->size());
+
+
+	static float fTime = 0.f;
+	fTime += 1.f;
+	m_vecClipUpdateTime[0] = fTime;
 }
 
 void CAnimator::Update(const _float& fTimeDelta)
@@ -41,7 +52,15 @@ void CAnimator::Update(const _float& fTimeDelta)
 
 	m_fCurTime = m_pVecClip->at(m_iCurClip).dStartTime + m_vecClipUpdateTime[m_iCurClip];
 
-	m_iFrameIdx = (int)(m_fCurTime * (float)m_iFrameCount);
+	double dFrameIdx = m_fCurTime * (double)m_iFrameCount;
+	m_iFrameIdx = (int)(dFrameIdx);
+
+	if (m_iFrameIdx >= m_pVecClip->at(0).iFrameLength - 1)
+		m_iNextFrameIdx = m_iFrameIdx;
+	else
+		m_iNextFrameIdx = m_iFrameIdx + 1;
+
+	m_fRatio = (float)(dFrameIdx - (double)m_iFrameIdx);
 
 	m_IsFinalMatUpdate = false;
 }
@@ -59,15 +78,19 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		m_pBoneFinalMat->Update_RWData(UAV_REGISTER::u0);
 
 		UINT iBoneCount = (UINT)m_pVecBones->size();
-
+		UINT iRow = 0;
 		REP tRep;
 
 		tRep.m_arrInt[0] = iBoneCount;
 		tRep.m_arrInt[1] = m_iFrameIdx;
+		tRep.m_arrInt[2] = m_iNextFrameIdx;
+		tRep.m_arrInt[3] = iRow;
+		tRep.m_arrFloat[0] = m_fRatio;
 
 		
 		int iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetUpContantBufferToShader_CS(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+		CDevice::GetInstance()->SetUpContantBufferToShader_CS(
+			CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
 		UINT iGrounX = (iBoneCount / 256) + 1;
 		
@@ -76,9 +99,9 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		m_IsFinalMatUpdate = true;
 	} 
 
-	// t12 레지스터에 최종행렬 데이터(구조버퍼) 바인딩
 	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t7);
 }
+
 
 void CAnimator::Dispatch(int x, int y, int z)
 {

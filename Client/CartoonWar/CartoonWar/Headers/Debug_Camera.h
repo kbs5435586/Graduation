@@ -1,5 +1,6 @@
 #pragma once
 #include "Camera.h"
+class CNavigation;
 class CDebug_Camera :
     public CCamera
 {
@@ -19,6 +20,7 @@ public:
 protected:
 	virtual void				Free();
 private:
-	POINT					m_ptMouse;
+	POINT						m_ptMouse;
+	CNavigation*				m_pNaviCom = nullptr;
 };
 

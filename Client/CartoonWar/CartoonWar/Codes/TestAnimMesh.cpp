@@ -17,6 +17,7 @@ HRESULT CTestAnimMesh::Ready_Prototype()
 
 HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 {
+	m_IsClone = true;
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 
@@ -27,8 +28,15 @@ HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 
+	//m_pAnimCom->GetCurClip() = 1;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
+
+	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	{
+		CTexture* pTexture = CTexture::Create(iter);
+		m_vecTexture.push_back(pTexture);
+	}
 	return S_OK;
 }
 
@@ -44,8 +52,62 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-	m_pAnimCom->Update(fTimeDelta);
 
+	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	{
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		_vec3 vSlide = {};
+		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		{
+			m_pTransformCom->BackWard(fTimeDelta);
+		}
+		else
+		{
+			m_pTransformCom->Go_There(vSlide);
+		}
+
+
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	{
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+
+	//else if (CManagement::GetInstance()->Key_Pressing(KEY_LBUTTON))
+	//{
+	//	Delete_Component(L"Com_Mesh", m_pMeshCom);
+	//	m_pMeshCom = (CMesh*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02_Attack01");
+	//	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
+	//	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+	//		return E_FAIL;
+	//	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
+	//	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
+	//}
+	//else if (CManagement::GetInstance()->Key_Pressing(KEY_RBUTTON))
+	//{
+	//	Delete_Component(L"Com_Mesh", m_pMeshCom);
+	//	m_pMeshCom = (CMesh*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02_Attack02");
+	//	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
+	//	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+	//		return E_FAIL;
+	//	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
+	//	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
+	//}
+
+	m_pAnimCom->Update(fTimeDelta);
 	return _int();
 }
 
@@ -58,6 +120,7 @@ void CTestAnimMesh::Render_GameObject()
 
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	//_uint iSubsetNum = 1;
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 
@@ -65,12 +128,32 @@ void CTestAnimMesh::Render_GameObject()
 		_matrix matWorld = m_pTransformCom->Get_Matrix();
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+		if (GetAsyncKeyState('O')&0x8000)
+			m_IsAnim ^= true;
+
+		REP tRep = {};
+		if (m_IsAnim)
+		{
+			tRep.m_arrInt[0] = 1;
+		}
+		else
+			tRep.m_arrInt[0] = 0;
+	
+
+
+		tRep.m_arrInt[1]=m_pAnimCom->GetBones()->size();
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-		m_pMeshCom->SetUp_Texture();
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		CDevice::GetInstance()->SetTextureToShader(m_vecTexture[i]->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 
 
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
@@ -135,6 +218,14 @@ void CTestAnimMesh::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
+	Safe_Release(m_pNaviCom);
+	if (m_IsClone)
+	{
+		for (auto& iter : m_vecTexture)
+		{
+			Safe_Release(iter);
+		}
+	}
 	CGameObject::Free();
 }
 
@@ -154,7 +245,7 @@ HRESULT CTestAnimMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -172,6 +263,11 @@ HRESULT CTestAnimMesh::Ready_Component()
 	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
 	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+		return E_FAIL;
+
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

@@ -60,15 +60,30 @@ void CTerrain::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData(&tMainPass);
+	FOG tFog = { 0.f, 5.f };
+
+
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,TEXTURE_REGISTER::t0);
+
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b6)->SetData((void*)&tFog);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b6)->GetCBV().Get(), iOffeset, CONST_REGISTER::b6);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t1);
+
 	CDevice::GetInstance()->UpdateTable();
+
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pNaviCom->Render_Navigation();
 
-	Safe_Release(pManagement);
+
+	Safe_Release(pManagement);;
 }
 
 HRESULT CTerrain::CreateInputLayout()
@@ -118,6 +133,7 @@ void CTerrain::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pNaviCom);
+	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
 }
@@ -156,6 +172,11 @@ HRESULT CTerrain::Ready_Component()
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
+
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

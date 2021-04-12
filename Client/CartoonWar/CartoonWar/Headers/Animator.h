@@ -15,6 +15,10 @@ public:
 private:
     const   vector<tMTBone>*        m_pVecBones;
     const   vector<tMTAnimClip>*    m_pVecClip;
+public:
+    const vector<tMTBone>*          GetBones(){return m_pVecBones;}
+public:
+    int&                            GetCurClip() { return m_iCurClip; }
 private:
     vector<_float>                  m_vecClipUpdateTime;
     vector<_matrix>                 m_vecFinalBoneMat;
@@ -22,11 +26,14 @@ private:
     _float						    m_fCurTime= 0.f;
     int							    m_iCurClip=0; // 클립 인덱스	
     int							    m_iFrameIdx=0; // 클립의 현제 프레임
+private:
+    int							    m_iNextFrameIdx; // 다음 프레임 인덱스
+    float						    m_fRatio;	// 프레임 사이 비율
 
     CStructedBuffer*                m_pBoneFinalMat = nullptr;  // 특정 프레임의 최종 행렬
     bool						    m_IsFinalMatUpdate = false; // 최종행렬 연산 수행여부
 public:
-    void                            SetBones(const vector<tMTBone>* _vecBones) { m_pVecBones = _vecBones; m_vecFinalBoneMat.resize(m_pVecBones->size()); }
+    void                            SetBones(const vector<tMTBone>* _vecBones);
     void                            SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip);
 public:
     void                            Update(const _float& fTimeDelta);

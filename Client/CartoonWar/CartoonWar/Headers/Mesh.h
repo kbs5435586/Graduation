@@ -68,6 +68,7 @@ private:
     wstring                         GetMtrlTextureName(FbxSurfaceMaterial* _pSurface, const char* _pMtrlProperty);
 private:
     HRESULT                         Ready_MeshData(tContainer* pContainer);
+    HRESULT                         Ready_MeshData(vector<tContainer>&  vecContainer);
     HRESULT                         Save(const _tchar* pFilePath);
     HRESULT                         Load(const _tchar* pFilePath);
 public:
@@ -77,10 +78,13 @@ public:
     CStructedBuffer*                GetBoneOffset(){return m_pBoneOffset;}
 private:
     RenderInfo                      m_tRenderInfo = {};
+    vector< RenderInfo>             m_vecRenderInfo;
 public:
     static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
     static CMesh*                   Create_Load(const _tchar* pFilePath);
     virtual CComponent*             Clone_Component(void* pArg);
+public:
+    CTexture*                       GetTexture(int i){return m_vecTexture[i]; }
 private:
     FbxScene*                       m_pScene = nullptr;
 private:
@@ -88,11 +92,12 @@ private:
     vector<tAnimClip*>				m_vecAnimClip;
     vector<tContainer>              m_vecContainer;
     FbxArray<FbxString*>			m_arrAnimName;
+    vector<CTexture*>               m_vecTexture;
+public:
+    vector<const _tchar*>           m_vecDiffTexturePath;
 private:
     vector<tMTAnimClip>			    m_vecMTAnimClip;
     vector<tMTBone>                 m_vecMTBone;
-private:
-    vector<CTexture*>               m_vecTexture;
 private:
     _uint                           m_iSubsetNum = 0;
     _uint                           m_iCurTexNum = 0;

@@ -228,7 +228,7 @@ struct tSkinningInfo
 
 matrix GetBoneMat(int _iBoneIdx, int _iRowIdx)
 {
-	return g_arrFinalBoneMat[_iBoneIdx];
+	return g_arrFinalBoneMat[(g_int_1 * _iRowIdx) + _iBoneIdx];
 }
 
 void Skinning(inout float3 _vPos, inout float3 _vTangent, inout float3 _vBinormal, inout float3 _vNormal
@@ -242,7 +242,6 @@ void Skinning(inout float3 _vPos, inout float3 _vTangent, inout float3 _vBinorma
 		if (0.f == _vWeight[i])
 			continue;
 
-		//matrix matBone = { float4(1.f,0.f,0.f,0.f), float4(0.f,1.f,0.f,0.f), float4(0.f,0.f,1.f,0.f), float4(0.f,0.f,0.f,1.f) };
 		matrix matBone = GetBoneMat((int)_vIndices[i], _iRowIdx);
 
 		info.vPos += (mul(float4(_vPos, 1.f), matBone) * _vWeight[i]).xyz;

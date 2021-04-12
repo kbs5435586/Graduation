@@ -20,6 +20,8 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_pBoneFrameData(rhs.m_pBoneFrameData)
 	, m_pBoneOffset(rhs.m_pBoneOffset)
 	, m_vecContainer(rhs.m_vecContainer)
+	, m_vecRenderInfo(rhs.m_vecRenderInfo)
+	, m_vecDiffTexturePath(rhs.m_vecDiffTexturePath)
 
 {
 
@@ -75,10 +77,11 @@ HRESULT CMesh::Ready_Mesh(const wstring& pFilePath, const _tchar* pSaveFilePath)
 	pFbxImporter = nullptr;
 
 
-
-	if (FAILED(Ready_MeshData(&m_vecContainer[0])))
+	
+	m_iSubsetNum;
+	if (FAILED(Ready_MeshData(m_vecContainer)))
 		return E_FAIL;
-	Load_Texture();
+	//Load_Texture();
 
 
 	if (pSaveFilePath)
@@ -150,6 +153,7 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 
 	// Subset Num
 	int iMtrlCnt = pMesh->GetNode()->GetMaterialCount();
+	//m_iSubsetNum += iMtrlCnt;
 	m_iSubsetNum = iMtrlCnt;
 	pContainer.vecIdx.resize(iMtrlCnt);
 
@@ -220,6 +224,17 @@ void CMesh::Laod_Material(FbxSurfaceMaterial* _pMtrlSur)
 	tMtrlInfo.strNormal = GetMtrlTextureName(_pMtrlSur, FbxSurfaceMaterial::sNormalMap);
 	tMtrlInfo.strSpec = GetMtrlTextureName(_pMtrlSur, FbxSurfaceMaterial::sSpecular);
 
+
+	int iLen = tMtrlInfo.strDiff.length();
+	_tchar* tag = new _tchar[iLen + 1];
+	ZeroMemory(tag, iLen + 1);
+
+	lstrcpy(tag, tMtrlInfo.strDiff.c_str());
+
+	m_vecDiffTexturePath.push_back(tag);
+
+	
+
 	m_vecContainer.back().vecMtrl.push_back(tMtrlInfo);
 }
 
@@ -227,7 +242,7 @@ void CMesh::Load_Texture()
 {
 	// Texture Load
 
-	/*for (UINT i = 0; i < m_vecContainer.size(); ++i)
+	for (UINT i = 0; i < m_vecContainer.size(); ++i)
 	{
 		for (UINT j = 0; j < m_vecContainer[i].vecMtrl.size(); ++j)
 		{
@@ -241,25 +256,8 @@ void CMesh::Load_Texture()
 				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
 				m_vecTexture.push_back(pTexture);
 			}
-
-			strPath = (m_vecContainer[i].vecMtrl[j].strNormal.c_str());
-			if (!strPath.empty())
-			{
-				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
-				m_vecTexture.push_back(pTexture);
-
-			}
-
-			strPath = (m_vecContainer[i].vecMtrl[j].strSpec.c_str());
-			if (!strPath.empty())
-			{
-				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
-				m_vecTexture.push_back(pTexture);
-			}
 		}
 	}
-
-	m_iMaxTexNum = m_vecTexture.size();*/
 }
 
 HRESULT CMesh::SetUp_Texture()
@@ -863,6 +861,8 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 		m_tRenderInfo.vecIndices.push_back(tIndices);
 	}
 
+
+
 	if (!pContainer->bAnimation)
 		return S_OK;
 
@@ -955,32 +955,267 @@ HRESULT CMesh::Ready_MeshData(tContainer* pContainer)
 	return S_OK;
 }
 
+HRESULT CMesh::Ready_MeshData(vector<tContainer>& vecContainer)
+{
+	for (auto& iter : vecContainer)
+	{
+		RenderInfo tRenderInfo;
+		ComPtr<ID3D12Resource> pVB = nullptr;
+		D3D12_VERTEX_BUFFER_VIEW tVtxView = {};
+		UINT iVtxCount = (UINT)iter.vecPos.size();
+		UINT iVtxSize = sizeof(MESH);
+
+		vector<MESH>		vecMesh;
+		vecMesh.resize(iVtxCount);
+		for (UINT i = 0; i < iVtxCount; ++i)
+		{
+			vecMesh[i].vPosition = iter.vecPos[i];
+			vecMesh[i].vColor = _vec4(1.f, 0.f, 1.f, 1.f);
+			vecMesh[i].vUV = iter.vecUV[i];
+			vecMesh[i].vNormal = iter.vecNormal[i];
+			vecMesh[i].vTangent = iter.vecTangent[i];
+			vecMesh[i].vBinormal = iter.vecBinormal[i];
+			vecMesh[i].vWeight = iter.vecWeights[i];
+			vecMesh[i].vIndices = iter.vecIndices[i];
+		}
+
+		D3D12_HEAP_PROPERTIES tHeapProperty = {};
+		tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
+		tHeapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		tHeapProperty.CreationNodeMask = 1;
+		tHeapProperty.VisibleNodeMask = 1;
+
+		D3D12_RESOURCE_DESC tResDesc = {};
+		tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		tResDesc.Alignment = 0;
+		tResDesc.Width = iVtxSize * iVtxCount;
+		tResDesc.Height = 1;
+		tResDesc.DepthOrArraySize = 1;
+		tResDesc.MipLevels = 1;
+		tResDesc.Format = DXGI_FORMAT_UNKNOWN;
+		tResDesc.SampleDesc.Count = 1;
+		tResDesc.SampleDesc.Quality = 0;
+		tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
+			&tHeapProperty,
+			D3D12_HEAP_FLAG_NONE,
+			&tResDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&pVB))))
+			return E_FAIL;
+
+		UINT8* pVertexDataBegin = nullptr;
+		D3D12_RANGE readRange{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+		pVB->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+		memcpy(pVertexDataBegin, vecMesh.data(), (tResDesc.Width * tResDesc.Height));
+		pVB->Unmap(0, nullptr);
+
+		tVtxView.BufferLocation = pVB->GetGPUVirtualAddress();
+		tVtxView.StrideInBytes = sizeof(MESH);
+		tVtxView.SizeInBytes = (UINT)tResDesc.Width;
+
+	
+		tRenderInfo.pVB = pVB;
+		tRenderInfo.iVtxSize = iVtxSize;
+		tRenderInfo.iVtxCnt = iVtxCount;
+		tRenderInfo.VertexBufferView = tVtxView;
+		tRenderInfo.vecVertices = vecMesh;
+
+
+		UINT iIdxBufferCount = (UINT)iter.vecIdx.size();
+		//m_tRenderInfo.vecIdx = pContainer->vecIdx;
+
+		for (UINT i = 0; i < iIdxBufferCount; ++i)
+		{
+			Indices	tIndices;
+			tIndices.iIndexCnt = (UINT)iter.vecIdx[i].size();
+			tIndices.eFormat = DXGI_FORMAT_R32_UINT;
+			tIndices.pSystem = malloc(GetSizeofFormat(tIndices.eFormat) * tIndices.iIndexCnt);
+			memcpy(tIndices.pSystem, &iter.vecIdx[i][0], GetSizeofFormat(tIndices.eFormat) * tIndices.iIndexCnt);
+
+
+			tHeapProperty = {};
+			tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
+			tHeapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+			tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+			tHeapProperty.CreationNodeMask = 1;
+			tHeapProperty.VisibleNodeMask = 1;
+
+			tResDesc = {};
+			tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+			tResDesc.Alignment = 0;
+			tResDesc.Width = GetSizeofFormat(tIndices.eFormat) * tIndices.iIndexCnt;
+			tResDesc.Height = 1;
+			tResDesc.DepthOrArraySize = 1;
+			tResDesc.MipLevels = 1;
+			tResDesc.Format = DXGI_FORMAT_UNKNOWN;
+			tResDesc.SampleDesc.Count = 1;
+			tResDesc.SampleDesc.Quality = 0;
+			tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+			tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+
+			if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
+				&tHeapProperty,
+				D3D12_HEAP_FLAG_NONE,
+				&tResDesc,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(&tIndices.pIB))))
+				return E_FAIL;
+
+			// Copy the Index data to the Index buffer.
+			UINT8* pIdxDataBegin = nullptr;
+			readRange = D3D12_RANGE{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+			tIndices.pIB->Map(0, &readRange, reinterpret_cast<void**>(&pIdxDataBegin));
+			memcpy(pIdxDataBegin, tIndices.pSystem, (tResDesc.Width * tResDesc.Height));
+			tIndices.pIB->Unmap(0, nullptr);
+
+			// Initialize the Index buffer view.
+			tIndices.IndexBufferView.BufferLocation = tIndices.pIB->GetGPUVirtualAddress();
+			tIndices.IndexBufferView.Format = tIndices.eFormat;
+			tIndices.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
+
+			tRenderInfo.vecIndices.push_back(tIndices);
+		}
+
+
+
+		m_vecRenderInfo.push_back(tRenderInfo);
+	}
+
+
+
+
+
+
+
+	if (!vecContainer[0].bAnimation)
+		return S_OK;
+
+	_uint iFrameCnt = 0;
+
+	for (_uint i = 0; i < m_vecBone.size(); ++i)
+	{
+		tMTBone bone = {};
+
+		bone.iDepth = m_vecBone[i]->iDepth;
+		bone.iParentIndx = m_vecBone[i]->iParentIndx;
+		bone.matBone = GetMatrix(m_vecBone[i]->matBone);
+		bone.matOffset = GetMatrix(m_vecBone[i]->matOffset);
+		bone.strBoneName = m_vecBone[i]->strBoneName;
+
+		for (UINT j = 0; j < m_vecBone[i]->vecKeyFrame.size(); ++j)
+		{
+			tMTKeyFrame tKeyframe = {};
+			tKeyframe.dTime = m_vecBone[i]->vecKeyFrame[j].dTime;
+			tKeyframe.iFrame = j;
+			tKeyframe.vTranslate.x = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetT().mData[0];
+			tKeyframe.vTranslate.y = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetT().mData[1];
+			tKeyframe.vTranslate.z = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetT().mData[2];
+
+			tKeyframe.vScale.x = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetS().mData[0];
+			tKeyframe.vScale.y = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetS().mData[1];
+			tKeyframe.vScale.z = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetS().mData[2];
+
+			tKeyframe.qRot.x = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[0];
+			tKeyframe.qRot.y = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[1];
+			tKeyframe.qRot.z = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[2];
+			tKeyframe.qRot.w = (float)m_vecBone[i]->vecKeyFrame[j].matTransform.GetQ().mData[3];
+
+			bone.vecKeyFrame.push_back(tKeyframe);
+		}
+		iFrameCnt = (UINT)max(iFrameCnt, bone.vecKeyFrame.size());
+
+		m_vecMTBone.push_back(bone);
+	}
+
+	for (_uint i = 0; i < m_vecAnimClip.size(); ++i)
+	{
+		tMTAnimClip tClip = {};
+
+		tClip.strAnimName = m_vecAnimClip[i]->strName;
+		tClip.dStartTime = m_vecAnimClip[i]->tStartTime.GetSecondDouble();
+		tClip.dEndTime = m_vecAnimClip[i]->tEndTime.GetSecondDouble();
+		tClip.dTimeLength = tClip.dEndTime - tClip.dStartTime;
+
+		tClip.iStartFrame = (int)m_vecAnimClip[i]->tStartTime.GetFrameCount(m_vecAnimClip[i]->eMode);
+		tClip.iEndFrame = (int)m_vecAnimClip[i]->tEndTime.GetFrameCount(m_vecAnimClip[i]->eMode);
+		tClip.iFrameLength = tClip.iEndFrame - tClip.iStartFrame;
+		tClip.eMode = m_vecAnimClip[i]->eMode;
+
+		m_vecMTAnimClip.push_back(tClip);
+	}
+
+
+
+	if (IsAnimation())
+	{
+
+			vector<_matrix> vecOffset;
+			vector<tFrameTrans> vecFrameTrans;
+			vecFrameTrans.resize((UINT)m_vecMTBone.size()* iFrameCnt);
+
+			for (size_t i = 0; i < m_vecMTBone.size(); ++i)
+			{
+				vecOffset.push_back(m_vecMTBone[i].matOffset);
+
+				for (size_t j = 0; j < m_vecMTBone[i].vecKeyFrame.size(); ++j)
+				{
+					_vec4 vecTemp =
+						_vec4(m_vecMTBone[i].vecKeyFrame[j].vTranslate.x, m_vecMTBone[i].vecKeyFrame[j].vTranslate.y, m_vecMTBone[i].vecKeyFrame[j].vTranslate.z, 0.f);
+					_vec4 vecTemp_ =
+						_vec4(m_vecMTBone[i].vecKeyFrame[j].vScale.x, m_vecMTBone[i].vecKeyFrame[j].vScale.y, m_vecMTBone[i].vecKeyFrame[j].vScale.z, 0.f);
+					vecFrameTrans[(UINT)m_vecMTBone.size() * j + i]
+						= tFrameTrans{ vecTemp,vecTemp_,
+						m_vecMTBone[i].vecKeyFrame[j].qRot
+					};
+				}
+			}
+
+			m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)vecOffset.size(), vecOffset.data());
+			m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans), (UINT)vecOffset.size() * iFrameCnt, vecFrameTrans.data());
+
+	}
+	return S_OK;
+}
+
 HRESULT CMesh::Save(const _tchar* pFilePath)
 {
 	FILE* pFile = nullptr;
 	errno_t err = _wfopen_s(&pFile, pFilePath, L"wb");
-
-	UINT iVtxCount = m_tRenderInfo.iVtxCnt;
-	UINT iVtxSize = m_tRenderInfo.iVtxSize;
-
-	fwrite(&iVtxCount, sizeof(int), 1, pFile);
-	fwrite(&iVtxSize, sizeof(int), 1, pFile);
-
-	for (auto& iter : m_tRenderInfo.vecVertices)
+	_uint iTotalSize = m_vecRenderInfo.size();
+	fwrite(&iTotalSize, sizeof(int), 1, pFile);
+	for (auto& iter : m_vecRenderInfo)
 	{
-		fwrite(&iter, sizeof(MESH), 1, pFile);
+		UINT iVtxCount = iter.iVtxCnt;
+		UINT iVtxSize = iter.iVtxSize;
+
+		fwrite(&iVtxCount, sizeof(int), 1, pFile);
+		fwrite(&iVtxSize, sizeof(int), 1, pFile);
+
+		for (auto& iter1 : iter.vecVertices)
+		{
+			fwrite(&iter1, sizeof(MESH), 1, pFile);
+		}
+
+		_uint	iMtrlCnt = iter.vecIndices.size();
+		fwrite(&iMtrlCnt, sizeof(int), 1, pFile);
+
+		_uint	iIdxBufferSize = 0;
+
+		for (_uint i = 0; i < iMtrlCnt; ++i)
+		{
+			fwrite(&iter.vecIndices[i], sizeof(Indices), 1, pFile);
+			fwrite(iter.vecIndices[i].pSystem, iter.vecIndices[i].iIndexCnt * GetSizeofFormat(iter.vecIndices[i].eFormat), 1, pFile);
+		}
 	}
-
-	_uint	iMtrlCnt = m_tRenderInfo.vecIndices.size();
-	fwrite(&iMtrlCnt, sizeof(int), 1, pFile);
-
-	_uint	iIdxBufferSize = 0;
-
-	for (_uint i = 0; i < iMtrlCnt; ++i)
-	{
-		fwrite(&m_tRenderInfo.vecIndices[i], sizeof(Indices), 1, pFile);
-		fwrite(m_tRenderInfo.vecIndices[i].pSystem, m_tRenderInfo.vecIndices[i].iIndexCnt * GetSizeofFormat(m_tRenderInfo.vecIndices[i].eFormat), 1, pFile);
-	}
+	
+	
 	_uint iAnimCnt = m_vecMTAnimClip.size();
 	fwrite(&iAnimCnt, sizeof(int), 1, pFile);
 
@@ -1027,91 +1262,34 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 {
 	FILE* pFile = nullptr;
 	errno_t err = _wfopen_s(&pFile, pFilePath, L"rb");
+	_uint iTotalSize = 0;
+	fread(&iTotalSize, sizeof(int), 1, pFile);
 
-	fread(&m_tRenderInfo.iVtxCnt, sizeof(int), 1, pFile);
-	fread(&m_tRenderInfo.iVtxSize, sizeof(int), 1, pFile);
-
-	m_tRenderInfo.vecVertices.resize(m_tRenderInfo.iVtxCnt);
-
-	for (_uint i = 0; i < (_uint)m_tRenderInfo.iVtxCnt; ++i)
-		fread(&m_tRenderInfo.vecVertices[i], sizeof(MESH), 1, pFile);		
-
-
-	CDevice::GetInstance()->Open();
-	D3D12_HEAP_PROPERTIES tHeapProperty = {};
-	tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
-	tHeapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	tHeapProperty.CreationNodeMask = 1;
-	tHeapProperty.VisibleNodeMask = 1;
-
-	D3D12_RESOURCE_DESC tResDesc = {};
-	tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	tResDesc.Alignment = 0;
-	tResDesc.Width = m_tRenderInfo.iVtxSize * m_tRenderInfo.iVtxCnt;
-	tResDesc.Height = 1;
-	tResDesc.DepthOrArraySize = 1;
-	tResDesc.MipLevels = 1;
-	tResDesc.Format = DXGI_FORMAT_UNKNOWN;
-	tResDesc.SampleDesc.Count = 1;
-	tResDesc.SampleDesc.Quality = 0;
-	tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
-
-	CDevice::GetInstance()->Open();
-	CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
-		&tHeapProperty,
-		D3D12_HEAP_FLAG_NONE,
-		&tResDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_tRenderInfo.pVB));
-	CDevice::GetInstance()->Close();
-	CDevice::GetInstance()->WaitForFenceEvent();
-
-
-
-	// Copy the triangle data to the vertex buffer.
-	UINT8* pVertexDataBegin = nullptr;
-	D3D12_RANGE readRange{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
-	m_tRenderInfo.pVB->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
-	memcpy(pVertexDataBegin, m_tRenderInfo.vecVertices.data(), (tResDesc.Width * tResDesc.Height));
-	m_tRenderInfo.pVB->Unmap(0, nullptr);
-
-	// Initialize the vertex buffer view.
-	m_tRenderInfo.VertexBufferView.BufferLocation = m_tRenderInfo.pVB->GetGPUVirtualAddress();
-	m_tRenderInfo.VertexBufferView.StrideInBytes = sizeof(MESH);
-	m_tRenderInfo.VertexBufferView.SizeInBytes = (UINT)tResDesc.Width;
-
-	_uint iMtrlCount = 0;
-	fread(&iMtrlCount, sizeof(int), 1, pFile);
-
-	//m_tRenderInfo.vecIndices.resize(iMtrlCount);
-	m_iSubsetNum = iMtrlCount;
-	for (_uint i = 0; i < iMtrlCount; ++i)
+	for (_uint i = 0; i < iTotalSize; ++i)
 	{
-		Indices info = {};
-		fread(&info, sizeof(Indices), 1, pFile);
-		_uint iByteWidth = info.iIndexCnt * GetSizeofFormat(info.eFormat);
-		
-		void* pSysMem = malloc(iByteWidth);
-		info.pSystem = pSysMem;
+		RenderInfo tRenderInfo;
 
-		fread(info.pSystem, iByteWidth, 1, pFile);
+		fread(&tRenderInfo.iVtxCnt, sizeof(int), 1, pFile);
+		fread(&tRenderInfo.iVtxSize, sizeof(int), 1, pFile);
+
+		tRenderInfo.vecVertices.resize(tRenderInfo.iVtxCnt);
+
+		for (_uint i = 0; i < (_uint)tRenderInfo.iVtxCnt; ++i)
+			fread(&tRenderInfo.vecVertices[i], sizeof(MESH), 1, pFile);
 
 
-		tHeapProperty = {};
+		//CDevice::GetInstance()->Open();
+		D3D12_HEAP_PROPERTIES tHeapProperty = {};
 		tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
 		tHeapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 		tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 		tHeapProperty.CreationNodeMask = 1;
 		tHeapProperty.VisibleNodeMask = 1;
 
-		tResDesc = {};
+		D3D12_RESOURCE_DESC tResDesc = {};
 		tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 		tResDesc.Alignment = 0;
-		tResDesc.Width = GetSizeofFormat(info.eFormat) * info.iIndexCnt;
+		tResDesc.Width = tRenderInfo.iVtxSize * tRenderInfo.iVtxCnt;
 		tResDesc.Height = 1;
 		tResDesc.DepthOrArraySize = 1;
 		tResDesc.MipLevels = 1;
@@ -1121,37 +1299,105 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 		tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 		tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-		memset(&info, 0, sizeof(info.pIB));
-		CDevice::GetInstance()->Open();
 
+		CDevice::GetInstance()->Open();
 		CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
 			&tHeapProperty,
 			D3D12_HEAP_FLAG_NONE,
 			&tResDesc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&info.pIB));
-
-
-
+			IID_PPV_ARGS(&tRenderInfo.pVB));
 		CDevice::GetInstance()->Close();
 		CDevice::GetInstance()->WaitForFenceEvent();
 
 
-		UINT8* pIdxDataBegin = nullptr;
-		readRange = D3D12_RANGE{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
-		info.pIB->Map(0, &readRange, reinterpret_cast<void**>(&pIdxDataBegin));
-		memcpy(pIdxDataBegin, info.pSystem, (tResDesc.Width * tResDesc.Height));
-		info.pIB->Unmap(0, nullptr);
 
-		// Initialize the Index buffer view.
-		info.IndexBufferView.BufferLocation = info.pIB->GetGPUVirtualAddress();
-		info.IndexBufferView.Format = info.eFormat;
-		info.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
+		// Copy the triangle data to the vertex buffer.
+		UINT8* pVertexDataBegin = nullptr;
+		D3D12_RANGE readRange{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+		tRenderInfo.pVB->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+		memcpy(pVertexDataBegin, tRenderInfo.vecVertices.data(), (tResDesc.Width * tResDesc.Height));
+		tRenderInfo.pVB->Unmap(0, nullptr);
 
-		m_tRenderInfo.vecIndices.push_back(info);
+		// Initialize the vertex buffer view.
+		tRenderInfo.VertexBufferView.BufferLocation = tRenderInfo.pVB->GetGPUVirtualAddress();
+		tRenderInfo.VertexBufferView.StrideInBytes = sizeof(MESH);
+		tRenderInfo.VertexBufferView.SizeInBytes = (UINT)tResDesc.Width;
+
+		_uint iMtrlCount = 0;
+		fread(&iMtrlCount, sizeof(int), 1, pFile);
+
+		//m_tRenderInfo.vecIndices.resize(iMtrlCount);
+		//m_iSubsetNum += iMtrlCount;
+		m_iSubsetNum = iMtrlCount;
+		for (_uint i = 0; i < iMtrlCount; ++i)
+		{
+			Indices info = {};
+			fread(&info, sizeof(Indices), 1, pFile);
+			_uint iByteWidth = info.iIndexCnt * GetSizeofFormat(info.eFormat);
+
+			void* pSysMem = malloc(iByteWidth);
+			info.pSystem = pSysMem;
+
+			fread(info.pSystem, iByteWidth, 1, pFile);
+
+
+			tHeapProperty = {};
+			tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
+			tHeapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+			tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+			tHeapProperty.CreationNodeMask = 1;
+			tHeapProperty.VisibleNodeMask = 1;
+
+			tResDesc = {};
+			tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+			tResDesc.Alignment = 0;
+			tResDesc.Width = GetSizeofFormat(info.eFormat) * info.iIndexCnt;
+			tResDesc.Height = 1;
+			tResDesc.DepthOrArraySize = 1;
+			tResDesc.MipLevels = 1;
+			tResDesc.Format = DXGI_FORMAT_UNKNOWN;
+			tResDesc.SampleDesc.Count = 1;
+			tResDesc.SampleDesc.Quality = 0;
+			tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+			tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+			memset(&info, 0, sizeof(info.pIB));
+			CDevice::GetInstance()->Open();
+
+			CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
+				&tHeapProperty,
+				D3D12_HEAP_FLAG_NONE,
+				&tResDesc,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(&info.pIB));
+
+
+
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
+
+
+			UINT8* pIdxDataBegin = nullptr;
+			readRange = D3D12_RANGE{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+			info.pIB->Map(0, &readRange, reinterpret_cast<void**>(&pIdxDataBegin));
+			memcpy(pIdxDataBegin, info.pSystem, (tResDesc.Width * tResDesc.Height));
+			info.pIB->Unmap(0, nullptr);
+
+			// Initialize the Index buffer view.
+			info.IndexBufferView.BufferLocation = info.pIB->GetGPUVirtualAddress();
+			info.IndexBufferView.Format = info.eFormat;
+			info.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
+
+			tRenderInfo.vecIndices.push_back(info);
+		}
+		m_vecRenderInfo.push_back(tRenderInfo);
 	}
 
+
+	
 	int iCount = 0;
 	fread(&iCount, sizeof(int), 1, pFile);
 	for (int i = 0; i < iCount; ++i)
@@ -1223,13 +1469,14 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 	return S_OK;
 }
 
+
+
 void CMesh::Render_Mesh(_uint iIdx)
 {
 	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_tRenderInfo.VertexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_tRenderInfo.vecIndices[iIdx].IndexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_tRenderInfo.vecIndices[iIdx].iIndexCnt, 1, 0, 0, 0);
-
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderInfo[0].VertexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderInfo[0].vecIndices[iIdx].IndexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderInfo[0].vecIndices[iIdx].iIndexCnt, 1, 0, 0, 0);
 }
 
 
@@ -1284,12 +1531,11 @@ void CMesh::Free()
 
 		Safe_Release(m_pBoneFrameData);
 		Safe_Release(m_pBoneOffset);
+		for (auto& iter : m_vecDiffTexturePath)
+			Safe_Delete_Array(iter);
 	}
-
-
-
-	//for (auto& iter : m_vecTexture)
-	//	Safe_Release(iter);
+	for (auto& iter : m_vecTexture)
+		Safe_Release(iter);
 
 
 	CComponent::Free();

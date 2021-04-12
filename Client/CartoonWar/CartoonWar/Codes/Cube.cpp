@@ -119,7 +119,7 @@ void CCube::Render_GameObject()
 
 	REFLECT	tReflect = {};
 
-	tReflect.matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera",0 ,-1.5f);
+
 	//GameObject_Camera_Debug
 	//Layer_Camera
 

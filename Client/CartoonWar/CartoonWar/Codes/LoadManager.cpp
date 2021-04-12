@@ -54,26 +54,75 @@ HRESULT CLoadManager::Load_File(const _tchar* pFilePath, void* pArg)
 
 			_tchar* pName = new _tchar[iLength + 1];
 			ZeroMemory(pName, iLength + 1);
-			
+
 			_tchar* pLayerTag = new _tchar[iLength_Layer + 1];
 			ZeroMemory(pLayerTag, iLength_Layer + 1);
-			
+
 			lstrcpy(pName, szName);
 			lstrcpy(pLayerTag, szLayerTag);
 
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(pName, (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-				return E_FAIL;
 
-			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
-			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, szLayerTag)->Get_ComponentPointer(L"Com_Transform");
-			pTransform->Set_Matrix(mat);
-			//
-			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
-			pTransform->Set_Add_PosY(fAdd_PosY);
 
-			//Safe_Delete_Array(pName);
-			//Safe_Delete_Array(pLayerTag);
+			if (!lstrcmp(pName, L"GameObject_rpgpp_lt_tree_01"))
+			{
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(pName, (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+					return E_FAIL;
+
+				ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
+				CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, szLayerTag)->Get_ComponentPointer(L"Com_Transform");
 			
+				pTransform->Set_Matrix(mat);
+				pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
+				//
+				ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
+				pTransform->Set_Add_PosY(fAdd_PosY);
+
+			}
+			if (!lstrcmp(pName, L"GameObject_rpgpp_lt_tree_02"))
+			{
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(pName, (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+					return E_FAIL;
+
+				ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
+				CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, szLayerTag)->Get_ComponentPointer(L"Com_Transform");
+
+				pTransform->Set_Matrix(mat);
+				pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
+				//
+				ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
+				pTransform->Set_Add_PosY(fAdd_PosY);
+
+			}
+			if (!lstrcmp(pName, L"GameObject_rpgpp_lt_tree_pine_01"))
+			{
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(pName, (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+					return E_FAIL;
+
+				ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
+				CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, szLayerTag)->Get_ComponentPointer(L"Com_Transform");
+
+				pTransform->Set_Matrix(mat);
+				pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
+				//
+				ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
+				pTransform->Set_Add_PosY(fAdd_PosY);
+
+			}
+			else
+			{
+				ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
+				//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, szLayerTag)->Get_ComponentPointer(L"Com_Transform");
+				//pTransform->Set_Matrix(mat);
+				//
+				ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
+				//pTransform->Set_Add_PosY(fAdd_PosY);
+			}
+
+
+
+
+
+
 		}
 	}
 	CloseHandle(hFile);

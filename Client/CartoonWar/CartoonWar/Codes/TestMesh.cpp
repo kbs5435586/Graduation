@@ -24,7 +24,7 @@ HRESULT CTestMesh::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 5.f,10.f,5.f };
+	_vec3 vPos = { 0.f,0.f,0.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
@@ -40,13 +40,22 @@ _int CTestMesh::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pManagement)
 		return -1;
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return -1;
+	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	//if (nullptr == pTerrainBuffer)
+	//	return -1;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(fY + 0.5f);
+	//m_pTransformCom->Set_PositionY(fY + 0.5f);
+
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	else if (GetAsyncKeyState(VK_RIGHT))
+	{
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
 
 	return _int();
 }
@@ -67,23 +76,21 @@ void CTestMesh::Render_GameObject()
 	pManagement->AddRef();
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
-
-	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->UpdateTable();
-
-
-	for (_uint i = 0; i < iSubsetNum; ++i)
+	for (_uint i = 0; i < 1; ++i)
 	{
-		m_pMeshCom->Render_Mesh(i);
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+
+		CDevice::GetInstance()->UpdateTable();
+		m_pMeshCom->Render_Mesh(0);
 	}
 
 	Safe_Release(pManagement);
@@ -105,18 +112,18 @@ HRESULT CTestMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom))) 
 		return E_FAIL;
 
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Mesh_Default");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Test");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
@@ -175,6 +182,7 @@ void CTestMesh::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pTextureCom);
 
 
 

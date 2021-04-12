@@ -29,8 +29,6 @@ HRESULT CRock02::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 
-	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
-	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	return S_OK;
 }
 
@@ -46,7 +44,6 @@ _int CRock02::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-	m_pAnimCom->Update(fTimeDelta);
 
 	return _int();
 }
@@ -74,8 +71,6 @@ void CRock02::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 		m_pMeshCom->SetUp_Texture();
 
-
-		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
@@ -135,8 +130,6 @@ void CRock02::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pComputeShaderCom);
-	Safe_Release(m_pAnimCom);
 	CGameObject::Free();
 }
 
@@ -156,7 +149,7 @@ HRESULT CRock02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -164,16 +157,6 @@ HRESULT CRock02::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
-		return E_FAIL;
-
-	m_pComputeShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Animation");
-	NULL_CHECK_VAL(m_pComputeShaderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_ComputeShader", m_pComputeShaderCom)))
-		return E_FAIL;
-
-	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

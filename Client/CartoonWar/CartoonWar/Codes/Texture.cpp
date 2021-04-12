@@ -13,6 +13,7 @@ CTexture::CTexture(const CTexture& rhs)
 	, m_vecTextureUpload(rhs.m_vecTextureUpload)
 	, m_vecTexture(rhs.m_vecTexture)
 	, m_vecSRV(rhs.m_vecSRV)
+	, m_pSRV(rhs.m_pSRV)
 	, m_vecUAV(rhs.m_vecUAV)
 	, m_mapSrvDescHeap(rhs.m_mapSrvDescHeap)
 {
@@ -136,6 +137,42 @@ HRESULT CTexture::Ready_Texture(const _tchar* pTag, const _tchar* pFilePath)
 	return S_OK;
 }
 
+HRESULT CTexture::Ready_Texture(const _tchar* pFilePath)
+{
+	wchar_t szExt[50] = L"";
+	_wsplitpath_s(pFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, 50);
+
+	wstring strExt = szExt;
+
+	CDevice::GetInstance()->Open();
+
+	if (L".dds" == strExt || L".DDS" == strExt)
+	{
+		if (FAILED(LoadFromDDSFile(pFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))
+			return E_FAIL;
+
+	}
+	else if (L".tga" == strExt || L".TGA" == strExt)
+	{
+		if (FAILED(LoadFromTGAFile(pFilePath, nullptr, m_Image)))
+			return E_FAIL;
+	}
+	else
+	{
+
+		if (FAILED(LoadFromWICFile(pFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
+			return E_FAIL;
+	}
+
+	if (FAILED(Create_ShaderResourceView_(m_Image, m_pSRV)))
+		return E_FAIL;
+
+	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
+
+	return S_OK;
+}
+
 
 CTexture* CTexture::Create(const _tchar* pFilePath, _uint iNum, TEXTURE_TYPE eType, _bool IsCube)
 {
@@ -153,6 +190,17 @@ CTexture* CTexture::Create(const _tchar* pTag, const _tchar* pFilePath)
 	CTexture* pInstance = new CTexture();
 
 	if (FAILED(pInstance->Ready_Texture(pTag, pFilePath)))
+	{
+		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+CTexture* CTexture::Create(const _tchar* pFilePath)
+{
+	CTexture* pInstance = new CTexture();
+
+	if (FAILED(pInstance->Ready_Texture( pFilePath)))
 	{
 		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
@@ -230,9 +278,9 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, _bool IsCube)
 }
 HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, vector<ID3D12DescriptorHeap*>& vecDesc)
 {
+	ID3D12DescriptorHeap* pDesc = nullptr;
 	ID3D12Resource* pTexture = nullptr;
 	ID3D12Resource* pTextureUpload = nullptr;
-	ID3D12DescriptorHeap* pDesc = nullptr;
 
 	if (FAILED(CreateTexture(CDevice::GetInstance()->GetDevice().Get(), Image.GetMetadata(), &pTexture)))
 		return E_FAIL;
@@ -281,6 +329,63 @@ HRESULT CTexture::Create_ShaderResourceView(ScratchImage& Image, vector<ID3D12De
 	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(pTexture, &srvDesc, handle);
 
 	vecDesc.push_back(pDesc);
+	m_vecTexture.push_back(pTexture);
+	m_vecTextureUpload.push_back(pTextureUpload);
+	m_vecSrvDescriptorIncrementSize.push_back(iSize);
+
+	return S_OK;
+}
+HRESULT CTexture::Create_ShaderResourceView_(ScratchImage& Image, ComPtr<ID3D12DescriptorHeap>& pSrv)
+{
+	ID3D12Resource* pTexture = nullptr;
+	ID3D12Resource* pTextureUpload = nullptr;
+
+	if (FAILED(CreateTexture(CDevice::GetInstance()->GetDevice().Get(), Image.GetMetadata(), &pTexture)))
+		return E_FAIL;
+
+	vector<D3D12_SUBRESOURCE_DATA> vecSubresources;
+
+	if (FAILED(PrepareUpload(CDevice::GetInstance()->GetDevice().Get()
+		, m_Image.GetImages(), m_Image.GetImageCount(), Image.GetMetadata(), vecSubresources)))
+		return E_FAIL;
+
+	const _uint UploadBufferSize = GetRequiredIntermediateSize(pTexture, 0, (_uint)vecSubresources.size());
+
+	CD3DX12_HEAP_PROPERTIES tUploadHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC	tDesc = CD3DX12_RESOURCE_DESC::Buffer(UploadBufferSize);
+
+	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tUploadHeap,
+		D3D12_HEAP_FLAG_NONE, &tDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&pTextureUpload))))
+		return E_FAIL;
+
+
+	UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get()
+		, pTexture, pTextureUpload, 0, 0
+		, static_cast<unsigned int>(vecSubresources.size()), vecSubresources.data());
+
+
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	ZeroMemory(&srvHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	srvHeapDesc.NodeMask = 0;
+	CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&pSrv));
+
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = pSrv->GetCPUDescriptorHandleForHeapStart();
+
+	_uint iSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = m_Image.GetMetadata().format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(pTexture, &srvDesc, handle);
+
 	m_vecTexture.push_back(pTexture);
 	m_vecTextureUpload.push_back(pTextureUpload);
 	m_vecSrvDescriptorIncrementSize.push_back(iSize);
