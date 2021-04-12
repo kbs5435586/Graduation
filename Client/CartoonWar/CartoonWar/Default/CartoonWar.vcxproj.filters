@@ -475,6 +475,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4">
       <UniqueIdentifier>{f604ba53-1190-4368-be0b-788f18be823a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="94. Server">
+      <UniqueIdentifier>{8a5b4ff6-f999-4a47-9dee-17806fcfbb7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -861,6 +864,12 @@
     <ClInclude Include="..\Headers\Tree3.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Server_Manager.h">
+      <Filter>94. Server</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>94. Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1220,6 +1229,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Tree3.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Server_Manager.cpp">
+      <Filter>94. Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

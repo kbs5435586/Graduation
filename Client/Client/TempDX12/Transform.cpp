@@ -15,6 +15,11 @@ CTransform::CTransform(const CTransform& rhs)
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());
 }
 
+void CTransform::Set_Matrix(_matrix* mat)
+{
+	memcpy(&m_matWorld, mat, sizeof(_matrix));
+}
+
 HRESULT CTransform::Ready_Transform()
 {
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());

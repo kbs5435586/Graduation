@@ -137,7 +137,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
 		m_objects[recv_id].showCharacter = true;
-		pTransform->Set_Matrix(&Pos);
+		pTransform->Set_Matrix(Pos);
 		Safe_Release(managment);
 	}
 	break;
@@ -165,7 +165,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			}
 		}
 		else // NPC 
-		{ 
+		{
 			if (0 != m_objects.count(recv_id))
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,

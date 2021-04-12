@@ -45,6 +45,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CARTOONWAR));
 
     MSG msg;
+
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 2), &WSAData);
+
     CSystem* pSystem = CSystem::GetInstance();
     NULL_CHECK_VAL(pSystem, FALSE);
     pSystem->AddRef();
@@ -157,6 +161,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_ACTIVATE:
+    {
+        CServer_Manager* server = CServer_Manager::GetInstance();
+        if (nullptr == server)
+            break;
+        server->AddRef();
+        if (LOWORD(wParam) != WA_INACTIVE) // 창 활성화 되어있을때
+            server->Set_wParam(wParam);
+        else
+            server->Set_wParam(wParam);
+        Safe_Release(server);
+    }
+    break;
     case WM_KEYDOWN:
         if (wParam == 'Q')
             PostQuitMessage(0);
@@ -178,6 +195,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_SOCKET:
+    {
+        CServer_Manager* server = CServer_Manager::GetInstance();
+        if (nullptr == server)
+            break;
+        server->AddRef();
+        server->SocketEventMessage(g_hWnd, lParam);
+        Safe_Release(server);
+    }
+    break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;

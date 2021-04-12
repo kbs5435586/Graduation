@@ -176,36 +176,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_KEYDOWN:
-        if (wParam == 'Q')
-        {
-            CServer_Manager* server = CServer_Manager::GetInstance();
-            if (nullptr == server)
-                break;
-            server->AddRef();
-            server->disconnect();
-            Safe_Release(server);
-
-            PostQuitMessage(0);
-        }
-        break;
+    case WM_ACTIVATE:
+    {
+        CServer_Manager* server = CServer_Manager::GetInstance();
+        if (nullptr == server)
+            break;
+        server->AddRef();
+        if (LOWORD(wParam) != WA_INACTIVE) // 활성화 되어있을때
+            server->Set_wParam(wParam);
+        else
+            server->Set_wParam(wParam);
+        Safe_Release(server);
+    }
+    break;
     case WM_COMMAND:
+    {
+        int wmId = LOWORD(wParam);
+        // 메뉴 선택을 구문 분석합니다:
+        switch (wmId)
         {
-            int wmId = LOWORD(wParam);
-            // 메뉴 선택을 구문 분석합니다:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
+        case IDM_ABOUT:
+            DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
         }
-        break;
+    }
+    break;
     case WM_SOCKET:
     {
         CServer_Manager* server = CServer_Manager::GetInstance();
@@ -217,12 +217,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            EndPaint(hWnd, &ps);
-        }
-        break;
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        EndPaint(hWnd, &ps);
+    }
+    break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

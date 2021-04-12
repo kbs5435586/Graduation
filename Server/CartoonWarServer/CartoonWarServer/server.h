@@ -15,7 +15,8 @@ private:
 	SOCKET listenSocket;
 	HANDLE g_iocp;
 	int LISTEN_KEY = 999;
-	int VIEW_RADIUS = 12; // 데이터 보내줄 시야 범위
+	float NEAR_APPROACH = 0.3f;
+	int VIEW_RADIUS = 15; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 
 public:
@@ -46,6 +47,7 @@ public:
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
 	void do_change_formation(int player_id);
+	void do_npc_rotate(int user_id, char dir);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);

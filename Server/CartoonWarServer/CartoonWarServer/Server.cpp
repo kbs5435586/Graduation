@@ -83,7 +83,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ROTATE:
     {
         cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
-        do_rotate(user_id,packet->direction);
+        do_rotate(user_id, packet->direction);
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -104,34 +104,28 @@ void Server::process_packet(int user_id, char* buf)
             {
                 if (ST_SLEEP == g_clients[p_id].m_boid[i]->m_status || ST_FREE == g_clients[p_id].m_boid[i]->m_status)
                 {
-                    cout << i << " is continue\n";
                     continue;
                 }
                 else
                 {
                     if (DO_ATTACK == p_act)
                     {
-                        cout << i << " is DO_ATTACK\n";
                         g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_ATTACK;
                     }
                     if (DO_DEFENCE == p_act)
                     {
-                        cout << i << " is DO_DEFENCE\n";
                         g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_DEFENCE;
                     }
                     if (DO_HOLD == p_act)
                     {
-                        cout << i << " is DO_HOLD\n";
                         g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_HOLD;
                     }
                     if (DO_FOLLOW == p_act)
                     {
-                        cout << i << " is DO_FOLLOW\n";
                         g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_FOLLOW;
                     }
                     if (DO_RANDMOVE == p_act)
                     {
-                        cout << i << " is DO_RANDMOVE\n";
                         g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_RANDMOVE;
                     }
                     activate_npc(i, g_clients[p_id].m_boid[i]->m_last_order);
@@ -236,9 +230,6 @@ void Server::do_move(int user_id, char direction)
     if (pos->z < 0)
         pos->z = 0;
 
-
-
-    cout << pos->x << "," << pos->y << "," << pos->z << endl;
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
     set_formation(user_id);
@@ -374,6 +365,7 @@ void Server::do_rotate(int user_id, char dir)
         send_rotate_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
         // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
     }
+    do_npc_rotate(user_id, dir);
 }
 
 void Server::set_formation(int user_id)
@@ -620,8 +612,6 @@ void Server::do_follow(int npc_id)
             _vec3 new_pos = *pos + Dir;
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-            cout << npc_id << "의 위치 : " << pos->x << " , " << pos->y << endl;
-
             for (int i = 0; i < NPC_ID_START; ++i)
             {
                 if (ST_ACTIVE != g_clients[i].m_status)
@@ -666,20 +656,54 @@ void Server::do_change_formation(int player_id)
     set_formation(player_id);
 }
 
+void Server::do_npc_rotate(int user_id, char dir)
+{
+    for (int i = MY_NPC_START(user_id); i <= MY_NPC_END(user_id); ++i)
+    {
+        if (ST_ACTIVE == g_clients[i].m_status)
+        {
+            if (TURN_RIGHT == dir)
+                g_clients[i].m_transform.Rotation_Y(ROTATE_SPEED);
+            else if (TURN_LEFT == dir)
+                g_clients[i].m_transform.Rotation_Y(-ROTATE_SPEED);
+
+            for (int player = 0; player < NPC_ID_START; ++player)
+            {
+                if (ST_ACTIVE != g_clients[player].m_status)
+                    continue;
+                if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
+                    continue;
+                //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+                //    activate_npc(c.second.m_id, c.second.m_last_order);
+
+                send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+            }
+        }
+    }
+}
+
 _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
 {
     _vec3* new_pos = goto_pos;
     _vec3* now_pos = g_clients[id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3 Dir = { 0,0,0 };
     
-    Dir = *new_pos - *now_pos;
-    float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
-    if (0 != distance_square)
+    if (sqrt((new_pos->x - now_pos->x) *
+        (new_pos->x - now_pos->x) +
+        (new_pos->y - now_pos->y) *
+        (new_pos->y - now_pos->y) +
+        (new_pos->z - now_pos->z) *
+        (new_pos->z - now_pos->z)) > NEAR_APPROACH)
     {
-        float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
+        Dir = *new_pos - *now_pos;
+        float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
+        if (0 != distance_square)
+        {
+            float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
-        Dir = Dir / hyp; // 여기가 노멀값
-        Dir = Dir * MOVE_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir / hyp; // 여기가 노멀값
+            Dir = Dir * MOVE_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
+        }
     }
     return Dir;
 }
@@ -939,8 +963,7 @@ void Server::initialize_NPC(int player_id)
                         &g_clients[player_id].m_boid[j]->m_target_pos);
                 }
             }
-            cout << "Init Player " << player_id << "'s " << npc_id << " NPC Complete\n";
-            
+            activate_npc(npc_id, g_clients[npc_id].m_last_order);
             for (int i = 0; i < NPC_ID_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
             {
                 if (true == is_near(npc_id, i))
@@ -954,12 +977,11 @@ void Server::initialize_NPC(int player_id)
                         continue;
                 }
             }
-            activate_npc(npc_id, g_clients[npc_id].m_last_order);
             break;
         }
         else
         {
-            continue; // 여기 수정할것 (임시방편), 모든 플레이어의 npc active일때 더이상 추가 안되게 처리
+            continue; // 여기 수정할것 (임시방편), 플레이어의 모든 npc active일때 더이상 추가 안되게 처리
         }
     }
 }
@@ -970,10 +992,20 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
-    _vec3* pos = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    packet.x = pos->x;
-    packet.y = pos->y;
-    packet.z = pos->z;
+    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_y = pos._42;
+    packet.p_z = pos._43;
+
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 
@@ -1206,10 +1238,6 @@ void Server::mainServer()
 
     WSADATA WSAData;
     WSAStartup(MAKEWORD(2, 2), &WSAData);
-
-    /*cout << "NPC Init Start\n";
-    initalize_NPC();
-    cout << "NPC Init Finish\n";*/
 
     listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 

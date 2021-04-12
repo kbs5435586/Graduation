@@ -52,7 +52,7 @@ _int CWire::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
-	if (true == server->Get_ShowPlayer())
+	if (true == server->Get_ShowOtherPlayer(ENUM_PLAYER2))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
