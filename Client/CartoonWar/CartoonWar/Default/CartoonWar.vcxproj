@@ -269,7 +269,7 @@
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
-    <ClInclude Include="..\Headers\UI_Direction.h" />
+    <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
     <ClInclude Include="..\Headers\UI_MP.h" />
     <ClInclude Include="..\Headers\UI_Position.h" />
@@ -395,7 +395,7 @@
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
-    <ClCompile Include="..\Codes\UI_Direction.cpp" />
+    <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
     <ClCompile Include="..\Codes\UI_MP.cpp" />
     <ClCompile Include="..\Codes\UI_Position.cpp" />

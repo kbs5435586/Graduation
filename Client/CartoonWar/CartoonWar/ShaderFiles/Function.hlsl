@@ -204,7 +204,33 @@ AD_Light Calculate_Light_Upgrade_V2(int iLightIdx, float4 vNormal, float4 vWorld
 	}
 	else if (tLight[iLightIdx].iLightType == 1)
 	{
+		float4	vLightWorldPos = tLight[iLightIdx].vLightPos;
+		float4	vLightDir = normalize(vWorldPos - vLightWorldPos);
+		float4	vShade = max(dot(-vLightDir, normalize(vNormal)), 0.f);
 
+		fDiffusePower = saturate(dot(-vLightDir, normalize(vNormal)));
+
+
+
+
+		float4	vReflect = reflect(vLightDir, normalize(vNormal));
+		float4	vLook = vWorldPos - vCamPos;
+		vLook = normalize(vLook);
+
+		fSpecularPower = max(dot(-vLook, normalize(vReflect)), 0.f);
+		fSpecularPower = pow(fSpecularPower, 1000.f);
+
+		float fDistance = distance(vWorldPos, vLightWorldPos);
+		if (0.f == tLight[iLightIdx].fRange)
+			fRatio = 0.f;
+		else
+			fRatio = saturate(1.f - fDistance / tLight[iLightIdx].fRange);
+
+
+		tCol.vDiffuse = fDiffusePower * tLight[iLightIdx].tColor.vDiffuse * fRatio;
+		tCol.vSpecular = fSpecularPower * tLight[iLightIdx].tColor.vSpecular * fRatio;
+		tCol.vAmbient = vShade + tLight[iLightIdx].tColor.vAmbient;
+		tCol.vShade = vShade;
 	}
 	else
 	{

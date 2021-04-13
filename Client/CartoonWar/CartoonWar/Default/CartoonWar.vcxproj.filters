@@ -858,7 +858,7 @@
     <ClInclude Include="..\Headers\UI_Position.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\02. UI_Position</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Direction.h">
+    <ClInclude Include="..\Headers\UI_PointLight.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1215,7 +1215,7 @@
     <ClCompile Include="..\Codes\UI_Position.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\02. UI_Position</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_Direction.cpp">
+    <ClCompile Include="..\Codes\UI_PointLight.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction</Filter>
     </ClCompile>
   </ItemGroup>

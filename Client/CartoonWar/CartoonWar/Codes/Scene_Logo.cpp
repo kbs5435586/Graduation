@@ -7,8 +7,9 @@
 #include "UI_Main.h"
 #include "UI_Diffuse.h"
 #include "UI_Normal.h"
-#include "UI_Shade.h"
 #include "UI_Position.h"
+#include "UI_Shade.h"
+#include "UI_PointLight.h"
 // New Scene
 #include "Scene_Stage.h"
 
@@ -17,24 +18,51 @@ unsigned __stdcall ResourceLoadThread(void* pArguments)
 {
 	//Mesh Load Thread
 	CScene_Logo* pLogo = reinterpret_cast<CScene_Logo*>(pArguments);
-	EnterCriticalSection(&(pLogo->m_tCritical_Section));
+	EnterCriticalSection(&(pLogo->m_tCritical_Section_Mesh));
 
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 	{
-		LeaveCriticalSection(&(pLogo->m_tCritical_Section));
+		LeaveCriticalSection(&(pLogo->m_tCritical_Section_Mesh));
 		return 0;
 	}
 
 	pManagement->AddRef();
 
-	//pLogo->Ready_Add_Prototype_Mesh(pManagement);
+	pLogo->Ready_Add_Prototype_Mesh(pManagement);
 
 	Safe_Release(pManagement);
 
-	LeaveCriticalSection(&(pLogo->m_tCritical_Section));
+	LeaveCriticalSection(&(pLogo->m_tCritical_Section_Mesh));
 	return 0;
 }
+
+
+unsigned __stdcall ShaderCompileThread(void* pArguments)
+{
+	//Mesh Load Thread
+	CScene_Logo* pLogo = reinterpret_cast<CScene_Logo*>(pArguments);
+	EnterCriticalSection(&(pLogo->m_tCritical_Section_Shader));
+
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+	{
+		LeaveCriticalSection(&(pLogo->m_tCritical_Section_Shader));
+		return 0;
+	}
+
+	pManagement->AddRef();
+
+	pLogo->Ready_Add_Prototype_Shader(pManagement);
+
+	Safe_Release(pManagement);
+
+	LeaveCriticalSection(&(pLogo->m_tCritical_Section_Shader));
+	return 0;
+}
+
+
+
 
 CScene_Logo::CScene_Logo()
 {
@@ -43,8 +71,12 @@ CScene_Logo::CScene_Logo()
 HRESULT CScene_Logo::Ready_Scene()
 {
 	m_eSceneID = SCENEID::SCENE_LOGO;
-	//InitializeCriticalSection(&m_tCritical_Section);
-	//m_hThread_Handle = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
+	InitializeCriticalSection(&m_tCritical_Section_Mesh);
+	m_hThread_Handle_Mesh = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
+
+
+	InitializeCriticalSection(&m_tCritical_Section_Shader);
+	m_hThread_Handle_Shader= (HANDLE)_beginthreadex(nullptr, 0, ShaderCompileThread, this, 0, nullptr);
 
 	CManagement* pManagement = CManagement::GetInstance();
 
@@ -53,10 +85,23 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	pManagement->AddRef();
 
+
+
+	WaitForSingleObject(m_hThread_Handle_Mesh, INFINITE);
+	CloseHandle(m_hThread_Handle_Mesh);
+	DeleteCriticalSection(&m_tCritical_Section_Mesh);
+
+
+	WaitForSingleObject(m_hThread_Handle_Shader, INFINITE);
+	CloseHandle(m_hThread_Handle_Shader);
+	DeleteCriticalSection(&m_tCritical_Section_Shader);
+
+
 	if (FAILED(Ready_Prototype_Component(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject(pManagement)))
 		return E_FAIL;
+
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Light(pManagement)))
@@ -78,9 +123,6 @@ _int CScene_Logo::LastUpdate_Scene(const _float& fTimeDelta)
 {
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
-		WaitForSingleObject(m_hThread_Handle, INFINITE);
-		CloseHandle(m_hThread_Handle);
-		DeleteCriticalSection(&m_tCritical_Section);
 
 		CManagement* pManagement = CManagement::GetInstance();
 		if (nullptr == pManagement)
@@ -120,7 +162,8 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Shade", CUI_Shade::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_PointLight", CUI_PointLight::Create())))
+		return E_FAIL;
 
 
 
@@ -131,18 +174,14 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 
 HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 {
-	if (FAILED(Ready_Add_Prototype_Mesh(pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Add_Prototype_Shader(pManagement)))
-		return E_FAIL;
+
 	if (FAILED(Ready_Add_Prototype_Buffer(pManagement)))
 		return E_FAIL;
  	if (FAILED(Ready_Add_Prototype_Texture(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Add_Prototype_Function(pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Add_Prototype_Texture_Mesh(pManagement)))
-		return E_FAIL;
+
 	if (FAILED(Ready_Add_Prototype_NaviMesh(pManagement)))
 		return E_FAIL;
 
@@ -233,28 +272,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 		return E_FAIL;
 	return S_OK;
 }
-HRESULT CScene_Logo::Ready_Add_Prototype_Texture_Mesh(CManagement* pManagement)
-{
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Orc_01",
-	//	m_pTextureCom = CTexture::Create(L"Texture_Orc_01", L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Albedo.tga"))))
-	//	return E_FAIL;
-	//if (nullptr == m_pTextureCom)
-	//	return E_FAIL;
-	//m_pTextureCom->AddRef();
 
-	//if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
-	//	L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Albedo.tga")))
-	//	return E_FAIL;
-	//if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
-	//	L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Armors_Normals.tga")))
-	//	return E_FAIL;
-	//if (FAILED(m_pTextureCom->Ready_Texture(L"Texture_Orc_01",
-	//	L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_01/Textures/Orc_01_Body_Normals.tga")))
-	//	return E_FAIL;
-
-
-	return S_OK;
-}
 HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test",
@@ -282,18 +300,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	}
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Monster.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/Monster.dat"))))
 		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02_Attack01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Test_Orc2_atk_01.FBX"))))
-		return E_FAIL; 
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02_Attack02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Test_Orc2_atk_02.FBX"))))
-		return E_FAIL;
-
-
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
 		CMesh::Create_Load(L"../Data/MeshData/Rock01.dat"))))
 		return E_FAIL;
@@ -398,10 +406,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree3",
 		CMesh::Create_Load(L"../Data/MeshData/rpg_Tree3.dat"))))
 		return E_FAIL;
-
-
-
-	return S_OK;
 
 
 	return S_OK;

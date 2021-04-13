@@ -5,13 +5,13 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Direction :
+class CUI_PointLight :
     public CUI
 {
 private:
-	CUI_Direction();
-	CUI_Direction(const CUI_Direction& rhs);
-	virtual ~CUI_Direction() = default;
+	CUI_PointLight();
+	CUI_PointLight(const CUI_PointLight& rhs);
+	virtual ~CUI_PointLight() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Direction*						Create();
+	static CUI_PointLight*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
