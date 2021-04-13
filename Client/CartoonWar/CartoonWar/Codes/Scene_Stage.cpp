@@ -234,8 +234,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
@@ -280,6 +280,17 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Red", tLightInfo)))
 	//	return E_FAIL;
 
+	/*ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.15f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(15.f, 5.5f, 15.f, 1.f);
+	tLightInfo.fRange = 15.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Red", tLightInfo)))
+		return E_FAIL;
+
 	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
 	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
@@ -302,6 +313,16 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
 	//	return E_FAIL;
 
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+	tLightInfo.fRange = 15.f;
+	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+		return E_FAIL;*/
 	return S_OK;
 }
 
@@ -411,11 +432,11 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 		return E_FAIL;
 
 
-	for (int i = 0; i < 10; ++i)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_rpgpp_lt_tree_01", (_uint)SCENEID::SCENE_STAGE, L"Layer_rpgpp_lt_tree_01")))
-			return E_FAIL;
-	}
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_rpgpp_lt_tree_01", (_uint)SCENEID::SCENE_STAGE, L"Layer_rpgpp_lt_tree_01")))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }

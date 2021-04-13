@@ -1174,7 +1174,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
                 //g_clients[user_id].m_transform.Ready_Transform();
-                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),(float)(rand() % WORLD_HEIGHT),(float)(rand() % WORLD_VERTICAL) };
+                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),20.f,(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 g_clients[user_id].m_speed = MOVE_SPEED;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록

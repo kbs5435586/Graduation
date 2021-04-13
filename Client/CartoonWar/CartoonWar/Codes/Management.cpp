@@ -18,7 +18,7 @@ CManagement::CManagement()
 	, m_pObserver_Manager(CObserverManager::GetInstance())
 	, m_pLoad_Manager(CLoadManager::GetInstance())
 	, m_pUAV_Manager(CUAVManager::GetInstance())
-	, m_pServer_Manager(CServer_Manager::GetInstance())
+	//, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
@@ -29,7 +29,7 @@ CManagement::CManagement()
 	m_pObserver_Manager->AddRef();
 	m_pLoad_Manager->AddRef();
 	m_pUAV_Manager->AddRef();
-	m_pServer_Manager->AddRef();
+	//m_pServer_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -268,6 +268,7 @@ void CManagement::Release_Engine()
 
 	if (dwRefCnt = CObserverManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CObserverManager Release Failed");
+
 	if (dwRefCnt = CUAVManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CUAVManager Release Failed");
 
@@ -307,8 +308,8 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CDevice::GetInstance()->DestroyInstance())
 		_MSG_BOX("CDevice Release Failed");
 
-	if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
-		_MSG_BOX("CServer_Manager Release Failed");
+	//if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
+	//	_MSG_BOX("CServer_Manager Release Failed");
 }
 
 CGameObject* CManagement::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
@@ -339,5 +340,5 @@ void CManagement::Free()
 	Safe_Release(m_pObserver_Manager);
 	Safe_Release(m_pLoad_Manager);
 	Safe_Release(m_pScene);
-	Safe_Release(m_pServer_Manager);
+	//Safe_Release(m_pServer_Manager);
 }
