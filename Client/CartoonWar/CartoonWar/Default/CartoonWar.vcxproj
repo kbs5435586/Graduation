@@ -268,15 +268,13 @@
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_Direction.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
     <ClInclude Include="..\Headers\UI_MP.h" />
-    <ClInclude Include="..\Headers\UI_Shade.h" />
+    <ClInclude Include="..\Headers\UI_Position.h" />
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
-    <ClInclude Include="..\Headers\UI_Reflect.h" />
-    <ClInclude Include="..\Headers\UI_Specular.h" />
-    <ClInclude Include="..\Headers\UI_Depth.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
@@ -396,15 +394,13 @@
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_Direction.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
     <ClCompile Include="..\Codes\UI_MP.cpp" />
-    <ClCompile Include="..\Codes\UI_Shade.cpp" />
+    <ClCompile Include="..\Codes\UI_Position.cpp" />
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
-    <ClCompile Include="..\Codes\UI_Reflect.cpp" />
-    <ClCompile Include="..\Codes\UI_Specular.cpp" />
-    <ClCompile Include="..\Codes\UI_Depth.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
@@ -468,9 +464,6 @@
     <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Reflect.hlsl">
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\ShaderFiles\Shader_Collider.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -493,6 +486,12 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Mesh_Default.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_DirectionLight.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_PointLIght.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

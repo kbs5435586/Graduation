@@ -42,11 +42,11 @@ HRESULT CRenderer::Render_RenderGroup()
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
-	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
+	//pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
 
 
 	Render_Deffered(pManagement);
-	Render_Light(pManagement);
+	//Render_Light(pManagement);
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 
 	Render_Alpha();

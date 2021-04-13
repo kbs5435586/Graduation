@@ -49,10 +49,13 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	vOut.vDiffuseTex = vIn.vColor;
 	vOut.vNormalTex  = vIn.vNormal;
-	vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;
-	vOut.vSpecularTex = tLight_Point.vSpecular + tLight_Default.vSpecular;
-	vOut.vPointLightTex = tLight_Point.vDiffuse;
 	vOut.vPositionTex = vIn.vWorldPos;
+
+
+	//vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;
+	//vOut.vSpecularTex = tLight_Point.vSpecular + tLight_Default.vSpecular;
+	//vOut.vPointLightTex = tLight_Point.vDiffuse;
+
 	return vOut;
 }
 

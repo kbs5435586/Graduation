@@ -71,8 +71,13 @@ void CUI_PointLight::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
+	ComPtr<ID3D12DescriptorHeap>	pTexture_Diffuse	= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTexture_Normal		= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTexture_Position	= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
+	//CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
+
+
+
 	CDevice::GetInstance()->UpdateTable();
 
 

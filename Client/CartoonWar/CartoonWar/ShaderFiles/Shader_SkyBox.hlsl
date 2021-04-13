@@ -39,7 +39,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	vOut.vDiffuseTex = g_textureCube.Sample(Sampler0, vIn.vTexUV);
-	vOut.vShadeTex	 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
+	//vOut.vShadeTex	 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 
 	return vOut;
 }

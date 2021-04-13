@@ -1,21 +1,23 @@
 #include "framework.h"
-#include "UI_Depth.h"
+#include "UI_Direction.h"
 #include "Management.h"
 
-CUI_Depth::CUI_Depth()
+CUI_Direction::CUI_Direction()
+	: CUI()
 {
 }
 
-CUI_Depth::CUI_Depth(const CUI_Depth& rhs)
+CUI_Direction::CUI_Direction(const CUI_Direction& rhs)
+	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Depth::Ready_Prototype()
+HRESULT CUI_Direction::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Depth::Ready_GameObject(void* pArg)
+HRESULT CUI_Direction::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -23,19 +25,19 @@ HRESULT CUI_Depth::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_fX = 75.f;
-	m_fY = 525.f;
+	m_fY = 375.f;
 
 	m_fSizeX = 150.f;
 	m_fSizeY = 150.f;
 	return S_OK;
 }
 
-_int CUI_Depth::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Direction::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Depth::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Direction::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -45,7 +47,7 @@ _int CUI_Depth::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Depth::Render_GameObject()
+void CUI_Direction::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -68,11 +70,16 @@ void CUI_Depth::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(6)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
+	ComPtr<ID3D12DescriptorHeap>	pTexture_Diffuse	= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTexture_Normal		= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTexture_Position	= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
+
+
+	CDevice::GetInstance()->SetTextureToShader(pTexture_Normal.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pTexture_Position.Get(), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -80,7 +87,7 @@ void CUI_Depth::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Depth::CreateInputLayout()
+HRESULT CUI_Direction::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -92,9 +99,9 @@ HRESULT CUI_Depth::CreateInputLayout()
 	return S_OK;
 }
 
-CUI_Depth* CUI_Depth::Create()
+CUI_Direction* CUI_Direction::Create()
 {
-	CUI_Depth* pInstance = new CUI_Depth();
+	CUI_Direction* pInstance = new CUI_Direction();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -102,9 +109,9 @@ CUI_Depth* CUI_Depth::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Depth::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Direction::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
-	CUI_Depth* pInstance = new CUI_Depth();
+	CUI_Direction* pInstance = new CUI_Direction();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -113,7 +120,7 @@ CGameObject* CUI_Depth::Clone_GameObject(void* pArg, const _uint& iIdx)
 	return pInstance;
 }
 
-void CUI_Depth::Free()
+void CUI_Direction::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -122,7 +129,7 @@ void CUI_Depth::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_Depth::Ready_Component()
+HRESULT CUI_Direction::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -143,7 +150,7 @@ HRESULT CUI_Depth::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Deffered");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_DirectionLight");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

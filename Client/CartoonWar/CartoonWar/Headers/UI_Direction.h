@@ -5,13 +5,13 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Reflect :
+class CUI_Direction :
     public CUI
 {
 private:
-	CUI_Reflect();
-	CUI_Reflect(const CUI_Reflect& rhs);
-	virtual ~CUI_Reflect() = default;
+	CUI_Direction();
+	CUI_Direction(const CUI_Direction& rhs);
+	virtual ~CUI_Direction() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Reflect*						Create();
+	static CUI_Direction*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();

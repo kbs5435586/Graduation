@@ -5,13 +5,14 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Specular :
-    public CUI
+
+class CUI_Position :
+	public CUI
 {
 private:
-    CUI_Specular();
-    CUI_Specular(const CUI_Specular& rhs);
-    virtual ~CUI_Specular() = default;
+	CUI_Position();
+	CUI_Position(const CUI_Position& rhs);
+	virtual ~CUI_Position() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,15 +22,16 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Specular*					Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	static CUI_Position* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
-	CTransform*								m_pTransformCom = nullptr;
-	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
-	CShader*								m_pShaderCom = nullptr;
+	CTransform* m_pTransformCom = nullptr;
+	CRenderer* m_pRendererCom = nullptr;
+	CBuffer_RectTex* m_pBufferCom = nullptr;
+	CShader* m_pShaderCom = nullptr;
+
 };
 

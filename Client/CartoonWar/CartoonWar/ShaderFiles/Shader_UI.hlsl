@@ -17,7 +17,7 @@ VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.vTexUV = vIn.vTexUV;
+	vOut.vTexUV = vIn.vTexUV; 
 
 	return vOut;
 }

@@ -417,74 +417,54 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 {
 	//Test
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Test",
-		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_02/Textures/Orc_02_Body_Albedo%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Test",
+	//	CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Orc/Orc_02/Textures/Orc_02_Body_Albedo%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+	//	return E_FAIL;
 
 	//DDS
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks",
-		CTexture::Create(L"../Bin/Resource/Texture/Bricks/bricks%d.dds", 3, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox",
-		CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha",
-		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firefire",
-		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_fire%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firenoise",
-		CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_noise%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Bricks/bricks%d.dds", 3, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox",
+	//	CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firefire",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_fire%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firenoise",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_noise%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123",
-		CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch123_%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456",
-		CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch456_%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch123_%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch456_%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+	//	return E_FAIL;
 
 	//PNG
 	//	if(FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo",
 	//	CTexture::Create(L"../Bin/Resource/Texture/Logo/Logo%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Noise",
-		CTexture::Create(L"../Bin/Resource/Texture/Noise/Noise%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke",
-		CTexture::Create(L"../Bin/Resource/Texture/Particle/CartoonSmoke%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Noise",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Noise/Noise%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke",
+	//	CTexture::Create(L"../Bin/Resource/Texture/Particle/CartoonSmoke%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+	//	return E_FAIL;
 
 	//TGA
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
 		CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex",
-		CTexture::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tex_a%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex",
+	//	CTexture::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tex_a%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MountainRock1_Diffuse",
-		CTexture::Create(L"../Bin/Resource/Texture/MountainRock/MountainsRocks01_MountainsRocks01_Albedo%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MountainRock1_Normal",
-		CTexture::Create(L"../Bin/Resource/Texture/MountainRock/MountainsRocks01_MountainsRocks01_Normal%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MountainRock2_Diffuse",
-		CTexture::Create(L"../Bin/Resource/Texture/MountainRock/MountainsRocks02_MountainsRocks02_Albedo%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MountainRock2_Normal",
-		CTexture::Create(L"../Bin/Resource/Texture/MountainRock/MountainsRocks02_MountainsRocks02_Normal%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MountainRock3_Diffuse",
-		CTexture::Create(L"../Bin/Resource/Texture/MountainRock/MountainsRocks03_RockMoutain03_Albedo%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MountainRock3_Normal",
-		CTexture::Create(L"../Bin/Resource/Texture/MountainRock/MountainsRocks03_RockMoutain03_Normal%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
-		return E_FAIL;
 
 
 	return S_OK;
