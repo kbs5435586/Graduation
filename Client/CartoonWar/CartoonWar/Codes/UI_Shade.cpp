@@ -1,21 +1,21 @@
 #include "framework.h"
-#include "UI_PointLight.h"
+#include "UI_Shade.h"
 #include "Management.h"
 
-CUI_PointLight::CUI_PointLight()
+CUI_Shade::CUI_Shade()
 {
 }
 
-CUI_PointLight::CUI_PointLight(const CUI_PointLight& rhs)
+CUI_Shade::CUI_Shade(const CUI_Shade& rhs)
 {
 }
 
-HRESULT CUI_PointLight::Ready_Prototype()
+HRESULT CUI_Shade::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_PointLight::Ready_GameObject(void* pArg)
+HRESULT CUI_Shade::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -23,19 +23,19 @@ HRESULT CUI_PointLight::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_fX = 225.f;
-	m_fY = 375.f;
+	m_fY = 225.f;
 
 	m_fSizeX = 150.f;
 	m_fSizeY = 150.f;
 	return S_OK;
 }
 
-_int CUI_PointLight::Update_GameObject(const _float& fTimeDelta)
+_int CUI_Shade::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_PointLight::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Shade::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -45,7 +45,7 @@ _int CUI_PointLight::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_PointLight::Render_GameObject()
+void CUI_Shade::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -71,13 +71,8 @@ void CUI_PointLight::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTexture_Diffuse	= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTexture_Normal		= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pTexture_Position	= pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
-	//CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
-
-
-
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -85,7 +80,7 @@ void CUI_PointLight::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_PointLight::CreateInputLayout()
+HRESULT CUI_Shade::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -97,9 +92,9 @@ HRESULT CUI_PointLight::CreateInputLayout()
 	return S_OK;
 }
 
-CUI_PointLight* CUI_PointLight::Create()
+CUI_Shade* CUI_Shade::Create()
 {
-	CUI_PointLight* pInstance = new CUI_PointLight();
+	CUI_Shade* pInstance = new CUI_Shade();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -107,9 +102,9 @@ CUI_PointLight* CUI_PointLight::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_PointLight::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Shade::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
-	CUI_PointLight* pInstance = new CUI_PointLight();
+	CUI_Shade* pInstance = new CUI_Shade();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -118,7 +113,7 @@ CGameObject* CUI_PointLight::Clone_GameObject(void* pArg, const _uint& iIdx)
 	return pInstance;
 }
 
-void CUI_PointLight::Free()
+void CUI_Shade::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -127,7 +122,7 @@ void CUI_PointLight::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_PointLight::Ready_Component()
+HRESULT CUI_Shade::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);

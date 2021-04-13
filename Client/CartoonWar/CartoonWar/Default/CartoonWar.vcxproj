@@ -148,6 +148,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -275,7 +276,7 @@
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
-    <ClInclude Include="..\Headers\UI_PointLight.h" />
+    <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
@@ -401,7 +402,7 @@
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
-    <ClCompile Include="..\Codes\UI_PointLight.cpp" />
+    <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>

@@ -6,13 +6,13 @@ class CBuffer_RectTex;
 class CShader;
 class CTexture;
 
-class CUI_PointLight :
+class CUI_Shade :
     public CUI
 {
 private:
-	CUI_PointLight();
-	CUI_PointLight(const CUI_PointLight& rhs);
-    virtual ~CUI_PointLight() = default;
+	CUI_Shade();
+	CUI_Shade(const CUI_Shade& rhs);
+    virtual ~CUI_Shade() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,7 +22,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_PointLight*					Create();
+	static CUI_Shade*					Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();

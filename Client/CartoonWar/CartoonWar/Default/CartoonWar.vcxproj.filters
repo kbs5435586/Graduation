@@ -469,11 +469,11 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\02. UI_Position">
       <UniqueIdentifier>{732327b6-bbd6-4861-a668-db50590ba3ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\05. UI_PointLight">
-      <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction">
       <UniqueIdentifier>{67c18660-b07c-4cb2-b3a7-f003b0a44a98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\03. UI_Shade">
+      <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -735,8 +735,8 @@
     <ClInclude Include="..\Headers\TestCube.h">
       <Filter>02. GameObject\99. BaseShape\99. TestCube</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_PointLight.h">
-      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_PointLight</Filter>
+    <ClInclude Include="..\Headers\UI_Shade.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\03. UI_Shade</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI.h">
       <Filter>02. GameObject\97. UI</Filter>
@@ -1095,8 +1095,8 @@
     <ClCompile Include="..\Codes\TestCube.cpp">
       <Filter>02. GameObject\99. BaseShape\99. TestCube</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_PointLight.cpp">
-      <Filter>02. GameObject\97. UI\99. UI_Deffered\05. UI_PointLight</Filter>
+    <ClCompile Include="..\Codes\UI_Shade.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\03. UI_Shade</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI.cpp">
       <Filter>02. GameObject\97. UI</Filter>

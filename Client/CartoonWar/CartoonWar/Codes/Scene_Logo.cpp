@@ -4,14 +4,11 @@
 // GameObject
 #include "Logo.h"
 // Defferd UI
+#include "UI_Main.h"
 #include "UI_Diffuse.h"
 #include "UI_Normal.h"
-#include "UI_Main.h"
 #include "UI_Shade.h"
-#include "UI_Specular.h"
-#include "UI_Reflect.h"
-#include "UI_PointLight.h"
-#include "UI_Depth.h"
+#include "UI_Position.h"
 // New Scene
 #include "Scene_Stage.h"
 
@@ -46,8 +43,8 @@ CScene_Logo::CScene_Logo()
 HRESULT CScene_Logo::Ready_Scene()
 {
 	m_eSceneID = SCENEID::SCENE_LOGO;
-	InitializeCriticalSection(&m_tCritical_Section);
-	m_hThread_Handle = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
+	//InitializeCriticalSection(&m_tCritical_Section);
+	//m_hThread_Handle = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
 
 	CManagement* pManagement = CManagement::GetInstance();
 
@@ -113,22 +110,17 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Logo", CLogo::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Main", CUI_Main::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Diffuse", CUI_Diffuse::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Normal", CUI_Normal::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Main", CUI_Main::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Position", CUI_Position::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Shade", CUI_Shade::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Specular", CUI_Specular::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Reflect", CUI_Reflect::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_PointLight", CUI_PointLight::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Depth", CUI_Depth::Create())))
-		return E_FAIL;
+
 
 
 
@@ -160,8 +152,8 @@ HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 
 HRESULT CScene_Logo::Ready_Layer(CManagement* pManagement)
 {
-	if (FAILED(Ready_Layer_Logo(L"Layer_Logo", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Logo(L"Layer_Logo", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
 	return S_OK;
@@ -425,9 +417,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks",
 	//	CTexture::Create(L"../Bin/Resource/Texture/Bricks/bricks%d.dds", 3, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox",
-	//	CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox",
+		CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
+		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha",
 	//	CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 	//	return E_FAIL;
