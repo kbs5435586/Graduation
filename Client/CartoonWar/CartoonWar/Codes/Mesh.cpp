@@ -1516,10 +1516,14 @@ void CMesh::Free()
 		for (auto& iter : m_vecDiffTexturePath)
 			Safe_Delete_Array(iter);
 
-		if(m_pBoneFrameData)
-		Safe_Release(m_pBoneFrameData);
-		if(m_pBoneOffset)
-		Safe_Release(m_pBoneOffset);
+
+	}
+	if (m_IsClone)
+	{
+		if (m_pBoneFrameData)
+			Safe_Release(m_pBoneFrameData);
+		if (m_pBoneOffset)
+			Safe_Release(m_pBoneOffset);
 	}
 
 

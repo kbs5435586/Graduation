@@ -171,6 +171,50 @@ AD_Light Calculate_Light_Upgrade(int LightType, float4 _vNormal, float4 vWorldPo
 	return tColor;
 }
 
+AD_Light Calculate_Light_Upgrade_V2(int iLightIdx, float4 vNormal, float4 vWorldPos)
+{
+	AD_Light tCol = (AD_Light)0;
+
+	float	fDiffusePower = 0.f;
+	float	fSpecularPower = 0.f;
+	float	fRatio = 0.f;
+
+
+	if (tLight[iLightIdx].iLightType == 0)
+	{
+		float4	vLightDir = normalize(tLight[iLightIdx].vLightDir);
+		float4	vShade = max(dot(-vLightDir, normalize(vNormal)), 0.f);
+
+
+		fDiffusePower = saturate(dot(-vLightDir, normalize(vNormal)));
+
+
+		float4	vReflect = reflect(vLightDir, normalize(vNormal));
+		float4	vLook = vWorldPos - vCamPos;
+		float4	vEye = normalize(vLook);
+
+		fSpecularPower = max(dot(-vEye, normalize(vReflect)), 0.f);
+		fSpecularPower = pow(fSpecularPower, 1000.f);
+
+
+		tCol.vDiffuse = fDiffusePower * tLight[iLightIdx].tColor.vDiffuse * fRatio;
+		tCol.vSpecular = fSpecularPower * tLight[iLightIdx].tColor.vSpecular * fRatio;
+		tCol.vAmbient = vShade + tLight[iLightIdx].tColor.vAmbient;
+		tCol.vShade = vShade;
+	}
+	else if (tLight[iLightIdx].iLightType == 1)
+	{
+
+	}
+	else
+	{
+
+	}
+
+	return tCol;
+}
+
+
 
 
 
