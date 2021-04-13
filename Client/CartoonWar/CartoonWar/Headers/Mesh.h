@@ -83,8 +83,6 @@ public:
     static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
     static CMesh*                   Create_Load(const _tchar* pFilePath);
     virtual CComponent*             Clone_Component(void* pArg);
-public:
-    CTexture*                       GetTexture(int i){return m_vecTexture[i]; }
 private:
     FbxScene*                       m_pScene = nullptr;
 private:
@@ -92,7 +90,6 @@ private:
     vector<tAnimClip*>				m_vecAnimClip;
     vector<tContainer>              m_vecContainer;
     FbxArray<FbxString*>			m_arrAnimName;
-    vector<CTexture*>               m_vecTexture;
 public:
     vector<const _tchar*>           m_vecDiffTexturePath;
 private:

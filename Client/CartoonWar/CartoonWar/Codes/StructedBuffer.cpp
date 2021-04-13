@@ -191,17 +191,4 @@ CStructedBuffer* CStructedBuffer::Create()
 void CStructedBuffer::Free()
 {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

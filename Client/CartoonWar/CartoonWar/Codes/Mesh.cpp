@@ -13,7 +13,6 @@ CMesh::CMesh(const CMesh& rhs)
 	: CComponent(rhs)
 	, m_tRenderInfo(rhs.m_tRenderInfo)
 	, m_iSubsetNum(rhs.m_iSubsetNum)
-	, m_vecTexture(rhs.m_vecTexture)
 	, m_iMaxTexNum(rhs.m_iMaxTexNum)
 	, m_vecMTBone(rhs.m_vecMTBone)
 	, m_vecMTAnimClip(rhs.m_vecMTAnimClip)
@@ -242,22 +241,7 @@ void CMesh::Load_Texture()
 {
 	// Texture Load
 
-	for (UINT i = 0; i < m_vecContainer.size(); ++i)
-	{
-		for (UINT j = 0; j < m_vecContainer[i].vecMtrl.size(); ++j)
-		{
-			CTexture* pTexture = nullptr;
-			wstring strPath;
-			wstring strFileName;
-
-			strPath = (m_vecContainer[i].vecMtrl[j].strDiff.c_str());
-			if (!strPath.empty())
-			{
-				pTexture = CTexture::Create(L"Texture_Mesh", strPath.c_str());
-				m_vecTexture.push_back(pTexture);
-			}
-		}
-	}
+	
 }
 
 HRESULT CMesh::SetUp_Texture()
@@ -1529,13 +1513,14 @@ void CMesh::Free()
 				Safe_Delete(m_tRenderInfo.vecIndices[i].pSystem);
 		}
 
-		Safe_Release(m_pBoneFrameData);
-		Safe_Release(m_pBoneOffset);
 		for (auto& iter : m_vecDiffTexturePath)
 			Safe_Delete_Array(iter);
+
+		if(m_pBoneFrameData)
+		Safe_Release(m_pBoneFrameData);
+		if(m_pBoneOffset)
+		Safe_Release(m_pBoneOffset);
 	}
-	for (auto& iter : m_vecTexture)
-		Safe_Release(iter);
 
 
 	CComponent::Free();
