@@ -49,51 +49,52 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-//PS_OUT PS_Main(VS_OUT vIn)
-//{
-//	PS_OUT vOut = (PS_OUT)0;
-//
-//	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vIn.vNormal, vIn.vWorldPos);
-//	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
-//
-//	float4	vOutColor	= g_texture0.Sample(Sampler0, vIn.vTexUV);
-//	float4	vFogColor	= float4(0.5f, 0.5f, 0.5f, 1.f);
-//
-//	vOut.vDiffuseTex	= vOutColor;
-//	vOut.vNormalTex		= vIn.vNormal;
-//	vOut.vShadeTex		= tLight_Point.vShade + tLight_Default.vShade;
-//	vOut.vSpecularTex	= tLight_Point.vSpecular + tLight_Default.vSpecular;
-//	//vOut.vPointLightTex = vIn.fFogFactor  * tLight_Point.vDiffuse + (1.f - vIn.fFogFactor)*vFogColor;
-//	vOut.vPointLightTex = tLight_Point.vDiffuse;
-//	vOut.vPositionTex = vIn.vWorldPos;
-//
-//
-//	return vOut;
-//}
-
 PS_OUT PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
+	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vIn.vNormal, vIn.vWorldPos);
+	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
 
-	AD_Light tCol = (AD_Light)0;
-	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4	vOutColor	= g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4	vFogColor	= float4(0.5f, 0.5f, 0.5f, 1.f);
 
-	for (int i = 0; i < iNumLight; ++i)
-	{
-		AD_Light tCurCol = Calculate_Light_Upgrade_V2(i, vIn.vNormal, vIn.vWorldPos);
-		tCol.vDiffuse += tCurCol.vDiffuse;
-		tCol.vSpecular += tCurCol.vSpecular;
-		tCol.vAmbient += tCurCol.vAmbient;
-		tCol.vShade += tCurCol.vShade;
-	}
+	vOut.vDiffuseTex	= vOutColor;
+	vOut.vNormalTex		= vIn.vNormal;
+	vOut.vShadeTex		= tLight_Point.vShade + tLight_Default.vShade;
+	vOut.vSpecularTex	= tLight_Point.vSpecular + tLight_Default.vSpecular;
+	//vOut.vPointLightTex = vIn.fFogFactor  * tLight_Point.vDiffuse + (1.f - vIn.fFogFactor)*vFogColor;
+	vOut.vPointLightTex = tLight_Point.vDiffuse;
+	vOut.vPositionTex = vIn.vWorldPos;
 
-	//vOut.vDiffuseTex = float4(iNumLight, iNumLight, iNumLight, iNumLight);
-	
-
-	vOut.vDiffuseTex = vOutColor* tCol.vDiffuse;
-	vOut.vShadeTex = tCol.vShade;
-	vOut.vSpecularTex = tCol.vSpecular;
 
 	return vOut;
 }
+
+//PS_OUT PS_Main(VS_OUT vIn)
+//{
+//	PS_OUT vOut = (PS_OUT)0;
+//
+//
+//	AD_Light tCol = (AD_Light)0;
+//	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+//
+//	for (int i = 0; i < iNumLight; ++i)
+//	{
+//		AD_Light tCurCol = Calculate_Light_Upgrade_V2(i, vIn.vNormal, vIn.vWorldPos);
+//		tCol.vDiffuse += tCurCol.vDiffuse;
+//		tCol.vSpecular += tCurCol.vSpecular;
+//		tCol.vAmbient += tCurCol.vAmbient;
+//		tCol.vShade += tCurCol.vShade;
+//	}
+//
+//	//vOut.vDiffuseTex = float4(iNumLight, iNumLight, iNumLight, iNumLight);
+//	
+//
+//	vOut.vDiffuseTex = vOutColor;
+//	vOut.vShadeTex = tCol.vShade;
+//	vOut.vSpecularTex = tCol.vSpecular;
+//	vOut.vPointLightTex = tCol.vDiffuse;
+//
+//	return vOut;
+//}
