@@ -31,12 +31,12 @@ HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 	//m_pAnimCom->GetCurClip() = 1;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
+	SetUp_Anim();
+	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	//{
+	//	CTexture* pTexture = CTexture::Create(iter);
+	//	m_vecTexture.push_back(pTexture);
+	//}
 	return S_OK;
 }
 
@@ -53,23 +53,24 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+
 	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-		_vec3 vLook = {};
-		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		vLook = Vector3_::Normalize(vLook);
+		//_vec3 vLook = {};
+		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		//vLook = Vector3_::Normalize(vLook);
 
 
-		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-		_vec3 vSlide = {};
-		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-		{
-			m_pTransformCom->BackWard(fTimeDelta);
-		}
-		else
-		{
-			m_pTransformCom->Go_There(vSlide);
-		}
+		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		//_vec3 vSlide = {};
+		//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		//{
+		//	m_pTransformCom->BackWard(fTimeDelta);
+		//}
+		//else
+		//{
+		//	m_pTransformCom->Go_There(vSlide);
+		//}
 
 
 	}
@@ -106,8 +107,9 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 	//	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	//	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	//}
-
-	m_pAnimCom->Update(fTimeDelta);
+	//auto iter = m_mapAnimCtrl;
+	m_iCurAnimIdx =7;
+	m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta);
 	return _int();
 }
 
@@ -119,7 +121,7 @@ void CTestAnimMesh::Render_GameObject()
 	pManagement->AddRef();
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum()-1;
 	//_uint iSubsetNum = 1;
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
@@ -128,16 +130,9 @@ void CTestAnimMesh::Render_GameObject()
 		_matrix matWorld = m_pTransformCom->Get_Matrix();
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-		if (GetAsyncKeyState('O')&0x8000)
-			m_IsAnim ^= true;
-
+	
 		REP tRep = {};
-		if (m_IsAnim)
-		{
-			tRep.m_arrInt[0] = 1;
-		}
-		else
-			tRep.m_arrInt[0] = 0;
+		tRep.m_arrInt[0] = 1;
 	
 
 
@@ -153,7 +148,7 @@ void CTestAnimMesh::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		CDevice::GetInstance()->SetTextureToShader(m_vecTexture[i]->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[i]->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 
 
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
@@ -183,6 +178,44 @@ HRESULT CTestAnimMesh::CreateInputLayout()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CTestAnimMesh::SetUp_Anim()
+{
+	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));			//attack01
+	m_vecAnimCtrl.push_back(AnimCtrl(71, 141, 2.3f, 4.7f));			//attack02
+	m_vecAnimCtrl.push_back(AnimCtrl(142, 217, 4.73f, 7.23f));		//attack03
+	m_vecAnimCtrl.push_back(AnimCtrl(218, 288, 7.26f, 9.59f));		//attack04
+
+	m_vecAnimCtrl.push_back(AnimCtrl(289, 364, 9.63f, 11.13f));		//attack05
+	m_vecAnimCtrl.push_back(AnimCtrl(365, 440, 12.16f, 14.6f));		//attack06
+	m_vecAnimCtrl.push_back(AnimCtrl(441, 521, 14.7f, 17.3f));		//attack07
+	m_vecAnimCtrl.push_back(AnimCtrl(522, 597, 17.3f, 19.9f));		//attack08
+
+	m_vecAnimCtrl.push_back(AnimCtrl(598, 659, 18.56f,20.56f));		//dead01
+	m_vecAnimCtrl.push_back(AnimCtrl(659, 719, 20.56f,22.56f));		//dead02
+	m_vecAnimCtrl.push_back(AnimCtrl(720, 775, 22.56f,24.36f));		//dead03
+	m_vecAnimCtrl.push_back(AnimCtrl(776, 831, 24.36f,26.16f));		//dead04
+	m_vecAnimCtrl.push_back(AnimCtrl(832, 872, 26.16f,27.32f));		//gethit01
+	m_vecAnimCtrl.push_back(AnimCtrl(873, 913, 27.32f,28.48f));		//gethit02
+	m_vecAnimCtrl.push_back(AnimCtrl(914, 974, 28.48f,30.48f));		//Idle
+	m_vecAnimCtrl.push_back(AnimCtrl(975, 1155, 30.48f,36.48f));	//Idle_Other00
+	m_vecAnimCtrl.push_back(AnimCtrl(1156, 1276, 36.48f,40.48f));	//Idle_Other01
+	m_vecAnimCtrl.push_back(AnimCtrl(1277, 1337, 40.48f,42.48f));	//Idle_sit
+	m_vecAnimCtrl.push_back(AnimCtrl(1338, 1388, 42.48f,44.2f));	//jump
+	m_vecAnimCtrl.push_back(AnimCtrl(1389, 1419, 44.2f,45.2f));		//run
+	m_vecAnimCtrl.push_back(AnimCtrl(1420, 1450, 45.2f,46.2f));		//run_back
+	m_vecAnimCtrl.push_back(AnimCtrl(1451, 1481, 46.2f,47.2f));		//run_left
+	m_vecAnimCtrl.push_back(AnimCtrl(1482, 1512, 47.2f,48.2f));		//run_right
+	m_vecAnimCtrl.push_back(AnimCtrl(1513, 1603, 48.2f,51.2f));		//shout
+	m_vecAnimCtrl.push_back(AnimCtrl(1604, 1644, 51.2f,52.36f));	//take weapon
+	m_vecAnimCtrl.push_back(AnimCtrl(1645, 1680, 52.36f,52.36f));	//TurnLeft
+	m_vecAnimCtrl.push_back(AnimCtrl(1681, 1726, 52.36f,54.f));		//TurnLeft_sit
+	m_vecAnimCtrl.push_back(AnimCtrl(1727, 1762, 54.f,55.08f));		//TurnRight
+	m_vecAnimCtrl.push_back(AnimCtrl(1763, 1808, 55.08f,56.32f));	//TurnRight_sit
+	m_vecAnimCtrl.push_back(AnimCtrl(1809, 1849, 56.32f,57.48f));	//walk		
+	m_vecAnimCtrl.push_back(AnimCtrl(1850, 1890, 57.48f,59.04f));	//walk back		
+	m_vecAnimCtrl.push_back(AnimCtrl(1891, 1941, 59.04f,60.36f));	//walk back sit		
 }
 
 CTestAnimMesh* CTestAnimMesh::Create()
@@ -218,7 +251,7 @@ void CTestAnimMesh::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
-	Safe_Release(m_pNaviCom);
+	//Safe_Release(m_pNaviCom);
 	if (m_IsClone)
 	{
 		for (auto& iter : m_vecTexture)
@@ -265,11 +298,10 @@ HRESULT CTestAnimMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
 		return E_FAIL;
 
-	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-		return E_FAIL;
+	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
-	return S_OK;
-}
+	return S_OK;}

@@ -21,6 +21,7 @@ public:
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
+	void									SetUp_Anim();
 public:
 	static CTestAnimMesh*					Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint & iIdx = 0) override;
@@ -37,6 +38,9 @@ private:
 	CNavigation*							m_pNaviCom = nullptr;
 private:
 	vector<CTexture*>						m_vecTexture;
-	_bool									m_IsAnim = false;
+	vector<AnimCtrl>						m_vecAnimCtrl;
+private:
+	_int									m_iCurAnimIdx = 0;
+	_int									m_iPreAnimIdx = 0;
 };
 

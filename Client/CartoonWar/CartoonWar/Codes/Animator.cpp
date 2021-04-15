@@ -28,10 +28,10 @@ void CAnimator::SetBones(const vector<tMTBone>* _vecBones)
 	m_vecFinalBoneMat.resize(m_pVecBones->size());
 }
 
-void CAnimator::SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip)
+void CAnimator::SetAnimClip(vector<tMTAnimClip> _vecAnimClip)
 {
-	m_pVecClip = _vecAnimClip;
-	m_vecClipUpdateTime.resize(m_pVecClip->size());
+	m_vecClip = _vecAnimClip;
+	m_vecClipUpdateTime.resize(m_vecClip.size());
 
 
 	static float fTime = 0.f;
@@ -39,29 +39,30 @@ void CAnimator::SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip)
 	m_vecClipUpdateTime[0] = fTime;
 }
 
-void CAnimator::Update(const _float& fTimeDelta)
+void CAnimator::Update(AnimCtrl tCtrl, const _float& fTimeDelta)
 {
 	m_fCurTime = 0.f;
 
+	m_vecClip;
 	m_vecClipUpdateTime[m_iCurClip] += fTimeDelta;
 
-	if (m_vecClipUpdateTime[m_iCurClip] >= m_pVecClip->at(m_iCurClip).dTimeLength)
+	if (m_vecClipUpdateTime[m_iCurClip] >= tCtrl.fEndTime - tCtrl.fStartTime)
 	{
 		m_vecClipUpdateTime[m_iCurClip] = 0.f;
 	}
 
-	m_fCurTime = m_pVecClip->at(m_iCurClip).dStartTime + m_vecClipUpdateTime[m_iCurClip];
+	m_fCurTime = tCtrl.fStartTime + m_vecClipUpdateTime[m_iCurClip];
 
-	double dFrameIdx = m_fCurTime * (double)m_iFrameCount;
-	m_iFrameIdx = (int)(dFrameIdx);
+	double dFrameIdx = m_fCurTime * m_iFrameCount;
+	tCtrl.iCurFrm = (int)(dFrameIdx);
 
-	if (m_iFrameIdx >= m_pVecClip->at(0).iFrameLength - 1)
-		m_iNextFrameIdx = m_iFrameIdx;
+	if (tCtrl.iCurFrm >= tCtrl.fEndTime - 1)
+		m_iNextFrameIdx = tCtrl.iCurFrm;
 	else
-		m_iNextFrameIdx = m_iFrameIdx + 1;
+		m_iNextFrameIdx = tCtrl.iCurFrm + 1;
 
-	m_fRatio = (float)(dFrameIdx - (double)m_iFrameIdx);
-
+	m_fRatio = (float)(dFrameIdx - (double)tCtrl.iCurFrm);
+	m_iFrameIdx = (_uint)tCtrl.iCurFrm;
 	m_IsFinalMatUpdate = false;
 }
 
@@ -84,6 +85,7 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		tRep.m_arrInt[0] = iBoneCount;
 		tRep.m_arrInt[1] = m_iFrameIdx;
 		tRep.m_arrInt[2] = m_iNextFrameIdx;
+		//tRep.m_arrInt[2] = m_iNextFrameIdx;
 		tRep.m_arrInt[3] = iRow;
 		tRep.m_arrFloat[0] = m_fRatio;
 

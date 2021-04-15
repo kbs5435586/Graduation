@@ -152,8 +152,8 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 
 	// Subset Num
 	int iMtrlCnt = pMesh->GetNode()->GetMaterialCount();
-	//m_iSubsetNum += iMtrlCnt;
-	m_iSubsetNum = iMtrlCnt;
+	m_iSubsetNum += iMtrlCnt;
+	//m_iSubsetNum = iMtrlCnt;
 	pContainer.vecIdx.resize(iMtrlCnt);
 
 
@@ -183,6 +183,7 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 		}
 
 		_uint iSubsetIdx = pMtrl->GetIndexArray().GetAt(i);
+
 		pContainer.vecIdx[iSubsetIdx].push_back(iArrIdx[0]);
 		pContainer.vecIdx[iSubsetIdx].push_back(iArrIdx[2]);
 		pContainer.vecIdx[iSubsetIdx].push_back(iArrIdx[1]);
@@ -1017,6 +1018,9 @@ HRESULT CMesh::Ready_MeshData(vector<tContainer>& vecContainer)
 		{
 			Indices	tIndices;
 			tIndices.iIndexCnt = (UINT)iter.vecIdx[i].size();
+			if (tIndices.iIndexCnt == 0)
+				continue;
+
 			tIndices.eFormat = DXGI_FORMAT_R32_UINT;
 			tIndices.pSystem = malloc(GetSizeofFormat(tIndices.eFormat) * tIndices.iIndexCnt);
 			memcpy(tIndices.pSystem, &iter.vecIdx[i][0], GetSizeofFormat(tIndices.eFormat) * tIndices.iIndexCnt);
@@ -1313,8 +1317,8 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 		fread(&iMtrlCount, sizeof(int), 1, pFile);
 
 		//m_tRenderInfo.vecIndices.resize(iMtrlCount);
-		//m_iSubsetNum += iMtrlCount;
-		m_iSubsetNum = iMtrlCount;
+		m_iSubsetNum += iMtrlCount;
+		//m_iSubsetNum = iMtrlCount;
 		for (_uint i = 0; i < iMtrlCount; ++i)
 		{
 			Indices info = {};
@@ -1458,9 +1462,9 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 void CMesh::Render_Mesh(_uint iIdx)
 {
 	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderInfo[0].VertexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderInfo[0].vecIndices[iIdx].IndexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderInfo[0].vecIndices[iIdx].iIndexCnt, 1, 0, 0, 0);
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderInfo[iIdx].VertexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderInfo[iIdx].vecIndices[0].IndexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderInfo[iIdx].vecIndices[0].iIndexCnt, 1, 0, 0, 0);
 }
 
 
@@ -1518,13 +1522,13 @@ void CMesh::Free()
 
 
 	}
-	if (m_IsClone)
-	{
-		if (m_pBoneFrameData)
-			Safe_Release(m_pBoneFrameData);
-		if (m_pBoneOffset)
-			Safe_Release(m_pBoneOffset);
-	}
+	//if (m_IsClone)
+	//{
+	//	if (m_pBoneFrameData)
+	//		Safe_Release(m_pBoneFrameData);
+	//	if (m_pBoneOffset)
+	//		Safe_Release(m_pBoneOffset);
+	//}
 
 
 	CComponent::Free();

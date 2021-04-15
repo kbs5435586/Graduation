@@ -41,7 +41,7 @@ private:
     FbxAMatrix                      GetTransform(FbxNode* _pNode);
 public:
     const   vector<tMTBone>*        GetBones() { return &m_vecMTBone; }
-    const vector<tMTAnimClip>*      GetAnimClip() { return &m_vecMTAnimClip; }
+    vector<tMTAnimClip>             GetAnimClip() { return m_vecMTAnimClip; }
 public:
     const vector<tContainer>        GetContainer() { return m_vecContainer; }
 private:
