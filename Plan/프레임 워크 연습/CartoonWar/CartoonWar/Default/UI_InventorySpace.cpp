@@ -28,9 +28,6 @@ HRESULT CUI_InventorySpace::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//float cellX[3]{ 300.f , 360.f , 420.f }, cellY[3]{ 300.f ,360.f, 420.f };
-	//m_fX = 200.0f;
-	//m_fY = 100.0f;
 
 	Pos = *(POINT*)pArg;
 
@@ -60,13 +57,9 @@ HRESULT CUI_InventorySpace::Ready_GameObject(void* pArg)
 		m_fY = 420.f;
 	}
 
-	//m_fX = Pos.x;
-	//m_fY = Pos.y;
 
 	m_fSizeX = 50.0f;
 	m_fSizeY = 50.0f;
-	m_fISizeX = 30.0f;
-	m_fISizeY = 30.0f;
 
 	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
@@ -103,29 +96,29 @@ _int CUI_InventorySpace::Update_GameObject(const _float& fTimeDelta)
 		}
 		
 
-		if (MousePos.x > m_fX - (25.f) && MousePos.x < m_fX + (25.f))
-		{
-			if (MousePos.y > m_fY - (25.f) && MousePos.y < m_fY + (25.f))
-			{
-				//if (cell.size() < 2)
-				//{
-					m_fX = (_float)MousePos.x - 100;
-					m_fY = (_float)MousePos.y - 100;
-					
-
-					m_pItemTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
-					NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-					if (FAILED(Add_Component(L"Com_Texture", m_pItemTextureCom)))
-						return E_FAIL;
-
-					//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Item", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &vPos)))
-					//	return E_FAIL;
-					
-					//CItem myitem;
-					//cell.emplace_back(myitem);
-				//}
-			}
-		}
+		//if (MousePos.x > m_fX - (25.f) && MousePos.x < m_fX + (25.f))
+		//{
+		//	if (MousePos.y > m_fY - (25.f) && MousePos.y < m_fY + (25.f))
+		//	{
+		//		//if (cell.size() < 2)
+		//		//{
+		//			m_fX = (_float)MousePos.x - 100;
+		//			m_fY = (_float)MousePos.y - 100;
+		//			
+		//
+		//			m_pItemTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
+		//			NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+		//			if (FAILED(Add_Component(L"Com_Texture", m_pItemTextureCom)))
+		//				return E_FAIL;
+		//
+		//			//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Item", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &vPos)))
+		//			//	return E_FAIL;
+		//			
+		//			//CItem myitem;
+		//			//cell.emplace_back(myitem);
+		//		//}
+		//	}
+		//}
 	}
 
 	Safe_Release(pManagement);
@@ -170,32 +163,7 @@ void CUI_InventorySpace::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	
-
-
-	if (m_pItemTextureCom != nullptr)
-	{
-	
-		matWorld._11 = m_fISizeX;
-		matWorld._22 = m_fISizeY;
-
-	
-
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-		//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(m_pItemTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-	}
-
-
-
 	CDevice::GetInstance()->UpdateTable();
-
-
-
-
-
 
 	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
