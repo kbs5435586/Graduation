@@ -10,8 +10,15 @@ class CUI_Diffuse;
 class CUI_Loading;
 class CItem;
 
+typedef struct item {
+	int HP, MP;
+	string name;
+
+}ITEM;
+
+
 class CUI_Inventory :
-    public CUI
+	public CUI
 {
 private:
 	CUI_Inventory();
@@ -21,8 +28,8 @@ private:
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float & fTimeDelta);
-	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
+	virtual _int							Update_GameObject(const _float& fTimeDelta);
+	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
@@ -37,9 +44,14 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
+	CShader* m_pShaderComT = nullptr;
 	CTexture* m_pTextureCom = nullptr;
+	CTexture* m_pITextureCom = nullptr;
 private:
 	POINT MousePos;
 	POINT Pos;
+	POINT IPos[3];
+	vector<ITEM> vList;
 };
+
 
