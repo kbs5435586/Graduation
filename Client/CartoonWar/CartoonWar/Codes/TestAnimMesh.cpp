@@ -32,16 +32,26 @@ HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
+
+
+	m_pLHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_l");
+	m_pRHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_r");
+	m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
 	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	//{
 	//	CTexture* pTexture = CTexture::Create(iter);
 	//	m_vecTexture.push_back(pTexture);
 	//}
+
+	
+
+	//m_pColiider[0]->Ready_Collider_OBB_BOX()
 	return S_OK;
 }
 
 _int CTestAnimMesh::Update_GameObject(const _float& fTimeDelta)
 {
+	//m_pColiider[0]->Update_Collider(m_pTransformCom);
 	return _int();
 }
 
@@ -95,7 +105,7 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
-	//Set_Animation();
+
 	return _int();
 }
 
@@ -141,7 +151,7 @@ void CTestAnimMesh::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
+	m_pColiider[0]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -160,7 +170,7 @@ HRESULT CTestAnimMesh::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 88, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;
@@ -252,6 +262,8 @@ void CTestAnimMesh::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
+	Safe_Release(m_pColiider[0]);
+	Safe_Release(m_pColiider[1]);
 	//Safe_Release(m_pNaviCom);
 	if (m_IsClone)
 	{
@@ -297,6 +309,16 @@ HRESULT CTestAnimMesh::Ready_Component()
 	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
 	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+		return E_FAIL;
+
+	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider0", m_pColiider[0])))
+		return E_FAIL;
+
+	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColiider[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider1", m_pColiider[1])))
 		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");

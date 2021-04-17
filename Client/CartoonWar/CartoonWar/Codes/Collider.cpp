@@ -92,6 +92,44 @@ HRESULT CCollider::Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSi
 	return S_OK;
 }
 
+HRESULT CCollider::Ready_Collider_AABB_BOX(_matrix matWorld, const _vec3 vSize)
+{
+
+	_matrix pTarget_matrix = matWorld;
+	_matrix matTemp = Remove_Rotation(pTarget_matrix);
+
+	m_pTransformCom->Set_Matrix(matTemp);
+	m_pTransformCom->Scaling(vSize);
+
+
+	return S_OK;
+}
+
+HRESULT CCollider::Ready_Collider_OBB_BOX(_matrix matWorld, const _vec3 vSize)
+{
+	_matrix pTarget_matrix = matWorld;
+
+
+	m_pTransformCom->Set_Matrix(pTarget_matrix);
+	m_pTransformCom->Scaling(vSize);
+
+
+	return S_OK;
+}
+
+HRESULT CCollider::Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize)
+{
+	_matrix pTarget_matrix = matWorld;
+
+
+	m_pTransformCom->Set_Matrix(pTarget_matrix);
+	m_pTransformCom->Scaling(vSize);
+	m_fRadius = vSize.x;
+	m_pTransformCom->Set_Matrix(pTarget_matrix);
+
+	return S_OK;
+}
+
 HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize)
 {
 	m_vSize = vSize;
@@ -106,6 +144,29 @@ HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize)
 		break;
 	case COLLIDER_TYPE::COLLIDER_SPHERE:
 		hr = Ready_Collider_SPHERE(pTransform, vSize);
+		break;
+	}
+
+	if (FAILED(Create_InputLayOut()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCollider::Clone_ColliderBox(_matrix matWorld, const _vec3 vSize)
+{
+	m_vSize = vSize;
+	HRESULT hr = S_OK;
+	switch (m_eType)
+	{
+	case COLLIDER_TYPE::COLLIDER_AABB:
+		hr = Ready_Collider_AABB_BOX(matWorld, vSize);
+		break;
+	case COLLIDER_TYPE::COLLIDER_OBB:
+		hr = Ready_Collider_OBB_BOX(matWorld, vSize);
+		break;
+	case COLLIDER_TYPE::COLLIDER_SPHERE:
+		hr = Ready_Collider_SPHERE(matWorld, vSize);
 		break;
 	}
 

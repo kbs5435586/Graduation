@@ -43,6 +43,8 @@ public:
     const   vector<tMTBone>*        GetBones() { return &m_vecMTBone; }
     vector<tMTAnimClip>             GetAnimClip() { return m_vecMTAnimClip; }
 public:
+    _matrix*                         Get_FindFrame(const _tchar* pFrameName);
+public:
     const vector<tContainer>        GetContainer() { return m_vecContainer; }
 private:
     _bool                           IsAnimation();

@@ -616,6 +616,20 @@ FbxAMatrix CMesh::GetTransform(FbxNode* _pNode)
 	return FbxAMatrix(vT, vR, vS);
 }
 
+_matrix* CMesh::Get_FindFrame(const _tchar* pFrameName)
+{
+	_matrix matTemp = {};
+	for (auto& iter : m_vecMTBone)
+	{
+		if (!lstrcmp(iter.strBoneName.c_str(), pFrameName))
+		{
+			matTemp = iter.matBone * iter.matOffset;
+			
+		}
+	}
+	return &matTemp;
+}
+
 _bool CMesh::IsAnimation()
 {
 	return !m_vecMTAnimClip.empty();
