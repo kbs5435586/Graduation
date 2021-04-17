@@ -29,6 +29,8 @@ private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
+	void									Set_Animation();
+private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
@@ -40,7 +42,8 @@ private:
 	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
-	_int									m_iCurAnimIdx = 0;
-	_int									m_iPreAnimIdx = 0;
+	_uint									m_iCurAnimIdx = 0;
+	_uint									m_iPreAnimIdx = 0;
+	_bool									m_IsOnce = false;
 };
 

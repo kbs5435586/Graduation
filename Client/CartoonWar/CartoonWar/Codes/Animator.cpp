@@ -39,19 +39,23 @@ void CAnimator::SetAnimClip(vector<tMTAnimClip> _vecAnimClip)
 	m_vecClipUpdateTime[0] = fTime;
 }
 
-void CAnimator::Update(AnimCtrl tCtrl, const _float& fTimeDelta)
+_bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
 {
+	_bool isRetVal = false;
 	m_fCurTime = 0.f;
 
 	m_vecClip;
 	m_vecClipUpdateTime[m_iCurClip] += fTimeDelta;
 
 	if (m_vecClipUpdateTime[m_iCurClip] >= tCtrl.fEndTime - tCtrl.fStartTime)
-	{
+	{                                 
 		m_vecClipUpdateTime[m_iCurClip] = 0.f;
+		isRetVal = true;
 	}
 
+	
 	m_fCurTime = tCtrl.fStartTime + m_vecClipUpdateTime[m_iCurClip];
+	
 
 	double dFrameIdx = m_fCurTime * m_iFrameCount;
 	tCtrl.iCurFrm = (int)(dFrameIdx);
@@ -64,6 +68,7 @@ void CAnimator::Update(AnimCtrl tCtrl, const _float& fTimeDelta)
 	m_fRatio = (float)(dFrameIdx - (double)tCtrl.iCurFrm);
 	m_iFrameIdx = (_uint)tCtrl.iCurFrm;
 	m_IsFinalMatUpdate = false;
+	return isRetVal;
 }
 
 void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)

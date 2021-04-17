@@ -513,17 +513,20 @@ struct tFrameTrans
 typedef struct tagAnimController
 {
 	tagAnimController() {}
-	tagAnimController(int _iStartFrm, int _iEndFrm, float _fStartTime, float _fEndTime)
+	tagAnimController(int _iStartFrm, int _iEndFrm, float _fStartTime, float _fEndTime, bool IsOnce = false)
 	{
 		iStartFrm = _iStartFrm;
 		iEndFrm = _iEndFrm;
 		fStartTime = _fStartTime;
 		fEndTime = _fEndTime;
 		iCurFrm = iStartFrm;
+		IsPlayOnce = IsOnce;
 	}
 	int		iStartFrm;
 	int		iEndFrm;
 	int		iCurFrm ;
 	float	fStartTime;
+	float	fCurTime =0.f;
 	float	fEndTime;
+	bool	IsPlayOnce = false;
 }AnimCtrl;

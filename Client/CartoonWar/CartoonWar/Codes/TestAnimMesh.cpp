@@ -52,27 +52,29 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-
-
 	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-		//_vec3 vLook = {};
-		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		//vLook = Vector3_::Normalize(vLook);
+		{
+			//_vec3 vLook = {};
+//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+//vLook = Vector3_::Normalize(vLook);
 
 
-		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-		//_vec3 vSlide = {};
-		//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-		//{
-		//	m_pTransformCom->BackWard(fTimeDelta);
-		//}
-		//else
-		//{
-		//	m_pTransformCom->Go_There(vSlide);
-		//}
+//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+//_vec3 vSlide = {};
+//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+//{
+//	m_pTransformCom->BackWard(fTimeDelta);
+//}
+//else
+//{
+//	m_pTransformCom->Go_There(vSlide);
+//}
+		}
 
 
+		m_iCurAnimIdx = 29;
+		m_pTransformCom->BackWard(fTimeDelta);
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	{
@@ -82,34 +84,18 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
 	{
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
+		m_IsOnce = true;
+		m_iCurAnimIdx = 27;
 	}
 
-	//else if (CManagement::GetInstance()->Key_Pressing(KEY_LBUTTON))
-	//{
-	//	Delete_Component(L"Com_Mesh", m_pMeshCom);
-	//	m_pMeshCom = (CMesh*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02_Attack01");
-	//	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	//	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
-	//		return E_FAIL;
-	//	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
-	//	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-	//}
-	//else if (CManagement::GetInstance()->Key_Pressing(KEY_RBUTTON))
-	//{
-	//	Delete_Component(L"Com_Mesh", m_pMeshCom);
-	//	m_pMeshCom = (CMesh*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02_Attack02");
-	//	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	//	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
-	//		return E_FAIL;
-	//	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
-	//	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-	//}
-	//auto iter = m_mapAnimCtrl;
-	m_iCurAnimIdx =7;
-	m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta);
+	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		m_iCurAnimIdx = 16;
+		m_IsOnce = false;
+	}
+	//Set_Animation();
 	return _int();
 }
 
@@ -121,7 +107,7 @@ void CTestAnimMesh::Render_GameObject()
 	pManagement->AddRef();
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum()-1;
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() - 1;
 	//_uint iSubsetNum = 1;
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
@@ -130,13 +116,13 @@ void CTestAnimMesh::Render_GameObject()
 		_matrix matWorld = m_pTransformCom->Get_Matrix();
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-	
+
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
-	
 
 
-		tRep.m_arrInt[1]=m_pAnimCom->GetBones()->size();
+
+		tRep.m_arrInt[1] = m_pAnimCom->GetBones()->size();
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -182,40 +168,55 @@ HRESULT CTestAnimMesh::CreateInputLayout()
 
 void CTestAnimMesh::SetUp_Anim()
 {
-	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));			//attack01
-	m_vecAnimCtrl.push_back(AnimCtrl(71, 141, 2.3f, 4.7f));			//attack02
-	m_vecAnimCtrl.push_back(AnimCtrl(142, 217, 4.73f, 7.23f));		//attack03
-	m_vecAnimCtrl.push_back(AnimCtrl(218, 288, 7.26f, 9.59f));		//attack04
+	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));			//attack01		0
+	m_vecAnimCtrl.push_back(AnimCtrl(71, 141, 2.3f, 4.7f));					//attack02		1
+	m_vecAnimCtrl.push_back(AnimCtrl(142, 217, 4.73f, 7.23f));				//attack03		2
+	m_vecAnimCtrl.push_back(AnimCtrl(218, 288, 7.26f, 9.59f));				//attack04		3
+	m_vecAnimCtrl.push_back(AnimCtrl(289, 364, 9.63f, 11.13f));				//attack05		4
+	m_vecAnimCtrl.push_back(AnimCtrl(365, 440, 12.16f, 14.6f));				//attack06		5
+	m_vecAnimCtrl.push_back(AnimCtrl(441, 521, 14.7f, 17.3f));				//attack07		6
+	m_vecAnimCtrl.push_back(AnimCtrl(522, 597, 17.3f, 19.9f));				//attack08		7
+	m_vecAnimCtrl.push_back(AnimCtrl(598, 658, 19.9f, 21.9f));				//dead01		8
+	m_vecAnimCtrl.push_back(AnimCtrl(659, 719, 21.9f, 23.9f));				//dead02		9
+	m_vecAnimCtrl.push_back(AnimCtrl(720, 775, 24.f, 25.8f));				//dead03		10
+	m_vecAnimCtrl.push_back(AnimCtrl(776, 831, 25.8f, 27.7f));				//dead04		11
+	m_vecAnimCtrl.push_back(AnimCtrl(832, 872, 27.7f, 29.f));				//gethit01		12
+	m_vecAnimCtrl.push_back(AnimCtrl(873, 913, 29.1f, 30.4f));				//gethit02		13
+	m_vecAnimCtrl.push_back(AnimCtrl(914, 974, 30.4f, 32.4f));				//Idle			14
+	m_vecAnimCtrl.push_back(AnimCtrl(975, 1155, 32.5f, 38.5f));				//Idle_Other00	15
+	m_vecAnimCtrl.push_back(AnimCtrl(1156, 1276, 38.5f, 42.5f));			//Idle_Other01	16
+	m_vecAnimCtrl.push_back(AnimCtrl(1277, 1337, 42.5f, 44.5f));			//Idle_sit		17
+	m_vecAnimCtrl.push_back(AnimCtrl(1338, 1388, 44.6f, 46.2f));			//jump			18
+	m_vecAnimCtrl.push_back(AnimCtrl(1389, 1419, 46.3f, 47.3f));			//run			19
+	m_vecAnimCtrl.push_back(AnimCtrl(1420, 1450, 47.3f, 38.3f));			//run_back		20
+	m_vecAnimCtrl.push_back(AnimCtrl(1451, 1481, 48.3f, 49.3f));			//run_left		21
+	m_vecAnimCtrl.push_back(AnimCtrl(1482, 1512, 49.4f, 50.4f));			//run_right		22
+	m_vecAnimCtrl.push_back(AnimCtrl(1513, 1603, 50.4f, 53.4f));			//shout			23
+	m_vecAnimCtrl.push_back(AnimCtrl(1604, 1644, 53.4f, 54.8f));			//take weapon	24
+	m_vecAnimCtrl.push_back(AnimCtrl(1645, 1680, 54.8f, 56.f, true));		//TurnLeft		25
+	m_vecAnimCtrl.push_back(AnimCtrl(1681, 1726, 56.f, 57.5f));				//TurnLeft_sit	26
+	m_vecAnimCtrl.push_back(AnimCtrl(1727, 1762, 57.5f, 58.7f, true));		//TurnRight		27
+	m_vecAnimCtrl.push_back(AnimCtrl(1763, 1808, 58.7f, 60.2f));			//TurnRight_sit	28
+	m_vecAnimCtrl.push_back(AnimCtrl(1809, 1849, 60.3f, 61.6f));			//walk			29
+	m_vecAnimCtrl.push_back(AnimCtrl(1850, 1890, 61.6f, 63.f));				//walk back		30
+	m_vecAnimCtrl.push_back(AnimCtrl(1891, 1941, 63.f, 64.7f));				//walk back sit	31
+	m_vecAnimCtrl.push_back(AnimCtrl(1942, 1982, 64.7f, 66.f));				//walk left		32
+	m_vecAnimCtrl.push_back(AnimCtrl(1983, 2033, 66.1f, 67.7f));			//walk left sit	33
+	m_vecAnimCtrl.push_back(AnimCtrl(2034, 2074, 67.8f, 69.1f));			//walk right	34
+	m_vecAnimCtrl.push_back(AnimCtrl(2075, 2125, 69.1f, 70.8f));			//sit			35	
+	m_vecAnimCtrl.push_back(AnimCtrl(2126, 2176, 70.86f, 72.5f));			//walk right	36
 
-	m_vecAnimCtrl.push_back(AnimCtrl(289, 364, 9.63f, 11.13f));		//attack05
-	m_vecAnimCtrl.push_back(AnimCtrl(365, 440, 12.16f, 14.6f));		//attack06
-	m_vecAnimCtrl.push_back(AnimCtrl(441, 521, 14.7f, 17.3f));		//attack07
-	m_vecAnimCtrl.push_back(AnimCtrl(522, 597, 17.3f, 19.9f));		//attack08
-
-	m_vecAnimCtrl.push_back(AnimCtrl(598, 659, 18.56f,20.56f));		//dead01
-	m_vecAnimCtrl.push_back(AnimCtrl(659, 719, 20.56f,22.56f));		//dead02
-	m_vecAnimCtrl.push_back(AnimCtrl(720, 775, 22.56f,24.36f));		//dead03
-	m_vecAnimCtrl.push_back(AnimCtrl(776, 831, 24.36f,26.16f));		//dead04
-	m_vecAnimCtrl.push_back(AnimCtrl(832, 872, 26.16f,27.32f));		//gethit01
-	m_vecAnimCtrl.push_back(AnimCtrl(873, 913, 27.32f,28.48f));		//gethit02
-	m_vecAnimCtrl.push_back(AnimCtrl(914, 974, 28.48f,30.48f));		//Idle
-	m_vecAnimCtrl.push_back(AnimCtrl(975, 1155, 30.48f,36.48f));	//Idle_Other00
-	m_vecAnimCtrl.push_back(AnimCtrl(1156, 1276, 36.48f,40.48f));	//Idle_Other01
-	m_vecAnimCtrl.push_back(AnimCtrl(1277, 1337, 40.48f,42.48f));	//Idle_sit
-	m_vecAnimCtrl.push_back(AnimCtrl(1338, 1388, 42.48f,44.2f));	//jump
-	m_vecAnimCtrl.push_back(AnimCtrl(1389, 1419, 44.2f,45.2f));		//run
-	m_vecAnimCtrl.push_back(AnimCtrl(1420, 1450, 45.2f,46.2f));		//run_back
-	m_vecAnimCtrl.push_back(AnimCtrl(1451, 1481, 46.2f,47.2f));		//run_left
-	m_vecAnimCtrl.push_back(AnimCtrl(1482, 1512, 47.2f,48.2f));		//run_right
-	m_vecAnimCtrl.push_back(AnimCtrl(1513, 1603, 48.2f,51.2f));		//shout
-	m_vecAnimCtrl.push_back(AnimCtrl(1604, 1644, 51.2f,52.36f));	//take weapon
-	m_vecAnimCtrl.push_back(AnimCtrl(1645, 1680, 52.36f,52.36f));	//TurnLeft
-	m_vecAnimCtrl.push_back(AnimCtrl(1681, 1726, 52.36f,54.f));		//TurnLeft_sit
-	m_vecAnimCtrl.push_back(AnimCtrl(1727, 1762, 54.f,55.08f));		//TurnRight
-	m_vecAnimCtrl.push_back(AnimCtrl(1763, 1808, 55.08f,56.32f));	//TurnRight_sit
-	m_vecAnimCtrl.push_back(AnimCtrl(1809, 1849, 56.32f,57.48f));	//walk		
-	m_vecAnimCtrl.push_back(AnimCtrl(1850, 1890, 57.48f,59.04f));	//walk back		
-	m_vecAnimCtrl.push_back(AnimCtrl(1891, 1941, 59.04f,60.36f));	//walk back sit		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2177, 2207, 72.56f, 73.56f));	//walk right sit37
+	//m_vecAnimCtrl.push_back(AnimCtrl(2208, 2238, 73.6f, 74.6f));	//run back root	
+	//m_vecAnimCtrl.push_back(AnimCtrl(2239, 2269, 74.6f, 75.6f));	//run left root		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2270, 2300, 75.6f, 76.6f));	//run right root
+	//m_vecAnimCtrl.push_back(AnimCtrl(2301, 2341, 76.7f, 78.f));		//run root		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2342, 2392, 78.f, 79.73f));	//walk back root	
+	//m_vecAnimCtrl.push_back(AnimCtrl(2393, 2433, 79.76f, 81.1f));	//walk back root		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2434, 2484, 81.1f, 82.8f));	//walk back sit		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2526, 2566, 84.2f, 85.53f));	//walk back sit		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2567, 2617, 85.56f, 87.23f));	//walk back sit		
+	//m_vecAnimCtrl.push_back(AnimCtrl(2618, 2668, 87.26f, 89.93f));	//walk back sit		
 }
 
 CTestAnimMesh* CTestAnimMesh::Create()
@@ -304,4 +305,16 @@ HRESULT CTestAnimMesh::Ready_Component()
 	//	return E_FAIL;
 
 	Safe_Release(pManagement);
-	return S_OK;}
+	return S_OK;
+}
+
+void CTestAnimMesh::Set_Animation()
+{
+
+	if (m_iCurAnimIdx != m_iPreAnimIdx)
+	{
+
+		m_iCurAnimIdx = m_iPreAnimIdx;
+	}
+
+}
