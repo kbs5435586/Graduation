@@ -19,6 +19,8 @@ public:
     const vector<tMTBone>*          GetBones(){return m_pVecBones;}
     vector<tMTAnimClip>             GetAnim(){return m_vecClip;}
 public:
+    CStructedBuffer*                GetFinalMatix() {  return m_pBoneFinalMat;}
+public:
     int&                            GetCurClip() { return m_iCurClip; }
 private:
     vector<_float>                  m_vecClipUpdateTime;

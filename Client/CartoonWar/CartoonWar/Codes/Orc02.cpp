@@ -33,12 +33,15 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
 
-	int iMax = 0;
 
 
 	m_pLHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_l");
-	m_pRHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_r");
-	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
+	_matrix matTemp = Matrix_::Transpose(*m_pLHandMatrix);
+	matTemp.m[0][3] = 0.f;
+	matTemp.m[1][3] = 0.f;
+	matTemp.m[2][3] = 0.f;
+	//m_pRHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_r");
+	m_pColiider[0]->Clone_ColliderBox(matTemp, _vec3(1.f, 1.f, 1.f));
 
 	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	//{
@@ -147,10 +150,15 @@ void COrc02::Render_GameObject()
 
 
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+		
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
+
+		//*m_pLHandMatrix *= m_pTransformCom->Get_Matrix();
 	}
-	m_pColiider[0]->Render_Collider();
+	CStructedBuffer* pTemp = m_pAnimCom->GetFinalMatix();
+
+	m_pColiider[0]->Render_Collider(pTemp);
 	Safe_Release(pManagement);
 }
 

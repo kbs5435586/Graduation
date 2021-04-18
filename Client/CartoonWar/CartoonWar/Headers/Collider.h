@@ -31,7 +31,7 @@ private:
     _matrix                     Remove_Rotation(_matrix matWorld);
     HRESULT                     Create_InputLayOut();
 public:
-    void                        Render_Collider();
+    void                        Render_Collider(CStructedBuffer* pArg = nullptr);
 public:
     static CCollider*           Create(COLLIDER_TYPE eType);
     virtual CComponent*         Clone_Component(void* pArg);

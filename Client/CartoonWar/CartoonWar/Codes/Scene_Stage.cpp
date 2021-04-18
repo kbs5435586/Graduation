@@ -156,19 +156,14 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if(FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
 
-
-
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMeshHatch", CTestHatchMesh::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestAnim", CTestAnimMesh::Create())))
 		return E_FAIL;
-
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
 		return E_FAIL;
-
-
 
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01", CRock01::Create())))
@@ -238,11 +233,10 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-
 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
@@ -257,8 +251,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+	//	return E_FAIL;
 
 
 	return S_OK;
