@@ -12,6 +12,9 @@
 #include "Terrain_Height.h"
 // Mesh
 #include "Orc01.h"
+#include "Orc02.h"
+#include "Orc03.h"
+
 #include "Rock01_A.h"
 // UI
 #include "UI_Loading.h"
@@ -140,6 +143,10 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc01", COrc01::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc02", COrc02::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc03", COrc03::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube_Texture", CCube_Texture::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_HP", CUI_HP::Create())))
@@ -248,7 +255,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 		return E_FAIL;
-
+	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -427,6 +437,20 @@ HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement*
 HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestAnim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

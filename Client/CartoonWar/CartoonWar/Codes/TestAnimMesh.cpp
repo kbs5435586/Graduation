@@ -33,6 +33,9 @@ HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
 
+	int iMax = 0;
+
+	//for(auto& iter : m_pMeshCom->Get)
 
 	m_pLHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_l");
 	m_pRHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_r");
@@ -117,7 +120,7 @@ void CTestAnimMesh::Render_GameObject()
 	pManagement->AddRef();
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() - 1;
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() ;
 	//_uint iSubsetNum = 1;
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
@@ -178,7 +181,7 @@ HRESULT CTestAnimMesh::CreateInputLayout()
 
 void CTestAnimMesh::SetUp_Anim()
 {
-	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));			//attack01		0
+	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));					//attack01		0
 	m_vecAnimCtrl.push_back(AnimCtrl(71, 141, 2.3f, 4.7f));					//attack02		1
 	m_vecAnimCtrl.push_back(AnimCtrl(142, 217, 4.73f, 7.23f));				//attack03		2
 	m_vecAnimCtrl.push_back(AnimCtrl(218, 288, 7.26f, 9.59f));				//attack04		3
@@ -291,7 +294,7 @@ HRESULT CTestAnimMesh::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;

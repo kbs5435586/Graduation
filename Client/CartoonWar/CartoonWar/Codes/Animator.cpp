@@ -90,7 +90,6 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		tRep.m_arrInt[0] = iBoneCount;
 		tRep.m_arrInt[1] = m_iFrameIdx;
 		tRep.m_arrInt[2] = m_iNextFrameIdx;
-		//tRep.m_arrInt[2] = m_iNextFrameIdx;
 		tRep.m_arrInt[3] = iRow;
 		tRep.m_arrFloat[0] = m_fRatio;
 

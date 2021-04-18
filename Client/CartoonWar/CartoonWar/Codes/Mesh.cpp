@@ -1425,7 +1425,6 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 	UINT _iFrameCount = 0;
 	for (int i = 0; i < iCount; ++i)
 	{
-
 		fread(&m_vecMTBone[i].iDepth, sizeof(int), 1, pFile);
 		fread(&m_vecMTBone[i].iParentIndx, sizeof(int), 1, pFile);
 		fread(&m_vecMTBone[i].matBone, sizeof(Matrix), 1, pFile);
