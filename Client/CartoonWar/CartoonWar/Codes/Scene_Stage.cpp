@@ -269,7 +269,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 		return E_FAIL;
 
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	/*ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
@@ -289,40 +289,40 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.vLightPos = _vec4(15.f, 5.5f, 15.f, 1.f);
 	tLightInfo.fRange = 15.f;
 	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Red", tLightInfo)))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
-	tLightInfo.fRange = 15.f;
-	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-		return E_FAIL;
+	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
+	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	//tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
+	//tLightInfo.fRange = 15.f;
+	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+	//	return E_FAIL;
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
-	tLightInfo.fRange = 15.f;
-	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-		return E_FAIL;
+	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+	//tLightInfo.fRange = 15.f;
+	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+	//	return E_FAIL;
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
-	tLightInfo.fRange = 15.f;
-	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-		return E_FAIL;
+	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+	//tLightInfo.fRange = 15.f;
+	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
