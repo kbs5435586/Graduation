@@ -14,9 +14,12 @@ public:
     HRESULT                         Ready_Animator();
 private:
     const   vector<tMTBone>*        m_pVecBones;
-    const   vector<tMTAnimClip>*    m_pVecClip;
+     vector<tMTAnimClip>            m_vecClip;
 public:
     const vector<tMTBone>*          GetBones(){return m_pVecBones;}
+    vector<tMTAnimClip>             GetAnim(){return m_vecClip;}
+public:
+    CStructedBuffer*                GetFinalMatix() {  return m_pBoneFinalMat;}
 public:
     int&                            GetCurClip() { return m_iCurClip; }
 private:
@@ -34,9 +37,9 @@ private:
     bool						    m_IsFinalMatUpdate = false; // 최종행렬 연산 수행여부
 public:
     void                            SetBones(const vector<tMTBone>* _vecBones);
-    void                            SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip);
+    void                            SetAnimClip(vector<tMTAnimClip> _vecAnimClip);
 public:
-    void                            Update(const _float& fTimeDelta);
+    _bool                           Update(AnimCtrl& tCtrl, const _float& fTimeDelta);
     void                            UpdateData(CMesh* pMesh, CShader* pShader);
     void                            SetClipTime(int _iClipIdx, float _fTime) { m_vecClipUpdateTime[_iClipIdx] = _fTime; }
     vector<_matrix>&                GetFinalBoneMat() { return m_vecFinalBoneMat; }

@@ -355,9 +355,6 @@
     <Filter Include="96. ShaderFiles\06. Particle">
       <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
-      <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
       <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
     </Filter>
@@ -474,6 +471,15 @@
     </Filter>
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\03. UI_Shade">
       <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
+      <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
+      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
+      <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -861,6 +867,12 @@
     <ClInclude Include="..\Headers\UI_PointLight.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Orc02.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Orc03.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1217,6 +1229,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_PointLight.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Orc02.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Orc03.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

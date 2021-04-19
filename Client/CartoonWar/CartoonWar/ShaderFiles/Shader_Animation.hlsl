@@ -216,11 +216,12 @@ struct tFrameTrans
 StructuredBuffer<tFrameTrans>   g_arrFrameTrans : register(t10);
 StructuredBuffer<matrix>        g_arrOffset : register(t11);
 RWStructuredBuffer<matrix>      g_arrFinalMat : register(u0);
-
+//RWTexture2D<matrix>             
 
 [numthreads(256, 1, 1)]
 void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
 {
+    int i = _iThreadIdx.x;
     if (g_int_0 <= _iThreadIdx.x)
         return;
 

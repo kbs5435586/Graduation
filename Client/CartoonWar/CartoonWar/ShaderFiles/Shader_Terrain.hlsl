@@ -73,7 +73,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 	AD_Light tCol = (AD_Light)0;
-	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
 	for (int i = 0; i < iNumLight; ++i)
 	{
 		AD_Light tCurCol = Calculate_Light_Upgrade_V2(i, vIn.vNormal, vIn.vWorldPos);

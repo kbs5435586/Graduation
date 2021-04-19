@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "Shader.h"
 #include "Transform.h"
+#include "StructedBuffer.h"
 #include "Buffer_CubeCol.h"
 #include "Management.h"
 
@@ -92,6 +93,44 @@ HRESULT CCollider::Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSi
 	return S_OK;
 }
 
+HRESULT CCollider::Ready_Collider_AABB_BOX(_matrix matWorld, const _vec3 vSize)
+{
+
+	_matrix pTarget_matrix = matWorld;
+	_matrix matTemp = Remove_Rotation(pTarget_matrix);
+
+	m_pTransformCom->Set_Matrix(matTemp);
+	m_pTransformCom->Scaling(vSize);
+
+
+	return S_OK;
+}
+
+HRESULT CCollider::Ready_Collider_OBB_BOX(_matrix matWorld, const _vec3 vSize)
+{
+	_matrix pTarget_matrix = matWorld;
+
+
+	m_pTransformCom->Set_Matrix(pTarget_matrix);
+	m_pTransformCom->Scaling(vSize);
+
+
+	return S_OK;
+}
+
+HRESULT CCollider::Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize)
+{
+	_matrix pTarget_matrix = matWorld;
+
+
+	m_pTransformCom->Set_Matrix(pTarget_matrix);
+	m_pTransformCom->Scaling(vSize);
+	m_fRadius = vSize.x;
+	m_pTransformCom->Set_Matrix(pTarget_matrix);
+
+	return S_OK;
+}
+
 HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize)
 {
 	m_vSize = vSize;
@@ -106,6 +145,29 @@ HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize)
 		break;
 	case COLLIDER_TYPE::COLLIDER_SPHERE:
 		hr = Ready_Collider_SPHERE(pTransform, vSize);
+		break;
+	}
+
+	if (FAILED(Create_InputLayOut()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCollider::Clone_ColliderBox(_matrix matWorld, const _vec3 vSize)
+{
+	m_vSize = vSize;
+	HRESULT hr = S_OK;
+	switch (m_eType)
+	{
+	case COLLIDER_TYPE::COLLIDER_AABB:
+		hr = Ready_Collider_AABB_BOX(matWorld, vSize);
+		break;
+	case COLLIDER_TYPE::COLLIDER_OBB:
+		hr = Ready_Collider_OBB_BOX(matWorld, vSize);
+		break;
+	case COLLIDER_TYPE::COLLIDER_SPHERE:
+		hr = Ready_Collider_SPHERE(matWorld, vSize);
 		break;
 	}
 
@@ -190,14 +252,14 @@ HRESULT CCollider::Create_InputLayOut()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 
 	return S_OK;
 }
 
-void CCollider::Render_Collider()
+void CCollider::Render_Collider(CStructedBuffer* pArg)
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -214,6 +276,8 @@ void CCollider::Render_Collider()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	pArg->Update_Data(TEXTURE_REGISTER::t7);
 	CDevice::GetInstance()->UpdateTable();
 
 

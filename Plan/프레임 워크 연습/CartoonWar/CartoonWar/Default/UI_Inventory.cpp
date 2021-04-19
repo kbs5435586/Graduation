@@ -43,22 +43,17 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 	int X[3]{ 0,1,2 }, Y[3]{ 0,1,2 };
 
 	Pos = POINT{ X[0],Y[0] };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
-		return E_FAIL;
-	Pos = POINT{ X[0],Y[1] };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
-		return E_FAIL;
+	IPos[0] = { (LONG)m_fX - 50,(LONG)m_fY };
+	IPos[1] = { (LONG)m_fX+ 5,(LONG)m_fY };
+	IPos[2] = { (LONG)m_fX + 60,(LONG)m_fY};
 
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	for (int j = 0; j < 3; ++j)
-	//	{
-	//		Pos = POINT{ X[j],Y[i] };
-	//
-	//		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
-	//			return E_FAIL;
-	//	}		
-	//}
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
+	//	return E_FAIL;
+	//Pos = POINT{ X[0],Y[1] };
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
+	//	return E_FAIL;
+
+
 
 	
 	Safe_Release(pManagement);
@@ -72,8 +67,6 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-	//float cellX[3]{ 300.f , 360.f , 420.f }, cellY[3]{ 300.f ,360.f, 420.f };
-	
 
 	if (pManagement->Key_Pressing(KEY_LBUTTON))
 	{
@@ -87,6 +80,10 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 				m_fX = (_float)MousePos.x;
 				m_fY = (_float)MousePos.y;
 				Pos = { (LONG)m_fX ,(LONG)m_fY };
+				
+				IPos[0] = { (LONG)m_fX - 50,(LONG)m_fY};
+				IPos[1] = { (LONG)m_fX +5,(LONG)m_fY};
+				IPos[2] = { (LONG)m_fX + 60,(LONG)m_fY};
 				pManagement->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
 			}
 		}
@@ -124,22 +121,67 @@ void CUI_Inventory::Render_GameObject()
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
+
+	for (int i = 0; i < 3; ++i)
+	{
+		matWorld._11 = 50;
+		matWorld._22 = 50;
+
+		matWorld._41 = IPos[i].x - (WINCX >> 1);
+		matWorld._42 = -IPos[i].y + (WINCY >> 1);
+
+
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+		CDevice::GetInstance()->SetTextureToShader(m_pITextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->UpdateTable();
+
+		m_pBufferCom->Render_VIBuffer();
+	}
+
 	matWorld._11 = m_fSizeX;
 	matWorld._22 = m_fSizeY;
 
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
+	//병석이가 저번에 한번 봐줬던 오류 >> 사소한 실수로 인한 어이없는 오류였음
+	m_pShaderComT->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(6)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pSpecTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+
+
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t4);
+	CDevice::GetInstance()->SetTextureToShader(pShadeTex.Get(), TEXTURE_REGISTER::t5);
+	CDevice::GetInstance()->SetTextureToShader(pSpecTex.Get(), TEXTURE_REGISTER::t6);
+	CDevice::GetInstance()->UpdateTable();
+
+	m_pBufferCom->Render_VIBuffer();
+
+	/////////////////////////////////////////////
+
+	matWorld._11 = m_fSizeX;
+	matWorld._22 = m_fSizeY;
+
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -m_fY + (WINCY >> 1);
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
-
 	m_pBufferCom->Render_VIBuffer();
+
 	Safe_Release(pManagement);
 }
 
@@ -150,6 +192,8 @@ HRESULT CUI_Inventory::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+		return E_FAIL;
+	if (FAILED(m_pShaderComT->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
 		return E_FAIL;
 
 	return S_OK;
@@ -183,7 +227,9 @@ void CUI_Inventory::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pITextureCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderComT);
 
 	CGameObject::Free();
 }
@@ -213,10 +259,19 @@ HRESULT CUI_Inventory::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
+	m_pShaderComT = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU");
+	NULL_CHECK_VAL(m_pShaderComT, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ShaderT", m_pShaderComT)))
+		return E_FAIL;
+
 
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
+	m_pITextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
+	NULL_CHECK_VAL(m_pITextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ITexture", m_pITextureCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

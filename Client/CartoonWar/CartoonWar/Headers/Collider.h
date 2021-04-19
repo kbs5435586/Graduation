@@ -19,14 +19,19 @@ public:
     HRESULT                     Ready_Collider_OBB_BOX(CTransform* pTransform, const _vec3 vSize);
     HRESULT                     Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSize);
 public:
+    HRESULT                     Ready_Collider_AABB_BOX(_matrix matWorld, const _vec3 vSize);
+    HRESULT                     Ready_Collider_OBB_BOX(_matrix matWorld, const _vec3 vSize);
+    HRESULT                     Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize);
+public:
     HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize);
+    HRESULT                     Clone_ColliderBox(_matrix matWorld, const _vec3 vSize);
 public:
     void                        Update_Collider(CTransform* pTransform);
 private:
     _matrix                     Remove_Rotation(_matrix matWorld);
     HRESULT                     Create_InputLayOut();
 public:
-    void                        Render_Collider();
+    void                        Render_Collider(CStructedBuffer* pArg = nullptr);
 public:
     static CCollider*           Create(COLLIDER_TYPE eType);
     virtual CComponent*         Clone_Component(void* pArg);
