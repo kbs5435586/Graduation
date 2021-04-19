@@ -38,9 +38,6 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 
 	int iMax = 0;
 
-
-	m_pLHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_l");
-	m_pRHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_r");
 	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
 
 	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)

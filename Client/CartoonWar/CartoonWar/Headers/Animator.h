@@ -35,6 +35,8 @@ private:
 
     CStructedBuffer*                m_pBoneFinalMat = nullptr;  // 특정 프레임의 최종 행렬
     bool						    m_IsFinalMatUpdate = false; // 최종행렬 연산 수행여부
+private:
+    CStructedBuffer*                m_pBoneMat = nullptr;
 public:
     void                            SetBones(const vector<tMTBone>* _vecBones);
     void                            SetAnimClip(vector<tMTAnimClip> _vecAnimClip);

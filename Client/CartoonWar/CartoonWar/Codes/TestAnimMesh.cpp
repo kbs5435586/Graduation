@@ -37,9 +37,7 @@ HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 
 	//for(auto& iter : m_pMeshCom->Get)
 
-	m_pLHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_l");
-	m_pRHandMatrix = m_pMeshCom->Get_FindFrame(L"hand_r");
-	m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
+
 	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	//{
 	//	CTexture* pTexture = CTexture::Create(iter);
@@ -47,8 +45,6 @@ HRESULT CTestAnimMesh::Ready_GameObject(void* pArg)
 	//}
 
 	
-
-	//m_pColiider[0]->Ready_Collider_OBB_BOX()
 	return S_OK;
 }
 
@@ -154,7 +150,6 @@ void CTestAnimMesh::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_pColiider[0]->Render_Collider();
 	Safe_Release(pManagement);
 }
 

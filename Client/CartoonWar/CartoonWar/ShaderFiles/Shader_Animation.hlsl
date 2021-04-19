@@ -216,6 +216,7 @@ struct tFrameTrans
 StructuredBuffer<tFrameTrans>   g_arrFrameTrans : register(t10);
 StructuredBuffer<matrix>        g_arrOffset : register(t11);
 RWStructuredBuffer<matrix>      g_arrFinalMat : register(u0);
+RWStructuredBuffer<matrix>      g_matrix : register(u1);
 //RWTexture2D<matrix>             
 
 [numthreads(256, 1, 1)]
@@ -240,4 +241,5 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
 
     matrix matOffset = transpose(g_arrOffset[_iThreadIdx.x]);
     g_arrFinalMat[g_int_0 * g_int_3 + _iThreadIdx.x] = mul(matOffset, matBone);
+    g_matrix[g_int_0 * g_int_3 + _iThreadIdx.x] = matBone;
 }

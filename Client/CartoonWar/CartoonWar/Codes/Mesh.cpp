@@ -616,19 +616,7 @@ FbxAMatrix CMesh::GetTransform(FbxNode* _pNode)
 	return FbxAMatrix(vT, vR, vS);
 }
 
-_matrix* CMesh::Get_FindFrame(const _tchar* pFrameName)
-{
-	_matrix matTemp = {};
-	for (auto& iter : m_vecMTBone)
-	{
-		if (!lstrcmp(iter.strBoneName.c_str(), pFrameName))
-		{
-			matTemp = iter.matBone * iter.matOffset;
-			
-		}
-	}
-	return &matTemp;
-}
+
 
 _bool CMesh::IsAnimation()
 {
@@ -1190,6 +1178,7 @@ HRESULT CMesh::Save(const _tchar* pFilePath)
 {
 	FILE* pFile = nullptr;
 	errno_t err = _wfopen_s(&pFile, pFilePath, L"wb");
+
 	_uint iTotalSize = m_vecRenderInfo.size();
 	fwrite(&iTotalSize, sizeof(int), 1, pFile);
 	for (auto& iter : m_vecRenderInfo)

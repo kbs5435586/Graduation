@@ -121,19 +121,20 @@ cbuffer MATERIAL_PARAM : register(b8)
 
 };
 
-Texture2D					g_texture0		: register(t0);
-Texture2D					g_texture1		: register(t1);
-Texture2D					g_texture2		: register(t2);
-Texture2D					g_texture3		: register(t3);
-Texture2D					g_texture4		: register(t4);
-Texture2D					g_texture5		: register(t5);
-TextureCube					g_textureCube	: register(t6);    
-StructuredBuffer<float4x4>	g_arrFinalBoneMat : register(t7);
+Texture2D					g_texture0			: register(t0);
+Texture2D					g_texture1			: register(t1);
+Texture2D					g_texture2			: register(t2);
+Texture2D					g_texture3			: register(t3);
+Texture2D					g_texture4			: register(t4);
+Texture2D					g_texture5			: register(t5);
+TextureCube					g_textureCube		: register(t6);    
+StructuredBuffer<float4x4>	g_arrFinalBoneMat	: register(t7);
+StructuredBuffer<matrix>	g_Matrix			: register(t8);
 
-SamplerState				Sampler0		: register(s0);
-SamplerState				Sampler1		: register(s1);
-SamplerState				Sampler2		: register(s2);
-SamplerState				Sampler3		: register(s3);
+SamplerState				Sampler0			: register(s0);
+SamplerState				Sampler1			: register(s1);
+SamplerState				Sampler2			: register(s2);
+SamplerState				Sampler3			: register(s3);
 
 int HasTex(in Texture2D _tex)
 {

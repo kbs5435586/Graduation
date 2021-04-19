@@ -85,12 +85,6 @@
     <Filter Include="01. Scene\01. Stage">
       <UniqueIdentifier>{6552fa3a-e608-42d9-b5f7-192d4ce50cda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer">
-      <UniqueIdentifier>{06fc3ebb-4243-49af-89ef-7394a6bb790c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol">
-      <UniqueIdentifier>{9e63f432-32a1-4574-9d6b-f2adbbbc16ef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject">
       <UniqueIdentifier>{a9a7af4d-c4af-40ef-b8d3-b002cf2b6854}</UniqueIdentifier>
     </Filter>
@@ -115,23 +109,8 @@
     <Filter Include="97. Engine\00. System\04. Camera">
       <UniqueIdentifier>{a1d71011-493e-4701-975b-463cf58ba3c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex">
-      <UniqueIdentifier>{d21c3bfa-fe43-46c0-8821-cd77faac6a34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\04. Texture">
       <UniqueIdentifier>{c146bee5-b527-4e44-b4ed-d27d44e5a6e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol">
-      <UniqueIdentifier>{8cc06ae5-cbca-45fd-afa5-311dc33b249c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex">
-      <UniqueIdentifier>{a7f9bfcd-d175-41c8-98fc-d6daaee3f99b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex">
-      <UniqueIdentifier>{9ea58e6e-34a7-4a9b-a0df-4181d7057194}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
-      <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\00. Scene_Logo">
       <UniqueIdentifier>{98ecb91f-3121-4ff3-8b0a-54591eedf38d}</UniqueIdentifier>
@@ -237,12 +216,6 @@
     </Filter>
     <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
       <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
-      <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
-      <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\09. Observer">
       <UniqueIdentifier>{750f9af0-9d7b-4a72-9092-c2934bbabc8e}</UniqueIdentifier>
@@ -354,9 +327,6 @@
     </Filter>
     <Filter Include="96. ShaderFiles\06. Particle">
       <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
-      <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test">
       <UniqueIdentifier>{22b3d187-d2ab-4990-8ac3-9f4dd71ea498}</UniqueIdentifier>
@@ -480,6 +450,36 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
       <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer">
+      <UniqueIdentifier>{06fc3ebb-4243-49af-89ef-7394a6bb790c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol">
+      <UniqueIdentifier>{9e63f432-32a1-4574-9d6b-f2adbbbc16ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex">
+      <UniqueIdentifier>{d21c3bfa-fe43-46c0-8821-cd77faac6a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol">
+      <UniqueIdentifier>{8cc06ae5-cbca-45fd-afa5-311dc33b249c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex">
+      <UniqueIdentifier>{a7f9bfcd-d175-41c8-98fc-d6daaee3f99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex">
+      <UniqueIdentifier>{9ea58e6e-34a7-4a9b-a0df-4181d7057194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
+      <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
+      <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
+      <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
+      <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

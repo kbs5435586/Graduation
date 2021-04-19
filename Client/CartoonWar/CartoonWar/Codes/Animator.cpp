@@ -12,6 +12,7 @@ CAnimator::CAnimator()
 CAnimator::CAnimator(const CAnimator& rhs)
 	: CComponent(rhs)
 	, m_pBoneFinalMat(rhs.m_pBoneFinalMat)
+	, m_pBoneMat(rhs.m_pBoneMat)
 {
 	m_IsClone = true;
 }
@@ -19,6 +20,7 @@ CAnimator::CAnimator(const CAnimator& rhs)
 HRESULT CAnimator::Ready_Animator()
 {
 	m_pBoneFinalMat = CStructedBuffer::Create();
+	m_pBoneMat = CStructedBuffer::Create();
 	return S_OK;
 }
 
@@ -82,6 +84,7 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		
 		CheckMesh(pMesh);
 		m_pBoneFinalMat->Update_RWData(UAV_REGISTER::u0);
+		m_pBoneMat->Update_RWData(UAV_REGISTER::u1);
 
 		UINT iBoneCount = (UINT)m_pVecBones->size();
 		UINT iRow = 0;
@@ -123,6 +126,8 @@ void CAnimator::CheckMesh(CMesh* pMesh)
 	if (m_pBoneFinalMat->GetElementCount() < iBoneCnt)
 	{
 		m_pBoneFinalMat->Ready_StructedBuffer(sizeof(_matrix), iBoneCnt, nullptr);
+		m_pBoneMat->Ready_StructedBuffer(sizeof(_matrix), iBoneCnt, nullptr);
+		
 	}
 }
 
