@@ -19,10 +19,12 @@ struct PS_OUT
 VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut;
-	matrix matTemp = g_arrFinalBoneMat[2];
-	matTemp = mul(matTemp, matWorld);
+	matrix matTemp = (g_matTemp[g_int_0]);
+	matTemp._44 = 1.f;
 
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWorld);
+	vOut.vPosition = mul(vOut.vPosition, matTemp);
+
 	vOut.vPosition = mul(vOut.vPosition, matView);
 	vOut.vPosition = mul(vOut.vPosition, matProj);
 	vOut.vColor = vIn.vColor;
@@ -32,8 +34,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	//vOut.vDiffuseTex = float4(1.f,1.f,1.f,1.f);
-	vOut.vDiffuseTex_ = float4(1.f,1.f,1.f,1.f);
+	vOut.vDiffuseTex = float4(1.f, 1.f, 1.f, 1.f);
+	vOut.vDiffuseTex_ = float4(1.f, 1.f, 1.f,1.f);
 	return vOut;
 }
 

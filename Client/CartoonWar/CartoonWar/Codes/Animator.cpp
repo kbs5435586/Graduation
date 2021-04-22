@@ -41,7 +41,7 @@ void CAnimator::SetAnimClip(vector<tMTAnimClip> _vecAnimClip)
 	m_vecClipUpdateTime[0] = fTime;
 }
 
-_bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
+_bool CAnimator::Update(AnimCtrl& tCtrl, _float& fRatio, const _float& fTimeDelta)
 {
 	_bool isRetVal = false;
 	m_fCurTime = 0.f;
@@ -68,6 +68,7 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
 		m_iNextFrameIdx = tCtrl.iCurFrm + 1;
 
 	m_fRatio = (float)(dFrameIdx - (double)tCtrl.iCurFrm);
+	fRatio = m_fRatio;
 	m_iFrameIdx = (_uint)tCtrl.iCurFrm;
 	m_IsFinalMatUpdate = false;
 	return isRetVal;
@@ -95,9 +96,9 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		tRep.m_arrInt[2] = m_iNextFrameIdx;
 		tRep.m_arrInt[3] = iRow;
 		tRep.m_arrFloat[0] = m_fRatio;
-
+	
 		
-		int iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 		CDevice::GetInstance()->SetUpContantBufferToShader_CS(
 			CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
@@ -109,6 +110,7 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 	} 
 
 	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t7);
+	m_pBoneMat->Update_Data(TEXTURE_REGISTER::t8);
 }
 
 
@@ -127,7 +129,6 @@ void CAnimator::CheckMesh(CMesh* pMesh)
 	{
 		m_pBoneFinalMat->Ready_StructedBuffer(sizeof(_matrix), iBoneCnt, nullptr);
 		m_pBoneMat->Ready_StructedBuffer(sizeof(_matrix), iBoneCnt, nullptr);
-		
 	}
 }
 

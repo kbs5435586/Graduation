@@ -83,6 +83,10 @@ public:
     static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
     static CMesh*                   Create_Load(const _tchar* pFilePath);
     virtual CComponent*             Clone_Component(void* pArg);
+public:
+    void                            SetRatio(float fRatio) { m_fRatio = fRatio; }
+private:
+    float                           m_fRatio = 0.f;
 private:
     FbxScene*                       m_pScene = nullptr;
 private:
@@ -99,6 +103,9 @@ private:
     _uint                           m_iSubsetNum = 0;
     _uint                           m_iCurTexNum = 0;
     _uint                           m_iMaxTexNum = 0;
+    _uint                           m_iFrameCnt = 0;
+public:
+    _uint                           GetFrameCnt() { return m_iFrameCnt; }
 private:
     CStructedBuffer*                m_pBoneFrameData; // 전체 본 프레임 정보
     CStructedBuffer*                m_pBoneOffset;	   // 각 뼈의 offset 행렬
@@ -106,5 +113,15 @@ public:
     const _uint&                    GetSubsetNum(){return m_iSubsetNum;}
 private:
     virtual void                    Free();
+    ///////////////////////////////////
+private:
+    void                            Compute_Matrix();
+
+    vector<_matrix>                 m_vecOffset;
+    vector<tFrameTrans>             m_vecFrameTrans;
+ private:
+     _vec4                          VectorPermute(_uint iPermuteX, _uint iPermuteY, _uint iPermuteZ, _uint iPermuteW, _vec4 v1, _vec4 v2);
+     _matrix                          MatrixAffineTransformation(_vec4 vScale, _vec4 vRotOrigin, _vec4 vRotQuaternion, _vec4 vTranslate);
+     _matrix                        MatrixRotationQuaternion(_vec4 Quaternion);
 };
 

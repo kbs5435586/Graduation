@@ -21,6 +21,9 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_vecContainer(rhs.m_vecContainer)
 	, m_vecRenderInfo(rhs.m_vecRenderInfo)
 	, m_vecDiffTexturePath(rhs.m_vecDiffTexturePath)
+	, m_vecFrameTrans(rhs.m_vecFrameTrans)
+	, m_vecOffset(rhs.m_vecOffset)
+	, m_iFrameCnt(rhs.m_iFrameCnt)
 
 {
 
@@ -1142,17 +1145,15 @@ HRESULT CMesh::Ready_MeshData(vector<tContainer>& vecContainer)
 	}
 
 
-
+	m_iFrameCnt = iFrameCnt;
 	if (IsAnimation())
 	{
 
-			vector<_matrix> vecOffset;
-			vector<tFrameTrans> vecFrameTrans;
-			vecFrameTrans.resize((UINT)m_vecMTBone.size()* iFrameCnt);
+			m_vecFrameTrans.resize((UINT)m_vecMTBone.size()* iFrameCnt);
 
 			for (size_t i = 0; i < m_vecMTBone.size(); ++i)
 			{
-				vecOffset.push_back(m_vecMTBone[i].matOffset);
+				m_vecOffset.push_back(m_vecMTBone[i].matOffset);
 
 				for (size_t j = 0; j < m_vecMTBone[i].vecKeyFrame.size(); ++j)
 				{
@@ -1160,15 +1161,15 @@ HRESULT CMesh::Ready_MeshData(vector<tContainer>& vecContainer)
 						_vec4(m_vecMTBone[i].vecKeyFrame[j].vTranslate.x, m_vecMTBone[i].vecKeyFrame[j].vTranslate.y, m_vecMTBone[i].vecKeyFrame[j].vTranslate.z, 0.f);
 					_vec4 vecTemp_ =
 						_vec4(m_vecMTBone[i].vecKeyFrame[j].vScale.x, m_vecMTBone[i].vecKeyFrame[j].vScale.y, m_vecMTBone[i].vecKeyFrame[j].vScale.z, 0.f);
-					vecFrameTrans[(UINT)m_vecMTBone.size() * j + i]
+					m_vecFrameTrans[(UINT)m_vecMTBone.size() * j + i]
 						= tFrameTrans{ vecTemp,vecTemp_,
 						m_vecMTBone[i].vecKeyFrame[j].qRot
 					};
 				}
 			}
 
-			m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)vecOffset.size(), vecOffset.data());
-			m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans), (UINT)vecOffset.size() * iFrameCnt, vecFrameTrans.data());
+			m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)m_vecOffset.size(), m_vecOffset.data());
+			m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans), (UINT)m_vecOffset.size() * iFrameCnt, m_vecFrameTrans.data());
 
 	}
 	return S_OK;
@@ -1428,30 +1429,29 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 			fread(&m_vecMTBone[i].vecKeyFrame[j], sizeof(tMTKeyFrame), 1, pFile);
 		}
 	}
-
+	m_iFrameCnt = _iFrameCount;
 	if (m_vecMTBone.size() > 0 && m_vecMTBone.size() > 0)
 	{
 		// BoneOffet За·Д
-		vector<Matrix> vecOffset;
-		vector<tFrameTrans> vecFrameTrans;
-		vecFrameTrans.resize((UINT)m_vecMTBone.size() * _iFrameCount);
+
+		m_vecFrameTrans.resize((UINT)m_vecMTBone.size() * _iFrameCount);
 
 		for (size_t i = 0; i < m_vecMTBone.size(); ++i)
 		{
-			vecOffset.push_back(m_vecMTBone[i].matOffset);
+			m_vecOffset.push_back(m_vecMTBone[i].matOffset);
 
 			for (size_t j = 0; j < m_vecMTBone[i].vecKeyFrame.size(); ++j)
 			{
 				_vec4 vecTemp = _vec4(m_vecMTBone[i].vecKeyFrame[j].vTranslate.x, m_vecMTBone[i].vecKeyFrame[j].vTranslate.y, m_vecMTBone[i].vecKeyFrame[j].vTranslate.z, 0.f);
 				_vec4 vecTemp_ = _vec4(m_vecMTBone[i].vecKeyFrame[j].vScale.x, m_vecMTBone[i].vecKeyFrame[j].vScale.y, m_vecMTBone[i].vecKeyFrame[j].vScale.z, 0.f);
-				vecFrameTrans[(UINT)m_vecMTBone.size() * j + i]
+				m_vecFrameTrans[(UINT)m_vecMTBone.size() * j + i]
 					= tFrameTrans{ vecTemp,vecTemp_,
 					m_vecMTBone[i].vecKeyFrame[j].qRot
 				};
 			}
 		}
-		m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)vecOffset.size(), vecOffset.data());
-		m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans), (UINT)vecOffset.size() * _iFrameCount, vecFrameTrans.data());
+		m_pBoneOffset = CStructedBuffer::Create(sizeof(Matrix), (UINT)m_vecOffset.size(), m_vecOffset.data());
+		m_pBoneFrameData = CStructedBuffer::Create(sizeof(tFrameTrans), (UINT)m_vecOffset.size() * _iFrameCount, m_vecFrameTrans.data());
 	}
 
 	fclose(pFile);
@@ -1534,4 +1534,130 @@ void CMesh::Free()
 
 
 	CComponent::Free();
+}
+
+void CMesh::Compute_Matrix()
+{
+	_vec4		vQZero = _vec4();
+	_matrix		matBone = _matrix();
+
+	_uint iFrameDataIdx = 0;
+	
+	_vec4 vScale = m_vecFrameTrans[iFrameDataIdx].vScale;
+	_vec4 vTranslate = m_vecFrameTrans[iFrameDataIdx].vTranslate;
+	_vec4 vRot = m_vecFrameTrans[iFrameDataIdx].qRot;
+
+
+
+}
+
+_vec4 CMesh::VectorPermute(_uint iPermuteX, _uint iPermuteY, _uint iPermuteZ, _uint iPermuteW, _vec4 v1, _vec4 v2)
+{
+	_vec4 vRetval = {};
+	_vec4 aPtr[2] = {v1, v2};
+
+	_vec4 vResult = _vec4(0.f,0.f,0.f,0.f);
+
+	const _uint	i0 = iPermuteX & 3;
+	const _uint vi0 = iPermuteX >> 2;
+	//vResult.x = aPtr[vi0][i0];
+
+	return _vec4();
+}
+
+_matrix CMesh::MatrixAffineTransformation(_vec4 vScale, _vec4 vRotOrigin, _vec4 vRotQuaternion, _vec4 vTranslate)
+{
+	_matrix matScale;
+	XMStoreFloat4x4(&matScale, XMMatrixIdentity());;
+
+	matScale.m[0][0] = vScale.x;
+	matScale.m[1][1] = vScale.y;
+	matScale.m[2][2] = vScale.z;
+
+	_vec4	vRotOr = {};
+	vRotOr.x = vRotOrigin.x;
+	vRotOr.y = vRotOrigin.y;
+	vRotOr.z = vRotOrigin.z;
+	vRotOr.w = 0.f;
+
+	_vec4	VTranslation = {};
+	VTranslation.x = vTranslate.x;
+	VTranslation.y = vTranslate.y;
+	VTranslation.z = vTranslate.z;
+	VTranslation.w = 0.f;
+
+	_matrix matRot;
+	XMStoreFloat4x4(&matRot, XMMatrixIdentity());;
+	matRot = MatrixRotationQuaternion(vRotQuaternion);
+
+	_matrix M = matScale;
+
+	//matrix M = MScaling;
+	//M._41_42_43_44 = M._41_42_43_44 - VRotationOrigin;
+	//M = mul(M, MRotation);
+	//M._41_42_43_44 = M._41_42_43_44 + VRotationOrigin;
+	//M._41_42_43_44 = M._41_42_43_44 + VTranslation;
+	//_outMat = M;
+
+
+	return M;
+}
+
+_matrix CMesh::MatrixRotationQuaternion(_vec4 Quaternion)
+{
+	_vec4 vConstant1110 = _vec4(1.f,1.f,1.f,0.f);
+	_vec4 Q0 = Quaternion + Quaternion;
+	_vec4 Q1 = Quaternion * Q0;
+
+	_vec4 V0 = _vec4(0.f, 0.f, 0.f, 0.f);
+	V0 = VectorPermute(1, 0, 0, 7, Q1, vConstant1110);
+
+	_vec4 V1 = _vec4(0.f, 0.f, 0.f, 0.f);
+	V1 = VectorPermute(2, 2, 1, 7, Q1, vConstant1110);
+
+
+	_vec4 R0 = vConstant1110 - V0;
+	R0 = R0 - V1;
+
+	V0 = _vec4(Quaternion.x, Quaternion.x, Quaternion.y, Quaternion.z);
+	V1 = _vec4(Q0.z, Q0.y, Q0.z, Q0.w);
+	V0 = V0 * V1;
+
+	V1 = _vec4(Quaternion.w, Quaternion.w, Quaternion.w, Quaternion.w);
+	_vec4 V2 = _vec4(Q0.y, Q0.z, Q0.x, Q0.w);
+	V1 = V1 * V2;
+
+	_vec4 R1 = V0 + V1;
+	_vec4 R2 = V0 - V1;
+
+	V0 = VectorPermute(1, 4, 5, 2, R1, R2);
+	V1 = VectorPermute(0, 6, 0, 6, R1, R2);
+
+
+	_matrix M;
+	XMStoreFloat4x4(&M, XMMatrixIdentity());;
+
+	//M._11_12_13_14= VectorPermute(0, 4, 5, 3, R0, V0);
+	_vec4 vTemp0 = VectorPermute(0, 4, 5, 3, R0, V0);
+	M.m[0][0] = vTemp0.x;
+	M.m[0][1] = vTemp0.y;
+	M.m[0][2] = vTemp0.z;
+	M.m[0][3] = vTemp0.w;
+	_vec4 vTemp1 = VectorPermute(6, 1, 7, 3, R0, V0);
+	M.m[1][0] = vTemp1.x;
+	M.m[1][1] = vTemp1.y;
+	M.m[1][2] = vTemp1.z;
+	M.m[1][3] = vTemp1.w;
+	_vec4 vTemp2 = VectorPermute(4, 5, 2, 3, R0, V1);
+	M.m[2][0] = vTemp2.x;
+	M.m[2][1] = vTemp2.y;
+	M.m[2][2] = vTemp2.z;
+	M.m[2][3] = vTemp2.w;
+	_vec4 vTemp3 = _vec4(0.f, 0.f, 0.f, 1.f);
+	M.m[3][0] = vTemp3.x;
+	M.m[3][1] = vTemp3.y;
+	M.m[3][2] = vTemp3.z;
+	M.m[3][3] = vTemp3.w;
+
+	return  M;
 }
