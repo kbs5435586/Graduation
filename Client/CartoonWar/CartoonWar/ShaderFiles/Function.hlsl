@@ -301,10 +301,6 @@ matrix GetBoneMat(int _iBoneIdx, int _iRowIdx)
 	return g_arrFinalBoneMat[(g_int_1 * _iRowIdx) + _iBoneIdx];
 }
 
-matrix GetMatrix(int iBoneIdx, int _iRowIdx)
-{
-	return g_Matrix[(g_int_1 * _iRowIdx) + iBoneIdx];
-}
 
 void Skinning(inout float3 _vPos, inout float3 _vTangent, inout float3 _vBinormal, inout float3 _vNormal
 	, inout float4 _vWeight, inout float4 _vIndices

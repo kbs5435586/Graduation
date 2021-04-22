@@ -15,16 +15,16 @@ private:
     virtual ~CCollider() = default;
 public:
     HRESULT                     Ready_Collider(COLLIDER_TYPE eType);
-    HRESULT                     Ready_Collider_AABB_BOX(CTransform* pTransform, const _vec3 vSize);
-    HRESULT                     Ready_Collider_OBB_BOX(CTransform* pTransform, const _vec3 vSize);
-    HRESULT                     Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSize);
+    HRESULT                     Ready_Collider_AABB_BOX(CTransform* pTransform, const _vec3 vSize = {1.f,1.f,1.f});
+    HRESULT                     Ready_Collider_OBB_BOX(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
+    HRESULT                     Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
-    HRESULT                     Ready_Collider_AABB_BOX(_matrix matWorld, const _vec3 vSize);
-    HRESULT                     Ready_Collider_OBB_BOX(_matrix matWorld, const _vec3 vSize);
-    HRESULT                     Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize);
+    HRESULT                     Ready_Collider_AABB_BOX(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
+    HRESULT                     Ready_Collider_OBB_BOX(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
+    HRESULT                     Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
-    HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize);
-    HRESULT                     Clone_ColliderBox(_matrix matWorld, const _vec3 vSize);
+    HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
+    HRESULT                     Clone_ColliderBox(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
     void                        Update_Collider(CTransform* pTransform);
 private:

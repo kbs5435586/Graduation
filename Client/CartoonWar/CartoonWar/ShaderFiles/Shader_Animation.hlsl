@@ -6,10 +6,6 @@ void VectorPermute(uint PermuteX, uint PermuteY, uint PermuteZ, uint PermuteW
     , out float4 _vOut)
 {
 
-    //const uint* aPtr[2];
-    //aPtr[0] = &V1;
-    //aPtr[1] = &V2;
-
     float4 aPtr[2] = { V1, V2 };
 
     float4 Result = (float4) 0.f;
@@ -216,17 +212,21 @@ struct tFrameTrans
 StructuredBuffer<tFrameTrans>   g_arrFrameTrans : register(t10);
 StructuredBuffer<matrix>        g_arrOffset : register(t11);
 RWStructuredBuffer<matrix>      g_arrFinalMat : register(u0);
-RWStructuredBuffer<matrix>      g_matrix : register(u1);
-//RWTexture2D<matrix>             
+RWStructuredBuffer<matrix>      g_arrmatTemp : register(u1);
+
+
+// int0 : bone cnt
+// int1 : frame idx
+// int2 : next frame idx
+// int3 : row
 
 [numthreads(256, 1, 1)]
-void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
+void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID) //(1,1,1)
 {
-    int i = _iThreadIdx.x;
     if (g_int_0 <= _iThreadIdx.x)
         return;
 
-    // 오프셋 행렬을 곱하여 최종 본행렬을 만들어낸다.		
+    // 오프셋 행렬을 곱하여 최종 본행렬을 만들어낸다.		 
     float4 vQZero = float4(0.f, 0.f, 0.f, 1.f);
     matrix matBone = (matrix) 0.f;
 
@@ -234,12 +234,20 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
     uint iFrameDataIndex = (g_int_0 * g_int_1) + _iThreadIdx.x;
     uint iFrameDataNextIndex = (g_int_0 * (g_int_1 + 1)) + _iThreadIdx.x;
 
-    float4 vScale = lerp(g_arrFrameTrans[iFrameDataIndex].vScale, g_arrFrameTrans[iFrameDataNextIndex].vScale, g_float_0);
-    float4 vTranslate = lerp(g_arrFrameTrans[iFrameDataIndex].vTranslate, g_arrFrameTrans[iFrameDataNextIndex].vTranslate, g_float_0);
-    float4 qRot = QuternionSlerp(g_arrFrameTrans[iFrameDataIndex].qRot, g_arrFrameTrans[iFrameDataNextIndex].qRot, g_float_0);
+    float4 vScale = lerp(g_arrFrameTrans[iFrameDataIndex].vScale, 
+        g_arrFrameTrans[iFrameDataNextIndex].vScale, g_float_0);
+
+    float4 vTranslate = lerp(g_arrFrameTrans[iFrameDataIndex].vTranslate, 
+        g_arrFrameTrans[iFrameDataNextIndex].vTranslate, g_float_0);
+
+    float4 qRot = QuternionSlerp(g_arrFrameTrans[iFrameDataIndex].qRot, 
+        g_arrFrameTrans[iFrameDataNextIndex].qRot, g_float_0);
+
     MatrixAffineTransformation(vScale, vQZero, qRot, vTranslate, matBone);
+
+    matrix matTemp = matBone;
 
     matrix matOffset = transpose(g_arrOffset[_iThreadIdx.x]);
     g_arrFinalMat[g_int_0 * g_int_3 + _iThreadIdx.x] = mul(matOffset, matBone);
-    g_matrix[g_int_0 * g_int_3 + _iThreadIdx.x] = matBone;
+    g_arrmatTemp[g_int_0 * g_int_3 + _iThreadIdx.x] =  (matTemp);
 }

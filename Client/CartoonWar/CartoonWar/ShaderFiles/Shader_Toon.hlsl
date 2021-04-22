@@ -48,6 +48,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	if (g_int_0 == 1)
 		Skinning(vIn.vPosition, vIn.vTangent, vIn.vBinormal, vIn.vNormal, vIn.vWeight, vIn.vIndices, 0);
 
+	
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld);
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWVP).xyz);

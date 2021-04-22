@@ -143,6 +143,13 @@ namespace Vector4_
 		XMStoreFloat4(&xmf4Result, XMLoadFloat4(&xmf4Vector1) + XMLoadFloat4(&xmf4Vector2));
 		return(xmf4Result);
 	}
+	inline float DotProduct(XMFLOAT4& xmf3Vector1, XMFLOAT4& xmf3Vector2)
+	{
+		XMFLOAT4 xmf3Result;
+		XMStoreFloat4(&xmf3Result, XMVector4Dot(XMLoadFloat4(&xmf3Vector1), XMLoadFloat4(&xmf3Vector2)));
+		return(xmf3Result.x);
+	}
+
 }
 
 namespace Matrix_

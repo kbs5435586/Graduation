@@ -99,7 +99,7 @@ _int CTestAnimMesh::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 27;
 	}
 
-	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio,fTimeDelta) && m_IsOnce)
 	{
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;

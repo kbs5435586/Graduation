@@ -32,7 +32,7 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
-	CCollider*								m_pColiider[2] = { nullptr };
+	CCollider*								m_pColiiderCom = nullptr;
 private:
 	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;
@@ -43,5 +43,7 @@ private:
 private:
 	_matrix*								m_pRHandMatrix = nullptr;
 	_matrix*								m_pLHandMatrix = nullptr;
+private:
+	float									m_fRatio = 0.f;
 };
 

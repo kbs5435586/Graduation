@@ -26,16 +26,15 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
 
-	m_iCurAnimIdx = 2;
-
-
+	_matrix matTemp = { };
+	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f,10.f,10.f));
 	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	//{
 	//	CTexture* pTexture = CTexture::Create(iter);
@@ -97,7 +96,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 27;
 	}
 
-	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
@@ -106,10 +105,12 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 }
 
 void COrc02::Render_GameObject()
-{CManagement* pManagement = CManagement::GetInstance();
+{
+	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
+
 
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() - 1;
@@ -124,9 +125,6 @@ void COrc02::Render_GameObject()
 
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
-
-
-
 		tRep.m_arrInt[1] = m_pAnimCom->GetBones()->size();
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
@@ -141,14 +139,15 @@ void COrc02::Render_GameObject()
 
 		//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[i]->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 
+		m_pMeshCom->SetRatio(m_fRatio);
 
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
-		
+
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
-
-		//*m_pLHandMatrix *= m_pTransformCom->Get_Matrix();
 	}
+	
+	m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
 	Safe_Release(pManagement);
 }
 
@@ -175,7 +174,7 @@ HRESULT COrc02::CreateInputLayout()
 
 void COrc02::SetUp_Anim()
 {
-	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));			//attack01		0
+	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.3f));					//attack01		0
 	m_vecAnimCtrl.push_back(AnimCtrl(71, 141, 2.3f, 4.7f));					//attack02		1
 	m_vecAnimCtrl.push_back(AnimCtrl(142, 217, 4.73f, 7.23f));				//attack03		2
 	m_vecAnimCtrl.push_back(AnimCtrl(218, 288, 7.26f, 9.59f));				//attack04		3
@@ -248,8 +247,7 @@ void COrc02::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
-	Safe_Release(m_pColiider[0]);
-	Safe_Release(m_pColiider[1]);
+	Safe_Release(m_pColiiderCom);
 	//Safe_Release(m_pNaviCom);
 	if (m_IsClone)
 	{
@@ -297,15 +295,11 @@ HRESULT COrc02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
 		return E_FAIL;
 
-	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider0", m_pColiider[0])))
+	m_pColiiderCom = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColiiderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider", m_pColiiderCom)))
 		return E_FAIL;
 
-	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pColiider[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider1", m_pColiider[1])))
-		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
