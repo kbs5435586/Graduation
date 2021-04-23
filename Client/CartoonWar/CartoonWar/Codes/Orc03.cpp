@@ -249,7 +249,9 @@ CGameObject* COrc03::Clone_GameObject(void* pArg, const _uint& iIdx)
 		MessageBox(0, L"COrc03 Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
+
 	m_iLayerIdx = iIdx;
+
 	return pInstance;
 }
 void COrc03::Free()

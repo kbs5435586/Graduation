@@ -76,7 +76,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		CTransform* pTransform;
 		if (ENUM_PLAYER1 == recv_id)
 		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Orc02", L"Com_Transform", 0);
 		}
 		else if (ENUM_PLAYER2 == recv_id)
@@ -113,8 +113,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (ENUM_PLAYER1 == recv_id) // 다른 플레이어 일때
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", 0);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc02", L"Com_Transform", 0);
 			}
 			if (ENUM_PLAYER2 == recv_id) // 다른 플레이어 일때
 			{
@@ -124,7 +124,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 		else // NPC 일때
 		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 		}
 		_matrix Pos = pTransform->Get_Matrix();
@@ -160,7 +160,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (ENUM_PLAYER1 == recv_id)
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc02", L"Com_Transform", 0);
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
@@ -173,7 +173,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (0 != m_objects.count(recv_id))
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
@@ -200,7 +200,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (ENUM_PLAYER1 == recv_id)
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc02", L"Com_Transform", 0);
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
@@ -213,7 +213,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (0 != m_objects.count(recv_id))
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}

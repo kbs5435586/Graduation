@@ -254,6 +254,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
 		return E_FAIL;
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return E_FAIL;
+	server->AddRef();
+	server->InitServer(g_hWnd);
+	Safe_Release(server);
 
 	return S_OK;
 }
@@ -482,12 +488,20 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = NPC_ID_START; i < MAX_NPC; i++)
+	CServer_Manager* pServer = CServer_Manager::GetInstance();
+	if (nullptr == pServer)
+		return E_FAIL;
+
+	pServer->AddRef();
+
+	for (int i = NPC_ID_START; i < 34; i++)
 	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		short ret = pServer->npc_id_to_idx(i);
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, pServer->npc_id_to_idx(i))))
 			return E_FAIL;
 	}
 
+	Safe_Release(pServer);
 	return S_OK;
 }
 
