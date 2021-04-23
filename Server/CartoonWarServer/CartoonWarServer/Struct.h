@@ -40,7 +40,8 @@ struct SESSION // 클라이언트 정보
 	mutex m_cLock;
 	SOCKET m_socket;
 	int m_id;
-	int m_owner_id;
+	short m_owner_id;
+	short hp;
 	ENUM_FUNCTION m_last_order;
 	OverEx m_recv_over;
 	int m_prev_size; // 잘린 파일의 경우 이전에 저장해둔 버퍼 크기

@@ -251,8 +251,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -482,8 +482,12 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	for (int i = NPC_ID_START; i < MAX_NPC; i++)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 

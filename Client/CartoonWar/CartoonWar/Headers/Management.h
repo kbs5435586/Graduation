@@ -89,6 +89,6 @@ private:
 	CObserverManager*			m_pObserver_Manager = nullptr;
 	CLoadManager*				m_pLoad_Manager = nullptr;
 	CUAVManager*				m_pUAV_Manager = nullptr;
-	//CServer_Manager*			m_pServer_Manager = nullptr;
+	CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

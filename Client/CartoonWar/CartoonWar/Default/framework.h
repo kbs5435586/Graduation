@@ -97,7 +97,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
-//#include "Server_Manager.h"
+#include "Server_Manager.h"
 
 
 
