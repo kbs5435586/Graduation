@@ -25,7 +25,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;

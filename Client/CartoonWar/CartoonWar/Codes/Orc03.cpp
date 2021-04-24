@@ -37,7 +37,7 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 	SetUp_Anim();
 
 	int iMax = 0;
-
+	m_pMeshCom->m_vecDiffTexturePath;
 	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
 
 	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
@@ -151,7 +151,7 @@ void COrc03::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_pColiider[0]->Render_Collider();
+	//m_pColiider[0]->Render_Collider();
 	Safe_Release(pManagement);
 }
 

@@ -203,7 +203,7 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 	_matrix	matTemp = matView;
 	matTemp = Matrix_::Inverse(matTemp);
-
+	_matrix matRev = _matrix();
 
 	output.matWorld = matWorld;
 	output.matView = matView;
@@ -211,6 +211,7 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	output.matWV = matWorld * matView;
 	output.matWVP = output.matWV * matProj;
 	output.vCamPos = (_vec4)&matTemp.m[3][0];
+	output.matRev = matRev;
 
 	output.matViewInv = Matrix_::Inverse(matView);
 	output.matProjInv = Matrix_::Inverse(matProj);

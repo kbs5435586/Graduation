@@ -32,21 +32,22 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
-
+	m_iCurAnimIdx = 14;
 	_matrix matTemp = { };
 	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f,10.f,10.f));
-	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	//{
-	//	CTexture* pTexture = CTexture::Create(iter);
-	//	m_vecTexture.push_back(pTexture);
-	//}
+	m_pMeshCom->m_vecDiffTexturePath;
+	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	{
+		CTexture* pTexture = CTexture::Create(iter);
+		m_vecTexture.push_back(pTexture);
+	}
 
 	return S_OK;
 }
 
 _int COrc02::Update_GameObject(const _float& fTimeDelta)
 {
-
+	m_pColiiderCom->Update_Collider(m_pTransformCom);
 
 	return _int();
 }
@@ -58,49 +59,50 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-	{
-		{
-			//_vec3 vLook = {};
-//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-//vLook = Vector3_::Normalize(vLook);
-
-
-//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-//_vec3 vSlide = {};
-//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-//{
-//	m_pTransformCom->BackWard(fTimeDelta);
-//}
-//else
-//{
-//	m_pTransformCom->Go_There(vSlide);
-//}
-		}
-
-
-		m_iCurAnimIdx = 29;
-		m_pTransformCom->BackWard(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+//	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+//	{
+//		{
+//			//_vec3 vLook = {};
+////vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+////vLook = Vector3_::Normalize(vLook);
+//
+//
+////_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+////_vec3 vSlide = {};
+////if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+////{
+////	m_pTransformCom->BackWard(fTimeDelta);
+////}
+////else
+////{
+////	m_pTransformCom->Go_There(vSlide);
+////}
+//		}
+//
+//
+//		m_iCurAnimIdx = 29;
+//		m_pTransformCom->BackWard(fTimeDelta);
+//	}
+//	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+//	{
+//		m_pTransformCom->Go_Straight(fTimeDelta);
+//	}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 27;
-	}
-
-	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 16;
-		m_IsOnce = false;
-	}
+//	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
+//	{
+//		m_IsOnce = true;
+//		m_iCurAnimIdx = 27;
+//	}
+//
+	m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta);
+	//if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
+	//{
+	//	m_iCurAnimIdx = 16;
+	//	m_IsOnce = false;
+	//}
 	return _int();
 }
 
@@ -114,7 +116,6 @@ void COrc02::Render_GameObject()
 
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() - 1;
-	//_uint iSubsetNum = 1;
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 
@@ -137,10 +138,11 @@ void COrc02::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[i]->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-
-		m_pMeshCom->SetRatio(m_fRatio);
-
+		CTexture* pTexture = m_vecTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 		CDevice::GetInstance()->UpdateTable();
@@ -166,7 +168,7 @@ HRESULT COrc02::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 88, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;
@@ -188,7 +190,7 @@ void COrc02::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(776, 831, 25.8f, 27.7f));				//dead04		11
 	m_vecAnimCtrl.push_back(AnimCtrl(832, 872, 27.7f, 29.f));				//gethit01		12
 	m_vecAnimCtrl.push_back(AnimCtrl(873, 913, 29.1f, 30.4f));				//gethit02		13
-	m_vecAnimCtrl.push_back(AnimCtrl(914, 974, 30.4f, 32.4f));				//Idle			14
+	m_vecAnimCtrl.push_back(AnimCtrl(914, 974, 30.5f, 32.4f));				//Idle			14
 	m_vecAnimCtrl.push_back(AnimCtrl(975, 1155, 32.5f, 38.5f));				//Idle_Other00	15
 	m_vecAnimCtrl.push_back(AnimCtrl(1156, 1276, 38.5f, 42.5f));			//Idle_Other01	16
 	m_vecAnimCtrl.push_back(AnimCtrl(1277, 1337, 42.5f, 44.5f));			//Idle_sit		17

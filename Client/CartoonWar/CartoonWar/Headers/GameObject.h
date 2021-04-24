@@ -25,7 +25,7 @@ protected:
 	HRESULT									Delete_Component(const _tchar* pComponentTag, CComponent* pComponent);
 	CComponent*								Find_Component(const _tchar* pComponentTag);
 public:
-	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0) = 0;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0) PURE;
 	virtual void							Free();
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;

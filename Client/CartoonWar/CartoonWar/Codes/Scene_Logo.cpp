@@ -301,19 +301,19 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	}
 
 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2_Anim1.fbx", L"../Data/MeshData/Test_Long_Orc_02.dat"))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
+		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2.fbx", L"../Data/MeshData/Test_Long_Orc_02.dat"))))
+		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
 	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc3.fbx", L"../Data/MeshData/Orc03.dat"))))
 	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-		CMesh::Create_Load( L"../Data/MeshData/Test_Long_Orc_02.dat"))))
-		return E_FAIL; 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
-		CMesh::Create_Load(L"../Data/MeshData/Orc03.dat"))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
+	//	CMesh::Create_Load( L"../Data/MeshData/Test_Long_Orc_02.dat"))))
+	//	return E_FAIL; 
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
+	//	CMesh::Create_Load(L"../Data/MeshData/Orc03.dat"))))
+	//	return E_FAIL;
  
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
 	//	CMesh::Create_Load(L"../Data/MeshData/Monster.dat"))))
