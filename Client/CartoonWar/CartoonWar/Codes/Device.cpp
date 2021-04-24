@@ -339,6 +339,8 @@ void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegis
 
 void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum)
 {
+	if (nullptr == pTextureDesc)
+		return;
 	_uint			iDestRange = 1;
 	_uint			iSrcRange = 1;
 

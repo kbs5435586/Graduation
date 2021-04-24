@@ -202,7 +202,7 @@ CTexture* CTexture::Create(const _tchar* pFilePath)
 
 	if (FAILED(pInstance->Ready_Texture( pFilePath)))
 	{
-		MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
+		//MessageBox(0, L"CTexture Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
