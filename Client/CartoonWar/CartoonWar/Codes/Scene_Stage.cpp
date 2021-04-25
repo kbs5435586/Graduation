@@ -278,8 +278,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
 		return E_FAIL;
 
-	if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
-		return E_FAIL;
+	//if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

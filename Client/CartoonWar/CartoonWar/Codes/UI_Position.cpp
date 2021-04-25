@@ -39,8 +39,8 @@ _int CUI_Position::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		/*	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;*/
 	}
 	return _int();
 }
