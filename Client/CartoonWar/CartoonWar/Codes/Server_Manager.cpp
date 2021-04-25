@@ -124,8 +124,19 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 		else // NPC ÀÏ¶§
 		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
+			if (!m_objects[recv_id].isFirst)
+			{
+				if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", nullptr, nullptr, npc_id_to_idx(recv_id))))
+					return;
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
+				m_objects[recv_id].isFirst = true;
+			}
+			else
+			{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
+			}
 		}
 		_matrix Pos = pTransform->Get_Matrix();
 		strcpy_s(m_objects[recv_id].name, my_packet->name);
@@ -456,12 +467,12 @@ short CServer_Manager::player_index(unsigned short id)
 
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {
-	return id + 29;
+	return id + 30;
 }
 
 short CServer_Manager::npc_id_to_idx(unsigned short id)
 {
-	return id - 29;;
+	return id - 30;;
 }
 
 void CServer_Manager::send_npc_act_packet(unsigned char act)

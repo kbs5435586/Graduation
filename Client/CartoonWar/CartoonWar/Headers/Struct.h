@@ -509,6 +509,7 @@ struct Player_Info
 	short	hp;
 	char	name[MAX_ID_LEN + 1];
 	bool	showCharacter;
+	bool	isFirst;
 };
 
 

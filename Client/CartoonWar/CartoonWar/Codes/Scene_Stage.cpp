@@ -488,7 +488,7 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	CServer_Manager* pServer = CServer_Manager::GetInstance();
+	/*CServer_Manager* pServer = CServer_Manager::GetInstance();
 	if (nullptr == pServer)
 		return E_FAIL;
 
@@ -501,7 +501,7 @@ HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pM
 			return E_FAIL;
 	}
 
-	Safe_Release(pServer);
+	Safe_Release(pServer);*/
 	return S_OK;
 }
 
