@@ -301,23 +301,41 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	}
 
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2.fbx", L"../Data/MeshData/Test_Long_Orc_02.dat"))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
+	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2.fbx", L"../Data/MeshData/Test_Long_Orc_02.dat"))))
+	//	return E_FAIL;
+	 
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
 	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc3.fbx", L"../Data/MeshData/Orc03.dat"))))
 	//	return E_FAIL;
 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-	//	CMesh::Create_Load( L"../Data/MeshData/Test_Long_Orc_02.dat"))))
-	//	return E_FAIL; 
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
+		CMesh::Create_Load( L"../Data/MeshData/Test_Long_Orc_02.dat"))))
+		return E_FAIL; 
+
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
 	//	CMesh::Create_Load(L"../Data/MeshData/Orc03.dat"))))
 	//	return E_FAIL;
+
+
+	//Weapon
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon1",
+		CMesh::Create_Load( L"../Data/MeshData/Weapon_01.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon2",
+		CMesh::Create_Load(L"../Data/MeshData/Weapon_02.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon3_1",
+		CMesh::Create_Load(L"../Data/MeshData/Weapon_03_1.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon3_2",
+		CMesh::Create_Load(L"../Data/MeshData/Weapon_03_2.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon4",
+		CMesh::Create_Load(L"../Data/MeshData/Weapon_04.dat"))))
+		return E_FAIL;
  
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
-	//	CMesh::Create_Load(L"../Data/MeshData/Monster.dat"))))
-	//	return E_FAIL;
+
 	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
 		CMesh::Create_Load(L"../Data/MeshData/Rock01.dat"))))
 		return E_FAIL;

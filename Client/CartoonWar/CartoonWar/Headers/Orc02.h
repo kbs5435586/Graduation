@@ -41,9 +41,6 @@ private:
 	_uint									m_iPreAnimIdx = 0;
 	_bool									m_IsOnce = false;
 private:
-	_matrix*								m_pRHandMatrix = nullptr;
-	_matrix*								m_pLHandMatrix = nullptr;
-private:
 	float									m_fRatio = 0.f;
 };
 
