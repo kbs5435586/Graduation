@@ -68,6 +68,8 @@
 #include "Tree3.h"
 #include "Tree4.h"
 
+#include "Weapon01.h"
+
 
 #include "TestAnimMesh.h"
 #include "TestHatchMesh.h"
@@ -226,6 +228,11 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 
 
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon01", CWeapon01::Create())))
+		return E_FAIL;
+
+
+
 
 	return S_OK;
 }
@@ -251,8 +258,11 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
+
 	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
 	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Weapon(L"LayerWeapon", pManagement)))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -463,6 +473,14 @@ HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement*
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

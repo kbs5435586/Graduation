@@ -484,7 +484,7 @@
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon">
       <UniqueIdentifier>{8496c958-d84d-461c-aabc-d38c0df8f31a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon00">
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01">
       <UniqueIdentifier>{9be74e22-c72f-464d-9b30-d5314e3b564a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -879,8 +879,8 @@
     <ClInclude Include="..\Headers\Orc03.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Weapon00.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon00</Filter>
+    <ClInclude Include="..\Headers\Weapon01.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Weapon.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon</Filter>
@@ -1248,8 +1248,8 @@
     <ClCompile Include="..\Codes\Orc03.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Weapon00.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon00</Filter>
+    <ClCompile Include="..\Codes\Weapon01.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Weapon.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon</Filter>

@@ -281,7 +281,7 @@
     <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
-    <ClInclude Include="..\Headers\Weapon00.h" />
+    <ClInclude Include="..\Headers\Weapon01.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="protocol.h">
@@ -411,7 +411,7 @@
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
-    <ClCompile Include="..\Codes\Weapon00.cpp" />
+    <ClCompile Include="..\Codes\Weapon01.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>
   <ItemGroup>

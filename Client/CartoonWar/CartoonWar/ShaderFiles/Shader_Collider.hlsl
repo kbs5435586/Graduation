@@ -35,29 +35,34 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT	vOut;
 	matrix matTemp = (g_matTemp[g_int_0]);
 
-	float3	vRight = float3(1.f, 0.f, 0.f);
-	float3	vUp = float3(0.f, 1.f, 0.f);
-	float3	vLook = float3(0.f, 0.f, 1.f);
 
-	float3	vRightTemp = float3(matTemp._11, matTemp._12, matTemp._13);
-	float3	vUpTemp = float3(matTemp._21, matTemp._22, matTemp._23);
-	float3	vLookTemp = float3(matTemp._31, matTemp._32, matTemp._33);
+	//Remove Rotate
+	{
+		//float3	vRight = float3(1.f, 0.f, 0.f);
+	//float3	vUp = float3(0.f, 1.f, 0.f);
+	//float3	vLook = float3(0.f, 0.f, 1.f);
 
-	vRight *= length(vRightTemp);
-	vUp *= length(vUpTemp);
-	vLook *= length(vLookTemp);
+	//float3	vRightTemp = float3(matTemp._11, matTemp._12, matTemp._13);
+	//float3	vUpTemp = float3(matTemp._21, matTemp._22, matTemp._23);
+	//float3	vLookTemp = float3(matTemp._31, matTemp._32, matTemp._33);
 
-	matTemp._11 = vRight.x;
-	matTemp._12 = vRight.y;
-	matTemp._13 = vRight.z;
+	//vRight *= length(vRightTemp);
+	//vUp *= length(vUpTemp);
+	//vLook *= length(vLookTemp);
 
-	matTemp._21 = vUp.x;
-	matTemp._22 = vUp.y;
-	matTemp._23 = vUp.z;
+	//matTemp._11 = vRight.x;
+	//matTemp._12 = vRight.y;
+	//matTemp._13 = vRight.z;
 
-	matTemp._31 = vLook.x;
-	matTemp._32 = vLook.y;
-	matTemp._33 = vLook.z;
+	//matTemp._21 = vUp.x;
+	//matTemp._22 = vUp.y;
+	//matTemp._23 = vUp.z;
+
+	//matTemp._31 = vLook.x;
+	//matTemp._32 = vLook.y;
+	//matTemp._33 = vLook.z;
+	}
+	
 	matTemp._44 = 1.f;
 
 	matrix matW =
