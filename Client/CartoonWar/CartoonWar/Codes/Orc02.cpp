@@ -28,28 +28,24 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-	m_pMeshCom->m_vecDiffTexturePath;
+	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(90.f));
+
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
 
 	m_pAnimCom->LateInit();
-	m_iCurAnimIdx = 0;
+	m_iCurAnimIdx = 43;
 	_matrix matTemp = { };
 	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f,10.f,10.f));	
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
+
 
 	return S_OK;
 }
 
 _int COrc02::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColiiderCom->Update_Collider(m_pTransformCom);
+	//m_pColiiderCom->Update_Collider(m_pTransformCom);
 
 	if (m_pWeapon)
 	{
@@ -66,9 +62,20 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (CManagement::GetInstance()->Key_Down(KEY_UP))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 0.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
+
+
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
+	{
+		m_IsOnce = true;
+		m_iCurAnimIdx = 14;
+	}
+
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
 		{
 			//_vec3 vLook = {};
@@ -87,77 +94,114 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 //	m_pTransformCom->Go_There(vSlide);
 //}
 		}
+		m_IsOnce = true;
+		m_iCurAnimIdx = 19;
+		m_pTransformCom->BackWard(fTimeDelta);
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
+	{
+		m_IsOnce = true;
+		m_iCurAnimIdx = 14;
 
-
-		m_iCurAnimIdx++;
-		//m_pTransformCom->BackWard(fTimeDelta);
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	{
+		m_IsOnce = true;
+		m_iCurAnimIdx = 20;
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
+
+
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	{
+		//m_IsOnce = true;
+		//m_iCurAnimIdx = 27;
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
-//	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-//	{
-//		m_IsOnce = true;
-//		m_iCurAnimIdx = 27;
-//	}
-//
+
+
 
 	Set_Animation();
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
-		m_iCurAnimIdx = 16;
+
+		int iRand = rand() % 2;
+		if (iRand % 2 == 0)
+		{
+			m_iCurAnimIdx = 15;
+		}
+		else
+		{
+			m_iCurAnimIdx = 16;
+		}
+
 		m_IsOnce = false;
 	}
 
 
 	if (CManagement::GetInstance()->Key_Down(KEY_E))
 	{
-		_uint iLen = 99999999;
-		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+		if (!m_pWeapon)
 		{
-			CTransform* pTargetTransform = (CTransform*)iter->Get_ComponentPointer(L"Com_Transform");
-			_vec3 vTargetPos = *pTargetTransform->Get_StateInfo(CTransform::STATE_POSITION);
-
-			_vec3 vLen = vPos - vTargetPos;
-			_uint iTempLen = Vector3_::Length(vLen);
-
-			if (iLen > iTempLen)
+			_uint iLen = 99999999;
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
 			{
-				iLen = iTempLen;
-				for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+				CTransform* pTargetTransform = (CTransform*)iter->Get_ComponentPointer(L"Com_Transform");
+				_vec3 vTargetPos = *pTargetTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+				_vec3 vLen = vPos - vTargetPos;
+				_uint iTempLen = Vector3_::Length(vLen);
+
+		
+
+				if (iLen > iTempLen)
 				{
-					dynamic_cast<CWeapon*>(iter1)->GetIsPicked() = false;
+					iLen = iTempLen;
+					for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+					{
+						dynamic_cast<CWeapon*>(iter1)->GetIsPicked() = false;
+					}
+					dynamic_cast<CWeapon*>(iter)->GetIsPicked() = true;
 				}
-				dynamic_cast<CWeapon*>(iter)->GetIsPicked() = true;
 			}
-		}
 
 
-		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
-		{
-			if (dynamic_cast<CWeapon*>(iter)->GetIsPicked())
+			for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
 			{
-				m_pWeapon = dynamic_cast<CWeapon*>(iter);
-				m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
-				m_pWeapon->GetBoneIdx() = 27;
+				if (dynamic_cast<CWeapon*>(iter)->GetIsPicked())
+				{
+					m_pWeapon = dynamic_cast<CWeapon*>(iter);
+					m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+					m_pWeapon->GetBoneIdx() = 27;
 
+				}
 			}
 		}
+	
 	}
 	else if (CManagement::GetInstance()->Key_Down(KEY_Q))	
 	{
-		m_pWeapon = nullptr;
-		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+		if (m_pWeapon)
 		{
-			dynamic_cast<CWeapon*>(iter)->GetIsPicked() = false;
+			m_pWeapon = nullptr;
+			for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+			{
+				dynamic_cast<CWeapon*>(iter)->GetIsPicked() = false;
+			}
 		}
+
 	}
+	else if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+	{
+		m_IsOnce = true;
+		m_iCurAnimIdx = rand() % 8;
+	}
+
 
 
 
@@ -196,11 +240,7 @@ void COrc02::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		CTexture* pTexture = m_vecTexture[i];
-		if (pTexture)
-		{
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-		}
+		m_pMeshCom->SetUp_Texture(i);
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 		CDevice::GetInstance()->UpdateTable();
@@ -302,8 +342,6 @@ void COrc02::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(3642, 3682, 121.40f, 122.73f));		//WithoutWalkRight		64
 	m_vecAnimCtrl.push_back(AnimCtrl(3683, 3733, 122.76f, 124.43f));		//WithoutWalkRightSit	65
 	m_vecAnimCtrl.push_back(AnimCtrl(3734, 3784, 124.46f, 126.13f));		//WithoutWalkSit		66
-
-
 }
 
 COrc02* COrc02::Create()
@@ -340,14 +378,9 @@ void COrc02::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pColiiderCom);
+	Safe_Release(m_pFrustumCom);
 	//Safe_Release(m_pNaviCom);
-	if (m_IsClone)
-	{
-		for (auto& iter : m_vecTexture)
-		{
-			Safe_Release(iter);
-		}
-	}
+
 	CGameObject::Free();
 }
 
@@ -392,6 +425,10 @@ HRESULT COrc02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Collider", m_pColiiderCom)))
 		return E_FAIL;
 
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);

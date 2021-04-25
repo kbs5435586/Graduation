@@ -27,7 +27,9 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(15.f, 0.f, 0.f);
+	_int	iMoveX = rand() % 500 + 1;
+	_int	iMoveZ = rand() % 500 + 1;
+	_vec3 vPos = _vec3(iMoveX, 0.f, iMoveZ);
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
@@ -37,22 +39,15 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 	SetUp_Anim();
 
 	m_pAnimCom->LateInit();
-	m_pMeshCom->m_vecDiffTexturePath;
-	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
 
-	m_iCurAnimIdx = 7;
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
+	m_iCurAnimIdx = 19;
 
 	return S_OK;
 }
 
 _int COrc03::Update_GameObject(const _float& fTimeDelta)
 {
-
+	Move(fTimeDelta);
 
 	return _int();
 }
@@ -64,49 +59,16 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-	{
-		{
-			//_vec3 vLook = {};
-//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-//vLook = Vector3_::Normalize(vLook);
 
 
-//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-//_vec3 vSlide = {};
-//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-//{
-//	m_pTransformCom->BackWard(fTimeDelta);
-//}
-//else
-//{
-//	m_pTransformCom->Go_There(vSlide);
-//}
-		}
-
-
-		m_iCurAnimIdx = 29;
-		m_pTransformCom->BackWard(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 27;
-	}
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
-		m_iCurAnimIdx = 16;
+		m_iCurAnimIdx = 19;
+
 		m_IsOnce = false;
 	}
+	Set_Animation();
 	return _int();
 }
 
@@ -145,11 +107,7 @@ void COrc03::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		CTexture* pTexture = m_vecTexture[i];
-		if (pTexture)
-		{
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-		}
+		m_pMeshCom->SetUp_Texture(i);
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 		CDevice::GetInstance()->UpdateTable();
@@ -346,8 +304,124 @@ void COrc03::Set_Animation()
 {
 	if (m_iCurAnimIdx != m_iPreAnimIdx)
 	{
-
-		m_iCurAnimIdx = m_iPreAnimIdx;
+		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
+		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
 
+}
+
+void COrc03::Move(const _float& fTimeDelta)
+{
+	if (!m_IsDest)
+	{
+		srand(unsigned(time(NULL)));
+		_int	iMoveX = rand() % 500 + 1;
+		_int	iMoveZ = rand() % 500 + 1;
+
+		m_vDest = { (_float)iMoveX, 0.f, (_float)iMoveZ };
+
+		m_IsDest = true;
+	}
+
+	_vec3	vt = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - m_vDest;
+	m_iDestLength = Vector3_::Length(vt);
+
+	// 목표점과 몬스터 사이벡터를 구함
+	_vec3 vP_M = m_vDest - *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	vP_M = Vector3_::Normalize(vP_M);
+
+	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vTemp *= -1.f;
+	vTemp = Vector3_::Normalize(vTemp);
+	m_fDot = Vector3_::DotProduct(vTemp, vP_M);
+
+	if (!m_IsRotateEnd)
+	{
+		if (fabs(m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z))
+		{
+			if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->x <= m_vDest.x)
+			{
+				m_eRotate = DIR_RIGHT;
+			}
+			else
+			{
+				m_eRotate = DIR_LEFT;
+			}
+			_int i = 0;
+		}
+		else
+		{
+			if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->z <= m_vDest.z)
+			{
+				if (m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+				{
+					m_eRotate = DIR_LEFT;
+				}
+				else
+				{
+					m_eRotate = DIR_RIGHT;
+				}
+
+			}
+			else
+			{
+				if (m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+				{
+					m_eRotate = DIR_RIGHT;
+				}
+				else
+				{
+					m_eRotate = DIR_LEFT;
+				}
+			}
+			_int i = 0;
+		}
+
+
+		m_IsRotateEnd = true;
+	}
+	_float fAngle = XMConvertToDegrees(m_fDot);
+	if (fAngle >= 56.f && fAngle <= 57.f)
+	{
+		m_IsRotateEnd = false;
+		if (m_iDestLength >= 3.f)
+		{
+			m_pTransformCom->Go_ToTarget(&m_vDest, fTimeDelta);
+		}
+		else
+		{
+			m_IsAlwaysOnce = false;
+			m_IsDest = false;
+			m_iFlyCnt++;
+		}
+
+	}
+	else
+	{
+		if (!m_IsAlwaysOnce)
+		{
+			if (m_eRotate == DIR_LEFT)
+			{
+				m_iCurAnimIdx = 25;
+				m_IsOnce = true;
+			}
+			else if (m_eRotate == DIR_RIGHT)
+			{
+				m_iCurAnimIdx = 27;
+				m_IsOnce = true;
+			}
+			m_IsAlwaysOnce = true;
+		}
+
+
+		if (m_eRotate == DIR_LEFT)
+		{
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
+		}
+		else if (m_eRotate == DIR_RIGHT)
+		{
+			m_pTransformCom->Rotation_Y(fTimeDelta);
+		}
+
+	}
 }

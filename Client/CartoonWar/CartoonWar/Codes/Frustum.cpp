@@ -78,7 +78,7 @@ _bool CFrustum::Isin_Frustum(Plane* pPlane, const _vec3* pPosition, const _float
 		XMVECTOR xmVector = {};
 		
 		_float fTemp = XMVectorGetX(XMPlaneDotCoord(pPlane[i], XMVectorSet(pPosition->x, pPosition->y, pPosition->z, 1.f)));
-		if (0.f > fTemp)
+		if (fRadius > fTemp)
 		{
 			return false;
 		}
