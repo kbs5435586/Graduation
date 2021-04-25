@@ -69,7 +69,11 @@
 #include "Tree4.h"
 
 #include "Weapon01.h"
+#include "Weapon02.h"
+#include "Weapon03.h"
+#include "Weapon04.h"
 
+#include "Castle0.h"
 
 #include "TestAnimMesh.h"
 #include "TestHatchMesh.h"
@@ -230,9 +234,15 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon01", CWeapon01::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon02", CWeapon02::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon03", CWeapon03::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon04", CWeapon04::Create())))
+		return E_FAIL; 
 
-
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle0", CCastle0::Create())))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -259,11 +269,13 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
-	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Weapon(L"LayerWeapon", pManagement)))
+	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
 		return E_FAIL;
 
+	//if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -501,6 +513,13 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Castle(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Castle0", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }

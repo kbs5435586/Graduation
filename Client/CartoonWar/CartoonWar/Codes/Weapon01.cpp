@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Management.h"
 #include "Weapon01.h"
+#include "StructedBuffer.h"
 
 CWeapon01::CWeapon01()
 	: CWeapon()
@@ -25,7 +26,7 @@ HRESULT CWeapon01::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	_vec3 vPos = {50.f, 0.f,0.f};
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
@@ -64,7 +65,6 @@ void CWeapon01::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
-
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
@@ -76,14 +76,28 @@ void CWeapon01::Render_GameObject()
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
+		REP tRep = {};
+		tRep.m_arrInt[0] = m_iBoneIdx;
+		tRep.m_arrInt[1] = m_IsPicked;
+
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), 
+			iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(),
+			iOffeset, CONST_REGISTER::b8);
+
 		CTexture* pTexture = m_vecTexture[i];
 		if (pTexture)
 		{
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 		}
 
+		if (nullptr != m_pStructedBuffer)
+		{
+			m_pStructedBuffer->Update_Data(TEXTURE_REGISTER::t8);
+		}
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
@@ -177,7 +191,7 @@ HRESULT CWeapon01::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Weapon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

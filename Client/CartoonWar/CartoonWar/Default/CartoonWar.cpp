@@ -175,9 +175,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     //}
     //break;
     case WM_KEYDOWN:
-        if (wParam == 'Q')
+        switch (wParam)
+        {
+        case VK_ESCAPE:
             PostQuitMessage(0);
-        break;
+            break;
+        }
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);

@@ -32,6 +32,8 @@ private:
 private:
 	HRESULT					Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement);
+private:
+	HRESULT					Ready_Layer_Castle(const _tchar* pLayerTag, CManagement* pManagement);
 public:
 	static CScene_Stage*	Create();
 protected:

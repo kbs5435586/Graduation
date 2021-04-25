@@ -275,7 +275,7 @@ void CCollider::Render_Collider(CStructedBuffer* pArg)
 
 	REP tRep = {};
 
-	tRep.m_arrInt[0] = 7;
+	tRep.m_arrInt[0] = 27;
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(),
 		iOffeset, CONST_REGISTER::b0);

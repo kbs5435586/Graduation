@@ -487,6 +487,18 @@
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01">
       <UniqueIdentifier>{9be74e22-c72f-464d-9b30-d5314e3b564a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02">
+      <UniqueIdentifier>{e6d3973d-c30e-409f-8c8c-1acad68a83ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03">
+      <UniqueIdentifier>{024363f5-f45e-43bc-b7fa-4e78f4b90297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04">
+      <UniqueIdentifier>{8bf797d0-4810-43b0-996b-4b7f15c73092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\03. Castle">
+      <UniqueIdentifier>{82bc9722-0f7e-4227-8418-c4203e937e61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -885,6 +897,18 @@
     <ClInclude Include="..\Headers\Weapon.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Weapon03.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon04.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon02.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Castle0.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1254,6 +1278,18 @@
     <ClCompile Include="..\Codes\Weapon.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Weapon02.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon03.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon04.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Castle0.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1318,6 +1354,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_UI.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
