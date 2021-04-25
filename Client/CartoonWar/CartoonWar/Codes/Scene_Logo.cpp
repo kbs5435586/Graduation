@@ -313,9 +313,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		CMesh::Create_Load( L"../Data/MeshData/Test_Long_Orc_02.dat"))))
 		return E_FAIL; 
 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
-	//	CMesh::Create_Load(L"../Data/MeshData/Orc03.dat"))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
+		CMesh::Create_Load(L"../Data/MeshData/Orc03.dat"))))
+		return E_FAIL;
 
 
 	//Weapon
