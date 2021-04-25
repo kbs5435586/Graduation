@@ -525,6 +525,9 @@ typedef struct tagAnimController
 		fEndTime = _fEndTime;
 		iCurFrm = iStartFrm;
 		IsPlayOnce = IsOnce;
+
+		fOriginStartTime = fStartTime;
+		fOriginEndTime = fEndTime;
 	}
 	int		iStartFrm;
 	int		iEndFrm;
@@ -533,4 +536,7 @@ typedef struct tagAnimController
 	float	fCurTime =0.f;
 	float	fEndTime;
 	bool	IsPlayOnce = false;
+
+	float	fOriginStartTime;
+	float	fOriginEndTime ;
 }AnimCtrl;

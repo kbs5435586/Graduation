@@ -12,6 +12,7 @@ private:
     virtual ~CAnimator() = default;
 public:
     HRESULT                         Ready_Animator();
+    void                            LateInit();
 private:
     const   vector<tMTBone>*        m_pVecBones;
      vector<tMTAnimClip>            m_vecClip;

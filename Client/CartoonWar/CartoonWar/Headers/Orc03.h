@@ -32,7 +32,6 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
-	CCollider*								m_pColiider[2] = { nullptr };
 private:
 	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;
@@ -40,9 +39,6 @@ private:
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx = 0;
 	_bool									m_IsOnce = false;
-private:
-	_matrix*								m_pRHandMatrix = nullptr;
-	_matrix*								m_pLHandMatrix = nullptr;
 private:
 	float									m_fRatio = 0.f;
 };

@@ -7,6 +7,7 @@
 CMesh::CMesh()
 	: CComponent()
 {
+
 }
 
 CMesh::CMesh(const CMesh& rhs)
@@ -156,7 +157,12 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 
 	// Subset Num
 	int iMtrlCnt = pMesh->GetNode()->GetMaterialCount();
+	if (iMtrlCnt >= 2)
+	{
+		_int i = 0;
+	}
 	m_iSubsetNum += iMtrlCnt;
+	//m_iSubsetNum++;
 	//m_iSubsetNum = iMtrlCnt;
 	pContainer.vecIdx.resize(iMtrlCnt);
 

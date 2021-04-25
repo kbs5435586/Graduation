@@ -299,10 +299,15 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 //	CMesh::Create(L"../Data/MeshData/Orc02.dat"))))
 //	return E_FAIL;
 	}
-
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Castle0",
+	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/GameObject.fbx", L"../Data/MeshData/GameObject.dat"))))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Castle0",
+	//	CMesh::Create_Load(L"../Data/MeshData/Castle0.dat"))))
+	//	return E_FAIL;
 
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2.fbx", L"../Data/MeshData/Test_Long_Orc_02.dat"))))
+	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc_02_Short.fbx"))))
 	//	return E_FAIL;
 	 
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
@@ -310,7 +315,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//	return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-		CMesh::Create_Load( L"../Data/MeshData/Test_Long_Orc_02.dat"))))
+		CMesh::Create_Load( L"../Data/MeshData/Orc_02.dat"))))
 		return E_FAIL; 
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
@@ -552,7 +557,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Mesh_Default",
 		CShader::Create(L"../ShaderFiles/Shader_Mesh_Default.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Weapon",
+		CShader::Create(L"../ShaderFiles/Shader_Weapon.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 
 
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Particle",
