@@ -278,8 +278,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
 		return E_FAIL;
 
-	if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
-		return E_FAIL;
+	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
+		return E_FAIL;*/
 
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -521,29 +521,29 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	/*if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;*/
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 3; ++i)
+	/*for (int i = 0; i < 3; ++i)
 	{
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Orc04(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 3; ++i)
+	/*for (int i = 0; i < 3; ++i)
 	{
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }

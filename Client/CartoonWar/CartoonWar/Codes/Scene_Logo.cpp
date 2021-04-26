@@ -317,7 +317,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Weapon_02.fbx", L"../Data/MeshData/Weapon_02.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon3_1",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Weapon_03_1.fbx", L"../Data/MeshData/Weapon_03_1.dat")))
+		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Weapon_03_1.fbx", L"../Data/MeshData/Weapon_03_1.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon3_2",
 		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Weapon_03_2.fbx", L"../Data/MeshData/Weapon_03_2.dat"))))

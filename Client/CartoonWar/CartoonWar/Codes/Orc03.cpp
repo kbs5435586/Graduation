@@ -57,8 +57,15 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
 		return -1;
+	server->AddRef();
+	if (server->Get_ShowNPC(m_iLayerIdx))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
 
 
 
@@ -69,6 +76,7 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 	Set_Animation();
+	Safe_Release(server);
 	return _int();
 }
 

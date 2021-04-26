@@ -76,14 +76,19 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		CTransform* pTransform;
 		if (ENUM_PLAYER1 == recv_id)
 		{
+			if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")))
+				return;
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Orc02", L"Com_Transform", 0);
 		}
 		else if (ENUM_PLAYER2 == recv_id)
 		{
-			/*pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Wire", L"Com_Transform", 0);*/
+			if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04")))
+				return;
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Orc04", L"Com_Transform", 0);
 		}
+		m_objects[recv_id].isFirst = true;
 		_matrix Pos = pTransform->Get_Matrix();
 		Pos._11 = my_packet->r_x;
 		Pos._12 = my_packet->r_y;
@@ -122,13 +127,33 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (ENUM_PLAYER1 == recv_id) // 다른 플레이어 일때
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-					L"Layer_Orc02", L"Com_Transform", 0);
+				if (!m_objects[recv_id].isFirst)
+				{
+					if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")))
+						return;
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc02", L"Com_Transform", 0);
+				}
+				else
+				{
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc02", L"Com_Transform", 0);
+				}
 			}
 			if (ENUM_PLAYER2 == recv_id) // 다른 플레이어 일때
 			{
-				/*pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", 0);*/
+				if (!m_objects[recv_id].isFirst)
+				{
+					if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04")))
+						return;
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc04", L"Com_Transform", 0);
+				}
+				else
+				{
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc04", L"Com_Transform", 0);
+				}
 			}
 		}
 		else // NPC 일때
@@ -139,7 +164,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 					return;
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
-				m_objects[recv_id].isFirst = true;
 			}
 			else
 			{
@@ -147,6 +171,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
+		m_objects[recv_id].isFirst = true;
 		_matrix Pos = pTransform->Get_Matrix();
 		strcpy_s(m_objects[recv_id].name, my_packet->name);
 		Pos._11 = my_packet->r_x;
@@ -185,8 +210,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
 			{
-				/*pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", 0);*/
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
 			}
 		}
 		else // NPC 
@@ -225,8 +250,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
 			{
-				/*pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", 0);*/
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
 			}
 		}
 		else

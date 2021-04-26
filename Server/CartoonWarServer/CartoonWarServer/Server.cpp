@@ -1184,7 +1184,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
                 //g_clients[user_id].m_transform.Ready_Transform();
-                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),20.f,(float)(rand() % WORLD_VERTICAL) };
+                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),0.f,(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 g_clients[user_id].m_transform.Scaling(0.1f, 0.1f, 0.1f);
                 g_clients[user_id].m_speed = MOVE_SPEED;
@@ -1276,7 +1276,7 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < 6; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < 4; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }

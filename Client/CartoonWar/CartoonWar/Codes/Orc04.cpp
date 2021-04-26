@@ -57,14 +57,22 @@ _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
 		return -1;
+	server->AddRef();
+	if (server->Get_ShowOtherPlayer(ENUM_PLAYER2))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
 		m_iCurAnimIdx = 19;
 		m_IsOnce = false;
 	}
+	Safe_Release(server);
 	return _int();
 }
 
