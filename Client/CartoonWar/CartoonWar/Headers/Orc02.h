@@ -29,6 +29,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pShaderComT = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
@@ -45,5 +46,7 @@ private:
 	_matrix*								m_pLHandMatrix = nullptr;
 private:
 	float									m_fRatio = 0.f;
+
+	_vec3									m;
 };
 

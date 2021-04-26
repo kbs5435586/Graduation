@@ -481,6 +481,12 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
       <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\03. UI_Inventory">
+      <UniqueIdentifier>{8a31aaf2-96d0-4b55-9784-497671c6934e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\98. Camera\01. Inventory Camera">
+      <UniqueIdentifier>{991ec409-e0f7-4664-bad7-7684ea70e597}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -873,6 +879,12 @@
     <ClInclude Include="..\Headers\Orc03.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\UI_Inventory.h">
+      <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Inventory_Camera.h">
+      <Filter>02. GameObject\98. Camera\01. Inventory Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1236,6 +1248,12 @@
     <ClCompile Include="..\Codes\Orc03.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Inventory.cpp">
+      <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory_Camera.cpp">
+      <Filter>02. GameObject\98. Camera\01. Inventory Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1301,6 +1319,7 @@
     <None Include="..\ShaderFiles\Shader_UI.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_UUU.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
@@ -1309,5 +1328,10 @@
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
       <Filter>96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Shader_UUI.txt">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </Text>
   </ItemGroup>
 </Project>

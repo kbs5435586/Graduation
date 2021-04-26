@@ -38,7 +38,7 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 	MousePos = {0 , 0};
 
 	Pos = { (LONG)m_fX ,(LONG)m_fY };
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_UI_INFO, &Pos);
+	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_UI_INFO, &Pos);
 
 	int X[3]{ 0,1,2 }, Y[3]{ 0,1,2 };
 
@@ -84,7 +84,7 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 				IPos[0] = { (LONG)m_fX - 50,(LONG)m_fY};
 				IPos[1] = { (LONG)m_fX +5,(LONG)m_fY};
 				IPos[2] = { (LONG)m_fX + 60,(LONG)m_fY};
-				pManagement->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
+			//	pManagement->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ _int CUI_Inventory::LastUpdate_GameObject(const _float& fTimeDelta)
 			return E_FAIL;
 	}
 
-	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
+	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
 
 	return _int();
 }
@@ -152,9 +152,9 @@ void CUI_Inventory::Render_GameObject()
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(6)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pSpecTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pSpecTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
 
 
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t3);
@@ -210,13 +210,14 @@ CUI_Inventory* CUI_Inventory::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Inventory::Clone_GameObject(void* pArg)
+CGameObject* CUI_Inventory::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CUI_Inventory* pInstance = new CUI_Inventory();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
 	}
+	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 

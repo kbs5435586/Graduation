@@ -217,6 +217,27 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	return S_OK;
 }
 
+HRESULT CShader::SetUp_OnShaderT(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output)
+{
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+	_matrix	matTemp = matView;
+	matTemp = Matrix_::Inverse(matTemp);
+
+	// 다른 카메라의 월드 뷰 프로젝션을 넘겨준다
+	output.I_matWorld = matWorld;
+	output.I_matView = matView;
+	output.I_matProj = matProj;
+	output.I_matWV = matWorld * matView;
+	output.I_matWVP = output.I_matWV * matProj;
+	output.I_vCamPos = (_vec4)&matTemp.m[3][0];
+
+	//output.I_matViewInv = Matrix_::Inverse(matView);
+	//output.I_matProjInv = Matrix_::Inverse(matProj);
+
+	return S_OK;
+}
+
 HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass)
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());

@@ -87,7 +87,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	Invalidate_ViewProjMatrix();
+	Invalidate_ViewProjMatrix(0);
 
 	return _int();
 }

@@ -20,7 +20,7 @@ public:
 	_matrix						Calculate_RelfectMatrix(const _float& fHeight);
 public:
 	HRESULT						SetUp_CameraProjDesc(const CAMERADESC & CameraDesc, const PROJDESC & ProjDesc);
-	void						Invalidate_ViewProjMatrix();
+	void						Invalidate_ViewProjMatrix(int n);
 private:
 	HRESULT						SetUp_ViewProjMatrices();
 public:
@@ -40,6 +40,7 @@ protected:
 
 protected:
 	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
+	_vec3						m;
 
 };
 

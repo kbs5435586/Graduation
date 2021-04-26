@@ -41,6 +41,18 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	row_major matrix	matViewInv;
 
 	float4				vCamPos;
+
+
+	row_major matrix	I_matWorld;
+	row_major matrix	I_matView;
+	row_major matrix	I_matProj;
+
+	row_major matrix	I_matWV;
+	row_major matrix	I_matWVP;
+	row_major matrix	I_matProjInv;
+	row_major matrix	I_matViewInv;
+
+	float4				I_vCamPos;
 };
 
 cbuffer MATERIAL : register (b1)

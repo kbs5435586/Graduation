@@ -41,6 +41,11 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	//	m_vecTexture.push_back(pTexture);
 	//}
 
+	m_tInfo = { 10.f,10.f,10.f,10.f };
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
+
 	return S_OK;
 }
 
@@ -101,6 +106,11 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
+
+
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 	return _int();
 }
 
@@ -120,8 +130,12 @@ void COrc02::Render_GameObject()
 
 		MAINPASS tMainPass = {};
 		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix I_matWorld = m_pTransformCom->Get_Matrix();
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+		_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
+		_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
 
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
@@ -146,6 +160,13 @@ void COrc02::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
+
+	m_pShaderComT->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPassT);
+	_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
 	
 	m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
 	Safe_Release(pManagement);
@@ -169,6 +190,12 @@ HRESULT COrc02::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
+	vector<D3D12_INPUT_ELEMENT_DESC>  vecDescT;
+	vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	if (FAILED(m_pShaderComT->Create_Shader(vecDescT, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -245,6 +272,7 @@ void COrc02::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderComT);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pColiiderCom);
@@ -283,6 +311,11 @@ HRESULT COrc02::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+
+	m_pShaderComT = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUI");
+	NULL_CHECK_VAL(m_pShaderComT, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ShaderT", m_pShaderComT)))
 		return E_FAIL;
 
 	m_pComputeShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Animation");
