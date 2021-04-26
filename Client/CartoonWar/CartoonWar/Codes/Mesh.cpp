@@ -84,7 +84,7 @@ HRESULT CMesh::Ready_Mesh(const wstring& pFilePath, const _tchar* pSaveFilePath)
 	m_iSubsetNum;
 	if (FAILED(Ready_MeshData(m_vecContainer)))
 		return E_FAIL;
-	//Load_Texture();
+	Load_Texture();
 
 
 
@@ -161,8 +161,8 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 	{
 		_int i = 0;
 	}
-	m_iSubsetNum += iMtrlCnt;
-	//m_iSubsetNum++;
+	//m_iSubsetNum += iMtrlCnt;
+	m_iSubsetNum++;
 	//m_iSubsetNum = iMtrlCnt;
 	pContainer.vecIdx.resize(iMtrlCnt);
 
@@ -235,40 +235,31 @@ void CMesh::Laod_Material(FbxSurfaceMaterial* _pMtrlSur)
 	tMtrlInfo.strSpec = GetMtrlTextureName(_pMtrlSur, FbxSurfaceMaterial::sSpecular);
 
 
-	int iLen = tMtrlInfo.strDiff.length();
-	_tchar* tag = new _tchar[iLen + 1];
-	ZeroMemory(tag, iLen + 1);
 
-	lstrcpy(tag, tMtrlInfo.strDiff.c_str());
-
-	m_vecDiffTexturePath.push_back(tag);
-
-	
 
 	m_vecContainer.back().vecMtrl.push_back(tMtrlInfo);
 }
 
 void CMesh::Load_Texture()
 {
-	// Texture Load
+	_uint iCnt = 0;
+	for (auto& iter : m_vecContainer)
+	{
+		CTexture* pTexture = CTexture::Create(iter.vecMtrl[0].strDiff.c_str());
+		m_vecRenderInfo[iCnt].pTexture = (pTexture);
+		iCnt++;
+	}
 
 	
 }
 
-HRESULT CMesh::SetUp_Texture()
+void CMesh::SetUp_Texture(_uint i)
 {
-	if (m_iCurTexNum >= m_iMaxTexNum)
+	CTexture* pTexture = m_vecRenderInfo[i].pTexture;
+	if (pTexture)
 	{
-		m_iCurTexNum = 0;
+		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 	}
-
-	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
-	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 1], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
-	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 2], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
-
-
-	//m_iCurTexNum+=3;
-	return S_OK;
 }
 
 void CMesh::Load_Skeleton(FbxNode* pNode)
@@ -1253,15 +1244,30 @@ HRESULT CMesh::Save(const _tchar* pFilePath)
 	}
 
 
+	//_uint iDiffTexCnt = 0;
+	//iDiffTexCnt = m_vecDiffTexturePath.size();
+	//fwrite(&iDiffTexCnt, sizeof(_uint), 1, pFile);
+	//for (auto& iter : m_vecDiffTexturePath)
+	//{
+	//	_uint iLen = lstrlen(iter)+1;
+	//	fwrite(&iLen, sizeof(_uint), 1, pFile);
+	//	fwrite(iter, sizeof(_tchar) * iLen, 1, pFile);
+	//}
+
+
+
 	_uint iDiffTexCnt = 0;
-	iDiffTexCnt = m_vecDiffTexturePath.size();
+	iDiffTexCnt = m_vecContainer.size();
 	fwrite(&iDiffTexCnt, sizeof(_uint), 1, pFile);
-	for (auto& iter : m_vecDiffTexturePath)
+	for (auto& iter : m_vecContainer)
 	{
-		_uint iLen = lstrlen(iter)+1;
+		const _tchar* pTemp = iter.vecMtrl[0].strDiff.c_str();
+
+		_uint iLen = iter.vecMtrl[0].strDiff.length()+1;
 		fwrite(&iLen, sizeof(_uint), 1, pFile);
-		fwrite(iter, sizeof(_tchar) * iLen, 1, pFile);
+		fwrite(pTemp, sizeof(_tchar) * iLen, 1, pFile);
 	}
+
 	
 	fclose(pFile);
 
@@ -1462,6 +1468,14 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 		m_vecDiffTexturePath.push_back(pTemp);
 	}
 
+	_uint iCnt = 0;
+	for (auto& iter : m_vecDiffTexturePath)
+	{
+		CTexture* pTexture = CTexture::Create(iter);
+		m_vecRenderInfo[iCnt].pTexture = (pTexture);
+		iCnt++;
+	}
+
 
 	m_iFrameCnt = _iFrameCount;
 	if (m_vecMTBone.size() > 0 && m_vecMTBone.size() > 0)
@@ -1556,8 +1570,14 @@ void CMesh::Free()
 		for (auto& iter : m_vecDiffTexturePath)
 			Safe_Delete_Array(iter);
 
+		for (auto& iter : m_vecRenderInfo)
+		{
+			Safe_Release(iter.pTexture);
+		}
 
 	}
+
+
 	//if (m_IsClone)
 	//{
 	//	if (m_pBoneFrameData)

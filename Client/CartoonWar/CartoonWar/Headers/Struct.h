@@ -232,7 +232,7 @@ struct RenderInfo
 	int							iVtxSize;
 	vector<MESH>				vecVertices;
 	vector<Indices>				vecIndices;
-	vector<class CTexture*>		vecTexture;
+	class CTexture*					pTexture;
 };
 
 
