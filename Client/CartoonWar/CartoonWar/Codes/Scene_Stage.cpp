@@ -277,6 +277,13 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 	//	return E_FAIL;
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return E_FAIL;
+	server->AddRef();
+	server->InitServer(g_hWnd);
+	Safe_Release(server);
+
 	return S_OK;
 }
 

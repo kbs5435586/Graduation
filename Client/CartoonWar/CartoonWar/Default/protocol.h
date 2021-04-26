@@ -48,7 +48,10 @@ struct sc_packet_login_ok
 	char size;
 	char type;
 	int id;
-	float x, y, z;
+	float p_x, p_y, p_z;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
 	short hp;
 	short level;
 	int	exp;

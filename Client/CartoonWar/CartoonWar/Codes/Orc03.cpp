@@ -28,8 +28,8 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	_vec3 vPos = _vec3(15.f, 0.f, 0.f);
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
@@ -113,9 +113,10 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
-		m_iCurAnimIdx = 16;
+		m_iCurAnimIdx = 14;
 		m_IsOnce = false;
 	}
+	Safe_Release(server);
 	return _int();
 }
 

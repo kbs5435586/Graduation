@@ -27,8 +27,8 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
@@ -66,8 +66,17 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
 		return -1;
+	server->AddRef();
+
+	if (true == server->Get_ShowOtherPlayer(ENUM_PLAYER1))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
 	if (CManagement::GetInstance()->Key_Down(KEY_UP))
 	{
 		{
@@ -110,7 +119,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	Set_Animation();
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
-		m_iCurAnimIdx = 16;
+		m_iCurAnimIdx = 14;
 		m_IsOnce = false;
 	}
 
@@ -160,7 +169,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 
 
-
+	Safe_Release(server);
 	return _int();
 }
 

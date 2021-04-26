@@ -156,10 +156,19 @@ void Server::send_login_ok_packet(int user_id)
 	packet.level = 0;
 	packet.size = sizeof(packet);
 	packet.type = SC_PACKET_LOGIN_OK;
-    _vec3* pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    packet.x = pos->x;
-	packet.y = pos->y;
-    packet.z = pos->z;
+    _matrix pos = g_clients[user_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_y = pos._42;
+    packet.p_z = pos._43;
 
 
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
@@ -952,6 +961,7 @@ void Server::initialize_NPC(int player_id)
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
+            g_clients[player_id].m_transform.Scaling(0.1f, 0.1f, 0.1f);
             g_clients[npc_id].m_speed = MOVE_SPEED;
             g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
             set_formation(player_id);
@@ -1176,6 +1186,7 @@ void Server::worker_thread()
                 //g_clients[user_id].m_transform.Ready_Transform();
                 _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),20.f,(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                g_clients[user_id].m_transform.Scaling(0.1f, 0.1f, 0.1f);
                 g_clients[user_id].m_speed = MOVE_SPEED;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;

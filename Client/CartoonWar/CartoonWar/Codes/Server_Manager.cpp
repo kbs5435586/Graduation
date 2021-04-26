@@ -84,12 +84,21 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			/*pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
 				L"Layer_Wire", L"Com_Transform", 0);*/
 		}
-		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-
-		vPos.x = m_objects[recv_id].x = my_packet->x;
-		vPos.y = m_objects[recv_id].y = my_packet->y;
-		vPos.z = m_objects[recv_id].z = my_packet->z;
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		_matrix Pos = pTransform->Get_Matrix();
+		Pos._11 = my_packet->r_x;
+		Pos._12 = my_packet->r_y;
+		Pos._13 = my_packet->r_z;
+		Pos._21 = my_packet->u_x;
+		Pos._22 = my_packet->u_y;
+		Pos._23 = my_packet->u_z;
+		Pos._31 = my_packet->l_x;
+		Pos._32 = my_packet->l_y;
+		Pos._33 = my_packet->l_z;
+		Pos._41 = my_packet->p_x;
+		Pos._42 = my_packet->p_y;
+		Pos._43 = my_packet->p_z;
+		m_objects[recv_id].showCharacter = true;
+		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		m_objects[recv_id].showCharacter = true;
