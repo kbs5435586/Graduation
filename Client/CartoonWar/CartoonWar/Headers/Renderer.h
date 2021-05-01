@@ -3,16 +3,16 @@
 class CGameObject;
 class CManagement;
 class CRenderer :
-    public CComponent
+	public CComponent
 {
 public:
-	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT ,RENDER_ALPHA, RENDER_PARTICLE,RENDER_UI,  RENDER_BLEND,RENDER_END };
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA, RENDER_PARTICLE, RENDER_UI, RENDER_BLEND, RENDER_END };
 private:
 	explicit						CRenderer();
 	virtual							~CRenderer() = default;
 public:
 	HRESULT							Ready_Renderer();
-	HRESULT							Add_RenderGroup(RENDERGROUP eGroup, CGameObject * pGameObject);
+	HRESULT							Add_RenderGroup(RENDERGROUP eGroup, CGameObject* pGameObject);
 	HRESULT							Render_RenderGroup();
 private:
 	void							Render_Priority();
@@ -25,8 +25,8 @@ private:
 	void							Render_Deffered(CManagement* pManagement);
 	void							Render_Light(CManagement* pManagement);
 public:
-	static CRenderer*				Create(); 
-	virtual CComponent*				Clone_Component(void* pArg = nullptr); 
+	static CRenderer* Create();
+	virtual CComponent* Clone_Component(void* pArg = nullptr);
 protected:
 	virtual void					Free();
 private:

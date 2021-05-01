@@ -1367,6 +1367,9 @@
     <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

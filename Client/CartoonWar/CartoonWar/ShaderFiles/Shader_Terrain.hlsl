@@ -24,8 +24,6 @@ struct PS_OUT
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vPositionTex			: SV_TARGET2;
-	float4 vShadeTex			: SV_TARGET3;
-	float4 vPointLightTex		: SV_TARGET4;
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -74,6 +72,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 	AD_Light tCol = (AD_Light)0;
 	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
+
 	for (int i = 0; i < iNumLight; ++i)
 	{
 		AD_Light tCurCol = Calculate_Light_Upgrade_V2(i, vIn.vNormal, vIn.vWorldPos);
@@ -87,9 +86,6 @@ PS_OUT PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = vOutColor;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
-	vOut.vShadeTex = tCol.vShade;
-
-	vOut.vPointLightTex = tCol.vDiffuse;
 
 	return vOut;
 }

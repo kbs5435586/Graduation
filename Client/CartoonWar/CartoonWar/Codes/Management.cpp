@@ -75,19 +75,30 @@ CLayer* CManagement::Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag)
 	return m_pObject_Manager->Find_Layer(iSceneID, pLayerTag);
 }
 
-LIGHT CManagement::Get_Light(const _tchar* pLightTag)
+LIGHT CManagement::Get_Light(_uint& iIdx)
 {
-	return m_pLight_Manager->GetLight(pLightTag);
+	return m_pLight_Manager->GetLight(iIdx);
 }
 
-HRESULT CManagement::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
+HRESULT CManagement::Add_LightInfo(LIGHT& tLightInfo)
 {
-	return m_pLight_Manager->Add_LightInfo(pLightTag, tLightInfo);
+	return m_pLight_Manager->Add_LightInfo(tLightInfo);
 }
+
 
 void CManagement::SetUp_OnShader_Light()
 {
 	return m_pLight_Manager->SetUp_OnShader();
+}
+
+void CManagement::Update()
+{
+	return m_pLight_Manager->Update();
+}
+
+void CManagement::Render()
+{
+	return m_pLight_Manager->Render();
 }
 
 
