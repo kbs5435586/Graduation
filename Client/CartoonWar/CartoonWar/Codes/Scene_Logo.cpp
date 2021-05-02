@@ -314,7 +314,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc3.fbx", L"../Data/MeshData/Orc03.dat"))))
 	//	return E_FAIL;
 
-<<<<<<< HEAD
+
 	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
 		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2.fbx", L"../Data/MeshData/Orc_02.dat"))))
 		return E_FAIL;
@@ -355,9 +355,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
 		CMesh::Create_Load( L"../Data/MeshData/Orc_02.dat"))))
 		return E_FAIL; 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
-		CMesh::Create_Load(L"../Data/MeshData/Orc_03.dat"))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
+	//	CMesh::Create_Load(L"../Data/MeshData/Orc_03.dat"))))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc04",
 		CMesh::Create_Load(L"../Data/MeshData/Orc_04.dat"))))
 		return E_FAIL;
@@ -382,11 +382,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		CMesh::Create_Load(L"../Data/MeshData/Weapon_04.dat"))))
 		return E_FAIL;
  //
-=======
-		CMesh::Create_Load(L"../Data/MeshData/Weapon_04.dat"))))
-		return E_FAIL;
- 
->>>>>>> parent of 6a31a4c (First Demo)
+
 
 	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
 		CMesh::Create_Load(L"../Data/MeshData/Rock01.dat"))))

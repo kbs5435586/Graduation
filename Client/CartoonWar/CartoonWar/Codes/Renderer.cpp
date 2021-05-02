@@ -37,7 +37,7 @@ HRESULT CRenderer::Render_RenderGroup()
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-	pManagement->Update();
+	//pManagement->Update();
 
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
@@ -46,7 +46,7 @@ HRESULT CRenderer::Render_RenderGroup()
 
 
 	Render_Deffered(pManagement);
-	Render_Light(pManagement);
+	//Render_Light(pManagement);
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 	
 	Render_Alpha();

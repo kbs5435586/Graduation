@@ -24,6 +24,8 @@ struct PS_OUT
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vPositionTex			: SV_TARGET2;
+	float4 vShadeTex			: SV_TARGET3;
+	float4 vSpecularTex			: SV_TARGET4;
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -86,6 +88,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 	vOut.vDiffuseTex = vOutColor;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
-
+	vOut.vShadeTex = tCol.vShade;
+	vOut.vSpecularTex = float4(1.f, 1.f, 1.f, 1.f);
 	return vOut;
 }

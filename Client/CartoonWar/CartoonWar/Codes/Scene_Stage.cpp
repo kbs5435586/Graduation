@@ -268,20 +268,15 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
-<<<<<<< HEAD
+
 	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
 	//	return E_FAIL;
-=======
 
-	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
-		return E_FAIL;
->>>>>>> parent of 6a31a4c (First Demo)
+
 
 	//if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 	//	return E_FAIL;
@@ -294,7 +289,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
-	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);

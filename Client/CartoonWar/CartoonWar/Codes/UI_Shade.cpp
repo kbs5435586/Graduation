@@ -71,7 +71,7 @@ void CUI_Shade::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(pNormalTex.Get(), TEXTURE_REGISTER::t0);
 
 	CDevice::GetInstance()->UpdateTable();
