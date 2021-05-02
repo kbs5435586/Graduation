@@ -18,7 +18,7 @@ private:
 private:
     void                            Load_Texture();
 public:
-    void                            SetUp_Texture(_uint i=0);
+    HRESULT                         SetUp_Texture();
 private:
     void                            Load_Skeleton(FbxNode* pNode);
     void                            Load_Skeleton_(FbxNode* pNode, _int iDepth, _int iIdx, _int iParentIdx);

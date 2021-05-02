@@ -101,7 +101,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 
 	vOut.vDiffuseTex = vDiffuse;
-	vOut.vNormalTex = tCol.vDiffuse;
+	//vOut.vNormalTex = tCol.vDiffuse;
+	vOut.vNormalTex = vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	
 

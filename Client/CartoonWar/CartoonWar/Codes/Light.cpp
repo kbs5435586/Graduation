@@ -53,14 +53,14 @@ void CLight::Render()
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-	// 
+	 
 	//_matrix matWorld = Matrix_::Identity();
 	//_matrix matView = Matrix_::Identity();
 	//_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-	//
+	
 	//matWorld._11 = 800.f;
 	//matWorld._22 = 600.f;
-	//
+	
 	//matWorld._41 = 400.f - (WINCX >> 1);
 	//matWorld._42 = -300.f + (WINCY >> 1);
 
@@ -92,7 +92,7 @@ void CLight::Render()
 	CDevice::GetInstance()->SetTextureToShader(pPositionTex.Get(), TEXTURE_REGISTER::t1);
 
 	CDevice::GetInstance()->UpdateTable();
-	m_pBufferCom->Render_VIBuffer();
+	//m_pBufferCom->Render_VIBuffer();
 }
 
 HRESULT CLight::CreateInputLayout(_uint iType)

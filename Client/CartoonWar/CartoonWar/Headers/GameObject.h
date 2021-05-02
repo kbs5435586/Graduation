@@ -5,8 +5,6 @@ class CComponent;
 class CGameObject :
     public CBase
 {
-public:
-	enum ROTATE_DIR { DIR_LEFT, DIR_RIGHT, DIR_END };
 protected:
     CGameObject();
     CGameObject(const CGameObject& rhs);
@@ -37,12 +35,5 @@ protected:
 protected:
 	_uint									m_iLayerIdx = 0;
 	_bool									m_IsClone = false;
-	_bool									m_IsDest = false;
-	ROTATE_DIR								m_eRotate = ROTATE_DIR::DIR_END;
-	_vec3									m_vDest = {};
-	_int									m_iDestLength = 0;
-	_float									m_fDot = 0.f;
-	_int									m_iFlyCnt = 0;
-	_bool									m_IsRotateEnd = false;
 };
 
