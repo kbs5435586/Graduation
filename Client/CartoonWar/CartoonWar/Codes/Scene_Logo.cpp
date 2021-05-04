@@ -76,7 +76,7 @@ HRESULT CScene_Logo::Ready_Scene()
 
 
 	InitializeCriticalSection(&m_tCritical_Section_Shader);
-	m_hThread_Handle_Shader= (HANDLE)_beginthreadex(nullptr, 0, ShaderCompileThread, this, 0, nullptr);
+	m_hThread_Handle_Shader = (HANDLE)_beginthreadex(nullptr, 0, ShaderCompileThread, this, 0, nullptr);
 
 	CManagement* pManagement = CManagement::GetInstance();
 
@@ -178,7 +178,7 @@ HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 
 	if (FAILED(Ready_Add_Prototype_Buffer(pManagement)))
 		return E_FAIL;
- 	if (FAILED(Ready_Add_Prototype_Texture(pManagement)))
+	if (FAILED(Ready_Add_Prototype_Texture(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Add_Prototype_Function(pManagement)))
 		return E_FAIL;
@@ -283,78 +283,14 @@ HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
-	{
-		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree3",
-//	CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tree_pine_01.fbx", L"../Data/MeshData/rpg_Tree3.dat"))))
-//	return E_FAIL; 
 
-
-//Orc_Test_0
-//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test0",
-//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Test_Attack_01-02.fbx"))))
-//	return E_FAIL;
-
-
-//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test0",
-//	CMesh::Create(L"../Data/MeshData/Orc02.dat"))))
-//	return E_FAIL;
-	}
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Castle0",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/GameObject.fbx", L"../Data/MeshData/GameObject.dat"))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Castle0",
-	//	CMesh::Create_Load(L"../Data/MeshData/Castle0.dat"))))
-	//	return E_FAIL;
-
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc_02_Short.fbx"))))
-	//	return E_FAIL;
-	 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc3.fbx", L"../Data/MeshData/Orc03.dat"))))
-	//	return E_FAIL;
-
-
-	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc2.fbx", L"../Data/MeshData/Orc_02.dat"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
+		CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings_fbx/build_barracks_01.fbx"))))
 		return E_FAIL;
-=======
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-		CMesh::Create_Load( L"../Data/MeshData/Orc_02.dat"))))
-		return E_FAIL; 
-
->>>>>>> parent of 6a31a4c (First Demo)
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
-		CMesh::Create_Load(L"../Data/MeshData/Orc03.dat"))))
-		return E_FAIL;
-
-
-	//Weapon
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon1",
-		CMesh::Create_Load( L"../Data/MeshData/Weapon_01.dat"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon2",
-		CMesh::Create_Load(L"../Data/MeshData/Weapon_02.dat"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon3_1",
-<<<<<<< HEAD
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Weapon_03_1.fbx", L"../Data/MeshData/Weapon_03_1.dat"))))
-=======
-		CMesh::Create_Load(L"../Data/MeshData/Weapon_03_1.dat"))))
->>>>>>> parent of 6a31a4c (First Demo)
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon3_2",
-		CMesh::Create_Load(L"../Data/MeshData/Weapon_03_2.dat"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon4",
-<<<<<<< HEAD
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Weapon_04.fbx", L"../Data/MeshData/Weapon_04.dat"))))
-		return E_FAIL;*/
-
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc02",
-		CMesh::Create_Load( L"../Data/MeshData/Orc_02.dat"))))
-		return E_FAIL; 
+		CMesh::Create_Load(L"../Data/MeshData/Orc_02.dat"))))
+		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
 	//	CMesh::Create_Load(L"../Data/MeshData/Orc_03.dat"))))
 	//	return E_FAIL;
@@ -367,7 +303,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 	//Weapon
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon1",
-		CMesh::Create_Load( L"../Data/MeshData/Weapon_01.dat"))))
+		CMesh::Create_Load(L"../Data/MeshData/Weapon_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon2",
 		CMesh::Create_Load(L"../Data/MeshData/Weapon_02.dat"))))
@@ -381,113 +317,113 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon4",
 		CMesh::Create_Load(L"../Data/MeshData/Weapon_04.dat"))))
 		return E_FAIL;
- //
+	//
 
 
-	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
-		CMesh::Create_Load(L"../Data/MeshData/Rock01.dat"))))
-		return E_FAIL;
+	   /*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock01.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
-		CMesh::Create_Load(L"../Data/MeshData/Rock01_A.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_A",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock01_A.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_B",
-		CMesh::Create_Load(L"../Data/MeshData/Rock01_B.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_B",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock01_B.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_C",
-		CMesh::Create_Load(L"../Data/MeshData/Rock01_C.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_C",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock01_C.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_D",
-		CMesh::Create_Load(L"../Data/MeshData/Rock01_D.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock01_D",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock01_D.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02",
-		CMesh::Create_Load(L"../Data/MeshData/Rock02.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock02.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_A",
-		CMesh::Create_Load(L"../Data/MeshData/Rock02_A.dat"))))
-		return E_FAIL;
-
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_B",
-		CMesh::Create_Load(L"../Data/MeshData/Rock02_B.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock03",
-		CMesh::Create_Load(L"../Data/MeshData/Rock03.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Bush01",
-		CMesh::Create_Load(L"../Data/MeshData/rpb_Bush01.dat"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Bush02",
-		CMesh::Create_Load(L"../Data/MeshData/rpb_Bush02.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Cloud1",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Cloud1.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Cloud2",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Cloud2.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Flower1",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Flower1.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Flower2",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Flower2.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Flower3",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Flower3.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Plant1",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Plant1.dat"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Plant2",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Plant2.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_A",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock02_A.dat"))))
+		   return E_FAIL;
 
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock1",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Rock1.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock02_B",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock02_B.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock2",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Rock2.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_Rock03",
+		   CMesh::Create_Load(L"../Data/MeshData/Rock03.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock3",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Rock3.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Bush01",
+		   CMesh::Create_Load(L"../Data/MeshData/rpb_Bush01.dat"))))
+		   return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Bush02",
+		   CMesh::Create_Load(L"../Data/MeshData/rpb_Bush02.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock4",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Rock4.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Cloud1",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Cloud1.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock5",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Rock5.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Cloud2",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Cloud2.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree1",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Tree1.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Flower1",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Flower1.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree2",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Tree2.dat"))))
-		return E_FAIL;
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Flower2",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Flower2.dat"))))
+		   return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree3",
-		CMesh::Create_Load(L"../Data/MeshData/rpg_Tree3.dat"))))
-		return E_FAIL;*/
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Flower3",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Flower3.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Plant1",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Plant1.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Plant2",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Plant2.dat"))))
+		   return E_FAIL;
+
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock1",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Rock1.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock2",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Rock2.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock3",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Rock3.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock4",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Rock4.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock5",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Rock5.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree1",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Tree1.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree2",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Tree2.dat"))))
+		   return E_FAIL;
+
+	   if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Tree3",
+		   CMesh::Create_Load(L"../Data/MeshData/rpg_Tree3.dat"))))
+		   return E_FAIL;*/
 
 
 	return S_OK;

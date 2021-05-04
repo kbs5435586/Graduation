@@ -30,12 +30,12 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 {
 	float4	vDiffuseTex	= g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vShadeTex	= g_texture1.Sample(Sampler0, vIn.vTexUV);
-	float4	vPointTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
+	float4	vSpecularTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
 
 	
-	//float4	vTexMerge = vDiffuseTex * vShadeTex + vSpecTex+ vPointLightTex;
+	//float4	vTexMerge = vDiffuseTex * vShadeTex + vSpecTex+ vPointLightTex;1
 	
-	float4	vTexMerge = (vDiffuseTex *vShadeTex);
+	float4	vTexMerge = (vDiffuseTex *vShadeTex) ;
 	//float4	vTexMerge = vDiffuseTex;
 	
 

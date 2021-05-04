@@ -415,12 +415,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\02. Tree2">
       <UniqueIdentifier>{36e89cab-4f35-4e78-bd51-3100b8adb2a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99. Default">
-      <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99. Default\00. Setting">
-      <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3">
       <UniqueIdentifier>{6ffc7681-b1be-40bd-9677-d08150096a5e}</UniqueIdentifier>
     </Filter>
@@ -498,6 +492,42 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\03. Castle">
       <UniqueIdentifier>{82bc9722-0f7e-4227-8418-c4203e937e61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props">
+      <UniqueIdentifier>{cf5484d3-6e6a-4db1-bb71-10e2b709e9a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\00. Barrel01">
+      <UniqueIdentifier>{4b7e6d6c-6c2c-4105-8b18-e7bd60e02265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\01. Barrel02">
+      <UniqueIdentifier>{d563af2a-7eb0-45d9-94f9-14486ff15692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\03. Barrel03">
+      <UniqueIdentifier>{d9c59fc6-eb13-4768-99a3-ae3eb9816b52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\04. Fence01">
+      <UniqueIdentifier>{4192a6cd-bb30-44c9-aeb5-3909f24beede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\05. Fence02">
+      <UniqueIdentifier>{ec3cccce-55e7-4859-ab5d-4a1cda373025}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\06. Fence03">
+      <UniqueIdentifier>{76418ff1-b47e-4b56-9a6d-a2e94087e30f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\07. Fence04">
+      <UniqueIdentifier>{6c0c5266-049c-4006-82be-eab57be292d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\08. Fence05">
+      <UniqueIdentifier>{5a1bd5c0-be0f-444d-a78b-b7081c69920d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\09. Fence06">
+      <UniqueIdentifier>{9d0b427d-5c71-44a3-a1a3-676db28a9177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Default">
+      <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Default\00. Setting">
+      <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -909,6 +939,33 @@
     <ClInclude Include="..\Headers\Castle0.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Barrel01.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\00. Barrel01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Barrel02.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\01. Barrel02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Barrel03.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\03. Barrel03</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fence02.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\05. Fence02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fence01.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\04. Fence01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fence03.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\06. Fence03</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fence04.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\07. Fence04</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fence05.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\08. Fence05</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fence06.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\09. Fence06</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1289,6 +1346,33 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Castle0.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Barrel01.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\00. Barrel01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Barrel02.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\01. Barrel02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Barrel03.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\03. Barrel03</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fence02.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\05. Fence02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fence01.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\04. Fence01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fence03.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\06. Fence03</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fence04.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\07. Fence04</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fence05.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\08. Fence05</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fence06.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\09. Fence06</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

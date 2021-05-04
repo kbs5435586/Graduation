@@ -153,6 +153,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Animator.h" />
+    <ClInclude Include="..\Headers\Barrel01.h" />
+    <ClInclude Include="..\Headers\Barrel02.h" />
+    <ClInclude Include="..\Headers\Barrel03.h" />
     <ClInclude Include="..\Headers\Base.h" />
     <ClInclude Include="..\Headers\Buffer_CubeCol.h" />
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
@@ -185,6 +188,12 @@
     <ClInclude Include="..\Headers\Enum.h" />
     <ClInclude Include="..\Headers\Extern.h" />
     <ClInclude Include="..\Headers\FbxLoader.h" />
+    <ClInclude Include="..\Headers\Fence01.h" />
+    <ClInclude Include="..\Headers\Fence02.h" />
+    <ClInclude Include="..\Headers\Fence03.h" />
+    <ClInclude Include="..\Headers\Fence04.h" />
+    <ClInclude Include="..\Headers\Fence05.h" />
+    <ClInclude Include="..\Headers\Fence06.h" />
     <ClInclude Include="..\Headers\Fire.h" />
     <ClInclude Include="..\Headers\Flower0.h" />
     <ClInclude Include="..\Headers\Flower1.h" />
@@ -297,6 +306,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Animator.cpp" />
+    <ClCompile Include="..\Codes\Barrel01.cpp" />
+    <ClCompile Include="..\Codes\Barrel02.cpp" />
+    <ClCompile Include="..\Codes\Barrel03.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
@@ -325,6 +337,12 @@
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
+    <ClCompile Include="..\Codes\Fence01.cpp" />
+    <ClCompile Include="..\Codes\Fence02.cpp" />
+    <ClCompile Include="..\Codes\Fence03.cpp" />
+    <ClCompile Include="..\Codes\Fence04.cpp" />
+    <ClCompile Include="..\Codes\Fence05.cpp" />
+    <ClCompile Include="..\Codes\Fence06.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Flower0.cpp" />
     <ClCompile Include="..\Codes\Flower1.cpp" />

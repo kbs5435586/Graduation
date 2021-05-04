@@ -78,7 +78,9 @@ public:
     CStructedBuffer*                GetBoneOffset(){return m_pBoneOffset;}
 private:
     RenderInfo                      m_tRenderInfo = {};
-    vector< RenderInfo>             m_vecRenderInfo;
+    vector<RenderInfo>              m_vecRenderInfo;
+private:
+    vector<RENDERSUP>               m_vecRenderSup;
 public:
     static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
     static CMesh*                   Create_Load(const _tchar* pFilePath);

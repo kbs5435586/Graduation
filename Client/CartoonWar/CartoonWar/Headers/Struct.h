@@ -210,7 +210,7 @@ struct Indices
 	ComPtr<ID3D12Resource>		pIB;
 	int							iIndexCnt;
 	DXGI_FORMAT					eFormat;
-	void*						pSystem;
+	void* pSystem;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
 };
 
@@ -228,6 +228,20 @@ struct RenderInfo
 	vector<Indices>				vecIndices;
 	vector<class CTexture*>		vecTexture;
 };
+
+typedef struct tagRenderSupport
+{
+	tagRenderSupport() {}
+	tagRenderSupport(int iIncicesCnt_, D3D12_VERTEX_BUFFER_VIEW VertexBufferView_, D3D12_INDEX_BUFFER_VIEW		IndexBufferView_)
+	{
+		iIncicesCnt = iIncicesCnt_;
+		VertexBufferView = VertexBufferView_;
+		IndexBufferView = IndexBufferView_;
+	}
+	int							iIncicesCnt;
+	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
+}RENDERSUP;
 
 
 typedef struct tagLightColor
@@ -258,7 +272,7 @@ typedef struct tagLightInfo
 
 typedef struct tagRenderTarget
 {
-	ID3D12Resource*		pTarget;
+	ID3D12Resource* pTarget;
 	XMFLOAT4			fClear_Color;
 }RENDERTARGER;
 
@@ -483,7 +497,7 @@ typedef struct tagGlobal
 	int		iWincx;
 	int		iWincy;
 	float	fTimeDelta;
-	float	fAccTime=0.f;
+	float	fAccTime = 0.f;
 }GLOBAL;
 
 
@@ -523,12 +537,12 @@ typedef struct tagAnimController
 	}
 	int		iStartFrm;
 	int		iEndFrm;
-	int		iCurFrm ;
+	int		iCurFrm;
 	float	fStartTime;
-	float	fCurTime =0.f;
+	float	fCurTime = 0.f;
 	float	fEndTime;
 	bool	IsPlayOnce = false;
 
 	float	fOriginStartTime;
-	float	fOriginEndTime ;
+	float	fOriginEndTime;
 }AnimCtrl;
