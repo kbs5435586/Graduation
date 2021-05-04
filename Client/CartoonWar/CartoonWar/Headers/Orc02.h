@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-class CFrustum;
 class CWeapon;
 class COrc02 :
     public CGameObject
@@ -35,8 +34,8 @@ private:
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiiderCom = nullptr;
-	CFrustum*								m_pFrustumCom = nullptr;
 private:
+	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
 	_uint									m_iCurAnimIdx = 0;

@@ -27,12 +27,14 @@ HRESULT CCastle0::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	//m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	{
+		CTexture* pTexture = CTexture::Create(iter);
+		m_vecTexture.push_back(pTexture);
+	}
+
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-
-
-	_vec3 vPos = _vec3(15.f, 0.f, 15.f);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	return S_OK;
 }
@@ -72,7 +74,11 @@ void CCastle0::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		m_pMeshCom->SetUp_Texture(i);
+		CTexture* pTexture = m_vecTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}

@@ -16,6 +16,7 @@ class CComponent;
 class CGameObject;
 class CLight;
 class CScene;
+class CRenderer;
 class CManagement :
     public CBase
 {
@@ -39,9 +40,11 @@ public://GameObjectManager
 	CGameObject*				Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag);
 	CLayer*						Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag);
 public://LightManager
-	LIGHT						Get_Light(const _tchar* pLightTag);
-	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);
+	LIGHT						Get_Light(_uint& iIdx);
+	HRESULT						Add_LightInfo(LIGHT& tLightInfo);
 	void						SetUp_OnShader_Light();
+	void						Update();
+	void						Render();
 public://ConstantBuffer_Mananger
 	HRESULT						Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal = false);
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }

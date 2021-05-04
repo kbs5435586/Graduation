@@ -8,54 +8,31 @@ CLight_Manager::CLight_Manager()
 {
 
 }
-LIGHT CLight_Manager::GetLight(const _tchar* pLightTag)
+
+HRESULT CLight_Manager::Add_LightInfo(LIGHT& tLightInfo)
 {
-	auto iter_find = m_mapLightInfo.find(pLightTag);
-	if (iter_find == m_mapLightInfo.end())
-		return LIGHT();
-
-	return iter_find->second->Get_LightInfo();
-}
-
-HRESULT CLight_Manager::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
-{
-	auto iter_find = m_mapLightInfo.find(pLightTag);
-	if (iter_find != m_mapLightInfo.end())
-		return E_FAIL;
-
 	CLight* pInstance = CLight::Create(tLightInfo);
 	if (nullptr == pInstance)
 		return E_FAIL;
 
-	m_mapLightInfo.insert(make_pair(pLightTag, pInstance));
+	m_vecLightInfo.push_back(pInstance);
 
 	return S_OK;
 }
 
 
 
+LIGHT CLight_Manager::GetLight(_uint& iIdx)
+{
+	if (iIdx < 0)
+		return LIGHT();
+
+	return m_vecLightInfo[iIdx]->Get_LightInfo();
+}
+
 void CLight_Manager::SetUp_OnShader()
 {
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
 	LIGHTINFO tInfo = {};
-
-
-
-	if (m_mapLightInfo.size() <= 0)
-	{
-		Safe_Release(pManagement);
-		return;
-	}
-
-	for (auto& iter : m_mapLightInfo)
-	{
-		m_vecLightInfo.push_back(iter.second);
-	}
-
 
 	for (int i = 0; i < m_vecLightInfo.size(); ++i)
 	{
@@ -64,18 +41,34 @@ void CLight_Manager::SetUp_OnShader()
 	}
 	tInfo.iCurLightCnt = (UINT)m_vecLightInfo.size();
 
+	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b2)->SetData(&tInfo);
+	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b2)->GetCBV().Get(),
+		iOffset, CONST_REGISTER::b2);
 
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b2)->SetData(&tInfo);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b2)->GetCBV().Get(), iOffset, CONST_REGISTER::b2);
 
+}
 
-	m_vecLightInfo.clear();
-	Safe_Release(pManagement);
+void CLight_Manager::Update()
+{
+	for (int i = 0; i < m_vecLightInfo.size(); ++i)
+	{
+		m_vecLightInfo[i]->Update();
+		m_vecLightInfo[i]->Set_ArrIdx(i);
+	}
+}
+
+void CLight_Manager::Render()
+{
+	for (int i = 0; i < m_vecLightInfo.size(); ++i)
+	{
+		m_vecLightInfo[i]->Render();
+	}
 }
 
 void CLight_Manager::Free()
 {
-	for (auto& iter : m_mapLightInfo)
-		Safe_Release(iter.second);
-	m_mapLightInfo.clear();
+	for (auto& iter : m_vecLightInfo)
+	{
+		Safe_Release(iter);
+	}
 }

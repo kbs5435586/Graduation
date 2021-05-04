@@ -499,9 +499,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\03. Castle">
       <UniqueIdentifier>{82bc9722-0f7e-4227-8418-c4203e937e61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\04. Orc04">
-      <UniqueIdentifier>{31b6cb28-3b89-4e69-97e6-fef198c74859}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -912,9 +909,6 @@
     <ClInclude Include="..\Headers\Castle0.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Orc04.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\04. Orc04</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1296,9 +1290,6 @@
     <ClCompile Include="..\Codes\Castle0.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Orc04.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\04. Orc04</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1366,6 +1357,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

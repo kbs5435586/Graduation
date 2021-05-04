@@ -213,7 +213,6 @@
     <ClInclude Include="..\Headers\Orc01.h" />
     <ClInclude Include="..\Headers\Orc02.h" />
     <ClInclude Include="..\Headers\Orc03.h" />
-    <ClInclude Include="..\Headers\Orc04.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
     <ClInclude Include="..\Headers\Plant0.h" />
@@ -351,7 +350,6 @@
     <ClCompile Include="..\Codes\Orc01.cpp" />
     <ClCompile Include="..\Codes\Orc02.cpp" />
     <ClCompile Include="..\Codes\Orc03.cpp" />
-    <ClCompile Include="..\Codes\Orc04.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
     <ClCompile Include="..\Codes\Plant0.cpp" />
@@ -514,6 +512,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

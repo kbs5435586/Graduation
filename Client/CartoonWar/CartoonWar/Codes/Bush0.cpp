@@ -65,7 +65,7 @@ void CBush0::Render_GameObject()
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-		m_pMeshCom->SetUp_Texture(i);
+		m_pMeshCom->SetUp_Texture();
 
 
 		CDevice::GetInstance()->UpdateTable();

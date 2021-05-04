@@ -14,7 +14,6 @@
 #include "Orc01.h"
 #include "Orc02.h"
 #include "Orc03.h"
-#include "Orc04.h"
 
 #include "Rock01_A.h"
 // UI
@@ -154,8 +153,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc03", COrc03::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc04", COrc04::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube_Texture", CCube_Texture::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_HP", CUI_HP::Create())))
@@ -267,15 +264,9 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
 		return E_FAIL;
 
 	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
@@ -302,7 +293,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(100.f, 0.f, 0.f, 1.f);
 	tLightInfo.fRange = 100.f;
-	if (FAILED(pManagement->Add_LightInfo(L"Light_Default", tLightInfo)))
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
 
@@ -503,12 +494,7 @@ HRESULT CScene_Stage::Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* p
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon04", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -528,23 +514,8 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	/*for (int i = 0; i < 3; ++i)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-	}*/
-
-	return S_OK;
-}
-
-HRESULT CScene_Stage::Ready_Layer_Orc04(const _tchar* pLayerTag, CManagement* pManagement)
-{
-	/*for (int i = 0; i < 3; ++i)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-	}*/
-
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 

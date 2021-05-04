@@ -13,6 +13,12 @@ struct VS_OUT
 	float2 vTexUV		: TEXCOORD;
 };
 
+
+struct PS_OUT
+{
+	float4 vTex : SV_TARGET3;
+};
+
 VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
@@ -23,8 +29,21 @@ VS_OUT VS_Main(VS_IN vIn)
 }
 
 
-float4 PS_Main(VS_OUT vIn): SV_TARGET
+PS_OUT PS_Main(VS_OUT vIn)
 {
-	return g_texture0.Sample(Sampler0, vIn.vTexUV);
+	PS_OUT vOut = (PS_OUT)0;
+
+	float4 vWorldPos = g_texture1.Sample(Sampler0, vIn.vTexUV);
+
+	//float4 vViewPos = mul(vWorldPos, matView);
+
+	//if (vViewPos.z <= 1.f)
+	//		clip(-1);
+	//
+	float4 vNormal = g_texture0.Sample(Sampler0, vIn.vTexUV);
+
+
+	vOut.vTex = vNormal;
+	return vOut;
 }
 
