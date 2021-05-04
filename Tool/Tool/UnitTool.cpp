@@ -118,9 +118,9 @@ BOOL CUnitTool::OnInitDialog()
 	if (iter_find != m_mapGameObject.end())
 		return FALSE;
 
-	for (_int i = 0; i < 25; ++i)
+	for (_int i = 0; i < 40; ++i)
 	{
-	
+
 		if (i == 0)
 		{
 			strName = L"MountainRock01";
@@ -185,7 +185,7 @@ BOOL CUnitTool::OnInitDialog()
 		{
 			strName = L"rpgpp_lt_flower_03";
 		}
-		else if (i ==16)
+		else if (i == 16)
 		{
 			strName = L"rpgpp_lt_plant_01";
 		}
@@ -221,13 +221,74 @@ BOOL CUnitTool::OnInitDialog()
 		{
 			strName = L"rpgpp_lt_bush_02";
 		}
+		else if (i == 25)
+		{
+			strName = L"build_barracks_01_low";
+		}
+		else if (i == 26)
+		{
+			strName = L"build_barracks_single_01_low";
+		}
+		else if (i == 27)
+		{
+			strName = L"build_big_storage_01_low";
+		}
+		else if (i == 28)
+		{
+			strName = L"build_bighouse_01_low";
+		}
+		else if (i == 29)
+		{
+			strName = L"build_bighouse_02_low";
+		}
+		else if (i == 30)
+		{
+			strName = L"build_blacksmith_01_low";
+		}
+		else if (i == 31)
+		{
+			strName = L"build_boat_01_low";
+		}
+		else if (i == 32)
+		{
+			strName = L"build_gate_01";
+		}
+		else if (i == 33)
+		{
+			strName = L"build_small_house_01_low";
+		}
+		else if (i == 34)
+		{
+			strName = L"build_small_house_straw_roof_01_low";
+		}
+		else if (i == 35)
+		{
+			strName = L"build_small_house_tall_roof_01_low";
+		}
+		else if (i == 36)
+		{
+			strName = L"build_storage_01_low";
+		}
+		else if (i == 37)
+		{
+			strName = L"build_tower_01";
+		}
+		else if (i == 38)
+		{
+			strName = L"build_wall_corner_01_low";
+		}
+		else if (i == 39)
+		{
+			strName = L"build_wall_panel_01_low";
+		}
+
 
 
 		m_mapGameObject.insert({ strName, i });
 		m_ListBox_Static.AddString(strName);
 	}
 
-	
+
 	return TRUE;
 }
 
@@ -369,6 +430,81 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 	{
 		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_bush_02";
 		m_pLayerTag = L"Layer_rpgpp_lt_bush_02";
+	}
+	else if (iSelect == 25)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_barracks_01_low";
+		m_pLayerTag = L"Layer_build_barracks_01_low";
+	}
+	else if (iSelect == 26)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_barracks_single_01_low";
+		m_pLayerTag = L"Layer_build_barracks_single_01_low";
+	}
+	else if (iSelect == 27)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_big_storage_01_low";
+		m_pLayerTag = L"Layer_build_big_storage_01_low";
+	}
+	else if (iSelect == 28)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_bighouse_01_low";
+		m_pLayerTag = L"Layer_build_bighouse_01_low";
+	}
+	else if (iSelect == 29)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_bighouse_02_low";
+		m_pLayerTag = L"Layer_build_bighouse_02_low";
+	}
+	else if (iSelect == 30)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_blacksmith_01_low";
+		m_pLayerTag = L"Layer_build_blacksmith_01_low";
+	}
+	else if (iSelect == 31)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_boat_01_low";
+		m_pLayerTag = L"Layer_build_boat_01_low";
+	}
+	else if (iSelect == 32)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_gate_01";
+		m_pLayerTag = L"Layer_build_gate_01";
+	}
+	else if (iSelect == 33)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_small_house_01_low";
+		m_pLayerTag = L"Layer_build_small_house_01_low";
+	}
+	else if (iSelect == 34)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_small_house_straw_roof_01_low";
+		m_pLayerTag = L"Layer_build_small_house_straw_roof_01_low";
+	}
+	else if (iSelect == 35)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_small_house_tall_roof_01_low";
+		m_pLayerTag = L"Layer_build_small_house_tall_roof_01_low";
+	}
+	else if (iSelect == 36)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_storage_01_low";
+		m_pLayerTag = L"Layer_build_storage_01_low";
+	}
+	else if (iSelect == 37)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_tower_01";
+		m_pLayerTag = L"Layer_build_tower_01";
+	}
+	else if (iSelect == 38)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_wall_corner_01_low";
+		m_pLayerTag = L"Layer_build_wall_corner_01_low";
+	}
+	else if (iSelect == 39)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_wall_panel_01_low";
+		m_pLayerTag = L"Layer_build_wall_panel_01_low";
 	}
 
 

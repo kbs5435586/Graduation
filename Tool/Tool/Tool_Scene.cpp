@@ -143,7 +143,51 @@ HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"rpgpp_lt_bush_02.x"))))
 		return E_FAIL;
 
-
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_barracks_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_barracks_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_barracks_single_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_barracks_single_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_big_storage_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_big_storage_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_bighouse_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_bighouse_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_bighouse_02_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_bighouse_02_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_blacksmith_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_blacksmith_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_boat_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_boat_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_gate_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_gate_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_small_house_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_small_house_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_small_house_straw_roof_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_small_house_straw_roof_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_small_house_tall_roof_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_small_house_tall_roof_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_storage_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_storage_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_tower_01",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_tower_01.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_wall_corner_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_wall_corner_01_low.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_wall_panel_01_low",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_wall_panel_01_low.x"))))
+		return E_FAIL;
 	return S_OK;
 }
 
