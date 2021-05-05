@@ -55,7 +55,7 @@ protected:
 	_bool				m_IsLoadUI_Texture = false;
 protected:
 	_tchar*				m_pGameObject_Tag = L"";
-	_tchar*				m_pComponent_Tag = L"";
+	_tchar				m_pComponent_Tag[128] = L"";
 protected:
 	UI					m_eUI = UI::UI_END;
 protected:				//Animation
@@ -70,12 +70,10 @@ public:
 	_float&				Get_SizeX() { return m_fSizeX; }
 	_float&				Get_SizeY() { return m_fSizeY; }
 	_tchar*				Get_GameObject_Tag() { return m_pGameObject_Tag; }
-	_tchar*&			Get_Component_Tag() { return m_pComponent_Tag; }
+	_tchar*				Get_Component_Tag() { return m_pComponent_Tag; }
 	UI&					GetEnumUI() { return m_eUI; }
 	_float&				GetCameraSpeed() { return m_fCameraSpeed; }
 
-public:
-	void				Set_Component_Tag(_tchar* pComponent_Tag){m_pComponent_Tag = pComponent_Tag;}
 public:
 	virtual CGameObject* Clone_GameObject(void* pArg) = 0;
 protected:

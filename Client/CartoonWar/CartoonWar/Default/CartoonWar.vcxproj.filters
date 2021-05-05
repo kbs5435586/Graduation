@@ -7,9 +7,6 @@
     <Filter Include="97. Engine">
       <UniqueIdentifier>{2a4d2200-c352-41a6-8e61-1765aec98400}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles">
-      <UniqueIdentifier>{d593620e-f7d3-48a4-bac6-d4efac0f0917}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\00. System">
       <UniqueIdentifier>{6a17b1c0-f3d0-4e42-a075-d1dae17362df}</UniqueIdentifier>
     </Filter>
@@ -202,12 +199,6 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\99. UI_Main">
       <UniqueIdentifier>{54249dab-acf5-4d20-8ecc-f5a08d829b8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles\01. Deffered">
-      <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. ShaderFiles\00. Struct">
-      <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\08. Collider">
       <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
     </Filter>
@@ -231,15 +222,6 @@
     </Filter>
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\01. UI_Normal">
       <UniqueIdentifier>{2849075b-6750-4f2d-bf07-d3240fbdb606}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. ShaderFiles\03. Tool">
-      <UniqueIdentifier>{4fca9aa0-5ffb-4dae-84c1-16b0595edf82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. ShaderFiles\04. Default">
-      <UniqueIdentifier>{39f808ff-71fd-4b08-8660-9c6a93bf6afa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. ShaderFiles\05. Mesh">
-      <UniqueIdentifier>{90eebf5c-cae6-4e76-868b-d578378ecd4b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\97. UI\02. UI_MP">
       <UniqueIdentifier>{dab807ce-103d-426f-bb80-ae549604c02d}</UniqueIdentifier>
@@ -307,9 +289,6 @@
     <Filter Include="97. Engine\01. Utility\09. UAVManager\01. UAVManager">
       <UniqueIdentifier>{4a5c22e6-04d9-4cde-9aeb-255a6b89ecc3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles\99. Compute">
-      <UniqueIdentifier>{9ce81e86-2c50-4511-8f0e-c94497ce7450}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\10. Particle">
       <UniqueIdentifier>{00f11d05-5e56-44d1-b3af-1cde2783f419}</UniqueIdentifier>
     </Filter>
@@ -324,9 +303,6 @@
     </Filter>
     <Filter Include="02. GameObject\96. Particle\99. Particle_Default">
       <UniqueIdentifier>{2b7b9969-cef9-4c87-b9a2-850fd61891e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. ShaderFiles\06. Particle">
-      <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test">
       <UniqueIdentifier>{22b3d187-d2ab-4990-8ac3-9f4dd71ea498}</UniqueIdentifier>
@@ -424,9 +400,6 @@
     <Filter Include="94. Server">
       <UniqueIdentifier>{8a5b4ff6-f999-4a47-9dee-17806fcfbb7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ShaderFiles\07. Light">
-      <UniqueIdentifier>{43e77f45-f2db-4a40-a5d6-6d13a6211bb7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\02. UI_Position">
       <UniqueIdentifier>{732327b6-bbd6-4861-a668-db50590ba3ef}</UniqueIdentifier>
     </Filter>
@@ -493,41 +466,74 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\03. Castle">
       <UniqueIdentifier>{82bc9722-0f7e-4227-8418-c4203e937e61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props">
-      <UniqueIdentifier>{cf5484d3-6e6a-4db1-bb71-10e2b709e9a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\00. Barrel01">
-      <UniqueIdentifier>{4b7e6d6c-6c2c-4105-8b18-e7bd60e02265}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\01. Barrel02">
-      <UniqueIdentifier>{d563af2a-7eb0-45d9-94f9-14486ff15692}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\03. Barrel03">
-      <UniqueIdentifier>{d9c59fc6-eb13-4768-99a3-ae3eb9816b52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\04. Fence01">
-      <UniqueIdentifier>{4192a6cd-bb30-44c9-aeb5-3909f24beede}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\05. Fence02">
-      <UniqueIdentifier>{ec3cccce-55e7-4859-ab5d-4a1cda373025}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\06. Fence03">
-      <UniqueIdentifier>{76418ff1-b47e-4b56-9a6d-a2e94087e30f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\07. Fence04">
-      <UniqueIdentifier>{6c0c5266-049c-4006-82be-eab57be292d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\08. Fence05">
-      <UniqueIdentifier>{5a1bd5c0-be0f-444d-a78b-b7081c69920d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Props\09. Fence06">
-      <UniqueIdentifier>{9d0b427d-5c71-44a3-a1a3-676db28a9177}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Default">
       <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
     </Filter>
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building">
+      <UniqueIdentifier>{bd754442-48eb-40d5-9d17-e5d453ae2226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\00. Barracks01">
+      <UniqueIdentifier>{16ef5dc1-2986-4366-addf-26121dd636b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\01. Barracks02">
+      <UniqueIdentifier>{3ffb2a08-8af2-4244-b0d3-8ec78d76a91f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\02. Storage01">
+      <UniqueIdentifier>{a58b4505-5037-4a3d-9c49-90c3e61740c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\04. BigHouse02">
+      <UniqueIdentifier>{9d27c3d1-fd93-4c75-8918-af7a8d6f20df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\03. BigHouse01">
+      <UniqueIdentifier>{82562390-2632-41e2-8600-642ef6e5160b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\05. BlackSmith01">
+      <UniqueIdentifier>{d5102287-1728-4399-ac4f-534ea56b4eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\06. Boat01">
+      <UniqueIdentifier>{7406b518-abfb-4ff6-a5a0-f0c604a3f50b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\07. Crane">
+      <UniqueIdentifier>{b0ac258c-e2a2-4e70-836a-f450e85981ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\08. Gate01">
+      <UniqueIdentifier>{0650be35-f7d2-4e9d-abfe-bcca11cf0721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\09. SmallHouse01">
+      <UniqueIdentifier>{6d8f06b1-78c4-47c2-b8ff-3ac53bbaced6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\NewFilter1">
+      <UniqueIdentifier>{629334ed-8715-4e78-9a80-96dd892b6234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles">
+      <UniqueIdentifier>{d593620e-f7d3-48a4-bac6-d4efac0f0917}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered">
+      <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\00. Struct">
+      <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\03. Tool">
+      <UniqueIdentifier>{4fca9aa0-5ffb-4dae-84c1-16b0595edf82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default">
+      <UniqueIdentifier>{39f808ff-71fd-4b08-8660-9c6a93bf6afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh">
+      <UniqueIdentifier>{90eebf5c-cae6-4e76-868b-d578378ecd4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\99. Compute">
+      <UniqueIdentifier>{9ce81e86-2c50-4511-8f0e-c94497ce7450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\06. Particle">
+      <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\07. Light">
+      <UniqueIdentifier>{43e77f45-f2db-4a40-a5d6-6d13a6211bb7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -939,32 +945,8 @@
     <ClInclude Include="..\Headers\Castle0.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Barrel01.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\00. Barrel01</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Barrel02.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\01. Barrel02</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Barrel03.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\03. Barrel03</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Fence02.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\05. Fence02</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Fence01.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\04. Fence01</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Fence03.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\06. Fence03</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Fence04.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\07. Fence04</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Fence05.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\08. Fence05</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Fence06.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\09. Fence06</Filter>
+    <ClInclude Include="..\Headers\Building.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Building</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1347,32 +1329,8 @@
     <ClCompile Include="..\Codes\Castle0.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Barrel01.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\00. Barrel01</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Barrel02.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\01. Barrel02</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Barrel03.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\03. Barrel03</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Fence02.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\05. Fence02</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Fence01.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\04. Fence01</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Fence03.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\06. Fence03</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Fence04.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\07. Fence04</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Fence05.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\08. Fence05</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Fence06.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Props\09. Fence06</Filter>
+    <ClCompile Include="..\Codes\Building.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Building</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1383,75 +1341,75 @@
       <Filter>95. Loaders\01. TextureLoader</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Deffered.hlsl">
-      <Filter>96. ShaderFiles\01. Deffered</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
-      <Filter>96. ShaderFiles\01. Deffered</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
-      <Filter>96. ShaderFiles\03. Tool</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\03. Tool</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Collider.hlsl">
-      <Filter>96. ShaderFiles\03. Tool</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\03. Tool</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Default.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Texture.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Toon.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Hatch.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Compute\Shader_Compute_Default.hlsl">
-      <Filter>96. ShaderFiles\99. Compute</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\99. Compute</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Particle.hlsl">
-      <Filter>96. ShaderFiles\06. Particle</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\06. Particle</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Animation.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Mesh_Default.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_PointLIght.hlsl">
-      <Filter>96. ShaderFiles\07. Light</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\07. Light</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_DirectionLight.hlsl">
-      <Filter>96. ShaderFiles\07. Light</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\07. Light</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Environment.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Fire.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_SkyBox.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
-      <Filter>96. ShaderFiles\01. Deffered</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
-      <Filter>96. ShaderFiles\00. Struct</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
-      <Filter>96. ShaderFiles\00. Struct</Filter>
+      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

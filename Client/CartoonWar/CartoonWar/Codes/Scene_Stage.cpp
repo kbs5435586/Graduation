@@ -79,6 +79,8 @@
 #include "TestHatchMesh.h"
 #include "TestMesh.h"
 
+#include "Building.h"
+
 
 CScene_Stage::CScene_Stage()
 {
@@ -106,8 +108,8 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Map_Demo.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -244,6 +246,9 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle0", CCastle0::Create())))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Building", CBuilding::Create())))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -266,8 +271,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
+	//	return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
 	//	return E_FAIL;

@@ -366,8 +366,7 @@ HRESULT CTool_Scene::Ready_Player_Layer(const _tchar * pLayerTag)
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Temp", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
+
 	Safe_Release(pManagement);
 	return S_OK;
 }

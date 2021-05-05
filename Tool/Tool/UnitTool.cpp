@@ -570,15 +570,21 @@ void CUnitTool::OnBnClickedSave()
 				_float  fAdd_PosY = 0.f;
 				TCHAR* pNames = pMesh->Get_ObjectName();
 				TCHAR* pLayerTag = (TCHAR*)(LPCTSTR)(strLayer);
+				TCHAR* pComTag = (*iter)->Get_Component_Tag();
 
 				int iLength = lstrlen(pMesh->Get_ObjectName()) + 1;
 				int iLength_Layer = lstrlen(strLayer) + 1;
+				int iLength_ComTag = lstrlen(pComTag) + 1;
 
 				WriteFile(hFile, &iLength, sizeof(int), &dwByte, nullptr);
 				WriteFile(hFile, pNames, sizeof(TCHAR)*iLength, &dwByte, nullptr);
 
 				WriteFile(hFile, &iLength_Layer, sizeof(int), &dwByte, nullptr);
 				WriteFile(hFile, pLayerTag, sizeof(TCHAR)*iLength_Layer, &dwByte, nullptr);
+
+				WriteFile(hFile, &iLength_ComTag, sizeof(int), &dwByte, nullptr);
+				WriteFile(hFile, pComTag, sizeof(TCHAR)*iLength_ComTag, &dwByte, nullptr);
+
 
 				pTransform = (CTransform*)(*iter)->Get_ComponentPointer(L"Com_Transform");
 				mat = pTransform->Get_Matrix();
@@ -669,12 +675,13 @@ void CUnitTool::OnBnClickedLoad()
 		D3DXMatrixIdentity(&mat);
 		TCHAR szName[MAX_STR] = L"";
 		TCHAR szLayerTag[MAX_STR] = L"";
+		TCHAR szComTag[MAX_STR] = L"";
 
 		DWORD dwByte = 0;
 		DWORD dwByte_Size = 0;
 		int iLength = 0;
 		int iLength_Layer = 0;
-
+		int iLength_Com = 0;
 		while (TRUE)
 		{
 			int iSize = 0;
@@ -689,6 +696,9 @@ void CUnitTool::OnBnClickedLoad()
 
 				ReadFile(hFile, &iLength_Layer, sizeof(int), &dwByte, nullptr);
 				ReadFile(hFile, szLayerTag, sizeof(TCHAR)*iLength_Layer, &dwByte, nullptr);
+				
+				ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
+				ReadFile(hFile, szComTag, sizeof(TCHAR)*iLength_Com, &dwByte, nullptr);
 
 				_tchar* pName = new _tchar[iLength + 1];
 				ZeroMemory(pName, iLength + 1);
@@ -696,10 +706,14 @@ void CUnitTool::OnBnClickedLoad()
 				_tchar* pLayerTag = new _tchar[iLength_Layer + 1];
 				ZeroMemory(pLayerTag, iLength_Layer + 1);
 
+				_tchar* pComrTag = new _tchar[iLength_Com + 1];
+				ZeroMemory(pComrTag, iLength_Com + 1);
+
 				lstrcpy(pName, szName);
 				lstrcpy(pLayerTag, szLayerTag);
+				lstrcpy(pComrTag, szComTag);
 
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(pName, SCENE_LOGO, pLayerTag)))
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Temp", SCENE_LOGO, pLayerTag, pComrTag)))
 					return;
 
 				ReadFile(hFile, mat, sizeof(_matrix), &dwByte, nullptr);
