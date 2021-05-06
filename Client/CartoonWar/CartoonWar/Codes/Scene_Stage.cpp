@@ -42,32 +42,6 @@
 #include "Rock03.h"
 
 
-#include "Bush0.h"
-#include "Bush1.h"
-
-#include "Cloud0.h"
-#include "Cloud1.h"
-
-#include "Flower0.h"
-#include "Flower1.h"
-#include "Flower2.h"
-
-#include "Plant0.h"
-#include "Plant1.h"
-
-#include "Rock0.h"
-#include "Rock1.h"
-#include "Rock2.h"
-#include "Rock3.h"
-#include "Rock4.h"
-#include "Rock5.h"
-
-#include "Tree0.h"
-#include "Tree1.h"
-#include "Tree2.h"
-#include "Tree3.h"
-#include "Tree4.h"
-
 #include "Weapon01.h"
 #include "Weapon02.h"
 #include "Weapon03.h"
@@ -80,6 +54,7 @@
 #include "TestMesh.h"
 
 #include "Building.h"
+#include "LowPoly.h"
 
 
 CScene_Stage::CScene_Stage()
@@ -100,10 +75,8 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	if (FAILED(Ready_Prototype_GameObject(pManagement)))
 		return E_FAIL;
-
 	if (FAILED(Ready_Light(pManagement)))
 		return E_FAIL;
-
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
@@ -113,13 +86,11 @@ HRESULT CScene_Stage::Ready_Scene()
 
 
 	Safe_Release(pManagement);
-
 	return S_OK;
 }
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
-	
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -195,44 +166,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks03", CRock03::Create())))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_tree_1", CRock03::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_tree_01", CTree0::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_tree_02", CTree1::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_tree_pine_01", CTree2::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_flower_01", CFlower0::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_flower_02", CFlower1::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_flower_03", CFlower2::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_plant_01", CPlant0::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_plant_02", CPlant1::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_01", CRock0::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_02", CRock1::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_03", CRock2::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_small_01", CRock3::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_rock_small_02", CRock4::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_bush_01", CBush0::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_rpgpp_lt_bush_02", CBush1::Create())))
-		return E_FAIL;
-
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon01", CWeapon01::Create())))
 		return E_FAIL;
@@ -243,10 +176,10 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon04", CWeapon04::Create())))
 		return E_FAIL; 
 
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle0", CCastle0::Create())))
-		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Building", CBuilding::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_LowPoly", CLowPoly::Create())))
 		return E_FAIL;
 
 	return S_OK;
@@ -279,11 +212,6 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
-	//	return E_FAIL;
-
-
-
-	//if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 	//	return E_FAIL;
 
 	return S_OK;

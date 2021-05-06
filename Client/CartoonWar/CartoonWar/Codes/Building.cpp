@@ -20,7 +20,10 @@ HRESULT CBuilding::Ready_Prototype()
 HRESULT CBuilding::Ready_GameObject(void* pArg)
 {
 	if (nullptr == pArg)
+	{
 		return E_FAIL;
+
+	}
 
 
 	_tchar pTempStr[128] = {};

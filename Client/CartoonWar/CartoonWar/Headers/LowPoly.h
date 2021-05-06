@@ -2,16 +2,16 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CMesh;
 class CShader;
 class CTexture;
-class CTree1 :
+class CMesh;
+class CLowPoly :
 	public CGameObject
 {
 private:
-	CTree1();
-	CTree1(const CTree1& rhs);
-	virtual ~CTree1() = default;
+	CLowPoly();
+	CLowPoly(const CLowPoly& rhs);
+	virtual ~CLowPoly() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -19,20 +19,18 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 private:
+	HRESULT									Ready_Component(const _tchar* pComTag);
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CTree1* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	static CLowPoly* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx);
 private:
 	virtual void							Free();
-	HRESULT									Ready_Component();
 private:
 	CTransform* m_pTransformCom = nullptr;
 	CRenderer* m_pRendererCom = nullptr;
-	CMesh* m_pMeshCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
-	CTexture* m_pTextureCom = nullptr;
-
-
+	CMesh* m_pMeshCom = nullptr;
+private:
+	vector<CTexture*>						m_vecTexture;
 };
-
