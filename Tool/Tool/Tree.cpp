@@ -20,15 +20,15 @@ HRESULT CTree::Ready_Prototype()
 
 HRESULT CTree::Ready_GameObject(void * pArg)
 {
-	TEMP tTemp = *(TEMP*)pArg;
-
-	if (FAILED(Ready_Component(tTemp.lstrComponentTag)))
-		return E_FAIL;
-
+	TEMP tTemp = {};
 	if (nullptr != pArg)
 	{
-		//_vec3 vPos = *(_vec3*)pArg;
+		tTemp = *(TEMP*)pArg;
+		if (FAILED(Ready_Component(tTemp.lstrComponentTag)))
+			return E_FAIL;
 		m_pTransformCom->Set_StateInfo(STATE_POSITION, &tTemp.vPos);
+		
+		lstrcpy(m_pComponent_Tag, tTemp.lstrComponentTag);
 	}
 
 	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);

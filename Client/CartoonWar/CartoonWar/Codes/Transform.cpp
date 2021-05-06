@@ -48,6 +48,11 @@ _matrix CTransform::Get_Matrix_Inverse() const
 	return mat;
 }
 
+void CTransform::Set_Matrix(_matrix matWorld, _bool IsMul)
+{
+	m_matWorld = Matrix_::Multiply(m_matWorld, matWorld);
+}
+
 void CTransform::Set_StateInfo(STATE eState, const _vec3* pInfo)
 {
 	memcpy(&m_matWorld.m[eState][0], pInfo, sizeof(_vec3));

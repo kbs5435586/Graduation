@@ -89,6 +89,6 @@ PS_OUT PS_Main(VS_OUT vIn)
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vShadeTex = tCol.vShade;
-	vOut.vSpecularTex = float4(1.f, 1.f, 1.f, 1.f);
+	vOut.vSpecularTex = tCol.vShade;
 	return vOut;
 }

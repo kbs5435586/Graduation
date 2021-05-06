@@ -162,6 +162,7 @@
     <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
+    <ClInclude Include="..\Headers\Building.h" />
     <ClInclude Include="..\Headers\Bush0.h" />
     <ClInclude Include="..\Headers\Bush1.h" />
     <ClInclude Include="..\Headers\Camera.h" />
@@ -306,6 +307,7 @@
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
+    <ClCompile Include="..\Codes\Building.cpp" />
     <ClCompile Include="..\Codes\Bush0.cpp" />
     <ClCompile Include="..\Codes\Bush1.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />

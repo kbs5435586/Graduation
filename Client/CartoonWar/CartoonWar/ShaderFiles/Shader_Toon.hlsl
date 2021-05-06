@@ -93,7 +93,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);
 
 	float	fRim = saturate(dot(vView, vNormal));
-	float	fRimPower = 5.f;
+	float	fRimPower = 3.f;
 
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
@@ -106,7 +106,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	vOut.vNormalTex = vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vShadeTex = vShade;
-	vOut.vSpecularTex = float4(1.f,1.f,1.f,1.f);
+	vOut.vSpecularTex = tCol.vShade;
 
 	return vOut;
 }

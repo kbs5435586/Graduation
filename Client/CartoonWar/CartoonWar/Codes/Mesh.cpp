@@ -25,6 +25,7 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_vecFrameTrans(rhs.m_vecFrameTrans)
 	, m_vecOffset(rhs.m_vecOffset)
 	, m_iFrameCnt(rhs.m_iFrameCnt)
+	, m_vecRenderSup(rhs.m_vecRenderSup)
 
 {
 
@@ -236,16 +237,15 @@ void CMesh::Laod_Material(FbxSurfaceMaterial* _pMtrlSur)
 
 
 	int iLen = tMtrlInfo.strDiff.length();
-	_tchar* tag = new _tchar[iLen + 1];
-	ZeroMemory(tag, iLen + 1);
+	if (iLen >= 0)
+	{
+		_tchar* tag = new _tchar[iLen + 1];
+		ZeroMemory(tag, iLen + 1);
+		lstrcpy(tag, tMtrlInfo.strDiff.c_str());
+		m_vecDiffTexturePath.push_back(tag);
+		m_vecContainer.back().vecMtrl.push_back(tMtrlInfo);
+	}
 
-	lstrcpy(tag, tMtrlInfo.strDiff.c_str());
-
-	m_vecDiffTexturePath.push_back(tag);
-
-	
-
-	m_vecContainer.back().vecMtrl.push_back(tMtrlInfo);
 }
 
 void CMesh::Load_Texture()
@@ -1081,6 +1081,7 @@ HRESULT CMesh::Ready_MeshData(vector<tContainer>& vecContainer)
 			tIndices.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
 
 			tRenderInfo.vecIndices.push_back(tIndices);
+			m_vecRenderSup.push_back(RENDERSUP(tIndices.iIndexCnt, tVtxView, tIndices.IndexBufferView));
 		}
 
 
@@ -1341,7 +1342,7 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 
 		//m_tRenderInfo.vecIndices.resize(iMtrlCount);
 		m_iSubsetNum += iMtrlCount;
-		//m_iSubsetNum = iMtrlCount;
+	
 		for (_uint i = 0; i < iMtrlCount; ++i)
 		{
 			Indices info = {};
@@ -1403,6 +1404,7 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 			info.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
 
 			tRenderInfo.vecIndices.push_back(info);
+			m_vecRenderSup.push_back(RENDERSUP(info.iIndexCnt, tRenderInfo.VertexBufferView, info.IndexBufferView));
 		}
 		m_vecRenderInfo.push_back(tRenderInfo);
 	}
@@ -1498,9 +1500,9 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 void CMesh::Render_Mesh(_uint iIdx)
 {
 	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderInfo[iIdx].VertexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderInfo[iIdx].vecIndices[0].IndexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderInfo[iIdx].vecIndices[0].iIndexCnt, 1, 0, 0, 0);
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderSup[iIdx].VertexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderSup[iIdx].IndexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderSup[iIdx].iIncicesCnt, 1, 0, 0, 0);
 }
 
 
