@@ -19,8 +19,6 @@ HRESULT CBuilding::Ready_Prototype()
 
 HRESULT CBuilding::Ready_GameObject(void* pArg)
 {
-
-
 	if (nullptr == pArg)
 		return E_FAIL;
 
@@ -36,20 +34,18 @@ HRESULT CBuilding::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//_vec3 vPos = { 0.f,0.f,0.f };
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-
-	
-	//m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
-	//m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	{
+		CTexture* pTexture = CTexture::Create(iter);
+		m_vecTexture.push_back(pTexture);
+	}
 
 	return S_OK;
 }
 
 _int CBuilding::Update_GameObject(const _float& fTimeDelta)
 {
-	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	//m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
+
 	return _int();
 }
 
@@ -80,6 +76,12 @@ void CBuilding::Render_GameObject()
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		CTexture* pTexture = m_vecTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);

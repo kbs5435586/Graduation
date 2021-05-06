@@ -27,7 +27,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());

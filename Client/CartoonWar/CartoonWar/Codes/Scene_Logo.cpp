@@ -311,13 +311,13 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_boat_01_low.fbx"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_gate_01",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_crane_low.fbx"))))
-			return E_FAIL;
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_01_low",
 			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_gate_01.fbx"))))
 			return E_FAIL;
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_straw_roof_01_low",
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_01_low",
 			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_small_house_01_low.fbx"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_straw_roof_01_low",
+			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_small_house_straw_roof_01_low.fbx"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_tall_roof_01_low",
 			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_small_house_tall_roof_01_low.fbx"))))

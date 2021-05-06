@@ -508,31 +508,31 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\NewFilter1">
       <UniqueIdentifier>{629334ed-8715-4e78-9a80-96dd892b6234}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles">
+    <Filter Include="96. ShaderFiles">
       <UniqueIdentifier>{d593620e-f7d3-48a4-bac6-d4efac0f0917}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered">
+    <Filter Include="96. ShaderFiles\01. Deffered">
       <UniqueIdentifier>{7dea5627-e98c-4bdd-9a79-e7321387d80a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\00. Struct">
+    <Filter Include="96. ShaderFiles\00. Struct">
       <UniqueIdentifier>{be990df9-2a72-47f3-9eca-7690319b9cb3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\03. Tool">
+    <Filter Include="96. ShaderFiles\03. Tool">
       <UniqueIdentifier>{4fca9aa0-5ffb-4dae-84c1-16b0595edf82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default">
+    <Filter Include="96. ShaderFiles\04. Default">
       <UniqueIdentifier>{39f808ff-71fd-4b08-8660-9c6a93bf6afa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh">
+    <Filter Include="96. ShaderFiles\05. Mesh">
       <UniqueIdentifier>{90eebf5c-cae6-4e76-868b-d578378ecd4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\99. Compute">
+    <Filter Include="96. ShaderFiles\99. Compute">
       <UniqueIdentifier>{9ce81e86-2c50-4511-8f0e-c94497ce7450}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\06. Particle">
+    <Filter Include="96. ShaderFiles\06. Particle">
       <UniqueIdentifier>{d3839f6b-a946-48b6-9978-f89556d75611}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. Loaders\01. TextureLoader\96. ShaderFiles\07. Light">
+    <Filter Include="96. ShaderFiles\07. Light">
       <UniqueIdentifier>{43e77f45-f2db-4a40-a5d6-6d13a6211bb7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -1341,75 +1341,75 @@
       <Filter>95. Loaders\01. TextureLoader</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Deffered.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered</Filter>
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Merge_Deffered.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered</Filter>
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Cell.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\03. Tool</Filter>
+      <Filter>96. ShaderFiles\03. Tool</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Collider.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\03. Tool</Filter>
+      <Filter>96. ShaderFiles\03. Tool</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Default.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Texture.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Toon.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Hatch.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Compute\Shader_Compute_Default.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\99. Compute</Filter>
+      <Filter>96. ShaderFiles\99. Compute</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Particle.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\06. Particle</Filter>
+      <Filter>96. ShaderFiles\06. Particle</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Animation.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Mesh_Default.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_PointLIght.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\07. Light</Filter>
+      <Filter>96. ShaderFiles\07. Light</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_DirectionLight.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\07. Light</Filter>
+      <Filter>96. ShaderFiles\07. Light</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Environment.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Fire.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_SkyBox.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\04. Default</Filter>
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\05. Mesh</Filter>
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\01. Deffered</Filter>
+      <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\00. Struct</Filter>
+      <Filter>96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
-      <Filter>95. Loaders\01. TextureLoader\96. ShaderFiles\00. Struct</Filter>
+      <Filter>96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
