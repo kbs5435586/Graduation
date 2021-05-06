@@ -516,7 +516,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader_UUI.txt" />
+    <None Include="Shader_UUI.hlsl">
+      <FileType>Text</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1330,7 +1330,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader_UUI.txt">
+    <Text Include="Shader_UUI.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </Text>
   </ItemGroup>
