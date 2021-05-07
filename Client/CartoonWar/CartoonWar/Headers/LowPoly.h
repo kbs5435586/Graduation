@@ -31,6 +31,5 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CMesh* m_pMeshCom = nullptr;
-private:
-	vector<CTexture*>						m_vecTexture;
+	CTexture* m_pTextureCom = nullptr;
 };

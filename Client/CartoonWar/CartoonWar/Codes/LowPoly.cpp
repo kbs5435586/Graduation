@@ -37,18 +37,13 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
 
 	return S_OK;
 }
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
+	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
 	return _int();
 }
 
@@ -80,11 +75,7 @@ void CLowPoly::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		CTexture* pTexture = m_vecTexture[i];
-		if (pTexture)
-		{
-			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-		}
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
@@ -120,7 +111,10 @@ HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -176,6 +170,7 @@ void CLowPoly::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pTextureCom);
 
 	CGameObject::Free();
 }

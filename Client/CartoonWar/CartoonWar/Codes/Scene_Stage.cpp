@@ -83,6 +83,8 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
 		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);

@@ -289,49 +289,49 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	{
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_barracks_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_barracks_01_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_barracks_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_barracks_single_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_barracks_single_01_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_barracks_single_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_big_storage_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_big_storage_01_low.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_big_storage_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_bighouse_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_bighouse_01_low.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_bighouse_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_bighouse_02_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_bighouse_02_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_bighouse_02_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_blacksmith_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_blacksmith_01_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_blacksmith_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_boat_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_boat_01_low.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_boat_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_gate_01",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_gate_01.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_gate_01.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_small_house_01_low.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_small_house_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_straw_roof_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_small_house_straw_roof_01_low.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_small_house_straw_roof_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_small_house_tall_roof_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_small_house_tall_roof_01_low.fbx"))))
+			CMesh::Create_Load( L"../Data/MeshData/build_small_house_tall_roof_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_storage_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_storage_01_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_storage_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_tower_01",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_tower_01.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_tower_01.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_wall_corner_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_wall_corner_01_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_wall_corner_01_low.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_wall_panel_01_low",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Buildings/build_wall_panel_01_low.fbx"))))
+			CMesh::Create_Load(L"../Data/MeshData/build_wall_panel_01_low.dat"))))
 			return E_FAIL;
 	}
 
@@ -368,80 +368,80 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks01.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks01_A",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks01_A.FBX"))))
+		CMesh::Create_Load( L"../Data/MeshData/MountainRocks01_A.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks01_B",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks01_B.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks01_B.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks01_C",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks01_C.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks01_C.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks01_D",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks01_D.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks01_D.dat"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks02.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks02.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks02_A",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks02_A.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks02_A.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks02_B",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainRocks02_B.FBX"))))
+		CMesh::Create_Load(L"../Data/MeshData/MountainRocks02_B.dat"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks03",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Rock/MountainsRocks03.FBX"))))
+		CMesh::Create_Load( L"../Data/MeshData/MountainsRocks03.dat"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_tree_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_bush_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_bush_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_tree_02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_bush_02.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_bush_02.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_tree_pine_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tree_pine_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_tree_pine_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_flower_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_flower_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_flower_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_flower_02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_flower_02.fbx"))))
+		CMesh::Create_Load( L"../Data/MeshData/rpgpp_lt_flower_02.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_flower_03",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_flower_03.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_flower_03.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_plant_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_plant_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_plant_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_plant_02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_plant_02.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_plant_02.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_rock_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_rock_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_rock_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_rock_02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_rock_02.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_rock_02.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_rock_03",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_rock_03.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_rock_03.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_rock_small_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_rock_small_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_rock_small_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_rock_small_02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_rock_small_02.fbx"))))
+		CMesh::Create_Load( L"../Data/MeshData/rpgpp_lt_rock_small_02.dat"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_bush_01",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_bush_01.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_bush_01.dat"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_bush_02",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_bush_02.fbx"))))
+		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_bush_02.dat"))))
 		return E_FAIL;
 
 

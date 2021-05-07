@@ -177,5 +177,10 @@ void CBuilding::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
 
+	for (auto& iter : m_vecTexture)
+	{
+		Safe_Release(iter);
+	}
+
 	CGameObject::Free();
 }

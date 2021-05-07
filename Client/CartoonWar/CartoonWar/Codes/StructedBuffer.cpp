@@ -7,13 +7,9 @@ CStructedBuffer::CStructedBuffer()
 }
 
 HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElementCnt, void* pArg)
-{
-
-	
+{	
 	m_iElementSize = iElementSize;
 	m_iElementCnt = iElementCnt;
-
-
 
 	if (pArg)
 		m_eState = D3D12_RESOURCE_STATE_COPY_DEST;
@@ -32,7 +28,9 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	tBufferDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	tBufferDesc.SampleDesc.Count = 1;
 	tBufferDesc.SampleDesc.Quality = 0;
+
 	CDevice::GetInstance()->Open();
+
 	CD3DX12_HEAP_PROPERTIES temp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	// Buffer Create
 	CDevice::GetInstance()->GetDevice()->CreateCommittedResource(
