@@ -71,21 +71,6 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 	}
-
-
-//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-//_vec3 vSlide = {};
-//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-//{
-//	m_pTransformCom->BackWard(fTimeDelta);
-//}
-//else
-//{
-//	m_pTransformCom->Go_There(vSlide);
-//}
-		}
-
-
 		m_iCurAnimIdx = 29;
 		m_pTransformCom->BackWard(fTimeDelta);
 	}
@@ -108,7 +93,6 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
-	Set_Animation();
 	Safe_Release(server);
 	return _int();
 }
