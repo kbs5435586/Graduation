@@ -51,9 +51,20 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			wsprintf(szFilePath, pFilepath, i);
 
 			if (FAILED(LoadFromDDSFile(szFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))
+			{
+
+				CDevice::GetInstance()->Close();
+				CDevice::GetInstance()->WaitForFenceEvent();
 				return E_FAIL;
+
+			}
 			if (FAILED(Create_ShaderResourceView(m_Image, IsCube)))
+			{
+
+				CDevice::GetInstance()->Close();
+				CDevice::GetInstance()->WaitForFenceEvent();
 				return E_FAIL;
+			}
 
 		}
 	}
@@ -63,9 +74,19 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 		{
 			wsprintf(szFilePath, pFilepath, i);
 			if (FAILED(LoadFromWICFile(szFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
+			{
+
+				CDevice::GetInstance()->Close();
+				CDevice::GetInstance()->WaitForFenceEvent();
 				return E_FAIL;
+			}
 			if (FAILED(Create_ShaderResourceView(m_Image, IsCube)))
+			{
+
+				CDevice::GetInstance()->Close();
+				CDevice::GetInstance()->WaitForFenceEvent();
 				return E_FAIL;
+			}
 		}
 
 	}
@@ -77,9 +98,19 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 			wsprintf(szFilePath, pFilepath, i);
 
 			if (FAILED(LoadFromTGAFile(szFilePath, nullptr, m_Image)))
+			{
+
+				CDevice::GetInstance()->Close();
+				CDevice::GetInstance()->WaitForFenceEvent();
 				return E_FAIL;
+			}
 			if (FAILED(Create_ShaderResourceView(m_Image, IsCube)))
+			{
+
+				CDevice::GetInstance()->Close();
+				CDevice::GetInstance()->WaitForFenceEvent();
 				return E_FAIL;
+			}
 		}
 	}
 
@@ -103,23 +134,43 @@ HRESULT CTexture::Ready_Texture(const _tchar* pTag, const _tchar* pFilePath)
 	if (L".dds" == strExt || L".DDS" == strExt)
 	{
 		if (FAILED(LoadFromDDSFile(pFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))
+		{
+
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 
 	}
 	else if (L".tga" == strExt || L".TGA" == strExt)
 	{
 		if (FAILED(LoadFromTGAFile(pFilePath, nullptr, m_Image)))
+		{
+
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 	}
 	else
 	{
 
 		if (FAILED(LoadFromWICFile(pFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
+		{
+
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 	}
 
 	if (FAILED(Create_ShaderResourceView(m_Image, m_vecSRV)))
+	{
+
+		CDevice::GetInstance()->Close();
+		CDevice::GetInstance()->WaitForFenceEvent();
 		return E_FAIL;
+	}
 	
 	CDevice::GetInstance()->Close();
 	CDevice::GetInstance()->WaitForFenceEvent();
@@ -149,23 +200,39 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilePath)
 	if (L".dds" == strExt || L".DDS" == strExt)
 	{
 		if (FAILED(LoadFromDDSFile(pFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))
+		{
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 
 	}
 	else if (L".tga" == strExt || L".TGA" == strExt)
 	{
 		if (FAILED(LoadFromTGAFile(pFilePath, nullptr, m_Image)))
+		{
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 	}
 	else
 	{
 
 		if (FAILED(LoadFromWICFile(pFilePath, WIC_FLAGS_NONE, nullptr, m_Image)))
+		{
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 	}
 
 	if (FAILED(Create_ShaderResourceView_(m_Image, m_pSRV)))
+	{
+		CDevice::GetInstance()->Close();
+		CDevice::GetInstance()->WaitForFenceEvent();
 		return E_FAIL;
+	}
 
 	CDevice::GetInstance()->Close();
 	CDevice::GetInstance()->WaitForFenceEvent();

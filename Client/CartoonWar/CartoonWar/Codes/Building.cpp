@@ -20,7 +20,10 @@ HRESULT CBuilding::Ready_Prototype()
 HRESULT CBuilding::Ready_GameObject(void* pArg)
 {
 	if (nullptr == pArg)
+	{
 		return E_FAIL;
+
+	}
 
 
 	_tchar pTempStr[128] = {};
@@ -173,6 +176,11 @@ void CBuilding::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
+
+	for (auto& iter : m_vecTexture)
+	{
+		Safe_Release(iter);
+	}
 
 	CGameObject::Free();
 }

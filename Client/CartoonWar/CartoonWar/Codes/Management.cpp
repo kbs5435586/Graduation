@@ -184,6 +184,11 @@ HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
 	return m_pLoad_Manager->Load_File(pFilePath, pArg);
 }
 
+HRESULT CManagement::Load_File_Low(const _tchar* pFilePath, void* pArg)
+{
+	return m_pLoad_Manager->Load_File_Low(pFilePath, pArg);
+}
+
 HRESULT CManagement::Ready_UAV_Manager()
 {
 	return m_pUAV_Manager->Ready_UAVManager();

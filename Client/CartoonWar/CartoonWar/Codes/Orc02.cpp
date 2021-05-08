@@ -186,7 +186,7 @@ void COrc02::Render_GameObject()
 
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() - 1;
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 

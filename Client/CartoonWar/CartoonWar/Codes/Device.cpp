@@ -314,6 +314,9 @@ HRESULT CDevice::SetHDRMetaData(_float fMaxOutputNits, _float fMinOutputNits, _f
 
 void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegisterNum, const _uint& iIdx)
 {
+	if (m_iCurrentDummyIdx >= 1024)
+		return;
+
 	_uint			iDestRange = 1;
 	_uint			iSrcRange = 1;
 
@@ -339,6 +342,9 @@ void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegis
 
 void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum)
 {
+	if (m_iCurrentDummyIdx >= 1024)
+		return;
+
 	if (nullptr == pTextureDesc)
 		return;
 	_uint			iDestRange = 1;
@@ -357,6 +363,9 @@ void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REG
 
 void CDevice::SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum)
 {
+	if (m_iCurrentDummyIdx >= 1024)
+		return;
+
 	UINT iDestRange = 1;
 	UINT iSrcRange = 1;
 	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -487,6 +496,9 @@ void CDevice::SetUpUAVToRegister_CS(CStructedBuffer* pBuffer, UAV_REGISTER eRegi
 
 void CDevice::SetBufferToRegister(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister)
 {
+	if (m_iCurrentDummyIdx >= 1024)
+		return;
+
 	UINT iDestRange = 1;
 	UINT iSrcRange = 1;
 	_uint iSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -536,6 +548,9 @@ void CDevice::SetBufferToRegister_CS(CStructedBuffer* pBuffer, TEXTURE_REGISTER 
 
 void CDevice::UpdateTable()
 {
+	if (m_iCurrentDummyIdx >= 1024)
+		return;
+
 	ID3D12DescriptorHeap* pDestriptor = m_vecDummyDescriptor[m_iCurrentDummyIdx].Get();
 	m_pCmdListGraphic->SetDescriptorHeaps(1, &pDestriptor);
 
@@ -557,6 +572,9 @@ void CDevice::UpdateTable_CS()
 
 void CDevice::ClearDummyDesc(_uint iIdx)
 {
+	if (iIdx >= 1024)
+		return;
+
 	D3D12_CPU_DESCRIPTOR_HANDLE hDestHandle = m_vecDummyDescriptor[iIdx]->GetCPUDescriptorHandleForHeapStart();
 	hDestHandle.ptr;
 
@@ -662,7 +680,7 @@ HRESULT CDevice::Create_RootSignature()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-	for (size_t i = 0; i < 512; ++i)
+	for (size_t i = 0; i < 1024; ++i)
 	{
 		ComPtr<ID3D12DescriptorHeap> pDummyDescriptor;
 		m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&pDummyDescriptor));

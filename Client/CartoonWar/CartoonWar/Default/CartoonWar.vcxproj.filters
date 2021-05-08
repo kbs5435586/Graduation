@@ -319,84 +319,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly">
       <UniqueIdentifier>{0dc0f715-195c-4e2e-bbde-c64ce2d63f0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush">
-      <UniqueIdentifier>{a375772f-d835-4d46-9aff-235abe4569f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud">
-      <UniqueIdentifier>{33e57bb5-bf4c-452c-8eed-918a15284014}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower">
-      <UniqueIdentifier>{2f38cac8-5888-4a5e-be90-ab30e64a1593}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant">
-      <UniqueIdentifier>{8f53e44c-176f-40ac-85fb-9fa2f8ba28a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock">
-      <UniqueIdentifier>{79bf98c6-5d38-4a5a-b08e-7ce84fe13602}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree">
-      <UniqueIdentifier>{b53eb348-4683-4af2-a433-feea982179c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush\00. Bush0">
-      <UniqueIdentifier>{be5f8097-c9a1-4f66-af1a-f9247c0a5c36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush\01. Bush1">
-      <UniqueIdentifier>{f7361d9d-56eb-4e72-9398-ba58c69c6b76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud\00. Cloud0">
-      <UniqueIdentifier>{4b4649d7-26d2-429d-a408-e2ad9491c3b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud\01. Cloud1">
-      <UniqueIdentifier>{4c44a699-eac0-4ae6-9e04-621373a2b9b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\00. Flower0">
-      <UniqueIdentifier>{3aa6c5cc-7ad1-4c07-aef0-732d6fbb8d20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\01. Flower1">
-      <UniqueIdentifier>{a5021a40-568e-4632-bdcf-f1460f1ecb15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\02. Flower2">
-      <UniqueIdentifier>{d86e8e22-9cfa-40ed-a475-1c064e8e3e82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant\00. Plant0">
-      <UniqueIdentifier>{03bdb7f4-e7fc-4285-9d5f-3371231e393f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant\01. Plant1">
-      <UniqueIdentifier>{6bb2d191-d55a-4bbb-8f5f-2016c7d1933d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\00. Rock0">
-      <UniqueIdentifier>{703cb723-f266-4579-b9e4-c0cdee349a80}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\01. Rock1">
-      <UniqueIdentifier>{85108afc-45d9-4648-a031-e087e22ed925}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\02. Rock2">
-      <UniqueIdentifier>{07ac7536-ed58-4752-9f54-af79c5a9a574}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\03. Rock3">
-      <UniqueIdentifier>{bba21a05-dc10-4d03-8e50-2d3ebb4c7d69}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\04. Rock4">
-      <UniqueIdentifier>{b82bbbe1-f1f0-4e2e-8a0e-d40824810dd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\05. Rock5">
-      <UniqueIdentifier>{cf05b391-b158-4cf4-8d0e-ab45892a4237}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\00. Tree0">
-      <UniqueIdentifier>{54380303-25be-4156-87cd-e9c686cdca30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\01. Tree1">
-      <UniqueIdentifier>{ea64fbd9-872f-4531-8f1c-362a310a6031}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\02. Tree2">
-      <UniqueIdentifier>{36e89cab-4f35-4e78-bd51-3100b8adb2a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3">
-      <UniqueIdentifier>{6ffc7681-b1be-40bd-9677-d08150096a5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4">
-      <UniqueIdentifier>{f604ba53-1190-4368-be0b-788f18be823a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="94. Server">
       <UniqueIdentifier>{8a5b4ff6-f999-4a47-9dee-17806fcfbb7e}</UniqueIdentifier>
     </Filter>
@@ -463,9 +385,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04">
       <UniqueIdentifier>{8bf797d0-4810-43b0-996b-4b7f15c73092}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\03. Castle">
-      <UniqueIdentifier>{82bc9722-0f7e-4227-8418-c4203e937e61}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Default">
       <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
     </Filter>
@@ -474,39 +393,6 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building">
       <UniqueIdentifier>{bd754442-48eb-40d5-9d17-e5d453ae2226}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\00. Barracks01">
-      <UniqueIdentifier>{16ef5dc1-2986-4366-addf-26121dd636b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\01. Barracks02">
-      <UniqueIdentifier>{3ffb2a08-8af2-4244-b0d3-8ec78d76a91f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\02. Storage01">
-      <UniqueIdentifier>{a58b4505-5037-4a3d-9c49-90c3e61740c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\04. BigHouse02">
-      <UniqueIdentifier>{9d27c3d1-fd93-4c75-8918-af7a8d6f20df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\03. BigHouse01">
-      <UniqueIdentifier>{82562390-2632-41e2-8600-642ef6e5160b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\05. BlackSmith01">
-      <UniqueIdentifier>{d5102287-1728-4399-ac4f-534ea56b4eec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\06. Boat01">
-      <UniqueIdentifier>{7406b518-abfb-4ff6-a5a0-f0c604a3f50b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\07. Crane">
-      <UniqueIdentifier>{b0ac258c-e2a2-4e70-836a-f450e85981ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\08. Gate01">
-      <UniqueIdentifier>{0650be35-f7d2-4e9d-abfe-bcca11cf0721}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\09. SmallHouse01">
-      <UniqueIdentifier>{6d8f06b1-78c4-47c2-b8ff-3ac53bbaced6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building\NewFilter1">
-      <UniqueIdentifier>{629334ed-8715-4e78-9a80-96dd892b6234}</UniqueIdentifier>
     </Filter>
     <Filter Include="96. ShaderFiles">
       <UniqueIdentifier>{d593620e-f7d3-48a4-bac6-d4efac0f0917}</UniqueIdentifier>
@@ -849,66 +735,6 @@
     <ClInclude Include="..\Headers\Rock02_B.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\02. Rock02_B</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Bush0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush\00. Bush0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Bush1.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush\01. Bush1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Cloud0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud\00. Cloud0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Cloud1.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud\01. Cloud1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Flower0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\00. Flower0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Flower1.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\01. Flower1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Flower2.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\02. Flower2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Plant0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant\00. Plant0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Plant1.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant\01. Plant1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Rock0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\00. Rock0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Rock1.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\01. Rock1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Rock2.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\02. Rock2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Rock3.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\03. Rock3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Rock4.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\04. Rock4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Rock5.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\05. Rock5</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Tree0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\00. Tree0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Tree1.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\01. Tree1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Tree2.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\02. Tree2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Tree4.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Tree3.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Server_Manager.h">
       <Filter>94. Server</Filter>
     </ClInclude>
@@ -942,11 +768,11 @@
     <ClInclude Include="..\Headers\Weapon02.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Castle0.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Building.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LowPoly.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1236,66 +1062,6 @@
     <ClCompile Include="..\Codes\Rock02_B.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Rock\01. Rock02\02. Rock02_B</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Bush0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush\00. Bush0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Bush1.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\00. Bush\01. Bush1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Cloud0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud\00. Cloud0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Cloud1.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\01. Cloud\01. Cloud1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Flower0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\00. Flower0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Flower1.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\01. Flower1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Flower2.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\02. Flower\02. Flower2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Plant0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant\00. Plant0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Plant1.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\03. Plant\01. Plant1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Rock0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\00. Rock0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Rock1.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\01. Rock1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Rock2.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\02. Rock2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Rock3.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\03. Rock3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Rock4.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\04. Rock4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Rock5.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\04. Rock\05. Rock5</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Tree0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\00. Tree0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Tree1.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\01. Tree1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Tree2.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\02. Tree2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Tree4.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\04. Tree4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Tree3.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly\05. Tree\03. Tree3</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Server_Manager.cpp">
       <Filter>94. Server</Filter>
     </ClCompile>
@@ -1326,11 +1092,11 @@
     <ClCompile Include="..\Codes\Weapon04.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Castle0.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\03. Castle</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Building.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LowPoly.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
