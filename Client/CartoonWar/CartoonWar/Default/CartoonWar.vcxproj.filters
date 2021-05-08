@@ -1328,10 +1328,8 @@
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
       <Filter>96. ShaderFiles\00. Struct</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Shader_UUI.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
-    </Text>
+    <FxCompile Include="..\ShaderFiles\Shader_UUI.hlsl">
+      <Filter>99. Default</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
