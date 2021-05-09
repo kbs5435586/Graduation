@@ -21,6 +21,7 @@ private:
     short PORT = 3500;
     WPARAM m_wparam;
     high_resolution_clock::time_point add_npc_ct;
+    high_resolution_clock::time_point attack_ct;
     high_resolution_clock::time_point change_formation_ct;
 
 public:
@@ -52,10 +53,12 @@ public:
     short Get_Anim(int id);
 
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
+    high_resolution_clock::time_point Get_Attack_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
     WPARAM Get_wParam();
 
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
+    void Set_Attack_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
     void Set_wParam(WPARAM p);
 

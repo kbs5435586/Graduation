@@ -502,36 +502,53 @@ void CServer_Manager::update_key_input()
 			Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
-	if (GetAsyncKeyState('T') & 0x8000)
+
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
-		send_move_packet(GO_FORWARD);
-		isSendOnePacket = false;
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- Get_Attack_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			send_attack_packet();
+			m_objects[my_id].anim = 14;
+			isSendOnePacket = false;
+			Set_Attack_CoolTime(high_resolution_clock::now());
+		}
 	}
-	if (GetAsyncKeyState('F') & 0x8000)
+	else
 	{
-		send_move_packet(GO_LEFT);
-		isSendOnePacket = false;
+		if (GetAsyncKeyState('T') & 0x8000)
+		{
+			send_move_packet(GO_FORWARD);
+			isSendOnePacket = false;
+		}
+		if (GetAsyncKeyState('F') & 0x8000)
+		{
+			send_move_packet(GO_LEFT);
+			isSendOnePacket = false;
+		}
+		if (GetAsyncKeyState('G') & 0x8000)
+		{
+			send_move_packet(GO_BACK);
+			isSendOnePacket = false;
+		}
+		if (GetAsyncKeyState('H') & 0x8000)
+		{
+			send_move_packet(GO_RIGHT);
+			isSendOnePacket = false;
+		}
+		if (GetAsyncKeyState('O') & 0x8000)
+		{
+			send_rotate_packet(TURN_LEFT);
+			isSendOnePacket = false;
+		}
+		if (GetAsyncKeyState('P') & 0x8000)
+		{
+			send_rotate_packet(TURN_RIGHT);
+			isSendOnePacket = false;
+		}
 	}
-	if (GetAsyncKeyState('G') & 0x8000)
-	{
-		send_move_packet(GO_BACK);
-		isSendOnePacket = false;
-	}
-	if (GetAsyncKeyState('H') & 0x8000)
-	{
-		send_move_packet(GO_RIGHT);
-		isSendOnePacket = false;
-	}
-	if (GetAsyncKeyState('O') & 0x8000)
-	{
-		send_rotate_packet(TURN_LEFT);
-		isSendOnePacket = false;
-	}
-	if (GetAsyncKeyState('P') & 0x8000)
-	{
-		send_rotate_packet(TURN_RIGHT);
-		isSendOnePacket = false;
-	}
+
 	if (true == isLogin)
 	{
 		if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
@@ -545,10 +562,6 @@ void CServer_Manager::update_key_input()
 			}
 		}
 	}
-	//if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
-	//{
-	//	send_attack_packet();
-	//}
 	if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
@@ -638,6 +651,16 @@ high_resolution_clock::time_point CServer_Manager::Get_ChangeFormation_Cooltime(
 high_resolution_clock::time_point CServer_Manager::Get_AddNPC_Cooltime()
 {
 	return add_npc_ct;
+}
+
+high_resolution_clock::time_point CServer_Manager::Get_Attack_Cooltime()
+{
+	return attack_ct;
+}
+
+void CServer_Manager::Set_Attack_CoolTime(high_resolution_clock::time_point ct)
+{
+	attack_ct = ct;
 }
 
 void CServer_Manager::Set_AddNPC_CoolTime(high_resolution_clock::time_point ct)
