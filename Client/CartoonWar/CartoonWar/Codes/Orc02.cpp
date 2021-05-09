@@ -31,7 +31,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	_vec3 vPos = { 200.f, 0.f, 200.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
@@ -79,26 +79,25 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-		{
-			//_vec3 vLook = {};
-//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-//vLook = Vector3_::Normalize(vLook);
-
-
-//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-//_vec3 vSlide = {};
-//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-//{
-//	m_pTransformCom->BackWard(fTimeDelta);
-//}
-//else
-//{
-//	m_pTransformCom->Go_There(vSlide);
-//}
-		}
 		m_iCurAnimIdx = 29;
-		//m_pTransformCom->Go_Straight(fTimeDelta);
-		m_pTransformCom->BackWard(fTimeDelta);
+		{
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
+
+
+			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+			_vec3 vSlide = {};
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->BackWard(fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+		}
+
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	{
@@ -168,7 +167,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 			}
 		}
 	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_Q))	
+	else if (CManagement::GetInstance()->Key_Down(KEY_Q))
 	{
 		m_pWeapon = nullptr;
 		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
@@ -224,7 +223,7 @@ void COrc02::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	
+
 
 	Safe_Release(pManagement);
 }
@@ -336,7 +335,7 @@ COrc02* COrc02::Create()
 	return pInstance;
 }
 
-CGameObject* COrc02::Clone_GameObject(void* pArg , _uint iIdx)
+CGameObject* COrc02::Clone_GameObject(void* pArg, _uint iIdx)
 
 {
 	COrc02* pInstance = new COrc02(*this);
@@ -358,7 +357,7 @@ void COrc02::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pColiiderCom);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
 	if (m_IsClone)
 	{
@@ -417,10 +416,10 @@ HRESULT COrc02::Ready_Component()
 		return E_FAIL;
 
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
