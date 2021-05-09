@@ -502,6 +502,7 @@ typedef struct tagGlobal
 {
 	int		iWincx;
 	int		iWincy;
+	int		iTeam;
 	float	fTimeDelta;
 	float	fAccTime = 0.f;
 }GLOBAL;

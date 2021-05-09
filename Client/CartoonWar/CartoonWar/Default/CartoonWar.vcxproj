@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\Animator.h" />
     <ClInclude Include="..\Headers\Base.h" />
+    <ClInclude Include="..\Headers\Buffer_Circle.h" />
     <ClInclude Include="..\Headers\Buffer_CubeCol.h" />
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
     <ClInclude Include="..\Headers\Buffer_Point.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
     <ClInclude Include="..\Headers\Cell.h" />
+    <ClInclude Include="..\Headers\Circle.h" />
     <ClInclude Include="..\Headers\Collider.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="..\Headers\GameObject.h" />
     <ClInclude Include="..\Headers\GameObject_Manager.h" />
     <ClInclude Include="..\Headers\Hash.h" />
+    <ClInclude Include="..\Headers\Hatch.h" />
     <ClInclude Include="..\Headers\Input.h" />
     <ClInclude Include="..\Headers\KeyManager.h" />
     <ClInclude Include="..\Headers\Layer.h" />
@@ -207,18 +210,10 @@
     <ClInclude Include="..\Headers\Orc01.h" />
     <ClInclude Include="..\Headers\Orc02.h" />
     <ClInclude Include="..\Headers\Orc03.h" />
+    <ClInclude Include="..\Headers\Orc04.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
-    <ClInclude Include="..\Headers\Rock01.h" />
-    <ClInclude Include="..\Headers\Rock01_A.h" />
-    <ClInclude Include="..\Headers\Rock01_B.h" />
-    <ClInclude Include="..\Headers\Rock01_C.h" />
-    <ClInclude Include="..\Headers\Rock01_D.h" />
-    <ClInclude Include="..\Headers\Rock02.h" />
-    <ClInclude Include="..\Headers\Rock02_A.h" />
-    <ClInclude Include="..\Headers\Rock02_B.h" />
-    <ClInclude Include="..\Headers\Rock03.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -279,6 +274,7 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\Animator.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Circle.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_Point.cpp" />
@@ -291,6 +287,7 @@
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
+    <ClCompile Include="..\Codes\Circle.cpp" />
     <ClCompile Include="..\Codes\Collider.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
@@ -308,6 +305,7 @@
     <ClCompile Include="..\Codes\Frustum.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\GameObject_Manager.cpp" />
+    <ClCompile Include="..\Codes\Hatch.cpp" />
     <ClCompile Include="..\Codes\Input.cpp" />
     <ClCompile Include="..\Codes\KeyManager.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
@@ -325,18 +323,10 @@
     <ClCompile Include="..\Codes\Orc01.cpp" />
     <ClCompile Include="..\Codes\Orc02.cpp" />
     <ClCompile Include="..\Codes\Orc03.cpp" />
+    <ClCompile Include="..\Codes\Orc04.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
-    <ClCompile Include="..\Codes\Rock01.cpp" />
-    <ClCompile Include="..\Codes\Rock01_A.cpp" />
-    <ClCompile Include="..\Codes\Rock01_B.cpp" />
-    <ClCompile Include="..\Codes\Rock01_C.cpp" />
-    <ClCompile Include="..\Codes\Rock01_D.cpp" />
-    <ClCompile Include="..\Codes\Rock02.cpp" />
-    <ClCompile Include="..\Codes\Rock02_A.cpp" />
-    <ClCompile Include="..\Codes\Rock02_B.cpp" />
-    <ClCompile Include="..\Codes\Rock03.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />

@@ -1,7 +1,7 @@
 #include "framework.h"
 #include "Circle.h"
 #include "Management.h"
-
+#include "UAV.h"
 CCircle::CCircle()
 	: CGameObject()
 {
@@ -23,6 +23,11 @@ HRESULT CCircle::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
+
+	_vec3 vPos = _vec3(15.f, 0.f, 0.f);
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	return S_OK;
 }
@@ -55,13 +60,15 @@ void CCircle::Render_GameObject()
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-	_matrix matReflect = CCamera_Manager::GetInstance()->Get_ReflectMatrix((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 0, -1.5f);
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default")->GetSRV().Get(), TEXTURE_REGISTER::t0);
+
 	CDevice::GetInstance()->UpdateTable();
+
 
 
 	m_pBufferCom->Render_VIBuffer();
@@ -73,8 +80,9 @@ HRESULT CCircle::CreateInputLayout()
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 	return S_OK;
@@ -92,7 +100,7 @@ CCircle* CCircle::Create()
 	return pInstance;
 }
 
-CGameObject* CCircle::Clone_GameObject(void* pArg)
+CGameObject* CCircle::Clone_GameObject(void* pArg, const _uint& iIdx)
 {
 	CCircle* pInstance = new CCircle(*this);
 
@@ -110,6 +118,7 @@ void CCircle::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
 
 	CGameObject::Free();
 }
@@ -130,7 +139,7 @@ HRESULT CCircle::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_Sphere*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere");
+	m_pBufferCom = (CBuffer_Sphere*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Circle");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;

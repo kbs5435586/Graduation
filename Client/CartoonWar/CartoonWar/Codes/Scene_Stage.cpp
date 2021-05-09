@@ -15,7 +15,6 @@
 #include "Orc02.h"
 #include "Orc03.h"
 
-#include "Rock01_A.h"
 // UI
 #include "UI_Loading.h"
 #include "UI_HP.h"
@@ -29,19 +28,6 @@
 //Particle
 #include "Particle_Default.h"
 
-#include "Rock01.h"
-#include "Rock01_A.h"
-#include "Rock01_B.h"
-#include "Rock01_C.h"
-#include "Rock01_D.h"
-
-#include "Rock02.h"
-#include "Rock02_A.h"
-#include "Rock02_B.h"
-
-#include "Rock03.h"
-
-
 #include "Weapon01.h"
 #include "Weapon02.h"
 #include "Weapon03.h"
@@ -53,6 +39,7 @@
 #include "TestHatchMesh.h"
 #include "TestMesh.h"
 
+#include "Hatch.h"
 #include "Building.h"
 #include "LowPoly.h"
 
@@ -81,9 +68,11 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 		return E_FAIL;
 
 
@@ -134,7 +123,7 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_MP", CUI_MP::Create())))
 		return E_FAIL;
-	if(FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
@@ -147,28 +136,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 
 
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01", CRock01::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_A", CRock01_A::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_B", CRock01_B::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_C", CRock01_C::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks01_D", CRock01_D::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks02", CRock02::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks02_A", CRock02_A::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks02_B", CRock02_B::Create())))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_MountainRocks03", CRock03::Create())))
-		return E_FAIL;
-
-
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon01", CWeapon01::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon02", CWeapon02::Create())))
@@ -176,12 +143,14 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon03", CWeapon03::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Weapon04", CWeapon04::Create())))
-		return E_FAIL; 
+		return E_FAIL;
 
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Building", CBuilding::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_LowPoly", CLowPoly::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
 		return E_FAIL;
 
 	return S_OK;
@@ -200,8 +169,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
@@ -231,7 +200,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(100.f, 0.f, 0.f, 1.f);
+	tLightInfo.vLightPos = _vec4(100.f, 100.f, 100.f, 1.f);
 	tLightInfo.fRange = 100.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
@@ -259,63 +228,63 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Red", tLightInfo)))
 		return E_FAIL;*/
 
-	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
-	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	//tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
-	//tLightInfo.fRange = 15.f;
-	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-	//	return E_FAIL;
+		//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+		//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+		//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
+		//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+		//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+		//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+		//tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
+		//tLightInfo.fRange = 15.f;
+		//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+		//	return E_FAIL;
 
-	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
-	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
-	//tLightInfo.fRange = 15.f;
-	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-	//	return E_FAIL;
+		//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+		//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+		//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+		//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+		//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+		//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+		//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+		//tLightInfo.fRange = 15.f;
+		//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+		//	return E_FAIL;
 
-	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
-	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
-	//tLightInfo.fRange = 15.f;
-	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-	//	return E_FAIL;
-
-
-	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
-	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	//tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
-	//tLightInfo.fRange = 15.f;
-	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
-	//	return E_FAIL;
+		//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+		//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+		//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+		//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+		//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+		//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+		//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+		//tLightInfo.fRange = 15.f;
+		//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+		//	return E_FAIL;
 
 
+		//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+		//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+		//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 0.15f, 1.f, 0.f);
+		//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+		//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+		//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+		//tLightInfo.vLightPos = _vec4(30.f, 5.5f, 15.f, 1.f);
+		//tLightInfo.fRange = 15.f;
+		//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Blue", tLightInfo)))
+		//	return E_FAIL;
 
-	//ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
-	//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
-	//tLightInfo.fRange = 15.f;
-	//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Green", tLightInfo)))
-	//	return E_FAIL;
+
+
+		//ZeroMemory(&tLightInfo, sizeof(LIGHT));
+		//tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+		//tLightInfo.tLightColor.vDiffuse = _vec4(0.15f, 1.f, 0.15f, 0.f);
+		//tLightInfo.tLightColor.vSpecular = _vec4(1.f, 0.f, 0.f, 0.f);
+		//tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+		//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+		//tLightInfo.vLightPos = _vec4(22.5f, 5.5f, 22.5f, 1.f);
+		//tLightInfo.fRange = 15.f;
+		//if (FAILED(pManagement->Add_LightInfo(L"Light_Point_Green", tLightInfo)))
+		//	return E_FAIL;
 
 	return S_OK;
 }

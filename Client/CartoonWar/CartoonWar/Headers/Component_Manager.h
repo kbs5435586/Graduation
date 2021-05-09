@@ -21,6 +21,7 @@
 #include "Buffer_Terrain_Height.h"
 #include "Buffer_Sphere.h"
 #include "Buffer_Point.h"
+#include "Buffer_Circle.h"
 
 class CComponent;
 class CComponent_Manager :

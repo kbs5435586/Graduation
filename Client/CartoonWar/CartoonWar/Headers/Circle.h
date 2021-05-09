@@ -4,6 +4,7 @@ class CTransform;
 class CRenderer;
 class CBuffer_Sphere;
 class CShader;
+class CTexture;
 
 class CCircle :
     public CGameObject
@@ -22,7 +23,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CCircle*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -31,6 +32,10 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_Sphere*							m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pCShaderCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
+
 
 };
+
 
