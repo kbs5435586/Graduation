@@ -7,6 +7,7 @@ CGameObject::CGameObject()
 
 }
 CGameObject::CGameObject(const CGameObject& rhs)
+	: m_iLayerIdx(rhs.m_iLayerIdx)
 {
 }
 

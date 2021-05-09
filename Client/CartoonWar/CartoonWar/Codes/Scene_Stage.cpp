@@ -14,6 +14,10 @@
 #include "Orc01.h"
 #include "Orc02.h"
 #include "Orc03.h"
+#include "Orc04.h"
+
+#include "Skeleton.h"
+#include "Sufferer.h"
 
 // UI
 #include "UI_Loading.h"
@@ -32,8 +36,6 @@
 #include "Weapon02.h"
 #include "Weapon03.h"
 #include "Weapon04.h"
-
-#include "Castle0.h"
 
 #include "TestAnimMesh.h"
 #include "TestHatchMesh.h"
@@ -68,10 +70,10 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+		return E_FAIL;
 	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 		return E_FAIL;
 
@@ -153,6 +155,12 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Skeleton", CSkeleton::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Sufferer", CSufferer::Create())))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -192,13 +200,13 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(100.f, 100.f, 100.f, 1.f);
-	tLightInfo.fRange = 100.f;
+	tLightInfo.vLightPos = _vec4(200.f, 20.f, 200.f, 1.f);
+	tLightInfo.fRange = 1000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
@@ -415,6 +423,14 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+	for (int i = 0; i < 2; ++i)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 

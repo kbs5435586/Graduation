@@ -341,15 +341,15 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
 		CMesh::Create_Load(L"../Data/MeshData/Orc_03.dat"))))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc3.fbx", L"../Data/MeshData/Orc_03.dat"))))
-	//	return E_FAIL;
-
-
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc04",
 		CMesh::Create_Load(L"../Data/MeshData/Orc_04.dat"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Skeleton",
+		CMesh::Create_Load(L"../Data/MeshData/Skeleton.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Sufferer",
+		CMesh::Create_Load(L"../Data/MeshData/Sufferer.dat"))))
+		return E_FAIL;
 
 
 

@@ -11,7 +11,7 @@ typedef struct tagVertexCol
 	}
 	tagVertexCol(XMFLOAT3 vPos, XMFLOAT4 vColor_, XMFLOAT3 vNormal_)
 	{
-		vPosition = vPos;
+		vPosition = vPos; 
 		vColor = vColor_;
 		vNormal = vNormal_;
 	}

@@ -75,8 +75,12 @@ void CHatch::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		CDevice::GetInstance()->SetTextureToShader(m_pTexture123, TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->SetTextureToShader(m_pTexture456, TEXTURE_REGISTER::t1);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(0), TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t1);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(2), TEXTURE_REGISTER::t2);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t3);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(4), TEXTURE_REGISTER::t4);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(5), TEXTURE_REGISTER::t5);
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
@@ -112,15 +116,12 @@ HRESULT CHatch::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTexture123 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_123");
-	NULL_CHECK_VAL(m_pTexture123, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture123", m_pTexture123)))
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	m_pTexture456 = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch_456");
-	NULL_CHECK_VAL(m_pTexture456, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture456", m_pTexture456)))
-		return E_FAIL;
+
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -176,8 +177,8 @@ void CHatch::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pTexture123);
-	Safe_Release(m_pTexture456);
+	Safe_Release(m_pTextureCom);
+
 
 	CGameObject::Free();
 }

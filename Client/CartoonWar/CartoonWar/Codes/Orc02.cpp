@@ -27,15 +27,17 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	_vec3 vPos = { 200.f, 0.f, 200.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
 
 	m_pAnimCom->LateInit();
-	m_iCurAnimIdx = 0;
+	m_iCurAnimIdx = 14;
 	_matrix matTemp = { };
 	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f,10.f,10.f));	
 	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
