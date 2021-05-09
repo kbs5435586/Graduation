@@ -80,7 +80,7 @@ void CTerrain::Render_GameObject()
 
 
 	m_pBufferCom->Render_VIBuffer();
-	//m_pNaviCom->Render_Navigation();
+	m_pNaviCom->Render_Navigation();
 
 
 	Safe_Release(pManagement);;
@@ -132,7 +132,7 @@ void CTerrain::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
@@ -169,10 +169,10 @@ HRESULT CTerrain::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);

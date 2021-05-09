@@ -79,7 +79,7 @@ void CUI_Diffuse::Render_GameObject()
 
 	
 	//DXGI_FORMAT_R32G32B32A32_FLOAT
-	m_pBufferCom->Render_VIBuffer();
+	//m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 

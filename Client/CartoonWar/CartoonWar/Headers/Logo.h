@@ -32,5 +32,7 @@ private:
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+private:
+	_float	m_fX, m_fY, m_fSizeX, m_fSizeY;
 };
 
