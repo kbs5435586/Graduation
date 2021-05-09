@@ -152,7 +152,7 @@ CLowPoly* CLowPoly::Create()
 	return pInstance;
 }
 
-CGameObject* CLowPoly::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CLowPoly::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CLowPoly* pInstance = new CLowPoly(*this);
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

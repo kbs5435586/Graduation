@@ -264,7 +264,7 @@ COrc04* COrc04::Create()
 	return pInstance;
 }
 
-CGameObject* COrc04::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* COrc04::Clone_GameObject(void* pArg , _uint iIdx)
 
 {
 	COrc04* pInstance = new COrc04(*this);

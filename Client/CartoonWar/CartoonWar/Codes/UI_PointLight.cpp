@@ -105,7 +105,7 @@ CUI_PointLight* CUI_PointLight::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_PointLight::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_PointLight::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_PointLight* pInstance = new CUI_PointLight();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

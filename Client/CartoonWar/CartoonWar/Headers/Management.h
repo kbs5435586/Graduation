@@ -35,7 +35,7 @@ public://ComponentManager
 	HRESULT						Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent);
 	CComponent*					Clone_Component(const _uint& iSceneID, const _tchar* pComponentTag, void* pArg = nullptr);
 public://GameObjectManager
-	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr, const _uint& iIdx=0);
+	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr, _uint iIdx=0);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 	CGameObject*				Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag);
 	CLayer*						Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag);

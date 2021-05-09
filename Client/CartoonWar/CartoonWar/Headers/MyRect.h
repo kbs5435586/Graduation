@@ -23,7 +23,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CMyRect*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx=0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

@@ -19,7 +19,7 @@ private:
 	void									SetUp_Anim();
 public:
 	static COrc02*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint & iIdx = 0) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, _uint  iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();

@@ -239,7 +239,7 @@ CTestAnimMesh* CTestAnimMesh::Create()
 	return pInstance;
 }
 
-CGameObject* CTestAnimMesh::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTestAnimMesh::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CTestAnimMesh* pInstance = new CTestAnimMesh(*this);
 

@@ -139,7 +139,7 @@ CWeapon03* CWeapon03::Create()
 	return pInstance;
 }
 
-CGameObject* CWeapon03::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CWeapon03::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CWeapon03* pInstance = new CWeapon03(*this);
 

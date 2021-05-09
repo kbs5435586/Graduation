@@ -112,7 +112,7 @@ CTerrain* CTerrain::Create()
 	return pInstance;
 }
 
-CGameObject* CTerrain::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTerrain::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CTerrain* pInstance = new CTerrain(*this);
 

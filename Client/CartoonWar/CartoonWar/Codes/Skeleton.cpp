@@ -38,8 +38,7 @@ HRESULT CSkeleton::Ready_GameObject(void* pArg)
 
 	m_pAnimCom->LateInit();
 	m_iCurAnimIdx = 14;
-	_matrix matTemp = { };
-	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f, 10.f, 10.f));
+
 	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	{
 		CTexture* pTexture = CTexture::Create(iter);
@@ -51,13 +50,6 @@ HRESULT CSkeleton::Ready_GameObject(void* pArg)
 
 _int CSkeleton::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColiiderCom->Update_Collider(m_pTransformCom);
-
-	if (m_pWeapon)
-	{
-		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
-		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
-	}
 
 
 	return _int();
@@ -125,8 +117,6 @@ void CSkeleton::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
-	m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
 	Safe_Release(pManagement);
 }
 
@@ -221,8 +211,6 @@ void CSkeleton::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(3642, 3682, 121.40f, 122.73f));		//WithoutWalkRight		64
 	m_vecAnimCtrl.push_back(AnimCtrl(3683, 3733, 122.76f, 124.43f));		//WithoutWalkRightSit	65
 	m_vecAnimCtrl.push_back(AnimCtrl(3734, 3784, 124.46f, 126.13f));		//WithoutWalkSit		66
-
-
 }
 
 CSkeleton* CSkeleton::Create()
@@ -237,7 +225,7 @@ CSkeleton* CSkeleton::Create()
 	return pInstance;
 }
 
-CGameObject* CSkeleton::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CSkeleton::Clone_GameObject(void* pArg , _uint iIdx)
 
 {
 	CSkeleton* pInstance = new CSkeleton(*this);

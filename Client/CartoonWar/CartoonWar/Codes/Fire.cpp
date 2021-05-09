@@ -153,7 +153,7 @@ CFire* CFire::Create()
 	return pInstance;
 }
 
-CGameObject* CFire::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CFire::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CFire* pInstance = new CFire(*this);
 

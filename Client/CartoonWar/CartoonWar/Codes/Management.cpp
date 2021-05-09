@@ -213,12 +213,12 @@ HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar
 }
 
 HRESULT CManagement::Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag,
-	CGameObject** ppCloneObject, void* pArg, const _uint& iIdx)
+	CGameObject** ppCloneObject, void* pArg , _uint iIdx)
 {
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_GameObjectToLayer(pProtoTag, iSceneID, pLayerTag, ppCloneObject, pArg);
+	return m_pObject_Manager->Add_GameObjectToLayer(pProtoTag, iSceneID, pLayerTag, ppCloneObject, pArg, iIdx);
 }
 
 CComponent* CManagement::Clone_Component(const _uint& iSceneID, const _tchar* pComponentTag, void* pArg)

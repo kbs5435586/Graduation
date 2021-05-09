@@ -100,7 +100,7 @@ CCircle* CCircle::Create()
 	return pInstance;
 }
 
-CGameObject* CCircle::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CCircle::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CCircle* pInstance = new CCircle(*this);
 

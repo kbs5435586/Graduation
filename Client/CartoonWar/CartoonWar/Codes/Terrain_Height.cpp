@@ -118,7 +118,7 @@ CTerrain_Height* CTerrain_Height::Create()
 	return pInstance;
 }
 
-CGameObject* CTerrain_Height::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTerrain_Height::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CTerrain_Height* pInstance = new CTerrain_Height(*this);
 

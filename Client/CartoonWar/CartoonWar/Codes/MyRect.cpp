@@ -144,7 +144,7 @@ CMyRect* CMyRect::Create()
 	return pInstance;
 }
 
-CGameObject* CMyRect::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CMyRect::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CMyRect* pInstance = new CMyRect(*this);
 

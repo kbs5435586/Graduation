@@ -159,7 +159,7 @@ CHatch* CHatch::Create()
 	return pInstance;
 }
 
-CGameObject* CHatch::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CHatch::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CHatch* pInstance = new CHatch(*this);
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

@@ -98,7 +98,7 @@ CSkyBox* CSkyBox::Create()
 	return pInstance;
 }
 
-CGameObject* CSkyBox::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CSkyBox::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CSkyBox* pInstance = new CSkyBox(*this);
 
