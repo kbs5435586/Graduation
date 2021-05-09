@@ -431,27 +431,27 @@ void CServer_Manager::update_key_input()
 		send_npc_act_packet(DO_ATTACK);
 		isSendOnePacket = false;
 	}
-	else if ((GetAsyncKeyState('2') & 0x8000))
+	if ((GetAsyncKeyState('2') & 0x8000))
 	{
 		send_npc_act_packet(DO_DEFENCE);
 		isSendOnePacket = false;
 	}
-	else if ((GetAsyncKeyState('3') & 0x8000))
+	if ((GetAsyncKeyState('3') & 0x8000))
 	{
 		send_npc_act_packet(DO_HOLD);
 		isSendOnePacket = false;
 	}
-	else if ((GetAsyncKeyState('4') & 0x8000))
+	if ((GetAsyncKeyState('4') & 0x8000))
 	{
 		send_npc_act_packet(DO_FOLLOW);
 		isSendOnePacket = false;
 	}
-	else if ((GetAsyncKeyState('5') & 0x8000))
+	if ((GetAsyncKeyState('5') & 0x8000))
 	{
 		send_npc_act_packet(DO_RANDMOVE);
 		isSendOnePacket = false;
 	}
-	else if ((GetAsyncKeyState('6') & 0x8000))
+	if ((GetAsyncKeyState('6') & 0x8000))
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_ChangeFormation_Cooltime());
@@ -462,7 +462,7 @@ void CServer_Manager::update_key_input()
 			Set_ChangeFormation_CoolTime(high_resolution_clock::now());
 		}
 	}
-	else if (GetAsyncKeyState('M') & 0x8000)
+	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_AddNPC_Cooltime());
@@ -473,49 +473,54 @@ void CServer_Manager::update_key_input()
 			Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
-	else if (GetAsyncKeyState('T') & 0x8000)
+	if (GetAsyncKeyState('T') & 0x8000)
 	{
 		send_move_packet(GO_FORWARD);
 		isSendOnePacket = false;
 	}
-	else if (GetAsyncKeyState('F') & 0x8000)
+	if (GetAsyncKeyState('F') & 0x8000)
 	{
 		send_move_packet(GO_LEFT);
 		isSendOnePacket = false;
 	}
-	else if (GetAsyncKeyState('G') & 0x8000)
+	if (GetAsyncKeyState('G') & 0x8000)
 	{
 		send_move_packet(GO_BACK);
 		isSendOnePacket = false;
 	}
-	else if (GetAsyncKeyState('H') & 0x8000)
+	if (GetAsyncKeyState('H') & 0x8000)
 	{
 		send_move_packet(GO_RIGHT);
 		isSendOnePacket = false;
 	}
-	else if (GetAsyncKeyState('O') & 0x8000)
+	if (GetAsyncKeyState('O') & 0x8000)
 	{
 		send_rotate_packet(TURN_LEFT);
 		isSendOnePacket = false;
 	}
-	else if (GetAsyncKeyState('P') & 0x8000)
+	if (GetAsyncKeyState('P') & 0x8000)
 	{
 		send_rotate_packet(TURN_RIGHT);
 		isSendOnePacket = false;
 	}
-	else if (GetAsyncKeyState('Q') & 0x8000)
+	if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
+		!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000))
+	{
+		m_objects[0].anim = 14;
+	}
+	if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
 		PostQuitMessage(0);
 	}
-	else
-	{
-		if (false == isSendOnePacket)
-		{
-			isSendOnePacket = true;
-			send_idle_packet();
-		}
-	}
+	//else
+	//{
+	//	if (false == isSendOnePacket)
+	//	{
+	//		isSendOnePacket = true;
+	//		send_idle_packet();
+	//	}
+	//}
 }
 
 short CServer_Manager::player_index(unsigned short id)

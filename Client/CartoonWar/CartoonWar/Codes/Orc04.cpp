@@ -62,51 +62,24 @@ _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
 		return -1;
-	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	server->AddRef();
+
+	if (server->Get_ShowOtherPlayer(ENUM_PLAYER2))
 	{
-		{
-			//_vec3 vLook = {};
-//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-//vLook = Vector3_::Normalize(vLook);
-
-
-//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-//_vec3 vSlide = {};
-//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-//{
-//	m_pTransformCom->BackWard(fTimeDelta);
-//}
-//else
-//{
-//	m_pTransformCom->Go_There(vSlide);
-//}
-		}
-
-
-		m_iCurAnimIdx = 29;
-		m_pTransformCom->BackWard(fTimeDelta);
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+		m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER2);
 	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 27;
-	}
-
+	
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
+	Safe_Release(server);
 	return _int();
 }
 

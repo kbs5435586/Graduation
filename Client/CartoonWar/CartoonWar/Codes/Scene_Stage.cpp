@@ -14,6 +14,7 @@
 #include "Orc01.h"
 #include "Orc02.h"
 #include "Orc03.h"
+#include "Orc04.h"
 
 // UI
 #include "UI_Loading.h"
@@ -117,6 +118,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc03", COrc03::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc04", COrc04::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube_Texture", CCube_Texture::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_HP", CUI_HP::Create())))
@@ -175,8 +178,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
+	//	return E_FAIL;
 
 	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 		return E_FAIL;*/
