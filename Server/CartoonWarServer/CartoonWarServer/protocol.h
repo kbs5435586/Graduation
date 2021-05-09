@@ -32,6 +32,8 @@ constexpr char CS_PACKET_ROTATE = 3;
 constexpr char CS_PACKET_ADD_NPC = 4;
 constexpr char CS_PACKET_NPC_ACT = 5;
 constexpr char CS_PACKET_CHANGE_FORMATION = 6;
+constexpr char CS_PACKET_ATTACK = 7;
+constexpr char CS_PACKET_IDLE = 8;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -40,6 +42,7 @@ constexpr char SC_PACKET_ENTER = 4;
 constexpr char SC_PACKET_LEAVE = 5;
 constexpr char SC_PACKET_CHAT = 6;
 constexpr char SC_PACKET_ADD_NPC_OK = 7;
+constexpr char SC_PACKET_IDLE = 8;
 
 #pragma pack(push ,1)
 
@@ -51,7 +54,7 @@ struct sc_packet_login_ok
 	float p_x, p_y, p_z;
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
-	float l_x, l_y, l_z; 
+	float l_x, l_y, l_z;
 	short hp;
 	short level;
 	int	exp;
@@ -63,7 +66,6 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
-	short anim;
 };
 
 struct sc_packet_rotate
@@ -117,6 +119,12 @@ struct sc_packet_npc_add_ok
 	char	act;
 };
 
+struct sc_packet_idle
+{
+	char	size;
+	char	type;
+	int		id;
+};
 constexpr unsigned char GO_UP = 0;
 constexpr unsigned char GO_DOWN = 1;
 constexpr unsigned char GO_LEFT = 2;
@@ -125,6 +133,12 @@ constexpr unsigned char GO_BACK = 4;
 constexpr unsigned char GO_FORWARD = 5;
 constexpr unsigned char TURN_LEFT = 6;
 constexpr unsigned char TURN_RIGHT = 7;
+
+struct cs_packet_idle
+{
+	char	size;
+	char	type;
+};
 
 struct cs_packet_login
 {
@@ -138,6 +152,12 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
+};
+
+struct cs_packet_attack
+{
+	char	size;
+	char	type;
 };
 
 struct cs_packet_rotate

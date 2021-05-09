@@ -140,6 +140,18 @@ void Server::process_packet(int user_id, char* buf)
         do_change_formation(user_id);
     }
     break;
+    case CS_PACKET_ATTACK:
+    {
+        cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
+        do_change_formation(user_id);
+    }
+    break;
+    case CS_PACKET_IDLE:
+    {
+        cs_packet_idle* packet = reinterpret_cast<cs_packet_idle*>(buf);
+        do_idle(user_id);
+    }
+    break;
 	default:
 		cout << "Unknown Packet Type Error\n";
 		DebugBreak();
@@ -1063,6 +1075,47 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
     g_clients[user_id].m_cLock.unlock();
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::do_idle(int user_id)
+{
+    for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
+    {
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애면 보내지도 마라
+            continue;
+        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+        //    activate_npc(c.second.m_id, c.second.m_last_order);
+        if (ST_ACTIVE != c.second.m_status)
+            continue;
+        if (c.second.m_id == user_id)
+            continue;
+    }
+    g_clients[user_id].m_cLock.lock();
+    unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
+    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
+    g_clients[user_id].m_cLock.unlock();
+
+    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+    {
+        send_idle_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+    }
+}
+
+void Server::send_idle_packet(int user_id, int idler)
+{
+    sc_packet_idle packet;
+    packet.id = idler;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_IDLE;
+    cout << "send " << idler << "'s idle" << endl;
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+
+void Server::do_attack(int user_id)
+{
+
 }
 
 void Server::disconnect(int user_id)
