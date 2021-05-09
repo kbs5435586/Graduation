@@ -71,12 +71,12 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -193,7 +193,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 		return E_FAIL;
-
+	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+		return E_FAIL;
 	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 		return E_FAIL;*/
 

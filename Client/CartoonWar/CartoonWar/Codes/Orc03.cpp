@@ -74,9 +74,12 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-		m_iCurAnimIdx = server->Get_Anim(server->npc_idx_to_id(m_iLayerIdx));
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			m_iCurAnimIdx = server->Get_Anim(server->npc_idx_to_id(m_iLayerIdx));
+		}
 	}
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)

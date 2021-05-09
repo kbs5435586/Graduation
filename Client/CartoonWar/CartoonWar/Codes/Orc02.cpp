@@ -27,7 +27,6 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 200.f, 0.f, 200.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
@@ -66,29 +65,19 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
-	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-
-	}
-
-	if (CManagement::GetInstance()->Key_Pressing(KEY_LBUTTON))
-	{
-		m_iCurAnimIdx = rand() % 8;
-	}
-	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-	{
-		{
-			//_vec3 vLook = {};
-//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-//vLook = Vector3_::Normalize(vLook);
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
 
 	if (server->Get_ShowOtherPlayer(ENUM_PLAYER1))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-		m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER1);
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER1);
+		}
 	}
 
 	Set_Animation();

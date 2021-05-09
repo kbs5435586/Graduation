@@ -1239,6 +1239,9 @@ void Server::worker_thread()
                 //g_clients[user_id].m_transform.Ready_Transform();
                 _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),0.f,(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+
+                g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
+
                 g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
