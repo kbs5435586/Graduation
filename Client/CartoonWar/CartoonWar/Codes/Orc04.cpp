@@ -41,11 +41,11 @@ HRESULT COrc04::Ready_GameObject(void* pArg)
 	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
 
 	m_iCurAnimIdx = 7;
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
+	//for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	//{
+	//	CTexture* pTexture = CTexture::Create(iter);
+	//	m_vecTexture.push_back(pTexture);
+	//}
 
 	return S_OK;
 }
@@ -118,11 +118,11 @@ void COrc04::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		CTexture* pTexture = m_vecTexture[i];
+		/*CTexture* pTexture = m_vecTexture[i];
 		if (pTexture)
 		{
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-		}
+		}*/
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 		CDevice::GetInstance()->UpdateTable();
@@ -286,7 +286,7 @@ HRESULT COrc04::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc03");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc04");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;

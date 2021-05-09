@@ -185,7 +185,11 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 		return E_FAIL;
 
 	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
@@ -426,8 +430,9 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, 1)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
 	//for (int i = 0; i < 2; ++i)
 	//{
 	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
@@ -441,7 +446,17 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 
 HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	for (int i = 0; i < 17; ++i)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+			return E_FAIL;
+	}
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Orc04(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
