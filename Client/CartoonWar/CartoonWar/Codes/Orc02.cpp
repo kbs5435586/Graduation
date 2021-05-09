@@ -26,7 +26,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
@@ -43,7 +43,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 
 	m_tInfo = { 10.f,10.f,10.f,10.f };
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
-	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + _vec3(0.f,20.f,0.f);
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
 
 	return S_OK;
@@ -128,8 +128,12 @@ void COrc02::Render_GameObject()
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 		MAINPASS tMainPass = {};
+		
 		_matrix matWorld = m_pTransformCom->Get_Matrix();
 		_matrix I_matWorld = m_pTransformCom->Get_Matrix();
+		I_matWorld._32 *= 500;
+
+		//I_matWorld.
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
@@ -164,7 +168,7 @@ void COrc02::Render_GameObject()
 		tRepT.m_arrInt[0] = 1;
 		tRepT.m_arrInt[1] = m_pAnimCom->GetBones()->size();
 
-		m_pShaderComT->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPass);
+		m_pShaderComT->SetUp_OnShaderT(I_matWorld, I_matView, I_matProj, tMainPass);
 
 		_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(

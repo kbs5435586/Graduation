@@ -476,7 +476,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex",
 		CTexture::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tex_a%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Inventory",
+		CTexture::Create(L"../Bin/Resource/Texture/Bricks/inventory.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+		return E_FAIL;
 
 
 	return S_OK;

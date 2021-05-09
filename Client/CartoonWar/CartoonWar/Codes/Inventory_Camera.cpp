@@ -26,7 +26,11 @@ HRESULT CInventory_Camera::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
+	
+	_vec3 startPos(0.f, 500.f, 0.f);
 
+
+	//m_pTransform->SetUp_RotationX(1000);
 	m_pTransform->SetUp_Speed(30.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
@@ -40,9 +44,10 @@ HRESULT CInventory_Camera::Ready_GameObject(void* pArg)
 
 _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 {
+	
 	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
-	if (nullptr == m_pInput_Device)
-		return -1;
+	//if (nullptr == m_pInput_Device)
+	//	return -1;
 	//
 	//if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 	//{
@@ -61,31 +66,32 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//{
 	//	m_pTransform->Go_Right(fTimeDelta);
 	//}
-	_long	MouseMove = 0;
-	if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-	{
-		m_pTransform->Go_Left(fTimeDelta * 0.5f);
-		m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		//if (MouseMove > 0)
-		//{
-		//	m_pTransform->Go_Right(MouseMove * fTimeDelta * 0.5f);
-		//}
-		//else
-		//{
-		//	m_pTransform->Go_Right(-MouseMove * fTimeDelta * 0.5f);
-		//}
-		//
-		//m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-	}
-
-	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-	{
-		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-	}
-
-	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
-
+	//_long	MouseMove = 0;
+	//if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+	//{
+	//	m_pTransform->Go_Left(fTimeDelta * 0.5f);
+	//	m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+	//	//if (MouseMove > 0)
+	//	//{
+	//	//	m_pTransform->Go_Right(MouseMove * fTimeDelta * 0.5f);
+	//	//}
+	//	//else
+	//	//{
+	//	//	m_pTransform->Go_Right(-MouseMove * fTimeDelta * 0.5f);
+	//	//}
+	//	//
+	//	//m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+	//}
+	//
+	//if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+	//{
+	//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+	//}
+	
+	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info(); 
+	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(0.f, 15.f, 0.f);
 	_vec3		vLook;
+	_vec3		temp = *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));
 	vLook = Vector3_::Normalize(vLook);
 

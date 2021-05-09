@@ -36,6 +36,9 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 		break;
 	case DATA_TYPE::DATA_MATRIX:
 		break;
+	case DATA_TYPE::DATA_VECTOR:
+		m_vec3 = *reinterpret_cast<_vec3*>(*iter_find);
+		break;
 	}
 
 }

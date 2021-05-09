@@ -40,12 +40,13 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 	Pos = { (LONG)m_fX ,(LONG)m_fY };
 	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_UI_INFO, &Pos);
 
-	int X[3]{ 0,1,2 }, Y[3]{ 0,1,2 };
+	int X[4]{ -141,-48,47 ,141}, Y[4]{ -2,53,109 ,166};
 
 	Pos = POINT{ X[0],Y[0] };
-	IPos[0] = { (LONG)m_fX - 50,(LONG)m_fY };
-	IPos[1] = { (LONG)m_fX+ 5,(LONG)m_fY };
-	IPos[2] = { (LONG)m_fX + 60,(LONG)m_fY};
+	IPos[0] = { -141 ,-2 };
+	IPos[1] = { -48 ,53 };
+	IPos[2] = { 47 ,109 };
+	IPos[3] = { 141 ,166 };
 
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
 	//	return E_FAIL;
@@ -81,9 +82,7 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 				m_fY = (_float)MousePos.y;
 				Pos = { (LONG)m_fX ,(LONG)m_fY };
 				
-				IPos[0] = { (LONG)m_fX - 50,(LONG)m_fY};
-				IPos[1] = { (LONG)m_fX +5,(LONG)m_fY};
-				IPos[2] = { (LONG)m_fX + 60,(LONG)m_fY};
+				
 			//	pManagement->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
 			}
 		}
@@ -122,44 +121,46 @@ void CUI_Inventory::Render_GameObject()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
-		matWorld._11 = 50;
+		matWorld._11 = 84;
 		matWorld._22 = 50;
+	
+		//matWorld._41 = IPos[i].x - (WINCX >> 1);
+		//matWorld._42 = -(IPos[i].y) + (WINCY >> 1);
+		matWorld._41 = m_fX + IPos[i].x - (WINCX >> 1);
+		for (int j = 0; j < 4; ++j)
+		{
+			matWorld._42 = -(m_fY + IPos[j].y) + (WINCY >> 1);
 
-		matWorld._41 = IPos[i].x - (WINCX >> 1);
-		matWorld._42 = -(IPos[i].y + 30) + (WINCY >> 1);
+			m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+			_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
+			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+			CDevice::GetInstance()->SetTextureToShader(m_pITextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+			CDevice::GetInstance()->UpdateTable();
 
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-		CDevice::GetInstance()->SetTextureToShader(m_pITextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->UpdateTable();
-
-		m_pBufferCom->Render_VIBuffer();
+			m_pBufferCom->Render_VIBuffer();
+		}
 	}
 
 	matWorld._11 = 150;
-	matWorld._22 = 150;
+	matWorld._22 = 125;
 
-	matWorld._41 = (m_fX - 80) - (WINCX >> 1);
-	matWorld._42 = -(m_fY - 80) + (WINCY >> 1);
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -(m_fY - 100) + (WINCY >> 1);
 
 	m_pShaderComT->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(1)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pSpecTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(2)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
 
 
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t3);
-	CDevice::GetInstance()->SetTextureToShader(pShadeTex.Get(), TEXTURE_REGISTER::t4);
-	CDevice::GetInstance()->SetTextureToShader(pSpecTex.Get(), TEXTURE_REGISTER::t5);
+
+	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
+
 	CDevice::GetInstance()->UpdateTable();
 
 	m_pBufferCom->Render_VIBuffer();
@@ -168,17 +169,17 @@ void CUI_Inventory::Render_GameObject()
 
 	matWorld._11 = m_fSizeX;
 	matWorld._22 = m_fSizeY;
-
+	
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
-
+	
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-
+	
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
-
+	
 	m_pBufferCom->Render_VIBuffer();
 
 	Safe_Release(pManagement);
@@ -265,7 +266,7 @@ HRESULT CUI_Inventory::Ready_Component()
 		return E_FAIL;
 
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Inventory");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

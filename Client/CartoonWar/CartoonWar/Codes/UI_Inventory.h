@@ -50,7 +50,7 @@ private:
 private:
 	POINT MousePos;
 	POINT Pos;
-	POINT IPos[3];
+	POINT IPos[4];
 	vector<ITEM> vList;
 };
 

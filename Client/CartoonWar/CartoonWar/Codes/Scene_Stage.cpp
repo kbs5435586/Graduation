@@ -403,7 +403,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 
 	CAMERADESC		tICameraDesc;
 	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-	tICameraDesc.vEye = _vec3(0.f, 0.f, -5.f);
+	tICameraDesc.vEye = _vec3(-10.f, 13.f, 0.f);
 	tICameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 

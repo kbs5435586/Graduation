@@ -16,6 +16,7 @@ struct VS_OUT
 struct PS_OUT
 {
 	float4 vDiffuseTex		: SV_TARGET0;
+	float4 vInventoryTex	: SV_TARGET5;
 	float4 vShadeTex		: SV_TARGET3;
 };
 
@@ -39,6 +40,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	vOut.vDiffuseTex = g_textureCube.Sample(Sampler0, vIn.vTexUV);
+	vOut.vInventoryTex = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 	vOut.vShadeTex	 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 
 	return vOut;

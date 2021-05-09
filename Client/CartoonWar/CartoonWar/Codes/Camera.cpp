@@ -109,7 +109,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices()
 	m_matProj._34 = 1.f;
 	m_matProj._44 = 0.0f;
 
-	Invalidate_ViewProjMatrix(0);
+	Invalidate_ViewProjMatrix(1);
 	return S_OK;
 }
 

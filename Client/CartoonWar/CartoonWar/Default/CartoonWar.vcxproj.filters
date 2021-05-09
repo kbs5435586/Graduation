@@ -1319,7 +1319,12 @@
     <None Include="..\ShaderFiles\Shader_UI.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_UUU.hlsl" />
+    <None Include="..\ShaderFiles\Shader_UUU.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UUI.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
@@ -1327,9 +1332,6 @@
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
       <Filter>96. ShaderFiles\00. Struct</Filter>
-    </FxCompile>
-    <FxCompile Include="..\ShaderFiles\Shader_UUI.hlsl">
-      <Filter>99. Default</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
