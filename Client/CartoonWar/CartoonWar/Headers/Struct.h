@@ -521,6 +521,7 @@ struct Player_Info
 	float	y;
 	float	z;
 	short	hp;
+	short	anim;
 	char	name[MAX_ID_LEN + 1];
 	bool	showCharacter;
 	bool	isFirst;

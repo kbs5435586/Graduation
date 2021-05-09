@@ -213,12 +213,12 @@ void Server::do_move(int user_id, char direction)
             g_clients[user_id].m_transform.Go_Right(MOVE_SPEED);
         break;
     case GO_FORWARD:
-        if (pos->z < WORLD_VERTICAL)
-            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED);
-        break;
-    case GO_BACK:
         if (pos->z >= 0)
             g_clients[user_id].m_transform.BackWard(MOVE_SPEED);
+        break;
+    case GO_BACK:
+        if (pos->z < WORLD_VERTICAL)
+            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED);
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";

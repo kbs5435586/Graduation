@@ -45,6 +45,7 @@ public:
     bool Get_ShowNPC(int npc_index);
     short Get_PlayerID();
     short Get_ShowOtherPlayer(int id);
+    short Get_Anim(int id);
 
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();

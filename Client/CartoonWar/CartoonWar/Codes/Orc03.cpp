@@ -70,22 +70,7 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-	}
-		m_iCurAnimIdx = 29;
-		m_pTransformCom->BackWard(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 27;
+		m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER1);
 	}
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)

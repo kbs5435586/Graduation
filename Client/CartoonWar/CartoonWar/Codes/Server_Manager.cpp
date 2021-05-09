@@ -103,6 +103,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
 		m_objects[recv_id].showCharacter = true;
+		m_objects[recv_id].anim = 14;
 		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
@@ -187,6 +188,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
 		m_objects[recv_id].showCharacter = true;
+		m_objects[recv_id].anim = 14;
 		pTransform->Set_Matrix(Pos);
 		Safe_Release(managment);
 	}
@@ -222,6 +224,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
+		m_objects[recv_id].anim = 29;
 		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		vPos.x = my_packet->x;
 		vPos.y = my_packet->y;
@@ -262,6 +265,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
+		m_objects[recv_id].anim = 29;
 		_vec3 rPos = *pTransform->Get_StateInfo(CTransform::STATE_RIGHT);
 		_vec3 uPos = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 		_vec3 lPos = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
@@ -556,6 +560,11 @@ short CServer_Manager::Get_PlayerID()
 short CServer_Manager::Get_ShowOtherPlayer(int id)
 {
 	return m_objects[id].showCharacter;
+}
+
+short CServer_Manager::Get_Anim(int id)
+{
+	return m_objects[id].anim;
 }
 
 WPARAM CServer_Manager::Get_wParam()

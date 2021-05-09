@@ -120,8 +120,8 @@ constexpr unsigned char GO_UP = 0;
 constexpr unsigned char GO_DOWN = 1;
 constexpr unsigned char GO_LEFT = 2;
 constexpr unsigned char GO_RIGHT = 3;
-constexpr unsigned char GO_FORWARD = 4;
-constexpr unsigned char GO_BACK = 5;
+constexpr unsigned char GO_BACK = 4;
+constexpr unsigned char GO_FORWARD = 5;
 constexpr unsigned char TURN_LEFT = 6;
 constexpr unsigned char TURN_RIGHT = 7;
 
