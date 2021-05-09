@@ -1,65 +1,72 @@
 #include "framework.h"
 #include "Management.h"
-#include "LowPoly.h"
+#include "Flag.h"
 
-CLowPoly::CLowPoly()
+CFlag::CFlag()
 	: CGameObject()
 {
 }
 
-CLowPoly::CLowPoly(const CLowPoly& rhs)
+CFlag::CFlag(const CFlag& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CLowPoly::Ready_Prototype()
+HRESULT CFlag::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CLowPoly::Ready_GameObject(void* pArg)
+HRESULT CFlag::Ready_GameObject(void* pArg)
 {
-	if (nullptr == pArg)
-	{
-		return E_FAIL;
-
-	}
-
-
-	_tchar pTempStr[128] = {};
-
-
-	lstrcpy(pTempStr, (const _tchar*)pArg);
-
-
-	if (FAILED(Ready_Component(pTempStr)))
+	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
+	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(-90.f));
+	_vec3 vPos = { 250.f,0.f,250.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+
+	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+
+	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
+	{
+		CTexture* pTexture = CTexture::Create(iter);
+		m_vecTexture.push_back(pTexture);
+	}
 
 
 	return S_OK;
 }
 
-_int CLowPoly::Update_GameObject(const _float& fTimeDelta)
+_int CFlag::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+
+	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	//if (nullptr == pTerrainBuffer)
+	//	return -1;
+
+	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+	//m_pTransformCom->Set_PositionY(fY + 0.5f);
+
+
 	return _int();
 }
 
-_int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CFlag::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
-	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-
-	}
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+		return -1;
 
 	return _int();
 }
 
-void CLowPoly::Render_GameObject()
+void CFlag::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -79,7 +86,11 @@ void CLowPoly::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+		CTexture* pTexture = m_vecTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
@@ -88,7 +99,7 @@ void CLowPoly::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
+HRESULT CFlag::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -104,7 +115,7 @@ HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, pComTag);
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -115,20 +126,13 @@ HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
-	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
-	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
-		return E_FAIL;
+
 
 	Safe_Release(pManagement);
 	return S_OK;
 }
 
-HRESULT CLowPoly::CreateInputLayout()
+HRESULT CFlag::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -149,37 +153,41 @@ HRESULT CLowPoly::CreateInputLayout()
 	return S_OK;
 }
 
-CLowPoly* CLowPoly::Create()
+CFlag* CFlag::Create()
 {
-	CLowPoly* pInstance = new CLowPoly();
+	CFlag* pInstance = new CFlag();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CLowPoly Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CFlag Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CLowPoly::Clone_GameObject(void* pArg , _uint iIdx)
+CGameObject* CFlag::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CLowPoly* pInstance = new CLowPoly(*this);
-	if (FAILED(pInstance->Ready_GameObject(pArg)))
+	CFlag* pInstance = new CFlag(*this);
+	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"CLowPoly Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CFlag Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
-void CLowPoly::Free()
+void CFlag::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pFrustumCom);
-
+	if (m_IsClone)
+	{
+		for (auto& iter : m_vecTexture)
+		{
+			Safe_Release(iter);
+		}
+	}
 	CGameObject::Free();
 }

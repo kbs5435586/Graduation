@@ -34,6 +34,7 @@ private:
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiiderCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;

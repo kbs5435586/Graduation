@@ -258,7 +258,7 @@ void COrc04::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
-
+	Safe_Release(m_pFrustumCom);
 	//Safe_Release(m_pNaviCom);
 	if (m_IsClone)
 	{
@@ -304,6 +304,10 @@ HRESULT COrc04::Ready_Component()
 	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
 	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+		return E_FAIL;
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");

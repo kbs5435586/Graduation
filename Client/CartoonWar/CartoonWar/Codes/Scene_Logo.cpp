@@ -253,8 +253,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum", CFrustum::Create())))
-		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB",
 		CCollider::Create(COLLIDER_TYPE::COLLIDER_AABB))))
 		return E_FAIL;
@@ -505,6 +504,14 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_rpgpp_lt_bush_02",
 		CMesh::Create_Load(L"../Data/MeshData/rpgpp_lt_bush_02.dat"))))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
+		CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
+		CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
+		return E_FAIL;
+
 
 
 	return S_OK;

@@ -159,8 +159,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	vOut.vTarget0 = hatchColor;
 	//vOut.vTarget1 = hatchColor;
-	//vOut.vTarget2 = hatchColor;
-	//vOut.vTarget3 = hatchColor;
+	vOut.vTarget2 = hatchColor;
+	vOut.vTarget3 = hatchColor;
 	vOut.vTarget4 = hatchColor;
 
 	return vOut;

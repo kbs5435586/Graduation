@@ -54,8 +54,12 @@ _int CBuilding::Update_GameObject(const _float& fTimeDelta)
 
 _int CBuilding::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 100.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+
+	}
 
 	return _int();
 }
@@ -120,6 +124,10 @@ HRESULT CBuilding::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -176,6 +184,7 @@ void CBuilding::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pFrustumCom);
 
 	for (auto& iter : m_vecTexture)
 	{
