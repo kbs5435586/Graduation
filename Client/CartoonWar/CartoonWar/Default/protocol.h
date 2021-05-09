@@ -32,6 +32,7 @@ constexpr char CS_PACKET_ROTATE = 3;
 constexpr char CS_PACKET_ADD_NPC = 4;
 constexpr char CS_PACKET_NPC_ACT = 5;
 constexpr char CS_PACKET_CHANGE_FORMATION = 6;
+constexpr char CS_PACKET_ATTACK = 7;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -137,6 +138,12 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
+};
+
+struct cs_packet_attack
+{
+	char	size;
+	char	type;
 };
 
 struct cs_packet_rotate

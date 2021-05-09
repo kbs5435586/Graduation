@@ -53,11 +53,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
-
-
 			m_pTransform->Go_Straight(fTimeDelta);
-
-
 		}
 		if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
 		{

@@ -9,8 +9,13 @@ COrc03::COrc03()
 
 COrc03::COrc03(const COrc03& rhs)
 	: CGameObject(rhs)
+	
 {
-
+	if (m_iCurAnimIdx == 1)
+	{
+	_int i = 0;
+		
+	}
 }
 
 HRESULT COrc03::Ready_Prototype()
@@ -66,6 +71,12 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
+
+	if (m_iLayerIdx == 1)
+	{
+		m_iLayerIdx;
+	}
+
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -78,6 +89,7 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
+
 	Safe_Release(server);
 	return _int();
 }

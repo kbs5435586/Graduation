@@ -161,7 +161,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 			if (!m_objects[recv_id].isFirst)
 			{
-				if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", nullptr, nullptr, npc_id_to_idx(recv_id))))
+				int iTemp = npc_id_to_idx(recv_id);
+				if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", nullptr, nullptr, iTemp)))
 					return;
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
@@ -388,6 +389,14 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	send_packet(&m_packet);
 }
 
+void CServer_Manager::send_attack_packet()
+{
+	cs_packet_attack m_packet;
+	m_packet.type = CS_PACKET_ATTACK;
+	m_packet.size = sizeof(m_packet);
+	send_packet(&m_packet);
+}
+
 void CServer_Manager::send_rotate_packet(unsigned char dir)
 {
 	cs_packet_rotate m_packet;
@@ -508,19 +517,15 @@ void CServer_Manager::update_key_input()
 	{
 		m_objects[0].anim = 14;
 	}
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	{
+		send_attack_packet();
+	}
 	if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
 		PostQuitMessage(0);
 	}
-	//else
-	//{
-	//	if (false == isSendOnePacket)
-	//	{
-	//		isSendOnePacket = true;
-	//		send_idle_packet();
-	//	}
-	//}
 }
 
 short CServer_Manager::player_index(unsigned short id)
@@ -530,12 +535,12 @@ short CServer_Manager::player_index(unsigned short id)
 
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {
-	return id + 30;
+	return id + 29;
 }
 
 short CServer_Manager::npc_id_to_idx(unsigned short id)
 {
-	return id - 30;;
+	return id - 29;
 }
 
 void CServer_Manager::send_npc_act_packet(unsigned char act)
@@ -620,4 +625,8 @@ void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_p
 void CServer_Manager::Set_wParam(WPARAM p)
 {
 	m_wparam = p;
+}
+
+void CServer_Manager::do_rotate(int user_id)
+{
 }

@@ -74,8 +74,8 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
-		return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -185,8 +185,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
 
 	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 		return E_FAIL;*/
@@ -428,13 +428,13 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	for (int i = 0; i < 2; ++i)
+	/*for (int i = 0; i < 2; ++i)
 	{
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }

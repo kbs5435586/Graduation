@@ -32,8 +32,9 @@ protected:
 	typedef map<const _tchar*, CComponent*>	MAPCOMPONENT;
 protected:
 	INFO									m_tInfo = {};
-protected:
+public:
 	_uint									m_iLayerIdx = 0;
+private:
 	_bool									m_IsClone = false;
 protected:
 	TEAM									m_eTeam = TEAM::TEAM_END;
