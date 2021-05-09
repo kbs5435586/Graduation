@@ -76,7 +76,7 @@ void CUI_Position::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 
 
-	m_pBufferCom->Render_VIBuffer();
+	//m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 
