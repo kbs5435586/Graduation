@@ -19,6 +19,13 @@ private:
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 
+	float MOVE_SPEED_NPC = 0.4f;
+	float MOVE_SPEED_PLAYER = 0.2f;
+	float ROTATE_SPEED = 0.1f;
+	int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
+	float FORMATION_SPACE = 50.f;
+	float SCALE_X = 0.05f, SCALE_Y = 0.05f, SCALE_Z = 0.05f;
+
 public:
 	void mainServer(); // 메인 서버
 	void error_display(const char* msg, int err_no);

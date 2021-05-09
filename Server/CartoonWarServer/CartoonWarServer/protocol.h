@@ -63,6 +63,7 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
+	short anim;
 };
 
 struct sc_packet_rotate

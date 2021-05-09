@@ -206,19 +206,19 @@ void Server::do_move(int user_id, char direction)
         break;
     case GO_LEFT:
         if (pos->x >= 0)
-            g_clients[user_id].m_transform.Go_Left(MOVE_SPEED);
+            g_clients[user_id].m_transform.Go_Left(MOVE_SPEED_PLAYER);
         break;
     case GO_RIGHT:
         if (pos->x < WORLD_HORIZONTAL)
-            g_clients[user_id].m_transform.Go_Right(MOVE_SPEED);
+            g_clients[user_id].m_transform.Go_Right(MOVE_SPEED_PLAYER);
         break;
     case GO_FORWARD:
         if (pos->z >= 0)
-            g_clients[user_id].m_transform.BackWard(MOVE_SPEED);
+            g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
         break;
     case GO_BACK:
         if (pos->z < WORLD_VERTICAL)
-            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED);
+            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
@@ -390,55 +390,55 @@ void Server::set_formation(int user_id)
         if (1 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos;
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
         }
         else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
         }
         else if (4 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
 
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
         }
@@ -449,68 +449,68 @@ void Server::set_formation(int user_id)
         if (1 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos;
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
         }
         else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
         }
         else if (4 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC* FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC* FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC* FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC* FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC* FORMATION_SPACE);
+            set_pos.Go_Straight(MOVE_SPEED_NPC* FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC* FORMATION_SPACE);
+            set_pos.Go_Straight(MOVE_SPEED_NPC* FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
         }
@@ -549,25 +549,25 @@ void Server::do_random_move(int npc_id)
         break;
     case MV_RIGHT: 
         if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[npc_id].m_transform.Go_Right(MOVE_SPEED);
+            g_clients[npc_id].m_transform.Go_Right(MOVE_SPEED_NPC);
         else if (pos->x > (WORLD_HORIZONTAL - 1))
             pos->x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
         if (pos->x > 0)
-            g_clients[npc_id].m_transform.Go_Left(MOVE_SPEED);
+            g_clients[npc_id].m_transform.Go_Left(MOVE_SPEED_NPC);
         else if (pos->x < 0)
             pos->x = 0;
         break;
     case MV_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[npc_id].m_transform.Go_Straight(MOVE_SPEED);
+            g_clients[npc_id].m_transform.Go_Straight(MOVE_SPEED_NPC);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (pos->z > 0)
-            g_clients[npc_id].m_transform.BackWard(MOVE_SPEED);
+            g_clients[npc_id].m_transform.BackWard(MOVE_SPEED_NPC);
         else if (pos->z < 0)
             pos->z = 0;
         break;
@@ -711,7 +711,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
             float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
             Dir = Dir / hyp; // 여기가 노멀값
-            Dir = Dir * MOVE_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * MOVE_SPEED_NPC; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
@@ -961,8 +961,8 @@ void Server::initialize_NPC(int player_id)
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
-            g_clients[player_id].m_transform.Scaling(0.1f, 0.1f, 0.1f);
-            g_clients[npc_id].m_speed = MOVE_SPEED;
+            g_clients[player_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
+            g_clients[npc_id].m_speed = MOVE_SPEED_NPC;
             g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
             set_formation(player_id);
             for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
@@ -1186,8 +1186,8 @@ void Server::worker_thread()
                 //g_clients[user_id].m_transform.Ready_Transform();
                 _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),0.f,(float)(rand() % WORLD_VERTICAL) };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-                g_clients[user_id].m_transform.Scaling(0.1f, 0.1f, 0.1f);
-                g_clients[user_id].m_speed = MOVE_SPEED;
+                g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
+                g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;

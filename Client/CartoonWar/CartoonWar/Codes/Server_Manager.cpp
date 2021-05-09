@@ -199,7 +199,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		if (nullptr == managment)
 			return;
 		managment->AddRef();
-
+		
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
@@ -224,12 +224,13 @@ void CServer_Manager::ProcessPacket(char* ptr)
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
-		m_objects[recv_id].anim = 29;
+		;
 		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		vPos.x = my_packet->x;
 		vPos.y = my_packet->y;
 		vPos.z = my_packet->z;
 		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_objects[recv_id].anim = 29;
 		Safe_Release(managment);
 	}
 	break;
@@ -334,7 +335,6 @@ void CServer_Manager::process_data(char* net_buf, size_t io_byte)
 void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 {
 	static int count = 0;
-	char TempLog[256];
 
 	switch (WSAGETSELECTEVENT(lParam))
 	{
@@ -429,72 +429,92 @@ void CServer_Manager::update_key_input()
 	if ((GetAsyncKeyState('1') & 0x8000))
 	{
 		send_npc_act_packet(DO_ATTACK);
+		isSendOnePacket = false;
 	}
-	if ((GetAsyncKeyState('2') & 0x8000))
+	else if ((GetAsyncKeyState('2') & 0x8000))
 	{
 		send_npc_act_packet(DO_DEFENCE);
+		isSendOnePacket = false;
 	}
-	if ((GetAsyncKeyState('3') & 0x8000))
+	else if ((GetAsyncKeyState('3') & 0x8000))
 	{
 		send_npc_act_packet(DO_HOLD);
+		isSendOnePacket = false;
 	}
-	if ((GetAsyncKeyState('4') & 0x8000))
+	else if ((GetAsyncKeyState('4') & 0x8000))
 	{
 		send_npc_act_packet(DO_FOLLOW);
+		isSendOnePacket = false;
 	}
-	if ((GetAsyncKeyState('5') & 0x8000))
+	else if ((GetAsyncKeyState('5') & 0x8000))
 	{
 		send_npc_act_packet(DO_RANDMOVE);
+		isSendOnePacket = false;
 	}
-	if ((GetAsyncKeyState('6') & 0x8000))
+	else if ((GetAsyncKeyState('6') & 0x8000))
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_ChangeFormation_Cooltime());
 		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			send_change_formation_packet();
+			isSendOnePacket = false;
 			Set_ChangeFormation_CoolTime(high_resolution_clock::now());
 		}
 	}
-
-	if (GetAsyncKeyState('M') & 0x8000)
+	else if (GetAsyncKeyState('M') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_AddNPC_Cooltime());
 		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			send_add_npc_packet();
+			isSendOnePacket = false;
 			Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
-	if (GetAsyncKeyState('T') & 0x8000)
+	else if (GetAsyncKeyState('T') & 0x8000)
 	{
 		send_move_packet(GO_FORWARD);
+		isSendOnePacket = false;
 	}
-	if (GetAsyncKeyState('F') & 0x8000)
+	else if (GetAsyncKeyState('F') & 0x8000)
 	{
 		send_move_packet(GO_LEFT);
+		isSendOnePacket = false;
 	}
-	if (GetAsyncKeyState('G') & 0x8000)
+	else if (GetAsyncKeyState('G') & 0x8000)
 	{
 		send_move_packet(GO_BACK);
+		isSendOnePacket = false;
 	}
-	if (GetAsyncKeyState('H') & 0x8000)
+	else if (GetAsyncKeyState('H') & 0x8000)
 	{
 		send_move_packet(GO_RIGHT);
+		isSendOnePacket = false;
 	}
-	if (GetAsyncKeyState('O') & 0x8000)
+	else if (GetAsyncKeyState('O') & 0x8000)
 	{
 		send_rotate_packet(TURN_LEFT);
+		isSendOnePacket = false;
 	}
-	if (GetAsyncKeyState('P') & 0x8000)
+	else if (GetAsyncKeyState('P') & 0x8000)
 	{
 		send_rotate_packet(TURN_RIGHT);
+		isSendOnePacket = false;
 	}
-	if (GetAsyncKeyState('Q') & 0x8000)
+	else if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
 		PostQuitMessage(0);
+	}
+	else
+	{
+		if (false == isSendOnePacket)
+		{
+			isSendOnePacket = true;
+			send_idle_packet();
+		}
 	}
 }
 

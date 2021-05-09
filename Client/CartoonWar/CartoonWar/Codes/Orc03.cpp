@@ -70,7 +70,7 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-		m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER1);
+		m_iCurAnimIdx = server->Get_Anim(server->npc_idx_to_id(m_iLayerIdx));
 	}
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
@@ -165,7 +165,7 @@ void COrc03::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(659, 719, 21.96f, 23.96f));			//dead02				9
 	m_vecAnimCtrl.push_back(AnimCtrl(720, 775, 24.f, 25.83f));				//dead03				10
 	m_vecAnimCtrl.push_back(AnimCtrl(776, 831, 25.86f, 27.7f));				//dead04				11
-	m_vecAnimCtrl.push_back(AnimCtrl(832, 872, 27.73f, 29.06f));			//gethit01				12
+	m_vecAnimCtrl.push_back(AnimCtrl(832, 872, 27.733333f, 29.06666f));		//gethit01				12
 	m_vecAnimCtrl.push_back(AnimCtrl(873, 913, 29.1f, 30.43f));				//gethit02				13
 	m_vecAnimCtrl.push_back(AnimCtrl(914, 974, 30.46f, 32.46f));			//Idle					14
 	m_vecAnimCtrl.push_back(AnimCtrl(975, 1155, 32.5f, 38.5f));				//Idle_Other00			15
@@ -173,7 +173,7 @@ void COrc03::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(1277, 1337, 42.566f, 44.56f));			//Idle_sit				17
 	m_vecAnimCtrl.push_back(AnimCtrl(1338, 1388, 44.6f, 46.26f));			//jump					18
 	m_vecAnimCtrl.push_back(AnimCtrl(1389, 1419, 46.3f, 47.3f));			//run					19
-	m_vecAnimCtrl.push_back(AnimCtrl(1420, 1450, 47.33f, 38.33f));			//run_back				20
+	m_vecAnimCtrl.push_back(AnimCtrl(1420, 1450, 47.333333f, 48.33333f));	//run_back				20
 	m_vecAnimCtrl.push_back(AnimCtrl(1451, 1481, 48.36f, 49.36f));			//run_left				21
 	m_vecAnimCtrl.push_back(AnimCtrl(1482, 1512, 49.4f, 50.4f));			//run_right				22
 	m_vecAnimCtrl.push_back(AnimCtrl(1513, 1603, 50.43f, 53.43f));			//shout					23
@@ -195,7 +195,7 @@ void COrc03::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(2238, 2298, 74.6f, 76.6f));			//WithoutDead_02		38
 	m_vecAnimCtrl.push_back(AnimCtrl(2299, 2349, 76.63f, 78.3f));			//WithoutDeadLeft		39
 	m_vecAnimCtrl.push_back(AnimCtrl(2350, 2400, 78.33f, 80.f));			//WithoutDeadRight		40
-	m_vecAnimCtrl.push_back(AnimCtrl(2401, 2436, 80.03f, 81.2f));			//WithoutGetHit_01		41
+	m_vecAnimCtrl.push_back(AnimCtrl(2401, 2436, 80.03333f, 81.22f));		//WithoutGetHit_01		41
 	m_vecAnimCtrl.push_back(AnimCtrl(2437, 2470, 81.23f, 82.33f));			//WithoutGetHit_21		42
 	m_vecAnimCtrl.push_back(AnimCtrl(2471, 2531, 82.36f, 84.36f));			//WithoutIdle_01		43
 	m_vecAnimCtrl.push_back(AnimCtrl(2532, 2712, 84.4f, 90.4f));			//WithoutIdle_02		44

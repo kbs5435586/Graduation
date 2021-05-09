@@ -13,6 +13,7 @@ private:
     CManagement* managment;
     unordered_map <int, Player_Info> m_objects;
     short my_id;
+    bool isSendOnePacket;
 
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
@@ -35,6 +36,7 @@ public:
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
     void send_change_formation_packet();
+    void send_idle_packet();
     void update_key_input();
 
     short player_index(unsigned short id);
