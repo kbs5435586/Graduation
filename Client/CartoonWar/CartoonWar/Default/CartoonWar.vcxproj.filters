@@ -394,6 +394,15 @@
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. henchman">
+      <UniqueIdentifier>{6c9c384c-e60b-4ddd-ae26-11db1a8cf332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. henchman\00. Skeleton">
+      <UniqueIdentifier>{6462d6a7-ff24-47f0-b259-766930753275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer">
+      <UniqueIdentifier>{6d1a732a-6a4f-4348-935d-3ce9d69ed972}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -732,6 +741,12 @@
     <ClInclude Include="..\Headers\Orc04.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\03. Orc04</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Skeleton.h">
+      <Filter>02. GameObject\01. Scene_Stage\04. henchman\00. Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Sufferer.h">
+      <Filter>02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1040,6 +1055,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Orc04.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\03. Orc04</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Skeleton.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\04. henchman\00. Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sufferer.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -228,10 +228,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
+    <ClInclude Include="..\Headers\Skeleton.h" />
     <ClInclude Include="..\Headers\SkyBox.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\ObserverManager.h" />
     <ClInclude Include="..\Headers\StructedBuffer.h" />
+    <ClInclude Include="..\Headers\Sufferer.h" />
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
@@ -340,9 +342,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Codes\Shader.cpp" />
+    <ClCompile Include="..\Codes\Skeleton.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\ObserverManager.cpp" />
     <ClCompile Include="..\Codes\StructedBuffer.cpp" />
+    <ClCompile Include="..\Codes\Sufferer.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
