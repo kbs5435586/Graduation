@@ -71,7 +71,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	m_fTimeAcc += fTimeDelta;
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
-
+	m_pFrustum->Transform_ToWorld();
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
@@ -183,6 +183,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		return E_FAIL;
 	m_pRenderer->AddRef();
 
+	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum", m_pFrustum= CFrustum::Create())))
+		return E_FAIL;
+	m_pFrustum->AddRef();
+
 	//if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex_RTT",CBuffer_RectTex::Create())))
 	//	return E_FAIL;
 	//if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_RTT",CShader::Create(L"../ShaderFiles/Shader_RTT.hlsl", "VS_Main", "PS_Main"))))
@@ -216,6 +220,7 @@ void CMainApp::Free()
 {
 	Safe_Release(m_pManagement);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pFrustum);
 
 	m_pManagement->Release_Engine();
 }

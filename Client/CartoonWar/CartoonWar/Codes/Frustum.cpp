@@ -35,8 +35,8 @@ HRESULT CFrustum::Transform_ToWorld()
 
 	for (_uint i = 0; i < 8; ++i)
 	{
-		m_vPoint[i] = Vector3_::TransformCoord(m_vOriginal_Point[i], xmMatView);
-		m_vPoint[i] = Vector3_::TransformCoord(m_vPoint[i], xmMatProj);
+		m_vPoint[i] = Vector3_::TransformCoord(m_vOriginal_Point[i], xmMatProj);
+		m_vPoint[i] = Vector3_::TransformCoord(m_vPoint[i], xmMatView);
 	}
 	return S_OK;
 }
@@ -57,14 +57,14 @@ _bool CFrustum::Culling_Frustum(CTransform* pTransform, const _float& fRadius)
 		vPoint[i] = Vector3_::TransformCoord(vPoint[i], temp);
 
 
-	m_Plane[0] = Plane(vPoint[1], vPoint[5], vPoint[6]);
-	m_Plane[1] = Plane(vPoint[4], vPoint[0], vPoint[3]);
+	m_Plane[0] = Plane(vPoint[0], vPoint[1], vPoint[2]);
+	m_Plane[1] = Plane(vPoint[5], vPoint[4], vPoint[7]);
 
 	m_Plane[2] = Plane(vPoint[4], vPoint[5], vPoint[1]);
-	m_Plane[3] = Plane(vPoint[3], vPoint[2], vPoint[6]);
+	m_Plane[3] = Plane(vPoint[6], vPoint[7], vPoint[2]);
 
-	m_Plane[4] = Plane(vPoint[7], vPoint[6], vPoint[5]);
-	m_Plane[5] = Plane(vPoint[0], vPoint[1], vPoint[2]);
+	m_Plane[4] = Plane(vPoint[4], vPoint[0], vPoint[7]);
+	m_Plane[5] = Plane(vPoint[5], vPoint[6], vPoint[1]);
 
 
 	return Isin_Frustum(m_Plane, &vPosition, fRadius);
@@ -75,13 +75,12 @@ _bool CFrustum::Isin_Frustum(Plane* pPlane, const _vec3* pPosition, const _float
 {
 	for (_uint i = 0; i < 6; ++i)
 	{
-		XMVECTOR xmVector = {};
-		
-		_float fTemp = XMVectorGetX(XMPlaneDotCoord(pPlane[i], XMVectorSet(pPosition->x, pPosition->y, pPosition->z, 1.f)));
-		if (0.f > fTemp)
-		{
+
+		_vec4 vNormal = pPlane[i];
+		_vec3 vTemp = _vec3(vNormal.x, vNormal.y, vNormal.z);
+		_vec4 vTemp_Pos = _vec4(pPosition->x, pPosition->y, pPosition->z,1.f);
+		if (vNormal.Dot(vTemp_Pos) + pPlane[i].w > fRadius)
 			return false;
-		}
 	}
 	return true;
 }

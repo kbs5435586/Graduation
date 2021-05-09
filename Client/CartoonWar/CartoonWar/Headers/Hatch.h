@@ -32,4 +32,5 @@ private:
 	CShader* m_pShaderCom = nullptr;
 	CMesh* m_pMeshCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
+	CFrustum* m_pFrustumCom = nullptr;
 };

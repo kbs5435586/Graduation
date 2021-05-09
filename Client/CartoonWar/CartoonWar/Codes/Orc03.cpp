@@ -62,8 +62,13 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+
+	}
+
 	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
 		{
@@ -285,7 +290,7 @@ void COrc03::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
-
+	Safe_Release(m_pFrustumCom);
 	//Safe_Release(m_pNaviCom);
 	if (m_IsClone)
 	{
@@ -331,6 +336,10 @@ HRESULT COrc03::Ready_Component()
 	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
 	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+		return E_FAIL;
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");

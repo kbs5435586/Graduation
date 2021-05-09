@@ -49,8 +49,12 @@ _int CHatch::Update_GameObject(const _float& fTimeDelta)
 
 _int CHatch::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+
+	}
 
 	return _int();
 }
@@ -120,6 +124,11 @@ HRESULT CHatch::Ready_Component(const _tchar* pComTag)
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
+
 
 
 
@@ -178,6 +187,7 @@ void CHatch::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pFrustumCom);
 
 
 	CGameObject::Free();

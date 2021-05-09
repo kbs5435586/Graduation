@@ -22,5 +22,7 @@ protected:
 private:
 	POINT						m_ptMouse;
 	CNavigation*				m_pNaviCom = nullptr;
+private:
+	_bool						m_IsTrue = false;
 };
 

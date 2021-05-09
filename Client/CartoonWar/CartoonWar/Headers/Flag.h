@@ -5,13 +5,13 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CMesh;
-class CLowPoly :
+class CFlag :
 	public CGameObject
 {
 private:
-	CLowPoly();
-	CLowPoly(const CLowPoly& rhs);
-	virtual ~CLowPoly() = default;
+	CFlag();
+	CFlag(const CFlag& rhs);
+	virtual ~CFlag() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -19,11 +19,11 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 private:
-	HRESULT									Ready_Component(const _tchar* pComTag);
+	HRESULT									Ready_Component();
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CLowPoly* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx=0);
+	static CFlag* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
 private:
 	virtual void							Free();
 private:
@@ -31,6 +31,7 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CMesh* m_pMeshCom = nullptr;
-	CTexture* m_pTextureCom = nullptr;
-	CFrustum* m_pFrustumCom = nullptr;
+private:
+		vector<CTexture*>						m_vecTexture;
 };
+

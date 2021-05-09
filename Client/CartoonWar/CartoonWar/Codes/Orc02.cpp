@@ -27,9 +27,10 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 200.f, 0.f, 200.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
@@ -38,8 +39,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 
 	m_pAnimCom->LateInit();
 	m_iCurAnimIdx = 14;
-	_matrix matTemp = { };
-	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f,10.f,10.f));	
+
 	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	{
 		CTexture* pTexture = CTexture::Create(iter);
@@ -58,13 +58,6 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
 		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
 	}
-
-	if (m_iLayerIdx == 1)
-	{
-		_int io = 0;
-	}
-
-
 	return _int();
 }
 
@@ -73,9 +66,18 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (CManagement::GetInstance()->Key_Down(KEY_UP))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LBUTTON))
+	{
+		m_iCurAnimIdx = rand() % 8;
+	}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
 		{
 			//_vec3 vLook = {};
@@ -94,25 +96,34 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 //	m_pTransformCom->Go_There(vSlide);
 //}
 		}
-
-
-		m_iCurAnimIdx++;
-		//m_pTransformCom->BackWard(fTimeDelta);
+		m_iCurAnimIdx = 29;
+		//m_pTransformCom->Go_Straight(fTimeDelta);
+		m_pTransformCom->BackWard(fTimeDelta);
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	{
+		m_iCurAnimIdx = 30;
+		//m_pTransformCom->BackWard(fTimeDelta);
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
-	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 	{
-		m_pTransformCom->Rotation_Y(fTimeDelta);
+		m_iCurAnimIdx = 32;
+		//m_pTransformCom->Rotation_Y(fTimeDelta);
+		m_pTransformCom->Go_Left(fTimeDelta);
 	}
-//	else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-//	{
-//		m_IsOnce = true;
-//		m_iCurAnimIdx = 27;
-//	}
-//
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		m_iCurAnimIdx = 34;
+		//m_pTransformCom->Rotation_Y(-fTimeDelta);
+		m_pTransformCom->Go_Right(fTimeDelta);
+	}
+	else
+	{
+		m_iCurAnimIdx = 14;
+	}
+
+
 
 	Set_Animation();
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
@@ -214,7 +225,7 @@ void COrc02::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 	
-	m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
+
 	Safe_Release(pManagement);
 }
 
@@ -348,6 +359,7 @@ void COrc02::Free()
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pColiiderCom);
 	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pFrustumCom);
 	if (m_IsClone)
 	{
 		for (auto& iter : m_vecTexture)
@@ -397,6 +409,11 @@ HRESULT COrc02::Ready_Component()
 	m_pColiiderCom = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
 	NULL_CHECK_VAL(m_pColiiderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider", m_pColiiderCom)))
+		return E_FAIL;
+
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 

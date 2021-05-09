@@ -266,6 +266,30 @@ void CTransform::Rotation_Z(const _float& fTimeDelta)
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
 }
 
+void CTransform::RotationRev_Y(_matrix matWorld, const _float& fTimeDelta)
+{
+	_vec3		vDir[3];
+
+	for (size_t i = 0; i < 3; ++i)
+		vDir[i] = *Get_StateInfo(STATE(i));
+
+	_matrix		matRev;
+	matRev *= matWorld;
+
+	_matrix		matRot;
+	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(m_fSpeed_Rotation * -fTimeDelta)));
+
+	matRot = matRot * matRev;
+	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
+	for (size_t i = 0; i < 3; ++i)
+		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
+
+
+	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
+	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
+	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+}
+
 void CTransform::Scaling(const _vec3& vScale)
 {
 	_vec3		vDir[3];
