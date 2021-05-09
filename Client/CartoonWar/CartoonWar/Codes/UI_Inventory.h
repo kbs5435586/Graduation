@@ -52,6 +52,7 @@ private:
 	POINT Pos;
 	POINT IPos[4];
 	vector<ITEM> vList;
+	bool canSee;
 };
 
 

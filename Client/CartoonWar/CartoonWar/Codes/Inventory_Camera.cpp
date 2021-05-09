@@ -17,6 +17,8 @@ HRESULT CInventory_Camera::Ready_Prototype()
 	if (FAILED(CCamera::Ready_Prototype()))
 		return E_FAIL;
 
+
+	
 	return NOERROR;
 }
 
@@ -26,6 +28,7 @@ HRESULT CInventory_Camera::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
+	
 	
 	_vec3 startPos(0.f, 500.f, 0.f);
 
@@ -87,7 +90,12 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//{
 	//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta*30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 	//}
-	
+	if (m_pInput_Device->Get_DIKeyState(DIK_I) & 0x80)
+	{
+		canSee = !canSee;
+	}
+
+
 	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info(); 
 	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(0.f, 15.f, 0.f);
 	_vec3		vLook;

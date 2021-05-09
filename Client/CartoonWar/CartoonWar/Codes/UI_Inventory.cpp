@@ -14,6 +14,7 @@ CUI_Inventory::CUI_Inventory(const CUI_Inventory& rhs)
 
 HRESULT CUI_Inventory::Ready_Prototype()
 {
+	canSee = false;
 	return S_OK;
 }
 
@@ -24,6 +25,7 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return E_FAIL;
@@ -68,7 +70,7 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-
+	
 	if (pManagement->Key_Pressing(KEY_LBUTTON))
 	{
 		GetCursorPos(&MousePos);
@@ -87,7 +89,10 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 			}
 		}
 	}
-	
+	if (pManagement->Key_Down(KEY_SPACE))
+	{
+		canSee = !canSee;
+	}
 
 	Safe_Release(pManagement);
 	return _int();
@@ -108,81 +113,85 @@ _int CUI_Inventory::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CUI_Inventory::Render_GameObject()
 {
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
-
-	MAINPASS tMainPass = {};
-
-	_matrix matWorld = Matrix_::Identity();
-	_matrix matView = Matrix_::Identity();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-
-
-	for (int i = 0; i < 4; ++i)
+	if (canSee)
 	{
-		matWorld._11 = 84;
-		matWorld._22 = 50;
-	
-		//matWorld._41 = IPos[i].x - (WINCX >> 1);
-		//matWorld._42 = -(IPos[i].y) + (WINCY >> 1);
-		matWorld._41 = m_fX + IPos[i].x - (WINCX >> 1);
-		for (int j = 0; j < 4; ++j)
+		CManagement* pManagement = CManagement::GetInstance();
+		if (nullptr == pManagement)
+			return;
+		pManagement->AddRef();
+
+
+		MAINPASS tMainPass = {};
+
+		_matrix matWorld = Matrix_::Identity();
+		_matrix matView = Matrix_::Identity();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+
+
+		for (int i = 0; i < 4; ++i)
 		{
-			matWorld._42 = -(m_fY + IPos[j].y) + (WINCY >> 1);
+			matWorld._11 = 84;
+			matWorld._22 = 50;
 
-			m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-			_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+			//matWorld._41 = IPos[i].x - (WINCX >> 1);
+			//matWorld._42 = -(IPos[i].y) + (WINCY >> 1);
+			matWorld._41 = m_fX + IPos[i].x - (WINCX >> 1);
+			for (int j = 0; j < 4; ++j)
+			{
+				matWorld._42 = -(m_fY + IPos[j].y) + (WINCY >> 1);
 
-			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-			CDevice::GetInstance()->SetTextureToShader(m_pITextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-			CDevice::GetInstance()->UpdateTable();
+				m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+				_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
-			m_pBufferCom->Render_VIBuffer();
+				CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+				//if문으로 아이템 정보를 관리하는 벡터의 크기의 수만큼 텍스쳐를 출력하게 한다.
+				//CDevice::GetInstance()->SetTextureToShader(m_pITextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+				CDevice::GetInstance()->UpdateTable();
+
+				m_pBufferCom->Render_VIBuffer();
+			}
 		}
+
+		matWorld._11 = 150;
+		matWorld._22 = 125;
+
+		matWorld._41 = m_fX - (WINCX >> 1);
+		matWorld._42 = -(m_fY - 100) + (WINCY >> 1);
+
+		m_pShaderComT->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+		ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
+
+		CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
+
+		CDevice::GetInstance()->UpdateTable();
+
+		m_pBufferCom->Render_VIBuffer();
+
+		/////////////////////////////////////////////
+
+		matWorld._11 = m_fSizeX;
+		matWorld._22 = m_fSizeY;
+
+		matWorld._41 = m_fX - (WINCX >> 1);
+		matWorld._42 = -m_fY + (WINCY >> 1);
+
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+		CDevice::GetInstance()->UpdateTable();
+
+		m_pBufferCom->Render_VIBuffer();
+
+		Safe_Release(pManagement);
 	}
-
-	matWorld._11 = 150;
-	matWorld._22 = 125;
-
-	matWorld._41 = m_fX - (WINCX >> 1);
-	matWorld._42 = -(m_fY - 100) + (WINCY >> 1);
-
-	m_pShaderComT->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(5)->pRtt->GetSRV().Get();
-
-
-
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
-
-	CDevice::GetInstance()->UpdateTable();
-
-	m_pBufferCom->Render_VIBuffer();
-
-	/////////////////////////////////////////////
-
-	matWorld._11 = m_fSizeX;
-	matWorld._22 = m_fSizeY;
 	
-	matWorld._41 = m_fX - (WINCX >> 1);
-	matWorld._42 = -m_fY + (WINCY >> 1);
-	
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->UpdateTable();
-	
-	m_pBufferCom->Render_VIBuffer();
-
-	Safe_Release(pManagement);
 }
 
 HRESULT CUI_Inventory::CreateInputLayout()
