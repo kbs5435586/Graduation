@@ -157,8 +157,10 @@ cbuffer GLOBAL : register(b9)
 {
 	int		wincx;
 	int		wincy;
+	int		Team;
 	float   g_fDT;
 	float   g_fAccTime;
+	
 }
 
 #endif

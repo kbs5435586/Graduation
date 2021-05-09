@@ -31,8 +31,9 @@ HRESULT CTree::Ready_GameObject(void * pArg)
 		lstrcpy(m_pComponent_Tag, tTemp.lstrComponentTag);
 	}
 
-	m_pTransformCom->Scaling(2.f, 2.f, 2.f);
-
+	//m_pTransformCom->Scaling(2.f, 2.f, 2.f);
+	m_pTransformCom->Scaling(0.01f, 0.01f, 0.01f);
+	m_pTransformCom->Set_Add_PosY(0.5f);
 
 	return S_OK;
 }

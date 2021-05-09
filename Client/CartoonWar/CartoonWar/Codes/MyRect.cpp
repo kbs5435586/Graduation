@@ -35,7 +35,7 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 
 
 
-
+	m_eTeam = TEAM::TEAM_A;
 
 
 	return S_OK;
@@ -55,6 +55,20 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
+	
+	m_fTempTime += fTimeDelta * 100.f;
+	if (m_fTempTime<=1000.f)
+	{
+		m_tRep.m_arrInt[2] = 0;
+		m_tRep.m_arrFloat[0] += fTimeDelta;
+
+	}
+	else
+	{
+		m_tRep.m_arrInt[2] = 1;
+		m_tRep.m_arrFloat[0] -= fTimeDelta;
+
+	}
 
 	return _int();
 }
@@ -80,20 +94,24 @@ void CMyRect::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 
 
-	REP tRef = {};
-	tRef.m_arrInt[0] = 1;
+
+	m_tRep.m_arrInt[0] = 1;
+	m_tRep.m_arrInt[1] = (_uint)m_eTeam;
 
 	CDevice::GetInstance()->ClearDummyDesc_CS();
-	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRef);
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
 
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(
 		pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(),
 		iOffset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
 
-	
+
 	m_pShaderCom[1]->UpdateData_CS();
-	CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1024, 1);
+
+
+	CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1000, 1);
+
 
 	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
@@ -147,7 +165,6 @@ void CMyRect::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom[0]);
 	Safe_Release(m_pShaderCom[1]);
-	Safe_Release(m_pTextureCom);
 
 	CGameObject::Free();
 }
@@ -183,10 +200,6 @@ HRESULT CMyRect::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
 
 	Safe_Release(pManagement);
 

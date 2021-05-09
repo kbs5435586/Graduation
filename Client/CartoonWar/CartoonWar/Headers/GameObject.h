@@ -35,5 +35,7 @@ protected:
 protected:
 	_uint									m_iLayerIdx = 0;
 	_bool									m_IsClone = false;
+protected:
+	TEAM									m_eTeam = TEAM::TEAM_END;
 };
 
