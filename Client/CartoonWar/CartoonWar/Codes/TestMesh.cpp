@@ -160,7 +160,7 @@ CTestMesh* CTestMesh::Create()
 	return pInstance;
 }
 
-CGameObject* CTestMesh::Clone_GameObject(void* pArg, const _uint& iIdx )
+CGameObject* CTestMesh::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CTestMesh* pInstance = new CTestMesh(*this);
 	if (FAILED(pInstance->Ready_GameObject()))

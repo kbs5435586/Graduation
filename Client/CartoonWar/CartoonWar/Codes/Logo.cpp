@@ -105,7 +105,7 @@ CLogo* CLogo::Create()
 	return pInstance;
 }
 
-CGameObject* CLogo::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CLogo::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CLogo* pInstance = new CLogo(*this);
 

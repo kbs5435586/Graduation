@@ -102,7 +102,7 @@ CUI_Position* CUI_Position::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Position::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Position::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_Position* pInstance = new CUI_Position();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

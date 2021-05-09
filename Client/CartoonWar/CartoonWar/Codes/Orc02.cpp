@@ -59,6 +59,11 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
 	}
 
+	if (m_iLayerIdx == 1)
+	{
+		_int io = 0;
+	}
+
 
 	return _int();
 }
@@ -291,7 +296,7 @@ COrc02* COrc02::Create()
 	return pInstance;
 }
 
-CGameObject* COrc02::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* COrc02::Clone_GameObject(void* pArg , _uint iIdx)
 
 {
 	COrc02* pInstance = new COrc02(*this);

@@ -158,7 +158,7 @@ CBuilding* CBuilding::Create()
 	return pInstance;
 }
 
-CGameObject* CBuilding::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CBuilding::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CBuilding* pInstance = new CBuilding(*this);
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

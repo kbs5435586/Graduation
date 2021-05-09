@@ -25,7 +25,7 @@ protected:
 	HRESULT									Delete_Component(const _tchar* pComponentTag, CComponent* pComponent);
 	CComponent*								Find_Component(const _tchar* pComponentTag);
 public:
-	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0) PURE;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx= 0) PURE;
 	virtual void							Free();
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;
@@ -34,7 +34,7 @@ protected:
 	INFO									m_tInfo = {};
 public:
 	_uint									m_iLayerIdx = 0;
-private:
+protected:
 	_bool									m_IsClone = false;
 protected:
 	TEAM									m_eTeam = TEAM::TEAM_END;

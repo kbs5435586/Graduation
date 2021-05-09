@@ -129,7 +129,7 @@ CTestCube* CTestCube::Create()
 	return pInstance;
 }
 
-CGameObject* CTestCube::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTestCube::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CTestCube* pInstance = new CTestCube(*this);
 

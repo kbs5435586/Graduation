@@ -157,7 +157,7 @@ CParticle_Default* CParticle_Default::Create()
 	return pInstance;
 }
 
-CGameObject* CParticle_Default::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CParticle_Default::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CParticle_Default* pInstance = new CParticle_Default(*this);
 

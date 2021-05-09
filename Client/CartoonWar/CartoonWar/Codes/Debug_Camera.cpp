@@ -111,7 +111,7 @@ CDebug_Camera* CDebug_Camera::Create()
 	return pInstance;
 }
 
-CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CDebug_Camera::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CDebug_Camera* pInstance = new CDebug_Camera(*this);
 

@@ -105,7 +105,7 @@ CUI_Diffuse* CUI_Diffuse::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_Diffuse* pInstance = new CUI_Diffuse();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

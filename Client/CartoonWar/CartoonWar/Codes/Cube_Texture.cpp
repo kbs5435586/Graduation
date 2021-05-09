@@ -118,7 +118,7 @@ CCube_Texture* CCube_Texture::Create()
 	return pInstance;
 }
 
-CGameObject* CCube_Texture::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CCube_Texture::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CCube_Texture* pInstance = new CCube_Texture(*this);
 

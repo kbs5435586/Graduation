@@ -38,8 +38,7 @@ HRESULT CSufferer::Ready_GameObject(void* pArg)
 
 	m_pAnimCom->LateInit();
 	m_iCurAnimIdx = 14;
-	_matrix matTemp = { };
-	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f, 10.f, 10.f));
+
 	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
 	{
 		CTexture* pTexture = CTexture::Create(iter);
@@ -51,15 +50,6 @@ HRESULT CSufferer::Ready_GameObject(void* pArg)
 
 _int CSufferer::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColiiderCom->Update_Collider(m_pTransformCom);
-
-	if (m_pWeapon)
-	{
-		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
-		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
-	}
-
-
 	return _int();
 }
 
@@ -126,7 +116,6 @@ void CSufferer::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-	m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
 	Safe_Release(pManagement);
 }
 
@@ -237,7 +226,7 @@ CSufferer* CSufferer::Create()
 	return pInstance;
 }
 
-CGameObject* CSufferer::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CSufferer::Clone_GameObject(void* pArg, _uint iIdx)
 
 {
 	CSufferer* pInstance = new CSufferer(*this);
@@ -259,7 +248,7 @@ void CSufferer::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pColiiderCom);
-	//Safe_Release(m_pNaviCom);
+
 	if (m_IsClone)
 	{
 		for (auto& iter : m_vecTexture)
@@ -310,12 +299,6 @@ HRESULT CSufferer::Ready_Component()
 	NULL_CHECK_VAL(m_pColiiderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider", m_pColiiderCom)))
 		return E_FAIL;
-
-
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

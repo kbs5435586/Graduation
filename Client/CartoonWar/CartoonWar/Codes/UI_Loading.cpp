@@ -107,7 +107,7 @@ CUI_Loading* CUI_Loading::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Loading::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Loading::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_Loading* pInstance = new CUI_Loading();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

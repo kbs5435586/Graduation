@@ -211,7 +211,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(200.f, 20.f, 200.f, 1.f);
-	tLightInfo.fRange = 1000.f;
+	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
@@ -426,15 +426,15 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, 1)))
 		return E_FAIL;
-	/*for (int i = 0; i < 2; ++i)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-	}*/
+	//for (int i = 0; i < 2; ++i)
+	//{
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//		return E_FAIL;
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }
