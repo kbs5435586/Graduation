@@ -87,6 +87,27 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 
+	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	{
+		m_iCurAnimIdx = 29;
+		{
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
+
+
+			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+			_vec3 vSlide = {};
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->BackWard(fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+		}
+	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_E))
 	{
