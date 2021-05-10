@@ -12,7 +12,9 @@ CGameObject::CGameObject(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CGameObject::CGameObject(const CGameObject & rhs)
 	: m_pGraphic_Device(rhs.m_pGraphic_Device)
+
 {
+	lstrcpy(m_pComponent_Tag, rhs.m_pComponent_Tag);
 	m_pGraphic_Device->AddRef();
 }
 

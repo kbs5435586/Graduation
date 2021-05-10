@@ -78,7 +78,9 @@ public:
     CStructedBuffer*                GetBoneOffset(){return m_pBoneOffset;}
 private:
     RenderInfo                      m_tRenderInfo = {};
-    vector< RenderInfo>             m_vecRenderInfo;
+    vector<RenderInfo>              m_vecRenderInfo;
+private:
+    vector<RENDERSUP>               m_vecRenderSup;
 public:
     static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
     static CMesh*                   Create_Load(const _tchar* pFilePath);
@@ -114,14 +116,8 @@ public:
 private:
     virtual void                    Free();
     ///////////////////////////////////
-private:
-    void                            Compute_Matrix();
-
     vector<_matrix>                 m_vecOffset;
     vector<tFrameTrans>             m_vecFrameTrans;
- private:
-     _vec4                          VectorPermute(_uint iPermuteX, _uint iPermuteY, _uint iPermuteZ, _uint iPermuteW, _vec4 v1, _vec4 v2);
-     _matrix                          MatrixAffineTransformation(_vec4 vScale, _vec4 vRotOrigin, _vec4 vRotQuaternion, _vec4 vTranslate);
-     _matrix                        MatrixRotationQuaternion(_vec4 Quaternion);
+
 };
 

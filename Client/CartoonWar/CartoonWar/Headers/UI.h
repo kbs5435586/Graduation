@@ -8,7 +8,7 @@ protected:
     CUI(const CUI& rhs);
     virtual ~CUI() = default;
 protected:
-    virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+    virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx= 0) override;
 protected:
     virtual void		 Free();
 protected:

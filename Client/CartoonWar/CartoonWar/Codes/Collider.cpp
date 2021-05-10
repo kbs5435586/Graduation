@@ -201,7 +201,7 @@ void CCollider::Update_Collider(CTransform* pTransform)
 		matTemp.m[2][2] *= m_vSize.z;
 
 		matTemp = matTemp * matTemp_Rotate;
-		m_pTransformCom->Set_Matrix(matTemp);
+		m_pTransformCom->Set_Matrix(matTemp_Rotate);
 	}
 		break;
 	case COLLIDER_TYPE::COLLIDER_SPHERE:
@@ -275,7 +275,7 @@ void CCollider::Render_Collider(CStructedBuffer* pArg)
 
 	REP tRep = {};
 
-	tRep.m_arrInt[0] = 0;
+	tRep.m_arrInt[0] = 27;
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(),
 		iOffeset, CONST_REGISTER::b0);

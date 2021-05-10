@@ -23,7 +23,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CMyRect*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx=0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -32,10 +32,11 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom[2] = {nullptr};
-	CTexture*								m_pTextureCom = nullptr;
 
 private:
 	_bool									m_IsTemp = false;
+	REP										m_tRep = {};
+	_float									m_fTempTime = 0.f;
 
 };
 

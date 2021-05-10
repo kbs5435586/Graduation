@@ -24,11 +24,11 @@ HRESULT CUI_Main::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 400.f;
-	m_fY = 300.f;
+	m_fX = WINCX/2;
+	m_fY = WINCY/2;
 
-	m_fSizeX = 800.f;
-	m_fSizeY = 600.f;
+	m_fSizeX = WINCX;
+	m_fSizeY = WINCY;
 	return S_OK;
 }
 
@@ -111,7 +111,7 @@ CUI_Main* CUI_Main::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Main::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Main::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CUI_Main* pInstance = new CUI_Main();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

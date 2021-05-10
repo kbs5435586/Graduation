@@ -19,9 +19,14 @@ CAnimator::CAnimator(const CAnimator& rhs)
 
 HRESULT CAnimator::Ready_Animator()
 {
+
+	return S_OK;
+}
+
+void CAnimator::LateInit()
+{
 	m_pBoneFinalMat = CStructedBuffer::Create();
 	m_pBoneMat = CStructedBuffer::Create();
-	return S_OK;
 }
 
 void CAnimator::SetBones(const vector<tMTBone>* _vecBones)
@@ -47,16 +52,16 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, _float& fRatio, const _float& fTimeDelt
 	m_fCurTime = 0.f;
 
 	m_vecClip;
-	m_vecClipUpdateTime[m_iCurClip] += fTimeDelta;
+	tCtrl.fCurTime += fTimeDelta;
 
-	if (m_vecClipUpdateTime[m_iCurClip] >= tCtrl.fEndTime - tCtrl.fStartTime)
+	if (tCtrl.fCurTime >= tCtrl.fEndTime - tCtrl.fStartTime)
 	{                                 
-		m_vecClipUpdateTime[m_iCurClip] = 0.f;
+		tCtrl.fCurTime = 0.f;
 		isRetVal = true;
 	}
 
 	
-	m_fCurTime = tCtrl.fStartTime + m_vecClipUpdateTime[m_iCurClip];
+	m_fCurTime = tCtrl.fStartTime + tCtrl.fCurTime;
 	
 
 	double dFrameIdx = m_fCurTime * m_iFrameCount;

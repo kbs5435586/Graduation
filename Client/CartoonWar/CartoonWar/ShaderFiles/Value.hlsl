@@ -39,6 +39,7 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	row_major matrix	matWVP;
 	row_major matrix	matProjInv;
 	row_major matrix	matViewInv;
+	row_major matrix	matRev;
 
 	float4				vCamPos;
 
@@ -171,8 +172,10 @@ cbuffer GLOBAL : register(b9)
 {
 	int		wincx;
 	int		wincy;
+	int		Team;
 	float   g_fDT;
 	float   g_fAccTime;
+	
 }
 
 #endif

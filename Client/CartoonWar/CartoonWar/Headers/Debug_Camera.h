@@ -16,7 +16,7 @@ public:
 	virtual void				Render_GameObject();
 public:
 	static CDebug_Camera*		Create();
-	virtual CGameObject*		Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0);
+	virtual CGameObject*		Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
 protected:
 	virtual void				Free();
 private:

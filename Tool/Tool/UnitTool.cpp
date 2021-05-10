@@ -118,9 +118,9 @@ BOOL CUnitTool::OnInitDialog()
 	if (iter_find != m_mapGameObject.end())
 		return FALSE;
 
-	for (_int i = 0; i < 25; ++i)
+	for (_int i = 0; i < 40; ++i)
 	{
-	
+
 		if (i == 0)
 		{
 			strName = L"MountainRock01";
@@ -185,7 +185,7 @@ BOOL CUnitTool::OnInitDialog()
 		{
 			strName = L"rpgpp_lt_flower_03";
 		}
-		else if (i ==16)
+		else if (i == 16)
 		{
 			strName = L"rpgpp_lt_plant_01";
 		}
@@ -221,13 +221,74 @@ BOOL CUnitTool::OnInitDialog()
 		{
 			strName = L"rpgpp_lt_bush_02";
 		}
+		else if (i == 25)
+		{
+			strName = L"build_barracks_01_low";
+		}
+		else if (i == 26)
+		{
+			strName = L"build_barracks_single_01_low";
+		}
+		else if (i == 27)
+		{
+			strName = L"build_big_storage_01_low";
+		}
+		else if (i == 28)
+		{
+			strName = L"build_bighouse_01_low";
+		}
+		else if (i == 29)
+		{
+			strName = L"build_bighouse_02_low";
+		}
+		else if (i == 30)
+		{
+			strName = L"build_blacksmith_01_low";
+		}
+		else if (i == 31)
+		{
+			strName = L"build_boat_01_low";
+		}
+		else if (i == 32)
+		{
+			strName = L"build_gate_01";
+		}
+		else if (i == 33)
+		{
+			strName = L"build_small_house_01_low";
+		}
+		else if (i == 34)
+		{
+			strName = L"build_small_house_straw_roof_01_low";
+		}
+		else if (i == 35)
+		{
+			strName = L"build_small_house_tall_roof_01_low";
+		}
+		else if (i == 36)
+		{
+			strName = L"build_storage_01_low";
+		}
+		else if (i == 37)
+		{
+			strName = L"build_tower_01";
+		}
+		else if (i == 38)
+		{
+			strName = L"build_wall_corner_01_low";
+		}
+		else if (i == 39)
+		{
+			strName = L"build_wall_panel_01_low";
+		}
+
 
 
 		m_mapGameObject.insert({ strName, i });
 		m_ListBox_Static.AddString(strName);
 	}
 
-	
+
 	return TRUE;
 }
 
@@ -370,6 +431,81 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 		m_pComponentTag = L"Component_StaticMesh_rpgpp_lt_bush_02";
 		m_pLayerTag = L"Layer_rpgpp_lt_bush_02";
 	}
+	else if (iSelect == 25)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_barracks_01_low";
+		m_pLayerTag = L"Layer_build_barracks_01_low";
+	}
+	else if (iSelect == 26)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_barracks_single_01_low";
+		m_pLayerTag = L"Layer_build_barracks_single_01_low";
+	}
+	else if (iSelect == 27)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_big_storage_01_low";
+		m_pLayerTag = L"Layer_build_big_storage_01_low";
+	}
+	else if (iSelect == 28)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_bighouse_01_low";
+		m_pLayerTag = L"Layer_build_bighouse_01_low";
+	}
+	else if (iSelect == 29)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_bighouse_02_low";
+		m_pLayerTag = L"Layer_build_bighouse_02_low";
+	}
+	else if (iSelect == 30)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_blacksmith_01_low";
+		m_pLayerTag = L"Layer_build_blacksmith_01_low";
+	}
+	else if (iSelect == 31)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_boat_01_low";
+		m_pLayerTag = L"Layer_build_boat_01_low";
+	}
+	else if (iSelect == 32)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_gate_01";
+		m_pLayerTag = L"Layer_build_gate_01";
+	}
+	else if (iSelect == 33)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_small_house_01_low";
+		m_pLayerTag = L"Layer_build_small_house_01_low";
+	}
+	else if (iSelect == 34)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_small_house_straw_roof_01_low";
+		m_pLayerTag = L"Layer_build_small_house_straw_roof_01_low";
+	}
+	else if (iSelect == 35)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_small_house_tall_roof_01_low";
+		m_pLayerTag = L"Layer_build_small_house_tall_roof_01_low";
+	}
+	else if (iSelect == 36)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_storage_01_low";
+		m_pLayerTag = L"Layer_build_storage_01_low";
+	}
+	else if (iSelect == 37)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_tower_01";
+		m_pLayerTag = L"Layer_build_tower_01";
+	}
+	else if (iSelect == 38)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_wall_corner_01_low";
+		m_pLayerTag = L"Layer_build_wall_corner_01_low";
+	}
+	else if (iSelect == 39)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_wall_panel_01_low";
+		m_pLayerTag = L"Layer_build_wall_panel_01_low";
+	}
 
 
 	m_pGameObjectTag = L"GameObject_Temp";
@@ -434,15 +570,21 @@ void CUnitTool::OnBnClickedSave()
 				_float  fAdd_PosY = 0.f;
 				TCHAR* pNames = pMesh->Get_ObjectName();
 				TCHAR* pLayerTag = (TCHAR*)(LPCTSTR)(strLayer);
+				TCHAR* pComTag = (*iter)->Get_Component_Tag();
 
 				int iLength = lstrlen(pMesh->Get_ObjectName()) + 1;
 				int iLength_Layer = lstrlen(strLayer) + 1;
+				int iLength_ComTag = lstrlen(pComTag) + 1;
 
 				WriteFile(hFile, &iLength, sizeof(int), &dwByte, nullptr);
 				WriteFile(hFile, pNames, sizeof(TCHAR)*iLength, &dwByte, nullptr);
 
 				WriteFile(hFile, &iLength_Layer, sizeof(int), &dwByte, nullptr);
 				WriteFile(hFile, pLayerTag, sizeof(TCHAR)*iLength_Layer, &dwByte, nullptr);
+
+				WriteFile(hFile, &iLength_ComTag, sizeof(int), &dwByte, nullptr);
+				WriteFile(hFile, pComTag, sizeof(TCHAR)*iLength_ComTag, &dwByte, nullptr);
+
 
 				pTransform = (CTransform*)(*iter)->Get_ComponentPointer(L"Com_Transform");
 				mat = pTransform->Get_Matrix();
@@ -533,12 +675,13 @@ void CUnitTool::OnBnClickedLoad()
 		D3DXMatrixIdentity(&mat);
 		TCHAR szName[MAX_STR] = L"";
 		TCHAR szLayerTag[MAX_STR] = L"";
+		TCHAR szComTag[MAX_STR] = L"";
 
 		DWORD dwByte = 0;
 		DWORD dwByte_Size = 0;
 		int iLength = 0;
 		int iLength_Layer = 0;
-
+		int iLength_Com = 0;
 		while (TRUE)
 		{
 			int iSize = 0;
@@ -553,6 +696,9 @@ void CUnitTool::OnBnClickedLoad()
 
 				ReadFile(hFile, &iLength_Layer, sizeof(int), &dwByte, nullptr);
 				ReadFile(hFile, szLayerTag, sizeof(TCHAR)*iLength_Layer, &dwByte, nullptr);
+				
+				ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
+				ReadFile(hFile, szComTag, sizeof(TCHAR)*iLength_Com, &dwByte, nullptr);
 
 				_tchar* pName = new _tchar[iLength + 1];
 				ZeroMemory(pName, iLength + 1);
@@ -560,10 +706,14 @@ void CUnitTool::OnBnClickedLoad()
 				_tchar* pLayerTag = new _tchar[iLength_Layer + 1];
 				ZeroMemory(pLayerTag, iLength_Layer + 1);
 
+				_tchar* pComrTag = new _tchar[iLength_Com + 1];
+				ZeroMemory(pComrTag, iLength_Com + 1);
+
 				lstrcpy(pName, szName);
 				lstrcpy(pLayerTag, szLayerTag);
+				lstrcpy(pComrTag, szComTag);
 
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(pName, SCENE_LOGO, pLayerTag)))
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Temp", SCENE_LOGO, pLayerTag, pComrTag)))
 					return;
 
 				ReadFile(hFile, mat, sizeof(_matrix), &dwByte, nullptr);

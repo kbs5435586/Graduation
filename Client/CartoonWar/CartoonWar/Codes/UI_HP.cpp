@@ -108,7 +108,7 @@ CUI_HP* CUI_HP::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_HP::Clone_GameObject(void* pArg, const _uint& iIdx )
+CGameObject* CUI_HP::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_HP* pInstance = new CUI_HP();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

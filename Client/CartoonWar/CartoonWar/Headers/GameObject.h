@@ -25,15 +25,18 @@ protected:
 	HRESULT									Delete_Component(const _tchar* pComponentTag, CComponent* pComponent);
 	CComponent*								Find_Component(const _tchar* pComponentTag);
 public:
-	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, const _uint& iIdx = 0) = 0;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx= 0) PURE;
 	virtual void							Free();
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;
 	typedef map<const _tchar*, CComponent*>	MAPCOMPONENT;
 protected:
 	INFO									m_tInfo = {};
-protected:
+public:
 	_uint									m_iLayerIdx = 0;
+protected:
 	_bool									m_IsClone = false;
+protected:
+	TEAM									m_eTeam = TEAM::TEAM_END;
 };
 

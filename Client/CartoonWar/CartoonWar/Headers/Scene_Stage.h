@@ -27,10 +27,13 @@ private:
 	HRESULT					Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement);
 private:
 	HRESULT					Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pManagement);
+private:
+	HRESULT					Ready_Layer_Castle(const _tchar* pLayerTag, CManagement* pManagement);
 public:
 	static CScene_Stage*	Create();
 protected:

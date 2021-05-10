@@ -42,6 +42,7 @@ struct PS_OUT
 	float4 vtTex		: SV_TARGET5;
 
 
+	float4 vSpecularTex			: SV_TARGET4;
 };
 
 VS_OUT	VS_Main(VS_IN vIn)
@@ -72,7 +73,6 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vSpecular = float4(0.f, 0.f, 0.f, 0.f);
 	float4	vPointLight = float4(0.f, 0.f, 0.f, 0.f);
-	//AD_Light   tLight_Point = Calculate_Light_Upgrade(1, vNormal, vIn.vWorldPos);
 
 	for (int i = 0; i < iNumLight; ++i)
 	{
@@ -83,13 +83,17 @@ PS_OUT	PS_Main(VS_OUT vIn)
 		tCol.vShade += tCurCol.vShade;
 	}
 
-	float4	vLightDir = normalize(tLight[0].vLightDir);
+
+	float4	vLightWorldPos = tLight[0].vLightPos;
+	float4	vLightDir = normalize(vIn.vWorldPos - vLightWorldPos);
+
+	//float4	vLightDir = normalize(tLight[0].vLightDir);
 
 	float fDot = max(0, dot(vNormal, vLightDir));
 
 
 	float4 vView = normalize(vCamPos - vIn.vWorldPos);
-	fDot = (ceil(fDot * 3.f) / 3.f);
+	fDot = (ceil(fDot * 5.f) / 5.f);
 
 	float4	vMtrlDif = tLight[0].tColor.vDiffuse * fDot;
 	float4	vMtrlAmb = tLight[0].tColor.vAmbient ;
@@ -97,7 +101,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);
 
 	float	fRim = saturate(dot(vView, vNormal));
-	float	fRimPower = 5.f;
+	float	fRimPower = 8.f;
 
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
@@ -106,11 +110,11 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 
 
-	vOut.vDiffuseTex = vDiffuse*vShade;
+	vOut.vDiffuseTex = vDiffuse;
+	vOut.vNormalTex = vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
-	vOut.vPointLightTex = tCol.vDiffuse;
 	vOut.vShadeTex = vShade;
-	//vOut.vtTex = vDiffuse * vShade;
+	vOut.vSpecularTex = tCol.vShade;
 
 	return vOut;
 }

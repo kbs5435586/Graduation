@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+class CWeapon;
 class COrc02 :
     public CGameObject
 {
@@ -18,7 +19,7 @@ private:
 	void									SetUp_Anim();
 public:
 	static COrc02*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint & iIdx = 0) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, _uint  iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -42,10 +43,8 @@ private:
 	_uint									m_iPreAnimIdx = 0;
 	_bool									m_IsOnce = false;
 private:
-	_matrix*								m_pRHandMatrix = nullptr;
-	_matrix*								m_pLHandMatrix = nullptr;
-private:
 	float									m_fRatio = 0.f;
+	CWeapon*								m_pWeapon = nullptr;
 
 	_vec3									m;
 };
