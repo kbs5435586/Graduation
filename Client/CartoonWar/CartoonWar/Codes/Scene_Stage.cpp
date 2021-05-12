@@ -71,12 +71,12 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
-		return E_FAIL;
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -169,7 +169,7 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
+ 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
@@ -187,11 +187,11 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
-		return E_FAIL;
-
-	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 	//	return E_FAIL;
+
+	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
@@ -206,7 +206,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
@@ -437,13 +437,13 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, 1)))
 		return E_FAIL;
-	for (int i = 0; i < 2; ++i)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-	}
+	//for (int i = 0; i < 2; ++i)
+	//{
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//		return E_FAIL;
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }

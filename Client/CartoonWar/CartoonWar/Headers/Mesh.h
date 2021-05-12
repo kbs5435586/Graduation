@@ -76,6 +76,8 @@ public:
 public:
     CStructedBuffer*                GetBoneFrameData(){return m_pBoneFrameData;}
     CStructedBuffer*                GetBoneOffset(){return m_pBoneOffset;}
+public:
+    vector<RenderInfo>              GetRenderInfo() { return m_vecRenderInfo; }
 private:
     RenderInfo                      m_tRenderInfo = {};
     vector<RenderInfo>              m_vecRenderInfo;
@@ -118,6 +120,8 @@ private:
     ///////////////////////////////////
     vector<_matrix>                 m_vecOffset;
     vector<tFrameTrans>             m_vecFrameTrans;
+    public:
+       vector< CTexture* >          m_pTexture ;
 
 };
 

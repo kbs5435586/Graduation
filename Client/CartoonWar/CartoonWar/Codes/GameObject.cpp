@@ -8,6 +8,7 @@ CGameObject::CGameObject()
 }
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_iLayerIdx(rhs.m_iLayerIdx)
+	, m_IsOBB_Collision(rhs.m_IsOBB_Collision)
 {
 }
 

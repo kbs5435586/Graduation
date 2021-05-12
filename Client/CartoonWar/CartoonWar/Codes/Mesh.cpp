@@ -26,9 +26,8 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_vecOffset(rhs.m_vecOffset)
 	, m_iFrameCnt(rhs.m_iFrameCnt)
 	, m_vecRenderSup(rhs.m_vecRenderSup)
-
+	, m_pTexture(rhs.m_pTexture)
 {
-
 	m_IsClone = true;
 
 
@@ -85,7 +84,7 @@ HRESULT CMesh::Ready_Mesh(const wstring& pFilePath, const _tchar* pSaveFilePath)
 	m_iSubsetNum;
 	if (FAILED(Ready_MeshData(m_vecContainer)))
 		return E_FAIL;
-	//Load_Texture();
+	Load_Texture();
 
 
 
@@ -252,6 +251,11 @@ void CMesh::Load_Texture()
 {
 	// Texture Load
 
+	for (_uint i = 0; i < m_vecDiffTexturePath.size(); ++i)
+	{
+		CTexture* pTexture = CTexture::Create(m_vecDiffTexturePath[i]);
+		m_pTexture.push_back(pTexture);
+	}
 	
 }
 
@@ -1466,6 +1470,12 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 		m_vecDiffTexturePath.push_back(pTemp);
 	}
 
+	for (_uint i = 0; i < m_vecDiffTexturePath.size(); ++i)
+	{
+		CTexture* pTexture = CTexture::Create(m_vecDiffTexturePath[i]);
+		m_pTexture.push_back(pTexture);
+	}
+
 
 	m_iFrameCnt = _iFrameCount;
 	if (m_vecMTBone.size() > 0 && m_vecMTBone.size() > 0)
@@ -1534,7 +1544,6 @@ void CMesh::Free()
 	if (m_pScene)
 	{
 		m_pScene->Destroy();
-
 	}
 	for (size_t i = 0; i < m_vecBone.size(); ++i)
 	{
@@ -1561,6 +1570,10 @@ void CMesh::Free()
 			Safe_Delete_Array(iter);
 
 
+		for (auto& iter : m_pTexture)
+		{
+			Safe_Release(iter);
+		}
 	}
 	//if (m_IsClone)
 	//{
@@ -1569,7 +1582,7 @@ void CMesh::Free()
 	//	if (m_pBoneOffset)
 	//		Safe_Release(m_pBoneOffset);
 	//}
-
+	//Safe_Release(m_pTexture);
 
 	CComponent::Free();
 }
