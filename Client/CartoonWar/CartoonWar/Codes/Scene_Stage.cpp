@@ -71,12 +71,12 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
-		return E_FAIL;
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -171,7 +171,7 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
-	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
+ 	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
@@ -214,7 +214,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);

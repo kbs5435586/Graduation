@@ -18,6 +18,7 @@ public:
 	virtual void							Render_GameObject();
 public:
 	INFO&									GetInfo(){return m_tInfo;}
+	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
 public:
 	virtual HRESULT							CreateInputLayout();
 protected:
@@ -36,7 +37,7 @@ public:
 	_uint									m_iLayerIdx = 0;
 protected:
 	_bool									m_IsClone = false;
-protected:
+	_bool									m_IsOBB_Collision = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 };
 

@@ -37,11 +37,6 @@ HRESULT CBuilding::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
 
 	return S_OK;
 }
@@ -84,7 +79,7 @@ void CBuilding::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		CTexture* pTexture = m_vecTexture[i];
+		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
 		if (pTexture)
 		{
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
@@ -185,11 +180,5 @@ void CBuilding::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pFrustumCom);
-
-	for (auto& iter : m_vecTexture)
-	{
-		Safe_Release(iter);
-	}
-
 	CGameObject::Free();
 }

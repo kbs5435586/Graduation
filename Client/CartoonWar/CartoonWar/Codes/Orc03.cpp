@@ -32,8 +32,8 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(15.f, 0.f, 0.f);
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	_vec3 vPos = _vec3(30.f, 0.f, 0.f);
+	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
@@ -43,21 +43,26 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 
 	m_pAnimCom->LateInit();
 	m_pMeshCom->m_vecDiffTexturePath;
-	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
 
 	m_iCurAnimIdx = 7;
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
+
+	_vec3 vColliderSize = { 2.f,4.f,2.f };
+	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 	return S_OK;
 }
 
 _int COrc03::Update_GameObject(const _float& fTimeDelta)
 {
+	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
+	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 
+	if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
+		Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
+	{
+		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
+	}
 
 	return _int();
 }
@@ -127,7 +132,7 @@ void COrc03::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		CTexture* pTexture = m_vecTexture[i];
+		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
 		if (pTexture)
 		{
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
@@ -137,6 +142,8 @@ void COrc03::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
+	m_pColliderCom[0]->Render_Collider();
+	m_pColliderCom[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -270,6 +277,8 @@ void COrc03::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pFrustumCom);
+	Safe_Release(m_pColliderCom[0]);
+	Safe_Release(m_pColliderCom[1]);
 	//Safe_Release(m_pNaviCom);
 	if (m_IsClone)
 	{
@@ -321,6 +330,16 @@ HRESULT COrc03::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
+	m_pColliderCom[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pColliderCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColliderCom[0])))
+		return E_FAIL;
+
+	m_pColliderCom[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColliderCom[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom[1])))
+
+		return E_FAIL;
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
