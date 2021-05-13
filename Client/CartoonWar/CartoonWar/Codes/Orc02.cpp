@@ -190,11 +190,11 @@ void COrc02::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-	/*	CTexture* pTexture = m_vecTexture[i];
+		CTexture* pTexture = m_vecTexture[i];
 		if (pTexture)
 		{
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-		}*/
+		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 		CDevice::GetInstance()->UpdateTable();

@@ -920,7 +920,7 @@ void Server::enter_game(int user_id, char name[])
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
-
+    cout << "Player " << user_id << " login finish" << endl;
     for (auto& c : g_clients)
     {
         int i = c.second.m_id;

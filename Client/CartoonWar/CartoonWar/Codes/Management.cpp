@@ -251,7 +251,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 
 	if (LOWORD(m_pServer_Manager->Get_wParam()) != WA_INACTIVE) // 활성화 되어있을때
 	{	
-
+		m_pKey_Manager->Key_Update();
 		m_pServer_Manager->update_key_input();
 	}
 
