@@ -100,15 +100,15 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 
 			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 			_vec3 vSlide = {};
-	/*		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 			{
 				m_pTransformCom->BackWard(fTimeDelta);
 			}
 			else
 			{
 				m_pTransformCom->Go_There(vSlide);
-			}*/
-			m_pTransformCom->BackWard(fTimeDelta);
+			}
+			//m_pTransformCom->BackWard(fTimeDelta);
 		}
 
 	}

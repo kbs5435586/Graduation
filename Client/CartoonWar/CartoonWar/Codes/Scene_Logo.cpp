@@ -369,7 +369,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 
 
-		//Weapon
+		/*Weapon*/
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon1",
 			CMesh::Create_Load(L"../Data/MeshData/Weapon_01.dat"))))
 			return E_FAIL;
@@ -385,7 +385,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Weapon4",
 			CMesh::Create_Load(L"../Data/MeshData/Weapon_04.dat"))))
 			return E_FAIL;
-		//
+		
 
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_MountainRocks01",
@@ -532,12 +532,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc04",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Orc4.fbx", L"../Data/MeshData/Orc_04.dat"))))
 		//	return E_FAIL;
-		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Skeleton",
-		//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Skeleton.fbx", L"../Data/MeshData/Skeleton.dat"))))
-		//	return E_FAIL;
-		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Sufferer",
-		//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Sufferer.fbx", L"../Data/MeshData/Sufferer.dat"))))
-		//	return E_FAIL;
+		////if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Skeleton",
+		////	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Skeleton.fbx", L"../Data/MeshData/Skeleton.dat"))))
+		////	return E_FAIL;
+		////if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Sufferer",
+		////	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Sufferer.fbx", L"../Data/MeshData/Sufferer.dat"))))
+		////	return E_FAIL;
 
 
 

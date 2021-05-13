@@ -193,8 +193,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+	//	return E_FAIL;
 	/*if(FAILED(Ready_Layer_Castle(L"Layer_Castle", pManagement)))
 		return E_FAIL;*/
 
@@ -490,7 +490,7 @@ CScene_Stage* CScene_Stage::Create()
 		MessageBox(0, L"CScene_Stage Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
-	return pInstance;
+	return pInstance; 
 }
 
 void CScene_Stage::Free()
