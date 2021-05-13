@@ -28,10 +28,10 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = _vec3(0.f, 10.f, 0.f);
+	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	_vec3 vPos = _vec3(250.f, 0.2f, 250.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(4.f, 4.f, 1.f);
+	m_pTransformCom->Scaling(10.f, 10.f, 1.f);
 
 
 
@@ -57,7 +57,7 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	
 	m_fTempTime += fTimeDelta * 100.f;
-	if (m_fTempTime<=1000.f)
+	if (m_fTempTime <= 1000.f)
 	{
 		m_tRep.m_arrInt[2] = 0;
 		m_tRep.m_arrFloat[0] += fTimeDelta;
@@ -69,6 +69,7 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_tRep.m_arrFloat[0] -= fTimeDelta;
 
 	}
+	
 
 	return _int();
 }
@@ -109,8 +110,20 @@ void CMyRect::Render_GameObject()
 
 	m_pShaderCom[1]->UpdateData_CS();
 
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Orc02", L"Com_Transform", 0);
 
-	CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1000, 1);
+	_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vOtherpos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+	_vec3 vMinuse = vThisPos - vOtherpos;
+	_uint iLen = Vector3_::Length(vMinuse);
+
+	if (iLen < 50.f)
+	{
+
+		CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1000, 1);
+	}
 
 
 	m_pBufferCom->Render_VIBuffer();

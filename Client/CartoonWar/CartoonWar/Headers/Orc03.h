@@ -32,6 +32,8 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
+	CCollider*								m_pColliderCom[2] = { nullptr };
 private:
 	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;

@@ -197,6 +197,7 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilePath)
 
 	CDevice::GetInstance()->Open();
 
+	CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
 	if (L".dds" == strExt || L".DDS" == strExt)
 	{
 		if (FAILED(LoadFromDDSFile(pFilePath, DDS_FLAGS_NONE, nullptr, m_Image)))

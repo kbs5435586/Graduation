@@ -34,9 +34,9 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
-	CCollider*								m_pColiiderCom = nullptr;
+	CCollider*								m_pColliderCom[2] = {nullptr};
+	CFrustum*								m_pFrustumCom = nullptr;
 private:
-	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
 	_uint									m_iCurAnimIdx = 0;

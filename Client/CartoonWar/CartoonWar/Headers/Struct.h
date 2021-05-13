@@ -235,7 +235,7 @@ struct RenderInfo
 	int							iVtxSize;
 	vector<MESH>				vecVertices;
 	vector<Indices>				vecIndices;
-	vector<class CTexture*>		vecTexture;
+	class CTexture*				pTexture;
 };
 
 typedef struct tagRenderSupport
@@ -556,3 +556,12 @@ typedef struct tagAnimController
 	float	fOriginStartTime;
 	float	fOriginEndTime;
 }AnimCtrl;
+
+
+typedef struct tagOBB
+{
+	XMFLOAT3			vPoint[8];
+	XMFLOAT3			vCenter;
+	XMFLOAT3			vAlignAxis[3]; 
+	XMFLOAT3			vProjAxis[3]; 
+}OBB;

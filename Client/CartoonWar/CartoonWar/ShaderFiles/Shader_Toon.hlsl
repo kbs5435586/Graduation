@@ -87,26 +87,25 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vLightWorldPos = tLight[0].vLightPos;
 	float4	vLightDir = normalize(vIn.vWorldPos - vLightWorldPos);
 
-	//float4	vLightDir = normalize(tLight[0].vLightDir);
-
 	float fDot = max(0, dot(vNormal, vLightDir));
 
 
 	float4 vView = normalize(vCamPos - vIn.vWorldPos);
 	fDot = (ceil(fDot * 5.f) / 5.f);
 
-	float4	vMtrlDif = tLight[0].tColor.vDiffuse * fDot;
+	float4	vMtrlDif =  fDot;
 	float4	vMtrlAmb = tLight[0].tColor.vAmbient ;
 
-	float3	fRimColor = float3(-2.f, -2.f, -2.f);
+	float3	fRimColor = float3(-0.f, -0.f, -0.f);
 
 	float	fRim = saturate(dot(vView, vNormal));
-	float	fRimPower = 8.f;
+	float	fRimPower = 6.f;
 
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
 
-	float4 vShade = (vMtrlDif + vMtrlAmb + vMtrlEmiv);
+	//float4 vShade = (vMtrlDif + vMtrlAmb + vMtrlEmiv);
+	float4 vShade = (vMtrlDif+ vMtrlEmiv);
 
 
 

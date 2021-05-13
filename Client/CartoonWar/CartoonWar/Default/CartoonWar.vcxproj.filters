@@ -403,6 +403,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer">
       <UniqueIdentifier>{6d1a732a-6a4f-4348-935d-3ce9d69ed972}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\05. Flag">
+      <UniqueIdentifier>{5560848d-c94a-4bb4-8a5b-eb93b35ae33c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\97. UI\03. UI_Inventory">
       <UniqueIdentifier>{8a31aaf2-96d0-4b55-9784-497671c6934e}</UniqueIdentifier>
     </Filter>
@@ -753,6 +756,9 @@
     <ClInclude Include="..\Headers\Sufferer.h">
       <Filter>02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Flag.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
+    </ClInclude>
     <ClInclude Include="..\Codes\UI_Inventory.h">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
     </ClInclude>
@@ -1073,6 +1079,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Sufferer.cpp">
       <Filter>02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Flag.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Inventory.cpp">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>

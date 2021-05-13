@@ -37,6 +37,7 @@ private:
 	_bool									m_IsTemp = false;
 	REP										m_tRep = {};
 	_float									m_fTempTime = 0.f;
+	_float									m_fTempTime2 = 0.f;
 
 };
 
