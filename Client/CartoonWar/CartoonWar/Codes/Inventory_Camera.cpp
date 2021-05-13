@@ -140,7 +140,7 @@ CInventory_Camera* CInventory_Camera::Create()
 	return pInstance;
 }
 
-CGameObject* CInventory_Camera::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CInventory_Camera::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CInventory_Camera* pInstance = new CInventory_Camera(*this);
 

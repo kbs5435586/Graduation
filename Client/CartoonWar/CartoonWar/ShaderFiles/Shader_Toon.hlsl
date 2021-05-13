@@ -38,7 +38,7 @@ struct PS_OUT
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vPositionTex			: SV_TARGET2;
 	float4 vShadeTex			: SV_TARGET3;
-	float4 vPointLightTex		: SV_TARGET4;
+	//float4 vPointLightTex		: SV_TARGET4;
 	float4 vtTex		: SV_TARGET5;
 
 

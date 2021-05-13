@@ -220,7 +220,7 @@ CUI_Inventory* CUI_Inventory::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Inventory::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Inventory::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_Inventory* pInstance = new CUI_Inventory();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

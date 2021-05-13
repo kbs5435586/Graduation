@@ -76,8 +76,8 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
-		return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -136,8 +136,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMeshHatch", CTestHatchMesh::Create())))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMeshHatch", CTestHatchMesh::Create())))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestAnim", CTestAnimMesh::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
@@ -158,8 +158,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_LowPoly", CLowPoly::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
+	//	return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Skeleton", CSkeleton::Create())))
 		return E_FAIL;

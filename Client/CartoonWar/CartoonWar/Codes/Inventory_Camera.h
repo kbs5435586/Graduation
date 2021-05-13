@@ -17,7 +17,7 @@ public:
 	virtual void				Render_GameObject();
 public:
 	static CInventory_Camera* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx);
+	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
 
 	HRESULT						Ready_Component();
 protected:
