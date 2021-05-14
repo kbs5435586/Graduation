@@ -27,7 +27,6 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 10.f, 0.f, 10.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
@@ -89,51 +88,51 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 
-	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-	{
-		m_iCurAnimIdx = 29;
-		{
-			_vec3 vLook = {};
-			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-			vLook = Vector3_::Normalize(vLook);
+	//if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	//{
+	//	m_iCurAnimIdx = 29;
+	//	{
+	//		_vec3 vLook = {};
+	//		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	//		vLook = Vector3_::Normalize(vLook);
 
 
-			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-			_vec3 vSlide = {};
-			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			{
-				m_pTransformCom->BackWard(fTimeDelta);
-			}
-			else
-			{
-				m_pTransformCom->Go_There(vSlide);
-			}
-			//m_pTransformCom->BackWard(fTimeDelta);
-		}
+	//		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+	//		_vec3 vSlide = {};
+	//		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+	//		{
+	//			m_pTransformCom->BackWard(fTimeDelta);
+	//		}
+	//		else
+	//		{
+	//			m_pTransformCom->Go_There(vSlide);
+	//		}
+	//		//m_pTransformCom->BackWard(fTimeDelta);
+	//	}
 
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-	{
-		m_iCurAnimIdx = 30;
-		//m_pTransformCom->BackWard(fTimeDelta);
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-	{
-		m_iCurAnimIdx = 32;
-		//m_pTransformCom->Rotation_Y(fTimeDelta);
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		m_iCurAnimIdx = 34;
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
-		//m_pTransformCom->Go_Right(fTimeDelta);
-	}
-	else
-	{
-		m_iCurAnimIdx = 14;
-	}
+	//}
+	//else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	//{
+	//	m_iCurAnimIdx = 30;
+	//	//m_pTransformCom->BackWard(fTimeDelta);
+	//	m_pTransformCom->Go_Straight(fTimeDelta);
+	//}
+	//else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	//{
+	//	m_iCurAnimIdx = 32;
+	//	//m_pTransformCom->Rotation_Y(fTimeDelta);
+	//	m_pTransformCom->Rotation_Y(fTimeDelta);
+	//}
+	//else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	//{
+	//	m_iCurAnimIdx = 34;
+	//	m_pTransformCom->Rotation_Y(-fTimeDelta);
+	//	//m_pTransformCom->Go_Right(fTimeDelta);
+	//}
+	//else
+	//{
+	//	m_iCurAnimIdx = 14;
+	//}
 
 
 
@@ -145,7 +144,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 
 
-	if (CManagement::GetInstance()->Key_Down(KEY_E))
+	/*if (CManagement::GetInstance()->Key_Down(KEY_E))
 	{
 		_uint iLen = 99999999;
 		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -187,7 +186,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			dynamic_cast<CWeapon*>(iter)->GetIsPicked() = false;
 		}
-	}
+	}*/
 
 
 	Safe_Release(server);

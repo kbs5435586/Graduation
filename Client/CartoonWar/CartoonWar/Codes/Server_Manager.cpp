@@ -73,6 +73,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
 		short recv_id = my_packet->id;
 		my_id = recv_id;
+		my_hp = my_packet->hp;
 		CTransform* pTransform;
 		if (ENUM_PLAYER1 == recv_id)
 		{
@@ -104,6 +105,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._43 = my_packet->p_z;
 		m_objects[recv_id].showCharacter = true;
 		m_objects[recv_id].anim = 14;
+		m_objects[recv_id].hp = my_packet->hp;
 		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
@@ -191,6 +193,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._43 = my_packet->p_z;
 		m_objects[recv_id].showCharacter = true;
 		m_objects[recv_id].anim = 14;
+		m_objects[recv_id].hp = my_packet->hp;
 		pTransform->Set_Matrix(Pos);
 		Safe_Release(managment);
 	}
@@ -313,6 +316,30 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_idle* my_packet = reinterpret_cast<sc_packet_idle*>(ptr);
 		int recv_id = my_packet->id;
 		m_objects[recv_id].anim = 14;
+	}
+	break;
+	case SC_PACKET_ATTACK:
+	{
+		sc_packet_attack* my_packet = reinterpret_cast<sc_packet_attack*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].anim = 0;
+	}
+	break;
+	case SC_PACKET_ATTACKED:
+	{
+		sc_packet_attacked* my_packet = reinterpret_cast<sc_packet_attacked*>(ptr);
+		int recv_id = my_packet->id;
+		short recv_hp = my_packet->hp;
+		m_objects[recv_id].hp = recv_hp;
+		m_objects[recv_id].anim = 12;
+	}
+	break;
+	case SC_PACKET_DEAD:
+	{
+		sc_packet_dead* my_packet = reinterpret_cast<sc_packet_dead*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].hp = 0;
+		m_objects[recv_id].anim = 8;
 	}
 	break;
 	default:
@@ -505,12 +532,12 @@ void CServer_Manager::update_key_input()
 
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+ 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- Get_Attack_Cooltime());
 		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			send_attack_packet();
-			m_objects[my_id].anim = 14;
+			m_objects[my_id].anim = 0;
 			isSendOnePacket = false;
 			Set_Attack_CoolTime(high_resolution_clock::now());
 		}
@@ -552,7 +579,8 @@ void CServer_Manager::update_key_input()
 	if (true == isLogin)
 	{
 		if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
-			!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000))
+			!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000) &&
+			!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
 		{
 			if (false == isSendOnePacket)
 			{
@@ -576,12 +604,12 @@ short CServer_Manager::player_index(unsigned short id)
 
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {
-	return id + 30;
+	return id + 29;
 }
 
 short CServer_Manager::npc_id_to_idx(unsigned short id)
 {
-	return id - 30;
+	return id - 29;
 }
 
 void CServer_Manager::send_npc_act_packet(unsigned char act)

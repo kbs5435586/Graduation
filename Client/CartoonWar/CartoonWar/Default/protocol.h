@@ -43,6 +43,9 @@ constexpr char SC_PACKET_LEAVE = 5;
 constexpr char SC_PACKET_CHAT = 6;
 constexpr char SC_PACKET_ADD_NPC_OK = 7;
 constexpr char SC_PACKET_IDLE = 8;
+constexpr char SC_PACKET_ATTACKED = 9;
+constexpr char SC_PACKET_DEAD = 10;
+constexpr char SC_PACKET_ATTACK = 11;
 
 #pragma pack(push ,1)
 
@@ -88,6 +91,7 @@ struct sc_packet_enter
 	char size;
 	char type;
 	int id;
+	short hp;
 	char name[MAX_ID_LEN];
 	char o_type;
 	float p_x, p_y, p_z;
@@ -97,6 +101,28 @@ struct sc_packet_enter
 };
 
 struct sc_packet_leave
+{
+	char size;
+	char type;
+	int id;
+};
+
+struct sc_packet_attacked
+{
+	char size;
+	char type;
+	int id;
+	short hp;
+};
+
+struct sc_packet_attack
+{
+	char size;
+	char type;
+	int id;
+};
+
+struct sc_packet_dead
 {
 	char size;
 	char type;

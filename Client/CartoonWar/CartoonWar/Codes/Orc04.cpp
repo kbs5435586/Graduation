@@ -64,12 +64,12 @@ _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (server->Get_ShowOtherPlayer(ENUM_PLAYER2))
 	{
-		//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
-		//{
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 			m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER2);
-		//}
+		}
 	}
 	
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)

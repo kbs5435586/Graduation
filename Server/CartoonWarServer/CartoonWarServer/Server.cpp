@@ -143,7 +143,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ATTACK:
     {
         cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
-        do_change_formation(user_id);
+        do_attack(user_id);
     }
     break;
     case CS_PACKET_IDLE:
@@ -163,7 +163,7 @@ void Server::send_login_ok_packet(int user_id)
 {
 	sc_packet_login_ok packet;
 	packet.exp = 0;
-	packet.hp = 0;
+	packet.hp = 100;
 	packet.id = user_id;
 	packet.level = 0;
 	packet.size = sizeof(packet);
@@ -271,10 +271,10 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (c.second.m_id == user_id)
             continue;
-        if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
-        {
+        //if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
+        //{
 
-        }
+        //}
         if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
         {
             OverEx* overEx = new OverEx;
@@ -694,8 +694,6 @@ void Server::do_npc_rotate(int user_id, char dir)
                     continue;
                 if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
                     continue;
-                //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-                //    activate_npc(c.second.m_id, c.second.m_last_order);
 
                 send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
             }
@@ -967,6 +965,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
             sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
             g_clients[npc_id].m_status = ST_SLEEP;
+            g_clients[npc_id].m_hp = 100;
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
@@ -1014,6 +1013,7 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
+    packet.hp = g_clients[other_id].m_hp;
     _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
     packet.r_y = pos._12;
@@ -1035,6 +1035,37 @@ void Server::send_enter_packet(int user_id, int other_id)
     g_clients[user_id].m_view_list.insert(other_id);
     g_clients[user_id].m_cLock.unlock();
 
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_attack_packet(int user_id, int other_id)
+{
+    sc_packet_attack packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ATTACK;
+    packet.id = other_id;
+    cout << user_id << " saw " << other_id << " attacking\n";
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_attacked_packet(int user_id, int other_id)
+{
+    sc_packet_attacked packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ATTACKED;
+    packet.id = other_id;
+    packet.hp = g_clients[other_id].m_hp;
+    cout << user_id << " saw " << other_id << " attacked\n";
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_dead_packet(int user_id, int other_id)
+{
+    sc_packet_dead packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_DEAD;
+    packet.id = g_clients[other_id].m_id;
+    cout << user_id << " saw " << other_id << " dead\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -1067,6 +1098,7 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
 {
     sc_packet_enter packet;
     packet.id = other_id; // 추가된 npc 아이디
+    packet.hp = g_clients[other_id].m_hp;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ADD_NPC_OK;
 
@@ -1115,7 +1147,52 @@ void Server::send_idle_packet(int user_id, int idler)
 
 void Server::do_attack(int user_id)
 {
+    cout << user_id << "is do attack\n";
+    for (int i = 0; i < NPC_ID_START; ++i) // 다른 플레이어들에게 내 공격모션 공유
+    {
+        if (false == is_near(i, user_id)) // 근처에 없는애들 무시
+            continue;
+        if (ST_ACTIVE != g_clients[i].m_status) // 비접속 상태인 애들 무시
+            continue;
+        if (i == user_id) // 나 자신 무시
+            continue;
 
+        send_attack_packet(i, user_id);
+    }
+
+    for (auto& c : g_clients)
+    {
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
+            continue;
+        if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
+            continue;
+        if (c.second.m_id == user_id) // 나 자신 무시
+            continue;
+        if (c.second.m_owner_id == user_id) // 내 npc들 무시
+            continue;
+
+        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대가 있으면
+        {
+            g_clients[c.second.m_id].m_cLock.lock();
+            unordered_set<int> copy_viewlist = g_clients[c.second.m_id].m_view_list; // 죽은애의 시야범위 가져옴
+            g_clients[c.second.m_id].m_cLock.unlock();
+
+            c.second.m_hp -= ATTACK_DAMAGE;
+
+            if (0 < c.second.m_hp)
+            {
+                for (auto cpy_vl : copy_viewlist)
+                    send_attacked_packet(cpy_vl, c.second.m_id); // 깎이고 남은 체력 있으면
+            }
+            else // 죽으면
+            {
+                g_clients[c.second.m_id].m_hp = 0;
+                for (auto cpy_vl : copy_viewlist)
+                    send_dead_packet(cpy_vl, c.second.m_id);
+                    //send_leave_packet(cpy_vl, c.second.m_id); // 시야범위 애들한테 애 없앰
+            }
+        }
+    }
 }
 
 void Server::disconnect(int user_id)
@@ -1162,6 +1239,21 @@ bool Server::is_near(int a, int b)
         return false;
     // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
     // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
+    return true;
+}
+
+bool Server::is_attackable(int a, int b)
+{
+    _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    if (sqrt((a_pos->x - b_pos->x) *
+        (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) *
+        (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) *
+        (a_pos->z - b_pos->z)) > ATTACK_RADIUS)
+        return false;
     return true;
 }
 

@@ -17,6 +17,7 @@ private:
 	int LISTEN_KEY = 999;
 	float NEAR_APPROACH = 0.3f;
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
+	int ATTACK_RADIUS = 20; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 
 	float MOVE_SPEED_NPC = 0.4f;
@@ -25,6 +26,7 @@ private:
 	int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	float FORMATION_SPACE = 25.f;
 	float SCALE_X = 0.05f, SCALE_Y = 0.05f, SCALE_Z = 0.05f;
+	int ATTACK_DAMAGE = 50;
 
 public:
 	void mainServer(); // 메인 서버
@@ -40,6 +42,9 @@ public:
 	void send_rotate_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_idle_packet(int user_id, int idler); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
+	void send_attacked_packet(int user_id, int other_id);
+	void send_attack_packet(int user_id, int other_id);
+	void send_dead_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
@@ -67,6 +72,7 @@ public:
 	void do_timer();
 
 	bool is_near(int a, int b);
+	bool is_attackable(int a, int b);
 	bool is_player(int id);
 	bool check_collision(int a, int b);
 

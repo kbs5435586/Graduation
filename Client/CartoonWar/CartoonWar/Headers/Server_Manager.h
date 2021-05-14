@@ -13,6 +13,7 @@ private:
     CManagement* managment;
     unordered_map <int, Player_Info> m_objects;
     short my_id;
+    short my_hp;
     bool isSendOnePacket;
     bool isLogin;
 
