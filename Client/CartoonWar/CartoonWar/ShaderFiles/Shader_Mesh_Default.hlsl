@@ -51,16 +51,11 @@ PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vIn.vNormal, vIn.vWorldPos);
-	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
-
-
 	vOut.vDiffuseTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	vOut.vNormalTex  = vIn.vNormal;
-	vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;
-	vOut.vSpecularTex = tLight_Point.vSpecular + tLight_Default.vSpecular;
-	vOut.vPointLightTex = tLight_Point.vDiffuse;
-	vOut.vPositionTex = vIn.vWorldPos;
+	vOut.vShadeTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vSpecularTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vPointLightTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
+
 	return vOut;
 }
 

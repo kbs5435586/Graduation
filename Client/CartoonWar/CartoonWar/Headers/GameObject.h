@@ -20,6 +20,8 @@ public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
 public:
+	_matrix&									GetAttackedObject_Matrix(){return m_matAttackedTarget;}
+public:
 	virtual HRESULT							CreateInputLayout();
 protected:
 	HRESULT									Add_Component(const _tchar* pComponentTag, CComponent* pComponent);
@@ -37,7 +39,16 @@ public:
 	_uint									m_iLayerIdx = 0;
 protected:
 	_bool									m_IsClone = false;
-	_bool									m_IsOBB_Collision = false;
+	_bool									m_IsOBB_Collision = false; 
+	_float									m_fBazierCnt = 0.f;
+	_bool									m_IsBazier = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
+protected:
+	_bool									m_IsHit = false;
+	_matrix									m_matAttackedTarget = {};
+protected:
+	_vec3									m_vStartPoint = {};
+	_vec3									m_vEndPoint = {};
+	_vec3									m_vMidPoint = {};
 };
 

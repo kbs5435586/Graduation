@@ -430,6 +430,18 @@
     <None Include="..\ShaderFiles\Compute\Shader_Compute_Default.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_1.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_2.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_3.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_4.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>

@@ -40,6 +40,8 @@ HRESULT CCollider::Ready_Collider_AABB_BOX(CTransform* pTransform, const _vec3 v
 	m_pTransformCom->Set_Matrix(matTemp);
 	m_pTransformCom->Scaling(vSize);
 
+	m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+	m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
 
 	return S_OK;
 }
@@ -208,25 +210,28 @@ _bool CCollider::Collision_AABB(CCollider* pTargetCollider)
 	_vec3		vSourMin, vSourMax;
 	_vec3		vDestMin, vDestMax;
 
-	XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
-	XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
-	//XMLoadFloat4x4
-	vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
-	vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
+	vSourMin = _vec3::Transform(m_vMin, matSour);
+	vSourMax = _vec3::Transform(m_vMax, matSour);
 
-	vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
-	vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
-
+	vDestMin = _vec3::Transform(pTargetCollider->m_vMin, matDest);
+	vDestMax = _vec3::Transform(pTargetCollider->m_vMax, matDest);
 
 	m_IsColl = false;
 
-	if (max(vSourMin.x, vDestMin.x) > min(vSourMax.x, vDestMax.x))
+	if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x)
+		&& max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
+	{
+		_uint i = 0; 
+	}
+
+	_float	fTemp_Max= max(vSourMin.x, vDestMin.x);
+	_float	fTemp_Min= min(vSourMax.x, vDestMax.x);
+	if (fTemp_Max < fTemp_Min)
 		return false;
 
-	if (max(vSourMin.y, vDestMin.y) > min(vSourMax.y, vDestMax.y))
-		return false;
-
-	if (max(vSourMin.z, vDestMin.z) > min(vSourMax.z, vDestMax.z))
+	fTemp_Max = max(vSourMin.z, vDestMin.z);
+	fTemp_Min = min(vSourMax.z, vDestMax.z);
+	if (fTemp_Max < fTemp_Min)
 		return false;
 
 	m_IsColl = true;
@@ -254,7 +259,6 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 
 
 	m_IsColl = false;
-
 	if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) && max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
 	{
 		m_IsColl = true;
@@ -266,6 +270,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 		{
 			if (fMoveZ <= 0.5f)
 			{
+				//fMoveZ *= 100.f;
 				vTemp = { pDestTransform->Get_Matrix()._41,
 						pDestTransform->Get_Matrix()._42,
 						pDestTransform->Get_Matrix()._43 + fMoveZ };
@@ -273,6 +278,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 			}
 			else
 			{
+				//fMoveZ *= 100.f;
 				vTemp = { pDestTransform->Get_Matrix()._41,
 					pDestTransform->Get_Matrix()._42,
 					pDestTransform->Get_Matrix()._43 - fMoveZ };
@@ -284,6 +290,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 		{
 			if (fMoveX <= 0.5f)
 			{
+				//fMoveX *= 100.f;
 				vTemp = { pDestTransform->Get_Matrix()._41 + fMoveX,
 						pDestTransform->Get_Matrix()._42,
 						pDestTransform->Get_Matrix()._43 };
@@ -291,6 +298,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 			}
 			else
 			{
+				//fMoveX *= 100.f;
 				vTemp = { pDestTransform->Get_Matrix()._41 - fMoveX,
 					pDestTransform->Get_Matrix()._42,
 					pDestTransform->Get_Matrix()._43 };
@@ -325,19 +333,14 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 			
 	}
 
-	_vec3	vAdd[2] = {};
-
-	vAdd[0] = Vector3_::Add(tOBB[0].vPoint[0], tOBB[0].vPoint[6]);
-	vAdd[1] = Vector3_::Add(tOBB[1].vPoint[0], tOBB[1].vPoint[6]);
-
-	tOBB[0].vCenter = Vector3_::ScalarProduct(vAdd[0], 0.5f, false);
-	tOBB[1].vCenter = Vector3_::ScalarProduct(vAdd[1], 0.5f, false);
+	tOBB[0].vCenter = (tOBB[0].vPoint[0] + tOBB[0].vPoint[6]) * 0.5f;
+	tOBB[1].vCenter = (tOBB[1].vPoint[0] + tOBB[1].vPoint[6]) * 0.5f;
 
 	for (size_t i = 0; i < 2; ++i)
 	{
 		Compute_AlignAxis(&tOBB[i]);
 		Compute_ProjAxis(&tOBB[i]);
-	}
+	}	
 
 	_vec3	vAlignAxis[9];
 
@@ -346,7 +349,7 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 		for (size_t j = 0; j < 3; ++j)
 		{
 			_uint		iIndex = i * 3 + j;
-			vAlignAxis[iIndex] = Vector3_::CrossProduct(tOBB[0].vAlignAxis[i], tOBB[1].vAlignAxis[j]);
+			vAlignAxis[iIndex] = Vector3_::CrossProduct(tOBB[0].vAlignAxis[i], tOBB[1].vAlignAxis[j], false);
 		}
 	}
 
@@ -357,19 +360,21 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 		for (size_t j = 0; j < 3; ++j)
 		{
 			_vec3		vCenterDir = tOBB[1].vCenter - tOBB[0].vCenter;
-			fDistance[0] = Vector3_::DotProduct(vCenterDir, tOBB[i].vAlignAxis[j]);
+
+			fDistance[0] = fabs(vCenterDir.Dot(tOBB[i].vAlignAxis[j]));
+			
 
 			fDistance[1] =
-				fabs( Vector3_::DotProduct(tOBB[0].vProjAxis[0], tOBB[i].vAlignAxis[j])) +
-				fabs( Vector3_::DotProduct(tOBB[0].vProjAxis[1], tOBB[i].vAlignAxis[j])) +
-				fabs( Vector3_::DotProduct(tOBB[0].vProjAxis[2], tOBB[i].vAlignAxis[j]));
+				fabs(tOBB[0].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[0].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[0].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
 
 
+			fDistance[1] =
+				fabs(tOBB[1].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[1].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[1].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
 
-			fDistance[2] =
-				fabs(Vector3_::DotProduct(tOBB[1].vProjAxis[0], tOBB[i].vAlignAxis[j])) +
-				fabs(Vector3_::DotProduct(tOBB[1].vProjAxis[1], tOBB[i].vAlignAxis[j])) +
-				fabs(Vector3_::DotProduct(tOBB[1].vProjAxis[2], tOBB[i].vAlignAxis[j]));
 
 			if (fDistance[1] + fDistance[2] < fDistance[0])
 				return false;
@@ -380,15 +385,17 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 	for (size_t i = 0; i < 9; ++i)
 	{
 		_vec3		vCenterDir = tOBB[1].vCenter - tOBB[0].vCenter;
-		fDistance[0] = fabs(Vector3_::DotProduct(vCenterDir, vAlignAxis[i]));
+		fDistance[0] = fabs(vCenterDir.Dot(vAlignAxis[i]));
 
-		fDistance[1] = fabs(Vector3_::DotProduct(tOBB[0].vProjAxis[0], vAlignAxis[i])) +
-			fabs(Vector3_::DotProduct(tOBB[0].vProjAxis[1], vAlignAxis[i])) +
-			fabs(Vector3_::DotProduct(tOBB[0].vProjAxis[2], vAlignAxis[i]));
+		fDistance[1] =
+			fabs(tOBB[0].vProjAxis[0].Dot(vAlignAxis[i])) +
+			fabs(tOBB[0].vProjAxis[1].Dot(vAlignAxis[i])) +
+			fabs(tOBB[0].vProjAxis[2].Dot(vAlignAxis[i]));
 
-		fDistance[2] = fabs(Vector3_::DotProduct(tOBB[1].vProjAxis[0], vAlignAxis[i])) +
-			fabs(Vector3_::DotProduct(tOBB[1].vProjAxis[1], vAlignAxis[i])) +
-			fabs(Vector3_::DotProduct(tOBB[1].vProjAxis[2], vAlignAxis[i]));
+		fDistance[1] =
+			fabs(tOBB[1].vProjAxis[0].Dot(vAlignAxis[i])) +
+			fabs(tOBB[1].vProjAxis[1].Dot(vAlignAxis[i])) +
+			fabs(tOBB[1].vProjAxis[2].Dot(vAlignAxis[i]));
 
 		if (fDistance[1] + fDistance[2] < fDistance[0])
 			return false;
@@ -407,39 +414,23 @@ void CCollider::Update_Collider(CTransform* pTransform)
 	case COLLIDER_TYPE::COLLIDER_AABB:
 	{
 		_matrix matTemp = Remove_Rotation(pTarget_matrix);
-		matTemp.m[0][0] = 1.f;
-		matTemp.m[1][1] = 1.f;
-		matTemp.m[2][2] = 1.f;
 		matTemp.m[0][0] *= m_vSize.x;
 		matTemp.m[1][1] *= m_vSize.y;
 		matTemp.m[2][2] *= m_vSize.z;
-		matTemp.m[3][1] = m_vSize.y / 2.f;
 		m_pTransformCom->Set_Matrix(matTemp);
 	}
 	break;
 	case COLLIDER_TYPE::COLLIDER_OBB:
 	{
 
-		_vec3		vDir[3];
+		_matrix matTemp_Rotate = pTarget_matrix;
+		_matrix matTemp;
+		matTemp.m[0][0] *= m_vSize.x;
+		matTemp.m[1][1] *= m_vSize.y;
+		matTemp.m[2][2] *= m_vSize.z;
 
-		for (size_t i = 0; i < 3; ++i)
-		{
-			vDir[i] = *pTransform->Get_StateInfo(CTransform::STATE(i));
-			vDir[i] = Vector3_::Normalize(vDir[i]);
-		}
-
-		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		vPos.y = m_vSize.y / 2.f;
-
-		vDir[CTransform::STATE_RIGHT] = Vector3_::ScalarProduct(vDir[CTransform::STATE_RIGHT], m_vSize.x, false);
-		vDir[CTransform::STATE_UP] = Vector3_::ScalarProduct(vDir[CTransform::STATE_UP], m_vSize.y, false);
-		vDir[CTransform::STATE_LOOK] = Vector3_::ScalarProduct(vDir[CTransform::STATE_LOOK], m_vSize.z, false);
-
-
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vDir[CTransform::STATE_RIGHT]);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vDir[CTransform::STATE_UP]);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vDir[CTransform::STATE_LOOK]);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		matTemp = matTemp * matTemp_Rotate;
+		m_pTransformCom->Set_Matrix(matTemp);
 
 	}
 	break;
@@ -475,10 +466,6 @@ _matrix CCollider::Compute_WorldTransform()
 
 void CCollider::Compute_AlignAxis(OBB* pOBB)
 {
-	//pOBB->vAlignAxis[0] =Vector3_::Subtract(pOBB->vPoint[2], pOBB->vPoint[3]);
-	//pOBB->vAlignAxis[1] =Vector3_::Subtract(pOBB->vPoint[0], pOBB->vPoint[3]);
-	//pOBB->vAlignAxis[2] =Vector3_::Subtract(pOBB->vPoint[7], pOBB->vPoint[3]);
-
 	pOBB->vAlignAxis[0] = (pOBB->vPoint[2] - pOBB->vPoint[3]);
 	pOBB->vAlignAxis[1] = (pOBB->vPoint[0] - pOBB->vPoint[3]);
 	pOBB->vAlignAxis[2] = (pOBB->vPoint[7] - pOBB->vPoint[3]);
