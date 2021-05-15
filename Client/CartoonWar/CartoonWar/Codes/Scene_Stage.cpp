@@ -215,6 +215,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Rect(L"Layer_Rect", pManagement)))
+		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 	//	return E_FAIL;

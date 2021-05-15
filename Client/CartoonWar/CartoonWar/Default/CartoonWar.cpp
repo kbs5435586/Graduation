@@ -23,9 +23,9 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-_float      g_MaxTime = 300.f;
-int			g_iRedNum=0;
-int			g_iBlueNum=0;
+_float      g_MaxTime = 300.f; // 업데이트
+int			g_iRedNum = 0;
+int			g_iBlueNum = 0;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,

@@ -63,11 +63,11 @@ _int COrc03::Update_GameObject(const _float& fTimeDelta)
 		(CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Transform")
 	);
 
-	//if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
-	//	Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
-	//{
-	//	CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
-	//}
+	if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
+		Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
+	{
+		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
+	}
 
 
 
