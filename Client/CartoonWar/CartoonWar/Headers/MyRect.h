@@ -43,7 +43,7 @@ private:
 	_bool									m_IsFix = false;
 	_float									m_fTempTime = 0.f;
 	_float									m_fDeltaTime = 0.f;
-private:
+public:
 	_uint									m_iNum = 0;
 	
 };

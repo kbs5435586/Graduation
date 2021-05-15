@@ -47,6 +47,8 @@ public:
     short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);
     short npc_id_to_idx(unsigned short id);
+    short object_idx_to_id(unsigned short id);
+    short object_id_to_idx(unsigned short id);
 
     bool Get_ShowPlayer();
     bool Get_ShowNPC(int npc_index);

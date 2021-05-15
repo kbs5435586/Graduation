@@ -186,6 +186,20 @@ void Server::send_login_ok_packet(int user_id)
 	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
+void Server::send_flag_info_packet(int object_id, int user_id)
+{
+    sc_packet_flag_info packet;
+    packet.id = object_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_FLAG_INFO;
+    _vec3* pos = g_clients[object_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    packet.p_x = pos->x;
+    packet.p_y = pos->y;
+    packet.p_z = pos->z;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
 void Server::send_packet(int user_id, void* packet)
 {
 	char* buf = reinterpret_cast<char*>(packet);
@@ -587,7 +601,7 @@ void Server::do_random_move(int npc_id)
 
     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
-    for (int i = 0; i < NPC_ID_START; ++i)
+    for (int i = 0; i < NPC_START; ++i)
     {
         if (ST_ACTIVE != g_clients[i].m_status)
             continue;
@@ -637,7 +651,7 @@ void Server::do_follow(int npc_id)
                 //isOnce = false;
                 g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-                for (int i = 0; i < NPC_ID_START; ++i)
+                for (int i = 0; i < NPC_START; ++i)
                 {
                     if (ST_ACTIVE != g_clients[i].m_status)
                         continue;
@@ -697,7 +711,7 @@ void Server::do_npc_rotate(int user_id, char dir)
             else if (TURN_LEFT == dir)
                 g_clients[i].m_transform.Rotation_Y(-ROTATE_SPEED);
 
-            for (int player = 0; player < NPC_ID_START; ++player)
+            for (int player = 0; player < NPC_START; ++player)
             {
                 if (ST_ACTIVE != g_clients[player].m_status)
                     continue;
@@ -772,7 +786,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교 => 클라쪽에서 명령 자체를 못보내게 처리
 
     //bool keep_alive = false;
-    //for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+    //for (int i = 0; i < NPC_START; ++i) // 모든 플레이어에 대해서
     //{
     //    if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
     //    {
@@ -925,6 +939,8 @@ void Server::enter_game(int user_id, char name[])
     strcpy_s(g_clients[user_id].m_name, name);
     g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+    for (int i = OBJECT_START; i <= MAX_OBJECT; ++i)
+        send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
     cout << "Player " << user_id << " login finish" << endl;
@@ -962,6 +978,25 @@ void Server::initialize_clients()
     }
 }
 
+void Server::initialize_objects()
+{
+    for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
+    {
+        g_clients[i].m_id = i; // 유저 등록
+        g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+    }
+    _vec3 pos = { 50.f, 0.2f, 50.f };
+    g_clients[450].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    pos = { 100.f, 0.2f, 450.f };
+    g_clients[451].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    pos = { 250.f, 0.2f, 250.f };
+    g_clients[452].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    pos = { 450.f, 0.2f, 400.f };
+    g_clients[453].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    pos = { 450.f, 0.2f, 100.f };
+    g_clients[454].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+}
+
 void Server::initialize_NPC(int player_id)
 {
     for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
@@ -994,7 +1029,7 @@ void Server::initialize_NPC(int player_id)
                 }
             }
             activate_npc(npc_id, g_clients[npc_id].m_last_order);
-            for (int i = 0; i < NPC_ID_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
+            for (int i = 0; i < NPC_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
             {
                 if (true == is_near(npc_id, i))
                 {
@@ -1120,7 +1155,7 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
 
 void Server::do_idle(int user_id)
 {
-    if (user_id < NPC_ID_START)
+    if (user_id < NPC_START)
     {
         g_clients[user_id].m_cLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
@@ -1132,9 +1167,9 @@ void Server::do_idle(int user_id)
             // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
         }
     }
-    else if (user_id >= NPC_ID_START && user_id <= MAX_NPC)
+    else if (user_id >= NPC_START && user_id <= MAX_NPC)
     {
-        for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+        for (int i = 0; i < NPC_START; ++i) // 모든 플레이어에 대해서
         {
             if (false == is_near(i, user_id)) // 근처에 없는 유저면 보내지도 마라
                 continue;
@@ -1160,7 +1195,7 @@ void Server::send_idle_packet(int user_id, int idler)
 void Server::do_attack(int user_id)
 {
     cout << user_id << "is do attack\n";
-    for (int i = 0; i < NPC_ID_START; ++i) // 다른 플레이어들에게 내 공격모션 공유
+    for (int i = 0; i < NPC_START; ++i) // 다른 플레이어들에게 내 공격모션 공유
     {
         if (false == is_near(i, user_id)) // 근처에 없는애들 무시
             continue;
@@ -1225,7 +1260,7 @@ void Server::disconnect(int user_id)
         g_clients[i].m_status = ST_SLEEP;
     }
 
-    for (int i = 0; i < NPC_ID_START; ++i)
+    for (int i = 0; i < NPC_START; ++i)
     {
         if (user_id == g_clients[i].m_id)
             continue;
@@ -1276,7 +1311,7 @@ bool Server::is_attackable(int a, int b)
 
 bool Server::is_player(int id)
 {
-    return id < NPC_ID_START;
+    return id < NPC_START;
 }
 
 void Server::worker_thread()
@@ -1429,6 +1464,7 @@ void Server::mainServer()
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initialize_clients(); // 클라이언트 정보들 초기화
+    initialize_objects(); // 오브젝트 정보들 초기화
 
      // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록

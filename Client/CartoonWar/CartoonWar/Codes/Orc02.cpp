@@ -53,9 +53,12 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
-
-
-
+	Obb_Collision();
+	m_pColliderCom[0]->Collision_AABB(
+		(CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", L"Com_Collider_AABB"),
+		m_pTransformCom,
+		(CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", L"Com_Transform")
+	);
 
 	if (m_pWeapon)
 	{
@@ -139,11 +142,13 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (m_IsHit)
 		{
-			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetOBBCollision() = true;
+			// ÀÌ»ף
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", 0)->GetOBBCollision() = true;
 			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetAttackedObject_Matrix() = matTemp;
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", 0)->GetAttackedObject_Matrix() = matTemp;
 			m_IsHit = false;
 		}
+		server->send_idle_packet();
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}

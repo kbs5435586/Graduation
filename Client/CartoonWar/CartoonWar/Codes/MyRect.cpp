@@ -24,7 +24,7 @@ HRESULT CMyRect::Ready_Prototype()
 HRESULT CMyRect::Ready_GameObject(void* pArg)
 {
 
-	FLAG tFlag = *(FLAG*)pArg;
+	//FLAG tFlag = *(FLAG*)pArg;
 	
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -32,11 +32,11 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	_vec3 vPos = tFlag.vPos;
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	/*_vec3 vPos = tFlag.vPos;
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);*/
 	m_pTransformCom->Scaling(10.f, 10.f, 1.f);
 
-	m_iNum = tFlag.iNum;
+	//m_iNum = tFlag.iNum;
 
 
 	return S_OK;
@@ -120,7 +120,7 @@ void CMyRect::Render_GameObject()
 			L"Layer_Orc02", L"Com_Transform", 0);
 
 		CTransform* pTransform_Blue = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc03", L"Com_Transform", 0);
+			L"Layer_Orc04", L"Com_Transform", 0);
 
 		_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 		_vec3 vRedPos = *pTransform_Red->Get_StateInfo(CTransform::STATE_POSITION);

@@ -29,6 +29,7 @@ private:
 	HRESULT					Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Rect(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement);
 private:
 	HRESULT					Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pManagement);

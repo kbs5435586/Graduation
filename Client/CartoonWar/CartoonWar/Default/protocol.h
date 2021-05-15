@@ -18,8 +18,10 @@ constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
 
 constexpr int MAX_USER = 29;
-constexpr int NPC_ID_START = 30;
-constexpr int MAX_NPC = 420;
+constexpr int NPC_START = 30;
+constexpr int MAX_NPC = 449;
+constexpr int OBJECT_START = 450;
+constexpr int MAX_OBJECT = 454;
 
 constexpr int WORLD_HORIZONTAL = 400; // 월드 가로 x
 constexpr int WORLD_HEIGHT = 400; // 월드 높이 y
@@ -47,6 +49,7 @@ constexpr char SC_PACKET_IDLE = 8;
 constexpr char SC_PACKET_ATTACKED = 9;
 constexpr char SC_PACKET_DEAD = 10;
 constexpr char SC_PACKET_ATTACK = 11;
+constexpr char SC_PACKET_FLAG_INFO = 12;
 
 #pragma pack(push ,1)
 
@@ -62,6 +65,14 @@ struct sc_packet_login_ok
 	short hp;
 	short level;
 	int	exp;
+};
+
+struct sc_packet_flag_info
+{
+	char size;
+	char type;
+	int id;
+	float p_x, p_y, p_z;
 };
 
 struct sc_packet_move

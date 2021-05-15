@@ -38,6 +38,7 @@ public:
 
 	void send_packet(int user_id, void* packet); // 보낼 패킷의 버퍼와 사이즈 설정
 	void send_login_ok_packet(int user_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
+	void send_flag_info_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
 	void send_move_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_rotate_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_idle_packet(int user_id, int idler); // 변경된 위치값 설정
@@ -55,7 +56,8 @@ public:
 	void do_rotate(int user_id, char dir);
 	void set_formation(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
-	void initialize_clients(); // 객체 연결 성공시 초기화
+	void initialize_clients(); // 플레이어 기본 초기화
+	void initialize_objects(); // 객체 초기화
 	void disconnect(int user_id);
 
 	void initialize_NPC(int player_id);

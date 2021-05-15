@@ -241,7 +241,7 @@ _bool CCollider::Collision_AABB(CCollider* pTargetCollider)
 }
 
 void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
-{
+{ // dest가 밀린애, sour가 미는애
 	_matrix		matSour = Compute_WorldTransform();
 	_matrix		matDest = pTargetCollider->Compute_WorldTransform();
 
@@ -275,6 +275,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 						pDestTransform->Get_Matrix()._42,
 						pDestTransform->Get_Matrix()._43 + fMoveZ };
 				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION,&vTemp);
+				// 여기에 업데이트
 			}
 			else
 			{

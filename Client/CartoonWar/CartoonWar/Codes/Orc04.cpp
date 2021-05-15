@@ -54,6 +54,12 @@ _int COrc04::Update_GameObject(const _float& fTimeDelta)
 {
     m_pColliderCom[0]->Update_Collider(m_pTransformCom);
     m_pColliderCom[1]->Update_Collider(m_pTransformCom);
+    //Obb_Collision();
+    m_pColliderCom[0]->Collision_AABB(
+        (CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_AABB"),
+        m_pTransformCom,
+        (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Transform")
+    );
 
     return _int();
 }
@@ -96,6 +102,7 @@ _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
    //   m_pTransformCom->Go_There(vSlide);
    //}
         }
+    }
 
 
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
@@ -103,6 +110,7 @@ _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
+    Safe_Release(server);
 	return _int();
 }
 

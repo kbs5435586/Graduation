@@ -25,8 +25,8 @@ HRESULT CFlag::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(-90.f));
 	//_vec3 vPos = { 250.f,0.f,250.f };
-	_vec3 vPos = *(_vec3*)pArg;
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	/*_vec3 vPos = *(_vec3*)pArg;
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);*/
 
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));

@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Server_Manager.h"
 #include "Management.h"
+#include "Layer.h"
+#include "MyRect.h"
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)
@@ -125,7 +127,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
 
-		if (recv_id < NPC_ID_START) // 플레이어 일때
+		if (recv_id < NPC_START) // 플레이어 일때
 		{
 			if (ENUM_PLAYER1 == recv_id) // 다른 플레이어 일때
 			{
@@ -207,7 +209,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
-		if (recv_id < NPC_ID_START) // 플레이어
+		if (recv_id < NPC_START) // 플레이어
 		{
 			if (ENUM_PLAYER1 == recv_id)
 			{
@@ -249,7 +251,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
 
-		if (recv_id < NPC_ID_START) // 플레이어일때
+		if (recv_id < NPC_START) // 플레이어일때
 		{
 			if (ENUM_PLAYER1 == recv_id)
 			{
@@ -336,6 +338,35 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		m_objects[recv_id].hp = 0;
 		m_objects[recv_id].anim = 8;
+	}
+	break;
+	case SC_PACKET_FLAG_INFO:
+	{
+		sc_packet_flag_info* my_packet = reinterpret_cast<sc_packet_flag_info*>(ptr);
+		int recv_id = my_packet->id;
+
+		CTransform* pTransform;
+		_vec3 vPos;
+
+		vPos.x = my_packet->p_x;
+		vPos.y = my_packet->p_y;
+		vPos.z = my_packet->p_z;
+
+		int iTemp = 0;
+
+		for(auto& iter : managment->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Rect")->Get_GameObjectLst())
+		{
+			dynamic_cast<CMyRect*>(iter)->m_iNum = iTemp;
+			iTemp++;
+		}
+
+		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Flag", L"Com_Transform", object_id_to_idx(recv_id));
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+
+		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Rect", L"Com_Transform", object_id_to_idx(recv_id));
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	}
 	break;
 	default:
@@ -608,9 +639,20 @@ short CServer_Manager::npc_id_to_idx(unsigned short id)
 	return id - 29;
 }
 
+short CServer_Manager::object_idx_to_id(unsigned short id)
+{
+	return id + 450;
+}
+
+short CServer_Manager::object_id_to_idx(unsigned short id)
+{
+	return id - 450;
+}
+
+
 void CServer_Manager::send_npc_act_packet(unsigned char act)
 {
-	if (my_id < NPC_ID_START)
+	if (my_id < NPC_START)
 	{
 		cs_packet_npc_act l_packet;
 		l_packet.size = sizeof(l_packet);
