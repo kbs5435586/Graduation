@@ -24,18 +24,12 @@ HRESULT CFlag::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(-90.f));
-	_vec3 vPos = { 250.f,0.f,250.f };
+	//_vec3 vPos = { 250.f,0.f,250.f };
+	_vec3 vPos = *(_vec3*)pArg;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-
-	for (auto& iter : m_pMeshCom->m_vecDiffTexturePath)
-	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecTexture.push_back(pTexture);
-	}
-
 
 	return S_OK;
 }
@@ -86,12 +80,11 @@ void CFlag::Render_GameObject()
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		CTexture* pTexture = m_vecTexture[i];
+		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
 		if (pTexture)
 		{
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 		}
-
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
@@ -121,7 +114,7 @@ HRESULT CFlag::Ready_Component()
 		return E_FAIL;
 
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Mesh_Default");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
@@ -167,7 +160,7 @@ CFlag* CFlag::Create()
 CGameObject* CFlag::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CFlag* pInstance = new CFlag(*this);
-	if (FAILED(pInstance->Ready_GameObject()))
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CFlag Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);

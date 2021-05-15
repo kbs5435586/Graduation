@@ -27,17 +27,21 @@ HRESULT COrc04::Ready_GameObject(void* pArg)
     if (FAILED(CreateInputLayout()))
         return E_FAIL;
 
-    _vec3 vPos = _vec3(15.f, 0.f, 0.f);
-    m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
-    m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-    m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-    m_pMeshCom->m_vecDiffTexturePath;
-    m_pAnimCom->SetBones(m_pMeshCom->GetBones());
-    m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-    SetUp_Anim();
+	_vec3 vPos = _vec3(15.f, 0.f, 0.f);
+	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
-    m_pAnimCom->LateInit();
-    m_iCurAnimIdx = 7;
+	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
+	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
+	SetUp_Anim();
+
+	m_pAnimCom->LateInit();
+	m_pMeshCom->m_vecDiffTexturePath;
+	//m_pColiider[0]->Clone_ColliderBox(*m_pLHandMatrix, _vec3(3.f, 3.f, 3.f));
+
+	m_iCurAnimIdx = 7;
+
 
     _vec3 vColliderSize = { 2.f,4.f,2.f };
     m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
@@ -94,30 +98,12 @@ _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
         }
 
 
-        m_iCurAnimIdx = 29;
-        m_pTransformCom->BackWard(fTimeDelta);
-    }
-    else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-    {
-        m_pTransformCom->Go_Straight(fTimeDelta);
-    }
-    else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-    {
-        m_pTransformCom->Rotation_Y(fTimeDelta);
-    }
-    else if (CManagement::GetInstance()->Key_Down(KEY_RIGHT))
-    {
-        m_IsOnce = true;
-        m_iCurAnimIdx = 27;
-    }
-
-    if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
-    {
-        m_iCurAnimIdx = 16;
-        m_IsOnce = false;
-    }
-    Safe_Release(server);
-    return _int();
+	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
+	{
+		m_iCurAnimIdx = 16;
+		m_IsOnce = false;
+	}
+	return _int();
 }
 
 void COrc04::Render_GameObject()
@@ -155,12 +141,12 @@ void COrc04::Render_GameObject()
         CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
             (_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-        CTexture* pTexture = m_pMeshCom->m_pTexture[i];
-        if (pTexture)
-        {
-            CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-        }
-        m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
+		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
         CDevice::GetInstance()->UpdateTable();
         m_pMeshCom->Render_Mesh(i);
@@ -322,10 +308,10 @@ HRESULT COrc04::Ready_Component()
     if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
         return E_FAIL;
 
-    m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc04");
-    NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-    if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
-        return E_FAIL;
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Orc04");
+	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+		return E_FAIL;
 
     m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
     NULL_CHECK_VAL(m_pShaderCom, E_FAIL);

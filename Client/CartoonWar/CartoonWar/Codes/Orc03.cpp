@@ -45,8 +45,7 @@ HRESULT COrc03::Ready_GameObject(void* pArg)
 	m_pMeshCom->m_vecDiffTexturePath;
 
 	m_iCurAnimIdx = 7;
-
-	_vec3 vColliderSize = { 2.f,4.f,2.f };
+	_vec3 vColliderSize = { 160.f,160.f,160.f };
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
@@ -57,12 +56,20 @@ _int COrc03::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
+	Obb_Collision();
+	//m_pColliderCom[0] ->Collision_AABB(
+	//	(CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_AABB"),
+	//	m_pTransformCom,
+	//	(CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Transform")
+	//);
 
 	//if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
 	//	Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
 	//{
 	//	CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
 	//}
+
+
 
 	return _int();
 }
@@ -358,4 +365,42 @@ void COrc03::Set_Animation()
 		m_iCurAnimIdx = m_iPreAnimIdx;
 	}
 
+}
+
+void COrc03::Obb_Collision()
+{
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][3]};
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vTemp = { vPos - vTargetPos};
+			vTemp *= -1.f;
+			vTemp.x *= -1.f;
+			m_vStartPoint = vPos;
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
+}
+
+void COrc03::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+{
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
 }

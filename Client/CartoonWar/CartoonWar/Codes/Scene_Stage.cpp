@@ -173,16 +173,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
  	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
-	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_BasicShape(L"Layer_BasicShape", pManagement)))
-		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
@@ -201,9 +197,14 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return E_FAIL;
-	server->AddRef();
-	server->InitServer(g_hWnd);
-	Safe_Release(server);
+	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+		return E_FAIL;
+
+
+	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
+	//	return E_FAIL;
 
 	// ¼­¹ö init
 
@@ -310,12 +311,8 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Layer_BasicShape(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestCube", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -363,13 +360,6 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	return S_OK;
-}
-
-HRESULT CScene_Stage::Ready_Layer_Orc(const _tchar* pLayerTag, CManagement* pManagement)
-{
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_MountainRocks01_A", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -428,8 +418,50 @@ HRESULT CScene_Stage::Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* p
 
 HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+
+	FLAG tFlag;
+	//tFlag.vPos = _vec3(250.f, 0.2f, 250.f);
+	tFlag.vPos = _vec3(50.f, 0.2f, 50.f);
+	tFlag.iNum = 0;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+
+
+	tFlag.vPos = _vec3(250.f, 0.2f, 250.f);
+	tFlag.iNum = 1;
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+
+
+
+	tFlag.vPos = _vec3(450.f, 0.2f, 400.f);
+	tFlag.iNum = 2;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+
+	tFlag.vPos = _vec3(450.f, 0.2f, 100.f);
+	tFlag.iNum = 3;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+
+
+	tFlag.vPos = _vec3(100.f, 0.2f, 450.f);
+	tFlag.iNum = 4;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag)))
+		return E_FAIL;
+
+
 
 	return S_OK;
 }
@@ -446,14 +478,6 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
-	//for (int i = 0; i < 2; ++i)
-	//{
-	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//		return E_FAIL;
-	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Sufferer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//		return E_FAIL;
-	//}
-
 	return S_OK;
 }
 
@@ -464,6 +488,13 @@ HRESULT CScene_Stage::Ready_Layer_Orc03(const _tchar* pLayerTag, CManagement* pM
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, i)))
 			return E_FAIL;
 	}
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Orc04(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 

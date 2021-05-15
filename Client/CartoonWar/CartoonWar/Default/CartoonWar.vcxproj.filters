@@ -295,9 +295,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
       <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
-      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
       <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
     </Filter>
@@ -405,6 +402,9 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\05. Flag">
       <UniqueIdentifier>{5560848d-c94a-4bb4-8a5b-eb93b35ae33c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
+      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -708,9 +708,6 @@
     <ClInclude Include="..\Headers\Orc02.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Orc03.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Weapon01.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01</Filter>
     </ClInclude>
@@ -752,6 +749,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Flag.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Orc03.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1141,6 +1141,18 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_1.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_2.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_3.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_4.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
