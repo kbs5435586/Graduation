@@ -264,6 +264,8 @@
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
+    <ClInclude Include="..\Headers\UI_WoL.h" />
+    <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
     <ClInclude Include="..\Headers\Weapon01.h" />
@@ -377,6 +379,8 @@
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
+    <ClCompile Include="..\Codes\UI_WoL.cpp" />
+    <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
     <ClCompile Include="..\Codes\Weapon01.cpp" />
@@ -440,6 +444,18 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_4.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_HP.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_MaxTime.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_WoL_Red.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_WoL_Blue.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">

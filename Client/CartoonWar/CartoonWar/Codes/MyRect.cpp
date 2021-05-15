@@ -46,6 +46,17 @@ _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 {
 	if (m_fTempTime >= 1000.f)
 	{
+		if (!m_IsFix)
+		{
+			if (m_tRep.m_arrInt[0])
+			{
+				g_iRedNum++;
+			}
+			else if (m_tRep.m_arrInt[1])
+			{
+				g_iBlueNum++;
+			}
+		}
 		m_IsFix = true;
 	}
 
@@ -112,9 +123,6 @@ void CMyRect::Render_GameObject()
 
 
 	CDevice::GetInstance()->ClearDummyDesc_CS();
-
-
-
 	{
 		CTransform* pTransform_Red = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Orc02", L"Com_Transform", 0);
@@ -154,10 +162,7 @@ void CMyRect::Render_GameObject()
 		}
 
 
-
-
-
-		iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+ 		iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
 		CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 		if(m_iNum ==0 )
 			CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
@@ -177,7 +182,7 @@ void CMyRect::Render_GameObject()
 				m_tRep.m_arrFloat[0] += m_fDeltaTime;
 				m_fTempTime += m_fDeltaTime * 100.f;
 				m_IsTemp = false;
-
+				m_eCurTeam;
 				if (m_eCurTeam != m_ePreTeam)
 				{
 					m_fDeltaTime = 0.f;
@@ -187,10 +192,10 @@ void CMyRect::Render_GameObject()
 					switch (m_eCurTeam)
 					{
 					case TEAM::TEAM_RED:
-
+						m_eCurTeam = TEAM::TEAM_RED;
 						break;
 					case TEAM::TEAM_BLUE:
-
+						m_eCurTeam = TEAM::TEAM_BLUE;
 						break;
 					default:
 						break;
