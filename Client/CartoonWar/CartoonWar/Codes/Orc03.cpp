@@ -58,11 +58,11 @@ _int COrc03::Update_GameObject(const _float& fTimeDelta)
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 
-	if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
-		Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
-	{
-		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
-	}
+	//if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
+	//	Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
+	//{
+	//	CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
+	//}
 
 	return _int();
 }
@@ -84,6 +84,7 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 			m_iCurAnimIdx = server->Get_Anim(server->npc_idx_to_id(m_iLayerIdx));
+			//m_IsOnce = true;
 		}
 	}
 

@@ -78,39 +78,33 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 			m_iCurAnimIdx = server->Get_Anim(ENUM_PLAYER1);
+			m_IsOnce = true;
 		}
 	}
 
-	Set_Animation();
-	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
+	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-		m_iCurAnimIdx = 16;
-		m_IsOnce = false;
+		m_iCurAnimIdx = 29;
+		{
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
+
+
+			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+			_vec3 vSlide = {};
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->BackWard(fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+			//m_pTransformCom->BackWard(fTimeDelta);
+		}
 	}
-
-	//if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-	//{
-	//	m_iCurAnimIdx = 29;
-	//	{
-	//		_vec3 vLook = {};
-	//		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-	//		vLook = Vector3_::Normalize(vLook);
-
-
-	//		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-	//		_vec3 vSlide = {};
-	//		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-	//		{
-	//			m_pTransformCom->BackWard(fTimeDelta);
-	//		}
-	//		else
-	//		{
-	//			m_pTransformCom->Go_There(vSlide);
-	//		}
-	//		//m_pTransformCom->BackWard(fTimeDelta);
-	//	}
-
-	//}
+	// 
 	//else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	//{
 	//	m_iCurAnimIdx = 30;
@@ -134,12 +128,11 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	//	m_iCurAnimIdx = 14;
 	//}
 
-
-
 	Set_Animation();
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
-		m_iCurAnimIdx = 16;
+		server->send_idle_packet();
+		m_iCurAnimIdx = 14;
 		m_IsOnce = false;
 	}
 
@@ -199,8 +192,6 @@ void COrc02::Render_GameObject()
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
-
-
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)

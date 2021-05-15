@@ -624,6 +624,7 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
+    //bool isOnce = true;
     for (int i = 0; i < g_clients[g_clients[npc_id].m_owner_id].m_boid.size(); ++i)
     {
         if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
@@ -631,40 +632,48 @@ void Server::do_follow(int npc_id)
             _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);
             _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 new_pos = *pos + Dir;
-            g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
-
-            for (int i = 0; i < NPC_ID_START; ++i)
+            if (*pos != new_pos)
             {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
+                //isOnce = false;
+                g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-                if (true == is_near(i, npc_id))
+                for (int i = 0; i < NPC_ID_START; ++i)
                 {
-                    g_clients[i].m_cLock.lock();
-                    if (0 != g_clients[i].m_view_list.count(npc_id))
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+
+                    if (true == is_near(i, npc_id))
                     {
-                        g_clients[i].m_cLock.unlock();
-                        send_move_packet(i, npc_id);
+                        g_clients[i].m_cLock.lock();
+                        if (0 != g_clients[i].m_view_list.count(npc_id))
+                        {
+                            g_clients[i].m_cLock.unlock();
+                            send_move_packet(i, npc_id);
+                        }
+                        else
+                        {
+                            g_clients[i].m_cLock.unlock();
+                            send_enter_packet(i, npc_id);
+                        }
                     }
                     else
                     {
-                        g_clients[i].m_cLock.unlock();
-                        send_enter_packet(i, npc_id);
+                        g_clients[i].m_cLock.lock();
+                        if (0 != g_clients[i].m_view_list.count(npc_id))
+                        {
+                            g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                            send_leave_packet(i, npc_id);
+                        }
+                        else
+                            g_clients[i].m_cLock.unlock();
                     }
                 }
-                else
-                {
-                    g_clients[i].m_cLock.lock();
-                    if (0 != g_clients[i].m_view_list.count(npc_id))
-                    {
-                        g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                        send_leave_packet(i, npc_id);
-                    }
-                    else
-                        g_clients[i].m_cLock.unlock();
-                }
+                break;
             }
-            break;
+            else //if (*pos == new_pos && !isOnce)
+            {
+                do_idle(npc_id);
+            }
         }
     }
 }
@@ -1111,26 +1120,29 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
 
 void Server::do_idle(int user_id)
 {
-    for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
+    if (user_id < NPC_ID_START)
     {
-        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애면 보내지도 마라
-            continue;
-        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-        //    activate_npc(c.second.m_id, c.second.m_last_order);
-        if (ST_ACTIVE != c.second.m_status)
-            continue;
-        if (c.second.m_id == user_id)
-            continue;
-    }
-    g_clients[user_id].m_cLock.lock();
-    unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
-    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
-    g_clients[user_id].m_cLock.unlock();
+        g_clients[user_id].m_cLock.lock();
+        unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
+        g_clients[user_id].m_cLock.unlock();
 
-    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+        for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+        {
+            send_idle_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+            // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+        }
+    }
+    else if (user_id >= NPC_ID_START && user_id <= MAX_NPC)
     {
-        send_idle_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+        for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+        {
+            if (false == is_near(i, user_id)) // 근처에 없는 유저면 보내지도 마라
+                continue;
+            if (ST_ACTIVE != g_clients[i].m_status) // 로그인 상태 아닌애면 보내지 마라
+                continue;
+
+            send_idle_packet(i, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        }
     }
 }
 
@@ -1140,7 +1152,7 @@ void Server::send_idle_packet(int user_id, int idler)
     packet.id = idler;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_IDLE;
-    cout << "send " << idler << "'s idle" << endl;
+    cout << idler << " do idle\n";
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
@@ -1181,12 +1193,16 @@ void Server::do_attack(int user_id)
 
             if (0 < c.second.m_hp)
             {
+                send_attacked_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
                 for (auto cpy_vl : copy_viewlist)
+                {
                     send_attacked_packet(cpy_vl, c.second.m_id); // 깎이고 남은 체력 있으면
+                }
             }
             else // 죽으면
             {
                 g_clients[c.second.m_id].m_hp = 0;
+                send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
                 for (auto cpy_vl : copy_viewlist)
                     send_dead_packet(cpy_vl, c.second.m_id);
                     //send_leave_packet(cpy_vl, c.second.m_id); // 시야범위 애들한테 애 없앰
@@ -1198,6 +1214,7 @@ void Server::do_attack(int user_id)
 void Server::disconnect(int user_id)
 {
     send_leave_packet(user_id, user_id); // 나 자신
+    cout << user_id << "is disconnect\n";
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
@@ -1329,13 +1346,14 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
                 //g_clients[user_id].m_transform.Ready_Transform();
-                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),0.f,(float)(rand() % WORLD_VERTICAL) };
+                _vec3 pos = { 10.f,0.f,0.f };
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
 
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
 
                 g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
+                g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;
@@ -1424,7 +1442,7 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < 3; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < 6; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }

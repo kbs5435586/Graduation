@@ -16,6 +16,7 @@ private:
     short my_hp;
     bool isSendOnePacket;
     bool isLogin;
+    string m_ip;
 
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP

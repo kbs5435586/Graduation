@@ -12,6 +12,7 @@ enum Players {
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
+const string SERVER_IP = "123.215.109.236";
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;

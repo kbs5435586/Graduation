@@ -12,6 +12,7 @@ enum Players {
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
+const string SERVER_IP = "123.215.109.243"; // 123.215.109.236 // 127.0.0.1
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
@@ -80,7 +81,6 @@ struct sc_packet_rotate
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
 };
-
 
 constexpr unsigned char O_HUMAN = 0;
 constexpr unsigned char O_ELF = 1;

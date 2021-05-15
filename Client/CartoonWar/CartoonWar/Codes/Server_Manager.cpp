@@ -42,7 +42,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &server_a.sin_addr); // 223.38.53.103 // 127.0.0.1 // 192.168.218.217 // 192.168.218.2
+	inet_pton(AF_INET, SERVER_IP.c_str(), &server_a.sin_addr); // 223.38.53.103 // 127.0.0.1 // 192.168.218.217 // 192.168.218.2
 	server_a.sin_port = htons(SERVER_PORT);
 
 	retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
@@ -109,7 +109,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
-		m_objects[recv_id].showCharacter = true;
 		isLogin = true;
 
 		Safe_Release(managment);
@@ -214,13 +213,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc02", L"Com_Transform", 0);
-				m_objects[recv_id].anim = 29;
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc04", L"Com_Transform", 0);
-				m_objects[recv_id].anim = 29;
 			}
 		}
 		else // NPC 
@@ -229,10 +226,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
-				m_objects[recv_id].anim = 28;
+				
 			}
 		}
-		;
+		m_objects[recv_id].anim = 29;
 		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		vPos.x = my_packet->x;
 		vPos.y = my_packet->y;
@@ -258,13 +255,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc02", L"Com_Transform", 0);
-				m_objects[recv_id].anim = 29;
+				
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc04", L"Com_Transform", 0);
-				m_objects[recv_id].anim = 29;
 			}
 		}
 		else
@@ -273,9 +269,9 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			{
 				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
-				m_objects[recv_id].anim = 28;
 			}
 		}
+		m_objects[recv_id].anim = 29;
 		_vec3 rPos = *pTransform->Get_StateInfo(CTransform::STATE_RIGHT);
 		_vec3 uPos = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 		_vec3 lPos = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
@@ -576,20 +572,20 @@ void CServer_Manager::update_key_input()
 		}
 	}
 
-	if (true == isLogin)
-	{
-		if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
-			!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000) &&
-			!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
-		{
-			if (false == isSendOnePacket)
-			{
-				send_idle_packet();
-				isSendOnePacket = true;
-				m_objects[my_id].anim = 14;
-			}
-		}
-	}
+	//if (true == isLogin)
+	//{
+	//	if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
+	//		!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000) &&
+	//		!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+	//	{
+	//		if (false == isSendOnePacket)
+	//		{
+	//			send_idle_packet();
+	//			isSendOnePacket = true;
+	//			m_objects[my_id].anim = 14;
+	//		}
+	//	}
+	//}
 	if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
