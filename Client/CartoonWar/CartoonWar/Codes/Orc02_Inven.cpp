@@ -1,26 +1,26 @@
 #include "framework.h"
 #include "Management.h"
-#include "Orc02.h"
+#include "Orc02_Inven.h"
 #include "Weapon.h"
 #include "Inventory_Camera.h"
 #include "Debug_Camera.h"
 
-COrc02::COrc02()
+COrc02_Inven::COrc02_Inven()
 	: CGameObject()
 {
 }
 
-COrc02::COrc02(const COrc02& rhs)
+COrc02_Inven::COrc02_Inven(const COrc02_Inven& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT COrc02::Ready_Prototype()
+HRESULT COrc02_Inven::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT COrc02::Ready_GameObject(void* pArg)
+HRESULT COrc02_Inven::Ready_GameObject(void* pArg)
 {
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
@@ -29,7 +29,6 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 10.f, 0.f, 10.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
@@ -47,36 +46,39 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	
 
-	//CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
-	//m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	//
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
-	//CAMERADESC		tICameraDesc;
-	//ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-	//tICameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
-	//tICameraDesc.vAt = m;
-	//tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
-	//
-	//PROJDESC		tIProjDesc;
-	//ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
-	//tIProjDesc.fFovY = XMConvertToRadians(60.f);
-	//tIProjDesc.fAspect = _float(WINCX) / WINCY;
-	//tIProjDesc.fNear = g_Near;
-	//tIProjDesc.fFar = g_Far;
-	//
-	//temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc);
+	CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
+	CAMERADESC		tICameraDesc;
+	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
+	tICameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
+	tICameraDesc.vAt = m;
+	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+
+	PROJDESC		tIProjDesc;
+	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+	tIProjDesc.fFovY = XMConvertToRadians(60.f);
+	tIProjDesc.fAspect = _float(WINCX) / WINCY;
+	tIProjDesc.fNear = g_Near;
+	tIProjDesc.fFar = g_Far;
+
+	temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc);
 
 
 
 	m_tInfo = { 10.f,10.f,10.f,10.f };
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
-	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + _vec3(0.f,20.f,0.f);
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
+	//m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + _vec3(0.f,20.f,0.f);
+	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
+
+
+	canSee = true;
 
 	return S_OK;
 }
 
-_int COrc02::Update_GameObject(const _float& fTimeDelta)
+_int COrc02_Inven::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
@@ -89,18 +91,18 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-_int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
+_int COrc02_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	if (canSee)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 	}
-
-
+	
+	
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LBUTTON))
 	{
@@ -204,37 +206,40 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 			dynamic_cast<CWeapon*>(iter)->GetIsPicked() = false;
 		}
 	}
+	//if (CManagement::GetInstance()->Key_Down(KEY_SPACE))
+	//{
+	//	canSee = !canSee;
+	//}
 
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 	//	(CGameObject**)&pCameraObject)))
 
 	//Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx);
 
-	//CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
-	//m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
-	//CAMERADESC		tICameraDesc;
-	//ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-	//tICameraDesc.vEye = m - _vec3(10.f,10.f,10.f);
-	//tICameraDesc.vAt = m;
-	//tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
-	//
-	//PROJDESC		tIProjDesc;
-	//ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
-	//tIProjDesc.fFovY = XMConvertToRadians(60.f);
-	//tIProjDesc.fAspect = _float(WINCX) / WINCY;
-	//tIProjDesc.fNear = g_Near;
-	//tIProjDesc.fFar = g_Far;
-	//
-	//temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc);
-	//temp->SetUp_CameraProjDesc();
-	
+	CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
+	CAMERADESC		tICameraDesc;
+	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
+	tICameraDesc.vEye = m - _vec3(10.f,10.f,10.f);
+	tICameraDesc.vAt = m;
+	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+
+	PROJDESC		tIProjDesc;
+	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+	tIProjDesc.fFovY = XMConvertToRadians(60.f);
+	tIProjDesc.fAspect = _float(WINCX) / WINCY;
+	tIProjDesc.fNear = g_Near;
+	tIProjDesc.fFar = g_Far;
+
+	temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc);
+
 	
 	return _int();
 }
 
-void COrc02::Render_GameObject()
+void COrc02_Inven::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -263,15 +268,15 @@ void COrc02::Render_GameObject()
 		tRep.m_arrInt[0] = 1;
 		tRep.m_arrInt[1] = m_pAnimCom->GetBones()->size();
 
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		m_pShaderCom->SetUp_OnShaderT(I_matWorld, I_matView, I_matProj, tMainPass);
 
-		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
 
-		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b8);
 
 		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
 		if (pTexture)
@@ -282,47 +287,16 @@ void COrc02::Render_GameObject()
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
-
-		//////////////////////////////////////////
-		//REP tRepT = {};
-		//tRepT.m_arrInt[0] = 1;
-		//tRepT.m_arrInt[1] = m_pAnimCom->GetBones()->size();
-		//
-		//m_pShaderComT->SetUp_OnShaderT(I_matWorld, I_matView, I_matProj, tMainPass);
-		//
-		//_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		//	(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
-		//
-		//iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRepT);
-		//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		//	(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b8);
-		//
-		////CDevice::GetInstance()->SetTextureToShader(m_vecTexture[i]->GetSRV_().Get(), TEXTURE_REGISTER::t0);
-		//
-		//m_pMeshCom->SetRatio(m_fRatio);
-		//
-		//m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
-		//
-		//CDevice::GetInstance()->UpdateTable();
-		//m_pMeshCom->Render_Mesh(i);
 	}
 
 	m_pColliderCom[0]->Render_Collider();
 	m_pColliderCom[1]->Render_Collider();
 
-	//m_pShaderComT->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPassT);
-	//_uint iOffesetT = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPassT);
-	//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffesetT, CONST_REGISTER::b0);
-	//CDevice::GetInstance()->UpdateTable();
-	//m_pBufferCom->Render_VIBuffer();
 
-	
-	//m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
 	Safe_Release(pManagement);
 }
 
-HRESULT COrc02::CreateInputLayout()
+HRESULT COrc02_Inven::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -340,24 +314,10 @@ HRESULT COrc02::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
-	//vector<D3D12_INPUT_ELEMENT_DESC>  vecDescT;
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//	  
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//	  
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//vecDescT.push_back(D3D12_INPUT_ELEMENT_DESC{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 88, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-	//
-	//if (FAILED(m_pShaderComT->Create_Shader(vecDescT, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
-	//	return E_FAIL;
 	return S_OK;
 }
 
-void COrc02::SetUp_Anim()
+void COrc02_Inven::SetUp_Anim()
 {
 	m_vecAnimCtrl.push_back(AnimCtrl(0, 70, 0.f, 2.33f));					//attack01				0
 	m_vecAnimCtrl.push_back(AnimCtrl(71, 141, 2.36f, 4.7f));				//attack02				1
@@ -431,51 +391,47 @@ void COrc02::SetUp_Anim()
 
 }
 
-COrc02* COrc02::Create()
+COrc02_Inven* COrc02_Inven::Create()
 {
-	COrc02* pInstance = new COrc02();
+	COrc02_Inven* pInstance = new COrc02_Inven();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"COrc02 Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"COrc02_Inven Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* COrc02::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* COrc02_Inven::Clone_GameObject(void* pArg, _uint iIdx)
 
 {
-	COrc02* pInstance = new COrc02(*this);
+	COrc02_Inven* pInstance = new COrc02_Inven(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 	{
-		MessageBox(0, L"COrc02 Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"COrc02_Inven Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	m_iLayerIdx = iIdx;
 	return pInstance;
 }
-void COrc02::Free()
+void COrc02_Inven::Free()
 {
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
-	//Safe_Release(m_pITransformCom);
 	Safe_Release(m_pShaderCom);
-	//Safe_Release(m_pShaderComT);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
 	Safe_Release(m_pColliderCom[0]);
 	Safe_Release(m_pColliderCom[1]);
 	Safe_Release(m_pNaviCom);
-	Safe_Release(m_pFrustumCom);
-	//Safe_Release(m_pIFrustumCom);
 
 	CGameObject::Free();
 }
 
-HRESULT COrc02::Ready_Component()
+HRESULT COrc02_Inven::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -485,11 +441,6 @@ HRESULT COrc02::Ready_Component()
 	NULL_CHECK_VAL(m_pTransformCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Transform", m_pTransformCom)))
 		return E_FAIL;
-	//m_pITransformCom = (CTransform*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Transform");
-	//NULL_CHECK_VAL(m_pITransformCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_ITransform", m_pITransformCom)))
-	//	return E_FAIL;
-
 
 	m_pRendererCom = (CRenderer*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer");
 	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
@@ -501,15 +452,10 @@ HRESULT COrc02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUI");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
-
-	//m_pShaderComT = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUI");
-	//NULL_CHECK_VAL(m_pShaderComT, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_ShaderT", m_pShaderComT)))
-	//	return E_FAIL;
 
 	m_pComputeShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Animation");
 	NULL_CHECK_VAL(m_pComputeShaderCom, E_FAIL);
@@ -531,16 +477,6 @@ HRESULT COrc02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom[1])))
 		return E_FAIL;
 
-	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
-	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
-		return E_FAIL;
-
-	//m_pIFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_IFrustum");
-	//NULL_CHECK_VAL(m_pIFrustumCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_IFrustum", m_pIFrustumCom)))
-	//	return E_FAIL;
-
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
@@ -550,7 +486,7 @@ HRESULT COrc02::Ready_Component()
 	return S_OK;
 }
 
-void COrc02::Set_Animation()
+void COrc02_Inven::Set_Animation()
 {
 	if (m_iCurAnimIdx != m_iPreAnimIdx)
 	{

@@ -16,7 +16,7 @@ HRESULT CInventory_Camera::Ready_Prototype()
 {
 	if (FAILED(CCamera::Ready_Prototype()))
 		return E_FAIL;
-
+	num = 1;
 
 	
 	return NOERROR;
@@ -97,7 +97,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 
 	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info(); 
-	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(0.f, 15.f, 0.f);
+	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(15.f, 0.f, 15.f);
 	_vec3		vLook;
 	_vec3		temp = *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));

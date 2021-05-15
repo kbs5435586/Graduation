@@ -14,6 +14,7 @@
 // Mesh
 #include "Orc01.h"
 #include "Orc02.h"
+#include "Orc02_Inven.h"
 #include "Orc03.h"
 #include "Orc04.h"
 
@@ -121,6 +122,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc01", COrc01::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc02", COrc02::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc02_Inven", COrc02_Inven::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Orc03", COrc03::Create())))
 		return E_FAIL;
@@ -347,7 +350,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 
 	CAMERADESC		tICameraDesc;
 	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-	tICameraDesc.vEye = _vec3(-10.f, 13.f, 0.f);
+	tICameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tICameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
@@ -467,6 +470,9 @@ HRESULT CScene_Stage::Ready_Layer_Orc02(const _tchar* pLayerTag, CManagement* pM
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, 1)))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Orc02_Inven", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, nullptr, 2)))
+		return E_FAIL;
+
 	//for (int i = 0; i < 2; ++i)
 	//{
 	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Skeleton", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))

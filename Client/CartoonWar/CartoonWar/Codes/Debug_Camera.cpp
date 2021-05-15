@@ -18,6 +18,8 @@ HRESULT CDebug_Camera::Ready_Prototype()
 	if (FAILED(CCamera::Ready_Prototype()))
 		return E_FAIL;
 
+	num = 0;
+
 	return NOERROR;
 }
 

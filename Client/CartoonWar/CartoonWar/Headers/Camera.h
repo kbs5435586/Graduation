@@ -41,6 +41,8 @@ protected:
 protected:
 	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
 	_vec3						m;
+public:
+	int							num;
 
 };
 

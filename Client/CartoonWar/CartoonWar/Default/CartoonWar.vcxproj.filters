@@ -412,6 +412,9 @@
     <Filter Include="02. GameObject\98. Camera\01. Inventory Camera">
       <UniqueIdentifier>{991ec409-e0f7-4664-bad7-7684ea70e597}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02\Inven">
+      <UniqueIdentifier>{98d72f97-ce94-467e-b36d-bd8d7c30c592}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -765,6 +768,9 @@
     <ClInclude Include="..\Codes\Inventory_Camera.h">
       <Filter>02. GameObject\98. Camera\01. Inventory Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Orc02_Inven.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02\Inven</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1088,6 +1094,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Inventory_Camera.cpp">
       <Filter>02. GameObject\98. Camera\01. Inventory Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Orc02_Inven.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02\Inven</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

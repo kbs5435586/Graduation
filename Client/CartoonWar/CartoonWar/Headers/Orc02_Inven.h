@@ -1,13 +1,13 @@
 #pragma once
 #include "GameObject.h"
 class CWeapon;
-class COrc02 :
+class COrc02_Inven :
     public CGameObject
 {
 private:
-	COrc02();
-	COrc02(const COrc02& rhs);
-	virtual ~COrc02() = default;
+	COrc02_Inven();
+	COrc02_Inven(const COrc02_Inven& rhs);
+	virtual ~COrc02_Inven() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -18,7 +18,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 	void									SetUp_Anim();
 public:
-	static COrc02*							Create();
+	static COrc02_Inven*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, _uint  iIdx = 0) override;
 private:
 	virtual void							Free();
@@ -27,17 +27,15 @@ private:
 	void									Set_Animation();
 private:
 	CTransform*								m_pTransformCom = nullptr;
-	//CTransform*								m_pITransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	//CShader*								m_pShaderComT = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColliderCom[4] = {nullptr};
-	CFrustum*								m_pFrustumCom = nullptr;
-	//CFrustum*								m_pIFrustumCom = nullptr;
+	
+	
 private:
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
@@ -49,5 +47,6 @@ private:
 	CWeapon*								m_pWeapon = nullptr;
 
 	_vec3									m;
+	bool									canSee;
 };
 

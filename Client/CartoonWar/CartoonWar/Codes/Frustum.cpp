@@ -41,6 +41,26 @@ HRESULT CFrustum::Transform_ToWorld()
 	return S_OK;
 }
 
+HRESULT CFrustum::Transform_ToIWorld()
+{
+	_matrix  matView, matProj;
+
+	matView = CCamera_Manager::GetInstance()->GetIMatView();
+	matProj = CCamera_Manager::GetInstance()->GetIMatProj();
+
+	matView = Matrix_::Inverse(matView);
+	matProj = Matrix_::Inverse(matProj);
+	XMMATRIX xmMatView = ::XMLoadFloat4x4(&matView);
+	XMMATRIX xmMatProj = ::XMLoadFloat4x4(&matProj);
+
+	for (_uint i = 0; i < 8; ++i)
+	{
+		m_vPoint[i] = Vector3_::TransformCoord(m_vOriginal_Point[i], xmMatProj);
+		m_vPoint[i] = Vector3_::TransformCoord(m_vPoint[i], xmMatView);
+	}
+	return S_OK;
+}
+
 _bool CFrustum::Culling_Frustum(CTransform* pTransform, const _float& fRadius)
 {
 	_vec3 vPoint[8];

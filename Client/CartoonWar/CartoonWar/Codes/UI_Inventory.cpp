@@ -14,7 +14,7 @@ CUI_Inventory::CUI_Inventory(const CUI_Inventory& rhs)
 
 HRESULT CUI_Inventory::Ready_Prototype()
 {
-	canSee = false;
+	
 	return S_OK;
 }
 
@@ -56,8 +56,8 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_InventorySpace", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI", nullptr, &Pos)))
 	//	return E_FAIL;
 
-
-
+	
+	canSee = false;
 	
 	Safe_Release(pManagement);
 	return S_OK;

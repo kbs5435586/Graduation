@@ -10,6 +10,7 @@ private:
 public:
 	HRESULT					Ready_Frustum();
 	HRESULT					Transform_ToWorld();
+	HRESULT					Transform_ToIWorld();
 	_bool					Culling_Frustum(CTransform* pTransform, const _float& fRadius = 0.f);
 public:
 	_bool					Isin_Frustum(Plane* pPlane, const _vec3* pPosition, const _float& fRadius);
