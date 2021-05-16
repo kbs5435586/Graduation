@@ -10,6 +10,7 @@
 #include "Debug_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
+#include "Sphere.h"
 // Mesh
 #include "Orc01.h"
 #include "Orc02.h"
@@ -114,6 +115,8 @@ void CScene_Stage::Render_Scene()
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect", CMyRect::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Sphere", CShpere::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
 		return E_FAIL;
@@ -237,7 +240,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(-1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))

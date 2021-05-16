@@ -202,6 +202,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\08. Collider">
       <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\02. Cube">
+      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
       <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
     </Filter>
@@ -409,8 +412,8 @@
     <Filter Include="02. GameObject\97. UI\04. UI_WoL_Blue">
       <UniqueIdentifier>{40ef1471-4070-4eb3-af3c-9cdae14279e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. BaseShape\02. Cube">
-      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
+    <Filter Include="02. GameObject\99. BaseShape\05. Sphere">
+      <UniqueIdentifier>{ea02003e-515b-4f6d-882a-2ef88e5827c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -765,6 +768,9 @@
     <ClInclude Include="..\Headers\UI_WoL_Blue.h">
       <Filter>02. GameObject\97. UI\04. UI_WoL_Blue</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Sphere.h">
+      <Filter>02. GameObject\99. BaseShape\05. Sphere</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1088,6 +1094,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp">
       <Filter>02. GameObject\97. UI\04. UI_WoL_Blue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sphere.cpp">
+      <Filter>02. GameObject\99. BaseShape\05. Sphere</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

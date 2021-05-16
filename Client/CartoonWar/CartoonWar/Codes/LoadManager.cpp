@@ -225,6 +225,7 @@ HRESULT CLoadManager::Load_File_Hatch(const _tchar* pFilePath, void* pArg)
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, pLayerTag)->Get_ComponentPointer(L"Com_Transform");
 			//pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
+			//pTransform->Scaling(20.f, 20.f, 20.f);
 
 			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
 			pTransform->Set_Add_PosY(fAdd_PosY);
