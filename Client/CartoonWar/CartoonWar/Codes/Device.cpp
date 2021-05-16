@@ -189,12 +189,39 @@ HRESULT CDevice::Create_SwapChain(_bool IsWindowed)
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.SampleDesc.Count = 1;
+	
 
 	swapChainDesc.Flags = m_IsTearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
 	ComPtr<IDXGISwapChain1> swapChain;
 	if (FAILED(m_pFactory->CreateSwapChainForHwnd(m_pCmdQueue.Get(), g_hWnd, &swapChainDesc,nullptr, nullptr, &swapChain)))
 		return E_FAIL;
+
+	
+	{
+		//BOOL	IsFullScreen = false;
+		//m_pSwapChain->GetFullscreenState(&IsFullScreen, nullptr);
+		//m_pSwapChain->SetFullscreenState(!IsFullScreen, nullptr);
+
+
+		//DXGI_MODE_DESC dxgiTargetParameters;
+		//dxgiTargetParameters.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//dxgiTargetParameters.Width = WINCX;
+		//dxgiTargetParameters.Height = WINCY;
+		//dxgiTargetParameters.RefreshRate.Numerator = 60;
+		//dxgiTargetParameters.RefreshRate.Denominator = 1;
+		//dxgiTargetParameters.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		//dxgiTargetParameters.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+
+		//m_pSwapChain->ResizeTarget(&dxgiTargetParameters);
+
+		//DXGI_SWAP_CHAIN_DESC dxgiSwapChainDesc;
+		//m_pSwapChain->GetDesc(&dxgiSwapChainDesc);
+
+		//m_pSwapChain->ResizeBuffers(m_iCurTargetIdx, WINCX, WINCY, dxgiSwapChainDesc.BufferDesc.Format, dxgiSwapChainDesc.Flags);
+
+
+	}
 
 
 	if (m_IsTearingSupport)

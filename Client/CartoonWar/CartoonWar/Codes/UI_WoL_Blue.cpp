@@ -25,7 +25,7 @@ HRESULT CUI_WoL_Blue::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 500.f;
+	m_fX = WINCX / 2 + 100.f;
 	m_fY = 50.f;
 
 	m_fSizeX = 50.f;

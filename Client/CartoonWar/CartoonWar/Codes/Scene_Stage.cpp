@@ -88,6 +88,8 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
+	
+
 	return CScene::Update_Scene(fTimeDelta);
 }
 

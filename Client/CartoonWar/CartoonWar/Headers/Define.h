@@ -2,8 +2,8 @@
 //#define WINCX 1920
 //#define WINCY 1080
 
-#define WINCX 800
-#define WINCY 600
+#define WINCX 1920
+#define WINCY 1080
 
 const float	g_Near = 0.1f;
 const float g_Far = 500.f;
