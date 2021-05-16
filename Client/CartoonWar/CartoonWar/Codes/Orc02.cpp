@@ -160,8 +160,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 
-
-
+	Safe_Release(server);
 	return _int();
 }
 

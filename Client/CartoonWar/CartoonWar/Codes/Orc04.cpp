@@ -54,6 +54,16 @@ HRESULT COrc04::Ready_GameObject(void* pArg)
 
 _int COrc04::Update_GameObject(const _float& fTimeDelta)
 {
+    m_pColliderCom[0]->Update_Collider(m_pTransformCom);
+    m_pColliderCom[1]->Update_Collider(m_pTransformCom);
+    //Obb_Collision();
+    m_pColliderCom[0]->Collision_AABB(
+        (CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_AABB"),
+        m_pTransformCom,
+        (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Transform")
+    );
+
+    return _int();
 	m_pWeapon = (CWeapon*)CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon")->Get_GameObject(2);
 
 	if (m_pWeapon)
@@ -165,6 +175,8 @@ void COrc04::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
+    m_pColliderCom[0]->Render_Collider();
+    m_pColliderCom[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
