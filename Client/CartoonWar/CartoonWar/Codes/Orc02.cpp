@@ -71,7 +71,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 	//Obb_Collision(); 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;

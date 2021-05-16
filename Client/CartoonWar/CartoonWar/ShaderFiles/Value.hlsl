@@ -42,6 +42,7 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	row_major matrix	matRev;
 
 	float4				vCamPos;
+	float4				vLook;
 };
 
 cbuffer MATERIAL : register (b1)
