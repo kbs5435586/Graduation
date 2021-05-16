@@ -15,22 +15,24 @@ private:
 
 	SOCKET listenSocket;
 	HANDLE g_iocp;
+
 	int LISTEN_KEY = 999;
+
 	float NEAR_APPROACH = 0.3f;
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
 	int ATTACK_RADIUS = 5; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
+	float FORMATION_SPACE = 15.f;
 
-	float MOVE_SPEED_NPC = 0.4f;
-	float MOVE_SPEED_PLAYER = 0.2f;
+	float MOVE_SPEED_NPC = 0.8f;
+	float MOVE_SPEED_PLAYER = 1.f;
 	float ROTATE_SPEED = 0.1f;
 	int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
-	float FORMATION_SPACE = 10.f;
 	float SCALE_X = 0.02f, SCALE_Y = 0.02f, SCALE_Z = 0.02f;
 	int ATTACK_DAMAGE = 50;
 	bool isGameStart;
-	short StartGame_PlayerCount = 0;
+	short StartGame_PlayerCount = 1;
 	float play_time = 300;
 
 public:

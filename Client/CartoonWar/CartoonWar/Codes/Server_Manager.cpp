@@ -596,27 +596,27 @@ void CServer_Manager::update_key_input()
 			send_move_packet(GO_FORWARD);
 			isSendOnePacket = false;
 		}
-		if (GetAsyncKeyState('F') & 0x8000)
-		{
-			send_move_packet(GO_LEFT);
-			isSendOnePacket = false;
-		}
+		//if (GetAsyncKeyState('F') & 0x8000)
+		//{
+		//	send_move_packet(GO_LEFT);
+		//	isSendOnePacket = false;
+		//}
 		if (GetAsyncKeyState('G') & 0x8000)
 		{
 			send_move_packet(GO_BACK);
 			isSendOnePacket = false;
 		}
-		if (GetAsyncKeyState('H') & 0x8000)
-		{
-			send_move_packet(GO_RIGHT);
-			isSendOnePacket = false;
-		}
-		if (GetAsyncKeyState('O') & 0x8000)
+		//if (GetAsyncKeyState('H') & 0x8000)
+		//{
+		//	send_move_packet(GO_RIGHT);
+		//	isSendOnePacket = false;
+		//}
+		if (GetAsyncKeyState('F') & 0x8000)
 		{
 			send_rotate_packet(TURN_LEFT);
 			isSendOnePacket = false;
 		}
-		if (GetAsyncKeyState('P') & 0x8000)
+		if (GetAsyncKeyState('H') & 0x8000)
 		{
 			send_rotate_packet(TURN_RIGHT);
 			isSendOnePacket = false;

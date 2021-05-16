@@ -178,6 +178,39 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	Invalidate_ViewProjMatrix();
 
+	//int id = CServer_Manager::GetInstance()->Get_PlayerID();
+//CTransform* pTransform;
+//if (ENUM_PLAYER1 == id)
+//{
+//   pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+//      L"Layer_Orc02", L"Com_Transform", 0);
+//}
+//else if (ENUM_PLAYER2 == id)
+//{
+//   pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+//      L"Layer_Orc04", L"Com_Transform", 0);
+
+//}
+//_vec3 vUp, vPos, vLook;
+//vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
+//vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+//vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+////카메라 고정
+//{
+//   vPos.y += 1.f;
+//   vUp = vUp * 2.f;
+//   vLook = vLook * -10.f;
+//   _vec3 vTemp = vUp - vLook;;
+//   vPos = vPos + vTemp;
+
+//   m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos); // 카메라 좌표
+
+//   m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+//   m_pTransform->Set_StateInfo(CTransform::STATE_UP, pTransform->Get_StateInfo(CTransform::STATE_UP));
+//   m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, pTransform->Get_StateInfo(CTransform::STATE_LOOK));
+//}
+
 	return _int();
 }
 

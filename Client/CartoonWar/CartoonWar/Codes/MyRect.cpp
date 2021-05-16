@@ -202,6 +202,9 @@ void CMyRect::Render_GameObject()
 					case TEAM::TEAM_BLUE:
 						m_eCurTeam = TEAM::TEAM_BLUE;
 						break;
+					case TEAM::TEAM_END:
+						m_eCurTeam = TEAM::TEAM_END;
+						break;
 					default:
 						break;
 					}
@@ -227,6 +230,29 @@ void CMyRect::Render_GameObject()
 		}
 		else
 		{
+			if (m_eCurTeam != m_ePreTeam)
+			{
+				m_fDeltaTime = 0.f;
+				m_fTempTime = 0.f;
+				m_IsTemp = true;
+				m_tRep.m_arrFloat[0] = 0.f;
+				switch (m_eCurTeam)
+				{
+				case TEAM::TEAM_RED:
+					m_eCurTeam = TEAM::TEAM_RED;
+					break;
+				case TEAM::TEAM_BLUE:
+					m_eCurTeam = TEAM::TEAM_BLUE;
+					break;
+				case TEAM::TEAM_END:
+					m_eCurTeam = TEAM::TEAM_END;
+					break;
+				default:
+					break;
+				}
+				m_ePreTeam = m_eCurTeam;
+			}
+
 			if (!m_IsFix)
 			{
 				m_tRep.m_arrFloat[0] = 0.f;

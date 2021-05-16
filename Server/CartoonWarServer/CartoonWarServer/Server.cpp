@@ -299,8 +299,6 @@ void Server::do_move(int user_id, char direction)
         pos->z = 0;
 
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
-
-    is_flag_near(user_id);
     set_formation(user_id);
 
     g_clients[user_id].m_cLock.lock();
@@ -1238,7 +1236,7 @@ void Server::send_idle_packet(int user_id, int idler)
     packet.id = idler;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_IDLE;
-    cout << idler << " do idle\n";
+    //cout << idler << " do idle\n";
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
@@ -1390,6 +1388,7 @@ void Server::is_flag_near(int flag)
                 count_red++;
                 if (false == flags[flag].isRed)
                 {
+                    cout << "flag " << flag << " is red\n";
                     flags[flag].isRed = true;
                     for (int j = 0; j <= MAX_USER; ++j)
                     {
@@ -1406,7 +1405,8 @@ void Server::is_flag_near(int flag)
                 count_blue++;
                 if (false == flags[flag].isBlue)
                 {
-                    flags[flag].isRed = true;
+                    cout << "flag " << flag << " is blue\n";
+                    flags[flag].isBlue = true;
                     for (int j = 0; j <= MAX_USER; ++j)
                     {
                         if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
@@ -1423,6 +1423,7 @@ void Server::is_flag_near(int flag)
     {
         if (true == flags[flag].isRed)
         {
+            cout << "flag " << flag << " is not red\n";
             flags[flag].isRed = false;
             for (int j = 0; j <= MAX_USER; ++j)
             {
@@ -1438,6 +1439,7 @@ void Server::is_flag_near(int flag)
     {
         if (true == flags[flag].isBlue)
         {
+            cout << "flag " << flag << " is not blue\n";
             flags[flag].isBlue = false;
             for (int j = 0; j <= MAX_USER; ++j)
             {
@@ -1518,8 +1520,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
                 //g_clients[user_id].m_transform.Ready_Transform();
-                _vec3 pos = { 10.f,0.f,0.f };
-                g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+               
 
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
                 g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
@@ -1527,9 +1528,17 @@ void Server::worker_thread()
                 g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 if (0 == user_id)
+                {
                     g_clients[user_id].m_team = TEAM_RED;
+                    _vec3 pos = { 50.f, 0.2f, 90.f };
+                    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                }
                 else
+                {
                     g_clients[user_id].m_team = TEAM_BLUE;
+                    _vec3 pos = { 450.f, 0.2f, 360.f };
+                    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                }
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
