@@ -25,7 +25,7 @@ HRESULT CUI_MP::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 400.f;
+	m_fX = WINCX / 2 ;
 	m_fY = 20.f;
 
 	m_fSizeX = 300.f;
