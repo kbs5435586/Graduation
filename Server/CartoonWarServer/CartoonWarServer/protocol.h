@@ -12,14 +12,18 @@ enum Players {
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
-const string SERVER_IP = "123.215.109.243"; // 123.215.109.236 // 127.0.0.1
+const string SERVER_IP = "127.0.0.1"; // 123.215.109.236 // 127.0.0.1
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
 
 constexpr int MAX_USER = 29;
 constexpr int NPC_START = 30;
-constexpr int MAX_NPC = 449;
+constexpr int MAX_NPC = 449; 
+
+constexpr int FLAG_START = 450;
+constexpr int MAX_FLAG = 454;
+
 constexpr int OBJECT_START = 450;
 constexpr int MAX_OBJECT = 454;
 
@@ -50,6 +54,8 @@ constexpr char SC_PACKET_ATTACKED = 9;
 constexpr char SC_PACKET_DEAD = 10;
 constexpr char SC_PACKET_ATTACK = 11;
 constexpr char SC_PACKET_FLAG_INFO = 12;
+constexpr char SC_PACKET_FLAG_BOOL = 13;
+constexpr char SC_PACKET_TIME = 14;
 
 #pragma pack(push ,1)
 
@@ -72,7 +78,18 @@ struct sc_packet_flag_info
 	char size;
 	char type;
 	int id;
+	bool isRed;
+	bool isBlue;
 	float p_x, p_y, p_z;
+};
+
+struct sc_packet_flag_bool
+{
+	char size;
+	char type;
+	int id;
+	bool isRed;
+	bool isBlue;
 };
 
 struct sc_packet_move
@@ -81,6 +98,13 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
+};
+
+struct sc_packet_time
+{
+	char size;
+	char type;
+	float time;
 };
 
 struct sc_packet_rotate

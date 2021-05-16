@@ -47,6 +47,8 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	inet_pton(AF_INET, SERVER_IP.c_str(), &server_a.sin_addr); // 223.38.53.103 // 127.0.0.1 // 192.168.218.217 // 192.168.218.2
 	server_a.sin_port = htons(SERVER_PORT);
 
+	init_client();
+
 	retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
 	if ((retval == SOCKET_ERROR) && (WSAEWOULDBLOCK != WSAGetLastError())) // 비동기 connect는 바로 리턴되면서 WSAEWOULDBLOCK 에러를 발생시킴
 	{
@@ -348,6 +350,9 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		CTransform* pTransform;
 		_vec3 vPos;
 
+		flags[recv_id].isBlue= my_packet->isBlue;
+		flags[recv_id].isRed = my_packet->isRed;
+
 		vPos.x = my_packet->p_x;
 		vPos.y = my_packet->p_y;
 		vPos.z = my_packet->p_z;
@@ -361,12 +366,27 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Flag", L"Com_Transform", object_id_to_idx(recv_id));
+			L"Layer_Flag", L"Com_Transform", recv_id);
 		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Rect", L"Com_Transform", object_id_to_idx(recv_id));
+			L"Layer_Rect", L"Com_Transform", recv_id);
 		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	}
+	break;
+	case SC_PACKET_FLAG_BOOL:
+	{
+		sc_packet_flag_bool* my_packet = reinterpret_cast<sc_packet_flag_bool*>(ptr);
+		int recv_id = my_packet->id;
+
+		flags[recv_id].isBlue = my_packet->isBlue;
+		flags[recv_id].isRed = my_packet->isRed;
+	}
+	break;
+	case SC_PACKET_TIME:
+	{
+		sc_packet_time* my_packet = reinterpret_cast<sc_packet_time*>(ptr);
+		game_time = my_packet->time;
 	}
 	break;
 	default:
@@ -689,6 +709,21 @@ bool CServer_Manager::Get_ShowNPC(int npc_index)
 	return m_objects[npc_idx_to_id(npc_index)].showCharacter;
 }
 
+bool CServer_Manager::Get_Blue(int id)
+{
+	return flags[id].isBlue;
+}
+
+bool CServer_Manager::Get_Red(int id)
+{
+	return flags[id].isRed;
+}
+
+bool CServer_Manager::Get_Login()
+{
+	return isLogin;
+}
+
 short CServer_Manager::Get_PlayerID()
 {
 	return my_id;
@@ -702,6 +737,11 @@ short CServer_Manager::Get_ShowOtherPlayer(int id)
 short CServer_Manager::Get_Anim(int id)
 {
 	return m_objects[id].anim;
+}
+
+float CServer_Manager::Get_GameTime()
+{
+	return game_time;
 }
 
 WPARAM CServer_Manager::Get_wParam()
@@ -742,4 +782,10 @@ void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_p
 void CServer_Manager::Set_wParam(WPARAM p)
 {
 	m_wparam = p;
+}
+
+void CServer_Manager::init_client()
+{
+	isRed = false;
+	isBlue = false;
 }

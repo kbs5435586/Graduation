@@ -22,6 +22,10 @@ void Server::error_display(const char* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
+void Server::start_game()
+{
+}
+
 void Server::recv_packet_construct(int user_id, int io_byte)
 {
     int rest_byte = io_byte; // 이만큼 남았다, 이만큼 처리를 마저 해줘야한다
@@ -72,7 +76,7 @@ void Server::process_packet(int user_id, char* buf)
         // bool connected 만든 이유가 true일때 socket이나 name처럼 한번 쓰고 업데이트 되지 않는
         // 값들은 안전하다는 의미, 그래서 connected를 true 되기 전에 socket, name을 처리하던가
         // true할때 같이 락을 걸던가 둘 중 하나로 해야함
-	}
+    }
 	break;
 	case CS_PACKET_MOVE:
 	{
@@ -192,12 +196,41 @@ void Server::send_flag_info_packet(int object_id, int user_id)
     packet.id = object_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_FLAG_INFO;
-    _vec3* pos = g_clients[object_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    packet.p_x = pos->x;
-    packet.p_y = pos->y;
-    packet.p_z = pos->z;
+    packet.isBlue = flags[object_id].isBlue;
+    packet.isRed = flags[object_id].isRed;
+    packet.p_x = flags[object_id].pos.x;
+    packet.p_y = flags[object_id].pos.y;
+    packet.p_z = flags[object_id].pos.z;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_flag_bool_packet(int object_id, int user_id)
+{
+    sc_packet_flag_bool packet;
+    packet.id = object_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_FLAG_BOOL;
+    packet.isBlue = flags[object_id].isBlue;
+    packet.isRed = flags[object_id].isRed;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_time_packet()
+{
+    sc_packet_time packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_TIME;
+    packet.time = play_time;
+
+    for (int i = 0; i <= MAX_USER; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status) // 비접속 상태인 애들 무시
+            continue;
+
+        send_packet(i, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    }
 }
 
 void Server::send_packet(int user_id, void* packet)
@@ -267,6 +300,7 @@ void Server::do_move(int user_id, char direction)
 
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
+    is_flag_near(user_id);
     set_formation(user_id);
 
     g_clients[user_id].m_cLock.lock();
@@ -878,6 +912,8 @@ void Server::do_timer()
             case FUNC_NPC_DEFENCE:
             case FUNC_NPC_HOLD:
             case FUNC_NPC_FOLLOW:
+            case FUNC_CHECK_FLAG:
+            case FUNC_CHECK_TIME:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -939,15 +975,13 @@ void Server::enter_game(int user_id, char name[])
     strcpy_s(g_clients[user_id].m_name, name);
     g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
-    for (int i = OBJECT_START; i <= MAX_OBJECT; ++i)
+    for (int i = 0; i < 5; ++i)
         send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
     cout << "Player " << user_id << " login finish" << endl;
-    for (auto& c : g_clients)
+    for (int i = 0; i <= MAX_USER; ++i)
     {
-        int i = c.second.m_id;
-
         if (user_id == i) // 데드락 회피용
             continue;
 
@@ -967,6 +1001,27 @@ void Server::enter_game(int user_id, char name[])
             //g_clients[i].m_cLock.unlock();
         }
     }
+
+    if (false == isGameStart)
+    {
+        short count = 0;
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE == g_clients[i].m_status)
+            {
+                count++;
+            }
+
+            if (StartGame_PlayerCount < count)
+            {
+                add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
+                add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
+                isGameStart = true;
+                cout << "Game Routine Start!\n";
+                break;
+            }
+        }
+    }
 }
 
 void Server::initialize_clients()
@@ -980,21 +1035,16 @@ void Server::initialize_clients()
 
 void Server::initialize_objects()
 {
-    for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
+    for (int i = 0; i < 5; ++i)
     {
-        g_clients[i].m_id = i; // 유저 등록
-        g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+        flags[i].isBlue = false;
+        flags[i].isRed = false;
     }
-    _vec3 pos = { 50.f, 0.2f, 50.f };
-    g_clients[450].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-    pos = { 100.f, 0.2f, 450.f };
-    g_clients[451].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-    pos = { 250.f, 0.2f, 250.f };
-    g_clients[452].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-    pos = { 450.f, 0.2f, 400.f };
-    g_clients[453].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-    pos = { 450.f, 0.2f, 100.f };
-    g_clients[454].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    flags[0].pos = { 50.f, 0.2f, 50.f };
+    flags[1].pos = { 100.f, 0.2f, 450.f };
+    flags[2].pos = { 250.f, 0.2f, 250.f };
+    flags[3].pos = { 450.f, 0.2f, 400.f };
+    flags[4].pos = { 450.f, 0.2f, 100.f };
 }
 
 void Server::initialize_NPC(int player_id)
@@ -1007,6 +1057,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_id = npc_id;
             g_clients[npc_id].m_owner_id = player_id;
             g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
+            g_clients[npc_id].m_team = g_clients[player_id].m_team;
             sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
             g_clients[npc_id].m_status = ST_SLEEP;
             g_clients[npc_id].m_hp = 100;
@@ -1314,6 +1365,92 @@ bool Server::is_player(int id)
     return id < NPC_START;
 }
 
+void Server::is_flag_near(int flag)
+{
+    int count_red = 0;
+    int count_blue = 0;
+
+    for (int player = 0; player <= MAX_USER; ++player)
+    {
+        if (ST_ACTIVE != g_clients[player].m_status) // 비접속 상태인 애들 무시
+            continue;
+
+        _vec3* a_pos = &flags[flag].pos; // 깃발
+        _vec3* b_pos = g_clients[player].m_transform.Get_StateInfo(CTransform::STATE_POSITION); // 플레이어
+
+        if (sqrt((a_pos->x - b_pos->x) *
+            (a_pos->x - b_pos->x) +
+            (a_pos->y - b_pos->y) *
+            (a_pos->y - b_pos->y) +
+            (a_pos->z - b_pos->z) *
+            (a_pos->z - b_pos->z)) < FLAG_RADIUS) // 깃발 범위 안이면
+        {
+            if (TEAM_RED == g_clients[player].m_team)
+            {
+                count_red++;
+                if (false == flags[flag].isRed)
+                {
+                    flags[flag].isRed = true;
+                    for (int j = 0; j <= MAX_USER; ++j)
+                    {
+                        if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                            continue;
+
+                        send_flag_bool_packet(flag, j);
+                    }
+                }
+
+            }
+            else if (TEAM_BLUE == g_clients[player].m_team)
+            {
+                count_blue++;
+                if (false == flags[flag].isBlue)
+                {
+                    flags[flag].isRed = true;
+                    for (int j = 0; j <= MAX_USER; ++j)
+                    {
+                        if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                            continue;
+
+                        send_flag_bool_packet(flag, j);
+                    }
+                }
+            }
+        }
+    }
+
+    if (0 == count_red)
+    {
+        if (true == flags[flag].isRed)
+        {
+            flags[flag].isRed = false;
+            for (int j = 0; j <= MAX_USER; ++j)
+            {
+                if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                    continue;
+
+                send_flag_bool_packet(flag, j);
+            }
+        }
+    }
+
+    if (0 == count_blue)
+    {
+        if (true == flags[flag].isBlue)
+        {
+            flags[flag].isBlue = false;
+            for (int j = 0; j <= MAX_USER; ++j)
+            {
+                if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                    continue;
+
+                send_flag_bool_packet(flag, j);
+            }
+        }
+        
+    }
+}
+
 void Server::worker_thread()
 {
     while (true)
@@ -1385,11 +1522,14 @@ void Server::worker_thread()
                 g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
 
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
-
                 g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
+                if (0 == user_id)
+                    g_clients[user_id].m_team = TEAM_RED;
+                else
+                    g_clients[user_id].m_team = TEAM_BLUE;
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
@@ -1436,6 +1576,21 @@ void Server::worker_thread()
             finite_state_machine(id, FUNC_NPC_RANDMOVE);
             delete overEx;
             break;
+        case FUNC_CHECK_FLAG:
+            for (int i = 0; i < 5; ++i)
+                is_flag_near(i);
+            add_timer(-1, FUNC_CHECK_FLAG, 100);
+            delete overEx;
+            break;
+        case FUNC_CHECK_TIME:
+            if (play_time >= 0)
+            {
+                send_time_packet();
+                play_time -= 1;
+                add_timer(-1, FUNC_CHECK_TIME, 1000);
+            }
+            delete overEx;
+            break;
         break;
         default:
             cout << "Unknown Operation in Worker_Thread\n";
@@ -1465,6 +1620,7 @@ void Server::mainServer()
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initialize_clients(); // 클라이언트 정보들 초기화
     initialize_objects(); // 오브젝트 정보들 초기화
+    isGameStart = false;
 
      // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록

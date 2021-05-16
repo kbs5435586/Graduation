@@ -140,22 +140,27 @@ void CMyRect::Render_GameObject()
 		_uint iLen_Red = Vector3_::Length(vLen_Red);
 		_uint iLen_Blue = Vector3_::Length(vLen_Blue);
 
-		if (iLen_Red < 30.f)
+		CServer_Manager* server = CServer_Manager::GetInstance();
+		if (nullptr == server)
+			return;
+		server->AddRef();
+
+		if (server->Get_Red(m_iLayerIdx) && !(server->Get_Blue(m_iLayerIdx)))
 		{
 			m_tRep.m_arrInt[0] = 1;
 			m_eCurTeam = TEAM::TEAM_RED;
 		}
-		if (iLen_Blue < 30.f)
+		if (!(server->Get_Red(m_iLayerIdx)) && server->Get_Blue(m_iLayerIdx))
 		{
 			m_tRep.m_arrInt[1] = 1;
 			m_eCurTeam = TEAM::TEAM_BLUE;
 		}
-		if (iLen_Blue > 30.f)
+		if (server->Get_Red(m_iLayerIdx) && server->Get_Blue(m_iLayerIdx))
 		{
 			m_tRep.m_arrInt[1] = 0;
 			m_eCurTeam = TEAM::TEAM_END;
 		}
-		if (iLen_Red > 30.f)
+		if (!(server->Get_Red(m_iLayerIdx)) && !(server->Get_Blue(m_iLayerIdx)))
 		{
 			m_tRep.m_arrInt[0] = 0;
 			m_eCurTeam = TEAM::TEAM_END;
@@ -242,7 +247,7 @@ void CMyRect::Render_GameObject()
 			}
 
 		}
-
+		Safe_Release(server);
 	}
 	
 

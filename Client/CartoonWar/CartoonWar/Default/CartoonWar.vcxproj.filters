@@ -202,9 +202,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\08. Collider">
       <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. BaseShape\02. Cube">
-      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
       <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
     </Filter>
@@ -411,6 +408,9 @@
     </Filter>
     <Filter Include="02. GameObject\97. UI\04. UI_WoL_Blue">
       <UniqueIdentifier>{40ef1471-4070-4eb3-af3c-9cdae14279e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\02. Cube">
+      <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

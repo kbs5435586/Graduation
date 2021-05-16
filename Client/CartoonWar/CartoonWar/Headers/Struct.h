@@ -572,3 +572,11 @@ typedef struct tagFlag
 	Vector3		vPos;
 	int			iNum;
 }FLAG;
+
+struct Flag
+{
+	bool isRed;
+	bool isBlue;
+	bool isOnce;
+	_vec3 pos;
+};

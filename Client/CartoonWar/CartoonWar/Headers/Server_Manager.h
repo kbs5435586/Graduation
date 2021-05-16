@@ -12,15 +12,19 @@ private:
 private:
     CManagement* managment;
     unordered_map <int, Player_Info> m_objects;
+    Flag flags[5];
     short my_id;
     short my_hp;
     bool isSendOnePacket;
     bool isLogin;
+    bool isRed;
+    bool isBlue;
     string m_ip;
 
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
     short PORT = 3500;
+    float game_time;
     WPARAM m_wparam;
     high_resolution_clock::time_point add_npc_ct;
     high_resolution_clock::time_point attack_ct;
@@ -52,9 +56,13 @@ public:
 
     bool Get_ShowPlayer();
     bool Get_ShowNPC(int npc_index);
+    bool Get_Blue(int id);
+    bool Get_Red(int id);
+    bool Get_Login();
     short Get_PlayerID();
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
+    float Get_GameTime();
 
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_Attack_Cooltime();
@@ -65,6 +73,8 @@ public:
     void Set_Attack_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
     void Set_wParam(WPARAM p);
+
+    void init_client();
 
     void err_quit(const char* msg);
     void disconnect();

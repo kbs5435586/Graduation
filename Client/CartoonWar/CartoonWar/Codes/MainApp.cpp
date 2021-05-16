@@ -136,11 +136,20 @@ HRESULT CMainApp::SetUp_OnShader(const _float& fTimeDelta)
 	m_tGlobal.iWincx = WINCX;
 	m_tGlobal.iWincy = WINCY;
 
-	g_MaxTime -= fTimeDelta;
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
+	if (server->Get_Login())
+		g_MaxTime = server->Get_GameTime();
+	else
+		g_MaxTime = 300.f;
 
 	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->SetData(&m_tGlobal);
 	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->GetCBV().Get(), iOffset, CONST_REGISTER::b9);
 
+	Safe_Release(server);
 	return S_OK;
 }
 
