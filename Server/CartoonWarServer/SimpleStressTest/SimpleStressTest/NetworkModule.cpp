@@ -133,7 +133,7 @@ void ProcessPacket(int ci, unsigned char packet[])
 			int my_id = client_map[move_packet->id];
 			if (-1 != my_id) {
 				g_clients[my_id].x = move_packet->x;
-				g_clients[my_id].y = move_packet->y;
+				g_clients[my_id].y = move_packet->z;
 			}
 			if (ci == my_id) {
 				if (0 != move_packet->move_time) {
@@ -156,8 +156,8 @@ void ProcessPacket(int ci, unsigned char packet[])
 		int my_id = ci;
 		client_map[login_packet->id] = my_id;
 		g_clients[my_id].id = login_packet->id;
-		g_clients[my_id].x = login_packet->x;
-		g_clients[my_id].y = login_packet->y;
+		g_clients[my_id].x = login_packet->p_x;
+		g_clients[my_id].y = login_packet->p_z;
 
 		//cs_packet_teleport t_packet;
 		//t_packet.size = sizeof(t_packet);
@@ -165,6 +165,16 @@ void ProcessPacket(int ci, unsigned char packet[])
 		//SendPacket(my_id, &t_packet);
 	}
 	break;
+	case SC_PACKET_ROTATE: break;
+	case SC_PACKET_CHAT: break;
+	case SC_PACKET_ADD_NPC_OK: break;
+	case SC_PACKET_IDLE: break;
+	case SC_PACKET_ATTACKED: break;
+	case SC_PACKET_DEAD: break;
+	case SC_PACKET_ATTACK: break;
+	case SC_PACKET_FLAG_INFO: break;
+	case SC_PACKET_FLAG_BOOL: break;
+	case SC_PACKET_TIME: break;
 	default: MessageBox(hWnd, L"Unknown Packet Type", L"ERROR", 0);
 		while (true);
 	}
@@ -351,10 +361,10 @@ void Test_Thread()
 			my_packet.size = sizeof(my_packet);
 			my_packet.type = CS_PACKET_MOVE;
 			switch (rand() % 4) {
-			case 0: my_packet.direction = D_UP; break;
-			case 1: my_packet.direction = D_DOWN; break;
-			case 2: my_packet.direction = D_LEFT; break;
-			case 3: my_packet.direction = D_RIGHT; break;
+			case 0: my_packet.direction = GO_FORWARD; break;
+			case 1: my_packet.direction = GO_BACK; break;
+			case 2: my_packet.direction = GO_LEFT; break;
+			case 3: my_packet.direction = GO_RIGHT; break;
 			}
 			my_packet.move_time = static_cast<unsigned>(duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count());
 			SendPacket(i, &my_packet);

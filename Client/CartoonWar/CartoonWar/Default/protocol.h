@@ -12,12 +12,12 @@ enum Players {
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
-const string SERVER_IP = "192.168.0.5"; // 123.215.109.236 // 127.0.0.1
+const string SERVER_IP = "127.0.0.1"; // 123.215.109.236 // 127.0.0.1
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
 
-constexpr int MAX_USER = 29;
+constexpr int MAX_USER = 50000;
 constexpr int NPC_START = 30;
 constexpr int MAX_NPC = 449;
 
@@ -27,9 +27,9 @@ constexpr int MAX_FLAG = 454;
 constexpr int OBJECT_START = 450;
 constexpr int MAX_OBJECT = 454;
 
-constexpr int WORLD_HORIZONTAL = 400; // 월드 가로 x
+constexpr int WORLD_HORIZONTAL = 500; // 월드 가로 x
 constexpr int WORLD_HEIGHT = 400; // 월드 높이 y
-constexpr int WORLD_VERTICAL = 400; // 월드 세로 z
+constexpr int WORLD_VERTICAL = 500; // 월드 세로 z
 
 constexpr int SERVER_PORT = 9000;
 
@@ -98,6 +98,7 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
+	//unsigned move_time; // 스트레스 테스트
 };
 
 struct sc_packet_time
@@ -213,6 +214,7 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
+	//unsigned move_time; // 스트레스 테스트
 };
 
 struct cs_packet_attack

@@ -17,7 +17,7 @@ constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
 
-constexpr int MAX_USER = 29;
+constexpr int MAX_USER = 50000;
 constexpr int NPC_START = 30;
 constexpr int MAX_NPC = 449; 
 
@@ -98,6 +98,7 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
+	//unsigned move_time; // 스트레스 테스트
 };
 
 struct sc_packet_time
@@ -213,6 +214,7 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
+	//unsigned move_time; // 스트레스 테스트
 };
 
 struct cs_packet_attack

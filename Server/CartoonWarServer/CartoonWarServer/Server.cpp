@@ -81,6 +81,7 @@ void Server::process_packet(int user_id, char* buf)
 	case CS_PACKET_MOVE:
 	{
 		cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+       // g_clients[user_id].m_move_time = packet->move_time; // 스트레스 테스트
 		do_move(user_id, packet->direction);
 	}
 	break;
@@ -938,7 +939,7 @@ void Server::send_move_packet(int user_id, int mover)
     packet.x = pos->x;  // 이동한 플레이어의 정보 담기
     packet.y = pos->y;
     packet.z = pos->z;
-
+    //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
@@ -977,7 +978,7 @@ void Server::enter_game(int user_id, char name[])
         send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
-    cout << "Player " << user_id << " login finish" << endl;
+    //cout << "Player " << user_id << " login finish" << endl;
     for (int i = 0; i <= MAX_USER; ++i)
     {
         if (user_id == i) // 데드락 회피용
@@ -1539,6 +1540,11 @@ void Server::worker_thread()
                     _vec3 pos = { 450.f, 0.2f, 360.f };
                     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 }
+
+                //{ // 스트레스 테스트
+                //    _vec3 pos = { (float)(rand()%WORLD_HORIZONTAL), 0.f, (float)(rand() % WORLD_HORIZONTAL) };
+                //    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                //}
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화

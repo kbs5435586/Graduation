@@ -49,6 +49,7 @@ struct SESSION // 클라이언트 정보
 	int m_prev_size; // 잘린 파일의 경우 이전에 저장해둔 버퍼 크기
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
 	atomic <ENUM_STATUS> m_status;
+	unsigned m_move_time; // 스트레스 테스트
 
 	float m_speed;
 	vector <SESSION*> m_boid;
