@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Management.h"
 #include "Orc04.h"
+#include "Weapon.h"
+#include "Layer.h"
 
 COrc04::COrc04()
     : CGameObject()
@@ -52,16 +54,15 @@ HRESULT COrc04::Ready_GameObject(void* pArg)
 
 _int COrc04::Update_GameObject(const _float& fTimeDelta)
 {
-    m_pColliderCom[0]->Update_Collider(m_pTransformCom);
-    m_pColliderCom[1]->Update_Collider(m_pTransformCom);
-    //Obb_Collision();
-    m_pColliderCom[0]->Collision_AABB(
-        (CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_AABB"),
-        m_pTransformCom,
-        (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Transform")
-    );
+	m_pWeapon = (CWeapon*)CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon")->Get_GameObject(2);
 
-    return _int();
+	if (m_pWeapon)
+	{
+		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
+		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
+	}
+
+	return _int();
 }
 
 _int COrc04::LastUpdate_GameObject(const _float& fTimeDelta)
@@ -156,13 +157,15 @@ void COrc04::Render_GameObject()
 		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
-        CDevice::GetInstance()->UpdateTable();
-        m_pMeshCom->Render_Mesh(i);
-    }
 
-    m_pColliderCom[0]->Render_Collider();
-    m_pColliderCom[1]->Render_Collider();
-    Safe_Release(pManagement);
+		m_pWeapon->GetBoneIdx() = 27;
+		m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+		m_pWeapon->GetIsPicked() = true;
+
+		CDevice::GetInstance()->UpdateTable();
+		m_pMeshCom->Render_Mesh(i);
+	}
+	Safe_Release(pManagement);
 }
 
 HRESULT COrc04::CreateInputLayout()

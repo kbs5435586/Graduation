@@ -55,29 +55,22 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	//int id = server->Get_PlayerID();
-	//CTransform* pTransform;
-	//if (ENUM_PLAYER1 == id)
-	//{
-	//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-	//		L"Layer_Orc02", L"Com_Transform", 0);
-	//}
-	//else if (ENUM_PLAYER2 == id)
-	//{
-	//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-	//		L"Layer_Orc04", L"Com_Transform", 0);
-	//}
 
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
-	{
 
-		if (LOWORD(server->Get_wParam()) != WA_INACTIVE) // 활성화 되어있을때
+	if (GetAsyncKeyState('V') & 0x8000)
+	{
+		m_IsFix ^= true;
+	}
+
+	{
+		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
-			if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
-			{
-				m_pTransform->Go_Straight(fTimeDelta);
+
+
+			m_pTransform->Go_Straight(fTimeDelta);
 
 			}
 			if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
@@ -178,39 +171,25 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	Invalidate_ViewProjMatrix();
 
-	//int id = CServer_Manager::GetInstance()->Get_PlayerID();
-//CTransform* pTransform;
-//if (ENUM_PLAYER1 == id)
-//{
-//   pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-//      L"Layer_Orc02", L"Com_Transform", 0);
-//}
-//else if (ENUM_PLAYER2 == id)
-//{
-//   pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-//      L"Layer_Orc04", L"Com_Transform", 0);
+	if(m_IsFix)
+	{
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Orc02", L"Com_Transform", 0);
 
-//}
-//_vec3 vUp, vPos, vLook;
-//vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
-//vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
-//vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vUp, vPos, vLook;
 
-////카메라 고정
-//{
-//   vPos.y += 1.f;
-//   vUp = vUp * 2.f;
-//   vLook = vLook * -10.f;
-//   _vec3 vTemp = vUp - vLook;;
-//   vPos = vPos + vTemp;
+		vUp = *m_pTransform->Get_StateInfo(CTransform::STATE::STATE_UP);
+		vLook = *m_pTransform->Get_StateInfo(CTransform::STATE::STATE_LOOK);
+		vPos = *pTransform->Get_StateInfo(CTransform::STATE::STATE_POSITION);
 
-//   m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos); // 카메라 좌표
-
-//   m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-//   m_pTransform->Set_StateInfo(CTransform::STATE_UP, pTransform->Get_StateInfo(CTransform::STATE_UP));
-//   m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, pTransform->Get_StateInfo(CTransform::STATE_LOOK));
-//}
-
+		vPos.y += 0.3f;
+		vUp = Vector3_::ScalarProduct(vUp, 5.f);
+		vLook = Vector3_::ScalarProduct(vLook, 15.f);
+		_vec3 vTemp = Vector3_::Subtract(vUp, vLook);
+		vPos = Vector3_::Add(vPos, vTemp);
+		m_pTransform->Set_StateInfo(CTransform::STATE::STATE_POSITION, &vPos);
+	}
+	
 	return _int();
 }
 
