@@ -765,7 +765,30 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default",
 		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_Default.hlsl", "CS_Main"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_1",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_Default_1.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_2",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_Default_2.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_3",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_Default_3.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_4",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_Default_4.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_HP",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_HP.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_MAX_TIME",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_MaxTime.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_WoL_Red",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_WoL_Red.hlsl", "CS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_WoL_Blue",
+		CShader::Create(L"../ShaderFiles/Compute/Shader_Compute_WoL_Blue.hlsl", "CS_Main"))))
+		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Animation",
 		CShader::Create(L"../ShaderFiles/Shader_Animation.hlsl", "CS_Main"))))

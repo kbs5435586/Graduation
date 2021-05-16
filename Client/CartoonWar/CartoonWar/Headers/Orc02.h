@@ -25,6 +25,8 @@ private:
 	HRESULT									Ready_Component();
 private:
 	void									Set_Animation();
+	void									Obb_Collision();
+	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	//CTransform*								m_pITransformCom = nullptr;

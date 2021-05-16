@@ -137,6 +137,8 @@ HRESULT CMainApp::SetUp_OnShader(const _float& fTimeDelta)
 	m_tGlobal.iWincx = WINCX;
 	m_tGlobal.iWincy = WINCY;
 
+	g_MaxTime -= fTimeDelta;
+
 	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->SetData(&m_tGlobal);
 	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->GetCBV().Get(), iOffset, CONST_REGISTER::b9);
 

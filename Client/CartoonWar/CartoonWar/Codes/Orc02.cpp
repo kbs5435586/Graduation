@@ -16,7 +16,7 @@ COrc02::COrc02(const COrc02& rhs)
 }
 
 HRESULT COrc02::Ready_Prototype()
-{
+{ 
 	return S_OK;
 }
 
@@ -30,9 +30,9 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	_vec3 vPos = { 10.f, 0.f, 10.f };
+	_vec3 vPos = { 10.f, 0.f, 0.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
@@ -42,10 +42,12 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	m_pAnimCom->LateInit();
 	m_iCurAnimIdx = 14;
 
-	_vec3 vColliderSize = { 2.f,4.f,2.f };
+	_vec3 vColliderSize = { 160.f,160.f,160.f };
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	
+	m_tInfo.fHP = 100.f;
+	m_tInfo.fAtt = 50.f;
 
 	//CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
 	//m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -81,6 +83,9 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 
+
+
+
 	if (m_pWeapon)
 	{
 		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
@@ -93,19 +98,26 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	//Obb_Collision(); 
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 	}
 
 
-
-	if (CManagement::GetInstance()->Key_Pressing(KEY_LBUTTON))
+	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
+		/*if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", L"Com_Collider_OBB")))
+		{
+			m_IsHit = true;
+			
+		}*/
+
 		m_iCurAnimIdx = rand() % 8;
+		m_IsOnce = true;
 	}
+
 	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
 		m_iCurAnimIdx = 29;
@@ -129,33 +141,53 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 
 	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
+	{
+		m_iCurAnimIdx = 16;
+	}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	{
 		m_iCurAnimIdx = 30;
 		//m_pTransformCom->BackWard(fTimeDelta);
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
+	{
+		m_iCurAnimIdx = 16;
+	}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 	{
 		m_iCurAnimIdx = 32;
-		//m_pTransformCom->Rotation_Y(fTimeDelta);
 		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		m_iCurAnimIdx = 34;
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
 		//m_pTransformCom->Go_Right(fTimeDelta);
 	}
-	else
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
 	{
-		m_iCurAnimIdx = 14;
+		m_iCurAnimIdx = 16;
+	}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		m_iCurAnimIdx = 34;
+		//m_pTransformCom->Go_Left(fTimeDelta);
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	{
+		m_iCurAnimIdx = 16;
 	}
 
 
 	Set_Animation();
+	
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
+		if (m_IsHit)
+		{
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetOBBCollision() = true;
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetAttackedObject_Matrix() = matTemp;
+			m_IsHit = false;
+		}
 		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
@@ -557,4 +589,39 @@ void COrc02::Set_Animation()
 		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
 		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
+}
+
+void COrc02::Obb_Collision()
+{
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			m_vStartPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vLook * 50);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			m_vMidPoint.y += 5.f;
+			m_IsBazier = true;
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
+}
+
+void COrc02::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+{
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
 }

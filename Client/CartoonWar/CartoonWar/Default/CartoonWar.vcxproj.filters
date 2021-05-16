@@ -223,9 +223,6 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\01. UI_Normal">
       <UniqueIdentifier>{2849075b-6750-4f2d-bf07-d3240fbdb606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\02. UI_MP">
-      <UniqueIdentifier>{dab807ce-103d-426f-bb80-ae549604c02d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment">
       <UniqueIdentifier>{d9d86630-a1f8-431e-b2d8-3cb98fc9d482}</UniqueIdentifier>
     </Filter>
@@ -294,9 +291,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
       <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
-      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
       <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
@@ -405,6 +399,18 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\05. Flag">
       <UniqueIdentifier>{5560848d-c94a-4bb4-8a5b-eb93b35ae33c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
+      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\02. UI_MaxTime">
+      <UniqueIdentifier>{dab807ce-103d-426f-bb80-ae549604c02d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\03. UI_WoL_Red">
+      <UniqueIdentifier>{6059d4f1-1733-4a7a-ab75-146e6ff40c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\04. UI_WoL_Blue">
+      <UniqueIdentifier>{40ef1471-4070-4eb3-af3c-9cdae14279e2}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\97. UI\03. UI_Inventory">
       <UniqueIdentifier>{8a31aaf2-96d0-4b55-9784-497671c6934e}</UniqueIdentifier>
@@ -652,7 +658,7 @@
       <Filter>02. GameObject\97. UI\01. UI_HP</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_MP.h">
-      <Filter>02. GameObject\97. UI\02. UI_MP</Filter>
+      <Filter>02. GameObject\97. UI\02. UI_MaxTime</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Fire.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\01. Fire</Filter>
@@ -717,9 +723,6 @@
     <ClInclude Include="..\Headers\Orc02.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Orc03.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Weapon01.h">
       <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01</Filter>
     </ClInclude>
@@ -761,6 +764,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Flag.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Orc03.h">
+      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_WoL.h">
+      <Filter>02. GameObject\97. UI\03. UI_WoL_Red</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_WoL_Blue.h">
+      <Filter>02. GameObject\97. UI\04. UI_WoL_Blue</Filter>
     </ClInclude>
     <ClInclude Include="..\Codes\UI_Inventory.h">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
@@ -982,7 +994,7 @@
       <Filter>02. GameObject\97. UI\01. UI_HP</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_MP.cpp">
-      <Filter>02. GameObject\97. UI\02. UI_MP</Filter>
+      <Filter>02. GameObject\97. UI\02. UI_MaxTime</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Fire.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\01. Fire</Filter>
@@ -1089,6 +1101,12 @@
     <ClCompile Include="..\Codes\Flag.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_WoL.cpp">
+      <Filter>02. GameObject\97. UI\03. UI_WoL_Red</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_WoL_Blue.cpp">
+      <Filter>02. GameObject\97. UI\04. UI_WoL_Blue</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\UI_Inventory.cpp">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
     </ClCompile>
@@ -1168,6 +1186,30 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_1.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_2.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_3.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_Default_4.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_HP.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_MaxTime.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_WoL_Red.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_WoL_Blue.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UUU.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>

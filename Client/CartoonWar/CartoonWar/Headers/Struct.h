@@ -560,8 +560,15 @@ typedef struct tagAnimController
 
 typedef struct tagOBB
 {
-	XMFLOAT3			vPoint[8];
-	XMFLOAT3			vCenter;
-	XMFLOAT3			vAlignAxis[3]; 
-	XMFLOAT3			vProjAxis[3]; 
+	Vector3			vPoint[8];
+	Vector3			vCenter;
+	Vector3			vAlignAxis[3];
+	Vector3			vProjAxis[3];
 }OBB;
+
+
+typedef struct tagFlag
+{
+	Vector3		vPos;
+	int			iNum;
+}FLAG;
