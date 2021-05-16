@@ -28,10 +28,10 @@ struct PS_OUT
 {
 	float4	vDiffuseTex			: SV_TARGET0;
 	float4	vNormalTex			: SV_TARGET1;
-	float4	vShadeTex			: SV_TARGET2;
-	float4	vSpecularTex		: SV_TARGET3;
-	float4	vPointLightTex		: SV_TARGET5;
-	float4	vPositionTex		: SV_TARGET6;
+	float4	vShadeTex			: SV_TARGET3;
+	float4	vSpecularTex		: SV_TARGET4;
+	float4	vPointLightTex		: SV_TARGET6;
+	float4	vPositionTex		: SV_TARGET2;
 };
 VS_OUT	VS_Main(VS_IN vIn)
 {
