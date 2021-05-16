@@ -68,6 +68,8 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return - 1;
+
+	
 	m_fTimeAcc += fTimeDelta;
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
@@ -149,11 +151,57 @@ void CMainApp::Compute_Frame()
 {
 	++m_dwRenderCnt;
 	
-	if (m_fTimeAcc >= 1.f)
+
+
+	if (g_MaxTime <= 0.f)
 	{
-		wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID()-1);
-		m_dwRenderCnt = 0;
-		m_fTimeAcc = 0.f;
+		if (g_iBlueNum > g_iRedNum)
+		{
+			if (m_fTimeAcc >= 1.f)
+			{
+				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "BlueWin");
+				m_dwRenderCnt = 0;
+				m_fTimeAcc = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fTimeAcc >= 1.f)
+			{
+				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "RedWin");
+				m_dwRenderCnt = 0;
+				m_fTimeAcc = 0.f;
+			}
+
+		}
+	}
+	else if (g_iRedNum >= 5)
+	{
+		if (m_fTimeAcc >= 1.f)
+		{
+			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "RedWin");
+			m_dwRenderCnt = 0;
+			m_fTimeAcc = 0.f;
+		}
+	}
+	else if (g_iBlueNum >= 5)
+	{
+		if (m_fTimeAcc >= 1.f)
+		{
+			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "BlueWin");
+			m_dwRenderCnt = 0;
+			m_fTimeAcc = 0.f;
+		}
+
+	}
+	else
+	{
+		if (m_fTimeAcc >= 1.f)
+		{
+			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"None");
+			m_dwRenderCnt = 0;
+			m_fTimeAcc = 0.f;
+		}
 	}
 
 	SetWindowText(g_hWnd, m_szFPS);
