@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+class CWeapon;
 class COrc03 :
     public CGameObject
 {
@@ -45,6 +46,7 @@ private:
 	_bool									m_IsOnce = false;
 private:
 	float									m_fRatio = 0.f;
+	CWeapon* m_pWeapon = nullptr;
 };
 
 

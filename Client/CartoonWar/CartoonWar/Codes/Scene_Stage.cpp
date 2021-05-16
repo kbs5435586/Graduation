@@ -205,8 +205,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
+		return E_FAIL;
+
+
 
 	// ¼­¹ö init
 
@@ -417,6 +419,11 @@ HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement*
 HRESULT CScene_Stage::Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	return S_OK;
