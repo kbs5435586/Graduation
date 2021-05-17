@@ -340,6 +340,39 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		m_objects[recv_id].hp = 0;
 		m_objects[recv_id].anim = 8;
+
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+		CTransform* pTransform;
+		if (0 == m_objects[my_id].hp)
+		{
+			if (ENUM_PLAYER1 == my_id)
+			{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc02", L"Com_Transform", 0);
+				_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+				vPos.x = 50.f;
+				vPos.y = 0.2f;
+				vPos.z = 90.f;
+				pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				send_position_packet(&vPos);
+
+			}
+			else if (ENUM_PLAYER2 == my_id) // 다른 플레이어
+			{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
+				_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+				vPos.x = 450.f;
+				vPos.y = 0.2f;
+				vPos.z = 360.f;
+				pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				send_position_packet(&vPos);
+			}
+		}
+		Safe_Release(managment);
 	}
 	break;
 	case SC_PACKET_FLAG_INFO:
@@ -483,6 +516,17 @@ void CServer_Manager::send_attack_packet()
 	send_packet(&m_packet);
 }
 
+void CServer_Manager::send_position_packet(_vec3* pos)
+{
+	cs_packet_position m_packet;
+	m_packet.type = CS_PACKET_POSITION;
+	m_packet.size = sizeof(m_packet);
+	m_packet.x = pos->x;
+	m_packet.y = pos->y;
+	m_packet.z = pos->z;
+	send_packet(&m_packet);
+}
+
 void CServer_Manager::send_rotate_packet(unsigned char dir)
 {
 	cs_packet_rotate m_packet;
@@ -529,7 +573,7 @@ void CServer_Manager::send_idle_packet()
 
 void CServer_Manager::update_key_input()
 {
-	if ((GetAsyncKeyState('1') & 0x8000))
+	/*if ((GetAsyncKeyState('1') & 0x8000))
 	{
 		send_npc_act_packet(DO_ATTACK);
 		isSendOnePacket = false;
@@ -553,7 +597,7 @@ void CServer_Manager::update_key_input()
 	{
 		send_npc_act_packet(DO_RANDMOVE);
 		isSendOnePacket = false;
-	}
+	}*/
 	if ((GetAsyncKeyState('6') & 0x8000))
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()

@@ -18,12 +18,12 @@ private:
 
 	int LISTEN_KEY = 999;
 
-	float NEAR_APPROACH = 0.3f;
+	float NEAR_APPROACH = 0.7f;
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
-	int ATTACK_RADIUS = 5; // 데이터 보내줄 시야 범위
+	int ATTACK_RADIUS = 7; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
-	float FORMATION_SPACE = 15.f;
+	float FORMATION_SPACE = 10.f;
 
 	float MOVE_SPEED_NPC = 0.8f;
 	float MOVE_SPEED_PLAYER = 1.f;

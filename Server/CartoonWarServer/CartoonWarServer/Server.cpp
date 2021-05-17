@@ -157,6 +157,16 @@ void Server::process_packet(int user_id, char* buf)
         do_idle(user_id);
     }
     break;
+    case CS_PACKET_POSITION:
+    {
+        cs_packet_position* packet = reinterpret_cast<cs_packet_position*>(buf);
+        _vec3 pos;
+        pos.x = packet->x;
+        pos.y = packet->y;
+        pos.z = packet->z;
+        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    }
+    break;
 	default:
 		cout << "Unknown Packet Type Error\n";
 		DebugBreak();
@@ -1025,7 +1035,7 @@ void Server::enter_game(int user_id, char name[])
 
 void Server::initialize_clients()
 {
-    for (int i = 0; i < MAX_USER; ++i)
+    for (int i = 0; i <= MAX_USER; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
         g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
@@ -1210,7 +1220,7 @@ void Server::do_idle(int user_id)
         g_clients[user_id].m_cLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
         g_clients[user_id].m_cLock.unlock();
-
+        send_idle_packet(user_id, user_id); // 임시
         for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
         {
             send_idle_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
@@ -1286,11 +1296,15 @@ void Server::do_attack(int user_id)
             }
             else // 죽으면
             {
+                if (c.second.m_id > MAX_USER)
+                {
+
+                }
                 g_clients[c.second.m_id].m_hp = 0;
+               // g_clients[c.second.m_id].m_status = ST_SLEEP;
                 send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
                 for (auto cpy_vl : copy_viewlist)
                     send_dead_packet(cpy_vl, c.second.m_id);
-                    //send_leave_packet(cpy_vl, c.second.m_id); // 시야범위 애들한테 애 없앰
             }
         }
     }
@@ -1494,7 +1508,7 @@ void Server::worker_thread()
         {
             // 현재는 한 쓰레드가 accept 끝나면 끝에 AcceptEx를 호출하게 해놔서 여러 쓰레드가 동시 접근 안함
             int user_id = -1;
-            for (int i = 0; i < MAX_USER; ++i)
+            for (int i = 0; i <= MAX_USER; ++i)
             {
                 lock_guard <mutex> guardLock{ g_clients[i].m_cLock }; // 함수에서 lock 할때 편함
                 // 이 cLock를 락을 걸고 락가드가 속한 블록에서 빠져나갈때 unlock해주고 루프 돌때마다 unlock-lock 해줌

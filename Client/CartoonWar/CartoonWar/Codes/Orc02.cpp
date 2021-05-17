@@ -27,7 +27,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 10.f, 0.f, 0.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
@@ -44,11 +44,8 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	
-	m_tInfo.fHP = 100.f;
+	m_tInfo.fHP = 50.f;
 	m_tInfo.fAtt = 50.f;
-
-
-
 
 	return S_OK;
 }
@@ -57,7 +54,7 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
-	Obb_Collision();
+	//Obb_Collision();
 	m_pColliderCom[0]->Collision_AABB(
 		(CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", L"Com_Collider_AABB"),
 		m_pTransformCom,
@@ -150,9 +147,9 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (m_IsHit)
 		{
 			// ÀÌ»ó
-			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", 0)->GetOBBCollision() = true;
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetOBBCollision() = true;
 			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04", 0)->GetAttackedObject_Matrix() = matTemp;
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetAttackedObject_Matrix() = matTemp;
 			m_IsHit = false;
 		}
 		server->send_idle_packet();

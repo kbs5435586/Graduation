@@ -46,6 +46,7 @@ public:
     void send_change_formation_packet();
     void send_idle_packet();
     void send_attack_packet();
+    void send_position_packet(_vec3* pos);
     void update_key_input();
 
     short player_index(unsigned short id);

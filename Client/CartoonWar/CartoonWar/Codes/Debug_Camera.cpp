@@ -56,7 +56,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	server->AddRef();
 
 
-	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 	if (nullptr == m_pInput_Device)
 		return -1;
 
@@ -164,10 +164,29 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	Invalidate_ViewProjMatrix();
 
+	CManagement* managment = CManagement::GetInstance();
+	if (nullptr == managment)
+		return -1;
+	managment->AddRef();
+
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+	CTransform* pTransform;
+
 	if(m_IsFix)
 	{
-		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc02", L"Com_Transform", 0);
+		if (ENUM_PLAYER1 == server->Get_PlayerID()) // 다른 플레이어 일때
+		{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc02", L"Com_Transform", 0);
+		}
+		else if (ENUM_PLAYER2 == server->Get_PlayerID()) // 다른 플레이어 일때
+		{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
+		}
 
 		_vec3 vUp, vPos, vLook;
 
@@ -182,7 +201,8 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 		vPos = Vector3_::Add(vPos, vTemp);
 		m_pTransform->Set_StateInfo(CTransform::STATE::STATE_POSITION, &vPos);
 	}
-	
+	Safe_Release(server);
+	Safe_Release(managment);
 	return _int();
 }
 

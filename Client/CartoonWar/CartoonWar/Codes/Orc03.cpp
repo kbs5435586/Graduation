@@ -65,11 +65,11 @@ _int COrc03::Update_GameObject(const _float& fTimeDelta)
 		(CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Transform")
 	);
 
-	if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
+	/*if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->
 		Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", L"Com_Collider_OBB")))
 	{
 		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02", 0)->GetOBBCollision() = true;
-	}
+	}*/
 
 	m_pWeapon = (CWeapon*)CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon")->Get_GameObject(1);
 
@@ -93,7 +93,7 @@ _int COrc03::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	if (server->Get_ShowNPC(m_iLayerIdx))
+	if (0 != m_iLayerIdx && server->Get_ShowNPC(m_iLayerIdx))
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{
@@ -156,9 +156,9 @@ void COrc03::Render_GameObject()
 		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
-		m_pWeapon->GetBoneIdx() = 27;
-		m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
-		m_pWeapon->GetIsPicked() = true;
+		//m_pWeapon->GetBoneIdx() = 27;
+		//m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+		//m_pWeapon->GetIsPicked() = true;
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);

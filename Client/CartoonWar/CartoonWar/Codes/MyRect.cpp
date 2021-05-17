@@ -202,9 +202,6 @@ void CMyRect::Render_GameObject()
 					case TEAM::TEAM_BLUE:
 						m_eCurTeam = TEAM::TEAM_BLUE;
 						break;
-					case TEAM::TEAM_END:
-						m_eCurTeam = TEAM::TEAM_END;
-						break;
 					default:
 						break;
 					}

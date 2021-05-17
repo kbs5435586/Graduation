@@ -12,12 +12,12 @@ enum Players {
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
-const string SERVER_IP = "127.0.0.1"; // 123.215.109.236 // 127.0.0.1
+const string SERVER_IP = "192.168.0.7"; // 123.215.109.236 // 127.0.0.1
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
 
-constexpr int MAX_USER = 50000;
+constexpr int MAX_USER = 29;
 constexpr int NPC_START = 30;
 constexpr int MAX_NPC = 449;
 
@@ -40,7 +40,8 @@ constexpr char CS_PACKET_ADD_NPC = 4;
 constexpr char CS_PACKET_NPC_ACT = 5;
 constexpr char CS_PACKET_CHANGE_FORMATION = 6;
 constexpr char CS_PACKET_ATTACK = 7;
-constexpr char CS_PACKET_IDLE = 8;
+constexpr char CS_PACKET_IDLE = 8; 
+constexpr char CS_PACKET_POSITION = 9;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -221,6 +222,15 @@ struct cs_packet_attack
 {
 	char	size;
 	char	type;
+};
+
+struct cs_packet_position
+{
+	char	size;
+	char	type;
+	float	x;
+	float	y;
+	float	z;
 };
 
 struct cs_packet_rotate

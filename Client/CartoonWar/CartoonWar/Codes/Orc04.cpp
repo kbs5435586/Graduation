@@ -168,15 +168,14 @@ void COrc04::Render_GameObject()
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 
-		m_pWeapon->GetBoneIdx() = 27;
-		m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
-		m_pWeapon->GetIsPicked() = true;
+		//m_pWeapon->GetBoneIdx() = 27;
+		//m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+		//m_pWeapon->GetIsPicked() = true;
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-    m_pColliderCom[0]->Render_Collider();
-    m_pColliderCom[1]->Render_Collider();
+
 	Safe_Release(pManagement);
 }
 

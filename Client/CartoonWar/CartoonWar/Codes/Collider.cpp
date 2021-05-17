@@ -257,6 +257,10 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 	vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
 	vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return ;
+	server->AddRef();
 
 	m_IsColl = false;
 	if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) && max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
@@ -276,6 +280,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 						pDestTransform->Get_Matrix()._43 + fMoveZ };
 				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION,&vTemp);
 				// 여기에 업데이트
+				server->send_position_packet(&vTemp);
 			}
 			else
 			{
@@ -284,6 +289,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 					pDestTransform->Get_Matrix()._42,
 					pDestTransform->Get_Matrix()._43 - fMoveZ };
 				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION,&vTemp);
+				server->send_position_packet(&vTemp);
 			}
 
 		}
@@ -296,6 +302,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 						pDestTransform->Get_Matrix()._42,
 						pDestTransform->Get_Matrix()._43 };
 				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+				server->send_position_packet(&vTemp);
 			}
 			else
 			{
@@ -304,12 +311,13 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 					pDestTransform->Get_Matrix()._42,
 					pDestTransform->Get_Matrix()._43 };
 				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+				server->send_position_packet(&vTemp);
 			}
 
 		}
 	}
 
-
+	Safe_Release(server);
 }
 
 _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
