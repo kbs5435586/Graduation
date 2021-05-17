@@ -183,6 +183,9 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 		vPos = *pTransform->Get_StateInfo(CTransform::STATE::STATE_POSITION);
 
 		vPos.y += 0.3f;
+
+		if (vPos.y <= 0.f)
+			vPos.y = 0.f;
 		vUp = Vector3_::ScalarProduct(vUp, 5.f);
 		vLook = Vector3_::ScalarProduct(vLook, 15.f);
 		_vec3 vTemp = Vector3_::Subtract(vUp, vLook);
