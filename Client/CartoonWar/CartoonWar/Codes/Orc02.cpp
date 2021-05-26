@@ -44,7 +44,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	
-	m_tInfo.fHP = 50.f;
+	m_tInfo.fHP = 100.f;
 	m_tInfo.fAtt = 50.f;
 
 	return S_OK;
@@ -157,6 +157,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 
+	m_tInfo.fHP = server->Get_HP(0);
 	Safe_Release(server);
 	return _int();
 }

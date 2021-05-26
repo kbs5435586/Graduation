@@ -44,7 +44,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, SERVER_IP.c_str(), &server_a.sin_addr); // 223.38.53.103 // 127.0.0.1 // 192.168.218.217 // 192.168.218.2
+	inet_pton(AF_INET, "192.168.218.62", &server_a.sin_addr); // 223.38.53.103 // 127.0.0.1 // 192.168.218.217 // 192.168.218.2
 	server_a.sin_port = htons(SERVER_PORT);
 
 	init_client();
@@ -771,6 +771,11 @@ bool CServer_Manager::Get_Login()
 short CServer_Manager::Get_PlayerID()
 {
 	return my_id;
+}
+
+short CServer_Manager::Get_HP(int id)
+{
+	return m_objects[id].hp;
 }
 
 short CServer_Manager::Get_ShowOtherPlayer(int id)

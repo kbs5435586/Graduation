@@ -167,7 +167,7 @@ void CMainApp::Compute_Frame()
 		{
 			if (m_fTimeAcc >= 1.f)
 			{
-				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "BlueWin");
+				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"BlueWin");
 				m_dwRenderCnt = 0;
 				m_fTimeAcc = 0.f;
 			}
@@ -176,7 +176,7 @@ void CMainApp::Compute_Frame()
 		{
 			if (m_fTimeAcc >= 1.f)
 			{
-				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "RedWin");
+				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"RedWin");
 				m_dwRenderCnt = 0;
 				m_fTimeAcc = 0.f;
 			}

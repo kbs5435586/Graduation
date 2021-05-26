@@ -61,6 +61,7 @@ public:
     bool Get_Red(int id);
     bool Get_Login();
     short Get_PlayerID();
+    short Get_HP(int id);
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
     float Get_GameTime();

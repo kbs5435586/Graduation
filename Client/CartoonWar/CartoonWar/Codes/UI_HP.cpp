@@ -38,6 +38,26 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 
 _int CUI_HP::Update_GameObject(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
+	
+
+	if (ENUM_PLAYER1 == server->Get_PlayerID())
+	{
+		//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")))
+		//	return;
+		m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")->Get_BackObject()->GetInfo();
+	}
+	else if (ENUM_PLAYER2 == server->Get_PlayerID())
+	{
+		//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04")))
+		//	return;
+		m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04")->Get_BackObject()->GetInfo();
+	}
+	Safe_Release(server);
 	return _int();
 }
 
