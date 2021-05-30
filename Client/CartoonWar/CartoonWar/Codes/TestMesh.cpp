@@ -28,7 +28,7 @@ HRESULT CTestMesh::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	//m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
+	//m_pTransformCom->Scaling(_vec3(0.01f, 0.01f, 0.01f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 	return S_OK;

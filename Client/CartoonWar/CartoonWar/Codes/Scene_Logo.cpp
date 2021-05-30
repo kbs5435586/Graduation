@@ -301,7 +301,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
-		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/UD_spearman.FBX"))))
+		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/UD_spearman0.fbx"))))
 		return E_FAIL;
 	{
 
