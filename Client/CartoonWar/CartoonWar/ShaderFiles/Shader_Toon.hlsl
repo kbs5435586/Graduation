@@ -51,7 +51,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWorld);
-	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWVP).xyz);
+	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWorld).xyz);
 	vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matWVP).xyz);
 	vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matWVP).xyz);
 
@@ -72,7 +72,6 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vPointLight = float4(0.f, 0.f, 0.f, 0.f);
 
 
-	
 
 	float4	vLightDir = tLight[0].vLightDir;
 
@@ -83,26 +82,16 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vMtrlDif =  fDot;
 	float4	vMtrlAmb = tLight[0].tColor.vAmbient ;
 
-	//float3	fRimColor = float3(-0.f, -0.f, -0.f);
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);
 
-	//float4 vView = normalize(vCamPos - vIn.vWorldPos);
-	float4 vView;
+	float4 vView = normalize(vCamPos - vIn.vWorldPos);
 
-
-	if (vLook.z <= 0)
-		vView = (vLook) * 1.f;
-	else
-		vView = (vLook) * -1.f;
-
-	//vView = (vLook) * -1.f;
-	//vView = normalize(vCamPos - vIn.vWorldPos);
 	float	fRim = saturate(dot(vNormal, vView));
 	if (fRim > 0.3f)
 		fRim = 1.f;
 	else
 		fRim = -1.f;
-	float	fRimPower = 10.f;
+	float	fRimPower = 5.f;
 
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);

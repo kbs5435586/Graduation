@@ -185,6 +185,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
  	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
@@ -194,19 +196,19 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
-		return E_FAIL;
-
-	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
+	//if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
+	//	return E_FAIL;
+
+	////if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
+	////	return E_FAIL;
+	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
+	//	return E_FAIL;
 
 
 

@@ -29,7 +29,8 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 
 	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 10.f, 0.f, 0.f };
-	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
+	//m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
+	m_pTransformCom->Scaling(1.f,1.f,1.f);
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pMeshCom->m_vecDiffTexturePath;

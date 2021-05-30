@@ -300,7 +300,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
+		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/UD_spearman.FBX"))))
+		return E_FAIL;
 	{
 
 
@@ -699,7 +701,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		CTexture::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tex_a%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
 		return E_FAIL;
 
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Toon",
+		CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Undead_Standard_Units%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+		return E_FAIL;
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch",
 			CTexture::Create(L"../Bin/Resource/Texture/Hatching/Hatch%d.dds", 6, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
