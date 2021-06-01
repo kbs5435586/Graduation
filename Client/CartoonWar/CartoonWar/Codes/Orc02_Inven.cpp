@@ -29,7 +29,7 @@ HRESULT COrc02_Inven::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 1000.f, 0.f, 1000.f };
+	_vec3 vPos = { 10.f, 0.f, 10.f };
 	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
@@ -49,10 +49,10 @@ HRESULT COrc02_Inven::Ready_GameObject(void* pArg)
 	CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
 	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 	CAMERADESC		tICameraDesc;
 	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-	tICameraDesc.vEye = m - _vec3(10.f, 10.f, 10.f);
+	tICameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tICameraDesc.vAt = m;
 	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
@@ -65,8 +65,13 @@ HRESULT COrc02_Inven::Ready_GameObject(void* pArg)
 
 	temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc);
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-	
+
+
+	m_tInfo = { 10.f,10.f,10.f,10.f };
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
+	//m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + _vec3(0.f,20.f,0.f);
+	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
+
 
 	canSee = true;
 
@@ -89,14 +94,11 @@ _int COrc02_Inven::Update_GameObject(const _float& fTimeDelta)
 _int COrc02_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
-		return -1; 
+		return -1;
 
-	
-	canSee = m_pObserverCom->GetBool();
-	
 	if (canSee)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 	}
 	
@@ -216,8 +218,8 @@ _int COrc02_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Camera", 1));
 	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 	CAMERADESC		tICameraDesc;
 	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
 	tICameraDesc.vEye = m - _vec3(10.f,10.f,10.f);
@@ -287,7 +289,8 @@ void COrc02_Inven::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-	
+	m_pColliderCom[0]->Render_Collider();
+	m_pColliderCom[1]->Render_Collider();
 
 
 	Safe_Release(pManagement);
@@ -424,7 +427,6 @@ void COrc02_Inven::Free()
 	Safe_Release(m_pColliderCom[0]);
 	Safe_Release(m_pColliderCom[1]);
 	Safe_Release(m_pNaviCom);
-	Safe_Release(m_pObserverCom);
 
 	CGameObject::Free();
 }
@@ -478,11 +480,6 @@ HRESULT COrc02_Inven::Ready_Component()
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-		return E_FAIL;
-
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

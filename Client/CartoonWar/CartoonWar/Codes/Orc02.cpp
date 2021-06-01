@@ -74,8 +74,8 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 
 	m_tInfo = { 10.f,10.f,10.f,10.f };
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INFO, &m_tInfo);
-	//m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + _vec3(0.f,20.f,0.f);
-	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
+	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + _vec3(0.f,20.f,0.f);
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
 
 	return S_OK;
 }

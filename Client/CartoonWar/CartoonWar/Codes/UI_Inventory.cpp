@@ -31,11 +31,11 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	pManagement->AddRef();
 
-	m_fX = WINCX/2;
-	m_fY = WINCY/2;
+	m_fX = 400.f;
+	m_fY = 300.f;
 
-	m_fSizeX = 800.f;
-	m_fSizeY = 800.f;
+	m_fSizeX = 400.f;
+	m_fSizeY = 400.f;
 
 	MousePos = {0 , 0};
 
@@ -58,7 +58,7 @@ HRESULT CUI_Inventory::Ready_GameObject(void* pArg)
 
 	
 	canSee = false;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &canSee);
+	
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -92,7 +92,6 @@ _int CUI_Inventory::Update_GameObject(const _float& fTimeDelta)
 	if (pManagement->Key_Down(KEY_SPACE))
 	{
 		canSee = !canSee;
-		
 	}
 
 	Safe_Release(pManagement);
@@ -107,7 +106,6 @@ _int CUI_Inventory::LastUpdate_GameObject(const _float& fTimeDelta)
 			return E_FAIL;
 	}
 
-	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &canSee);
 	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_UI_INFO, &Pos);
 
 	return _int();
