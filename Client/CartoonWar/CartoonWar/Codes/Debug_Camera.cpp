@@ -26,7 +26,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(30.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -69,11 +69,18 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	읽은 pTransform 값 카메라에 이용*/
 
 
-
 	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	if (nullptr == m_pInput_Device)
 		return -1;
+
+	if (GetAsyncKeyState('V') & 0x8000)
+	{
+		m_IsFix ^= true;
+	}
+
 	{
 		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
@@ -168,6 +175,28 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	Invalidate_ViewProjMatrix();
 
+	if(m_IsFix)
+	{
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Orc02", L"Com_Transform", 0);
+
+		_vec3 vUp, vPos, vLook;
+
+		vUp = *m_pTransform->Get_StateInfo(CTransform::STATE::STATE_UP);
+		vLook = *m_pTransform->Get_StateInfo(CTransform::STATE::STATE_LOOK);
+		vPos = *pTransform->Get_StateInfo(CTransform::STATE::STATE_POSITION);
+
+		vPos.y += 0.3f;
+
+		if (vPos.y <= 0.f)
+			vPos.y = 0.f;
+		vUp = Vector3_::ScalarProduct(vUp, 5.f);
+		vLook = Vector3_::ScalarProduct(vLook, 15.f);
+		_vec3 vTemp = Vector3_::Subtract(vUp, vLook);
+		vPos = Vector3_::Add(vPos, vTemp);
+		m_pTransform->Set_StateInfo(CTransform::STATE::STATE_POSITION, &vPos);
+	}
+	
 	return _int();
 }
 

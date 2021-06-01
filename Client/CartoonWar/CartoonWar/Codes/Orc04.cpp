@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Management.h"
 #include "Orc04.h"
+#include "Weapon.h"
+#include "Layer.h"
 
 COrc04::COrc04()
 	: CGameObject()
@@ -48,6 +50,14 @@ HRESULT COrc04::Ready_GameObject(void* pArg)
 
 _int COrc04::Update_GameObject(const _float& fTimeDelta)
 {
+	m_pWeapon = (CWeapon*)CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon")->Get_GameObject(2);
+
+	if (m_pWeapon)
+	{
+		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
+		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
+	}
+
 	return _int();
 }
 
@@ -113,6 +123,11 @@ void COrc04::Render_GameObject()
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+
+
+		m_pWeapon->GetBoneIdx() = 27;
+		m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+		m_pWeapon->GetIsPicked() = true;
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);

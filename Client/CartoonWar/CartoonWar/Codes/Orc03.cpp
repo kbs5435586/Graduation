@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Management.h"
 #include "Orc03.h"
+#include "Weapon.h"
+#include "Layer.h"
 
 COrc03::COrc03()
 	: CGameObject()
@@ -59,16 +61,13 @@ _int COrc03::Update_GameObject(const _float& fTimeDelta)
 	//);
 
 
+	m_pWeapon = (CWeapon*)CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon")->Get_GameObject(1);
 
-	if (GetAsyncKeyState('I'))
+	if (m_pWeapon)
 	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
+		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
 	}
-	if (GetAsyncKeyState('K'))
-	{
-		m_pTransformCom->BackWard(fTimeDelta);
-	}
-
 
 
 	return _int();
@@ -174,11 +173,14 @@ void COrc03::Render_GameObject()
 		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
+		m_pWeapon->GetBoneIdx() = 27;
+		m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+		m_pWeapon->GetIsPicked() = true;
+
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_pColliderCom[0]->Render_Collider();
-	m_pColliderCom[1]->Render_Collider();
+
 	Safe_Release(pManagement);
 }
 

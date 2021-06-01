@@ -10,6 +10,7 @@
 #include "Debug_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
+#include "Sphere.h"
 // Mesh
 #include "Orc01.h"
 #include "Orc02.h"
@@ -74,12 +75,12 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -106,6 +107,8 @@ void CScene_Stage::Render_Scene()
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect", CMyRect::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Sphere", CShpere::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
 		return E_FAIL;
@@ -182,6 +185,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
  	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
@@ -191,6 +196,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
+
 	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
@@ -205,9 +211,22 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
+
+	//if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
 	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
+	//	return E_FAIL;
+
+	////if (FAILED(Ready_Layer_Orc04(L"Layer_Orc04", pManagement)))
+	////	return E_FAIL;
 	//if (FAILED(Ready_Layer_Weapon(L"Layer_Weapon", pManagement)))
 	//	return E_FAIL;
+
+
 
 	// ¼­¹ö init
 
@@ -222,7 +241,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(-1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
@@ -418,6 +437,11 @@ HRESULT CScene_Stage::Ready_Layer_Particle(const _tchar* pLayerTag, CManagement*
 HRESULT CScene_Stage::Ready_Layer_Weapon(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon01", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon02", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Weapon03", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	return S_OK;

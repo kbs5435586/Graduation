@@ -28,7 +28,7 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 
 
 	m_fX = 100.f;
-	m_fY = WINCY - 100.f;
+	m_fY = WINCY - 200.f;
 
 	m_fSizeX = 300.f;
 	m_fSizeY = 25.f;

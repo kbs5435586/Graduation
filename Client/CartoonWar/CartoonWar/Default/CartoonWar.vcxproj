@@ -236,6 +236,7 @@
     <ClInclude Include="..\Headers\SimpleMath.h" />
     <ClInclude Include="..\Headers\Skeleton.h" />
     <ClInclude Include="..\Headers\SkyBox.h" />
+    <ClInclude Include="..\Headers\Sphere.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\ObserverManager.h" />
     <ClInclude Include="..\Headers\StructedBuffer.h" />
@@ -354,6 +355,7 @@
     <ClCompile Include="..\Codes\Skeleton.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\ObserverManager.cpp" />
+    <ClCompile Include="..\Codes\Sphere.cpp" />
     <ClCompile Include="..\Codes\StructedBuffer.cpp" />
     <ClCompile Include="..\Codes\Sufferer.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
