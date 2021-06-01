@@ -46,7 +46,7 @@ void CAnimator::SetAnimClip(vector<tMTAnimClip> _vecAnimClip)
 	m_vecClipUpdateTime[0] = fTime;
 }
 
-_bool CAnimator::Update(AnimCtrl& tCtrl, _float& fRatio, const _float& fTimeDelta)
+_bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
 {
 	_bool isRetVal = false;
 	m_fCurTime = 0.f;
@@ -72,7 +72,6 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, _float& fRatio, const _float& fTimeDelt
 		m_iNextFrameIdx = tCtrl.iCurFrm + 1;
 
 	m_fRatio = (float)(dFrameIdx - (double)tCtrl.iCurFrm);
-	fRatio = m_fRatio;
 	m_iFrameIdx = (_uint)tCtrl.iCurFrm;
 	m_IsFinalMatUpdate = false;
 	return isRetVal;

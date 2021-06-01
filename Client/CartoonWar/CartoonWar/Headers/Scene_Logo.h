@@ -2,11 +2,11 @@
 #include "Scene.h"
 class CManagement;
 class CScene_Logo :
-    public CScene
+	public CScene
 {
 private:
-    CScene_Logo();
-    virtual ~CScene_Logo() = default;
+	CScene_Logo();
+	virtual ~CScene_Logo() = default;
 public:
 	virtual HRESULT			Ready_Scene() override;
 	virtual _int			Update_Scene(const _float& fTimeDelta) override;
@@ -44,10 +44,8 @@ public:
 	CRITICAL_SECTION		m_tCritical_Section_Component = {};
 	HANDLE					m_hThread_Handle_Component = {};
 public:
-	static CScene_Logo*		Create();
+	static CScene_Logo* Create();
 protected:
 	virtual void			Free();
-private:
-	CTexture*				m_pTextureCom = nullptr;
 };
 

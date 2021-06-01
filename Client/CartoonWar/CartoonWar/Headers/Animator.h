@@ -44,7 +44,7 @@ public:
     void                            SetBones(const vector<tMTBone>* _vecBones);
     void                            SetAnimClip(vector<tMTAnimClip> _vecAnimClip);
 public:
-    _bool                           Update(AnimCtrl& tCtrl, _float& fRatio, const _float& fTimeDelta);
+    _bool                           Update(AnimCtrl& tCtrl, const _float& fTimeDelta);
     void                            UpdateData(CMesh* pMesh, CShader* pShader);
     void                            SetClipTime(int _iClipIdx, float _fTime) { m_vecClipUpdateTime[_iClipIdx] = _fTime; }
     vector<_matrix>&                GetFinalBoneMat() { return m_vecFinalBoneMat; }

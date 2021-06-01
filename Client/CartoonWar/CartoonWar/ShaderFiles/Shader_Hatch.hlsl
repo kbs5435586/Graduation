@@ -146,12 +146,12 @@ PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	float4 vHatvhTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV * 20.f) * vIn.vWeight123.x;
-	float4 vHatvhTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV * 20.f) * vIn.vWeight123.y;
-	float4 vHatvhTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV * 20.f) * vIn.vWeight123.z;
-	float4 vHatvhTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV * 20.f) * vIn.vWeight456.x;
-	float4 vHatvhTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV * 20.f) * vIn.vWeight456.y;
-	float4 vHatvhTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV * 20.f) * vIn.vWeight456.z;
+	float4 vHatvhTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV * 5.f) * vIn.vWeight123.x;
+	float4 vHatvhTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV * 5.f) * vIn.vWeight123.y;
+	float4 vHatvhTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV * 5.f) * vIn.vWeight123.z;
+	float4 vHatvhTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV * 5.f) * vIn.vWeight456.x;
+	float4 vHatvhTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV * 5.f) * vIn.vWeight456.y;
+	float4 vHatvhTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV * 5.f) * vIn.vWeight456.z;
 
 	float4 hatchColor = vHatvhTex0 + vHatvhTex1 + vHatvhTex2 + vHatvhTex3 + vHatvhTex4 + vHatvhTex5;
 

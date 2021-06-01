@@ -171,6 +171,7 @@
     <ClInclude Include="..\Headers\Building.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
+    <ClInclude Include="..\Headers\Catapult.h" />
     <ClInclude Include="..\Headers\Cell.h" />
     <ClInclude Include="..\Headers\Circle.h" />
     <ClInclude Include="..\Headers\Collider.h" />
@@ -212,13 +213,11 @@
     <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
+    <ClInclude Include="..\Headers\NPC.h" />
     <ClInclude Include="..\Headers\Observer.h" />
-    <ClInclude Include="..\Headers\Orc01.h" />
-    <ClInclude Include="..\Headers\Orc02.h" />
-    <ClInclude Include="..\Headers\Orc03.h" />
-    <ClInclude Include="..\Headers\Orc04.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
+    <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
@@ -234,13 +233,11 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
-    <ClInclude Include="..\Headers\Skeleton.h" />
     <ClInclude Include="..\Headers\SkyBox.h" />
     <ClInclude Include="..\Headers\Sphere.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\ObserverManager.h" />
     <ClInclude Include="..\Headers\StructedBuffer.h" />
-    <ClInclude Include="..\Headers\Sufferer.h" />
     <ClInclude Include="..\Headers\System.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
@@ -268,11 +265,6 @@
     <ClInclude Include="..\Headers\UI_WoL.h" />
     <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
-    <ClInclude Include="..\Headers\Weapon.h" />
-    <ClInclude Include="..\Headers\Weapon01.h" />
-    <ClInclude Include="..\Headers\Weapon02.h" />
-    <ClInclude Include="..\Headers\Weapon03.h" />
-    <ClInclude Include="..\Headers\Weapon04.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="protocol.h">
@@ -297,6 +289,7 @@
     <ClCompile Include="..\Codes\Building.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
+    <ClCompile Include="..\Codes\Catapult.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
     <ClCompile Include="..\Codes\Circle.cpp" />
     <ClCompile Include="..\Codes\Collider.cpp" />
@@ -331,13 +324,11 @@
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />
+    <ClCompile Include="..\Codes\NPC.cpp" />
     <ClCompile Include="..\Codes\Observer.cpp" />
-    <ClCompile Include="..\Codes\Orc01.cpp" />
-    <ClCompile Include="..\Codes\Orc02.cpp" />
-    <ClCompile Include="..\Codes\Orc03.cpp" />
-    <ClCompile Include="..\Codes\Orc04.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
+    <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
@@ -352,12 +343,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Codes\Shader.cpp" />
-    <ClCompile Include="..\Codes\Skeleton.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\ObserverManager.cpp" />
     <ClCompile Include="..\Codes\Sphere.cpp" />
     <ClCompile Include="..\Codes\StructedBuffer.cpp" />
-    <ClCompile Include="..\Codes\Sufferer.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
@@ -384,11 +373,6 @@
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
-    <ClCompile Include="..\Codes\Weapon.cpp" />
-    <ClCompile Include="..\Codes\Weapon01.cpp" />
-    <ClCompile Include="..\Codes\Weapon02.cpp" />
-    <ClCompile Include="..\Codes\Weapon03.cpp" />
-    <ClCompile Include="..\Codes\Weapon04.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>
   <ItemGroup>

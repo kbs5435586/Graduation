@@ -121,12 +121,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage">
       <UniqueIdentifier>{e5920e3e-7b2b-4d62-a4aa-343c9358345f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\00. SkyBox">
-      <UniqueIdentifier>{3f5cec16-69a6-460b-b3e3-fa91565b0c21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Height">
-      <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\06. Frustum">
       <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
     </Filter>
@@ -138,9 +132,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\01. Constant_Buffer_Manager">
       <UniqueIdentifier>{69783f59-863d-4086-8a76-922b2f29122d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\01. Terrain">
-      <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\05. RenderToTexture">
       <UniqueIdentifier>{0452afe4-216f-4235-a03c-f9762dd19fac}</UniqueIdentifier>
@@ -256,18 +247,6 @@
     <Filter Include="02. GameObject\96. Particle\99. Particle_Default">
       <UniqueIdentifier>{2b7b9969-cef9-4c87-b9a2-850fd61891e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test">
-      <UniqueIdentifier>{22b3d187-d2ab-4990-8ac3-9f4dd71ea498}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test\99. TestMesh">
-      <UniqueIdentifier>{22975039-a9a6-464c-a97e-9721ea9c2be6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test\98. TestAnimMesh">
-      <UniqueIdentifier>{96030d62-0d11-4080-95f8-7376d27c2237}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\99. Test\97. TestHatchMesh">
-      <UniqueIdentifier>{2aa04e3e-e525-45d1-b5f8-99ab695e1677}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly">
       <UniqueIdentifier>{0dc0f715-195c-4e2e-bbde-c64ce2d63f0f}</UniqueIdentifier>
     </Filter>
@@ -361,15 +340,6 @@
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\04. henchman">
-      <UniqueIdentifier>{6c9c384c-e60b-4ddd-ae26-11db1a8cf332}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\04. henchman\00. Skeleton">
-      <UniqueIdentifier>{6462d6a7-ff24-47f0-b259-766930753275}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer">
-      <UniqueIdentifier>{6d1a732a-6a4f-4348-935d-3ce9d69ed972}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\05. Flag">
       <UniqueIdentifier>{5560848d-c94a-4bb4-8a5b-eb93b35ae33c}</UniqueIdentifier>
     </Filter>
@@ -385,35 +355,35 @@
     <Filter Include="02. GameObject\99. BaseShape\05. Sphere">
       <UniqueIdentifier>{ea02003e-515b-4f6d-882a-2ef88e5827c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc">
-      <UniqueIdentifier>{048814f2-3709-4400-89d5-3213d5deb0d2}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test">
+      <UniqueIdentifier>{22b3d187-d2ab-4990-8ac3-9f4dd71ea498}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\00. Orc01">
-      <UniqueIdentifier>{566d53e0-6414-410b-8250-5ce9fd1546b0}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test\99. TestMesh">
+      <UniqueIdentifier>{22975039-a9a6-464c-a97e-9721ea9c2be6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
-      <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test\98. TestAnimMesh">
+      <UniqueIdentifier>{96030d62-0d11-4080-95f8-7376d27c2237}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon">
-      <UniqueIdentifier>{8496c958-d84d-461c-aabc-d38c0df8f31a}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test\97. TestHatchMesh">
+      <UniqueIdentifier>{2aa04e3e-e525-45d1-b5f8-99ab695e1677}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01">
-      <UniqueIdentifier>{9be74e22-c72f-464d-9b30-d5314e3b564a}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\00. Player">
+      <UniqueIdentifier>{b82650a2-e8a2-42b8-80fc-e5c30f050808}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02">
-      <UniqueIdentifier>{e6d3973d-c30e-409f-8c8c-1acad68a83ea}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\01. NPC">
+      <UniqueIdentifier>{acf20eeb-b0aa-4a51-918e-720b10e0edeb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03">
-      <UniqueIdentifier>{024363f5-f45e-43bc-b7fa-4e78f4b90297}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. SkyBox">
+      <UniqueIdentifier>{3f5cec16-69a6-460b-b3e3-fa91565b0c21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04">
-      <UniqueIdentifier>{8bf797d0-4810-43b0-996b-4b7f15c73092}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain">
+      <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\03. Orc04">
-      <UniqueIdentifier>{d7a44ade-c834-4ec0-822c-62baf4142535}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain\00. Terrain_Height">
+      <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
-      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
+    <Filter Include="02. GameObject\01. Scene_Stage\05. Catapult">
+      <UniqueIdentifier>{623e8644-6d56-4b9a-9a56-6789453dcb6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -553,7 +523,7 @@
       <Filter>01. Scene\01. Stage</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\SkyBox.h">
-      <Filter>02. GameObject\01. Scene_Stage\00. SkyBox</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\03. SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_CubeTex.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
@@ -562,16 +532,13 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Terrain.h">
-      <Filter>02. GameObject\01. Scene_Stage\01. Terrain</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Terrain_Height.h">
-      <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Orc01.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\00. Orc01</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\00. Terrain_Height</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Hash.h">
       <Filter>98. Headers</Filter>
@@ -667,7 +634,7 @@
       <Filter>02. GameObject\97. UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\TestMesh.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\99. TestMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\99. TestMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\FbxLoader.h">
       <Filter>95. Loaders\00. FbxLoader</Filter>
@@ -697,10 +664,10 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\TestHatchMesh.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\97. TestHatchMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\97. TestHatchMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\TestAnimMesh.h">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\98. TestAnimMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\98. TestAnimMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Server_Manager.h">
       <Filter>94. Server</Filter>
@@ -713,24 +680,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_PointLight.h">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Orc02.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Weapon01.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Weapon.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Weapon03.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Weapon04.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Weapon02.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Building.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Building</Filter>
@@ -747,20 +696,8 @@
     <ClInclude Include="..\Headers\Hatch.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Hatch</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Orc04.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\03. Orc04</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Skeleton.h">
-      <Filter>02. GameObject\01. Scene_Stage\04. henchman\00. Skeleton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Sufferer.h">
-      <Filter>02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Flag.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Orc03.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_WoL.h">
       <Filter>02. GameObject\97. UI\03. UI_WoL_Red</Filter>
@@ -770,6 +707,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Sphere.h">
       <Filter>02. GameObject\99. BaseShape\05. Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Catapult.h">
+      <Filter>02. GameObject\01. Scene_Stage\05. Catapult</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player.h">
+      <Filter>02. GameObject\01. Scene_Stage\00. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NPC.h">
+      <Filter>02. GameObject\01. Scene_Stage\01. NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -892,7 +838,7 @@
       <Filter>01. Scene\01. Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\SkyBox.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\00. SkyBox</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\03. SkyBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
@@ -901,16 +847,13 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\01. Terrain</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain_Height.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\02. Terrain_Height</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Orc01.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\00. Orc01</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\00. Terrain_Height</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Frustum.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
@@ -997,7 +940,7 @@
       <Filter>02. GameObject\97. UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestMesh.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\99. TestMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\99. TestMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\FbxLoader.cpp">
       <Filter>95. Loaders\00. FbxLoader</Filter>
@@ -1027,10 +970,10 @@
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestHatchMesh.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\97. TestHatchMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\97. TestHatchMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestAnimMesh.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\99. Environment\99. Test\98. TestAnimMesh</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\98. TestAnimMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Server_Manager.cpp">
       <Filter>94. Server</Filter>
@@ -1040,27 +983,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_PointLight.cpp">
       <Filter>02. GameObject\97. UI\99. UI_Deffered\04. UI_Direction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Orc02.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\01. Orc02</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Orc03.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\02. Orc03</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Weapon01.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Weapon.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Weapon02.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Weapon03.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Weapon04.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Building.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\04. Building</Filter>
@@ -1077,15 +999,6 @@
     <ClCompile Include="..\Codes\Hatch.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\00. Hatch</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Orc04.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. Orc\03. Orc04</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Skeleton.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\04. henchman\00. Skeleton</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Sufferer.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\04. henchman\01. Sufferer</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Flag.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\05. Flag</Filter>
     </ClCompile>
@@ -1097,6 +1010,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Sphere.cpp">
       <Filter>02. GameObject\99. BaseShape\05. Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Catapult.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\05. Catapult</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\00. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NPC.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\01. NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

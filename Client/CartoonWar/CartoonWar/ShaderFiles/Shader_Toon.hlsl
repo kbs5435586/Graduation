@@ -91,7 +91,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 		fRim = 1.f;
 	else
 		fRim = -1.f;
-	float	fRimPower = 5.f;
+	float	fRimPower = 1.f;
 
 
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
