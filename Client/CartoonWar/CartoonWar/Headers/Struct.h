@@ -182,6 +182,7 @@ typedef struct tagMainPass
 	XMFLOAT4X4	matRev;
 
 	XMFLOAT4	vCamPos;
+	XMFLOAT4	vLook;
 
 	XMFLOAT4X4	I_matWorld;
 	XMFLOAT4X4	I_matView;

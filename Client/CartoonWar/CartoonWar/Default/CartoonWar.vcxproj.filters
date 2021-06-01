@@ -127,9 +127,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\02. Terrain_Height">
       <UniqueIdentifier>{7cfb3c23-962d-4480-99e8-c4aaff875be1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc">
-      <UniqueIdentifier>{048814f2-3709-4400-89d5-3213d5deb0d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\06. Frustum">
       <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
     </Filter>
@@ -144,9 +141,6 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\01. Terrain">
       <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\00. Orc01">
-      <UniqueIdentifier>{566d53e0-6414-410b-8250-5ce9fd1546b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\05. RenderToTexture">
       <UniqueIdentifier>{0452afe4-216f-4235-a03c-f9762dd19fac}</UniqueIdentifier>
@@ -292,9 +286,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
       <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
-      <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer">
       <UniqueIdentifier>{06fc3ebb-4243-49af-89ef-7394a6bb790c}</UniqueIdentifier>
     </Filter>
@@ -324,21 +315,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
       <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon">
-      <UniqueIdentifier>{8496c958-d84d-461c-aabc-d38c0df8f31a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01">
-      <UniqueIdentifier>{9be74e22-c72f-464d-9b30-d5314e3b564a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02">
-      <UniqueIdentifier>{e6d3973d-c30e-409f-8c8c-1acad68a83ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03">
-      <UniqueIdentifier>{024363f5-f45e-43bc-b7fa-4e78f4b90297}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04">
-      <UniqueIdentifier>{8bf797d0-4810-43b0-996b-4b7f15c73092}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building">
       <UniqueIdentifier>{bd754442-48eb-40d5-9d17-e5d453ae2226}</UniqueIdentifier>
@@ -379,9 +355,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Hatch">
       <UniqueIdentifier>{79e45fc5-d449-400e-9806-303f5fc6b5eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\03. Orc04">
-      <UniqueIdentifier>{d7a44ade-c834-4ec0-822c-62baf4142535}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Default">
       <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
     </Filter>
@@ -400,9 +373,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\05. Flag">
       <UniqueIdentifier>{5560848d-c94a-4bb4-8a5b-eb93b35ae33c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
-      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\97. UI\02. UI_MaxTime">
       <UniqueIdentifier>{dab807ce-103d-426f-bb80-ae549604c02d}</UniqueIdentifier>
     </Filter>
@@ -411,6 +381,39 @@
     </Filter>
     <Filter Include="02. GameObject\97. UI\04. UI_WoL_Blue">
       <UniqueIdentifier>{40ef1471-4070-4eb3-af3c-9cdae14279e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. BaseShape\05. Sphere">
+      <UniqueIdentifier>{ea02003e-515b-4f6d-882a-2ef88e5827c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc">
+      <UniqueIdentifier>{048814f2-3709-4400-89d5-3213d5deb0d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\00. Orc01">
+      <UniqueIdentifier>{566d53e0-6414-410b-8250-5ce9fd1546b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\02. Orc03">
+      <UniqueIdentifier>{66fa3d69-3229-48ae-ba95-7b54600804af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon">
+      <UniqueIdentifier>{8496c958-d84d-461c-aabc-d38c0df8f31a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\00. Weapon01">
+      <UniqueIdentifier>{9be74e22-c72f-464d-9b30-d5314e3b564a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\01. Weapon02">
+      <UniqueIdentifier>{e6d3973d-c30e-409f-8c8c-1acad68a83ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\02. Weapon03">
+      <UniqueIdentifier>{024363f5-f45e-43bc-b7fa-4e78f4b90297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\99. Weapon\03. Weapon04">
+      <UniqueIdentifier>{8bf797d0-4810-43b0-996b-4b7f15c73092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\03. Orc04">
+      <UniqueIdentifier>{d7a44ade-c834-4ec0-822c-62baf4142535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\03. Orc\01. Orc02">
+      <UniqueIdentifier>{3e7a1400-6201-4b6a-aa2d-c645ebe10177}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\97. UI\03. UI_Inventory">
       <UniqueIdentifier>{8a31aaf2-96d0-4b55-9784-497671c6934e}</UniqueIdentifier>
@@ -774,6 +777,9 @@
     <ClInclude Include="..\Headers\UI_WoL_Blue.h">
       <Filter>02. GameObject\97. UI\04. UI_WoL_Blue</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Sphere.h">
+      <Filter>02. GameObject\99. BaseShape\05. Sphere</Filter>
+    </ClInclude>
     <ClInclude Include="..\Codes\UI_Inventory.h">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
     </ClInclude>
@@ -1106,6 +1112,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp">
       <Filter>02. GameObject\97. UI\04. UI_WoL_Blue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sphere.cpp">
+      <Filter>02. GameObject\99. BaseShape\05. Sphere</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Inventory.cpp">
       <Filter>02. GameObject\97. UI\03. UI_Inventory</Filter>
