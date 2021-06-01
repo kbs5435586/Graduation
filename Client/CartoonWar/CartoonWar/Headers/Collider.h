@@ -26,8 +26,15 @@ public:
     HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
     HRESULT                     Clone_ColliderBox(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
+    _bool                       Collision_AABB(CCollider* pTargetCollider);
+    void				        Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform);
+    _bool                       Collision_OBB(CCollider* pTargetCollider);
+public:
     void                        Update_Collider(CTransform* pTransform);
+    _matrix				        Compute_WorldTransform();
 private:
+    void				        Compute_AlignAxis(OBB* pOBB);
+    void				        Compute_ProjAxis(OBB* pOBB);
     _matrix                     Remove_Rotation(_matrix matWorld);
     HRESULT                     Create_InputLayOut();
 public:
@@ -41,6 +48,12 @@ private:
     COLLIDER_TYPE               m_eType = COLLIDER_TYPE::COLLIDER_END;
     _vec3                       m_vSize = {};
     _float                      m_fRadius = 0.f;
+    _bool                       m_IsColl = false;
+private:
+    OBB*                        m_pOBB = nullptr;
+    _vec3                       m_vMin = {};
+    _vec3                       m_vMax = {};
+    _matrix                     m_matWorld = {};
 private:
     CShader*                    m_pShaderCom = nullptr;
     CTransform*                 m_pTransformCom = nullptr;

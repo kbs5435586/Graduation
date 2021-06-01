@@ -211,7 +211,8 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	output.matWV = matWorld * matView;
 	output.matWVP = output.matWV * matProj;
 	output.vCamPos = (_vec4)&matTemp.m[3][0];
-	output.matRev = matRev;
+	output.matRev = Matrix_::Inverse(output.matWV);
+	output.matRev = Matrix_::Transpose(output.matRev);
 
 	output.matViewInv = Matrix_::Inverse(matView);
 	output.matProjInv = Matrix_::Inverse(matProj);

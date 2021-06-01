@@ -11,7 +11,7 @@ typedef struct tagVertexCol
 	}
 	tagVertexCol(XMFLOAT3 vPos, XMFLOAT4 vColor_, XMFLOAT3 vNormal_)
 	{
-		vPosition = vPos;
+		vPosition = vPos; 
 		vColor = vColor_;
 		vNormal = vNormal_;
 	}
@@ -210,7 +210,7 @@ struct Indices
 	ComPtr<ID3D12Resource>		pIB;
 	int							iIndexCnt;
 	DXGI_FORMAT					eFormat;
-	void*						pSystem;
+	void* pSystem;
 	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
 };
 
@@ -226,8 +226,22 @@ struct RenderInfo
 	int							iVtxSize;
 	vector<MESH>				vecVertices;
 	vector<Indices>				vecIndices;
-	class CTexture*					pTexture;
+	class CTexture*				pTexture;
 };
+
+typedef struct tagRenderSupport
+{
+	tagRenderSupport() {}
+	tagRenderSupport(int iIncicesCnt_, D3D12_VERTEX_BUFFER_VIEW VertexBufferView_, D3D12_INDEX_BUFFER_VIEW		IndexBufferView_)
+	{
+		iIncicesCnt = iIncicesCnt_;
+		VertexBufferView = VertexBufferView_;
+		IndexBufferView = IndexBufferView_;
+	}
+	int							iIncicesCnt;
+	D3D12_VERTEX_BUFFER_VIEW	VertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW		IndexBufferView;
+}RENDERSUP;
 
 
 typedef struct tagLightColor
@@ -258,7 +272,7 @@ typedef struct tagLightInfo
 
 typedef struct tagRenderTarget
 {
-	ID3D12Resource*		pTarget;
+	ID3D12Resource* pTarget;
 	XMFLOAT4			fClear_Color;
 }RENDERTARGER;
 
@@ -482,8 +496,9 @@ typedef struct tagGlobal
 {
 	int		iWincx;
 	int		iWincy;
+	int		iTeam;
 	float	fTimeDelta;
-	float	fAccTime=0.f;
+	float	fAccTime = 0.f;
 }GLOBAL;
 
 
@@ -523,12 +538,28 @@ typedef struct tagAnimController
 	}
 	int		iStartFrm;
 	int		iEndFrm;
-	int		iCurFrm ;
+	int		iCurFrm;
 	float	fStartTime;
-	float	fCurTime =0.f;
+	float	fCurTime = 0.f;
 	float	fEndTime;
 	bool	IsPlayOnce = false;
 
 	float	fOriginStartTime;
-	float	fOriginEndTime ;
+	float	fOriginEndTime;
 }AnimCtrl;
+
+
+typedef struct tagOBB
+{
+	Vector3			vPoint[8];
+	Vector3			vCenter;
+	Vector3			vAlignAxis[3];
+	Vector3			vProjAxis[3];
+}OBB;
+
+
+typedef struct tagFlag
+{
+	Vector3		vPos;
+	int			iNum;
+}FLAG;

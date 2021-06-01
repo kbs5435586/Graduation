@@ -18,7 +18,7 @@ private:
 private:
     void                            Load_Texture();
 public:
-    void                            SetUp_Texture(_uint i=0);
+    HRESULT                         SetUp_Texture();
 private:
     void                            Load_Skeleton(FbxNode* pNode);
     void                            Load_Skeleton_(FbxNode* pNode, _int iDepth, _int iIdx, _int iParentIdx);
@@ -76,9 +76,13 @@ public:
 public:
     CStructedBuffer*                GetBoneFrameData(){return m_pBoneFrameData;}
     CStructedBuffer*                GetBoneOffset(){return m_pBoneOffset;}
+public:
+    vector<RenderInfo>              GetRenderInfo() { return m_vecRenderInfo; }
 private:
     RenderInfo                      m_tRenderInfo = {};
-    vector< RenderInfo>             m_vecRenderInfo;
+    vector<RenderInfo>              m_vecRenderInfo;
+private:
+    vector<RENDERSUP>               m_vecRenderSup;
 public:
     static CMesh*                   Create(const wstring& pFilePath, const _tchar* pSaveFilePath = nullptr);
     static CMesh*                   Create_Load(const _tchar* pFilePath);
@@ -116,6 +120,8 @@ private:
     ///////////////////////////////////
     vector<_matrix>                 m_vecOffset;
     vector<tFrameTrans>             m_vecFrameTrans;
+    public:
+       vector< CTexture* >          m_pTexture ;
 
 };
 

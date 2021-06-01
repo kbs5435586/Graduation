@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-class CFrustum;
 class CWeapon;
 class COrc02 :
     public CGameObject
@@ -20,12 +19,14 @@ private:
 	void									SetUp_Anim();
 public:
 	static COrc02*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint & iIdx = 0) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg, _uint  iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
 	void									Set_Animation();
+	void									Obb_Collision();
+	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -34,7 +35,7 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
-	CCollider*								m_pColiiderCom = nullptr;
+	CCollider*								m_pColliderCom[2] = {nullptr};
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	vector<AnimCtrl>						m_vecAnimCtrl;

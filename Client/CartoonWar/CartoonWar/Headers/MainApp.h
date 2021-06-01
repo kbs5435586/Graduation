@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 class CRenderer;
+class CFrustum;
 class CManagement;
 
 class CMainApp :
@@ -31,6 +32,7 @@ private:
 private:
     CManagement*                m_pManagement = nullptr;
     CRenderer*                  m_pRenderer = nullptr;
+    CFrustum*                   m_pFrustum = nullptr;
     GLOBAL                      m_tGlobal;
 private:
     _float                      m_fTimeDelta=0.f;

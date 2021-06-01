@@ -166,7 +166,7 @@ CCube* CCube::Create()
 	return pInstance;
 }
 
-CGameObject* CCube::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CCube::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CCube* pInstance = new CCube(*this);
 

@@ -36,7 +36,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
-	vOut.vDiffuseTex = vIn.vColor;
+	vOut.vDiffuseTex = float4(0.f,0.f,1.f,1.f);
 
 	return vOut;
 }

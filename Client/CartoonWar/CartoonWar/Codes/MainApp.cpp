@@ -68,10 +68,12 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return - 1;
+
+	
 	m_fTimeAcc += fTimeDelta;
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
-
+	m_pFrustum->Transform_ToWorld();
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
@@ -136,6 +138,8 @@ HRESULT CMainApp::SetUp_OnShader(const _float& fTimeDelta)
 	m_tGlobal.iWincx = WINCX;
 	m_tGlobal.iWincy = WINCY;
 
+	g_MaxTime -= fTimeDelta;
+
 	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->SetData(&m_tGlobal);
 	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b9)->GetCBV().Get(), iOffset, CONST_REGISTER::b9);
 
@@ -146,11 +150,57 @@ void CMainApp::Compute_Frame()
 {
 	++m_dwRenderCnt;
 	
-	if (m_fTimeAcc >= 1.f)
+
+
+	if (g_MaxTime <= 0.f)
 	{
-		wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID()-1);
-		m_dwRenderCnt = 0;
-		m_fTimeAcc = 0.f;
+		if (g_iBlueNum > g_iRedNum)
+		{
+			if (m_fTimeAcc >= 1.f)
+			{
+				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "BlueWin");
+				m_dwRenderCnt = 0;
+				m_fTimeAcc = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fTimeAcc >= 1.f)
+			{
+				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "RedWin");
+				m_dwRenderCnt = 0;
+				m_fTimeAcc = 0.f;
+			}
+
+		}
+	}
+	else if (g_iRedNum >= 5)
+	{
+		if (m_fTimeAcc >= 1.f)
+		{
+			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "RedWin");
+			m_dwRenderCnt = 0;
+			m_fTimeAcc = 0.f;
+		}
+	}
+	else if (g_iBlueNum >= 5)
+	{
+		if (m_fTimeAcc >= 1.f)
+		{
+			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, "BlueWin");
+			m_dwRenderCnt = 0;
+			m_fTimeAcc = 0.f;
+		}
+
+	}
+	else
+	{
+		if (m_fTimeAcc >= 1.f)
+		{
+			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"None");
+			m_dwRenderCnt = 0;
+			m_fTimeAcc = 0.f;
+		}
 	}
 
 	SetWindowText(g_hWnd, m_szFPS);
@@ -182,6 +232,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer", m_pRenderer = CRenderer::Create())))
 		return E_FAIL;
 	m_pRenderer->AddRef();
+
+	if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum", m_pFrustum= CFrustum::Create())))
+		return E_FAIL;
+	m_pFrustum->AddRef();
 
 	//if (FAILED(m_pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex_RTT",CBuffer_RectTex::Create())))
 	//	return E_FAIL;
@@ -216,6 +270,7 @@ void CMainApp::Free()
 {
 	Safe_Release(m_pManagement);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pFrustum);
 
 	m_pManagement->Release_Engine();
 }

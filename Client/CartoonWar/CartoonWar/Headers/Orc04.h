@@ -18,13 +18,12 @@ private:
 	void									SetUp_Anim();
 public:
 	static COrc04* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
 	void									Set_Animation();
-	void									Move(const _float& fTimeDelta);
 private:
 	CTransform* m_pTransformCom = nullptr;
 	CRenderer* m_pRendererCom = nullptr;
@@ -33,7 +32,7 @@ private:
 	CShader* m_pComputeShaderCom = nullptr;
 	CAnimator* m_pAnimCom = nullptr;
 	CNavigation* m_pNaviCom = nullptr;
-
+	CFrustum* m_pFrustumCom = nullptr;
 private:
 	vector<CTexture*>						m_vecTexture;
 	vector<AnimCtrl>						m_vecAnimCtrl;
@@ -41,7 +40,6 @@ private:
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx = 0;
 	_bool									m_IsOnce = false;
-	_bool									m_IsAlwaysOnce = false;
 private:
 	float									m_fRatio = 0.f;
 };

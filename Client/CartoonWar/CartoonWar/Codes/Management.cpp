@@ -75,19 +75,30 @@ CLayer* CManagement::Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag)
 	return m_pObject_Manager->Find_Layer(iSceneID, pLayerTag);
 }
 
-LIGHT CManagement::Get_Light(const _tchar* pLightTag)
+LIGHT CManagement::Get_Light(_uint& iIdx)
 {
-	return m_pLight_Manager->GetLight(pLightTag);
+	return m_pLight_Manager->GetLight(iIdx);
 }
 
-HRESULT CManagement::Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo)
+HRESULT CManagement::Add_LightInfo(LIGHT& tLightInfo)
 {
-	return m_pLight_Manager->Add_LightInfo(pLightTag, tLightInfo);
+	return m_pLight_Manager->Add_LightInfo(tLightInfo);
 }
+
 
 void CManagement::SetUp_OnShader_Light()
 {
 	return m_pLight_Manager->SetUp_OnShader();
+}
+
+void CManagement::Update()
+{
+	return m_pLight_Manager->Update();
+}
+
+void CManagement::Render()
+{
+	return m_pLight_Manager->Render();
 }
 
 
@@ -173,6 +184,16 @@ HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
 	return m_pLoad_Manager->Load_File(pFilePath, pArg);
 }
 
+HRESULT CManagement::Load_File_Low(const _tchar* pFilePath, void* pArg)
+{
+	return m_pLoad_Manager->Load_File_Low(pFilePath, pArg);
+}
+
+HRESULT CManagement::Load_File_Hatch(const _tchar* pFilePath, void* pArg)
+{
+	return m_pLoad_Manager->Load_File_Hatch(pFilePath, pArg);
+}
+
 HRESULT CManagement::Ready_UAV_Manager()
 {
 	return m_pUAV_Manager->Ready_UAVManager();
@@ -192,12 +213,12 @@ HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar
 }
 
 HRESULT CManagement::Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag,
-	CGameObject** ppCloneObject, void* pArg, const _uint& iIdx)
+	CGameObject** ppCloneObject, void* pArg , _uint iIdx)
 {
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_GameObjectToLayer(pProtoTag, iSceneID, pLayerTag, ppCloneObject, pArg);
+	return m_pObject_Manager->Add_GameObjectToLayer(pProtoTag, iSceneID, pLayerTag, ppCloneObject, pArg, iIdx);
 }
 
 CComponent* CManagement::Clone_Component(const _uint& iSceneID, const _tchar* pComponentTag, void* pArg)

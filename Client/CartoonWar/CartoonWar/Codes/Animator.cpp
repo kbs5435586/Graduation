@@ -51,7 +51,6 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, _float& fRatio, const _float& fTimeDelt
 	_bool isRetVal = false;
 	m_fCurTime = 0.f;
 
-	m_vecClip;
 	tCtrl.fCurTime += fTimeDelta;
 
 	if (tCtrl.fCurTime >= tCtrl.fEndTime - tCtrl.fStartTime)

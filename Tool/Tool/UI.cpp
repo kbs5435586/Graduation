@@ -224,7 +224,7 @@ void CUI::OnBnClickedLoad()
 			pGameObject->Get_SizeX() = fSizeX;
 			pGameObject->Get_SizeY() = fSizeY;
 			m_pComponentTag = szComponentTag;
-			pGameObject->Set_Component_Tag(szComponentTag);
+			//pGameObject->Set_Component_Tag(szComponentTag);
 			pGameObject->GetLoadUI_Texture() = true;
 
 		}

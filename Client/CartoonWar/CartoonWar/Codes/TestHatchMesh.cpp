@@ -116,7 +116,7 @@ CTestHatchMesh* CTestHatchMesh::Create()
 	return pInstance;
 }
 
-CGameObject* CTestHatchMesh::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTestHatchMesh::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CTestHatchMesh* pInstance = new CTestHatchMesh(*this);
 

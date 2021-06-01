@@ -24,11 +24,12 @@ HRESULT CLogo::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	
-	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
+	m_fX = WINCX / 2;
+	m_fY = WINCY / 2;
 
-	_vec3 vPos = _vec3(0.f, -0.f, 0.f);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_fSizeX = WINCX;
+	m_fSizeY = WINCY;
+
 	return S_OK;
 }
 
@@ -43,8 +44,11 @@ _int CLogo::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
+	if (m_pRendererCom != nullptr)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+			return E_FAIL;
+	}
 	return _int();
 }
 
@@ -57,19 +61,20 @@ void CLogo::Render_GameObject()
 
 
 	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
-	_matrix matProj = Matrix_::Identity();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
+	matWorld._11 = m_fSizeX;
+	matWorld._22 = m_fSizeY;
 
-
-	//_matrix matWorld = Matrix_::Identity();
-	//_matrix matView = Matrix_::Identity();
-	//_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -m_fY + (WINCY >> 1);
 
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData(&tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), 
 		iOffset, CONST_REGISTER::b0);
@@ -105,7 +110,7 @@ CLogo* CLogo::Create()
 	return pInstance;
 }
 
-CGameObject* CLogo::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CLogo::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CLogo* pInstance = new CLogo(*this);
 
@@ -150,12 +155,12 @@ HRESULT CLogo::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Texture");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Logo");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

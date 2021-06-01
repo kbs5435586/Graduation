@@ -23,19 +23,28 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CMyRect*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx=0) override;
 private:
 	virtual void							Free();
-	HRESULT									Ready_Component();
+	HRESULT									Ready_Component(_uint iNum = 0);
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom[2] = {nullptr};
-	CTexture*								m_pTextureCom = nullptr;
 
 private:
+	REP										m_tRep = {};
+	TEAM									m_eCurTeam = TEAM::TEAM_END;
+	TEAM									m_ePreTeam = TEAM::TEAM_END;
+private:
 	_bool									m_IsTemp = false;
-
+	_bool									m_IsChange = false;
+	_bool									m_IsFix = false;
+	_float									m_fTempTime = 0.f;
+	_float									m_fDeltaTime = 0.f;
+private:
+	_uint									m_iNum = 0;
+	
 };
 

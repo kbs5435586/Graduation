@@ -25,9 +25,9 @@ CMesh::CMesh(const CMesh& rhs)
 	, m_vecFrameTrans(rhs.m_vecFrameTrans)
 	, m_vecOffset(rhs.m_vecOffset)
 	, m_iFrameCnt(rhs.m_iFrameCnt)
-
+	, m_vecRenderSup(rhs.m_vecRenderSup)
+	, m_pTexture(rhs.m_pTexture)
 {
-
 	m_IsClone = true;
 
 
@@ -161,8 +161,8 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 	{
 		_int i = 0;
 	}
-	//m_iSubsetNum += iMtrlCnt;
-	m_iSubsetNum++;
+	m_iSubsetNum += iMtrlCnt;
+	//m_iSubsetNum++;
 	//m_iSubsetNum = iMtrlCnt;
 	pContainer.vecIdx.resize(iMtrlCnt);
 
@@ -235,31 +235,44 @@ void CMesh::Laod_Material(FbxSurfaceMaterial* _pMtrlSur)
 	tMtrlInfo.strSpec = GetMtrlTextureName(_pMtrlSur, FbxSurfaceMaterial::sSpecular);
 
 
+	int iLen = tMtrlInfo.strDiff.length();
+	if (iLen >= 0)
+	{
+		_tchar* tag = new _tchar[iLen + 1];
+		ZeroMemory(tag, iLen + 1);
+		lstrcpy(tag, tMtrlInfo.strDiff.c_str());
+		m_vecDiffTexturePath.push_back(tag);
+		m_vecContainer.back().vecMtrl.push_back(tMtrlInfo);
+	}
 
-
-	m_vecContainer.back().vecMtrl.push_back(tMtrlInfo);
 }
 
 void CMesh::Load_Texture()
 {
-	_uint iCnt = 0;
-	for (auto& iter : m_vecContainer)
-	{
-		CTexture* pTexture = CTexture::Create(iter.vecMtrl[0].strDiff.c_str());
-		m_vecRenderInfo[iCnt].pTexture = (pTexture);
-		iCnt++;
-	}
+	// Texture Load
 
+	for (_uint i = 0; i < m_vecDiffTexturePath.size(); ++i)
+	{
+		CTexture* pTexture = CTexture::Create(m_vecDiffTexturePath[i]);
+		m_pTexture.push_back(pTexture);
+	}
 	
 }
 
-void CMesh::SetUp_Texture(_uint i)
+HRESULT CMesh::SetUp_Texture()
 {
-	CTexture* pTexture = m_vecRenderInfo[i].pTexture;
-	if (pTexture)
+	if (m_iCurTexNum >= m_iMaxTexNum)
 	{
-		CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		m_iCurTexNum = 0;
 	}
+
+	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t0)));
+	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 1], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t1)));
+	//CDevice::GetInstance()->SetTextureToShader(m_vecTexture[m_iCurTexNum + 2], (TEXTURE_REGISTER)((_uint)(TEXTURE_REGISTER::t2)));
+
+
+	//m_iCurTexNum+=3;
+	return S_OK;
 }
 
 void CMesh::Load_Skeleton(FbxNode* pNode)
@@ -343,10 +356,11 @@ void CMesh::Triangulate(FbxNode* pNode)
 void CMesh::GetTangent(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int iVtxOrder)
 {
 	int iTangentCnt = pMesh->GetElementTangentCount();
-	if (1 != iTangentCnt)
-		assert(NULL); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
 	if (iTangentCnt == 0)
 		return;
+	if (1 != iTangentCnt)
+		assert(NULL); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
+
 
 	// 탄젠트 data 의 시작 주소
 	FbxGeometryElementTangent* pTangent = pMesh->GetElementTangent();
@@ -409,10 +423,11 @@ void CMesh::GetNormal(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int iV
 void CMesh::GetBinormal(FbxMesh* pMesh, tContainer* pContainer, _int iIdx, _int iVtxOrder)
 {
 	int iBinormalCnt = pMesh->GetElementBinormalCount();
-	if (1 != iBinormalCnt)
-		assert(NULL); // 정점 1개가 포함하는 종법선 정보가 2개 이상이다.
 	if (iBinormalCnt == 0)
 		return;
+	if (1 != iBinormalCnt)
+		assert(NULL); // 정점 1개가 포함하는 종법선 정보가 2개 이상이다.
+
 
 	// 종법선 data 의 시작 주소
 	FbxGeometryElementBinormal* pBinormal = pMesh->GetElementBinormal();
@@ -1072,6 +1087,7 @@ HRESULT CMesh::Ready_MeshData(vector<tContainer>& vecContainer)
 			tIndices.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
 
 			tRenderInfo.vecIndices.push_back(tIndices);
+			m_vecRenderSup.push_back(RENDERSUP(tIndices.iIndexCnt, tVtxView, tIndices.IndexBufferView));
 		}
 
 
@@ -1244,30 +1260,15 @@ HRESULT CMesh::Save(const _tchar* pFilePath)
 	}
 
 
-	//_uint iDiffTexCnt = 0;
-	//iDiffTexCnt = m_vecDiffTexturePath.size();
-	//fwrite(&iDiffTexCnt, sizeof(_uint), 1, pFile);
-	//for (auto& iter : m_vecDiffTexturePath)
-	//{
-	//	_uint iLen = lstrlen(iter)+1;
-	//	fwrite(&iLen, sizeof(_uint), 1, pFile);
-	//	fwrite(iter, sizeof(_tchar) * iLen, 1, pFile);
-	//}
-
-
-
 	_uint iDiffTexCnt = 0;
-	iDiffTexCnt = m_vecContainer.size();
+	iDiffTexCnt = m_vecDiffTexturePath.size();
 	fwrite(&iDiffTexCnt, sizeof(_uint), 1, pFile);
-	for (auto& iter : m_vecContainer)
+	for (auto& iter : m_vecDiffTexturePath)
 	{
-		const _tchar* pTemp = iter.vecMtrl[0].strDiff.c_str();
-
-		_uint iLen = iter.vecMtrl[0].strDiff.length()+1;
+		_uint iLen = lstrlen(iter)+1;
 		fwrite(&iLen, sizeof(_uint), 1, pFile);
-		fwrite(pTemp, sizeof(_tchar) * iLen, 1, pFile);
+		fwrite(iter, sizeof(_tchar) * iLen, 1, pFile);
 	}
-
 	
 	fclose(pFile);
 
@@ -1347,7 +1348,7 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 
 		//m_tRenderInfo.vecIndices.resize(iMtrlCount);
 		m_iSubsetNum += iMtrlCount;
-		//m_iSubsetNum = iMtrlCount;
+	
 		for (_uint i = 0; i < iMtrlCount; ++i)
 		{
 			Indices info = {};
@@ -1409,6 +1410,7 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 			info.IndexBufferView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
 
 			tRenderInfo.vecIndices.push_back(info);
+			m_vecRenderSup.push_back(RENDERSUP(info.iIndexCnt, tRenderInfo.VertexBufferView, info.IndexBufferView));
 		}
 		m_vecRenderInfo.push_back(tRenderInfo);
 	}
@@ -1468,12 +1470,10 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 		m_vecDiffTexturePath.push_back(pTemp);
 	}
 
-	_uint iCnt = 0;
-	for (auto& iter : m_vecDiffTexturePath)
+	for (_uint i = 0; i < m_vecDiffTexturePath.size(); ++i)
 	{
-		CTexture* pTexture = CTexture::Create(iter);
-		m_vecRenderInfo[iCnt].pTexture = (pTexture);
-		iCnt++;
+		CTexture* pTexture = CTexture::Create(m_vecDiffTexturePath[i]);
+		m_pTexture.push_back(pTexture);
 	}
 
 
@@ -1512,9 +1512,9 @@ HRESULT CMesh::Load(const _tchar* pFilePath)
 void CMesh::Render_Mesh(_uint iIdx)
 {
 	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderInfo[iIdx].VertexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderInfo[iIdx].vecIndices[0].IndexBufferView);
-	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderInfo[iIdx].vecIndices[0].iIndexCnt, 1, 0, 0, 0);
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &m_vecRenderSup[iIdx].VertexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&m_vecRenderSup[iIdx].IndexBufferView);
+	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_vecRenderSup[iIdx].iIncicesCnt, 1, 0, 0, 0);
 }
 
 
@@ -1544,7 +1544,6 @@ void CMesh::Free()
 	if (m_pScene)
 	{
 		m_pScene->Destroy();
-
 	}
 	for (size_t i = 0; i < m_vecBone.size(); ++i)
 	{
@@ -1570,14 +1569,12 @@ void CMesh::Free()
 		for (auto& iter : m_vecDiffTexturePath)
 			Safe_Delete_Array(iter);
 
-		for (auto& iter : m_vecRenderInfo)
+
+		for (auto& iter : m_pTexture)
 		{
-			Safe_Release(iter.pTexture);
+			Safe_Release(iter);
 		}
-
 	}
-
-
 	//if (m_IsClone)
 	//{
 	//	if (m_pBoneFrameData)
@@ -1585,7 +1582,7 @@ void CMesh::Free()
 	//	if (m_pBoneOffset)
 	//		Safe_Release(m_pBoneOffset);
 	//}
-
+	//Safe_Release(m_pTexture);
 
 	CComponent::Free();
 }

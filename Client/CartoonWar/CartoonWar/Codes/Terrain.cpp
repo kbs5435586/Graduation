@@ -73,14 +73,14 @@ void CTerrain::Render_GameObject()
 
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t1);
+	//ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
+	//CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t1);
 
 	CDevice::GetInstance()->UpdateTable();
 
 
 	m_pBufferCom->Render_VIBuffer();
-	//m_pNaviCom->Render_Navigation();
+	m_pNaviCom->Render_Navigation();
 
 
 	Safe_Release(pManagement);;
@@ -112,7 +112,7 @@ CTerrain* CTerrain::Create()
 	return pInstance;
 }
 
-CGameObject* CTerrain::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CTerrain::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CTerrain* pInstance = new CTerrain(*this);
 
@@ -132,7 +132,7 @@ void CTerrain::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
@@ -169,10 +169,10 @@ HRESULT CTerrain::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);

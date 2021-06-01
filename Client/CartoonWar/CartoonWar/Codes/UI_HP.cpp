@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "UI_HP.h"
 #include "Management.h"
+#include "Layer.h"
+#include "UAV.h"
 
 CUI_HP::CUI_HP()
 	: CUI()
@@ -16,7 +18,7 @@ HRESULT CUI_HP::Ready_Prototype()
 {
 	return S_OK;
 }
-
+ 
 HRESULT CUI_HP::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
@@ -25,20 +27,17 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	m_fX = 600.f;
-	m_fY = 50.0f;
+	m_fX = 100.f;
+	m_fY = WINCY - 100.f;
 
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
-
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-
+	m_fSizeX = 300.f;
+	m_fSizeY = 25.f;
+	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")->Get_BackObject()->GetInfo();
 	return S_OK;
 }
 
 _int CUI_HP::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tInfo = m_pObserverCom->GetInfo();
 	return _int();
 }
 
@@ -61,7 +60,8 @@ void CUI_HP::Render_GameObject()
 	pManagement->AddRef();
 
 
-	MAINPASS tMainPass = {};
+	MAINPASS	tMainPass = {};
+
 
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
@@ -78,8 +78,24 @@ void CUI_HP::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_HP")->GetSRV().Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
+
+
+
+
+
+
+	m_tRep.m_arrInt[0] = m_tInfo.fHP;
+	m_tRep.m_arrInt[1] = (_uint)m_IsTemp;
+
+	CDevice::GetInstance()->ClearDummyDesc_CS();
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_HP"), UAV_REGISTER::u0);
+
+	m_pCompute_ShaderCom->UpdateData_CS();
+	CManagement::GetInstance()->Get_UAV(L"UAV_HP")->Dispatch(1, 100, 1);
 
 
 	m_pBufferCom->Render_VIBuffer();
@@ -92,8 +108,10 @@ HRESULT CUI_HP::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc/*, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED*/)))
+
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -108,7 +126,7 @@ CUI_HP* CUI_HP::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_HP::Clone_GameObject(void* pArg, const _uint& iIdx )
+CGameObject* CUI_HP::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_HP* pInstance = new CUI_HP();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
@@ -126,9 +144,8 @@ void CUI_HP::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pObserverCom);
+	Safe_Release(m_pCompute_ShaderCom);
 
 
 	CGameObject::Free();
@@ -160,14 +177,9 @@ HRESULT CUI_HP::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
-
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	m_pCompute_ShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_HP");
+	NULL_CHECK_VAL(m_pCompute_ShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Compute_Shader", m_pCompute_ShaderCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

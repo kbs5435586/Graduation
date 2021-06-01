@@ -24,7 +24,7 @@ private:
 	virtual HRESULT							CreateInputLayout();
 public:
 	static CUI_HP*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, const _uint& iIdx = 0) override;
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -33,7 +33,9 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
-	CObserver*								m_pObserverCom = nullptr;
+	CShader*								m_pCompute_ShaderCom = nullptr;
+private:
+	REP										m_tRep = {};
+	_bool									m_IsTemp = false;
 };
 

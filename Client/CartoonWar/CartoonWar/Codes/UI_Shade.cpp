@@ -71,12 +71,13 @@ void CUI_Shade::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc0 = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc0.Get(), TEXTURE_REGISTER::t0);
+	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(pNormalTex.Get(), TEXTURE_REGISTER::t0);
+
 	CDevice::GetInstance()->UpdateTable();
 
-
-	m_pBufferCom->Render_VIBuffer();
+	
+	//m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 
@@ -102,7 +103,7 @@ CUI_Shade* CUI_Shade::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Shade::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Shade::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_Shade* pInstance = new CUI_Shade();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

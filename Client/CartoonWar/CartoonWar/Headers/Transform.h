@@ -17,6 +17,7 @@ public: // Getter
 	const _float			Get_Add_PosY() { return m_fAdd_PosY; }
 public:
 	void					Set_Matrix(_matrix matWorld) { m_matWorld = matWorld; }
+	void					Set_Matrix(_matrix matWorld, _bool IsMul);
 public: // Setter
 	void					Set_StateInfo(STATE eState, const _vec3* pInfo);
 	void					Set_PositionY(const _float& fY) {	m_matWorld.m[3][1] = fY;}
@@ -39,6 +40,8 @@ public:
 	void					Rotation_X(const _float& fTimeDelta);
 	void					Rotation_Y(const _float& fTimeDelta);
 	void					Rotation_Z(const _float& fTimeDelta);
+public:
+	void					RotationRev_Y(_matrix matWorld, const _float& fTimeDelta);
 
 	void					Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta);
 	void					Rotation_Axis(const _float& fTimeDelta,const _vec3* pAxis);

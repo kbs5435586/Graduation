@@ -14,7 +14,7 @@ COrc02::COrc02(const COrc02& rhs)
 }
 
 HRESULT COrc02::Ready_Prototype()
-{
+{ 
 	return S_OK;
 }
 
@@ -27,33 +27,42 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(90.f));
-
+	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
+	_vec3 vPos = { 10.f, 0.f, 0.f };
+	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
+	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pMeshCom->m_vecDiffTexturePath;
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	SetUp_Anim();
 
 	m_pAnimCom->LateInit();
-	m_iCurAnimIdx = 43;
-	_matrix matTemp = { };
-	m_pColiiderCom->Clone_ColliderBox(matTemp, _vec3(10.f,10.f,10.f));	
+	m_iCurAnimIdx = 14;
 
+	_vec3 vColliderSize = { 160.f,160.f,160.f };
+	m_pColliderCom[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColliderCom[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	
+	m_tInfo.fHP = 100.f;
+	m_tInfo.fAtt = 50.f;
 
 	return S_OK;
 }
 
 _int COrc02::Update_GameObject(const _float& fTimeDelta)
 {
-	//m_pColiiderCom->Update_Collider(m_pTransformCom);
+	m_pColliderCom[0]->Update_Collider(m_pTransformCom);
+	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
+
+
+
 
 	if (m_pWeapon)
 	{
 		CTransform* pWeaponTransform = (CTransform*)m_pWeapon->Get_ComponentPointer(L"Com_Transform");
 		pWeaponTransform->Set_Matrix(m_pTransformCom->Get_Matrix());
 	}
-
-
 	return _int();
 }
 
@@ -61,147 +70,146 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 0.f))
+	//Obb_Collision(); 
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
+
 	}
 
 
+	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+	{
+		/*if (m_pColliderCom[1]->Collision_OBB((CCollider*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", L"Com_Collider_OBB")))
+		{
+			m_IsHit = true;
+			
+		}*/
+
+		m_iCurAnimIdx = rand() % 8;
+		m_IsOnce = true;
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	{
+		m_iCurAnimIdx = 29;
+		{
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
+
+
+			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+			_vec3 vSlide = {};
+	/*		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->BackWard(fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}*/
+			m_pTransformCom->BackWard(fTimeDelta);
+		}
+
+	}
 	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 14;
+		m_iCurAnimIdx = 16;
 	}
-
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 	{
-		{
-			//_vec3 vLook = {};
-//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-//vLook = Vector3_::Normalize(vLook);
-
-
-//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-//_vec3 vSlide = {};
-//if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-//{
-//	m_pTransformCom->BackWard(fTimeDelta);
-//}
-//else
-//{
-//	m_pTransformCom->Go_There(vSlide);
-//}
-		}
-		m_IsOnce = true;
-		m_iCurAnimIdx = 19;
-		m_pTransformCom->BackWard(fTimeDelta);
+		m_iCurAnimIdx = 30;
+		//m_pTransformCom->BackWard(fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
 	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 14;
-
+		m_iCurAnimIdx = 16;
 	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = 20;
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		m_iCurAnimIdx = 32;
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+		//m_pTransformCom->Go_Right(fTimeDelta);
 	}
-
-
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
+	{
+		m_iCurAnimIdx = 16;
+	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
+		m_iCurAnimIdx = 34;
+		//m_pTransformCom->Go_Left(fTimeDelta);
 		m_pTransformCom->Rotation_Y(-fTimeDelta);
 	}
-	else if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 	{
-		//m_IsOnce = true;
-		//m_iCurAnimIdx = 27;
-		m_pTransformCom->Rotation_Y(fTimeDelta);
+		m_iCurAnimIdx = 16;
 	}
 
 
 
 	Set_Animation();
+	
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], m_fRatio, fTimeDelta) && m_IsOnce)
 	{
-
-		int iRand = rand() % 2;
-		if (iRand % 2 == 0)
+		if (m_IsHit)
 		{
-			m_iCurAnimIdx = 15;
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetOBBCollision() = true;
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", 0)->GetAttackedObject_Matrix() = matTemp;
+			m_IsHit = false;
 		}
-		else
-		{
-			m_iCurAnimIdx = 16;
-		}
-
+		m_iCurAnimIdx = 16;
 		m_IsOnce = false;
 	}
 
 
 	if (CManagement::GetInstance()->Key_Down(KEY_E))
 	{
-		if (!m_pWeapon)
+		_uint iLen = 99999999;
+		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
 		{
-			_uint iLen = 99999999;
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+			CTransform* pTargetTransform = (CTransform*)iter->Get_ComponentPointer(L"Com_Transform");
+			_vec3 vTargetPos = *pTargetTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLen = vPos - vTargetPos;
+			_uint iTempLen = Vector3_::Length(vLen);
+
+			if (iLen > iTempLen)
 			{
-				CTransform* pTargetTransform = (CTransform*)iter->Get_ComponentPointer(L"Com_Transform");
-				_vec3 vTargetPos = *pTargetTransform->Get_StateInfo(CTransform::STATE_POSITION);
-
-				_vec3 vLen = vPos - vTargetPos;
-				_uint iTempLen = Vector3_::Length(vLen);
-
-		
-
-				if (iLen > iTempLen)
+				iLen = iTempLen;
+				for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
 				{
-					iLen = iTempLen;
-					for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
-					{
-						dynamic_cast<CWeapon*>(iter1)->GetIsPicked() = false;
-					}
-					dynamic_cast<CWeapon*>(iter)->GetIsPicked() = true;
+					dynamic_cast<CWeapon*>(iter1)->GetIsPicked() = false;
 				}
-			}
-
-
-			for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
-			{
-				if (dynamic_cast<CWeapon*>(iter)->GetIsPicked())
-				{
-					m_pWeapon = dynamic_cast<CWeapon*>(iter);
-					m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
-					m_pWeapon->GetBoneIdx() = 27;
-
-				}
-			}
-		}
-	
-	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_Q))	
-	{
-		if (m_pWeapon)
-		{
-			m_pWeapon = nullptr;
-			for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
-			{
-				dynamic_cast<CWeapon*>(iter)->GetIsPicked() = false;
+				dynamic_cast<CWeapon*>(iter)->GetIsPicked() = true;
 			}
 		}
 
-	}
-	else if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
-	{
-		m_IsOnce = true;
-		m_iCurAnimIdx = rand() % 8;
-	}
 
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+		{
+			if (dynamic_cast<CWeapon*>(iter)->GetIsPicked())
+			{
+				m_pWeapon = dynamic_cast<CWeapon*>(iter);
+				m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
+				m_pWeapon->GetBoneIdx() = 27;
+
+			}
+		}
+	}
+	else if (CManagement::GetInstance()->Key_Down(KEY_Q))
+	{
+		m_pWeapon = nullptr;
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+		{
+			dynamic_cast<CWeapon*>(iter)->GetIsPicked() = false;
+		}
+	}
 
 
 
@@ -217,7 +225,7 @@ void COrc02::Render_GameObject()
 
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum() - 1;
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 
@@ -240,14 +248,19 @@ void COrc02::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		m_pMeshCom->SetUp_Texture(i);
+		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	
-	m_pColiiderCom->Render_Collider(m_pAnimCom->GetMatix());
+
+	m_pColliderCom[0]->Render_Collider();
+	m_pColliderCom[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -342,6 +355,8 @@ void COrc02::SetUp_Anim()
 	m_vecAnimCtrl.push_back(AnimCtrl(3642, 3682, 121.40f, 122.73f));		//WithoutWalkRight		64
 	m_vecAnimCtrl.push_back(AnimCtrl(3683, 3733, 122.76f, 124.43f));		//WithoutWalkRightSit	65
 	m_vecAnimCtrl.push_back(AnimCtrl(3734, 3784, 124.46f, 126.13f));		//WithoutWalkSit		66
+
+
 }
 
 COrc02* COrc02::Create()
@@ -356,7 +371,7 @@ COrc02* COrc02::Create()
 	return pInstance;
 }
 
-CGameObject* COrc02::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* COrc02::Clone_GameObject(void* pArg, _uint iIdx)
 
 {
 	COrc02* pInstance = new COrc02(*this);
@@ -377,10 +392,11 @@ void COrc02::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pAnimCom);
-	Safe_Release(m_pColiiderCom);
+	Safe_Release(m_pColliderCom[0]);
+	Safe_Release(m_pColliderCom[1]);
+	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
-	//Safe_Release(m_pNaviCom);
-
+	
 	CGameObject::Free();
 }
 
@@ -420,9 +436,14 @@ HRESULT COrc02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
 		return E_FAIL;
 
-	m_pColiiderCom = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pColiiderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider", m_pColiiderCom)))
+	m_pColliderCom[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pColliderCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColliderCom[0])))
+		return E_FAIL;
+
+	m_pColliderCom[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColliderCom[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom[1])))
 		return E_FAIL;
 
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
@@ -430,10 +451,11 @@ HRESULT COrc02::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -446,4 +468,39 @@ void COrc02::Set_Animation()
 		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
 		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
+}
+
+void COrc02::Obb_Collision()
+{
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			m_vStartPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vLook * 50);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			m_vMidPoint.y += 5.f;
+			m_IsBazier = true;
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
+}
+
+void COrc02::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+{
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
 }

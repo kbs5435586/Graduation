@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "UI_MP.h"
 #include "Management.h"
+#include "UAV.h"
 
 CUI_MP::CUI_MP()
 	: CUI()
@@ -24,21 +25,19 @@ HRESULT CUI_MP::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	m_fX = WINCX / 2 ;
+	m_fY = 20.f;
 
-	m_fX = 600.f;
-	m_fY = 200.f;
+	m_fSizeX = 300.f;
+	m_fSizeY = 25.f;
 
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
-
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return S_OK;
 }
 
 _int CUI_MP::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tInfo = m_pObserverCom->GetInfo();
+
 	return _int();
 }
 
@@ -61,7 +60,8 @@ void CUI_MP::Render_GameObject()
 	pManagement->AddRef();
 
 
-	MAINPASS tMainPass = {};
+	MAINPASS	tMainPass = {};
+
 
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
@@ -76,10 +76,26 @@ void CUI_MP::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_MAX_TIME")->GetSRV().Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
+
+
+
+
+
+
+	m_tRep.m_arrInt[0] = g_MaxTime;
+	m_tRep.m_arrInt[1] = (_uint)m_IsTemp;
+
+	CDevice::GetInstance()->ClearDummyDesc_CS();
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_MAX_TIME"), UAV_REGISTER::u0);
+
+	m_pCompute_ShaderCom->UpdateData_CS();
+	CManagement::GetInstance()->Get_UAV(L"UAV_MAX_TIME")->Dispatch(1, 300, 1);
 
 
 	m_pBufferCom->Render_VIBuffer();
@@ -108,7 +124,7 @@ CUI_MP* CUI_MP::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_MP::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_MP::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CUI_MP* pInstance = new CUI_MP();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
@@ -126,9 +142,9 @@ void CUI_MP::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pTextureCom);
+
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pObserverCom);
+	Safe_Release(m_pCompute_ShaderCom);
 
 
 	CGameObject::Free();
@@ -159,15 +175,9 @@ HRESULT CUI_MP::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
-
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Bricks");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
-
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	m_pCompute_ShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_MAX_TIME");
+	NULL_CHECK_VAL(m_pCompute_ShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Compute_Shader", m_pCompute_ShaderCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

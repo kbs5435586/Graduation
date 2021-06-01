@@ -24,11 +24,11 @@ HRESULT CUI_Main::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 400.f;
-	m_fY = 300.f;
+	m_fX = WINCX/2;
+	m_fY = WINCY/2;
 
-	m_fSizeX = 800.f;
-	m_fSizeY = 600.f;
+	m_fSizeX = WINCX;
+	m_fSizeY = WINCY;
 	return S_OK;
 }
 
@@ -75,11 +75,10 @@ void CUI_Main::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	ComPtr<ID3D12DescriptorHeap>	pDiffuseTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pPointTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
 
 	CDevice::GetInstance()->SetTextureToShader(pDiffuseTex.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->SetTextureToShader(pShadeTex.Get(), TEXTURE_REGISTER::t1);
-	CDevice::GetInstance()->SetTextureToShader(pPointTex.Get(), TEXTURE_REGISTER::t2);
+
 
 
 	CDevice::GetInstance()->UpdateTable();
@@ -111,7 +110,7 @@ CUI_Main* CUI_Main::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Main::Clone_GameObject(void* pArg, const _uint& iIdx)
+CGameObject* CUI_Main::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CUI_Main* pInstance = new CUI_Main();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))

@@ -162,7 +162,7 @@ COrc01* COrc01::Create()
 	return pInstance;
 }
 
-CGameObject* COrc01::Clone_GameObject(void* pArg, const _uint& iIdx )
+CGameObject* COrc01::Clone_GameObject(void* pArg, _uint iIdx )
 {
 	COrc01* pInstance = new COrc01(*this);
 	if (FAILED(pInstance->Ready_GameObject()))

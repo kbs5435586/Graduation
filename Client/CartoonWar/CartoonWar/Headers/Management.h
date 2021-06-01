@@ -16,6 +16,7 @@ class CComponent;
 class CGameObject;
 class CLight;
 class CScene;
+class CRenderer;
 class CManagement :
     public CBase
 {
@@ -34,14 +35,16 @@ public://ComponentManager
 	HRESULT						Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent);
 	CComponent*					Clone_Component(const _uint& iSceneID, const _tchar* pComponentTag, void* pArg = nullptr);
 public://GameObjectManager
-	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr, const _uint& iIdx=0);
+	HRESULT						Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject = nullptr, void* pArg = nullptr, _uint iIdx=0);
 	HRESULT						Add_Prototype_GameObject(const _tchar* pGameObjectTag, CGameObject* pGameObject);
 	CGameObject*				Get_BackObject(const _uint& iSceneID, const _tchar* pLayerTag);
 	CLayer*						Get_Layer(const _uint& iSceneID, const _tchar* pLayerTag);
 public://LightManager
-	LIGHT						Get_Light(const _tchar* pLightTag);
-	HRESULT						Add_LightInfo(const _tchar* pLightTag, LIGHT& tLightInfo);
+	LIGHT						Get_Light(_uint& iIdx);
+	HRESULT						Add_LightInfo(LIGHT& tLightInfo);
 	void						SetUp_OnShader_Light();
+	void						Update();
+	void						Render();
 public://ConstantBuffer_Mananger
 	HRESULT						Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal = false);
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }
@@ -65,6 +68,8 @@ public://Observer_Manager
 	void                        Notify(DATA_TYPE eType, void* pData = nullptr);
 public://Load_Manager
 	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
+	HRESULT						Load_File_Low(const _tchar* pFilePath, void* pArg = nullptr);
+	HRESULT						Load_File_Hatch(const _tchar* pFilePath, void* pArg = nullptr);
 public://UAV_Manager
 	HRESULT						Ready_UAV_Manager();
 	CUAV*						Get_UAV(const _tchar* pUAVTag);
