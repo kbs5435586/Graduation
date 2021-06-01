@@ -96,24 +96,24 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 
-	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info(); 
-	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(15.f, 0.f, 15.f);
-	_vec3		vLook;
-	_vec3		temp = *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));
-	vLook = Vector3_::Normalize(vLook);
-
-	_vec3		vRight;
-	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
-	vRight = Vector3_::Normalize(vRight);
-
-	_vec3		vUp;
-	vUp = Vector3_::CrossProduct(vLook, vRight);
-	vUp = Vector3_::Normalize(vUp);
-
-	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	//m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info(); 
+	//m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(15.f, 0.f, 15.f);
+	//_vec3		vLook;
+	//_vec3		temp = *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	//vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));
+	//vLook = Vector3_::Normalize(vLook);
+	//
+	//_vec3		vRight;
+	//vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
+	//vRight = Vector3_::Normalize(vRight);
+	//
+	//_vec3		vUp;
+	//vUp = Vector3_::CrossProduct(vLook, vRight);
+	//vUp = Vector3_::Normalize(vUp);
+	//
+	//m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	//m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	//m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
 	return _int();
 }

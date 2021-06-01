@@ -34,7 +34,7 @@ private:
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColliderCom[4] = {nullptr};
-	
+	CObserver*								m_pObserverCom = nullptr;
 	
 private:
 	vector<AnimCtrl>						m_vecAnimCtrl;

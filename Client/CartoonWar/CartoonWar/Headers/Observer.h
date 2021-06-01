@@ -15,6 +15,7 @@ public:
     _matrix                 GetMatInfo() { return m_matrix; }
     POINT                   GetUIInfo() { return m_Point; }
     _vec3                   GetVec3Info() { return m_vec3; }
+    bool                    GetBool() { return m_bool; }
 public:
     static CObserver*       Create();
     virtual CComponent*     Clone_Component(void* pArg);
@@ -25,7 +26,7 @@ private:
     POINT                   m_Point = {};
     _matrix                 m_matrix = {};
     _vec3                   m_vec3 = {};
-
+    bool                    m_bool = {};
 
 };
 

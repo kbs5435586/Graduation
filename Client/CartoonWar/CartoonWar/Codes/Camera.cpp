@@ -87,6 +87,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices()
 {
 	_vec3		vLook;
 	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, m_tCameraDesc.vEye);
+	vLook -= _vec3(10, 0, 0);
 	vLook = Vector3_::Normalize(vLook);
 
 	_vec3		vRight;
