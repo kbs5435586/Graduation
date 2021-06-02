@@ -16,6 +16,7 @@ CTexture::CTexture(const CTexture& rhs)
 	, m_pSRV(rhs.m_pSRV)
 	, m_vecUAV(rhs.m_vecUAV)
 	, m_mapSrvDescHeap(rhs.m_mapSrvDescHeap)
+	, m_vTextureResolution(rhs.m_vTextureResolution)
 {
 	m_IsClone = true;
 	for (auto& iter : m_vecTexture)
@@ -114,7 +115,7 @@ HRESULT CTexture::Ready_Texture(const _tchar* pFilepath, _uint iNum, TEXTURE_TYP
 		}
 	}
 
-
+	m_vTextureResolution = {(_float)m_Image.GetMetadata().width, (_float)m_Image.GetMetadata().height};
 
 	CDevice::GetInstance()->Close();
 	CDevice::GetInstance()->WaitForFenceEvent();

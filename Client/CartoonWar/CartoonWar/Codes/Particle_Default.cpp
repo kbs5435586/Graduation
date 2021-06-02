@@ -35,19 +35,6 @@ HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 
 _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 {
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return -1;
-
-	pManagement->AddRef();
-
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return -1;
-
-
-
-	Safe_Release(pManagement);
 
 	return _int();
 }
@@ -56,8 +43,7 @@ _int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PARTICLE, this)))
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
 	m_pParticleCom->Update_Particle(fTimeDelta);
@@ -100,7 +86,7 @@ void CParticle_Default::Render_GameObject()
 	m_pParticleCom->Update_Particle_Shader();
 	if (FAILED(m_pParticleCom->SetUp_OnUpdateShader(tRep_Update)))
 		return;
-
+	tRep_Update.m_arrVec2[0]= m_pTextureCom_Noise->GetTextureResolution();
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetTextureToShader_CS(m_pTextureCom_Noise->GetSRV(), TEXTURE_REGISTER::t0);
@@ -197,7 +183,7 @@ HRESULT CParticle_Default::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Smoke");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_CartoonSmoke");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_TextureCom", m_pTextureCom)))
 		return E_FAIL;

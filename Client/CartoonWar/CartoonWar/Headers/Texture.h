@@ -38,6 +38,8 @@ public:
 public:
     D3D12_RESOURCE_STATES                               GetState() { return m_eState; }
     void                                                SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }
+public:
+    _vec2                                               GetTextureResolution() { return m_vTextureResolution; }
 private:
     vector<ID3D12Resource*>                             m_vecTexture;
     vector<ID3D12Resource*>                             m_vecTextureUpload;
@@ -54,6 +56,8 @@ private:
     ID3D12DescriptorHeap*                               m_pInitTextureDesc = nullptr;
 private:
     ScratchImage			 	                        m_Image;
+private:
+    _vec2                                               m_vTextureResolution = {};
 
 };
 

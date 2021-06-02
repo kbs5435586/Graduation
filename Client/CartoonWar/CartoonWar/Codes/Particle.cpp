@@ -55,7 +55,6 @@ void CParticle::Update_Particle(const _float& fTimeDelta)
 
 HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 {
-
 	tRep.m_arrInt[0] = m_iMaxParticle;
 	tRep.m_arrInt[1] = m_iAddCnt;
 
