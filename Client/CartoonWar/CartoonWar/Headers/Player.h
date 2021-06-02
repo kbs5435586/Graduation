@@ -52,8 +52,6 @@ private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 private:
-	SPECIES									m_eSpecies = SPECIES::SPECIES_END;
-private:
-	COLOR									m_eColor= COLOR::COLOR_END;
+	PLAYER									m_tPlayer = {};
 };
 

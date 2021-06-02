@@ -43,7 +43,7 @@ struct VS_OUT
 struct PS_OUT
 {
 	float4 vTarget : SV_TARGET0;
-	float4 vTarget1 : SV_TARGET1;
+	float4 vTarget1 : SV_TARGET3;
 };
 
 struct GS_OUT
@@ -68,53 +68,53 @@ VS_OUT	VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-
 [maxvertexcount(6)]
-void GS_Main(point VS_OUT _in[1], inout TriangleStream<GS_OUT> OutputStream)
+void GS_Main(point VTX_OUT _in[1], inout TriangleStream<GS_OUT> OutputStream)
 {
-	GS_OUT output[4] =
-	{
-		(GS_OUT)0.f, (GS_OUT)0.f, (GS_OUT)0.f, (GS_OUT)0.f
-	};
-	uint iInstID = (uint) _in[0].iInstID;
+    GS_OUT output[4] =
+    {
+        (GS_OUT)0.f, (GS_OUT)0.f, (GS_OUT)0.f, (GS_OUT)0.f
+    };
 
-	if (0 == tData[iInstID].iAlive)
-		return;
-
-	float fRatio = tData[iInstID].m_fCurTime / tData[iInstID].m_fLifeTime;
-	float fCurScale = ((g_float_1 - g_float_0) * fRatio + g_float_0) / 2.f;
-
-	output[0].vPosition = _in[0].vWorldPos + float4(-fCurScale, fCurScale, 0.f, 0.f);
-	output[1].vPosition = _in[0].vWorldPos + float4(fCurScale, fCurScale, 0.f, 0.f);
-	output[2].vPosition = _in[0].vWorldPos + float4(fCurScale, -fCurScale, 0.f, 0.f);
-	output[3].vPosition = _in[0].vWorldPos + float4(-fCurScale, -fCurScale, 0.f, 0.f);
-
-	float4x4	matVP = matView * matProj;
-	output[0].vPosition = mul(output[0].vPosition, matVP);
-	output[1].vPosition = mul(output[1].vPosition, matVP);
-	output[2].vPosition = mul(output[2].vPosition, matVP);
-	output[3].vPosition = mul(output[3].vPosition, matVP);
-
-	output[0].vUV = float2(0.f, 0.f);
-	output[1].vUV = float2(1.f, 0.f);
-	output[2].vUV = float2(1.f, 1.f);
-	output[3].vUV = float2(0.f, 1.f);
-
-	output[0].iInstID = iInstID;
-	output[1].iInstID = iInstID;
-	output[2].iInstID = iInstID;
-	output[3].iInstID = iInstID;
+    uint iInstID = (uint) _in[0].iInstID;
 
 
-	OutputStream.Append(output[0]);
-	OutputStream.Append(output[1]);
-	OutputStream.Append(output[2]);
-	OutputStream.RestartStrip();
+    if (0 == tData[iInstID].iAlive)
+        return;
 
-	OutputStream.Append(output[0]);
-	OutputStream.Append(output[2]);
-	OutputStream.Append(output[3]);
-	OutputStream.RestartStrip();
+    float fRatio = tData[iInstID].m_fCurTime / tData[iInstID].m_fLifeTime;
+    float fCurScale = ((g_float_1 - g_float_0) * fRatio + g_float_0) / 2.f;
+
+    output[0].vPosition = _in[0].vViewPos + float4(-fCurScale, fCurScale, 0.f, 0.f);
+    output[1].vPosition = _in[0].vViewPos + float4(fCurScale, fCurScale, 0.f, 0.f);
+    output[2].vPosition = _in[0].vViewPos + float4(fCurScale, -fCurScale, 0.f, 0.f);
+    output[3].vPosition = _in[0].vViewPos + float4(-fCurScale, -fCurScale, 0.f, 0.f);
+
+    output[0].vPosition = mul(output[0].vPosition, g_matProj);
+    output[1].vPosition = mul(output[1].vPosition, g_matProj);
+    output[2].vPosition = mul(output[2].vPosition, g_matProj);
+    output[3].vPosition = mul(output[3].vPosition, g_matProj);
+
+    output[0].vUV = float2(0.f, 0.f);
+    output[1].vUV = float2(1.f, 0.f);
+    output[2].vUV = float2(1.f, 1.f);
+    output[3].vUV = float2(0.f, 1.f);
+
+    output[0].iInstID = iInstID;
+    output[1].iInstID = iInstID;
+    output[2].iInstID = iInstID;
+    output[3].iInstID = iInstID;
+
+
+    OutputStream.Append(output[0]);
+    OutputStream.Append(output[1]);
+    OutputStream.Append(output[2]);
+    OutputStream.RestartStrip();
+
+    OutputStream.Append(output[0]);
+    OutputStream.Append(output[2]);
+    OutputStream.Append(output[3]);
+    OutputStream.RestartStrip();
 }
 
 
@@ -142,10 +142,8 @@ PS_OUT	PS_Main(GS_OUT _in)
 	float4 vCurColor = (g_vec4_1 - g_vec4_0) * fRatio + g_vec4_0;
 	 vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
 
-	 float4 vTemp = float4(1.f,1.f,1.f,1.f);
-
 	vOut.vTarget = vCurColor;
-	vOut.vTarget1 = vTemp;
+	vOut.vTarget1 = vCurColor;
 
 	return vOut;
 }
@@ -154,14 +152,13 @@ PS_OUT	PS_Main(GS_OUT _in)
 
 
 [numthreads(1024, 1, 1)]
-void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
+void CS_ParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
 {
     if (_iThreadIdx.x >= g_int_0)
         return;
 
     tRWSharedData[0].iAddCount = g_int_1;
 
-    //tRWData[_iThreadIdx.x].iAlive = 0;
     // Dead 파티클 살리기
     if (0 == tRWData[_iThreadIdx.x].iAlive)
     {
@@ -170,8 +167,7 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
         while (0 < iOrigin)
         {
             int iInputValue = iOrigin - 1;
-            //InterlockedExchange(tRWSharedData[0].iAddCount, iInputValue, iExchange);
-            InterlockedCompareExchange(tRWSharedData[0].iAddCount, iOrigin, iInputValue, iExchange);
+            InterlockedExchange(tRWSharedData[0].iAddCount, iInputValue, iExchange);
 
             if (iExchange == iOrigin)
             {
@@ -202,13 +198,13 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
 
             float3 vNoise =
             {
-                gaussian5x5Sample(vUV + int2(0, -100), g_texture0)
-                , gaussian5x5Sample(vUV + int2(0, 0), g_texture0)
-                , gaussian5x5Sample(vUV + int2(0, 100), g_texture0)
+                gaussian5x5Sample(vUV + int2(0, -100), g_tex_0)
+                , gaussian5x5Sample(vUV + int2(0, 0), g_tex_0)
+                , gaussian5x5Sample(vUV + int2(0, 100), g_tex_0)
             };
 
 
-            float3 vDir = (float3) 0.f;
+            float3 vDir = (float4) 0.f;
 
             vDir = (vNoise - 0.5f) * 2.f;
 
@@ -236,7 +232,7 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
         tRWData[_iThreadIdx.x].vWorldPos += tRWData[_iThreadIdx.x].vWorldDir * fSpeed * g_fDT;
 
         // 생존 파티클 개수 확인
-        //tRWSharedData[0].iCurCount = 0;
-        //InterlockedAdd(tRWSharedData[0].iCurCount, 1);
+        tRWSharedData[0].iCurCount = 0;
+        InterlockedAdd(tRWSharedData[0].iCurCount, 1);
     }
 }

@@ -564,3 +564,11 @@ typedef struct tagFlag
 	Vector3		vPos;
 	int			iNum;
 }FLAG;
+
+
+
+typedef struct tagPlayer
+{
+	SPECIES		eSpecies;
+	COLOR		eColor;
+}PLAYER;
