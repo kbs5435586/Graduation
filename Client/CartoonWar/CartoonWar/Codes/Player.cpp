@@ -28,29 +28,41 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	//Compute_Matrix();
+	_vec3 vPos = {30.f,0.f,50.f};
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
 	m_pAnimCom->LateInit();
 
-	m_eCurClass = CLASS::CLASS_INFANTRY;
+	_vec3 vColliderSize = { 40.f ,160.f,40.f };
+	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+
+	m_eCurClass = CLASS::CLASS_CAVALRY;
 	m_iCurAnimIdx = 0;
+	m_iPreAnimIdx = 100;
+
+
 	return S_OK;
 }
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
-	//m_pColiider[0]->Update_Collider(m_pTransformCom);
+	
+	m_pColiider[0]->Update_Collider(m_pTransformCom);
+	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
 	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
-		if (m_iCurAnimIdx >m_vecAnimCtrl.size()-1)
-			m_iCurAnimIdx = 0;
+	/*	if (m_iCurAnimIdx >m_vecAnimCtrl.size()-1)
+			m_iCurAnimIdx = 0; 
 		else
-			m_iCurAnimIdx++;
+			m_iCurAnimIdx++;*/
+		m_iCurAnimIdx = 9;
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 		m_pTransformCom->Rotation_Y(fTimeDelta);
@@ -66,8 +78,11 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+	Death(fTimeDelta);
+	Set_Animation(fTimeDelta);
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
+		m_iCurAnimIdx = 0;
 		m_IsOnce = false;
 	}
 
@@ -120,6 +135,10 @@ void CPlayer::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
+
+
+	//m_pColiider[0]->Render_Collider();
+	//m_pColiider[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -144,20 +163,7 @@ HRESULT CPlayer::CreateInputLayout()
 	return S_OK;
 }
 
-void CPlayer::SetUp_Anim()
-{
-	m_vecAnimCtrl.push_back(AnimCtrl(0, 423, 0.f, 14.1f));
-	/*	m_vecAnimCtrl.push_back(AnimCtrl(10, 131, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 0.f, 0.75f));	*/
-}
+
 
 CPlayer* CPlayer::Create()
 {
@@ -169,6 +175,7 @@ CPlayer* CPlayer::Create()
 		Safe_Release(pInstance);
 	}
 	return pInstance;
+
 }
 
 CGameObject* CPlayer::Clone_GameObject(void* pArg, _uint iIdx)
@@ -217,7 +224,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Archer");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -239,12 +246,12 @@ HRESULT CPlayer::Ready_Component()
 
 	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
 	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider0", m_pColiider[0])))
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColiider[0])))
 		return E_FAIL;
 
-	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
 	NULL_CHECK_VAL(m_pColiider[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider1", m_pColiider[1])))
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColiider[1])))
 		return E_FAIL;
 
 	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
@@ -278,13 +285,14 @@ HRESULT CPlayer::Ready_Component()
 	return S_OK;
 }
 
-void CPlayer::Set_Animation()
+void CPlayer::Set_Animation(const _float& fTimeDelta)
 {
-
 	if (m_iCurAnimIdx != m_iPreAnimIdx)
-	{
+	{		
+		Attack(fTimeDelta);
+		//m_IsDeath = false;
 
-		m_iCurAnimIdx = m_iPreAnimIdx;
+		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
 
 }
@@ -659,18 +667,15 @@ void CPlayer::Change_Class()
 			//	take damage	
 			//	death a		
 			//	death b	
-
-			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 1.f));
-
-			//m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
-			//m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
+			m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
+			m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
+			m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
+			m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
 		}
 		break;
 		}
@@ -685,3 +690,151 @@ void CPlayer::AnimVectorClear()
 	m_vecAnimCtrl.clear();
 	m_vecAnimCtrl.shrink_to_fit();
 }
+
+void CPlayer::Compute_Matrix()
+{
+	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3		vSize = m_pTransformCom->Get_Scale();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
+
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationZ(XMConvertToRadians(100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matLeft.m[2][0], &vLook, sizeof(_vec3));
+	matLeft.Translation(vPos);
+	
+	vRight = { 1.f, 0.f, 0.f }; 
+	vUp = { 0.f, 1.f, 0.f };
+	vLook = { 0.f, 0.f, 1.f };
+	DirectX::XMStoreFloat4x4(&matRight, DirectX::XMMatrixRotationZ(XMConvertToRadians(-100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	mat = ::XMLoadFloat4x4(&matRight);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matRight.m[2][0], &vLook, sizeof(_vec3));
+	matRight.Translation(vPos);
+
+
+	m_matLeft = matLeft;
+	m_matRight = matRight;
+}
+
+void CPlayer::Death(const _float& fTimeDelta)
+{
+	m_iDeathMotion[0] = 100;
+	m_iDeathMotion[1] = 100;
+	switch (m_eCurClass)
+	{
+	case CLASS::CLASS_WORKER:
+		m_iDeathMotion[0] = 4;
+		m_iDeathMotion[1] = 5;
+	case CLASS::CLASS_INFANTRY:
+	case CLASS::CLASS_CAVALRY:
+	case CLASS::CLASS_MAGE:
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS::CLASS_SPEARMAN:
+		m_iDeathMotion[0] = 8;
+		m_iDeathMotion[1] = 9;
+		break;
+	case CLASS::CLASS_MMAGE:
+		m_iDeathMotion[0] = 5;
+		m_iDeathMotion[1] = 6;
+		break;
+	case CLASS::CLASS_ARCHER:
+		m_iDeathMotion[0] = 7;
+		m_iDeathMotion[1] = 8;
+		break;
+	}
+
+	if (m_iCurAnimIdx == m_iDeathMotion[1] )
+	{
+		if (!m_IsDeath)
+		{			
+			Compute_Matrix();
+			m_fDeathTime += fTimeDelta * 1.2f;
+			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
+			m_pTransformCom->Set_Matrix(matTemp);
+			if (m_fDeathTime >= 1.7f)
+			{
+				m_fDeathTime = 0.f;
+				m_IsDeath = true;
+			}			
+		}
+
+	}
+	else if (m_iCurAnimIdx == m_iDeathMotion[0])
+	{		
+		if (!m_IsDeath)
+		{
+			Compute_Matrix();
+			m_fDeathTime += fTimeDelta * 1.2f;
+			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
+			m_pTransformCom->Set_Matrix(matTemp);
+			if (m_fDeathTime >= 1.7f)
+			{
+				m_fDeathTime = 0.f;
+				m_IsDeath = true;
+			}
+		}
+	}
+
+}
+
+void CPlayer::Attack(const _float& fTimeDelta)
+{
+	m_iAttackMotion[0] = 100;
+	m_iAttackMotion[1] = 100;
+	switch (m_eCurClass)
+	{
+	case CLASS::CLASS_WORKER:
+	case CLASS::CLASS_MMAGE:
+		m_iAttackMotion[0] = 3;
+		break;
+	case CLASS::CLASS_INFANTRY:
+	case CLASS::CLASS_CAVALRY:
+	case CLASS::CLASS_MAGE:
+	case CLASS::CLASS_PRIEST:
+		m_iAttackMotion[0] = 6;
+		m_iAttackMotion[1] = 7;
+		break;
+	case CLASS::CLASS_SPEARMAN:
+		m_iAttackMotion[0] = 6;
+		break;
+	case CLASS::CLASS_ARCHER:
+		break;
+	}
+
+	if (m_iCurAnimIdx == m_iAttackMotion[1] || m_iCurAnimIdx == m_iAttackMotion[0])
+	{
+		_vec3 vColliderSize = { 70.f ,160.f,70.f };
+		_vec3 vOBB_ColliderSize = { 60.f ,160.f,120.f };
+		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, vOBB_ColliderSize);
+		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, vColliderSize);
+	}
+	else
+	{
+		_vec3 vColliderSize = { 40.f ,160.f,40.f };
+		_vec3 vOBB_ColliderSize = { 40.f ,160.f,120.f };
+		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, vOBB_ColliderSize);
+		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, vColliderSize);
+	}
+}
+

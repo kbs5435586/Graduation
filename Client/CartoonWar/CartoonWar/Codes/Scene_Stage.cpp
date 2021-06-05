@@ -154,8 +154,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))

@@ -201,6 +201,61 @@ HRESULT CCollider::Clone_ColliderBox(_matrix matWorld, const _vec3 vSize)
 	return S_OK;
 }
 
+void CCollider::Change_ColliderBoxSize(CTransform* pTransform, const _vec3 vSize)
+{
+	m_vSize = vSize;
+	if (m_eType == COLLIDER_TYPE::COLLIDER_AABB)
+	{
+		_matrix pTarget_matrix = pTransform->Get_Matrix();
+		_matrix matTemp = Remove_Rotation(pTarget_matrix);
+
+		m_pTransformCom->Set_Matrix(matTemp);
+		m_pTransformCom->Scaling(vSize);
+
+		m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+		m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
+	}
+	else if (m_eType == COLLIDER_TYPE::COLLIDER_OBB)
+	{
+		CTransform* pTarget_Transform = pTransform;
+		_vec3		vDir[3];
+
+		for (size_t i = 0; i < 3; ++i)
+		{
+			vDir[i] = *pTarget_Transform->Get_StateInfo(CTransform::STATE(i));
+			vDir[i] = Vector3_::Normalize(vDir[i]);
+		}
+
+
+		vDir[CTransform::STATE_RIGHT] = Vector3_::ScalarProduct(vDir[CTransform::STATE_RIGHT], vSize.x, false);
+		vDir[CTransform::STATE_UP] = Vector3_::ScalarProduct(vDir[CTransform::STATE_UP], vSize.y, false);
+		vDir[CTransform::STATE_LOOK] = Vector3_::ScalarProduct(vDir[CTransform::STATE_LOOK], vSize.z, false);
+
+
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vDir[CTransform::STATE_RIGHT]);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vDir[CTransform::STATE_UP]);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vDir[CTransform::STATE_LOOK]);
+
+
+		m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+		m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
+
+		if (m_pOBB)
+		{
+			m_pOBB->vPoint[0] = _vec3(m_vMin.x, m_vMax.y, m_vMin.z);
+			m_pOBB->vPoint[1] = _vec3(m_vMax.x, m_vMax.y, m_vMin.z);
+			m_pOBB->vPoint[2] = _vec3(m_vMax.x, m_vMin.y, m_vMin.z);
+			m_pOBB->vPoint[3] = _vec3(m_vMin.x, m_vMin.y, m_vMin.z);
+
+			m_pOBB->vPoint[4] = _vec3(m_vMin.x, m_vMax.y, m_vMax.z);
+			m_pOBB->vPoint[5] = _vec3(m_vMax.x, m_vMax.y, m_vMax.z);
+			m_pOBB->vPoint[6] = _vec3(m_vMax.x, m_vMin.y, m_vMax.z);
+			m_pOBB->vPoint[7] = _vec3(m_vMin.x, m_vMin.y, m_vMax.z);
+		}
+		
+	}
+}
+
 _bool CCollider::Collision_AABB(CCollider* pTargetCollider)
 {
 
@@ -544,10 +599,6 @@ void CCollider::Render_Collider(CStructedBuffer* pArg)
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 	REP tRep = {};
-
-
-
-
 	if (pArg)
 	{
 		tRep.m_arrInt[1] = 27;

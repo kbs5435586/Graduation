@@ -93,8 +93,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	vOut.vDiffuseTex = float4(1.f, 1.f, 1.f, 1.f);
-	vOut.vDiffuseTex_ = float4(1.f, 1.f, 1.f, 1.f);
+	vOut.vDiffuseTex = float4(0.f, 0.f, 0.f, 1.f);
+	vOut.vDiffuseTex_ = float4(0.f, 0.f, 0.f, 1.f);
 	return vOut;
 }
 

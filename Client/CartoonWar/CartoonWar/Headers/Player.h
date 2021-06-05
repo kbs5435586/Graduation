@@ -21,7 +21,6 @@ public:
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
-	void									SetUp_Anim();
 public:
 	static CPlayer*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg, _uint iIdx = 0) override;
@@ -29,9 +28,13 @@ private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
-	void									Set_Animation();
+	void									Set_Animation(const _float& fTimeDelta);
 	void									Change_Class();
 	void									AnimVectorClear();
+	void									Compute_Matrix();
+private:
+	void									Death(const _float& fTimeDelta);
+	void									Attack(const _float& fTimeDelta);
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -46,12 +49,20 @@ private:
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
 	_uint									m_iCurAnimIdx = 0;
-	_uint									m_iPreAnimIdx = 0;
+	_uint									m_iPreAnimIdx =0;
 	_bool									m_IsOnce = false;
+	_uint									m_iAttackMotion[2] = {};
+	_uint									m_iDeathMotion[2] = {};
 private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 private:
 	PLAYER									m_tPlayer = {};
+public:
+	_bool									m_IsDeath = false;
+public:
+	_matrix									m_matLeft = {};
+	_matrix									m_matRight = {};
+	_float									m_fDeathTime = 0.f;
 };
 

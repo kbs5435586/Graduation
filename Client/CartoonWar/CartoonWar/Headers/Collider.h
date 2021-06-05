@@ -26,6 +26,8 @@ public:
     HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
     HRESULT                     Clone_ColliderBox(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
+    void                        Change_ColliderBoxSize(CTransform* pTransform, const _vec3 vSize);
+public:
     _bool                       Collision_AABB(CCollider* pTargetCollider);
     void				        Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform);
     _bool                       Collision_OBB(CCollider* pTargetCollider);

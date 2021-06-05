@@ -264,6 +264,8 @@ void CTransform::Rotation_Z(const _float& fTimeDelta)
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
 	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+
+	mat.r;
 }
 
 void CTransform::RotationRev_Y(_matrix matWorld, const _float& fTimeDelta)
