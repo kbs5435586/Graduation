@@ -175,6 +175,7 @@
     <ClInclude Include="..\Headers\Cell.h" />
     <ClInclude Include="..\Headers\Circle.h" />
     <ClInclude Include="..\Headers\Collider.h" />
+    <ClInclude Include="..\Headers\CollisionMgr.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
     <ClInclude Include="..\Headers\Constant.h" />
@@ -293,6 +294,7 @@
     <ClCompile Include="..\Codes\Cell.cpp" />
     <ClCompile Include="..\Codes\Circle.cpp" />
     <ClCompile Include="..\Codes\Collider.cpp" />
+    <ClCompile Include="..\Codes\CollisionMgr.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
     <ClCompile Include="..\Codes\Constant_Buffer.cpp" />

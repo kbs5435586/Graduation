@@ -385,6 +385,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\05. Catapult">
       <UniqueIdentifier>{623e8644-6d56-4b9a-9a56-6789453dcb6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\11. CollisionMgr">
+      <UniqueIdentifier>{8a3a0e5f-cadc-4c45-aaa2-6244b7efc87b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -717,6 +720,9 @@
     <ClInclude Include="..\Headers\NPC.h">
       <Filter>02. GameObject\01. Scene_Stage\01. NPC</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\CollisionMgr.h">
+      <Filter>97. Engine\01. Utility\11. CollisionMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1019,6 +1025,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NPC.cpp">
       <Filter>02. GameObject\01. Scene_Stage\01. NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CollisionMgr.cpp">
+      <Filter>97. Engine\01. Utility\11. CollisionMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -5,8 +5,6 @@ class CObserverManager :
     public CBase
 {
     _DECLARE_SINGLETON(CObserverManager);
-public:
-   
 private:
     CObserverManager();
     virtual ~CObserverManager() = default;

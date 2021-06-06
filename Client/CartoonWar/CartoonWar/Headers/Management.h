@@ -9,6 +9,7 @@
 #include "LoadManager.h"
 #include "FBXLoader.h"
 #include "UAVManager.h"
+#include "CollisionMgr.h"
 
 #include "MRT.h"
 #include "Base.h"
@@ -73,6 +74,9 @@ public://Load_Manager
 public://UAV_Manager
 	HRESULT						Ready_UAV_Manager();
 	CUAV*						Get_UAV(const _tchar* pUAVTag);
+public://CCollisionMgr
+	HRESULT						Ready_CollsionManager();
+	void						Update_CollisionManager();
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -94,6 +98,7 @@ private:
 	CObserverManager*			m_pObserver_Manager = nullptr;
 	CLoadManager*				m_pLoad_Manager = nullptr;
 	CUAVManager*				m_pUAV_Manager = nullptr;
+	CCollisionMgr*				m_pCollision_Manager = nullptr;
 	//CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

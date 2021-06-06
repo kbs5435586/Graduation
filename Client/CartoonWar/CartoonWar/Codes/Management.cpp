@@ -204,6 +204,15 @@ CUAV* CManagement::Get_UAV(const _tchar* pUAVTag)
 	return m_pUAV_Manager->GetUAV(pUAVTag);
 }
 
+HRESULT CManagement::Ready_CollsionManager()
+{
+	return E_NOTIMPL;
+}
+
+void CManagement::Update_CollisionManager()
+{
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)

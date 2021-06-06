@@ -42,7 +42,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-	m_eCurClass = CLASS::CLASS_CAVALRY;
+	m_eCurClass = CLASS::CLASS_INFANTRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
@@ -163,8 +163,6 @@ HRESULT CPlayer::CreateInputLayout()
 	return S_OK;
 }
 
-
-
 CPlayer* CPlayer::Create()
 {
 	CPlayer* pInstance = new CPlayer();
@@ -224,7 +222,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -290,8 +288,7 @@ void CPlayer::Set_Animation(const _float& fTimeDelta)
 	if (m_iCurAnimIdx != m_iPreAnimIdx)
 	{		
 		Attack(fTimeDelta);
-		//m_IsDeath = false;
-
+		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
 		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
 
@@ -691,7 +688,7 @@ void CPlayer::AnimVectorClear()
 	m_vecAnimCtrl.shrink_to_fit();
 }
 
-void CPlayer::Compute_Matrix()
+void CPlayer::Compute_Matrix_Z()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3		vSize = m_pTransformCom->Get_Scale();
@@ -735,6 +732,50 @@ void CPlayer::Compute_Matrix()
 	m_matRight = matRight;
 }
 
+void CPlayer::Compute_Matrix_X()
+{
+	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3		vSize = m_pTransformCom->Get_Scale();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
+
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationX(XMConvertToRadians(100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matLeft.m[2][0], &vLook, sizeof(_vec3));
+	matLeft.Translation(vPos);
+
+	vRight = { 1.f, 0.f, 0.f };
+	vUp = { 0.f, 1.f, 0.f };
+	vLook = { 0.f, 0.f, 1.f };
+	DirectX::XMStoreFloat4x4(&matRight, DirectX::XMMatrixRotationX(XMConvertToRadians(-100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	mat = ::XMLoadFloat4x4(&matRight);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matRight.m[2][0], &vLook, sizeof(_vec3));
+	matRight.Translation(vPos);
+
+
+	m_matLeft = matLeft;
+	m_matRight = matRight;
+}
+
 void CPlayer::Death(const _float& fTimeDelta)
 {
 	m_iDeathMotion[0] = 100;
@@ -742,23 +783,36 @@ void CPlayer::Death(const _float& fTimeDelta)
 	switch (m_eCurClass)
 	{
 	case CLASS::CLASS_WORKER:
+		Compute_Matrix_X();
 		m_iDeathMotion[0] = 4;
 		m_iDeathMotion[1] = 5;
 	case CLASS::CLASS_INFANTRY:
-	case CLASS::CLASS_CAVALRY:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
 	case CLASS::CLASS_MAGE:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS::CLASS_CAVALRY:
+		Compute_Matrix_Z();
 		m_iDeathMotion[0] = 9;
 		m_iDeathMotion[1] = 10;
 		break;
 	case CLASS::CLASS_SPEARMAN:
+		Compute_Matrix_X();
 		m_iDeathMotion[0] = 8;
 		m_iDeathMotion[1] = 9;
 		break;
 	case CLASS::CLASS_MMAGE:
+		Compute_Matrix_Z();
 		m_iDeathMotion[0] = 5;
 		m_iDeathMotion[1] = 6;
 		break;
 	case CLASS::CLASS_ARCHER:
+		Compute_Matrix_X();
 		m_iDeathMotion[0] = 7;
 		m_iDeathMotion[1] = 8;
 		break;
@@ -768,7 +822,7 @@ void CPlayer::Death(const _float& fTimeDelta)
 	{
 		if (!m_IsDeath)
 		{			
-			Compute_Matrix();
+			
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);
@@ -784,7 +838,6 @@ void CPlayer::Death(const _float& fTimeDelta)
 	{		
 		if (!m_IsDeath)
 		{
-			Compute_Matrix();
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);

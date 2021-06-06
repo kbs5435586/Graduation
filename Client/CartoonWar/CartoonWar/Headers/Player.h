@@ -31,7 +31,8 @@ private:
 	void									Set_Animation(const _float& fTimeDelta);
 	void									Change_Class();
 	void									AnimVectorClear();
-	void									Compute_Matrix();
+	void									Compute_Matrix_X();
+	void									Compute_Matrix_Z();
 private:
 	void									Death(const _float& fTimeDelta);
 	void									Attack(const _float& fTimeDelta);
@@ -54,15 +55,14 @@ private:
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
 private:
-	CLASS									m_eCurClass = CLASS::CLASS_END;
-	CLASS									m_ePreClass = CLASS::CLASS_END;
-private:
-	PLAYER									m_tPlayer = {};
-public:
-	_bool									m_IsDeath = false;
-public:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
 	_float									m_fDeathTime = 0.f;
+	_bool									m_IsDeath = false;
+private:
+	CLASS									m_eCurClass = CLASS::CLASS_END;
+	CLASS									m_ePreClass = CLASS::CLASS_END;
+	PLAYER									m_tPlayer = {};
+
 };
 

@@ -20,7 +20,7 @@ public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
 public:
-	_matrix&									GetAttackedObject_Matrix(){return m_matAttackedTarget;}
+	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
 	virtual HRESULT							CreateInputLayout();
 protected:
