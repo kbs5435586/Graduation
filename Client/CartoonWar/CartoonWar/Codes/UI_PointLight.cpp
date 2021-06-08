@@ -42,7 +42,7 @@ _int CUI_PointLight::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (m_pRendererCom != nullptr)
 	{
 		/*	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-				return E_FAIL;*/
+		return E_FAIL;*/
 	}
 	return _int();
 }
@@ -79,7 +79,7 @@ void CUI_PointLight::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 
 
-	//m_pBufferCom->Render_VIBuffer();
+	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 

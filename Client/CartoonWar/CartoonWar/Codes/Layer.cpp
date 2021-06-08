@@ -37,12 +37,17 @@ HRESULT CLayer::Ready_Layer()
 
 _int CLayer::Update_Object(const _float& fTimeDelta)
 {
-	for (auto& pGameObject : m_ObjectList)
+	auto iter = m_ObjectList.begin();
+	for (; iter != m_ObjectList.end();)
 	{
-		if (nullptr != pGameObject)
+		if ((*iter)->Update_GameObject(fTimeDelta))
 		{
-			if (pGameObject->Update_GameObject(fTimeDelta) & 0x80000000)
-				return -1;
+			Safe_Release(*iter);
+			iter = m_ObjectList.erase(iter);
+		}
+		else
+		{
+			++iter;
 		}
 	}
 	return _int();

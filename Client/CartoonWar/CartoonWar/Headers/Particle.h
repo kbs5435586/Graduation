@@ -13,6 +13,7 @@ public:
     void                        Update_Particle(const _float& fTimeDelta);
     HRESULT                     SetUp_OnShader(REP& tRep);
     HRESULT                     SetUp_OnUpdateShader(REP& tRep);
+    void                        Set_Particle(PARTICLESET tParticleSet);
 public:
     void                        DisPatch(_int x, _int y, _int z);
     void                        Update_Particle_Shader();
@@ -22,13 +23,14 @@ private:
 public:
     const _uint&                GetMaxParticle(){return m_iMaxParticle;}
 private:
-    _uint                       m_iMaxParticle = 30;
-    _float                      m_fFrequency = 0.01f;
     _float                      m_fAccTime = 0.f;
+    _float                      m_fFrequency = 0.01f;
+private:
+    _uint                       m_iMaxParticle = 30;
     _float                      m_fMinLifeTime = 0.5f;
     _float                      m_fMaxLifeTime = 1.f;
-    _float                      m_fMinSpeed = 100.f;
-    _float                      m_fMaxSpeed = 50.f;
+    _float                      m_fMinSpeed = 10.f;
+    _float                      m_fMaxSpeed = 1.f;
     _float                      m_fStartScale = 5.f;
     _float                      m_fEndScale = 1.f;
 private:

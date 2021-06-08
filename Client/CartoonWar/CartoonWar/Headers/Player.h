@@ -33,6 +33,9 @@ private:
 	void									AnimVectorClear();
 	void									Compute_Matrix_X();
 	void									Compute_Matrix_Z();
+	void									Obb_Collision();
+	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+private:
 private:
 	void									Death(const _float& fTimeDelta);
 	void									Attack(const _float& fTimeDelta);
@@ -54,6 +57,7 @@ private:
 	_bool									m_IsOnce = false;
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
+	_vec3									m_vOBB_Range[2] = {};
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};

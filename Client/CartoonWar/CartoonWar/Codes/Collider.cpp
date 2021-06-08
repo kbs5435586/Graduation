@@ -425,7 +425,7 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 				fabs(tOBB[0].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
 
 
-			fDistance[1] =
+			fDistance[2] =
 				fabs(tOBB[1].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
 				fabs(tOBB[1].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
 				fabs(tOBB[1].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
@@ -447,7 +447,7 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 			fabs(tOBB[0].vProjAxis[1].Dot(vAlignAxis[i])) +
 			fabs(tOBB[0].vProjAxis[2].Dot(vAlignAxis[i]));
 
-		fDistance[1] =
+		fDistance[2] =
 			fabs(tOBB[1].vProjAxis[0].Dot(vAlignAxis[i])) +
 			fabs(tOBB[1].vProjAxis[1].Dot(vAlignAxis[i])) +
 			fabs(tOBB[1].vProjAxis[2].Dot(vAlignAxis[i]));
@@ -460,10 +460,11 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 	return _bool(m_IsColl = true);
 }
 
-void CCollider::Update_Collider(CTransform* pTransform)
+void CCollider::Update_Collider(CTransform* pTransform, CLASS eCurClass)
 {
 	_matrix pTarget_matrix = pTransform->Get_Matrix();
 	m_matWorld = pTransform->Get_Matrix();
+	m_matWorld.m[3][1] += 10.f;
 	switch (m_eType)
 	{
 	case COLLIDER_TYPE::COLLIDER_AABB:
@@ -472,6 +473,7 @@ void CCollider::Update_Collider(CTransform* pTransform)
 		matTemp.m[0][0] *= m_vSize.x;
 		matTemp.m[1][1] *= m_vSize.y;
 		matTemp.m[2][2] *= m_vSize.z;
+		matTemp.m[3][1] += 3.f;
 		m_pTransformCom->Set_Matrix(matTemp);
 	}
 	break;
@@ -485,8 +487,15 @@ void CCollider::Update_Collider(CTransform* pTransform)
 		matTemp.m[2][2] *= m_vSize.z;
 
 		matTemp = matTemp * matTemp_Rotate;
+		if (eCurClass == CLASS::CLASS_MMAGE || eCurClass == CLASS::CLASS_CAVALRY)
+		{
+			matTemp.m[3][1] += 5.f;
+		}
+		else
+		{
+			matTemp.m[3][1] += 3.f;
+		}
 		m_pTransformCom->Set_Matrix(matTemp);
-
 	}
 	break;
 	case COLLIDER_TYPE::COLLIDER_SPHERE:

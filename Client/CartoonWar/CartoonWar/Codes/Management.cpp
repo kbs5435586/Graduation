@@ -18,6 +18,7 @@ CManagement::CManagement()
 	, m_pObserver_Manager(CObserverManager::GetInstance())
 	, m_pLoad_Manager(CLoadManager::GetInstance())
 	, m_pUAV_Manager(CUAVManager::GetInstance())
+	, m_pCollision_Manager(CCollisionMgr::GetInstance())
 	//, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
@@ -29,6 +30,7 @@ CManagement::CManagement()
 	m_pObserver_Manager->AddRef();
 	m_pLoad_Manager->AddRef();
 	m_pUAV_Manager->AddRef();
+	m_pCollision_Manager->AddRef();
 	//m_pServer_Manager->AddRef();
 }
 
@@ -206,11 +208,12 @@ CUAV* CManagement::Get_UAV(const _tchar* pUAVTag)
 
 HRESULT CManagement::Ready_CollsionManager()
 {
-	return E_NOTIMPL;
+	return m_pCollision_Manager->Ready_CollsionManager();
 }
 
 void CManagement::Update_CollisionManager()
 {
+	return m_pCollision_Manager->Update_CollisionManager();
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
@@ -293,8 +296,13 @@ void CManagement::Release_Engine()
 {
 	_ulong			dwRefCnt = 0;
 
+
+
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
+
+	if (dwRefCnt = CCollisionMgr::GetInstance()->DestroyInstance())
+		_MSG_BOX("CCollisionMgr Release Failed");
 
 	if (dwRefCnt = CObserverManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CObserverManager Release Failed");
@@ -369,6 +377,7 @@ void CManagement::Free()
 	Safe_Release(m_pKey_Manager);
 	Safe_Release(m_pObserver_Manager);
 	Safe_Release(m_pLoad_Manager);
+	Safe_Release(m_pCollision_Manager);
 	Safe_Release(m_pScene);
 	//Safe_Release(m_pServer_Manager);
 }

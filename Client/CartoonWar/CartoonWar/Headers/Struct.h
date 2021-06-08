@@ -572,3 +572,16 @@ typedef struct tagPlayer
 	SPECIES		eSpecies;
 	COLOR		eColor;
 }PLAYER;
+
+
+typedef struct tagParticleSet
+{
+	Vector3		vPos;
+	int			iMaxParticle;
+	float		iMinLifeTime;
+	float		fMaxLifeTime;
+	float		fStartScale;
+	float		fEndScale;
+	float		fMinSpeed;
+	float		fMaxSpeed;
+}PARTICLESET;

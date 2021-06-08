@@ -1064,9 +1064,6 @@
     <None Include="..\ShaderFiles\Compute\Shader_Compute_Default.hlsl">
       <Filter>96. ShaderFiles\99. Compute</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Particle.hlsl">
-      <Filter>96. ShaderFiles\06. Particle</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_Animation.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
@@ -1123,6 +1120,9 @@
     </None>
     <None Include="..\ShaderFiles\Compute\Shader_Compute_WoL_Blue.hlsl">
       <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Particle.hlsl">
+      <Filter>96. ShaderFiles\06. Particle</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

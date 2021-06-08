@@ -28,13 +28,19 @@ public:
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
+public:
+	void									Set_Particle(PARTICLESET tParticleSet);
+
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_Point*						m_pBufferCom = nullptr;
+	CBuffer_Point*							m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom[2] = {nullptr};
 	CTexture*								m_pTextureCom = nullptr;
 	CTexture*								m_pTextureCom_Noise = nullptr;
 	CParticle*								m_pParticleCom = nullptr;
+private:
+	_float									m_fMaxLifeTime = 0.f;
+	_float									m_fLifeTime = 0.f;
 };
 

@@ -17,6 +17,10 @@ HRESULT CNPC::Ready_Prototype()
 
 HRESULT CNPC::Ready_GameObject(void* pArg)
 {
+	if (pArg)
+	{
+		m_tPlayer = *(PLAYER*)pArg;
+	}
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -24,21 +28,41 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	//Compute_Matrix();
+	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
+	_vec3 vPos = {25.f,0.f,25.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
 	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-	SetUp_Anim();
 	m_pAnimCom->LateInit();
+
+	//_vec3 vColliderSize = { 40.f ,160.f,40.f };
+	_vec3 vColliderSize = { 40.f ,160.f,40.f };
+	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+
+	m_eCurClass = CLASS::CLASS_WORKER;
+	m_iCurAnimIdx = 0;
+	m_iPreAnimIdx = 100;
+
+	
 
 	return S_OK;
 }
 
 _int CNPC::Update_GameObject(const _float& fTimeDelta)
 {
-	return _int();
+	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
+	m_pColiider[1]->Update_Collider(m_pTransformCom);
+
+	Change_Class();
+	Obb_Collision();
+	if (m_IsDead)
+		return DEAD_OBJ;
+	return NO_EVENT;
 }
 
 _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
@@ -49,8 +73,11 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+	Death(fTimeDelta);
+	Set_Animation(fTimeDelta);
 	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
+		m_iCurAnimIdx = 0;
 		m_IsOnce = false;
 	}
 
@@ -68,7 +95,6 @@ void CNPC::Render_GameObject()
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
-
 		MAINPASS tMainPass = {};
 		_matrix matWorld = m_pTransformCom->Get_Matrix();
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
@@ -76,9 +102,6 @@ void CNPC::Render_GameObject()
 
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
-
-
-
 		tRep.m_arrInt[1] = m_pAnimCom->GetBones()->size();
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
@@ -91,10 +114,26 @@ void CNPC::Render_GameObject()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
+		if (iSubsetNum >= 2)
+		{
+			if (i == 0)
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+			else
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+		else
+		{
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
-		m_pMeshCom->Render_Mesh(i);
+		//m_pMeshCom->Render_Mesh(i);
 	}
+
+
+	m_pColiider[0]->Render_Collider();
+	//m_pColiider[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -119,21 +158,6 @@ HRESULT CNPC::CreateInputLayout()
 	return S_OK;
 }
 
-void CNPC::SetUp_Anim()
-{
-	m_vecAnimCtrl.push_back(AnimCtrl(0, 423, 0.f, 14.1f));
-	/*	m_vecAnimCtrl.push_back(AnimCtrl(10, 131, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 0.f, 0.75f));
-		m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 0.f, 0.75f));	*/
-}
-
 CNPC* CNPC::Create()
 {
 	CNPC* pInstance = new CNPC();
@@ -144,13 +168,14 @@ CNPC* CNPC::Create()
 		Safe_Release(pInstance);
 	}
 	return pInstance;
+
 }
 
 CGameObject* CNPC::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CNPC* pInstance = new CNPC(*this);
 
-	if (FAILED(pInstance->Ready_GameObject()))
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CNPC Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
@@ -192,7 +217,7 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -214,13 +239,33 @@ HRESULT CNPC::Ready_Component()
 
 	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
 	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider0", m_pColiider[0])))
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColiider[0])))
 		return E_FAIL;
 
-	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
 	NULL_CHECK_VAL(m_pColiider[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider1", m_pColiider[1])))
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColiider[1])))
 		return E_FAIL;
+
+	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
+	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
+		return E_FAIL;
+
+	if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	{
+		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
+		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture1", m_pTextureCom[1])))
+			return E_FAIL;
+	}
+	else
+	{
+		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Undead");
+		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture1", m_pTextureCom[1])))
+			return E_FAIL;
+	}
 
 
 
@@ -233,13 +278,679 @@ HRESULT CNPC::Ready_Component()
 	return S_OK;
 }
 
-void CNPC::Set_Animation()
+void CNPC::Set_Animation(const _float& fTimeDelta)
 {
-
 	if (m_iCurAnimIdx != m_iPreAnimIdx)
 	{
-
-		m_iCurAnimIdx = m_iPreAnimIdx;
+		Attack(fTimeDelta);
+		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
+		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
 
 }
+
+void CNPC::Change_Class()
+{
+	if (m_eCurClass != m_ePreClass)
+	{
+		AnimVectorClear();
+		if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+		{
+			switch (m_eCurClass)
+			{
+			case CLASS::CLASS_WORKER:
+			{
+				//idle		
+				//walk		
+				//run		
+				//attack	
+				//death a	
+				//death b	
+				//take damage
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.000f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 136, 3.366f, 4.533f));
+				m_vecAnimCtrl.push_back(AnimCtrl(137, 167, 4.566f, 5.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(168, 193, 5.599f, 6.433f));
+				m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
+				m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			case CLASS::CLASS_INFANTRY:
+			{
+				//	idle		
+				//	walk		
+				//	run			
+				//	charge		
+				//	combat idle	
+				//	combat walk	
+				//	attack a	
+				//	attack b	
+				//	take damage	
+				//	death a		
+				//	death b		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
+				m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			case CLASS::CLASS_CAVALRY:
+			{
+				//idle 		
+				//walk 		
+				//run 		
+				//charge 	
+				//combat idle 
+				//combat walk
+				//combat hit a
+				//combat hit b 
+				//take damage 
+				//death a 	
+				//death b 	
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
+				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+				m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
+				m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
+				m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
+				m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
+				m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
+				m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			}
+			break;
+			case CLASS::CLASS_SPEARMAN:
+			{
+				//		idle		
+				//		walk		
+				//		run			
+				//		charge		
+				//		combat idle	
+				//		combat walk	
+				//		attack		
+				//		take damage	
+				//		death a		
+				//		death b		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
+				m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+			}
+			break;
+			case CLASS::CLASS_MAGE:
+			{
+				//	idle		
+				//	walk		
+				//	run			
+				//	charge		
+				//	combat idle	
+				//	combat walk	
+				//	attack a	
+				//	attack b	
+				//	take damage	
+				//	death a		
+				//	death b		
+				//	cast a		
+				//	cast b		
+				//	cast c		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
+				m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(375, 426, 12.500f, 14.199f));
+				m_vecAnimCtrl.push_back(AnimCtrl(427, 477, 14.233f, 15.900f));
+				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
+				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
+				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			case CLASS::CLASS_MMAGE:
+			{
+
+				//	idle	
+				//	walk	
+				//	run		
+				//	attack	
+				//	take damage
+				//	death a	
+				//	death b	
+				//	cast a	
+				//	cast b	
+				//	cast load
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
+				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+				m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
+				m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
+				m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
+				m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
+				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			}
+			break;
+			case CLASS::CLASS_ARCHER:
+			{
+
+				//	idle		
+				//	walk		
+				//	run			
+				//	combat_idle	
+				//	combat walk	
+				//	attack a	
+				//	take damage	
+				//	death a		
+				//	death b		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
+				m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
+				m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
+				m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
+				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+			}
+			break;
+			case CLASS::CLASS_PRIEST:
+			{
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
+				m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(367, 426, 12.500f, 14.199f));
+				m_vecAnimCtrl.push_back(AnimCtrl(327, 477, 14.233f, 15.900f));
+				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
+				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
+				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			}
+		}
+		else
+		{
+			switch (m_eCurClass)
+			{
+			case CLASS::CLASS_WORKER:
+			{
+				//idle		
+				//walk		
+				//run		
+				//attack	
+				//death a	
+				//death b	
+				//take damage
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.000f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 136, 3.366f, 4.533f));
+				m_vecAnimCtrl.push_back(AnimCtrl(137, 167, 4.566f, 5.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(168, 193, 5.599f, 6.433f));
+				m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
+				m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			case CLASS::CLASS_INFANTRY:
+			{
+				//	idle		
+				//	walk		
+				//	run			
+				//	charge		
+				//	combat idle	
+				//	combat walk	
+				//	attack a	
+				//	attack b	
+				//	take damage	
+				//	death a		
+				//	death b		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
+				m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			case CLASS::CLASS_CAVALRY:
+			{
+				//idle 		
+				//walk 		
+				//run 		
+				//charge 	
+				//combat idle 
+				//combat walk
+				//combat hit a
+				//combat hit b 
+				//take damage 
+				//death a 	
+				//death b 	
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
+				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+				m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
+				m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
+				m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
+				m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
+				m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
+				m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			}
+			break;
+			case CLASS::CLASS_SPEARMAN:
+			{
+				//		idle		
+				//		walk		
+				//		run			
+				//		charge		
+				//		combat idle	
+				//		combat walk	
+				//		attack		
+				//		take damage	
+				//		death a		
+				//		death b		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
+				m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+			}
+			break;
+			case CLASS::CLASS_MAGE:
+			{
+				//	idle		
+				//	walk		
+				//	run			
+				//	charge		
+				//	combat idle	
+				//	combat walk	
+				//	attack a	
+				//	attack b	
+				//	take damage	
+				//	death a		
+				//	death b		
+				//	cast a		
+				//	cast b		
+				//	cast c		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
+				m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(375, 426, 12.500f, 14.199f));
+				m_vecAnimCtrl.push_back(AnimCtrl(427, 477, 14.233f, 15.900f));
+				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
+				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
+				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			}
+			break;
+			case CLASS::CLASS_MMAGE:
+			{
+
+				//	idle	
+				//	walk	
+				//	run		
+				//	attack	
+				//	take damage
+				//	death a	
+				//	death b	
+				//	cast a	
+				//	cast b	
+				//	cast load
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
+				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+				m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
+				m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
+				m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
+				m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
+				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			}
+			break;
+			case CLASS::CLASS_ARCHER:
+			{
+
+				//	idle		
+				//	walk		
+				//	run			
+				//	combat_idle	
+				//	combat walk	
+				//	attack a	
+				//	take damage	
+				//	death a		
+				//	death b	
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
+				m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
+				m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
+				m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
+				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+			}
+			break;
+			}
+		}
+
+		m_ePreClass = m_eCurClass;
+	}
+}
+
+void CNPC::AnimVectorClear()
+{
+	m_vecAnimCtrl.clear();
+	m_vecAnimCtrl.shrink_to_fit();
+}
+
+void CNPC::Obb_Collision()
+{
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vTemp = { vPos - vTargetPos };
+			vTemp.Normalize();
+			m_vStartPoint = vPos;
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			//m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
+
+			
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
+}
+
+void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+{
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
+
+
+}
+
+void CNPC::Compute_Matrix_X()
+{
+	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3		vSize = m_pTransformCom->Get_Scale();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
+
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationX(XMConvertToRadians(100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matLeft.m[2][0], &vLook, sizeof(_vec3));
+	matLeft.Translation(vPos);
+
+	vRight = { 1.f, 0.f, 0.f };
+	vUp = { 0.f, 1.f, 0.f };
+	vLook = { 0.f, 0.f, 1.f };
+	DirectX::XMStoreFloat4x4(&matRight, DirectX::XMMatrixRotationX(XMConvertToRadians(-100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	mat = ::XMLoadFloat4x4(&matRight);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matRight.m[2][0], &vLook, sizeof(_vec3));
+	matRight.Translation(vPos);
+
+
+	m_matLeft = matLeft;
+	m_matRight = matRight;
+}
+
+void CNPC::Compute_Matrix_Z()
+{
+	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3		vSize = m_pTransformCom->Get_Scale();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
+
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationZ(XMConvertToRadians(100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matLeft.m[2][0], &vLook, sizeof(_vec3));
+	matLeft.Translation(vPos);
+
+	vRight = { 1.f, 0.f, 0.f };
+	vUp = { 0.f, 1.f, 0.f };
+	vLook = { 0.f, 0.f, 1.f };
+	DirectX::XMStoreFloat4x4(&matRight, DirectX::XMMatrixRotationZ(XMConvertToRadians(-100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	mat = ::XMLoadFloat4x4(&matRight);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matRight.m[2][0], &vLook, sizeof(_vec3));
+	matRight.Translation(vPos);
+
+
+	m_matLeft = matLeft;
+	m_matRight = matRight;
+}
+
+void CNPC::Death(const _float& fTimeDelta)
+{
+	m_iDeathMotion[0] = 100;
+	m_iDeathMotion[1] = 100;
+	switch (m_eCurClass)
+	{
+	case CLASS::CLASS_WORKER:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 4;
+		m_iDeathMotion[1] = 5;
+	case CLASS::CLASS_INFANTRY:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS::CLASS_MAGE:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS::CLASS_CAVALRY:
+		Compute_Matrix_Z();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS::CLASS_SPEARMAN:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 8;
+		m_iDeathMotion[1] = 9;
+		break;
+	case CLASS::CLASS_MMAGE:
+		Compute_Matrix_Z();
+		m_iDeathMotion[0] = 5;
+		m_iDeathMotion[1] = 6;
+		break;
+	case CLASS::CLASS_ARCHER:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 7;
+		m_iDeathMotion[1] = 8;
+		break;
+	}
+
+	if (m_iCurAnimIdx == m_iDeathMotion[1])
+	{
+		if (!m_IsDeath)
+		{
+
+			m_fDeathTime += fTimeDelta * 1.2f;
+			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
+			m_pTransformCom->Set_Matrix(matTemp);
+			if (m_fDeathTime >= 1.7f)
+			{
+				m_fDeathTime = 0.f;
+				m_IsDeath = true;
+			}
+		}
+
+	}
+	else if (m_iCurAnimIdx == m_iDeathMotion[0])
+	{
+		if (!m_IsDeath)
+		{
+			m_fDeathTime += fTimeDelta * 1.2f;
+			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
+			m_pTransformCom->Set_Matrix(matTemp);
+			if (m_fDeathTime >= 1.7f)
+			{
+				m_fDeathTime = 0.f;
+				m_IsDeath = true;
+			}
+		}
+	}
+
+}
+
+void CNPC::Attack(const _float& fTimeDelta)
+{
+	m_iAttackMotion[0] = 100;
+	m_iAttackMotion[1] = 100;
+	switch (m_eCurClass)
+	{
+	case CLASS::CLASS_WORKER:
+	case CLASS::CLASS_MMAGE:
+		m_iAttackMotion[0] = 3;
+		break;
+	case CLASS::CLASS_INFANTRY:
+	case CLASS::CLASS_CAVALRY:
+	case CLASS::CLASS_MAGE:
+	case CLASS::CLASS_PRIEST:
+		m_iAttackMotion[0] = 6;
+		m_iAttackMotion[1] = 7;
+		break;
+	case CLASS::CLASS_SPEARMAN:
+		m_iAttackMotion[0] = 6;
+		break;
+	case CLASS::CLASS_ARCHER:
+		break;
+	}
+
+	if (m_iCurAnimIdx == m_iAttackMotion[1] || m_iCurAnimIdx == m_iAttackMotion[0])
+	{
+		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
+		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
+	}
+	else
+	{
+		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
+		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
+	}
+}
+

@@ -20,30 +20,46 @@ HRESULT CParticle_Default::Ready_Prototype()
 
 HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 {
+	PARTICLESET tParticleSet = {};
+	if (nullptr != pArg)
+	{
+		tParticleSet = *(PARTICLESET*)pArg;
+	}
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-
-	_vec3 vPos = _vec3(50.f, 100.f, 50.f);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &tParticleSet.vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 
+	Set_Particle(tParticleSet);
+	m_fMaxLifeTime = 1.f;
+	
 	return S_OK;
 }
 
 _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 {
+	m_fLifeTime += fTimeDelta;
 
-	return _int();
+	if (m_fLifeTime >= m_fMaxLifeTime)
+	{
+		m_fLifeTime = 0.f;
+		m_IsDead = true;
+	}
+
+
+	if (m_IsDead)
+		return DEAD_OBJ;
+	return NO_EVENT;
 }
 
 _int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHA, this)))
 		return -1;
 
 	m_pParticleCom->Update_Particle(fTimeDelta);
@@ -130,7 +146,7 @@ CGameObject* CParticle_Default::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CParticle_Default* pInstance = new CParticle_Default(*this);
 
-	if (FAILED(pInstance->Ready_GameObject()))
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CParticle_Default Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
@@ -201,4 +217,12 @@ HRESULT CParticle_Default::Ready_Component()
 	Safe_Release(pManagement);
 
 	return S_OK;
+}
+
+void CParticle_Default::Set_Particle(PARTICLESET tParticleSet)
+{
+	if (m_pParticleCom)
+	{
+		m_pParticleCom->Set_Particle(tParticleSet);
+	}
 }

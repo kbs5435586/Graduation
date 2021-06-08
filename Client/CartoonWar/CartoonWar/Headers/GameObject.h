@@ -19,6 +19,8 @@ public:
 public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
+	_bool&									GetIsHit(){return m_IsHit;}
+	_bool&									GetIsDead(){return m_IsDead;}
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
@@ -42,6 +44,7 @@ protected:
 	_bool									m_IsOBB_Collision = false; 
 	_float									m_fBazierCnt = 0.f;
 	_bool									m_IsBazier = false;
+	_bool									m_IsDead = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 protected:
 	_bool									m_IsHit = false;

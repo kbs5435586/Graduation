@@ -212,8 +212,9 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
 
         float fRatio = tRWData[_iThreadIdx.x].m_fCurTime / tRWData[_iThreadIdx.x].m_fLifeTime;
         float fSpeed = (g_float_3 - g_float_2) * fRatio + g_float_2;
-        tRWData[_iThreadIdx.x].vWorldPos += tRWData[_iThreadIdx.x].vWorldDir * fSpeed * g_fDT;
-
+		float3 vNormalizeDir = normalize(tRWData[_iThreadIdx.x].vWorldDir);
+        tRWData[_iThreadIdx.x].vWorldPos += vNormalizeDir * fSpeed * g_fDT;
+		//tRWData[_iThreadIdx.x].vWorldPos.y += 2.f;
         // 생존 파티클 개수 확인
         tRWSharedData[0].iCurCount = 0;
         InterlockedAdd(tRWSharedData[0].iCurCount, 1);

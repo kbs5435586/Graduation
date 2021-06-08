@@ -10,6 +10,8 @@ private:
 public:
     HRESULT                 Ready_CollsionManager();
     void                    Update_CollisionManager();
+private:
+    void                    Player_to_Player_Collision();
 public:
     static CCollisionMgr*   Create();
 private:

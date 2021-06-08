@@ -30,6 +30,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_UAV_Manager()))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Ready_CollsionManager()))
+		return E_FAIL;
 	
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
@@ -74,6 +76,8 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
+	m_pManagement->Update_CollisionManager();
+	
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 

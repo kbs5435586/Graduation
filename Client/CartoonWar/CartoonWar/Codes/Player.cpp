@@ -29,8 +29,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	_vec3 vPos = {30.f,0.f,50.f};
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	_vec3 vPos = {_float(rand()%50),0.f,_float(rand() % 50) };
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
@@ -39,10 +39,11 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pAnimCom->LateInit();
 
 	_vec3 vColliderSize = { 40.f ,160.f,40.f };
+	//_vec3 vColliderSize = { 70.f ,160.f,70.f };
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-	m_eCurClass = CLASS::CLASS_INFANTRY;
+	m_eCurClass = CLASS::CLASS_CAVALRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
@@ -52,22 +53,46 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
-	
-	m_pColiider[0]->Update_Collider(m_pTransformCom);
+	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
 	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
-	/*	if (m_iCurAnimIdx >m_vecAnimCtrl.size()-1)
-			m_iCurAnimIdx = 0; 
-		else
-			m_iCurAnimIdx++;*/
-		m_iCurAnimIdx = 9;
+		{
+			PARTICLESET tParticleSet;
+			_vec3 vPos = { 0.f,0.f,0.f };
+			tParticleSet.vPos = vPos;
+			tParticleSet.iMaxParticle = 30;
+			tParticleSet.fMaxLifeTime = 1.f;
+			tParticleSet.iMinLifeTime = 0.1f;
+
+			tParticleSet.fStartScale = 1.f;
+			tParticleSet.fEndScale = 1.f;
+
+			tParticleSet.fMaxSpeed = 10.f;
+			tParticleSet.fMinSpeed = 100.f;
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+				return NO_EVENT;
+		}
+		m_iCurAnimIdx= m_iAttackMotion[0];
+		m_IsOnce = true;
+		m_IsHit = true;
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 		m_pTransformCom->Rotation_Y(fTimeDelta);
+	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+		m_pTransformCom->BackWard(fTimeDelta);
+	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+		m_pTransformCom->Go_Straight(fTimeDelta);
 	Change_Class();
-	return _int();
+	Obb_Collision();
+
+
+	if (m_IsDead)
+		return DEAD_OBJ;
+	return NO_EVENT;
 }
 
 _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
@@ -84,6 +109,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		m_iCurAnimIdx = 0;
 		m_IsOnce = false;
+		m_IsHit = false;
 	}
 
 	return _int();
@@ -137,7 +163,7 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	//m_pColiider[0]->Render_Collider();
+	m_pColiider[0]->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
@@ -222,7 +248,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -319,6 +345,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 				m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			}
 			break;
 			case CLASS::CLASS_INFANTRY:
@@ -345,6 +373,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
 				m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
 				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			}
 			break;
 			case CLASS::CLASS_CAVALRY:
@@ -371,6 +401,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 				m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 			}
 			break;
 			case CLASS::CLASS_SPEARMAN:
@@ -395,6 +427,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
 				m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
 				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
 			}
 			break;
 			case CLASS::CLASS_MAGE:
@@ -427,6 +461,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
 				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
 				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			}
 			break;
 			case CLASS::CLASS_MMAGE:
@@ -452,6 +488,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 				m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 			}
 			break;
 			case CLASS::CLASS_ARCHER:
@@ -475,6 +513,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
 				m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
 				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
 			}
 			break;
 			case CLASS::CLASS_PRIEST:
@@ -493,6 +533,8 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
 				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
 				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			}
 			break;
 			}
@@ -517,6 +559,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -543,6 +587,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
 			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 		}
 		break;
 		case CLASS::CLASS_CAVALRY:
@@ -569,6 +615,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 		}
 		break;
 		case CLASS::CLASS_SPEARMAN:
@@ -588,11 +636,13 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
 			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
 			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-			m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 292,  8.533f, 9.733f));
 			m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
 			m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,60.f };
 		}
 		break;
 		case CLASS::CLASS_MAGE:
@@ -625,6 +675,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
 			m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
 			m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 		}
 		break;
 		case CLASS::CLASS_MMAGE:
@@ -650,6 +702,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -673,6 +727,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
 			m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
 			m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
 		}
 		break;
 		}
@@ -730,6 +786,44 @@ void CPlayer::Compute_Matrix_Z()
 
 	m_matLeft = matLeft;
 	m_matRight = matRight;
+}
+
+void CPlayer::Obb_Collision()
+{
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vTemp = { vPos - vTargetPos };
+			vTemp.Normalize();
+			m_vStartPoint = vPos;
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			//m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
+}
+
+void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+{
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
 }
 
 void CPlayer::Compute_Matrix_X()
@@ -877,17 +971,13 @@ void CPlayer::Attack(const _float& fTimeDelta)
 
 	if (m_iCurAnimIdx == m_iAttackMotion[1] || m_iCurAnimIdx == m_iAttackMotion[0])
 	{
-		_vec3 vColliderSize = { 70.f ,160.f,70.f };
-		_vec3 vOBB_ColliderSize = { 60.f ,160.f,120.f };
-		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, vOBB_ColliderSize);
-		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, vColliderSize);
+		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
+		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
 	}
 	else
 	{
-		_vec3 vColliderSize = { 40.f ,160.f,40.f };
-		_vec3 vOBB_ColliderSize = { 40.f ,160.f,120.f };
-		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, vOBB_ColliderSize);
-		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, vColliderSize);
+		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
+		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
 	}
 }
 
