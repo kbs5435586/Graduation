@@ -316,6 +316,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_INFANTRY:
@@ -344,6 +347,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_CAVALRY:
@@ -372,6 +378,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_SPEARMAN:
@@ -398,6 +407,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_MAGE:
@@ -432,11 +444,13 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_MMAGE:
 			{
-
 				//	idle	
 				//	walk	
 				//	run		
@@ -459,6 +473,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_ARCHER:
@@ -484,6 +501,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_PRIEST:
@@ -530,6 +550,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_INFANTRY:
@@ -558,6 +581,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_CAVALRY:
@@ -586,6 +612,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_SPEARMAN:
@@ -612,6 +641,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_MAGE:
@@ -646,6 +678,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_MMAGE:
@@ -673,11 +708,13 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 2;
 			}
 			break;
 			case CLASS::CLASS_ARCHER:
 			{
-
 				//	idle		
 				//	walk		
 				//	run			
@@ -698,6 +735,9 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			}
@@ -728,9 +768,10 @@ void CNPC::Obb_Collision()
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 			//m_vMidPoint.y += 2.f;
-			m_IsBazier = true;
 
-			
+			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
+			Create_Particle(vParticlePos);
+			m_IsBazier = true;		
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 	}
@@ -752,6 +793,28 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	fCnt += 0.01f;
 
+
+}
+
+void CNPC::Create_Particle(const _vec3& vPos)
+{
+	if (m_IsParticle)
+	{
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vPos;
+		tParticleSet.iMaxParticle = 30;
+		tParticleSet.fMaxLifeTime = 1.f;
+		tParticleSet.iMinLifeTime = 1.f;
+
+		tParticleSet.fStartScale = 1.f;
+		tParticleSet.fEndScale = 1.f;
+
+		tParticleSet.fMaxSpeed = 10.f;
+		tParticleSet.fMinSpeed = 100.f;
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return;
+		m_IsParticle = false;
+	}
 
 }
 

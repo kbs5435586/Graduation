@@ -34,7 +34,7 @@ HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 
 	Set_Particle(tParticleSet);
-	m_fMaxLifeTime = 1.f;
+	m_fMaxLifeTime = tParticleSet.fMaxLifeTime;
 	
 	return S_OK;
 }

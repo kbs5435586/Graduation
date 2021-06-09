@@ -35,7 +35,8 @@ private:
 	void									Compute_Matrix_Z();
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
-private:
+public:
+	void									Create_Particle(const _vec3& vPoistion);
 private:
 	void									Death(const _float& fTimeDelta);
 	void									Attack(const _float& fTimeDelta);
@@ -57,6 +58,7 @@ private:
 	_bool									m_IsOnce = false;
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
+	_uint									m_iCombatMotion[3] = {};
 	_vec3									m_vOBB_Range[2] = {};
 private:
 	_matrix									m_matLeft = {};

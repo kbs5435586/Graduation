@@ -80,7 +80,7 @@ _bool CKeyManager::Key_Pressing(DWORD dwKey)
 }
 _bool CKeyManager::Key_Combine(DWORD dwFirstKey, DWORD dwSecondKey)
 {
-	if (Key_Down(dwSecondKey) && (m_dwKey & dwFirstKey))
+	if (Key_Pressing(dwSecondKey) && (m_dwKey & dwFirstKey))
 		return true;
 
 	return false;

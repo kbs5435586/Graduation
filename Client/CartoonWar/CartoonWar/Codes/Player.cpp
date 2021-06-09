@@ -43,7 +43,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-	m_eCurClass = CLASS::CLASS_CAVALRY;
+	m_eCurClass = CLASS::CLASS_INFANTRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
@@ -56,39 +56,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
-	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
-	{
-		{
-			PARTICLESET tParticleSet;
-			_vec3 vPos = { 0.f,0.f,0.f };
-			tParticleSet.vPos = vPos;
-			tParticleSet.iMaxParticle = 30;
-			tParticleSet.fMaxLifeTime = 1.f;
-			tParticleSet.iMinLifeTime = 0.1f;
 
-			tParticleSet.fStartScale = 1.f;
-			tParticleSet.fEndScale = 1.f;
-
-			tParticleSet.fMaxSpeed = 10.f;
-			tParticleSet.fMinSpeed = 100.f;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
-				return NO_EVENT;
-		}
-		m_iCurAnimIdx= m_iAttackMotion[0];
-		m_IsOnce = true;
-		m_IsHit = true;
-	}
-	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
-	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-		m_pTransformCom->BackWard(fTimeDelta);
-	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-		m_pTransformCom->Go_Straight(fTimeDelta);
 	Change_Class();
 	Obb_Collision();
-
+	Combat(fTimeDelta);
+	Input_Key(fTimeDelta);
 
 	if (m_IsDead)
 		return DEAD_OBJ;
@@ -105,12 +77,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	Death(fTimeDelta);
 	Set_Animation(fTimeDelta);
-	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-		m_IsHit = false;
-	}
 
 	return _int();
 }
@@ -248,7 +214,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -347,6 +313,9 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_INFANTRY:
@@ -375,6 +344,9 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_CAVALRY:
@@ -403,6 +375,9 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_SPEARMAN:
@@ -429,6 +404,9 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_MAGE:
@@ -463,11 +441,13 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_MMAGE:
 			{
-
 				//	idle	
 				//	walk	
 				//	run		
@@ -490,6 +470,9 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_ARCHER:
@@ -515,6 +498,9 @@ void CPlayer::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
 			}
 			break;
 			case CLASS::CLASS_PRIEST:
@@ -561,6 +547,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 0;
+			m_iCombatMotion[1] = 1;
+			m_iCombatMotion[2] = 3;
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -589,6 +578,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
 		}
 		break;
 		case CLASS::CLASS_CAVALRY:
@@ -617,6 +609,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
 		}
 		break;
 		case CLASS::CLASS_SPEARMAN:
@@ -643,6 +638,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
 		}
 		break;
 		case CLASS::CLASS_MAGE:
@@ -677,6 +675,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
 		}
 		break;
 		case CLASS::CLASS_MMAGE:
@@ -704,11 +705,13 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
 			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_iCombatMotion[0] = 0;
+			m_iCombatMotion[1] = 1;
+			m_iCombatMotion[2] = 2;
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
 		{
-
 			//	idle		
 			//	walk		
 			//	run			
@@ -729,6 +732,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
 		}
 		break;
 		}
@@ -824,6 +830,113 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	_vec3 vPos = { fX, fY, fZ };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	fCnt += 0.01f;
+}
+
+void CPlayer::Input_Key(const _float& fTimeDelta)
+{
+
+	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+	{
+		_uint iRand = rand() % 2;
+		if (iRand == 0)
+			m_iCurAnimIdx = m_iAttackMotion[0];
+		else
+			m_iCurAnimIdx = m_iAttackMotion[1];
+		m_IsOnce = true;
+		m_IsHit = true;
+		m_IsCombat = true;
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
+
+	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 2;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[2];
+
+		m_pTransformCom->BackWard(fTimeDelta*2.f);
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	{
+
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->BackWard(fTimeDelta);
+	}
+	if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Go_Straight(fTimeDelta);
+	}
+	if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
+
+
+	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
+		{
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		}
+		else
+		{
+			m_iCurAnimIdx = 0;
+		}
+		m_IsOnce = false;
+		m_IsHit = false;
+	}
+
+
 }
 
 void CPlayer::Compute_Matrix_X()
@@ -978,6 +1091,20 @@ void CPlayer::Attack(const _float& fTimeDelta)
 	{
 		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
 		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
+	}
+}
+
+void CPlayer::Combat(const _float& fTimeDelta)
+{
+	if (m_IsCombat)
+	{
+		m_fCombatTime += fTimeDelta;
+	}
+
+
+	if (m_fCombatTime >= 10.f)
+	{
+		m_IsCombat = false;
 	}
 }
 
