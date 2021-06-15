@@ -15,12 +15,6 @@ struct VS_OUT
 	float4 vWorldPos		: TEXCOORD1;
 };
 
-struct PS_OUT
-{
-	float4 vDiffuseTex : SV_TARGET0;
-
-};
-
 
 VS_OUT	VS_Main(VS_IN vIn)
 {
@@ -33,10 +27,10 @@ VS_OUT	VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-PS_OUT	PS_Main(VS_OUT vIn)
+float4	PS_Main(VS_OUT vIn):SV_TARGET
 {
-	PS_OUT vOut = (PS_OUT)0;
-	vOut.vDiffuseTex = float4(0.f,0.f,1.f,1.f);
+	float4 vOut = (float4)0;
+	vOut = float4(0.f,0.f,1.f,1.f);
 
 	return vOut;
 }

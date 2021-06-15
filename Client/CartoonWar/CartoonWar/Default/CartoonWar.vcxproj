@@ -205,6 +205,7 @@
     <ClInclude Include="..\Headers\KeyManager.h" />
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
+    <ClInclude Include="..\Headers\Light_Camera.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Line.h" />
     <ClInclude Include="..\Headers\LoadManager.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\Codes\KeyManager.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Light.cpp" />
+    <ClCompile Include="..\Codes\Light_Camera.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Line.cpp" />
     <ClCompile Include="..\Codes\LoadManager.cpp" />
@@ -494,6 +496,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Shadow.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

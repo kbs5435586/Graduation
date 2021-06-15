@@ -63,6 +63,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	srand(unsigned(time(NULL)));
+
 	return S_OK;
 }
 

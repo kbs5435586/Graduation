@@ -22,6 +22,7 @@ public: // Setter
 	void					Set_StateInfo(STATE eState, const _vec3* pInfo);
 	void					Set_PositionY(const _float& fY) {	m_matWorld.m[3][1] = fY;}
 	void					Set_Add_PosY(_float fY) { m_fAdd_PosY = fY; }
+	void					SetLook(const _vec3& vLook);
 public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();

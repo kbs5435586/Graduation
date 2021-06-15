@@ -11,6 +11,7 @@
 #include "Cube_Texture.h"
 #include "SkyBox.h"
 #include "Debug_Camera.h"
+#include "Light_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
 #include "Sphere.h"
@@ -100,6 +101,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Light", CLight_Camera::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
@@ -156,8 +159,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
@@ -176,12 +181,17 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.vLightDir = _vec4(-1.f, -1.f, 1.f, 0.f);
+	//tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 1.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
+
+
+
+
 	return S_OK;
 }
 
@@ -212,6 +222,34 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFar = g_Far;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
+		return E_FAIL;
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	CLight_Camera* pCameraObject = nullptr;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Light", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
+		(CGameObject**)&pCameraObject)))
+		return E_FAIL;
+
+	CAMERADESC		tCameraDesc;
+	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
+	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
+	tCameraDesc.vAt = _vec3(1.f, -1.f, 1.f);
+	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+
+	PROJDESC		tProjDesc;
+	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
+	tProjDesc.fFovY = XMConvertToRadians(60.f);
+	tProjDesc.fAspect = _float(WINCX) / WINCY;
+	tProjDesc.fNear = 1.f;
+	tProjDesc.fFar = 100000.f;
+
+
+	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, true)))
 		return E_FAIL;
 
 

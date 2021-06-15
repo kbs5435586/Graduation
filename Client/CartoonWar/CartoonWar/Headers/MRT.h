@@ -36,6 +36,7 @@ private:
     D3D12_RESOURCE_BARRIER			m_TargetToRes[8];
     D3D12_RESOURCE_BARRIER			m_ResToTarget[8];
 private:
-
+    D3D12_VIEWPORT					m_tViewPort;
+    D3D12_RECT						m_tScissorRect;
 };
 

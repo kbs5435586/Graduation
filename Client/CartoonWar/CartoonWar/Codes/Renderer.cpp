@@ -39,20 +39,24 @@ HRESULT CRenderer::Render_RenderGroup()
 	pManagement->AddRef();
 	//pManagement->Update();
 
+
+
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
-	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
-
-
+ 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
+ 	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
+	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
-	//Render_Light(pManagement);
+	Render_Light(pManagement);
+	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
-	
-	
-	Render_UI();
 	Render_Blend();
-
+	
+	
+	Render_Priority();
+	Render_Alpha();
+	Render_UI();
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -110,19 +114,6 @@ void CRenderer::Render_UI()
 	m_RenderList[RENDER_UI].clear();
 }
 
-void CRenderer::Render_Particle()
-{
-	for (auto& pGameObject : m_RenderList[RENDER_PARTICLE])
-	{
-		if (nullptr != pGameObject)
-		{
-			pGameObject->Render_GameObject();
-			Safe_Release(pGameObject);
-		}
-	}
-	m_RenderList[RENDER_PARTICLE].clear();
-}
-
 void CRenderer::Render_Blend()
 {
 	for (auto& pGameObject : m_RenderList[RENDER_BLEND])
@@ -136,15 +127,27 @@ void CRenderer::Render_Blend()
 	m_RenderList[RENDER_BLEND].clear();
 }
 
+void CRenderer::Render_Shadow(CManagement* pManagement)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->OM_Set();
+
+	for (auto& pGameObject : m_RenderList[RENDER_SHADOW])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject_Shadow();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_SHADOW].clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->TargetToResBarrier();
+}
+
 void CRenderer::Render_Deffered(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
 
-
-	Render_Priority();
 	Render_NoneAlpha();
-	Render_Alpha();
-
 
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }

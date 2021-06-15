@@ -40,11 +40,6 @@ struct VS_OUT
 	float2 vUV : TEXCOORD;
 	float iInstID : FOG;
 };
-struct PS_OUT
-{
-	float4 vTarget : SV_TARGET0;
-	float4 vTarget1 : SV_TARGET3;
-};
 
 struct GS_OUT
 {
@@ -116,17 +111,16 @@ void GS_Main(point VS_OUT _in[1], inout TriangleStream<GS_OUT> OutputStream)
 }
 
 
-PS_OUT	PS_Main(GS_OUT _in) 
+float4	PS_Main(GS_OUT _in) : SV_TARGET
 {
-	PS_OUT vOut = (PS_OUT)0;
+	float4 vOut = (float4)0;
 
 
 	float fRatio = tData[_in.iInstID].m_fCurTime / tData[_in.iInstID].m_fLifeTime;
 	float4 vCurColor = (g_vec4_1 - g_vec4_0) * fRatio + g_vec4_0;
 	 vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
 
-	vOut.vTarget = vCurColor;
-	vOut.vTarget1 = vCurColor;
+	vOut = vCurColor;
 
 	return vOut;
 }

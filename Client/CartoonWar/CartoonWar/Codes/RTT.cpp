@@ -80,12 +80,7 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	m_tDesc.SampleDesc.Count = 1;
 	m_tDesc.SampleDesc.Quality = 0;
 	m_tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	m_tDesc.SampleDesc.Count = 1;
-	m_tDesc.SampleDesc.Quality = 0;
-	m_tDesc.Alignment = 0;
-	m_tDesc.DepthOrArraySize = 1;
-	m_tDesc.MipLevels = 1;
+	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT::D3D12_TEXTURE_LAYOUT_UNKNOWN;
 
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;

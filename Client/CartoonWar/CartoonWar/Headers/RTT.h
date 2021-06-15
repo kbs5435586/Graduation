@@ -29,6 +29,8 @@ public:
                                             , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr = _vec4());
     const _tchar*                   Get_MRT_Tag() { return m_pTag; }
 public:
+    D3D12_RESOURCE_DESC             Get_Desc() { return m_tDesc; }
+public:
 private:
     virtual void                    Free();
 private:

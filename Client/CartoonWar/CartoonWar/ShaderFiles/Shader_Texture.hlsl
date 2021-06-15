@@ -18,7 +18,7 @@ struct PS_OUT
 {
 	float4 vDiffuseTex		: SV_TARGET0;
 	float4 vNormalTex		: SV_TARGET1;
-	float4 vNormalTex_		: SV_TARGET3;
+	float4 vPositionTex		: SV_TARGET2;
 };
 
 VS_OUT VS_Main(VS_IN vIn)
@@ -37,10 +37,9 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 
-	//float4 vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	vOut.vDiffuseTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	vOut.vNormalTex  = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	vOut.vNormalTex_ = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	vOut.vPositionTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
 	return vOut;
 }

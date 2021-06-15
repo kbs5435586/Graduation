@@ -86,6 +86,34 @@ void CTerrain::Render_GameObject()
 	Safe_Release(pManagement);;
 }
 
+void CTerrain::Render_GameObject_Shadow()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+	m_pShaderCom_Shadow->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+
+	m_pBufferCom->Render_VIBuffer();
+	//m_pNaviCom->Render_Navigation();
+	Safe_Release(pManagement);;
+
+}
+
 HRESULT CTerrain::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -131,6 +159,7 @@ void CTerrain::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pFrustumCom);
@@ -162,6 +191,11 @@ HRESULT CTerrain::Ready_Component()
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+
+	m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
+	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
 
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");

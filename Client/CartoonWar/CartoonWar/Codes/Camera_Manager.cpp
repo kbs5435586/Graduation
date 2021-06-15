@@ -13,7 +13,6 @@ CCamera_Manager::CCamera_Manager()
 
 
 
-
 void CCamera_Manager::Free()
 {
 }

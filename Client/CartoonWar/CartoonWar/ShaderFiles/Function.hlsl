@@ -2,59 +2,35 @@
 #define _FUNCTION
 #include "Value.hlsl"
 
-
-LIGHT Calculate_Light(int _iLightIdx, float4 _vNormal, float4 _vWorldPos)
+LIGHT Calculate_Light(int _iLightIdx, float3 _vViewNormal, float3 _vViewPos)
 {
-	LIGHT tColor = (LIGHT)0.f;
+	LIGHT tCol = (LIGHT)0.f;
 
 
-	float4	vLightDir = normalize(tLight[_iLightIdx].vLightDir);
-	float4	vNormal = _vNormal;
-	float	fDiffusePower = 0.f;
-	float	fSpecularPower = 0.f;
-	float	fRatio = 1.f;
+	float3 vViewLightDir = (float3) 0.f;
+	float fDiffPow = 0.f;
+	float fSpecPow = 0.f;
+	float fRatio = 1.f;
 
-
-	float4	vShade = max(dot(-vLightDir, normalize(vNormal)), 0.f);
-
-
+	// Directional Light
 	if (tLight[_iLightIdx].iLightType == 0)
 	{
-		//fDiffusePower = saturate(dot(-vLightDir, normalize(_vNormal)) );
-		fDiffusePower = saturate(dot(-vLightDir, normalize(vNormal)));
-		
+		// 광원의 방향   
+		vViewLightDir = normalize(mul(float4(tLight[_iLightIdx].vLightDir.xyz, 0.f), matView).xyz);
+		fDiffPow = saturate(dot(-vViewLightDir, _vViewNormal));
 	}
-	else if (tLight[_iLightIdx].iLightType == 1)
-	{
-		float4	vWorldLightPos = mul(tLight[_iLightIdx].vLightPos, matWorld);
 
-		vLightDir = normalize(_vWorldPos - vWorldLightPos);
-		fDiffusePower = saturate(dot(-vLightDir, _vNormal));
+	// 반사 방향
+	float3 vReflect = normalize(vViewLightDir + 2 * (dot(-vViewLightDir, _vViewNormal) * _vViewNormal));
+	float3 vEye = normalize(_vViewPos);
+	fSpecPow = saturate(dot(-vEye, vReflect));
+	fSpecPow = pow(fSpecPow, 10);
 
-		float fDistance = distance(_vWorldPos, vWorldLightPos);
-		if (0.f == tLight[_iLightIdx].fRange)
-			fRatio = 0.f;
-		else
-			fRatio = saturate(1.f - fDistance / tLight[_iLightIdx].fRange);
+	tCol.vDiffuse = fDiffPow * tLight[_iLightIdx].tColor.vDiffuse * fRatio;
+	tCol.vSpecular = fSpecPow * tLight[_iLightIdx].tColor.vSpecular * fRatio;
+	tCol.vAmbient = tLight[_iLightIdx].tColor.vAmbient;
 
-	}
-	else
-	{
-
-	}
-	float4	vReflect = reflect(vLightDir, normalize(vNormal));
-	float4	vLook	 = _vWorldPos - vCamPos;
-	float4	vEye	 = normalize(vLook);
-
-	fSpecularPower	 = max(dot(-vEye, normalize(vReflect)), 0.f);
-	fSpecularPower	 = pow(fSpecularPower, 200.f);
-
-
-	tColor.vDiffuse = fDiffusePower * tLight[_iLightIdx].tColor.vDiffuse * fRatio;
-	tColor.vSpecular = fSpecularPower * tLight[_iLightIdx].tColor.vSpecular * fRatio;
-	tColor.vAmbient = vShade + tLight[_iLightIdx].tColor.vAmbient;
-	return tColor;
-
+	return tCol;
 }
 
 float4 Calculate_Shade(float4 vNormal, float4 _vWorldPos)

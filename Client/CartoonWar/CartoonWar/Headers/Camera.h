@@ -17,10 +17,14 @@ public:
 	virtual _int				LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void				Render_GameObject();
 public:
-	_matrix						Calculate_RelfectMatrix(const _float& fHeight);
+	void						ShadowMatView();
 public:
 	HRESULT						SetUp_CameraProjDesc(const CAMERADESC & CameraDesc, const PROJDESC & ProjDesc);
 	void						Invalidate_ViewProjMatrix();
+public:
+	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _bool IsShadow);
+	HRESULT						SetUp_ViewProjMatrices(_bool IsShadow);
+	void						Invalidate_ViewProjMatrix(_bool IsShadow);
 private:
 	HRESULT						SetUp_ViewProjMatrices();
 public:
@@ -37,7 +41,12 @@ protected:
 protected:
 	_matrix						m_matProj;
 	PROJDESC					m_tProjDesc;
-
+protected:
+	_matrix						m_matShadowView;
+	CAMERADESC					m_tShadowCameraDesc;
+protected:
+	_matrix						m_matShadowProj;
+	PROJDESC					m_tShadowProjDesc;
 protected:
 	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
 

@@ -43,8 +43,8 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 
 	// Defferd MRT
 	{
-		tRtt arrRT[8] = {};
-		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
+		tRtt arrRT[3] = {};
+		arrRT[0].vClear_Color = { 1.f,0.f,0.f,1.f };
 		arrRT[0].pRtt= CRTT::Create(L"DiffuseTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
@@ -65,31 +65,17 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[2].pRtt == nullptr)
 			return E_FAIL;
 
-		arrRT[3].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[3].pRtt = CRTT::Create(L"PositionTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[3].vClear_Color);
-		if (arrRT[3].pRtt == nullptr)
-			return E_FAIL;
-
-		arrRT[4].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[4].pRtt = CRTT::Create(L"PositionTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[4].vClear_Color);
-		if (arrRT[4].pRtt == nullptr)
-			return E_FAIL;
 
 
-		CMRT* pMRT = CMRT::Create(5, arrRT, m_pDsTex);
+		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
-
 
 	}
 
 	// Light MRT
 	{
-		tRtt arrRT[8] = {};
-		arrRT[0].vClear_Color = { 0.f,0.f,1.f,1.f };
+		tRtt arrRT[2] = {};
+		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[0].pRtt = CRTT::Create(L"DiffuseLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
@@ -102,6 +88,26 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		CMRT* pMRT = CMRT::Create(2, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
 
+	}
+
+
+	// Shadow MRT
+	{
+		tRtt arrRT[1] = {};
+		arrRT[0].vClear_Color = { 0.f,0.f,0.f,0.f };
+		arrRT[0].pRtt = CRTT::Create(L"ShadowMapTargetTex"
+			, 4096, 4096
+			, DXGI_FORMAT_R32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
+
+		CRTT* pDsTex = CRTT::Create(L"ShadowDepathTex"
+			, 4096, 4096, DXGI_FORMAT_D24_UNORM_S8_UINT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+		if (pDsTex == nullptr)
+			return E_FAIL;
+
+		CMRT* pMRT = CMRT::Create(1, arrRT, pDsTex);
+		m_vecMRT.push_back(pMRT);
 	}
 
 	return S_OK;

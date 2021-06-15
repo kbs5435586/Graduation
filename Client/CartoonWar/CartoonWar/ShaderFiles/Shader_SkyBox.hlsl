@@ -13,13 +13,6 @@ struct VS_OUT
 	float4 vWorldPos	: TEXCOORD1;
 };
 
-struct PS_OUT
-{
-	float4 vDiffuseTex		: SV_TARGET0;
-	float4 vShadeTex		: SV_TARGET3;
-};
-
-
 
 VS_OUT VS_Main(VS_IN vIn)
 {
@@ -34,12 +27,11 @@ VS_OUT VS_Main(VS_IN vIn)
 
 
 
-PS_OUT PS_Main(VS_OUT vIn)
+float4 PS_Main(VS_OUT vIn) :SV_TARGET
 {
-	PS_OUT vOut = (PS_OUT)0;
+	float4 vOut = (float4)0;
 
-	vOut.vDiffuseTex = g_textureCube.Sample(Sampler0, vIn.vTexUV);
-	vOut.vShadeTex	 = g_textureCube.Sample(Sampler0, vIn.vTexUV);
+	vOut = g_textureCube.Sample(Sampler0, vIn.vTexUV);
 
 	return vOut;
 }

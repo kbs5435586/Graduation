@@ -14,6 +14,23 @@ CTransform::CTransform(const CTransform& rhs)
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());
 }
 
+
+void CTransform::SetLook(const _vec3& vLook_)
+{
+	_vec3 vLook = vLook_;
+	_vec3 vUp = { 0.f,1.f,0.f };
+	_vec3 vRight = {};
+	vLook = Vector3_::Normalize(vLook);
+	vRight = Vector3_::CrossProduct(vUp, vLook);
+	vUp = Vector3_::CrossProduct(vLook, vRight);
+
+	this->Set_StateInfo(STATE::STATE_RIGHT, &vRight);
+	this->Set_StateInfo(STATE::STATE_UP, &vUp);
+	this->Set_StateInfo(STATE::STATE_LOOK, &vLook);
+
+
+}
+
 HRESULT CTransform::Ready_Transform()
 {
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());

@@ -20,22 +20,25 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut;
 
-	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vPosition = float4(vIn.vPosition * 2.f, 1.f);
 	vOut.vTexUV = vIn.vTexUV;
+
 
 	return vOut;
 }
 
 float4	PS_Main(VS_OUT vIn) : SV_Target
 {
-	float4	vDiffuseTex	= g_texture0.Sample(Sampler0, vIn.vTexUV);
-	float4	vShadeTex	= g_texture1.Sample(Sampler0, vIn.vTexUV);
+	float4	vDiffuseTex		= g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4	vShadeTex		= g_texture1.Sample(Sampler0, vIn.vTexUV);
+	float4	vSpecularTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
 
-	//float4	vTexMerge = vDiffuseTex * vShadeTex + vSpecTex+ vPointLightTex;1
-	
-	float4	vTexMerge = (vDiffuseTex *vShadeTex);
-	//float4	vTexMerge = vDiffuseTex;
-	
+
+
+
+	//float4	vTexMerge = (vDiffuseTex);
+	float4	vTexMerge = (vDiffuseTex* vShadeTex);
+
 
 	return  vTexMerge;
 }

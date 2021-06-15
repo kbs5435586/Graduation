@@ -10,6 +10,7 @@ CDebug_Camera::CDebug_Camera()
 
 CDebug_Camera::CDebug_Camera(const CDebug_Camera& rhs)
 	: CCamera(rhs)
+
 {
 }
 
@@ -172,7 +173,7 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if(m_IsFix)
 	{
-		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		/*CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Orc02", L"Com_Transform", 0);
 
 		_vec3 vUp, vPos, vLook;
@@ -189,7 +190,7 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 		vLook = Vector3_::ScalarProduct(vLook, 15.f);
 		_vec3 vTemp = Vector3_::Subtract(vUp, vLook);
 		vPos = Vector3_::Add(vPos, vTemp);
-		m_pTransform->Set_StateInfo(CTransform::STATE::STATE_POSITION, &vPos);
+		m_pTransform->Set_StateInfo(CTransform::STATE::STATE_POSITION, &vPos);*/
 	}
 	
 	return _int();

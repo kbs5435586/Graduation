@@ -61,12 +61,6 @@ void CUI_Main::Render_GameObject()
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
-	matWorld._11 = m_fSizeX;
-	matWorld._22 = m_fSizeY;
-
-	matWorld._41 = m_fX - (WINCX >> 1);
-	matWorld._42 = -m_fY + (WINCY >> 1);
-
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -74,10 +68,12 @@ void CUI_Main::Render_GameObject()
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	ComPtr<ID3D12DescriptorHeap>	pDiffuseTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pSpecularTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(1)->pRtt->GetSRV().Get();
 
 	CDevice::GetInstance()->SetTextureToShader(pDiffuseTex.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->SetTextureToShader(pShadeTex.Get(), TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(pSpecularTex.Get(), TEXTURE_REGISTER::t2);
 
 
 
@@ -94,7 +90,7 @@ HRESULT CUI_Main::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_LIGHT)))
 		return E_FAIL;
 
 	return S_OK;

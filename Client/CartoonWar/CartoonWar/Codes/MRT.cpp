@@ -54,6 +54,10 @@ HRESULT CMRT::Ready_MRT(_uint iCnt, tRtt* arrRT, CRTT* pDsTex)
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		m_ResToTarget[i] = barrier;
 	}
+
+
+	m_tViewPort = D3D12_VIEWPORT{ 0.f, 0.f, (_float)m_tArr[0].pRtt->Get_Desc().Width, (_float)m_tArr[0].pRtt->Get_Desc().Height, 0.f, 1.f };
+	m_tScissorRect = D3D12_RECT{ 0, 0, (LONG)m_tArr[0].pRtt->Get_Desc().Width, (LONG)m_tArr[0].pRtt->Get_Desc().Height };
 	return S_OK;
 }
 
@@ -65,6 +69,9 @@ void CMRT::OM_Set(_uint iCnt, _uint iOffset)
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDsTex->GetDSV()->GetCPUDescriptorHandleForHeapStart();
 
+	CDevice::GetInstance()->GetCmdLst()->RSSetViewports(1, &m_tViewPort);
+	CDevice::GetInstance()->GetCmdLst()->RSSetScissorRects(1, &m_tScissorRect);
+
 	// 타겟 지정	
 	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(iCnt, &hRTVHandle, FALSE, &hDSVHandle);
 }
@@ -73,6 +80,9 @@ void CMRT::OM_Set()
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
 	D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDsTex->GetDSV()->GetCPUDescriptorHandleForHeapStart();
+
+	CDevice::GetInstance()->GetCmdLst()->RSSetViewports(1, &m_tViewPort);
+	CDevice::GetInstance()->GetCmdLst()->RSSetScissorRects(1, &m_tScissorRect);
 
 	// 타겟 지정	
 	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(m_iRTCnt, &hRTVHandle, TRUE/*DescHeap 에 연속적으로 있다*/, &hDSVHandle);

@@ -88,6 +88,7 @@ HRESULT CManagement::Add_LightInfo(LIGHT& tLightInfo)
 }
 
 
+
 void CManagement::SetUp_OnShader_Light()
 {
 	return m_pLight_Manager->SetUp_OnShader();

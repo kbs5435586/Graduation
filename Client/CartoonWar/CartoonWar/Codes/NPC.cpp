@@ -128,7 +128,7 @@ void CNPC::Render_GameObject()
 
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
-		//m_pMeshCom->Render_Mesh(i);
+		m_pMeshCom->Render_Mesh(i);
 	}
 
 
