@@ -181,7 +181,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 1.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
@@ -243,7 +242,7 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
-	tProjDesc.fFovY = XMConvertToRadians(60.f);
+	tProjDesc.fFovY = XMConvertToRadians(5.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = 1.f;
 	tProjDesc.fFar = 100000.f;

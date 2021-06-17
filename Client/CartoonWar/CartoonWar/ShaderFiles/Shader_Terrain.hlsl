@@ -13,8 +13,6 @@ struct VS_OUT
 	float4	vNormal				: NORMAL;
 	float2	vTexUV				: TEXCOORD0;
 	float4	vWorldPos			: TEXCOORD1;
-	float4	vProjPos			: TEXCOORD2;
-	float	fFogFactor			: FOG;
 };
 
 struct PS_OUT
@@ -32,13 +30,6 @@ VS_OUT VS_Main(VS_IN vIn)
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWV);
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWV));
 	vOut.vTexUV = vIn.vTexUV;
-	vOut.vProjPos = vOut.vPosition;
-
-
-	vOut.fFogFactor = saturate((fFogEnd - vCamPos.z) / (fFogEnd - fFogStart));
-
-
-
 
 	return vOut;
 }
@@ -70,12 +61,9 @@ PS_OUT PS_Main(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 	AD_Light tCol = (AD_Light)0;
 	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
-	float4	vNormal  = vIn.vNormal;
-	float4	vPosition  = vIn.vWorldPos;
-
 
 	vOut.vDiffuseTex = vOutColor;
-	vOut.vNormalTex = vNormal;
-	vOut.vPositionTex = vPosition;
+	vOut.vNormalTex = vIn.vNormal;
+	vOut.vPositionTex = vIn.vWorldPos;
 	return vOut;
 }

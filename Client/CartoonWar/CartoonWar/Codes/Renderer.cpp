@@ -31,7 +31,7 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eGroup, CGameObject* pGameObject)
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_RenderGroup()
+HRESULT CRenderer::Render_RenderGroup()//106 104
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)

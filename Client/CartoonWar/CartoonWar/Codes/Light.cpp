@@ -4,8 +4,6 @@
 #include "Transform.h"
 #include "Management.h"
 #include "Debug_Camera.h"
-_vec3 vAsis[3] = { { 1.f, 0.f, 0.f }, { 0.f, 1.f, 0.f } ,{ 0.f, 0.f, 1.f } };
-
 CLight::CLight()
 {
 
@@ -37,7 +35,7 @@ void CLight::Render()
 	MAINPASS tMainPass = {};
 	REP tRep = {};
 	tRep.m_arrInt[0] = 1;
-	//tRep.m_arrMat[0] = CCamera_Manager::GetInstance()->m_matViewTemp * CCamera_Manager::GetInstance()->m_matShadow;
+	_matrix matShadowWorld =dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_Matrix();
 	_matrix matShadowView = CCamera_Manager::GetInstance()->GetShadowView();
 	_matrix matShadowProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
 	tRep.m_arrMat[0] = matShadowView*matShadowProj ;
@@ -46,7 +44,7 @@ void CLight::Render()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 	
 
-	m_pShader_Dir->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	m_pShader_Dir->SetUp_OnShader(matShadowWorld, matView, matProj, tMainPass);
 	_uint iOffeset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
@@ -79,54 +77,15 @@ HRESULT CLight::CreateInputLayout(_uint iType)
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (iType == 0)
-	{
-		if (FAILED(m_pShader_Dir->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_FORWARD)))
-			return E_FAIL;
-	}
-	else if (iType == 1)
-	{
-		if (FAILED(m_pShader_Point->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_LIGHT)))
-			return E_FAIL;
-	}
+
+	if (FAILED(m_pShader_Dir->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_LIGHT)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
 
 
-
-void CLight::Set_LookAt(const _vec3& vLook)
-{
-	_vec3 vFront = vLook;
-	vFront.Normalize();
-
-	_vec3 vTempUp = { 0.f, 1.f, 0.f };
-	_vec3 vRight = vTempUp.Cross(vLook);
-	vRight.Normalize();
-
-	_vec3 vUp = vFront.Cross(vRight);
-	vUp.Normalize();
-
-	Matrix matRot = XMMatrixIdentity();
-
-	matRot.Right(vRight);
-	matRot.Up(vUp);
-	matRot.Forward(vFront);
-
-	m_vLocalRot = DecomposeRotMat(matRot);
-
-	// 방향벡터(우, 상, 전) 갱신하기	
-	Matrix matRotate = XMMatrixRotationX(m_vLocalRot.x);
-	matRotate *= XMMatrixRotationY(m_vLocalRot.y);
-	matRotate *= XMMatrixRotationZ(m_vLocalRot.z);
-
-	for (UINT i = 0; i < 3; ++i)
-	{
-		m_vLocalDir[i] = XMVector3TransformNormal(vAsis[i], matRotate);
-		m_vLocalDir[i].Normalize();
-		m_vWorldDir[i] = m_vLocalDir[i];
-	}
-}
 
 CLight* CLight::Create(LIGHT& tLightInfo)
 {
@@ -148,5 +107,4 @@ void CLight::Free()
 	Safe_Release(m_pShader_Point);
 	Safe_Release(m_pShader_Merge);
 	Safe_Release(m_pShader_Dir);
-	//Safe_Delete(m_pLight);
 }

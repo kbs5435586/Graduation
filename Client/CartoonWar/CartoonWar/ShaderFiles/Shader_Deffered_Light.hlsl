@@ -25,6 +25,7 @@ VS_OUT	VS_DirLight(VS_IN vIn)
 	VS_OUT	vOut;
 
 	vOut.vPosition = float4(vIn.vPosition*2.f ,1.f);
+	//vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
 }
@@ -34,19 +35,20 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
 
-	float3 vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV).xyz;
-	float3 vPosition = g_texture1.Sample(Sampler0, vIn.vTexUV).xyz;
+	float4 vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float4 vPosition = g_texture1.Sample(Sampler0, vIn.vTexUV);
 	
 	if (vPosition.z <= 1.f)
 	{
 		clip(-1);
 	}
 
-	LIGHT tCurCol = Calculate_Light(0, vNormalTex, vPosition);
+	LIGHT tCurCol = Calculate_Light(0, vNormalTex.xyz, vPosition.xyz);
 	
 	if (dot(tCurCol.vDiffuse, tCurCol.vDiffuse) != 0.f)
 	{
-		float4 vWorldPos = mul(float4(vPosition.xyz, 1.f), matViewInv); // 메인카메라 view 역행렬을 곱해서 월드좌표를 알아낸다.
+		float4 vWorldPos = mul(vPosition, matViewInv); // 메인카메라 view 역행렬을 곱해서 월드좌표를 알아낸다.
+		//vWorldPos = mul(vPosition, matWorld); // 메인카메라 view 역행렬을 곱해서 월드좌표를 알아낸다.
 		float4 vShadowProj = mul(vWorldPos, g_mat_0); // 광원 시점으로 투영시킨 좌표 구하기
 		float fDepth = vShadowProj.z / vShadowProj.w; // w 로 나눠서 실제 투영좌표 z 값을 구한다.(올바르게 비교하기 위해서)
 
@@ -54,6 +56,7 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 		float2 vShadowUV = float2((vShadowProj.x / vShadowProj.w) * 0.5f + 0.5f
 			, (vShadowProj.y / vShadowProj.w) * -0.5f + 0.5f);
 
+		//vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
 		if (0.01f < vShadowUV.x && vShadowUV.x < 0.99f && 0.01f < vShadowUV.y && vShadowUV.y < 0.99f)
 		{
 			float fShadowDepth = g_texture2.Sample(Sampler0, vShadowUV).r;
@@ -71,6 +74,6 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 
 
 	vOut.vDiffuse = tCurCol.vDiffuse + tCurCol.vAmbient;
-	vOut.vSpecular = float4(vPosition, 1.f);
+	vOut.vSpecular = tCurCol.vDiffuse + tCurCol.vAmbient;
 	return vOut;
 }
