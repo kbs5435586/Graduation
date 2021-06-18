@@ -44,7 +44,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 	// Defferd MRT
 	{
 		tRtt arrRT[3] = {};
-		arrRT[0].vClear_Color = { 1.f,0.f,0.f,1.f };
+		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[0].pRtt= CRTT::Create(L"DiffuseTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);

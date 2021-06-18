@@ -115,7 +115,7 @@ void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 {
 	m_matShadowView = m_pTransform->Get_Matrix_Inverse();
 
-	m_matShadowProj = XMMatrixOrthographicLH((_float)10, (_float)10, 1.f, 10000.f);
+	m_matShadowProj = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 1.f, 10000.f);
 	CCamera_Manager::GetInstance()->SetShadowMatView(m_matShadowView);
 	CCamera_Manager::GetInstance()->SetShadowMatProj(m_matShadowProj);
 }
