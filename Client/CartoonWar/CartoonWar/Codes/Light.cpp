@@ -35,7 +35,7 @@ void CLight::Render()
 	MAINPASS tMainPass = {};
 	REP tRep = {};
 	tRep.m_arrInt[0] = 1;
-	_matrix matShadowWorld =dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_Matrix();
+	//_matrix matShadowWorld =dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_Matrix();
 	_matrix matShadowView = CCamera_Manager::GetInstance()->GetShadowView();
 	_matrix matShadowProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
 	tRep.m_arrMat[0] = matShadowView*matShadowProj ;
@@ -44,7 +44,7 @@ void CLight::Render()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 	
 
-	m_pShader_Dir->SetUp_OnShader(matShadowWorld, matView, matProj, tMainPass);
+	m_pShader_Dir->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffeset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
