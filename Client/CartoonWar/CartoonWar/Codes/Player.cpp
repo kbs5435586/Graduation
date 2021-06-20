@@ -34,9 +34,14 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
-	m_pAnimCom->SetBones(m_pMeshCom->GetBones());
-	m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-	m_pAnimCom->LateInit();
+	m_pAnimCom[0]->SetBones(m_pMeshCom[0]->GetBones());
+	m_pAnimCom[0]->SetAnimClip(m_pMeshCom[0]->GetAnimClip());
+	m_pAnimCom[0]->LateInit();
+
+	m_pAnimCom[1]->SetBones(m_pMeshCom[1]->GetBones());
+	m_pAnimCom[1]->SetAnimClip(m_pMeshCom[1]->GetAnimClip());
+	m_pAnimCom[1]->LateInit();
+
 
 	_vec3 vColliderSize = { 40.f ,160.f,40.f };
 	//_vec3 vColliderSize = { 70.f ,160.f,70.f };
@@ -47,6 +52,9 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
+
+	m_pCurAnimCom = m_pAnimCom[0];
+	m_pCurMeshCom = m_pMeshCom[0];
 
 	return S_OK;
 }
@@ -91,7 +99,7 @@ void CPlayer::Render_GameObject()
 	pManagement->AddRef();
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 		MAINPASS tMainPass = {};
@@ -101,7 +109,7 @@ void CPlayer::Render_GameObject()
 
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
-		tRep.m_arrInt[1] = m_pAnimCom->GetBones()->size();
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -125,9 +133,9 @@ void CPlayer::Render_GameObject()
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
 		}
 
-		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
-		m_pMeshCom->Render_Mesh(i);
+		m_pCurMeshCom->Render_Mesh(i);
 	}
 
 
@@ -138,13 +146,14 @@ void CPlayer::Render_GameObject()
 
 void CPlayer::Render_GameObject_Shadow()
 {
+	
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
 
 
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
 		MAINPASS tMainPass = {};
@@ -157,7 +166,7 @@ void CPlayer::Render_GameObject_Shadow()
 
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
-		tRep.m_arrInt[1] = m_pAnimCom->GetBones()->size();
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
 
 		m_pShaderCom_Shadow->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -169,9 +178,9 @@ void CPlayer::Render_GameObject_Shadow()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
-		m_pMeshCom->Render_Mesh(i);
+		m_pCurMeshCom->Render_Mesh(i);
 	}
 	Safe_Release(pManagement);
 }
@@ -227,13 +236,15 @@ CGameObject* CPlayer::Clone_GameObject(void* pArg, _uint iIdx)
 
 void CPlayer::Free()
 {
-	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pMeshCom[0]);
+	Safe_Release(m_pMeshCom[1]);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
-	Safe_Release(m_pAnimCom);
+	Safe_Release(m_pAnimCom[0]);
+	Safe_Release(m_pAnimCom[1]);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
@@ -259,9 +270,13 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
-	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+	m_pMeshCom[0] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
+	NULL_CHECK_VAL(m_pMeshCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh0", m_pMeshCom[0])))
+		return E_FAIL;
+	m_pMeshCom[1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Cavalry");
+	NULL_CHECK_VAL(m_pMeshCom[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh1", m_pMeshCom[1])))
 		return E_FAIL;
 
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
@@ -278,9 +293,13 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
-	m_pAnimCom = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+	m_pAnimCom[0] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[0], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim0", m_pAnimCom[0])))
+		return E_FAIL;
+	m_pAnimCom[1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim1", m_pAnimCom[1])))
 		return E_FAIL;
 
 	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
@@ -971,7 +990,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 
 
-	if (m_pAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
 		{
@@ -986,6 +1005,32 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 
 
+
+
+	if (GetAsyncKeyState('1') & 0x8000)
+	{
+		/*if (FAILED(this->Delete_Component(L"Com_Mesh", m_pMeshCom)))
+			return;
+		if (FAILED(this->Delete_Component(L"Com_Anim", m_pAnimCom)))
+			return;
+		Safe_Release(m_pMeshCom);
+		Safe_Release(m_pAnimCom);
+		m_pMeshCom = (CMesh*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mounted_Mage");
+		NULL_CHECK_VOID(m_pMeshCom);
+		if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+			return;
+		m_pAnimCom = (CAnimator*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VOID(m_pAnimCom);
+		if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
+			return ;
+		m_pAnimCom->SetBones(m_pMeshCom->GetBones());
+		m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
+		m_pAnimCom->LateInit();*/
+
+		m_pCurAnimCom = m_pAnimCom[1];
+		m_pCurMeshCom = m_pMeshCom[1];
+		m_eCurClass = CLASS::CLASS_CAVALRY;
+	}
 }
 
 void CPlayer::Compute_Matrix_X()

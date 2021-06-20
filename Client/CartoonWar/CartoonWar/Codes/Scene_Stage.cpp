@@ -153,12 +153,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))

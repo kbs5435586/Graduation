@@ -73,8 +73,13 @@ HRESULT CGameObject::Delete_Component(const _tchar* pComponentTag, CComponent* p
 		return E_FAIL;
 
 	if (nullptr != Find_Component(pComponentTag))
-		m_mapComponent.erase(pComponentTag);
-	Safe_Release(pComponent);
+	{
+
+		auto iter = m_mapComponent.find(pComponentTag);
+		m_mapComponent.erase(iter);
+		//Safe_Release(pComponent);
+	}
+
 	return S_OK;
 }
 
