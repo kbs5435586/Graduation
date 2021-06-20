@@ -510,15 +510,15 @@ struct tFrameTrans
 	XMFLOAT4	qRot;
 };
 
-//struct Player_Info
-//{
-//	int		id;
-//	float	x;
-//	float	y;
-//	float	z;
-//	char	name[MAX_ID_LEN + 1];
-//	bool	showCharacter;
-//};
+struct Session
+{
+	int		id;
+	float	x;
+	float	y;
+	float	z;
+	char	name[MAX_ID_LEN + 1];
+	bool	showObject;
+};
 
 
 

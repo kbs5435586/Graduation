@@ -89,6 +89,7 @@ using namespace DirectX::SimpleMath;
 #include "Extern.h"
 #include "Function.h"
 #include "Typedef.h"
+#include "protocol.h"
 #include "Struct.h"
 #include "Funtor.h"
 #include "Hash.h"
@@ -97,7 +98,7 @@ using namespace DirectX::SimpleMath;
 #include "Device.h"
 #include "Input.h"
 #include "Camera_Manager.h"
-//#include "Server_Manager.h"
+#include "Server_Manager.h"
 
 
 

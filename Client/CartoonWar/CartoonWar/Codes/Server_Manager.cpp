@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Server_Manager.h"
 #include "Management.h"
+#include "Layer.h"
+#include "MyRect.h"
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)
@@ -19,7 +21,12 @@ void CServer_Manager::err_quit(const char* msg)
 
 CServer_Manager::CServer_Manager()
 {
-
+	/*
+	if (FAILED(Ready_Layer_Orc02(L"Layer_Orc02", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Orc03(L"Layer_Orc03", pManagement)))
+		return E_FAIL;
+	*/
 };
 
 BOOL CServer_Manager::InitServer(HWND hWnd)
@@ -37,8 +44,10 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &server_a.sin_addr);
+	inet_pton(AF_INET, "192.168.218.62", &server_a.sin_addr); // 223.38.53.103 // 127.0.0.1 // 192.168.218.217 // 192.168.218.2
 	server_a.sin_port = htons(SERVER_PORT);
+
+	init_client();
 
 	retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
 	if ((retval == SOCKET_ERROR) && (WSAEWOULDBLOCK != WSAGetLastError())) // 비동기 connect는 바로 리턴되면서 WSAEWOULDBLOCK 에러를 발생시킴
@@ -68,31 +77,47 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
 		short recv_id = my_packet->id;
 		my_id = recv_id;
+		my_hp = my_packet->hp;
 		CTransform* pTransform;
 		if (ENUM_PLAYER1 == recv_id)
 		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Cube", L"Com_Transform", 0);
+			//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")))
+			//	return;
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Orc02", L"Com_Transform", 0);
 		}
 		else if (ENUM_PLAYER2 == recv_id)
 		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Wire", L"Com_Transform", 0);
+			//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04")))
+			//	return;
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Orc04", L"Com_Transform", 0);
 		}
-		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-
-		vPos.x = m_objects[recv_id].x = my_packet->x;
-		vPos.y = m_objects[recv_id].y = my_packet->y;
-		vPos.z = m_objects[recv_id].z = my_packet->z;
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_objects[recv_id].isFirst = true;
+		_matrix Pos = pTransform->Get_Matrix();
+		Pos._11 = my_packet->r_x;
+		Pos._12 = my_packet->r_y;
+		Pos._13 = my_packet->r_z;
+		Pos._21 = my_packet->u_x;
+		Pos._22 = my_packet->u_y;
+		Pos._23 = my_packet->u_z;
+		Pos._31 = my_packet->l_x;
+		Pos._32 = my_packet->l_y;
+		Pos._33 = my_packet->l_z;
+		Pos._41 = my_packet->p_x;
+		Pos._42 = my_packet->p_y;
+		Pos._43 = my_packet->p_z;
+		m_objects[recv_id].showObject = true;
+		m_objects[recv_id].anim = 14;
+		m_objects[recv_id].hp = my_packet->hp;
+		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
-		m_objects[recv_id].showCharacter = true;
+		isLogin = true;
 
 		Safe_Release(managment);
 	}
 	break;
-
 	case SC_PACKET_ENTER:
 	{
 		managment = CManagement::GetInstance();
@@ -104,24 +129,57 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
 
-		if (recv_id < NPC_ID_START) // 플레이어 일때
+		if (recv_id < NPC_START) // 플레이어 일때
 		{
 			if (ENUM_PLAYER1 == recv_id) // 다른 플레이어 일때
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", 0);
+				if (!m_objects[recv_id].isFirst)
+				{
+					//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc02", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")))
+					//	return;
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc02", L"Com_Transform", 0);
+				}
+				else
+				{
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc02", L"Com_Transform", 0);
+				}
 			}
 			if (ENUM_PLAYER2 == recv_id) // 다른 플레이어 일때
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", 0);
+				if (!m_objects[recv_id].isFirst)
+				{
+					//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc04", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc04")))
+					//	return;
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc04", L"Com_Transform", 0);
+				}
+				else
+				{
+					pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+						L"Layer_Orc04", L"Com_Transform", 0);
+				}
 			}
 		}
 		else // NPC 일때
 		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-				L"Layer_Rect", L"Com_Transform", npc_id_to_idx(recv_id));
+			if (!m_objects[recv_id].isFirst)
+			{
+				int iTemp = npc_id_to_idx(recv_id);
+				//if (FAILED(managment->Add_GameObjectToLayer(L"GameObject_Orc03", (_uint)SCENEID::SCENE_STAGE, L"Layer_Orc03", nullptr, nullptr, iTemp)))
+				//	return;
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc03", L"Com_Transform", iTemp);
+			}
+			else
+			{
+				int iTemp = npc_id_to_idx(recv_id);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc03", L"Com_Transform", iTemp);
+			}
 		}
+		m_objects[recv_id].isFirst = true;
 		_matrix Pos = pTransform->Get_Matrix();
 		strcpy_s(m_objects[recv_id].name, my_packet->name);
 		Pos._11 = my_packet->r_x;
@@ -136,7 +194,9 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._41 = my_packet->p_x;
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
-		m_objects[recv_id].showCharacter = true;
+		m_objects[recv_id].showObject = true;
+		m_objects[recv_id].anim = 14;
+		m_objects[recv_id].hp = my_packet->hp;
 		pTransform->Set_Matrix(Pos);
 		Safe_Release(managment);
 	}
@@ -151,27 +211,29 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
-		if (recv_id < NPC_ID_START) // 플레이어
+		if (recv_id < NPC_START) // 플레이어
 		{
 			if (ENUM_PLAYER1 == recv_id)
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", 0);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc02", L"Com_Transform", 0);
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", 0);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
 			}
 		}
 		else // NPC 
 		{
 			if (0 != m_objects.count(recv_id))
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Rect", L"Com_Transform", npc_id_to_idx(recv_id));
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
+
 			}
 		}
+		m_objects[recv_id].anim = 29;
 		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		vPos.x = my_packet->x;
 		vPos.y = my_packet->y;
@@ -191,27 +253,29 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
 
-		if (recv_id < NPC_ID_START) // 플레이어일때
+		if (recv_id < NPC_START) // 플레이어일때
 		{
 			if (ENUM_PLAYER1 == recv_id)
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Cube", L"Com_Transform", 0);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc02", L"Com_Transform", 0);
+
 			}
 			else if (ENUM_PLAYER2 == recv_id) // 다른 플레이어
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Wire", L"Com_Transform", 0);
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
 			}
 		}
 		else
 		{
 			if (0 != m_objects.count(recv_id))
 			{
-				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_LOGO,
-					L"Layer_Rect", L"Com_Transform", npc_id_to_idx(recv_id));
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc03", L"Com_Transform", npc_id_to_idx(recv_id));
 			}
 		}
+		m_objects[recv_id].anim = 29;
 		_vec3 rPos = *pTransform->Get_StateInfo(CTransform::STATE_RIGHT);
 		_vec3 uPos = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 		_vec3 lPos = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
@@ -232,19 +296,130 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int other_id = my_packet->id;
 
 		if (0 != m_objects.count(other_id))
-			m_objects[other_id].showCharacter = false;
+			m_objects[other_id].showObject = false;
 
 		for (int i = MY_NPC_START(other_id); i <= MY_NPC_END(other_id); ++i)
 		{
 			if (0 != m_objects.count(i))
-				m_objects[i].showCharacter = false;
+				m_objects[i].showObject = false;
 		}
-	}fkeh 
+	}
 	break;
 	case SC_PACKET_ADD_NPC_OK:
 	{
 		sc_packet_npc_add_ok* my_packet = reinterpret_cast<sc_packet_npc_add_ok*>(ptr);
 		int npc_id = my_packet->id;
+	}
+	break;
+	case SC_PACKET_IDLE:
+	{
+		sc_packet_idle* my_packet = reinterpret_cast<sc_packet_idle*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].anim = 14;
+	}
+	break;
+	case SC_PACKET_ATTACK:
+	{
+		sc_packet_attack* my_packet = reinterpret_cast<sc_packet_attack*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].anim = 0;
+	}
+	break;
+	case SC_PACKET_ATTACKED:
+	{
+		sc_packet_attacked* my_packet = reinterpret_cast<sc_packet_attacked*>(ptr);
+		int recv_id = my_packet->id;
+		short recv_hp = my_packet->hp;
+		m_objects[recv_id].hp = recv_hp;
+		m_objects[recv_id].anim = 12;
+	}
+	break;
+	case SC_PACKET_DEAD:
+	{
+		sc_packet_dead* my_packet = reinterpret_cast<sc_packet_dead*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].hp = 0;
+		m_objects[recv_id].anim = 8;
+
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+		CTransform* pTransform;
+		if (0 == m_objects[my_id].hp)
+		{
+			if (ENUM_PLAYER1 == my_id)
+			{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc02", L"Com_Transform", 0);
+				_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+				vPos.x = 50.f;
+				vPos.y = 0.2f;
+				vPos.z = 90.f;
+				pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				send_position_packet(&vPos);
+
+			}
+			else if (ENUM_PLAYER2 == my_id) // 다른 플레이어
+			{
+				pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+					L"Layer_Orc04", L"Com_Transform", 0);
+				_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+				vPos.x = 450.f;
+				vPos.y = 0.2f;
+				vPos.z = 360.f;
+				pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+				send_position_packet(&vPos);
+			}
+		}
+		Safe_Release(managment);
+	}
+	break;
+	case SC_PACKET_FLAG_INFO:
+	{
+		sc_packet_flag_info* my_packet = reinterpret_cast<sc_packet_flag_info*>(ptr);
+		int recv_id = my_packet->id;
+
+		CTransform* pTransform;
+		_vec3 vPos;
+
+		flags[recv_id].isBlue = my_packet->isBlue;
+		flags[recv_id].isRed = my_packet->isRed;
+
+		vPos.x = my_packet->p_x;
+		vPos.y = my_packet->p_y;
+		vPos.z = my_packet->p_z;
+
+		int iTemp = 0;
+
+		for (auto& iter : managment->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Rect")->Get_GameObjectLst())
+		{
+			dynamic_cast<CMyRect*>(iter)->m_iNum = iTemp;
+			iTemp++;
+		}
+
+		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Flag", L"Com_Transform", recv_id);
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+
+		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Rect", L"Com_Transform", recv_id);
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	}
+	break;
+	case SC_PACKET_FLAG_BOOL:
+	{
+		sc_packet_flag_bool* my_packet = reinterpret_cast<sc_packet_flag_bool*>(ptr);
+		int recv_id = my_packet->id;
+
+		flags[recv_id].isBlue = my_packet->isBlue;
+		flags[recv_id].isRed = my_packet->isRed;
+	}
+	break;
+	case SC_PACKET_TIME:
+	{
+		sc_packet_time* my_packet = reinterpret_cast<sc_packet_time*>(ptr);
+		game_time = my_packet->time;
 	}
 	break;
 	default:
@@ -280,7 +455,6 @@ void CServer_Manager::process_data(char* net_buf, size_t io_byte)
 void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 {
 	static int count = 0;
-	char TempLog[256];
 
 	switch (WSAGETSELECTEVENT(lParam))
 	{
@@ -334,6 +508,25 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	send_packet(&m_packet);
 }
 
+void CServer_Manager::send_attack_packet()
+{
+	cs_packet_attack m_packet;
+	m_packet.type = CS_PACKET_ATTACK;
+	m_packet.size = sizeof(m_packet);
+	send_packet(&m_packet);
+}
+
+void CServer_Manager::send_position_packet(_vec3* pos)
+{
+	cs_packet_position m_packet;
+	m_packet.type = CS_PACKET_POSITION;
+	m_packet.size = sizeof(m_packet);
+	m_packet.x = pos->x;
+	m_packet.y = pos->y;
+	m_packet.z = pos->z;
+	send_packet(&m_packet);
+}
+
 void CServer_Manager::send_rotate_packet(unsigned char dir)
 {
 	cs_packet_rotate m_packet;
@@ -370,28 +563,41 @@ void CServer_Manager::send_change_formation_packet()
 	send_packet(&l_packet);
 }
 
+void CServer_Manager::send_idle_packet()
+{
+	cs_packet_idle l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_IDLE;
+	send_packet(&l_packet);
+}
+
 void CServer_Manager::update_key_input()
 {
-	if ((GetAsyncKeyState('1') & 0x8000))
+	/*if ((GetAsyncKeyState('1') & 0x8000))
 	{
 		send_npc_act_packet(DO_ATTACK);
+		isSendOnePacket = false;
 	}
 	if ((GetAsyncKeyState('2') & 0x8000))
 	{
 		send_npc_act_packet(DO_DEFENCE);
+		isSendOnePacket = false;
 	}
 	if ((GetAsyncKeyState('3') & 0x8000))
 	{
 		send_npc_act_packet(DO_HOLD);
+		isSendOnePacket = false;
 	}
 	if ((GetAsyncKeyState('4') & 0x8000))
 	{
 		send_npc_act_packet(DO_FOLLOW);
+		isSendOnePacket = false;
 	}
 	if ((GetAsyncKeyState('5') & 0x8000))
 	{
 		send_npc_act_packet(DO_RANDMOVE);
-	}
+		isSendOnePacket = false;
+	}*/
 	if ((GetAsyncKeyState('6') & 0x8000))
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
@@ -399,10 +605,10 @@ void CServer_Manager::update_key_input()
 		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			send_change_formation_packet();
+			isSendOnePacket = false;
 			Set_ChangeFormation_CoolTime(high_resolution_clock::now());
 		}
 	}
-
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
@@ -410,33 +616,71 @@ void CServer_Manager::update_key_input()
 		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			send_add_npc_packet();
+			isSendOnePacket = false;
 			Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
-	if (GetAsyncKeyState('T') & 0x8000)
+
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
-		send_move_packet(GO_FORWARD);
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- Get_Attack_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			send_attack_packet();
+			m_objects[my_id].anim = 0;
+			isSendOnePacket = false;
+			Set_Attack_CoolTime(high_resolution_clock::now());
+		}
 	}
-	if (GetAsyncKeyState('F') & 0x8000)
+	else
 	{
-		send_move_packet(GO_LEFT);
+		if (GetAsyncKeyState('T') & 0x8000)
+		{
+			send_move_packet(GO_FORWARD);
+			isSendOnePacket = false;
+		}
+		//if (GetAsyncKeyState('F') & 0x8000)
+		//{
+		//	send_move_packet(GO_LEFT);
+		//	isSendOnePacket = false;
+		//}
+		if (GetAsyncKeyState('G') & 0x8000)
+		{
+			send_move_packet(GO_BACK);
+			isSendOnePacket = false;
+		}
+		//if (GetAsyncKeyState('H') & 0x8000)
+		//{
+		//	send_move_packet(GO_RIGHT);
+		//	isSendOnePacket = false;
+		//}
+		if (GetAsyncKeyState('F') & 0x8000)
+		{
+			send_rotate_packet(TURN_LEFT);
+			isSendOnePacket = false;
+		}
+		if (GetAsyncKeyState('H') & 0x8000)
+		{
+			send_rotate_packet(TURN_RIGHT);
+			isSendOnePacket = false;
+		}
 	}
-	if (GetAsyncKeyState('G') & 0x8000)
-	{
-		send_move_packet(GO_BACK);
-	}
-	if (GetAsyncKeyState('H') & 0x8000)
-	{
-		send_move_packet(GO_RIGHT);
-	}
-	if (GetAsyncKeyState('O') & 0x8000)
-	{
-		send_rotate_packet(TURN_LEFT);
-	}
-	if (GetAsyncKeyState('P') & 0x8000)
-	{
-		send_rotate_packet(TURN_RIGHT);
-	}
+
+	//if (true == isLogin)
+	//{
+	//	if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
+	//		!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000) &&
+	//		!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+	//	{
+	//		if (false == isSendOnePacket)
+	//		{
+	//			send_idle_packet();
+	//			isSendOnePacket = true;
+	//			m_objects[my_id].anim = 14;
+	//		}
+	//	}
+	//}
 	if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
@@ -456,12 +700,23 @@ short CServer_Manager::npc_idx_to_id(unsigned short id)
 
 short CServer_Manager::npc_id_to_idx(unsigned short id)
 {
-	return id - 29;;
+	return id - 29;
 }
+
+short CServer_Manager::object_idx_to_id(unsigned short id)
+{
+	return id + 450;
+}
+
+short CServer_Manager::object_id_to_idx(unsigned short id)
+{
+	return id - 450;
+}
+
 
 void CServer_Manager::send_npc_act_packet(unsigned char act)
 {
-	if (my_id < NPC_ID_START)
+	if (my_id < NPC_START)
 	{
 		cs_packet_npc_act l_packet;
 		l_packet.size = sizeof(l_packet);
@@ -490,12 +745,27 @@ void CServer_Manager::Free() // 여기에 소켓, 윈속 종료
 
 bool CServer_Manager::Get_ShowPlayer()
 {
-	return m_objects[my_id].showCharacter;
+	return m_objects[my_id].showObject;
 }
 
 bool CServer_Manager::Get_ShowNPC(int npc_index)
 {
-	return m_objects[npc_idx_to_id(npc_index)].showCharacter;
+	return m_objects[npc_idx_to_id(npc_index)].showObject;
+}
+
+bool CServer_Manager::Get_Blue(int id)
+{
+	return flags[id].isBlue;
+}
+
+bool CServer_Manager::Get_Red(int id)
+{
+	return flags[id].isRed;
+}
+
+bool CServer_Manager::Get_Login()
+{
+	return isLogin;
 }
 
 short CServer_Manager::Get_PlayerID()
@@ -503,9 +773,24 @@ short CServer_Manager::Get_PlayerID()
 	return my_id;
 }
 
+short CServer_Manager::Get_HP(int id)
+{
+	return m_objects[id].hp;
+}
+
 short CServer_Manager::Get_ShowOtherPlayer(int id)
 {
-	return m_objects[id].showCharacter;
+	return m_objects[id].showObject;
+}
+
+short CServer_Manager::Get_Anim(int id)
+{
+	return m_objects[id].anim;
+}
+
+float CServer_Manager::Get_GameTime()
+{
+	return game_time;
 }
 
 WPARAM CServer_Manager::Get_wParam()
@@ -523,6 +808,16 @@ high_resolution_clock::time_point CServer_Manager::Get_AddNPC_Cooltime()
 	return add_npc_ct;
 }
 
+high_resolution_clock::time_point CServer_Manager::Get_Attack_Cooltime()
+{
+	return attack_ct;
+}
+
+void CServer_Manager::Set_Attack_CoolTime(high_resolution_clock::time_point ct)
+{
+	attack_ct = ct;
+}
+
 void CServer_Manager::Set_AddNPC_CoolTime(high_resolution_clock::time_point ct)
 {
 	add_npc_ct = ct;
@@ -536,4 +831,10 @@ void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_p
 void CServer_Manager::Set_wParam(WPARAM p)
 {
 	m_wparam = p;
+}
+
+void CServer_Manager::init_client()
+{
+	isRed = false;
+	isBlue = false;
 }
