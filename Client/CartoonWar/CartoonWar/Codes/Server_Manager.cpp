@@ -684,9 +684,10 @@ bool CServer_Manager::Get_ShowPlayer()
 	return m_objects[my_id].showObject;
 }
 
-bool CServer_Manager::Get_ShowNPC(int npc_index)
+bool CServer_Manager::Get_ShowNPC(int index)
 {
-	return m_objects[npc_idx_to_id(npc_index)].showObject;
+	short npc_index = npc_idx_to_id(index);
+	return m_objects[npc_index].showObject;
 }
 
 bool CServer_Manager::Get_Blue(int id)
@@ -709,9 +710,15 @@ short CServer_Manager::Get_PlayerID()
 	return my_id;
 }
 
-short CServer_Manager::Get_HP(int id)
+short CServer_Manager::Get_PlayerHP(int id)
 {
 	return m_objects[id].hp;
+}
+
+short CServer_Manager::Get_NpcHP(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].hp;
 }
 
 short CServer_Manager::Get_ShowOtherPlayer(int id)

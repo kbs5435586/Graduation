@@ -3,11 +3,12 @@ enum ENUM_FUNCTION
 {
 	FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_PLAYER_MOVE_FOR_NPC,
 	FUNC_NPC_START, FUNC_NPC_RANDMOVE, FUNC_NPC_ATTACK, FUNC_NPC_DEFENCE,
-	FUNC_NPC_HOLD, FUNC_NPC_FOLLOW, FUNC_END
+	FUNC_NPC_HOLD, FUNC_NPC_FOLLOW, FUNC_CHECK_FLAG, FUNC_CHECK_TIME, FUNC_END
 };
 enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_END };
 enum ENUM_FORMATION { FM_FLOCK, FM_SQUARE, FM_PIRAMID, FM_CIRCLE, FM_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
+enum ENUM_TEAM { TEAM_RED, TEAM_BLUE, TEAM_END };
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
 
 struct Collision
@@ -40,12 +41,15 @@ struct SESSION // 클라이언트 정보
 	mutex m_cLock;
 	SOCKET m_socket;
 	int m_id;
-	int m_owner_id;
+	short m_owner_id;
+	short m_hp;
+	short m_team;
 	ENUM_FUNCTION m_last_order;
 	OverEx m_recv_over;
 	int m_prev_size; // 잘린 파일의 경우 이전에 저장해둔 버퍼 크기
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
 	atomic <ENUM_STATUS> m_status;
+	unsigned m_move_time; // 스트레스 테스트
 
 	float m_speed;
 	vector <SESSION*> m_boid;
@@ -74,4 +78,11 @@ struct event_type
 	{
 		return (wakeup_time > left.wakeup_time); // 순서대로 저장하는 용도
 	}
+};
+
+struct Flag
+{
+	bool isRed;
+	bool isBlue;
+	_vec3 pos;
 };

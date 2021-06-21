@@ -10,16 +10,20 @@ Server::~Server()
 
 void Server::error_display(const char* msg, int err_no)
 {
-    WCHAR* lpMsgBuf; 
-    FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-        FORMAT_MESSAGE_FROM_SYSTEM, 
-        NULL, err_no, 
+    WCHAR* lpMsgBuf;
+    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL, err_no,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         (LPTSTR)&lpMsgBuf, 0, NULL);
     cout << msg;
     wcout << L"에러 " << lpMsgBuf << endl;
     while (true);
     LocalFree(lpMsgBuf);
+}
+
+void Server::start_game()
+{
 }
 
 void Server::recv_packet_construct(int user_id, int io_byte)
@@ -41,7 +45,7 @@ void Server::recv_packet_construct(int user_id, int io_byte)
         if (packet_size <= rest_byte + g_clients[user_id].m_prev_size) // 지난번에 받은거랑 나머지랑 합쳐서 패킷 사이즈보다 크거나 같으면 패킷 완성
         {
             memcpy(g_clients[user_id].m_packet_buf + g_clients[user_id].m_prev_size, p, packet_size - g_clients[user_id].m_prev_size); // p에 있는걸 packet_size만큼 m_packet_buf에 복사
-            
+
             p += packet_size - g_clients[user_id].m_prev_size;
             rest_byte -= packet_size - g_clients[user_id].m_prev_size;
             packet_size = 0;
@@ -61,25 +65,26 @@ void Server::recv_packet_construct(int user_id, int io_byte)
 
 void Server::process_packet(int user_id, char* buf)
 {
-	switch (buf[1]) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
-	{
-	case CS_PACKET_LOGIN: // case에서는 변수를 선언할때 중괄호 해줘야 변수로 선언이 된다
-	{
-		cs_packet_login* packet = reinterpret_cast<cs_packet_login*>(buf);
+    switch (buf[1]) // 우리는 패킷을 0은 char size, 1은 char type으로 설정했으므로
+    {
+    case CS_PACKET_LOGIN: // case에서는 변수를 선언할때 중괄호 해줘야 변수로 선언이 된다
+    {
+        cs_packet_login* packet = reinterpret_cast<cs_packet_login*>(buf);
         enter_game(user_id, packet->name); // 새로 들어왔으니 접속 처리 및 이미 들어와있는 클라 정보 정리
 
         // 원래 락 걸때 socket이랑 connected랑 name을 동시에 보호해줘야함
         // bool connected 만든 이유가 true일때 socket이나 name처럼 한번 쓰고 업데이트 되지 않는
         // 값들은 안전하다는 의미, 그래서 connected를 true 되기 전에 socket, name을 처리하던가
         // true할때 같이 락을 걸던가 둘 중 하나로 해야함
-	}
-	break;
-	case CS_PACKET_MOVE:
-	{
-		cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
-		do_move(user_id, packet->direction);
-	}
-	break;
+    }
+    break;
+    case CS_PACKET_MOVE:
+    {
+        cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+        // g_clients[user_id].m_move_time = packet->move_time; // 스트레스 테스트
+        do_move(user_id, packet->direction);
+    }
+    break;
     case CS_PACKET_ROTATE:
     {
         cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
@@ -140,45 +145,119 @@ void Server::process_packet(int user_id, char* buf)
         do_change_formation(user_id);
     }
     break;
-	default:
-		cout << "Unknown Packet Type Error\n";
-		DebugBreak();
-		exit(-1);
-	}
+    case CS_PACKET_ATTACK:
+    {
+        cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
+        do_attack(user_id);
+    }
+    break;
+    case CS_PACKET_IDLE:
+    {
+        cs_packet_idle* packet = reinterpret_cast<cs_packet_idle*>(buf);
+        do_idle(user_id);
+    }
+    break;
+    case CS_PACKET_POSITION:
+    {
+        cs_packet_position* packet = reinterpret_cast<cs_packet_position*>(buf);
+        _vec3 pos;
+        pos.x = packet->x;
+        pos.y = packet->y;
+        pos.z = packet->z;
+        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    }
+    break;
+    default:
+        cout << "Unknown Packet Type Error\n";
+        DebugBreak();
+        exit(-1);
+    }
 }
 
 void Server::send_login_ok_packet(int user_id)
 {
-	sc_packet_login_ok packet;
-	packet.exp = 0;
-	packet.hp = 0;
-	packet.id = user_id;
-	packet.level = 0;
-	packet.size = sizeof(packet);
-	packet.type = SC_PACKET_LOGIN_OK;
-    _vec3* pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    packet.x = pos->x;
-	packet.y = pos->y;
-    packet.z = pos->z;
+    sc_packet_login_ok packet;
+    packet.exp = 0;
+    packet.hp = 100;
+    packet.id = user_id;
+    packet.level = 0;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_LOGIN_OK;
+    _matrix pos = g_clients[user_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_y = pos._42;
+    packet.p_z = pos._43;
 
 
-	send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_flag_info_packet(int object_id, int user_id)
+{
+    sc_packet_flag_info packet;
+    packet.id = object_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_FLAG_INFO;
+    packet.isBlue = flags[object_id].isBlue;
+    packet.isRed = flags[object_id].isRed;
+    packet.p_x = flags[object_id].pos.x;
+    packet.p_y = flags[object_id].pos.y;
+    packet.p_z = flags[object_id].pos.z;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_flag_bool_packet(int object_id, int user_id)
+{
+    sc_packet_flag_bool packet;
+    packet.id = object_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_FLAG_BOOL;
+    packet.isBlue = flags[object_id].isBlue;
+    packet.isRed = flags[object_id].isRed;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_time_packet()
+{
+    sc_packet_time packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_TIME;
+    packet.time = play_time;
+
+    for (int i = 0; i <= MAX_USER; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status) // 비접속 상태인 애들 무시
+            continue;
+
+        send_packet(i, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    }
 }
 
 void Server::send_packet(int user_id, void* packet)
 {
-	char* buf = reinterpret_cast<char*>(packet);
+    char* buf = reinterpret_cast<char*>(packet);
 
-	// m_recv_over는 recv 전용 오버랩 구조체이므로 쓰면 안된다
-	// 그냥 OverEx overex로 오버랩 구조체 선언해서 쓰는것도 안된다, 로컬 변수라 함수 밖으로 나가면 사라져버림 -> 할당받아야함
-	OverEx* overEx = new OverEx; // 확장 오버랩 할당
-	overEx->function = FUNC_SEND; // 타입 설정
-	ZeroMemory(&overEx->over, sizeof(overEx->over)); // 오버랩 구조체 초기화
-	memcpy(overEx->io_buf, buf, buf[0]); // IOCP버퍼에 패킷 내용을 패킷 크기만큼 복사
-	overEx->wsabuf.buf = overEx->io_buf; // WSA버퍼에 IOCP버퍼 복사
-	overEx->wsabuf.len = buf[0]; // 버퍼 사이즈 설정
+    // m_recv_over는 recv 전용 오버랩 구조체이므로 쓰면 안된다
+    // 그냥 OverEx overex로 오버랩 구조체 선언해서 쓰는것도 안된다, 로컬 변수라 함수 밖으로 나가면 사라져버림 -> 할당받아야함
+    OverEx* overEx = new OverEx; // 확장 오버랩 할당
+    overEx->function = FUNC_SEND; // 타입 설정
+    ZeroMemory(&overEx->over, sizeof(overEx->over)); // 오버랩 구조체 초기화
+    memcpy(overEx->io_buf, buf, buf[0]); // IOCP버퍼에 패킷 내용을 패킷 크기만큼 복사
+    overEx->wsabuf.buf = overEx->io_buf; // WSA버퍼에 IOCP버퍼 복사
+    overEx->wsabuf.len = buf[0]; // 버퍼 사이즈 설정
 
-	WSASend(g_clients[user_id].m_socket, &overEx->wsabuf, 1, NULL, 0, &overEx->over, NULL);
+    WSASend(g_clients[user_id].m_socket, &overEx->wsabuf, 1, NULL, 0, &overEx->over, NULL);
 }
 
 void Server::do_move(int user_id, char direction)
@@ -197,19 +276,19 @@ void Server::do_move(int user_id, char direction)
         break;
     case GO_LEFT:
         if (pos->x >= 0)
-            g_clients[user_id].m_transform.Go_Left(MOVE_SPEED);
+            g_clients[user_id].m_transform.Go_Left(MOVE_SPEED_PLAYER);
         break;
     case GO_RIGHT:
         if (pos->x < WORLD_HORIZONTAL)
-            g_clients[user_id].m_transform.Go_Right(MOVE_SPEED);
+            g_clients[user_id].m_transform.Go_Right(MOVE_SPEED_PLAYER);
         break;
     case GO_FORWARD:
-        if (pos->z < WORLD_VERTICAL)
-            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED);
+        if (pos->z >= 0)
+            g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
         break;
     case GO_BACK:
-        if (pos->z >= 0)
-            g_clients[user_id].m_transform.BackWard(MOVE_SPEED);
+        if (pos->z < WORLD_VERTICAL)
+            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
@@ -231,7 +310,6 @@ void Server::do_move(int user_id, char direction)
         pos->z = 0;
 
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
-
     set_formation(user_id);
 
     g_clients[user_id].m_cLock.lock();
@@ -250,10 +328,10 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (c.second.m_id == user_id)
             continue;
-        if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
-        {
+        //if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
+        //{
 
-        }
+        //}
         if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
         {
             OverEx* overEx = new OverEx;
@@ -339,7 +417,7 @@ void Server::do_rotate(int user_id, char dir)
         g_clients[user_id].m_transform.Rotation_Y(ROTATE_SPEED);
     else if (TURN_LEFT == dir)
         g_clients[user_id].m_transform.Rotation_Y(-ROTATE_SPEED);
-    
+
     for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
     {
         if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애면 보내지도 마라
@@ -381,55 +459,55 @@ void Server::set_formation(int user_id)
         if (1 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos;
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
         }
         else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
         }
         else if (4 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
 
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
         }
@@ -440,68 +518,68 @@ void Server::set_formation(int user_id)
         if (1 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos;
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
         }
         else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
         }
         else if (4 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED * FORMATION_SPACE);
+            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
         }
@@ -538,27 +616,27 @@ void Server::do_random_move(int npc_id)
         else if (pos->y > (WORLD_HEIGHT - 1))
             pos->y = WORLD_HEIGHT - 1;
         break;
-    case MV_RIGHT: 
+    case MV_RIGHT:
         if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[npc_id].m_transform.Go_Right(MOVE_SPEED);
+            g_clients[npc_id].m_transform.Go_Right(MOVE_SPEED_NPC);
         else if (pos->x > (WORLD_HORIZONTAL - 1))
             pos->x = WORLD_HORIZONTAL - 1;
         break;
     case MV_LEFT:
         if (pos->x > 0)
-            g_clients[npc_id].m_transform.Go_Left(MOVE_SPEED);
+            g_clients[npc_id].m_transform.Go_Left(MOVE_SPEED_NPC);
         else if (pos->x < 0)
             pos->x = 0;
         break;
     case MV_FORWARD:
         if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[npc_id].m_transform.Go_Straight(MOVE_SPEED);
+            g_clients[npc_id].m_transform.Go_Straight(MOVE_SPEED_NPC);
         else if (pos->z > (WORLD_VERTICAL - 1))
             pos->z = WORLD_VERTICAL - 1;
         break;
     case MV_BACK:
         if (pos->z > 0)
-            g_clients[npc_id].m_transform.BackWard(MOVE_SPEED);
+            g_clients[npc_id].m_transform.BackWard(MOVE_SPEED_NPC);
         else if (pos->z < 0)
             pos->z = 0;
         break;
@@ -566,7 +644,7 @@ void Server::do_random_move(int npc_id)
 
     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
 
-    for (int i = 0; i < NPC_ID_START; ++i)
+    for (int i = 0; i < NPC_START; ++i)
     {
         if (ST_ACTIVE != g_clients[i].m_status)
             continue;
@@ -603,6 +681,7 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
+    //bool isOnce = true;
     for (int i = 0; i < g_clients[g_clients[npc_id].m_owner_id].m_boid.size(); ++i)
     {
         if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
@@ -610,40 +689,48 @@ void Server::do_follow(int npc_id)
             _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);
             _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 new_pos = *pos + Dir;
-            g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
-
-            for (int i = 0; i < NPC_ID_START; ++i)
+            if (*pos != new_pos)
             {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
+                //isOnce = false;
+                g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-                if (true == is_near(i, npc_id))
+                for (int i = 0; i < NPC_START; ++i)
                 {
-                    g_clients[i].m_cLock.lock();
-                    if (0 != g_clients[i].m_view_list.count(npc_id))
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+
+                    if (true == is_near(i, npc_id))
                     {
-                        g_clients[i].m_cLock.unlock();
-                        send_move_packet(i, npc_id);
+                        g_clients[i].m_cLock.lock();
+                        if (0 != g_clients[i].m_view_list.count(npc_id))
+                        {
+                            g_clients[i].m_cLock.unlock();
+                            send_move_packet(i, npc_id);
+                        }
+                        else
+                        {
+                            g_clients[i].m_cLock.unlock();
+                            send_enter_packet(i, npc_id);
+                        }
                     }
                     else
                     {
-                        g_clients[i].m_cLock.unlock();
-                        send_enter_packet(i, npc_id);
+                        g_clients[i].m_cLock.lock();
+                        if (0 != g_clients[i].m_view_list.count(npc_id))
+                        {
+                            g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                            send_leave_packet(i, npc_id);
+                        }
+                        else
+                            g_clients[i].m_cLock.unlock();
                     }
                 }
-                else
-                {
-                    g_clients[i].m_cLock.lock();
-                    if (0 != g_clients[i].m_view_list.count(npc_id))
-                    {
-                        g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                        send_leave_packet(i, npc_id);
-                    }
-                    else
-                        g_clients[i].m_cLock.unlock();
-                }
+                break;
             }
-            break;
+            else //if (*pos == new_pos && !isOnce)
+            {
+                do_idle(npc_id);
+            }
         }
     }
 }
@@ -667,14 +754,12 @@ void Server::do_npc_rotate(int user_id, char dir)
             else if (TURN_LEFT == dir)
                 g_clients[i].m_transform.Rotation_Y(-ROTATE_SPEED);
 
-            for (int player = 0; player < NPC_ID_START; ++player)
+            for (int player = 0; player < NPC_START; ++player)
             {
                 if (ST_ACTIVE != g_clients[player].m_status)
                     continue;
                 if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
                     continue;
-                //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-                //    activate_npc(c.second.m_id, c.second.m_last_order);
 
                 send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
             }
@@ -687,7 +772,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
     _vec3* new_pos = goto_pos;
     _vec3* now_pos = g_clients[id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3 Dir = { 0,0,0 };
-    
+
     if (sqrt((new_pos->x - now_pos->x) *
         (new_pos->x - now_pos->x) +
         (new_pos->y - now_pos->y) *
@@ -702,7 +787,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
             float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
             Dir = Dir / hyp; // 여기가 노멀값
-            Dir = Dir * MOVE_SPEED; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * MOVE_SPEED_NPC; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
@@ -744,7 +829,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     // func_id 에 넣는게 새로운 상태, 그걸 과거 상태랑 비교 => 클라쪽에서 명령 자체를 못보내게 처리
 
     //bool keep_alive = false;
-    //for (int i = 0; i < NPC_ID_START; ++i) // 모든 플레이어에 대해서
+    //for (int i = 0; i < NPC_START; ++i) // 모든 플레이어에 대해서
     //{
     //    if (true == is_near(npc_id, i)) // 플레이어 시야범위 안에 있고
     //    {
@@ -836,6 +921,8 @@ void Server::do_timer()
             case FUNC_NPC_DEFENCE:
             case FUNC_NPC_HOLD:
             case FUNC_NPC_FOLLOW:
+            case FUNC_CHECK_FLAG:
+            case FUNC_CHECK_TIME:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -862,7 +949,7 @@ void Server::send_move_packet(int user_id, int mover)
     packet.x = pos->x;  // 이동한 플레이어의 정보 담기
     packet.y = pos->y;
     packet.z = pos->z;
-
+    //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
@@ -897,13 +984,13 @@ void Server::enter_game(int user_id, char name[])
     strcpy_s(g_clients[user_id].m_name, name);
     g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+    for (int i = 0; i < 5; ++i)
+        send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
-
-    for (auto& c : g_clients)
+    cout << "Player " << user_id << " login finish" << endl;
+    for (int i = 0; i <= MAX_USER; ++i)
     {
-        int i = c.second.m_id;
-
         if (user_id == i) // 데드락 회피용
             continue;
 
@@ -923,15 +1010,50 @@ void Server::enter_game(int user_id, char name[])
             //g_clients[i].m_cLock.unlock();
         }
     }
+
+    if (false == isGameStart)
+    {
+        short count = 0;
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE == g_clients[i].m_status)
+            {
+                count++;
+            }
+
+            if (StartGame_PlayerCount < count)
+            {
+                add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
+                add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
+                isGameStart = true;
+                cout << "Game Routine Start!\n";
+                break;
+            }
+        }
+    }
 }
 
 void Server::initialize_clients()
 {
-    for (int i = 0; i < MAX_USER; ++i)
+    for (int i = 0; i <= MAX_USER; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
         g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
     }
+}
+
+void Server::initialize_objects()
+{
+    for (int i = 0; i < 5; ++i)
+    {
+        flags[i].isBlue = false;
+        flags[i].isRed = false;
+    }
+    flags[0].pos = { 50.f, 0.2f, 50.f };
+    flags[1].pos = { 100.f, 0.2f, 450.f };
+    flags[2].pos = { 250.f, 0.2f, 250.f };
+    flags[3].pos = { 450.f, 0.2f, 400.f };
+    flags[4].pos = { 450.f, 0.2f, 100.f };
 }
 
 void Server::initialize_NPC(int player_id)
@@ -944,15 +1066,18 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_id = npc_id;
             g_clients[npc_id].m_owner_id = player_id;
             g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
+            g_clients[npc_id].m_team = g_clients[player_id].m_team;
             sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
             g_clients[npc_id].m_status = ST_SLEEP;
+            g_clients[npc_id].m_hp = 100;
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
-            g_clients[npc_id].m_speed = MOVE_SPEED;
+            g_clients[player_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
+            g_clients[npc_id].m_speed = MOVE_SPEED_NPC;
             g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
             set_formation(player_id);
             for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
@@ -964,7 +1089,7 @@ void Server::initialize_NPC(int player_id)
                 }
             }
             activate_npc(npc_id, g_clients[npc_id].m_last_order);
-            for (int i = 0; i < NPC_ID_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
+            for (int i = 0; i < NPC_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
             {
                 if (true == is_near(npc_id, i))
                 {
@@ -992,6 +1117,7 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
+    packet.hp = g_clients[other_id].m_hp;
     _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
     packet.r_y = pos._12;
@@ -1013,6 +1139,37 @@ void Server::send_enter_packet(int user_id, int other_id)
     g_clients[user_id].m_view_list.insert(other_id);
     g_clients[user_id].m_cLock.unlock();
 
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_attack_packet(int user_id, int other_id)
+{
+    sc_packet_attack packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ATTACK;
+    packet.id = other_id;
+    cout << user_id << " saw " << other_id << " attacking\n";
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_attacked_packet(int user_id, int other_id)
+{
+    sc_packet_attacked packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ATTACKED;
+    packet.id = other_id;
+    packet.hp = g_clients[other_id].m_hp;
+    cout << user_id << " saw " << other_id << " attacked\n";
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_dead_packet(int user_id, int other_id)
+{
+    sc_packet_dead packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_DEAD;
+    packet.id = g_clients[other_id].m_id;
+    cout << user_id << " saw " << other_id << " dead\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -1045,6 +1202,7 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
 {
     sc_packet_enter packet;
     packet.id = other_id; // 추가된 npc 아이디
+    packet.hp = g_clients[other_id].m_hp;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ADD_NPC_OK;
 
@@ -1055,9 +1213,107 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
+void Server::do_idle(int user_id)
+{
+    if (user_id < NPC_START)
+    {
+        g_clients[user_id].m_cLock.lock();
+        unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
+        g_clients[user_id].m_cLock.unlock();
+        send_idle_packet(user_id, user_id); // 임시
+        for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+        {
+            send_idle_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+            // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+        }
+    }
+    else if (user_id >= NPC_START && user_id <= MAX_NPC)
+    {
+        for (int i = 0; i < NPC_START; ++i) // 모든 플레이어에 대해서
+        {
+            if (false == is_near(i, user_id)) // 근처에 없는 유저면 보내지도 마라
+                continue;
+            if (ST_ACTIVE != g_clients[i].m_status) // 로그인 상태 아닌애면 보내지 마라
+                continue;
+
+            send_idle_packet(i, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        }
+    }
+}
+
+void Server::send_idle_packet(int user_id, int idler)
+{
+    sc_packet_idle packet;
+    packet.id = idler;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_IDLE;
+    //cout << idler << " do idle\n";
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+
+void Server::do_attack(int user_id)
+{
+    cout << user_id << "is do attack\n";
+    for (int i = 0; i < NPC_START; ++i) // 다른 플레이어들에게 내 공격모션 공유
+    {
+        if (false == is_near(i, user_id)) // 근처에 없는애들 무시
+            continue;
+        if (ST_ACTIVE != g_clients[i].m_status) // 비접속 상태인 애들 무시
+            continue;
+        if (i == user_id) // 나 자신 무시
+            continue;
+
+        send_attack_packet(i, user_id);
+    }
+
+    for (auto& c : g_clients)
+    {
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
+            continue;
+        if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
+            continue;
+        if (c.second.m_id == user_id) // 나 자신 무시
+            continue;
+        if (c.second.m_owner_id == user_id) // 내 npc들 무시
+            continue;
+
+        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대가 있으면
+        {
+            g_clients[c.second.m_id].m_cLock.lock();
+            unordered_set<int> copy_viewlist = g_clients[c.second.m_id].m_view_list; // 죽은애의 시야범위 가져옴
+            g_clients[c.second.m_id].m_cLock.unlock();
+
+            c.second.m_hp -= ATTACK_DAMAGE;
+
+            if (0 < c.second.m_hp)
+            {
+                send_attacked_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
+                for (auto cpy_vl : copy_viewlist)
+                {
+                    send_attacked_packet(cpy_vl, c.second.m_id); // 깎이고 남은 체력 있으면
+                }
+            }
+            else // 죽으면
+            {
+                if (c.second.m_id > MAX_USER)
+                {
+
+                }
+                g_clients[c.second.m_id].m_hp = 0;
+                // g_clients[c.second.m_id].m_status = ST_SLEEP;
+                send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
+                for (auto cpy_vl : copy_viewlist)
+                    send_dead_packet(cpy_vl, c.second.m_id);
+            }
+        }
+    }
+}
+
 void Server::disconnect(int user_id)
 {
     send_leave_packet(user_id, user_id); // 나 자신
+    cout << user_id << "is disconnect\n";
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
@@ -1068,7 +1324,7 @@ void Server::disconnect(int user_id)
         g_clients[i].m_status = ST_SLEEP;
     }
 
-    for (int i = 0; i < NPC_ID_START; ++i)
+    for (int i = 0; i < NPC_START; ++i)
     {
         if (user_id == g_clients[i].m_id)
             continue;
@@ -1078,7 +1334,7 @@ void Server::disconnect(int user_id)
         {
             send_leave_packet(g_clients[i].m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
         }
-       // c.second.m_cLock.unlock();
+        // c.second.m_cLock.unlock();
     }
     g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
     g_clients[user_id].m_cLock.unlock();
@@ -1091,7 +1347,7 @@ bool Server::is_near(int a, int b)
 
     if (sqrt((a_pos->x - b_pos->x) *
         (a_pos->x - b_pos->x) +
-        (a_pos->y - b_pos->y) * 
+        (a_pos->y - b_pos->y) *
         (a_pos->y - b_pos->y) +
         (a_pos->z - b_pos->z) *
         (a_pos->z - b_pos->z)) > VIEW_RADIUS)
@@ -1102,9 +1358,114 @@ bool Server::is_near(int a, int b)
     return true;
 }
 
+bool Server::is_attackable(int a, int b)
+{
+    _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    if (sqrt((a_pos->x - b_pos->x) *
+        (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) *
+        (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) *
+        (a_pos->z - b_pos->z)) > ATTACK_RADIUS)
+        return false;
+    return true;
+}
+
 bool Server::is_player(int id)
 {
-    return id < NPC_ID_START;
+    return id < NPC_START;
+}
+
+void Server::is_flag_near(int flag)
+{
+    int count_red = 0;
+    int count_blue = 0;
+
+    for (int player = 0; player <= MAX_USER; ++player)
+    {
+        if (ST_ACTIVE != g_clients[player].m_status) // 비접속 상태인 애들 무시
+            continue;
+
+        _vec3* a_pos = &flags[flag].pos; // 깃발
+        _vec3* b_pos = g_clients[player].m_transform.Get_StateInfo(CTransform::STATE_POSITION); // 플레이어
+
+        if (sqrt((a_pos->x - b_pos->x) *
+            (a_pos->x - b_pos->x) +
+            (a_pos->y - b_pos->y) *
+            (a_pos->y - b_pos->y) +
+            (a_pos->z - b_pos->z) *
+            (a_pos->z - b_pos->z)) < FLAG_RADIUS) // 깃발 범위 안이면
+        {
+            if (TEAM_RED == g_clients[player].m_team)
+            {
+                count_red++;
+                if (false == flags[flag].isRed)
+                {
+                    cout << "flag " << flag << " is red\n";
+                    flags[flag].isRed = true;
+                    for (int j = 0; j <= MAX_USER; ++j)
+                    {
+                        if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                            continue;
+
+                        send_flag_bool_packet(flag, j);
+                    }
+                }
+
+            }
+            else if (TEAM_BLUE == g_clients[player].m_team)
+            {
+                count_blue++;
+                if (false == flags[flag].isBlue)
+                {
+                    cout << "flag " << flag << " is blue\n";
+                    flags[flag].isBlue = true;
+                    for (int j = 0; j <= MAX_USER; ++j)
+                    {
+                        if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                            continue;
+
+                        send_flag_bool_packet(flag, j);
+                    }
+                }
+            }
+        }
+    }
+
+    if (0 == count_red)
+    {
+        if (true == flags[flag].isRed)
+        {
+            cout << "flag " << flag << " is not red\n";
+            flags[flag].isRed = false;
+            for (int j = 0; j <= MAX_USER; ++j)
+            {
+                if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                    continue;
+
+                send_flag_bool_packet(flag, j);
+            }
+        }
+    }
+
+    if (0 == count_blue)
+    {
+        if (true == flags[flag].isBlue)
+        {
+            cout << "flag " << flag << " is not blue\n";
+            flags[flag].isBlue = false;
+            for (int j = 0; j <= MAX_USER; ++j)
+            {
+                if (ST_ACTIVE != g_clients[j].m_status) // 비접속 상태인 애들 무시
+                    continue;
+
+                send_flag_bool_packet(flag, j);
+            }
+        }
+
+    }
 }
 
 void Server::worker_thread()
@@ -1147,7 +1508,7 @@ void Server::worker_thread()
         {
             // 현재는 한 쓰레드가 accept 끝나면 끝에 AcceptEx를 호출하게 해놔서 여러 쓰레드가 동시 접근 안함
             int user_id = -1;
-            for (int i = 0; i < MAX_USER; ++i)
+            for (int i = 0; i <= MAX_USER; ++i)
             {
                 lock_guard <mutex> guardLock{ g_clients[i].m_cLock }; // 함수에서 lock 할때 편함
                 // 이 cLock를 락을 걸고 락가드가 속한 블록에서 빠져나갈때 unlock해주고 루프 돌때마다 unlock-lock 해줌
@@ -1174,10 +1535,30 @@ void Server::worker_thread()
                 g_clients[user_id].m_recv_over.wsabuf.len = MAX_BUF_SIZE; // WSA버퍼 크기 설정
                 g_clients[user_id].m_socket = clientSocket;
                 //g_clients[user_id].m_transform.Ready_Transform();
-                _vec3 pos = { (float)(rand() % WORLD_HORIZONTAL),20.f,(float)(rand() % WORLD_VERTICAL) };
-                g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-                g_clients[user_id].m_speed = MOVE_SPEED;
+
+
+                g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
+                g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
+                g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
+                g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
+                if (0 == user_id)
+                {
+                    g_clients[user_id].m_team = TEAM_RED;
+                    _vec3 pos = { 50.f, 0.2f, 90.f };
+                    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                }
+                else
+                {
+                    g_clients[user_id].m_team = TEAM_BLUE;
+                    _vec3 pos = { 450.f, 0.2f, 360.f };
+                    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                }
+
+                //{ // 스트레스 테스트
+                //    _vec3 pos = { (float)(rand()%WORLD_HORIZONTAL), 0.f, (float)(rand() % WORLD_HORIZONTAL) };
+                //    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+                //}
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = FM_FLOCK;
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
@@ -1224,7 +1605,22 @@ void Server::worker_thread()
             finite_state_machine(id, FUNC_NPC_RANDMOVE);
             delete overEx;
             break;
-        break;
+        case FUNC_CHECK_FLAG:
+            for (int i = 0; i < 5; ++i)
+                is_flag_near(i);
+            add_timer(-1, FUNC_CHECK_FLAG, 100);
+            delete overEx;
+            break;
+        case FUNC_CHECK_TIME:
+            if (play_time >= 0)
+            {
+                send_time_packet();
+                play_time -= 1;
+                add_timer(-1, FUNC_CHECK_TIME, 1000);
+            }
+            delete overEx;
+            break;
+            break;
         default:
             cout << "Unknown Operation in Worker_Thread\n";
             while (true);
@@ -1252,8 +1648,10 @@ void Server::mainServer()
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initialize_clients(); // 클라이언트 정보들 초기화
+    initialize_objects(); // 오브젝트 정보들 초기화
+    isGameStart = false;
 
-     // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
+    // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록
     SOCKET clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
     OverEx accept_over;

@@ -77,17 +77,27 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-		return -1;
+	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+	}
 
 	Death(fTimeDelta);
 	Set_Animation(fTimeDelta);
 
+	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
+	Safe_Release(server);
 	return _int();
 }
 

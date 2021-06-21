@@ -12,17 +12,27 @@ enum Players {
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 1024;
 
+const string SERVER_IP = "127.0.0.1"; // 123.215.109.236 // 127.0.0.1
 constexpr int MAX_ID_LEN = 50;
 constexpr int MAX_STR_LEN = 80;
 constexpr int MAX_CHAT_LEN = 50;
 
 constexpr int MAX_USER = 29;
-constexpr int NPC_ID_START = 30;
-constexpr int MAX_NPC = 420;
+constexpr int NPC_START = 30;
+constexpr int MAX_NPC = 449;
 
-constexpr int WORLD_HORIZONTAL = 40; // 월드 가로 x
-constexpr int WORLD_HEIGHT = 40; // 월드 높이 y
-constexpr int WORLD_VERTICAL = 40; // 월드 세로 z
+constexpr int FLAG_START = 450;
+constexpr int MAX_FLAG = 454;
+
+constexpr int OBJECT_START = 450;
+constexpr int MAX_OBJECT = 454;
+
+constexpr int TEST_PLAYERS = 2;
+constexpr int TEST_NPCS = 28;
+
+constexpr int WORLD_HORIZONTAL = 500; // 월드 가로 x
+constexpr int WORLD_HEIGHT = 400; // 월드 높이 y
+constexpr int WORLD_VERTICAL = 500; // 월드 세로 z
 
 constexpr int SERVER_PORT = 9000;
 
@@ -32,6 +42,9 @@ constexpr char CS_PACKET_ROTATE = 3;
 constexpr char CS_PACKET_ADD_NPC = 4;
 constexpr char CS_PACKET_NPC_ACT = 5;
 constexpr char CS_PACKET_CHANGE_FORMATION = 6;
+constexpr char CS_PACKET_ATTACK = 7;
+constexpr char CS_PACKET_IDLE = 8;
+constexpr char CS_PACKET_POSITION = 9;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -40,6 +53,13 @@ constexpr char SC_PACKET_ENTER = 4;
 constexpr char SC_PACKET_LEAVE = 5;
 constexpr char SC_PACKET_CHAT = 6;
 constexpr char SC_PACKET_ADD_NPC_OK = 7;
+constexpr char SC_PACKET_IDLE = 8;
+constexpr char SC_PACKET_ATTACKED = 9;
+constexpr char SC_PACKET_DEAD = 10;
+constexpr char SC_PACKET_ATTACK = 11;
+constexpr char SC_PACKET_FLAG_INFO = 12;
+constexpr char SC_PACKET_FLAG_BOOL = 13;
+constexpr char SC_PACKET_TIME = 14;
 
 #pragma pack(push ,1)
 
@@ -48,10 +68,32 @@ struct sc_packet_login_ok
 	char size;
 	char type;
 	int id;
-	float x, y, z;
+	float p_x, p_y, p_z;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
 	short hp;
 	short level;
 	int	exp;
+};
+
+struct sc_packet_flag_info
+{
+	char size;
+	char type;
+	int id;
+	bool isRed;
+	bool isBlue;
+	float p_x, p_y, p_z;
+};
+
+struct sc_packet_flag_bool
+{
+	char size;
+	char type;
+	int id;
+	bool isRed;
+	bool isBlue;
 };
 
 struct sc_packet_move
@@ -60,6 +102,14 @@ struct sc_packet_move
 	char type;
 	int id;
 	float x, y, z;
+	//unsigned move_time; // 스트레스 테스트
+};
+
+struct sc_packet_time
+{
+	char size;
+	char type;
+	float time;
 };
 
 struct sc_packet_rotate
@@ -72,7 +122,6 @@ struct sc_packet_rotate
 	float l_x, l_y, l_z;
 };
 
-
 constexpr unsigned char O_HUMAN = 0;
 constexpr unsigned char O_ELF = 1;
 constexpr unsigned char O_ORK = 2;
@@ -82,6 +131,7 @@ struct sc_packet_enter
 	char size;
 	char type;
 	int id;
+	short hp;
 	char name[MAX_ID_LEN];
 	char o_type;
 	float p_x, p_y, p_z;
@@ -91,6 +141,28 @@ struct sc_packet_enter
 };
 
 struct sc_packet_leave
+{
+	char size;
+	char type;
+	int id;
+};
+
+struct sc_packet_attacked
+{
+	char size;
+	char type;
+	int id;
+	short hp;
+};
+
+struct sc_packet_attack
+{
+	char size;
+	char type;
+	int id;
+};
+
+struct sc_packet_dead
 {
 	char size;
 	char type;
@@ -113,14 +185,26 @@ struct sc_packet_npc_add_ok
 	char	act;
 };
 
+struct sc_packet_idle
+{
+	char	size;
+	char	type;
+	int		id;
+};
 constexpr unsigned char GO_UP = 0;
 constexpr unsigned char GO_DOWN = 1;
 constexpr unsigned char GO_LEFT = 2;
 constexpr unsigned char GO_RIGHT = 3;
-constexpr unsigned char GO_FORWARD = 4;
-constexpr unsigned char GO_BACK = 5;
+constexpr unsigned char GO_BACK = 4;
+constexpr unsigned char GO_FORWARD = 5;
 constexpr unsigned char TURN_LEFT = 6;
 constexpr unsigned char TURN_RIGHT = 7;
+
+struct cs_packet_idle
+{
+	char	size;
+	char	type;
+};
 
 struct cs_packet_login
 {
@@ -134,6 +218,22 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	direction;
+	//unsigned move_time; // 스트레스 테스트
+};
+
+struct cs_packet_attack
+{
+	char	size;
+	char	type;
+};
+
+struct cs_packet_position
+{
+	char	size;
+	char	type;
+	float	x;
+	float	y;
+	float	z;
 };
 
 struct cs_packet_rotate

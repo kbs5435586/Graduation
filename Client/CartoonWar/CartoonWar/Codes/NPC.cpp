@@ -67,11 +67,19 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
+	if (server->Get_ShowNPC(m_iLayerIdx))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
 
 	Death(fTimeDelta);
 	Set_Animation(fTimeDelta);
@@ -81,6 +89,8 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 
+	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+	Safe_Release(server);
 	return _int();
 }
 
