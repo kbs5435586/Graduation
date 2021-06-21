@@ -45,11 +45,11 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CMesh*									m_pMeshCom[2] = {nullptr};
+	CMesh*									m_pMeshCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
-	CAnimator*								m_pAnimCom[2] = {nullptr};
+	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = {nullptr};
@@ -78,7 +78,7 @@ private:
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	PLAYER									m_tPlayer = {};
 private:
-	_bool									m_IsDelete = false;
+	_uint									m_iCurMeshNum = 0;
 
 };
 
