@@ -66,6 +66,10 @@ public:
     short Get_Anim(int id);
     float Get_GameTime();
 
+    bool is_player(int id);
+    bool is_npc(int id);
+    bool is_object(int id);
+
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_Attack_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();

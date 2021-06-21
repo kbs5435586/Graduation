@@ -69,7 +69,14 @@ HRESULT CScene_Stage::Ready_Scene()
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return E_FAIL;
 
+	server->AddRef();
+	server->InitServer(g_hWnd);
+
+	Safe_Release(server);
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -161,14 +168,14 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 	//	return E_FAIL;
 	return S_OK;
@@ -387,16 +394,21 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
+	tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+		return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_BROWN };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
-		return E_FAIL;
+	for (int i = 0; i < TEST_NPCS; ++i)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+			return E_FAIL;
+	}
 	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 	//	return E_FAIL;

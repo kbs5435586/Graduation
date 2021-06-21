@@ -513,11 +513,20 @@ struct tFrameTrans
 struct Session
 {
 	int		id;
-	float	x;
-	float	y;
-	float	z;
+	short	hp;
+	short	anim;
 	char	name[MAX_ID_LEN + 1];
 	bool	showObject;
+	Session() : showObject(false) {};
+};
+
+
+struct Flag
+{
+	bool isRed;
+	bool isBlue;
+	bool isOnce;
+	_vec3 pos;
 };
 
 
