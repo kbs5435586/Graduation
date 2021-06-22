@@ -27,14 +27,39 @@ HRESULT CLight_Camera::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->SetUp_Speed(30.f, XMConvertToRadians(90.f));
-
+	fTemp = 820.f;
 
 	return NOERROR;
 }
 
 _int CLight_Camera::Update_GameObject(const _float& fTimeDelta)
 {
+	if (GetAsyncKeyState('I') )
+	{
+		m_pTransform->Go_Straight(fTimeDelta);
+	}
+	if (GetAsyncKeyState('K') )
+	{
+		m_pTransform->BackWard(fTimeDelta);
+	}
+	if (GetAsyncKeyState('L') )
+	{
+		//m_pTransform->Go_Left(fTimeDelta);
+		fTemp++;
+	}
+	if (GetAsyncKeyState('J'))
+	{
+		//m_pTransform->Go_Right(fTimeDelta);
+		fTemp--;
+		if (fTemp <= 0)
+		{
+			_int i = 0;
+		}
+	}
 
+
+
+	//m_pTransform->Scaling(fTemp, fTemp, fTemp);
 	return _int();
 }
 

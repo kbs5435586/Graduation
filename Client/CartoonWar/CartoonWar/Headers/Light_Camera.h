@@ -14,11 +14,13 @@ public:
 	virtual _int				LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void				Render_GameObject();
 public:
-	static CLight_Camera* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
+	static CLight_Camera*		Create();
+	virtual CGameObject*		Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
 protected:
 	virtual void				Free();
 private:
 	POINT						m_ptMouse;
+private:
+	_float						fTemp = 0.f;
 };
 

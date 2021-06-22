@@ -35,7 +35,7 @@ void CLight::Render()
 	MAINPASS tMainPass = {};
 	REP tRep = {};
 	tRep.m_arrInt[0] = 1;
-	//_matrix matShadowWorld =dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_Matrix();
+	_matrix matShadowWorld =dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_Matrix();
 	_matrix matShadowView = CCamera_Manager::GetInstance()->GetShadowView();
 	_matrix matShadowProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
 	tRep.m_arrMat[0] = matShadowView*matShadowProj ;
