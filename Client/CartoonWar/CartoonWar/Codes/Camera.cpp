@@ -96,16 +96,17 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 	vRight = Vector3_::Normalize(vRight);
 
 	_vec3		vUp;
-	vUp = Vector3_::CrossProduct(vLook, vRight);
+	vUp = Vector3_::CrossProduct(vLook, vRight, false);
 	vUp = Vector3_::Normalize(vUp);
 
 	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tShadowCameraDesc.vEye);
+	//m_pTransform->Scaling(3.5f, 3.5f, 3.5f);
+	m_pTransform->Scaling(820.f, 820.f, 820.f);
 
 	CCamera_Manager::GetInstance()->SetShadowMatWorld(m_pTransform->Get_Matrix());
-
 
 	Invalidate_ViewProjMatrix(IsShadow);
 	return S_OK;
@@ -114,8 +115,9 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 {
 	m_matShadowView = m_pTransform->Get_Matrix_Inverse();
+	//m_matShadowProj = XMMatrixOrthographicLH((_float)512, (_float)512, 1.f, 100000.f);
+	m_matShadowProj = XMMatrixOrthographicLH((_float)2, (_float)2, 0.1f, 100000.f);
 
-	m_matShadowProj = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 1.f, 10000.f);
 	CCamera_Manager::GetInstance()->SetShadowMatView(m_matShadowView);
 	CCamera_Manager::GetInstance()->SetShadowMatProj(m_matShadowProj);
 }
@@ -139,6 +141,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices()
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tCameraDesc.vEye);
+
 
 	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
 	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));

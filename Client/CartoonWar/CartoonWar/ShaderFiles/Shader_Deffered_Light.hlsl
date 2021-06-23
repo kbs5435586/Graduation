@@ -44,7 +44,7 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 	}
 
 	LIGHT tCurCol = Calculate_Light(0, vNormalTex.xyz, vPosition.xyz);
-	
+	float4 fTemp = tCurCol.vDiffuse;
 	if (dot(tCurCol.vDiffuse, tCurCol.vDiffuse) != 0.f)
 	{
 		float4 vWorldPos = mul(vPosition, matViewInv); // 메인카메라 view 역행렬을 곱해서 월드좌표를 알아낸다.
@@ -56,16 +56,19 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 		float2 vShadowUV = float2((vShadowProj.x / vShadowProj.w) * 0.5f + 0.5f
 			, (vShadowProj.y / vShadowProj.w) * -0.5f + 0.5f);
 
-		//vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
 		if (0.01f < vShadowUV.x && vShadowUV.x < 0.99f && 0.01f < vShadowUV.y && vShadowUV.y < 0.99f)
 		{
 			float fShadowDepth = g_texture2.Sample(Sampler0, vShadowUV).r;
 
 			// 그림자인 경우 빛을 약화시킨다.
-			if (fShadowDepth != 0.f && (fDepth > fShadowDepth + 0.00001f))
+			if (fShadowDepth && (fDepth > fShadowDepth + 0.00001f))
 			{
-				tCurCol.vDiffuse *= 0.1f;
+				tCurCol.vDiffuse = 0.f;
 				//tCurCol.vSpec = (float4) 0.f;
+			}
+			else if((fDepth <= fShadowDepth + 0.00001f))
+			{
+				fTemp = 0.f;
 			}
 		}
 
@@ -73,7 +76,14 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 	}
 
 
+	float4 vWorldPos = mul(vPosition, matViewInv);
 	vOut.vDiffuse = tCurCol.vDiffuse + tCurCol.vAmbient;
-	vOut.vSpecular = tCurCol.vDiffuse + tCurCol.vAmbient;
+	if (vWorldPos.y <= 0.01f)
+	{
+		vOut.vSpecular = fTemp+ tCurCol.vAmbient;
+	}
+	else
+		vOut.vSpecular = 1.f;
+
 	return vOut;
 }

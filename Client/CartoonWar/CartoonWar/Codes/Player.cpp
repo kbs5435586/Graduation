@@ -31,16 +31,19 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	//Compute_Matrix();
 	_vec3 vPos = { 10.f,0.f,10.f };
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
-	m_pAnimCom[0]->SetBones(m_pMeshCom[0]->GetBones());
-	m_pAnimCom[0]->SetAnimClip(m_pMeshCom[0]->GetAnimClip());
-	m_pAnimCom[0]->LateInit();
 
-	m_pAnimCom[1]->SetBones(m_pMeshCom[1]->GetBones());
-	m_pAnimCom[1]->SetAnimClip(m_pMeshCom[1]->GetAnimClip());
-	m_pAnimCom[1]->LateInit();
+
+	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
+	{
+		if (m_pAnimCom[i] == nullptr)
+			continue;
+		m_pAnimCom[i]->SetBones(m_pMeshCom[i]->GetBones());
+		m_pAnimCom[i]->SetAnimClip(m_pMeshCom[i]->GetAnimClip());
+		m_pAnimCom[i]->LateInit();
+	}
 
 
 	_vec3 vColliderSize = { 40.f ,160.f,40.f };
@@ -48,13 +51,12 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-	m_eCurClass = CLASS::CLASS_INFANTRY;
+	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
-
-	m_pCurAnimCom = m_pAnimCom[0];
-	m_pCurMeshCom = m_pMeshCom[0];
+	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
+	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
 	return S_OK;
 }
@@ -64,11 +66,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
+	m_pTransformCom->Set_PositionY(0.f);
 
 	Change_Class();
+	Input_Key(fTimeDelta);
 	Obb_Collision();
 	Combat(fTimeDelta);
-	Input_Key(fTimeDelta);
 
 	if (m_IsDead)
 		return DEAD_OBJ;
@@ -246,15 +249,17 @@ CGameObject* CPlayer::Clone_GameObject(void* pArg, _uint iIdx)
 
 void CPlayer::Free()
 {
-	Safe_Release(m_pMeshCom[0]);
-	Safe_Release(m_pMeshCom[1]);
+	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
+	{
+		
+		Safe_Release(m_pMeshCom[i]);
+		Safe_Release(m_pAnimCom[i]);
+	}
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
-	Safe_Release(m_pAnimCom[0]);
-	Safe_Release(m_pAnimCom[1]);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
@@ -280,14 +285,54 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom[0] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
-	NULL_CHECK_VAL(m_pMeshCom[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh0", m_pMeshCom[0])))
+	//enum class CLASS { CLASS_WORKER, CLASS_CAVALRY, CLASS_INFANTRY, CLASS_SPEARMAN, CLASS_MAGE, CLASS_MMAGE,
+	//CLASS_ARCHER, CLASS_PRIEST, CLASS_END };
+	m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_Worker", m_pMeshCom[(_uint)CLASS::CLASS_WORKER])))
 		return E_FAIL;
-	m_pMeshCom[1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Cavalry");
-	NULL_CHECK_VAL(m_pMeshCom[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh1", m_pMeshCom[1])))
+
+	m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Cavalry");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_LightCavalry", m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY])))
 		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY+1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY+1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_HeavyCavalry", m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY+1])))
+		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Infantry");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_LightInfantry", m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY])))
+		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY+1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY+1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_HeavyInfantry", m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY+1])))
+		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_SpearMan");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_Spearman", m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN])))
+		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_MAGE] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mage");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_MAGE], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_Mage", m_pMeshCom[(_uint)CLASS::CLASS_MAGE])))
+		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_MMAGE] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mounted_Mage");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_MMAGE], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_MountedMage", m_pMeshCom[(_uint)CLASS::CLASS_MMAGE])))
+		return E_FAIL;
+
+	m_pMeshCom[(_uint)CLASS::CLASS_ARCHER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Archer");
+	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
+		return E_FAIL;
+
+
 
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
@@ -303,14 +348,46 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
-	m_pAnimCom[0] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim0", m_pAnimCom[0])))
+
+
+
+	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim0", m_pAnimCom[(_uint)CLASS::CLASS_WORKER])))
 		return E_FAIL;
-	m_pAnimCom[1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim1", m_pAnimCom[1])))
+	m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim1", m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY])))
 		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY+1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY+1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim2", m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY+1])))
+		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim3", m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY])))
+		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY+1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY+1], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim4", m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY+1])))
+		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim5", m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN])))
+		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_MAGE] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_MAGE], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim6", m_pAnimCom[(_uint)CLASS::CLASS_MAGE])))
+		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_MMAGE] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_MMAGE], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim7", m_pAnimCom[(_uint)CLASS::CLASS_MMAGE])))
+		return E_FAIL;
+	m_pAnimCom[(_uint)CLASS::CLASS_ARCHER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
+	if (FAILED(Add_Component(L"Com_Anim8", m_pAnimCom[(_uint)CLASS::CLASS_ARCHER])))
+		return E_FAIL;
+
 
 	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
 	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
@@ -368,6 +445,10 @@ void CPlayer::Change_Class()
 {
 	if (m_eCurClass != m_ePreClass)
 	{
+		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
+		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
+		m_iCurAnimIdx = 0;
+
 		AnimVectorClear();
 		if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
 		{
@@ -692,6 +773,68 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[2] = 3;
 		}
 		break;
+		case CLASS(2):
+		{
+			//idle 		
+			//walk 		
+			//run 		
+			//charge 	
+			//combat idle 
+			//combat walk
+			//combat hit a
+			//combat hit b 
+			//take damage 
+			//death a 	
+			//death b 	
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
+			m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+			m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
+			m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
+			m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
+			m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
+			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
+			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+			break;
+		case CLASS(4):
+		{
+			//	idle		
+			//	walk		
+			//	run			
+			//	charge		
+			//	combat idle	
+			//	combat walk	
+			//	attack a	
+			//	attack b	
+			//	take damage	
+			//	death a		
+			//	death b		
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
+			m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
+			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+			break;
 		case CLASS::CLASS_SPEARMAN:
 		{
 			//		idle		
@@ -810,9 +953,9 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
-			m_iCombatMotion[0] = 4;
-			m_iCombatMotion[1] = 5;
-			m_iCombatMotion[2] = 3;
+			m_iCombatMotion[0] = 3;
+			m_iCombatMotion[1] = 4;
+			m_iCombatMotion[2] = 2;
 		}
 		break;
 		}
@@ -1046,29 +1189,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 
 
-	if (GetAsyncKeyState('1') & 0x8000)
+	if (GetAsyncKeyState('1'))
 	{
-		/*if (FAILED(this->Delete_Component(L"Com_Mesh", m_pMeshCom)))
-			return;
-		if (FAILED(this->Delete_Component(L"Com_Anim", m_pAnimCom)))
-			return;
-		Safe_Release(m_pMeshCom);
-		Safe_Release(m_pAnimCom);
-		m_pMeshCom = (CMesh*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mounted_Mage");
-		NULL_CHECK_VOID(m_pMeshCom);
-		if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
-			return;
-		m_pAnimCom = (CAnimator*)CManagement::GetInstance()->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-		NULL_CHECK_VOID(m_pAnimCom);
-		if (FAILED(Add_Component(L"Com_Anim", m_pAnimCom)))
-			return ;
-		m_pAnimCom->SetBones(m_pMeshCom->GetBones());
-		m_pAnimCom->SetAnimClip(m_pMeshCom->GetAnimClip());
-		m_pAnimCom->LateInit();*/
-
-		m_pCurAnimCom = m_pAnimCom[1];
-		m_pCurMeshCom = m_pMeshCom[1];
-		m_eCurClass = CLASS::CLASS_CAVALRY;
+		m_iCurMeshNum++;
+		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
+			m_iCurMeshNum = 0;
+		m_iCurAnimIdx = 0;
+		m_eCurClass = (CLASS)m_iCurMeshNum;
 	}
 
 	Safe_Release(server);
@@ -1202,6 +1329,7 @@ void CPlayer::Attack(const _float& fTimeDelta)
 	case CLASS::CLASS_WORKER:
 	case CLASS::CLASS_MMAGE:
 		m_iAttackMotion[0] = 3;
+		m_iAttackMotion[1] = 3;
 		break;
 	case CLASS::CLASS_INFANTRY:
 	case CLASS::CLASS_CAVALRY:
@@ -1212,8 +1340,19 @@ void CPlayer::Attack(const _float& fTimeDelta)
 		break;
 	case CLASS::CLASS_SPEARMAN:
 		m_iAttackMotion[0] = 6;
+		m_iAttackMotion[1] = 6;
 		break;
 	case CLASS::CLASS_ARCHER:
+		m_iAttackMotion[0]=5;
+		m_iAttackMotion[1]=5;
+		break;
+	case CLASS(2):
+		m_iAttackMotion[0] = 6;
+		m_iAttackMotion[1] = 7;
+		break;
+	case CLASS(4):
+		m_iAttackMotion[0] = 6;
+		m_iAttackMotion[1] = 7;
 		break;
 	}
 

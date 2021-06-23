@@ -64,7 +64,7 @@ void CSkyBox::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,  TEXTURE_REGISTER::t6);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,  TEXTURE_REGISTER::t6, 3);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -81,7 +81,7 @@ HRESULT CSkyBox::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::SKYBOX, DEPTH_STENCIL_TYPE::LESS_EQUAL, SHADER_TYPE::SHADER_FORWARD)))
 		return E_FAIL;
 
-
+			
 	return S_OK;
 }
 
