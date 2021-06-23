@@ -176,7 +176,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     //        server->Set_wParam(wParam);
     //    Safe_Release(server);
     //}
-    //break;
+    break;
     case WM_KEYDOWN:
         switch (wParam)
         {
@@ -201,16 +201,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    //case WM_SOCKET:
-    //{
-    //    CServer_Manager* server = CServer_Manager::GetInstance();
-    //    if (nullptr == server)
-    //        break;
-    //    server->AddRef();
-    //    server->SocketEventMessage(g_hWnd, lParam);
-    //    Safe_Release(server);
-    //}
-    //break;
+    case WM_SOCKET:
+    {
+        CServer_Manager* server = CServer_Manager::GetInstance();
+        if (nullptr == server)
+            break;
+        server->AddRef();
+        server->SocketEventMessage(g_hWnd, lParam);
+        Safe_Release(server);
+    }
+    break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;

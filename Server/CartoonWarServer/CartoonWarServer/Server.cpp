@@ -996,18 +996,21 @@ void Server::enter_game(int user_id, char name[])
 
         if (true == is_near(user_id, i))
         {
-            //g_clients[i].m_cLock.lock();
+            g_clients[i].m_cLock.lock();
             if (ST_SLEEP == g_clients[i].m_status)
             {
+                g_clients[i].m_cLock.unlock();
                 activate_npc(i, FUNC_NPC_HOLD);
             }
-            if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
+            else if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
+                g_clients[i].m_cLock.unlock();
                 send_enter_packet(user_id, i); // 새로 접속한 클라에게 이미 연결중인 클라 정보들을 보냄 
                 if (true == is_player(i))
                     send_enter_packet(i, user_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
             }
-            //g_clients[i].m_cLock.unlock();
+            else
+                g_clients[i].m_cLock.unlock();
         }
     }
 

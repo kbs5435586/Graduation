@@ -26,10 +26,10 @@ private:
 	float FORMATION_SPACE = 10.f;
 
 	float MOVE_SPEED_NPC = 0.8f;
-	float MOVE_SPEED_PLAYER = 1.f;
-	float ROTATE_SPEED = 0.1f;
+	float MOVE_SPEED_PLAYER = 0.05f;
+	float ROTATE_SPEED = 0.01f;
 	int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
-	float SCALE_X = 0.02f, SCALE_Y = 0.02f, SCALE_Z = 0.02f;
+	float SCALE_X = 0.1f, SCALE_Y = 0.1f, SCALE_Z = 0.1f;
 	int ATTACK_DAMAGE = 50;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;

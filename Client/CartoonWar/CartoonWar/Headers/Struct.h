@@ -516,8 +516,7 @@ struct Session
 	short	hp;
 	short	anim;
 	char	name[MAX_ID_LEN + 1];
-	bool	showObject;
-	Session() : showObject(false) {};
+	bool	showObject = false;
 };
 
 

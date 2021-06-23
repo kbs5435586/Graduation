@@ -328,19 +328,19 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		int iTemp = 0;
 
-		for (auto& iter : managment->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Rect")->Get_GameObjectLst())
+		/*for (auto& iter : managment->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Rect")->Get_GameObjectLst())
 		{
 			dynamic_cast<CMyRect*>(iter)->m_iLayerIdx = iTemp;
 			iTemp++;
-		}
+		}*/
 
-		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Flag", L"Com_Transform", recv_id);
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		//pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		//	L"Layer_Flag", L"Com_Transform", recv_id);
+		//pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
-		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Rect", L"Com_Transform", recv_id);
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		//pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		//	L"Layer_Rect", L"Com_Transform", recv_id);
+		//pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	}
 	break;
 	case SC_PACKET_FLAG_BOOL:
@@ -534,28 +534,7 @@ void CServer_Manager::update_key_input()
 		send_npc_act_packet(DO_RANDMOVE);
 		isSendOnePacket = false;
 	}*/
-	if ((GetAsyncKeyState('6') & 0x8000))
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- Get_ChangeFormation_Cooltime());
-		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-		{
-			send_change_formation_packet();
-			isSendOnePacket = false;
-			Set_ChangeFormation_CoolTime(high_resolution_clock::now());
-		}
-	}
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- Get_AddNPC_Cooltime());
-		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-		{
-			send_add_npc_packet();
-			isSendOnePacket = false;
-			Set_AddNPC_CoolTime(high_resolution_clock::now());
-		}
-	}
+
 
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
@@ -571,36 +550,7 @@ void CServer_Manager::update_key_input()
 	}
 	else
 	{
-		if (GetAsyncKeyState('T') & 0x8000)
-		{
-			send_move_packet(GO_FORWARD);
-			isSendOnePacket = false;
-		}
-		//if (GetAsyncKeyState('F') & 0x8000)
-		//{
-		//	send_move_packet(GO_LEFT);
-		//	isSendOnePacket = false;
-		//}
-		if (GetAsyncKeyState('G') & 0x8000)
-		{
-			send_move_packet(GO_BACK);
-			isSendOnePacket = false;
-		}
-		//if (GetAsyncKeyState('H') & 0x8000)
-		//{
-		//	send_move_packet(GO_RIGHT);
-		//	isSendOnePacket = false;
-		//}
-		if (GetAsyncKeyState('F') & 0x8000)
-		{
-			send_rotate_packet(TURN_LEFT);
-			isSendOnePacket = false;
-		}
-		if (GetAsyncKeyState('H') & 0x8000)
-		{
-			send_rotate_packet(TURN_RIGHT);
-			isSendOnePacket = false;
-		}
+		
 	}
 
 	//if (true == isLogin)

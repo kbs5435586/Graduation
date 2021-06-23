@@ -709,7 +709,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//DDS 
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_SkyBox",
-			CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 0, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
+			CTexture::Create(L"../Bin/Resource/Texture/SkyBox/SkyBox%d.dds", 2, TEXTURE_TYPE::TEXTURE_TYPE_DDS, true))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha",
 			CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
