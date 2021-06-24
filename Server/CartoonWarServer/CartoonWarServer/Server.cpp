@@ -263,7 +263,7 @@ void Server::send_packet(int user_id, void* packet)
 void Server::do_move(int user_id, char direction)
 {
     _vec3* newpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* oldpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     switch (direction)
     {
@@ -322,7 +322,7 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (check_collision(user_id, c.second.m_id))
         {
-            g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, oldpos);
+            g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
             isCollide = true;
             set_formation(user_id);
             break;
@@ -1105,7 +1105,8 @@ void Server::initialize_NPC(int player_id)
             g_clients[player_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
             g_clients[npc_id].m_speed = MOVE_SPEED_NPC;
             g_clients[npc_id].m_class = CLASS::CLASS_WORKER;
-            g_clients[npc_id].m_collision_box = { 20.f,80.f,20.f };
+            g_clients[npc_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
+            g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
             g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
             set_formation(player_id);
             for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
@@ -1568,7 +1569,8 @@ void Server::worker_thread()
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
                 g_clients[user_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
                 g_clients[user_id].m_class = CLASS::CLASS_WORKER;
-                g_clients[user_id].m_collision_box = { 20.f,80.f,20.f };
+                g_clients[user_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
+                g_clients[user_id].m_col.radius = 20.f * SCALE.x;
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
@@ -1744,19 +1746,33 @@ bool Server::check_collision(int a, int b)
 {
     _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3 a_col = g_clients[a].m_collision_box;
-    _vec3 b_col = g_clients[b].m_collision_box;
+    float a_ran = g_clients[a].m_col.radius;
+    float b_ran = g_clients[b].m_col.radius;
+    //_vec3 a_col = g_clients[a].m_col.col_range;
+    //_vec3 b_col = g_clients[b].m_col.col_range;
 
-    _vec3 a_min = { a_pos->x - a_col.x / 2,a_pos->y ,a_pos->z - a_col.z / 2 };
-    _vec3 a_max = { a_pos->x + a_col.x / 2,a_pos->y + a_col.y ,a_pos->z + a_col.z / 2 };
-    _vec3 b_min = { b_pos->x - b_col.x / 2,b_pos->y ,b_pos->z - b_col.z / 2 };
-    _vec3 b_max = { b_pos->x + b_col.x / 2,b_pos->y + b_col.y ,b_pos->z + b_col.z / 2 };
+    //_vec3 a_min = { a_pos->x - a_col.x / 2,a_pos->y ,a_pos->z - a_col.z / 2 }; // AABB 충돌
+    //_vec3 a_max = { a_pos->x + a_col.x / 2,a_pos->y + a_col.y ,a_pos->z + a_col.z / 2 };
+    //_vec3 b_min = { b_pos->x - b_col.x / 2,b_pos->y ,b_pos->z - b_col.z / 2 };
+    //_vec3 b_max = { b_pos->x + b_col.x / 2,b_pos->y + b_col.y ,b_pos->z + b_col.z / 2 };
 
-    if ((a_min.x <= b_max.x && a_max.x >= b_min.x) &&
-        (a_min.y <= b_max.y && a_max.y >= b_min.y) &&
-        (a_min.z <= b_max.z && a_max.z >= b_min.z))
+    //if ((a_min.x <= b_max.x && a_max.x >= b_min.x) &&
+    //    (a_min.y <= b_max.y && a_max.y >= b_min.y) &&
+    //    (a_min.z <= b_max.z && a_max.z >= b_min.z))
+    //{
+    //    //Pos = PrevPos; 이전 위치로 되돌리기
+    //    cout << "id " << a << " has collide with " << b << "\n";
+    //    return true;
+    //}
+    //else
+    //    return false;
+
+    float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
+    
+    if (dist < (a_ran + b_ran))
     {
-        //Pos = PrevPos; 이전 위치로 되돌리기
         cout << "id " << a << " has collide with " << b << "\n";
         return true;
     }
