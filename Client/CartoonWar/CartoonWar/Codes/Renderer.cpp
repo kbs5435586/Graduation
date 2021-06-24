@@ -57,6 +57,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Priority();
 	Render_Alpha();
 	Render_UI();
+	Render_UI_Back();
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -112,6 +113,20 @@ void CRenderer::Render_UI()
 		}
 	}
 	m_RenderList[RENDER_UI].clear();
+}
+
+void CRenderer::Render_UI_Back()
+{
+	//RENDER_UI_BACK
+	for (auto& pGameObject : m_RenderList[RENDER_UI_BACK])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_UI_BACK].clear();
 }
 
 void CRenderer::Render_Blend()

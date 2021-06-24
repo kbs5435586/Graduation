@@ -248,6 +248,7 @@
     <ClInclude Include="..\Headers\TestHatchMesh.h" />
     <ClInclude Include="..\Headers\TestMesh.h" />
     <ClInclude Include="..\Headers\Texture.h" />
+    <ClInclude Include="..\Headers\Throw_Arrow.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\TimerManager.h" />
     <ClInclude Include="..\Headers\Transform.h" />
@@ -256,6 +257,8 @@
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_OnHead.h" />
+    <ClInclude Include="..\Headers\UI_OnHeadBack.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
     <ClInclude Include="..\Headers\UI_MP.h" />
@@ -359,6 +362,7 @@
     <ClCompile Include="..\Codes\TestHatchMesh.cpp" />
     <ClCompile Include="..\Codes\TestMesh.cpp" />
     <ClCompile Include="..\Codes\Texture.cpp" />
+    <ClCompile Include="..\Codes\Throw_Arrow.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\TimerManager.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
@@ -366,6 +370,8 @@
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_OnHead.cpp" />
+    <ClCompile Include="..\Codes\UI_OnHeadBack.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
     <ClCompile Include="..\Codes\UI_MP.cpp" />
@@ -499,6 +505,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Shadow.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

@@ -145,7 +145,7 @@ void CUI_WoL::Free()
 	Safe_Release(m_pCompute_ShaderCom);
 
 
-	CGameObject::Free();
+	CUI::Free();
 }
 
 HRESULT CUI_WoL::Ready_Component()

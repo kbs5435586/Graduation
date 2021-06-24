@@ -1,12 +1,15 @@
 #include "framework.h"
 #include "Management.h"
 #include "Player.h"
-
+#include "UI_OnHead.h"
+#include "UI_OnHeadBack.h"
 CPlayer::CPlayer()
+	: CGameObject()
 {
 }
 
 CPlayer::CPlayer(const CPlayer& rhs)
+	: CGameObject(rhs)
 {
 }
 
@@ -28,14 +31,14 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//Compute_Matrix();
 	_vec3 vPos = { 10.f,0.f,10.f };
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
+	//tagInfo(float hp, float mp, float att, float def)
 
-
+	m_tInfo = INFO(10, 1,1,0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -51,12 +54,26 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-	m_eCurClass = CLASS::CLASS_WORKER;
+	m_eCurClass = CLASS::CLASS_ARCHER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
+
+
+
+	m_pUI_OnHead = CUI_OnHead::Create();
+	if (nullptr == m_pUI_OnHead)
+		return E_FAIL;
+	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
+		return E_FAIL;
+
+	m_pUI_OnHeadBack = CUI_OnHeadBack::Create();
+	if (nullptr == m_pUI_OnHeadBack)
+		return E_FAIL;
+	if (FAILED(m_pUI_OnHeadBack->Ready_GameObject((void*)&vPos)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -66,12 +83,34 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
+	m_pUI_OnHead->Update_GameObject(fTimeDelta);
+	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
+	m_pUI_OnHead->SetInfo(m_tInfo);	
+
+	m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
+	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
+	m_pUI_OnHeadBack->SetInfo(m_tInfo);
+
 	m_pTransformCom->Set_PositionY(0.f);
 
 	Change_Class();
 	Input_Key(fTimeDelta);
 	Obb_Collision();
 	Combat(fTimeDelta);
+	Death(fTimeDelta);
+	if (m_tInfo.fHP <= 0.f)
+	{
+		if (!m_IsDeadMotion)
+		{
+			_uint iRand = rand() % 2;
+			if (iRand == 0)
+				m_iCurAnimIdx = m_iDeathMotion[0];
+			else
+				m_iCurAnimIdx = m_iDeathMotion[1];
+			m_IsDeadMotion = true;
+		}
+
+	}
 
 	if (m_IsDead)
 		return DEAD_OBJ;
@@ -82,13 +121,14 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-
+	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
+	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 		return -1;
 
-	Death(fTimeDelta);
+
 	Set_Animation(fTimeDelta);
 
 	return _int();
@@ -100,7 +140,6 @@ void CPlayer::Render_GameObject()
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
-
 
 	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
@@ -256,6 +295,9 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
 
+
+	Safe_Release(m_pUI_OnHead);
+	Safe_Release(m_pUI_OnHeadBack);
 	CGameObject::Free();
 }
 
@@ -438,7 +480,7 @@ void CPlayer::Change_Class()
 		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
-
+		DeathMontion_Init();
 		AnimVectorClear();
 		if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
 		{
@@ -961,49 +1003,7 @@ void CPlayer::AnimVectorClear()
 	m_vecAnimCtrl.shrink_to_fit();
 }
 
-void CPlayer::Compute_Matrix_Z()
-{
-	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3		vSize = m_pTransformCom->Get_Scale();
-	_matrix		matLeft = Matrix_::Identity();
-	_matrix		matRight = Matrix_::Identity();
 
-	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
-	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationZ(XMConvertToRadians(100.f)));
-	vRight *= 0.1f;
-	vUp *= 0.1f;
-	vLook *= 0.1f;
-	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
-
-	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
-	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
-	memcpy(&matLeft.m[2][0], &vLook, sizeof(_vec3));
-	matLeft.Translation(vPos);
-	
-	vRight = { 1.f, 0.f, 0.f }; 
-	vUp = { 0.f, 1.f, 0.f };
-	vLook = { 0.f, 0.f, 1.f };
-	DirectX::XMStoreFloat4x4(&matRight, DirectX::XMMatrixRotationZ(XMConvertToRadians(-100.f)));
-	vRight *= 0.1f;
-	vUp *= 0.1f;
-	vLook *= 0.1f;
-	mat = ::XMLoadFloat4x4(&matRight);
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
-
-	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
-	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
-	memcpy(&matRight.m[2][0], &vLook, sizeof(_vec3));
-	matRight.Translation(vPos);
-
-
-	m_matLeft = matLeft;
-	m_matRight = matRight;
-}
 
 void CPlayer::Obb_Collision()
 {
@@ -1048,6 +1048,15 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
+
+		if (m_eCurClass == CLASS::CLASS_ARCHER)
+		{
+			//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			//_matrix matTemp = m_pTransformCom->Get_Matrix();
+			CTransform* pTemp = m_pTransformCom;
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&pTemp)))
+				return ;
+		}
 		_uint iRand = rand() % 2;
 		if (iRand == 0)
 			m_iCurAnimIdx = m_iAttackMotion[0];
@@ -1082,7 +1091,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	}
-	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
 	{
 		if (!m_IsCombat)
 			m_iCurAnimIdx = 0;
@@ -1108,7 +1117,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		m_pTransformCom->BackWard(fTimeDelta);
 	}
-	if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
 		if (!m_IsCombat)
 			m_iCurAnimIdx = 0;
@@ -1124,7 +1133,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
-	if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
+	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
 	{
 		if (!m_IsCombat)
 			m_iCurAnimIdx = 0;
@@ -1150,14 +1159,68 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 
 
-	if (GetAsyncKeyState('1'))
+	if (CManagement::GetInstance()->Key_Down(KEY_1))
 	{
 		m_iCurMeshNum++;
 		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
 			m_iCurMeshNum = 0;
 		m_iCurAnimIdx = 0;
 		m_eCurClass = (CLASS)m_iCurMeshNum;
+
+
+	//	m_iCurAnimIdx = 5;
+
 	}
+
+
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
+	{
+		m_tInfo.fHP -= 1.f;
+	}
+}
+
+void CPlayer::Compute_Matrix_Z()
+{
+	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3		vSize = m_pTransformCom->Get_Scale();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
+
+	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
+	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationZ(XMConvertToRadians(100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matLeft.m[2][0], &vLook, sizeof(_vec3));
+	matLeft.Translation(vPos);
+
+	vRight = { 1.f, 0.f, 0.f };
+	vUp = { 0.f, 1.f, 0.f };
+	vLook = { 0.f, 0.f, 1.f };
+	DirectX::XMStoreFloat4x4(&matRight, DirectX::XMMatrixRotationZ(XMConvertToRadians(-100.f)));
+	vRight *= 0.1f;
+	vUp *= 0.1f;
+	vLook *= 0.1f;
+	mat = ::XMLoadFloat4x4(&matRight);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
+
+	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
+	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
+	memcpy(&matRight.m[2][0], &vLook, sizeof(_vec3));
+	matRight.Translation(vPos);
+
+
+	m_matLeft = matLeft;
+	m_matRight = matRight;
 }
 
 void CPlayer::Compute_Matrix_X()
@@ -1206,6 +1269,42 @@ void CPlayer::Compute_Matrix_X()
 
 void CPlayer::Death(const _float& fTimeDelta)
 {
+	DeathMontion_Init();
+	if (m_iCurAnimIdx == m_iDeathMotion[1] )
+	{
+		if (!m_IsDead)
+		{						
+			m_fDeathTime += fTimeDelta * 1.2f;
+			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
+			m_pTransformCom->Set_Matrix(matTemp);
+			if (m_fDeathTime >= 1.7f)
+			{
+				m_fDeathTime = 0.f;
+				m_IsDead = true;
+				
+			}			
+		}
+
+	}
+	else if (m_iCurAnimIdx == m_iDeathMotion[0])
+	{		
+		if (!m_IsDead)
+		{
+			m_fDeathTime += fTimeDelta * 1.2f;
+			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
+			m_pTransformCom->Set_Matrix(matTemp);
+			if (m_fDeathTime >= 1.7f)
+			{
+				m_fDeathTime = 0.f;
+				m_IsDead = true;
+			}
+		}
+	}
+
+}
+
+void CPlayer::DeathMontion_Init()
+{
 	m_iDeathMotion[0] = 100;
 	m_iDeathMotion[1] = 100;
 	switch (m_eCurClass)
@@ -1214,7 +1313,13 @@ void CPlayer::Death(const _float& fTimeDelta)
 		Compute_Matrix_X();
 		m_iDeathMotion[0] = 4;
 		m_iDeathMotion[1] = 5;
+		break;
 	case CLASS::CLASS_INFANTRY:
+		Compute_Matrix_X();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS(4):
 		Compute_Matrix_X();
 		m_iDeathMotion[0] = 9;
 		m_iDeathMotion[1] = 10;
@@ -1225,6 +1330,11 @@ void CPlayer::Death(const _float& fTimeDelta)
 		m_iDeathMotion[1] = 10;
 		break;
 	case CLASS::CLASS_CAVALRY:
+		Compute_Matrix_Z();
+		m_iDeathMotion[0] = 9;
+		m_iDeathMotion[1] = 10;
+		break;
+	case CLASS(2):
 		Compute_Matrix_Z();
 		m_iDeathMotion[0] = 9;
 		m_iDeathMotion[1] = 10;
@@ -1245,38 +1355,6 @@ void CPlayer::Death(const _float& fTimeDelta)
 		m_iDeathMotion[1] = 8;
 		break;
 	}
-
-	if (m_iCurAnimIdx == m_iDeathMotion[1] )
-	{
-		if (!m_IsDeath)
-		{			
-			
-			m_fDeathTime += fTimeDelta * 1.2f;
-			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
-			m_pTransformCom->Set_Matrix(matTemp);
-			if (m_fDeathTime >= 1.7f)
-			{
-				m_fDeathTime = 0.f;
-				m_IsDeath = true;
-			}			
-		}
-
-	}
-	else if (m_iCurAnimIdx == m_iDeathMotion[0])
-	{		
-		if (!m_IsDeath)
-		{
-			m_fDeathTime += fTimeDelta * 1.2f;
-			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
-			m_pTransformCom->Set_Matrix(matTemp);
-			if (m_fDeathTime >= 1.7f)
-			{
-				m_fDeathTime = 0.f;
-				m_IsDeath = true;
-			}
-		}
-	}
-
 }
 
 void CPlayer::Attack(const _float& fTimeDelta)

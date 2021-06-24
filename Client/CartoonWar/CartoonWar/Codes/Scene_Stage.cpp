@@ -4,6 +4,7 @@
 
 #include "Player.h"
 #include "NPC.h"
+#include "Throw_Arrow.h"
 
 // Shape
 #include "MyRect.h"
@@ -22,6 +23,7 @@
 #include "UI_MP.h"
 #include "UI_WoL.h"
 #include "UI_WoL_Blue.h"
+#include "UI_OnHead.h"
 
 // Environment
 #include "Fire.h"
@@ -119,6 +121,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_WoL_Blue", CUI_WoL_Blue::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead", CUI_OnHead::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
@@ -142,6 +146,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Player", CPlayer::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_NPC", CNPC::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_ThrowArrow", CThrow_Arrow::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -389,6 +395,9 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_TAN };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
+	//GameObject_ThrowArrow
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
