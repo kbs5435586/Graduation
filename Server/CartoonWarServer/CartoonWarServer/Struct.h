@@ -9,12 +9,9 @@ enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_END };
 enum ENUM_FORMATION { FM_FLOCK, FM_SQUARE, FM_PIRAMID, FM_CIRCLE, FM_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
 enum ENUM_TEAM { TEAM_RED, TEAM_BLUE, TEAM_END };
+enum class CLASS { CLASS_WORKER, CLASS_CAVALRY, CLASS_INFANTRY = 3, CLASS_SPEARMAN = 5, CLASS_MAGE = 6, CLASS_MMAGE = 7, 
+	CLASS_ARCHER = 8, CLASS_PRIEST = 9, CLASS_END = 10 };
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
-
-struct Collision
-{
-	float sphere_r;
-};
 
 struct OverEx // 확장 오버랩 구조체
 {
@@ -52,12 +49,15 @@ struct SESSION // 클라이언트 정보
 	unsigned m_move_time; // 스트레스 테스트
 
 	float m_speed;
+	
 	vector <SESSION*> m_boid;
 	ENUM_FORMATION m_formation;
+	CLASS m_class;
+
 	_vec3 m_target_pos;
+	_vec3 m_collision_box;
 
 	CTransform m_transform;
-	Collision m_collision;
 	//float m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
 	char m_name[MAX_ID_LEN + 1]; // +1은 아이디가 50 꽉차서 오면 안되긴 하지만 혹시라도 꽉 차서 왔을때 대비
 	// m_isConnected가 true일때 m_name가 의미있음, true인데 m_name에 값이 없는 경우가 없어야함

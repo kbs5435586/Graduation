@@ -262,32 +262,33 @@ void Server::send_packet(int user_id, void* packet)
 
 void Server::do_move(int user_id, char direction)
 {
-    _vec3* pos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* newpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* oldpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     switch (direction)
     {
     case GO_UP:
-        if (pos->y >= 0)
-            pos->y--;
+        if (newpos->y >= 0)
+            newpos->y--;
         break;
     case GO_DOWN:
-        if (pos->y < WORLD_HEIGHT)
-            pos->y++;
+        if (newpos->y < WORLD_HEIGHT)
+            newpos->y++;
         break;
     case GO_LEFT:
-        if (pos->x >= 0)
+        if (newpos->x >= 0)
             g_clients[user_id].m_transform.Go_Left(MOVE_SPEED_PLAYER);
         break;
     case GO_RIGHT:
-        if (pos->x < WORLD_HORIZONTAL)
+        if (newpos->x < WORLD_HORIZONTAL)
             g_clients[user_id].m_transform.Go_Right(MOVE_SPEED_PLAYER);
         break;
     case GO_FORWARD:
-        if (pos->z >= 0)
+        if (newpos->z >= 0)
             g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
         break;
     case GO_BACK:
-        if (pos->z < WORLD_VERTICAL)
+        if (newpos->z < WORLD_VERTICAL)
             g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
         break;
     default:
@@ -296,22 +297,44 @@ void Server::do_move(int user_id, char direction)
         exit(-1);
     }
 
-    if (pos->y < 0)
-        pos->y = 0;
-    if (pos->y >= (WORLD_HEIGHT - 1))
-        pos->y = WORLD_HEIGHT - 1;
-    if (pos->x < 0)
-        pos->x = 0;
-    if (pos->x >= (WORLD_HORIZONTAL - 1))
-        pos->x = WORLD_HORIZONTAL - 1;
-    if (pos->z >= (WORLD_VERTICAL - 1))
-        pos->z = WORLD_VERTICAL - 1;
-    if (pos->z < 0)
-        pos->z = 0;
+    if (newpos->y < 0)
+        newpos->y = 0;
+    if (newpos->y >= (WORLD_HEIGHT - 1))
+        newpos->y = WORLD_HEIGHT - 1;
+    if (newpos->x < 0)
+        newpos->x = 0;
+    if (newpos->x >= (WORLD_HORIZONTAL - 1))
+        newpos->x = WORLD_HORIZONTAL - 1;
+    if (newpos->z >= (WORLD_VERTICAL - 1))
+        newpos->z = WORLD_VERTICAL - 1;
+    if (newpos->z < 0)
+        newpos->z = 0;
 
-    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
-    set_formation(user_id);
+    bool isCollide = false;
 
+    for (auto& c : g_clients) // aabb 충돌체크
+    {
+        if (c.second.m_id == user_id)
+            continue;
+        if (ST_ACTIVE != c.second.m_status)
+            continue;
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
+            continue;
+        if (check_collision(user_id, c.second.m_id))
+        {
+            g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, oldpos);
+            isCollide = true;
+            set_formation(user_id);
+            break;
+        }
+    }
+
+    if (!isCollide)
+    {
+        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, newpos);
+        set_formation(user_id);
+    }
+   
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
     // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
@@ -1079,8 +1102,10 @@ void Server::initialize_NPC(int player_id)
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
-            g_clients[player_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
+            g_clients[player_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
             g_clients[npc_id].m_speed = MOVE_SPEED_NPC;
+            g_clients[npc_id].m_class = CLASS::CLASS_WORKER;
+            g_clients[npc_id].m_collision_box = { 20.f,80.f,20.f };
             g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
             set_formation(player_id);
             for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
@@ -1406,7 +1431,7 @@ void Server::is_flag_near(int flag)
                 count_red++;
                 if (false == flags[flag].isRed)
                 {
-                    cout << "flag " << flag << " is red\n";
+                    //cout << "flag " << flag << " is red\n";
                     flags[flag].isRed = true;
                     for (int j = 0; j <= MAX_USER; ++j)
                     {
@@ -1423,7 +1448,7 @@ void Server::is_flag_near(int flag)
                 count_blue++;
                 if (false == flags[flag].isBlue)
                 {
-                    cout << "flag " << flag << " is blue\n";
+                    //cout << "flag " << flag << " is blue\n";
                     flags[flag].isBlue = true;
                     for (int j = 0; j <= MAX_USER; ++j)
                     {
@@ -1541,20 +1566,22 @@ void Server::worker_thread()
 
 
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
-                g_clients[user_id].m_transform.Scaling(SCALE_X, SCALE_Y, SCALE_Z);
+                g_clients[user_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
+                g_clients[user_id].m_class = CLASS::CLASS_WORKER;
+                g_clients[user_id].m_collision_box = { 20.f,80.f,20.f };
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 if (0 == user_id)
                 {
                     g_clients[user_id].m_team = TEAM_RED;
-                    _vec3 pos = { 50.f, 0.2f, 90.f };
+                    _vec3 pos = { 50.f, 0.f, 90.f };
                     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 }
                 else
                 {
                     g_clients[user_id].m_team = TEAM_BLUE;
-                    _vec3 pos = { 450.f, 0.2f, 360.f };
+                    _vec3 pos = { 90.f, 0.f, 30.f };
                     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 }
 
@@ -1715,12 +1742,24 @@ void Server::mainServer()
 
 bool Server::check_collision(int a, int b)
 {
-    _vec3* p1 = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* p2 = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 a_col = g_clients[a].m_collision_box;
+    _vec3 b_col = g_clients[b].m_collision_box;
 
-    float* r1 = &g_clients[a].m_collision.sphere_r;
-    float* r2 = &g_clients[b].m_collision.sphere_r;
+    _vec3 a_min = { a_pos->x - a_col.x / 2,a_pos->y ,a_pos->z - a_col.z / 2 };
+    _vec3 a_max = { a_pos->x + a_col.x / 2,a_pos->y + a_col.y ,a_pos->z + a_col.z / 2 };
+    _vec3 b_min = { b_pos->x - b_col.x / 2,b_pos->y ,b_pos->z - b_col.z / 2 };
+    _vec3 b_max = { b_pos->x + b_col.x / 2,b_pos->y + b_col.y ,b_pos->z + b_col.z / 2 };
 
-    return fabs((p1->x - p2->x) * (p1->x - p2->x) + (p1->y - p2->y) * (p1->y - p2->y) + (p1->z - p2->z) * (p1->z - p2->z)
-        <= (*r1 + *r2) * (*r1 + *r2));
+    if ((a_min.x <= b_max.x && a_max.x >= b_min.x) &&
+        (a_min.y <= b_max.y && a_max.y >= b_min.y) &&
+        (a_min.z <= b_max.z && a_max.z >= b_min.z))
+    {
+        //Pos = PrevPos; 이전 위치로 되돌리기
+        cout << "id " << a << " has collide with " << b << "\n";
+        return true;
+    }
+    else
+        return false;
 }

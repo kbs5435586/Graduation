@@ -29,10 +29,10 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	_vec3 vPos = { 10.f,0.f,10.f };
+	//_vec3 vPos = { 10.f,0.f,10.f };
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
-	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 
 
