@@ -13,7 +13,7 @@ HRESULT CRTT::CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTe
 	lstrcpy(m_pTag, pTag);
 	m_pTexture = _pTex2D;
 	m_tDesc = _pTex2D->GetDesc();
-
+	//여기
 	HRESULT hr = S_OK;
 	if (m_tDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
 	{
@@ -70,6 +70,7 @@ HRESULT CRTT::CreateFromResource(const _tchar* pTag, ComPtr<ID3D12Resource> _pTe
 HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, 
 	const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
 {
+
 	lstrcpy(m_pTag, pTag);
 	m_tDesc.MipLevels = 1;
 	m_tDesc.Format = _eFormat;
@@ -86,7 +87,8 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	m_tDesc.Alignment = 0;
 	m_tDesc.DepthOrArraySize = 1;
 	m_tDesc.MipLevels = 1;
-
+	
+	
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;
 	m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
@@ -109,7 +111,7 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	if(FAILED(CDevice ::GetInstance()->GetDevice()->
 		CreateCommittedResource(&_HeapProperty, _eHeapFlag, &m_tDesc, m_eState, pValue, IID_PPV_ARGS(&m_pTexture))))
 		return E_FAIL;
-
+	//여기
 	// Texture 를 관리할 View 생성(SRV, RTV, DSV)
 	if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
 	{
@@ -139,7 +141,7 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 
 			CDevice::GetInstance()->GetDevice()->CreateRenderTargetView(m_pTexture.Get(), nullptr, hRTVHeap);
 		}
-
+		
 		// SRV 를 저장할 DescriptorHeap Create
 		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 		srvHeapDesc.NumDescriptors = 1;

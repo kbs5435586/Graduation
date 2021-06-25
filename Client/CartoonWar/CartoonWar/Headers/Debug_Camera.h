@@ -24,6 +24,5 @@ private:
 	CNavigation*				m_pNaviCom = nullptr;
 private:
 	_bool						m_IsTrue = false;
-	_bool						m_IsFix = false;
 };
 

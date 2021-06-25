@@ -17,92 +17,57 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 	m_iStride = sizeof(VTXCOL);
 
 	const float PI = acos(-1);
-	UINT iStackCount = 40; // 가로 분할 개수
-	UINT iSliceCount = 40; // 세로 분할 개수
-	float fRadius = 1.f;
+	const int M = 10;
+	const int N = 10;
+	float rad = 0.5f;
 
-	float fStackAngle = XM_PI / iStackCount;
-	float fSliceAngle = XM_2PI / iSliceCount;
+	m_iNumVertices = M * N + N + 1;
 
-	m_iNumVertices = iStackCount * iSliceCount + iSliceCount + 1;
-
-	float fUVXStep = 1.f / (float)iSliceCount;
-	float fUVYStep = 1.f / (float)iStackCount;
-
+	float delta_phi = (float)(PI / M);
+	float delta_theta = (float)(2 * PI / N);
 
 	//정점관리 벡터
-	vector<VTXTEXNOR>	vecVertices;
+	vector<VTXCOL>	vecVertices;
 	//> 사이즈 조정
+	vecVertices.resize(m_iNumVertices);
 
-	VTXTEXNOR v;
-
-	v.vPos = _vec3(0.f, fRadius, 0.f);
-	v.vTexUV = _vec2(0.5f, 0.f);
-	v.vNormal = v.vPos;
-	v.vNormal= Vector3_::Normalize(v.vNormal);
-	vecVertices.push_back(v);
-
-
-	for (UINT i = 1; i < iStackCount; ++i)
+	for (int i = 0; i <= M; i++)
 	{
-		float phi = i * fStackAngle;
-
-		for (UINT j = 0; j <= iSliceCount; ++j)
+		for (int j = 0; j <= N; j++)
 		{
-			float theta = j * fSliceAngle;
-			
-			v.vPos = _vec3(fRadius * sinf(i * fStackAngle) * cosf(j * fSliceAngle)
-				, fRadius * cosf(i * fStackAngle)
-				, fRadius * sinf(i * fStackAngle) * sinf(j * fSliceAngle));
-			v.vTexUV = _vec2(fUVXStep * j, fUVYStep * i);
-			v.vNormal = v.vPos;
-			v.vNormal = Vector3_::Normalize(v.vNormal);
-		
-			vecVertices.push_back(v);
+
+			float phi = delta_phi * i - (float)(PI / 2);
+			float theta = delta_theta * j;
+
+			vecVertices[(N * i) + j] = VTXCOL
+			(
+				XMFLOAT3((rad * cosf(phi)) * cosf(theta),(rad * cosf(phi)) * (float)sinf(theta), (rad * sinf(phi))),
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.f),
+				XMFLOAT3((rad * cosf(phi)) * cosf(theta), (rad * cosf(phi)) * (float)sinf(theta), (rad * sinf(phi)))
+			);
 		}
 	}
 
-	v.vPos = _vec3(0.f, -fRadius, 0.f);
-	v.vTexUV = _vec2(0.5f, 1.f);
-	v.vNormal = v.vPos;
-	v.vNormal = Vector3_::Normalize(v.vNormal);
-	vecVertices.push_back(v);
-
-	vector<_uint>	vecIndices;
 	//인덱스
-	for (UINT i = 0; i < iSliceCount; ++i)
-	{
-		vecIndices.push_back(0);
-		vecIndices.push_back(i + 2);
-		vecIndices.push_back(i + 1);
-	}
+	m_iNumIndices = M * N * 6;
+	vector<_uint>	vecIndices;
+	vecIndices.resize(m_iNumIndices);
 
-	for (UINT i = 0; i < iStackCount - 2; ++i)
+	int index = 0;
+
+	for (int i = 0; i < M; i++)
 	{
-		for (UINT j = 0; j < iSliceCount; ++j)
+		for (int j = 0; j < N; j++)
 		{
-			// + 
-			// | \
-			// +--+
-			vecIndices.push_back((iSliceCount + 1) * (i)+(j)+1);
-			vecIndices.push_back((iSliceCount + 1) * (i + 1) + (j + 1) + 1);
-			vecIndices.push_back((iSliceCount + 1) * (i + 1) + (j)+1);
+			vecIndices[index++] = N * i + j;
+			vecIndices[index++] = N * (i + 1) + j;
+			vecIndices[index++] = N * i + (j + 1);
 
-			// +--+
-			//  \ |
-			//    +
-			vecIndices.push_back((iSliceCount + 1) * (i)+(j)+1);
-			vecIndices.push_back((iSliceCount + 1) * (i)+(j + 1) + 1);
-			vecIndices.push_back((iSliceCount + 1) * (i + 1) + (j + 1) + 1);
+			vecIndices[index++] = N * i + (j + 1);
+			vecIndices[index++] = N * (i + 1) + j;
+			vecIndices[index++] = N * (i + 1) + (j + 1);
+
 		}
-	}
-
-	UINT iBottomIdx = (UINT)vecVertices.size() - 1;
-	for (UINT i = 0; i < iSliceCount; ++i)
-	{
-		vecIndices.push_back(iBottomIdx);
-		vecIndices.push_back(iBottomIdx - (i + 2));
-		vecIndices.push_back(iBottomIdx - (i + 1));
 	}
 
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
@@ -110,7 +75,7 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 
 	CDevice::GetInstance()->Open();
 	{
-		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * vecVertices.size());
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iNumVertices);
 
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
 			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pVertexBuffer))))
@@ -125,15 +90,15 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};
 		vertexData.pData = (void*)(vecVertices.data());
-		vertexData.RowPitch = m_iStride * vecVertices.size();
-		vertexData.SlicePitch = m_iStride * vecVertices.size();
+		vertexData.RowPitch = m_iStride * m_iNumIndices;
+		vertexData.SlicePitch = m_iStride * m_iNumIndices;
 
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer.Get(), m_pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
 		CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	{
-		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * vecIndices.size());
+		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices);
 
 
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
@@ -145,8 +110,8 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = (void*)(vecIndices.data());
-		indexData.RowPitch = sizeof(_uint) * vecIndices.size();
-		indexData.SlicePitch = sizeof(_uint) * vecIndices.size();
+		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
+		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
@@ -157,11 +122,11 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 
 	m_tVertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_tVertexBufferView.StrideInBytes = m_iStride;
-	m_tVertexBufferView.SizeInBytes = m_iStride * vecVertices.size();
+	m_tVertexBufferView.SizeInBytes = m_iStride * m_iNumVertices;
 
 	m_tIndexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_tIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * vecIndices.size();
+	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * m_iNumIndices;
 
 	CDevice::GetInstance()->WaitForFenceEvent();
 	return S_OK;

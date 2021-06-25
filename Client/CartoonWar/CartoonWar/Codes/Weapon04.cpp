@@ -60,9 +60,6 @@ _int CWeapon04::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CWeapon04::Render_GameObject()
 {
-	if (!m_IsPicked)
-		return;
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;

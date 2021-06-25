@@ -957,7 +957,9 @@ HRESULT CDevice::Create_View()
 	{
 		m_iDSVHeapSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 		D3D12_DESCRIPTOR_HEAP_DESC tHeap_Desc;
-		tHeap_Desc.NumDescriptors = 1;
+
+		///
+		tHeap_Desc.NumDescriptors = 2;
 		tHeap_Desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		tHeap_Desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		tHeap_Desc.NodeMask = 0;

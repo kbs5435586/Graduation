@@ -15,13 +15,16 @@ public:
     HRESULT                                 Ready_RTTMananger();
     void                                    Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
     CMRT*                                   Get_RTT(const _uint& iIdx) { return m_vecMRT[iIdx]; }
+    CMRT*                                   Get_BackRTT(const _uint& iIdx) { return m_vecBackMRT[iIdx]; }
 public:
     static CRTTMananger*                    Create();
     virtual void                            Free();
 private:
     vector<CMRT*>                           m_vecMRT;
+    vector<CMRT*>                           m_vecBackMRT;
     _uint                                   m_iSize = 0;
-    CRTT*                                   m_pDsTex = nullptr;
+    CRTT*                                   m_pDsTex = {};
+    CRTT*                                   m_pDsBackTex = {};
 
 };
 

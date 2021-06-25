@@ -40,18 +40,25 @@ HRESULT CRenderer::Render_RenderGroup()
 	//pManagement->Update();
 
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
+
+	
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
-
-
+	pManagement->Get_RTT((_uint)MRT::MRT_INVENTORY)->Clear();
+	
 	Render_Deffered(pManagement);
 	//Render_Light(pManagement);
+	Render_Inventory(pManagement);
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 	
 	Render_Alpha();
 	Render_UI();
 	Render_Blend();
+
+
+	//
+	
 
 
 	Safe_Release(pManagement);
@@ -73,6 +80,8 @@ void CRenderer::Render_Priority()
 
 void CRenderer::Render_NoneAlpha()
 {
+	//pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear();
+	////pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 	for (auto& pGameObject : m_RenderList[RENDER_NONEALPHA])
 	{
 		if (nullptr != pGameObject)
@@ -136,15 +145,36 @@ void CRenderer::Render_Blend()
 	m_RenderList[RENDER_BLEND].clear();
 }
 
+void CRenderer::Render_Inventory(CManagement* pManagement)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_INVENTORY)->OM_Set();
+
+	for (auto& pGameObject : m_RenderList[RENDER_INVENTORY])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_INVENTORY].clear();
+
+	pManagement->Get_RTT((_uint)MRT::MRT_INVENTORY)->TargetToResBarrier();
+}
+
 void CRenderer::Render_Deffered(CManagement* pManagement)
 {
+	// 인벤토리 그리는 Set
+	// OM_Set(인벤토리용) index = 1
+	// Render_Inventory Character( )
+
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
 
 
 	Render_Priority();
 	Render_NoneAlpha();
 
-
+	
 
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }

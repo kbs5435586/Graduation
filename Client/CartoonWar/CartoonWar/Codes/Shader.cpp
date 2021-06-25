@@ -111,6 +111,15 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.NumRenderTargets = 1;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
+	case SHADER_TYPE::SHADER_INVENTORY:
+		m_tPipeline.NumRenderTargets = 6;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[4] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[5] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		break;
 	}
 
 	switch (eTopology)
@@ -212,7 +221,6 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	output.matWV = matWorld * matView;
 	output.matWVP = output.matWV * matProj;
 	output.vCamPos = (_vec4)&matTemp.m[3][0];
-	output.vLook = (_vec4)&matTemp.m[2][0];
 	output.matRev = Matrix_::Inverse(output.matWV);
 	output.matRev = Matrix_::Transpose(output.matRev);
 

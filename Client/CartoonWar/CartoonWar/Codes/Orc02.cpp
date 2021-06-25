@@ -2,7 +2,6 @@
 #include "Management.h"
 #include "Orc02.h"
 #include "Weapon.h"
-#include "Layer.h"
 #include "Inventory_Camera.h"
 #include "Debug_Camera.h"
 
@@ -32,8 +31,7 @@ HRESULT COrc02::Ready_GameObject(void* pArg)
 
 	//m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 10.f, 0.f, 0.f };
-	//m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
-	m_pTransformCom->Scaling(1.f,1.f,1.f);
+	m_pTransformCom->Scaling(0.02f, 0.02f, 0.02f);
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pMeshCom->m_vecDiffTexturePath;
@@ -86,7 +84,7 @@ _int COrc02::Update_GameObject(const _float& fTimeDelta)
 	m_pColliderCom[1]->Update_Collider(m_pTransformCom);
 
 
-	m_pWeapon = (CWeapon*)CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon")->Get_GameObject(0);
+
 
 	if (m_pWeapon)
 	{
@@ -101,7 +99,7 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 	//Obb_Collision(); 
-	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
@@ -195,6 +193,17 @@ _int COrc02::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 
 
+	if (CManagement::GetInstance()->Key_Down(KEY_E))
+	{
+		_uint iLen = 99999999;
+		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Weapon"))
+		{
+			CTransform* pTargetTransform = (CTransform*)iter->Get_ComponentPointer(L"Com_Transform");
+			_vec3 vTargetPos = *pTargetTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLen = vPos - vTargetPos;
+			_uint iTempLen = Vector3_::Length(vLen);
 
 			if (iLen > iTempLen)
 			{
@@ -302,10 +311,6 @@ void COrc02::Render_GameObject()
 			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
 		}
 		m_pAnimCom->UpdateData(m_pMeshCom, m_pComputeShaderCom);
-
-		m_pWeapon->GetBoneIdx() = 27;
-		m_pWeapon->GetStructedBuffer() = m_pAnimCom->GetMatix();
-		m_pWeapon->GetIsPicked() = true;
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);

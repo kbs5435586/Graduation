@@ -6,7 +6,7 @@
 #define WINCY 1080
 
 const float	g_Near = 0.1f;
-const float g_Far = 300.f;
+const float g_Far = 500.f;
 
 #define NO_COPY(CLASSNAME)									\
 	private:												\

@@ -4,7 +4,7 @@
 
 struct tRtt
 {
-    CRTT* pRtt;
+    CRTT*   pRtt;
     _vec4   vClear_Color;
 };
 class CMRT :
@@ -32,6 +32,7 @@ private:
     tRtt                            m_tArr[8] = {};
     _uint                           m_iRTCnt = 0;
     CRTT*                           m_pDsTex= nullptr;
+    CRTT*                           m_pDsBackTex = nullptr;
     ComPtr<ID3D12DescriptorHeap>    m_pRTV;
     D3D12_RESOURCE_BARRIER			m_TargetToRes[8];
     D3D12_RESOURCE_BARRIER			m_ResToTarget[8];

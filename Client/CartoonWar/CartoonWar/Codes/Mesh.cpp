@@ -157,9 +157,9 @@ void CMesh::Load_Mesh(FbxMesh* pMesh)
 
 	// Subset Num
 	int iMtrlCnt = pMesh->GetNode()->GetMaterialCount();
-	if (iMtrlCnt <=0)
+	if (iMtrlCnt >= 2)
 	{
-		iMtrlCnt = 1;
+		_int i = 0;
 	}
 	m_iSubsetNum += iMtrlCnt;
 	//m_iSubsetNum++;
