@@ -1717,35 +1717,6 @@ void Server::mainServer()
     WSACleanup();
 }
 
-//int Server::API_SendMessage(lua_State* L)
-//{
-//    int my_id = (int)lua_tointeger(L, -3);
-//    int user_id = (int)lua_tointeger(L, -2);
-//    char* mess = (char*)lua_tostring(L, -1);
-//
-//    send_chat_packet(user_id, my_id, mess);
-//    lua_pop(L, 3);
-//    return 0;
-//}
-//
-//int Server::API_get_x(lua_State* L)
-//{
-//    int obj_id = (int)lua_tointeger(L, -1);
-//    lua_pop(L, 2);
-//    int x = g_clients[obj_id].m_x;
-//    lua_pushnumber(L, x);
-//    return 1;
-//}
-//
-//int Server::API_get_y(lua_State* L)
-//{
-//    int obj_id = (int)lua_tointeger(L, -1);
-//    lua_pop(L, 2);
-//    int y = g_clients[obj_id].m_y;
-//    lua_pushnumber(L, y);
-//    return 1;
-//}
-
 bool Server::check_collision(int a, int b)
 {
     _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
@@ -1779,14 +1750,14 @@ bool Server::check_collision(int a, int b)
     
     if (dist < (a_rad + b_rad))
     {
-        cout << "id " << a << " has collide with " << b << "\n";
-        a_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-        a_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
-        a_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
+        //cout << "id " << a << " has collide with " << b << "\n";
+        //a_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        //a_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
+        //a_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
 
-        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        //b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        //b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        //b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
 
         return true;
     }
