@@ -275,6 +275,8 @@
     </ClInclude>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\Headers\UI_ClassTap.h" />
+    <ClInclude Include="..\Headers\UI_Button.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Animator.cpp" />
@@ -378,6 +380,8 @@
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
+    <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
+    <ClCompile Include="..\Codes\UI_Button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />

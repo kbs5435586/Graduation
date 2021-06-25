@@ -58,12 +58,22 @@ _bool CKeyManager::Key_Up(DWORD dwKey)
 }
 _bool CKeyManager::Key_Down(DWORD dwKey)
 {
-	if (!(m_dwKeyDown & dwKey) && (m_dwKey & dwKey))
+	//if (!(m_dwKeyDown & dwKey) && (m_dwKey & dwKey))
+	//{
+	//	m_dwKeyDown |= dwKey;
+	//	return true;
+	//}
+	//else if (!(m_dwKey & dwKey) && (m_dwKeyDown & dwKey))
+	//{
+	//	m_dwKeyDown ^= dwKey;
+	//	return false;
+	//}
+	if(m_dwKey & dwKey)
 	{
 		m_dwKeyDown |= dwKey;
 		return true;
 	}
-	else if (!(m_dwKey & dwKey) && (m_dwKeyDown & dwKey))
+	else if (m_dwKeyDown & dwKey)
 	{
 		m_dwKeyDown ^= dwKey;
 		return false;

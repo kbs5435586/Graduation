@@ -32,7 +32,8 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 
 	m_fSizeX = 300.f;
 	m_fSizeY = 25.f;
-	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")->Get_BackObject()->GetInfo();
+	//m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")->Get_BackObject()->GetInfo();
+	m_tInfo = { 100.f,100.f,10.f,10.f };
 	return S_OK;
 }
 
@@ -80,10 +81,6 @@ void CUI_HP::Render_GameObject()
 
 	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_HP")->GetSRV().Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
-
-
-
-
 
 
 	m_tRep.m_arrInt[0] = m_tInfo.fHP;

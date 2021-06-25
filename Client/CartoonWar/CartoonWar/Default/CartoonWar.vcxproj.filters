@@ -391,6 +391,12 @@
     <Filter Include="02. GameObject\98. Camera\01. Light_Camera">
       <UniqueIdentifier>{1531d645-66e8-49ff-8a24-fcc3e86344e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\05. UI_ClassTap">
+      <UniqueIdentifier>{4c8da03f-32de-4fba-beb0-cd0eb03b809d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\98. default">
+      <UniqueIdentifier>{3994499c-3184-4188-ae7b-5a34dae7127c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -729,6 +735,12 @@
     <ClInclude Include="..\Headers\Light_Camera.h">
       <Filter>02. GameObject\98. Camera\01. Light_Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_ClassTap.h">
+      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Button.h">
+      <Filter>02. GameObject\97. UI\98. default</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1037,6 +1049,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Light_Camera.cpp">
       <Filter>02. GameObject\98. Camera\01. Light_Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_ClassTap.cpp">
+      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Button.cpp">
+      <Filter>02. GameObject\97. UI\98. default</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
