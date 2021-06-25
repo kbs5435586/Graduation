@@ -32,7 +32,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	//_vec3 vPos = { 10.f,0.f,10.f };
+	_vec3 vPos = { 10.f,0.f,10.f };
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -62,9 +62,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-
-
 	m_pUI_OnHead = CUI_OnHead::Create();
+
 	if (nullptr == m_pUI_OnHead)
 		return E_FAIL;
 	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
@@ -127,13 +126,16 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (nullptr == m_pRendererCom)
 		return -1;
-	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-		return -1;
 
+	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
+	{
+		m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
+		m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+	}
 
 	Set_Animation(fTimeDelta);
 
@@ -1069,6 +1071,15 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			{
 				server->send_attack_packet();
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
+			}
+
+			if (m_eCurClass == CLASS::CLASS_ARCHER)
+			{
+				//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				//_matrix matTemp = m_pTransformCom->Get_Matrix();
+				CTransform* pTemp = m_pTransformCom;
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&pTemp)))
+					return;
 			}
 
 			_uint iRand = rand() % 2;
