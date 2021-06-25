@@ -1051,10 +1051,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		if (m_eCurClass == CLASS::CLASS_ARCHER)
 		{
-			//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			//_matrix matTemp = m_pTransformCom->Get_Matrix();
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
 			CTransform* pTemp = m_pTransformCom;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&pTemp)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return ;
 		}
 		_uint iRand = rand() % 2;
@@ -1142,6 +1142,28 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 
 
+
+
+
+
+	if (CManagement::GetInstance()->Key_Down(KEY_1))
+	{
+		m_iCurMeshNum++;
+		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
+			m_iCurMeshNum = 0;
+		m_iCurAnimIdx = 0;
+		m_eCurClass = (CLASS)m_iCurMeshNum;
+
+	}
+
+
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
+	{
+		m_tInfo.fHP -= 1.f;
+	}
+
+
+
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
@@ -1156,27 +1178,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsHit = false;
 	}
 
-
-
-
-	if (CManagement::GetInstance()->Key_Down(KEY_1))
-	{
-		m_iCurMeshNum++;
-		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
-			m_iCurMeshNum = 0;
-		m_iCurAnimIdx = 0;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-
-
-	//	m_iCurAnimIdx = 5;
-
-	}
-
-
-	if (CManagement::GetInstance()->Key_Down(KEY_2))
-	{
-		m_tInfo.fHP -= 1.f;
-	}
 }
 
 void CPlayer::Compute_Matrix_Z()

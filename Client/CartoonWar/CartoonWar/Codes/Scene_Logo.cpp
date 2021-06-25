@@ -704,9 +704,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//if(FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Infantry",
 	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Undead/Undead_Light_Infantry.fbx", L"../Data/Undead/Light_Infantry.dat"))))
 	//	return E_FAIL;
-	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Arrow",
-		CMesh::Create(L"../Bin/Resource/Mesh/Static/Arrow/Arrow.FBX", L"../Data/Arrow.dat"))))
-		return E_FAIL;*/
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Arrow",
+	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Arrow/Arrow.FBX", L"../Data/Arrow.dat"))))
+	//	return E_FAIL;
 	return S_OK;
 }
 
