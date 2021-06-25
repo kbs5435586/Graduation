@@ -287,6 +287,10 @@ void Server::do_move(int user_id, char direction)
         if (newpos->z >= 0)
             g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
         break;
+    case GO_FAST_FORWARD:
+        if (newpos->z >= 0)
+            g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
+        break;
     case GO_BACK:
         if (newpos->z < WORLD_VERTICAL)
             g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
@@ -322,7 +326,7 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (check_collision(user_id, c.second.m_id))
         {
-            g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
+            //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
             isCollide = true;
             set_formation(user_id);
             break;
@@ -331,7 +335,7 @@ void Server::do_move(int user_id, char direction)
 
     if (!isCollide)
     {
-        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, newpos);
+        //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, newpos);
         set_formation(user_id);
     }
    
@@ -1746,8 +1750,8 @@ bool Server::check_collision(int a, int b)
 {
     _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    float a_ran = g_clients[a].m_col.radius;
-    float b_ran = g_clients[b].m_col.radius;
+    float a_rad = g_clients[a].m_col.radius;
+    float b_rad = g_clients[b].m_col.radius;
     //_vec3 a_col = g_clients[a].m_col.col_range;
     //_vec3 b_col = g_clients[b].m_col.col_range;
 
@@ -1770,10 +1774,20 @@ bool Server::check_collision(int a, int b)
     float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
         (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
         (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
+
+    float overlap = 0.5f * (dist - a_rad - b_rad);
     
-    if (dist < (a_ran + b_ran))
+    if (dist < (a_rad + b_rad))
     {
         cout << "id " << a << " has collide with " << b << "\n";
+        a_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        a_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
+        a_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
+
+        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+
         return true;
     }
     else

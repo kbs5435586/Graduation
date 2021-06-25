@@ -535,24 +535,6 @@ void CServer_Manager::update_key_input()
 		isSendOnePacket = false;
 	}*/
 
-
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- Get_Attack_Cooltime());
-		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-		{
-			send_attack_packet();
-			m_objects[my_id].anim = 0;
-			isSendOnePacket = false;
-			Set_Attack_CoolTime(high_resolution_clock::now());
-		}
-	}
-	else
-	{
-		
-	}
-
 	//if (true == isLogin)
 	//{
 	//	if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&

@@ -197,8 +197,9 @@ constexpr unsigned char GO_LEFT = 2;
 constexpr unsigned char GO_RIGHT = 3;
 constexpr unsigned char GO_BACK = 4;
 constexpr unsigned char GO_FORWARD = 5;
-constexpr unsigned char TURN_LEFT = 6;
-constexpr unsigned char TURN_RIGHT = 7;
+constexpr unsigned char GO_FAST_FORWARD = 6;
+constexpr unsigned char TURN_LEFT = 7;
+constexpr unsigned char TURN_RIGHT = 8;
 
 struct cs_packet_idle
 {

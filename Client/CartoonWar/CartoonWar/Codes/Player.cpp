@@ -1065,6 +1065,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	{
 		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 		{
+			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+				- server->Get_Attack_Cooltime());
+			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+			{
+				server->send_attack_packet();
+				server->Set_Attack_CoolTime(high_resolution_clock::now());
+			}
+
 			_uint iRand = rand() % 2;
 			if (iRand == 0)
 				m_iCurAnimIdx = m_iAttackMotion[0];
@@ -1086,7 +1094,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
+				server->send_idle_packet();
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
@@ -1102,7 +1110,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
+				server->send_idle_packet();
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
@@ -1114,11 +1122,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			else
 				m_iCurAnimIdx = m_iCombatMotion[2];
 
-			m_pTransformCom->BackWard(fTimeDelta * 2.f);
+			server->send_move_packet(GO_FAST_FORWARD);
 		}
 		else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 		{
-
 			if (!m_IsCombat)
 				m_iCurAnimIdx = 1;
 			else
@@ -1128,7 +1135,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
+				server->send_idle_packet();
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
@@ -1144,7 +1151,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
+				server->send_idle_packet();
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
