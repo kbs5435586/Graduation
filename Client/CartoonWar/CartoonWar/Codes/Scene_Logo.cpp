@@ -360,6 +360,10 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker",
 			CMesh::Create_Load(L"../Data/Undead/Worker.dat"))))
 			return E_FAIL;
+
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Arrow",
+			CMesh::Create_Load(L"../Data/Arrow.dat"))))
+			return E_FAIL;
 	}
 
 
@@ -512,6 +516,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 			return E_FAIL;
 			
 	}
+
+
 
 	{
 	/*	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Human_Archer",
@@ -698,9 +704,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	//if(FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Infantry",
 	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Undead/Undead_Light_Infantry.fbx", L"../Data/Undead/Light_Infantry.dat"))))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_SpearMan",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Undead/Undead_Spearman.fbx", L"../Data/Undead/SpearMan.dat"))))
-	//	return E_FAIL;
+	/*if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Arrow",
+		CMesh::Create(L"../Bin/Resource/Mesh/Static/Arrow/Arrow.FBX", L"../Data/Arrow.dat"))))
+		return E_FAIL;*/
 	return S_OK;
 }
 
@@ -797,7 +803,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Mesh_Default",
 		CShader::Create(L"../ShaderFiles/Shader_Mesh_Default.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_OnHead",
+		CShader::Create(L"../ShaderFiles/Shader_OnHead.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	//Compute_Shader_Compile
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default",

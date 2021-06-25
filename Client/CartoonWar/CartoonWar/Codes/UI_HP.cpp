@@ -148,7 +148,7 @@ void CUI_HP::Free()
 	Safe_Release(m_pCompute_ShaderCom);
 
 
-	CGameObject::Free();
+	CUI::Free();
 }
 
 HRESULT CUI_HP::Ready_Component()

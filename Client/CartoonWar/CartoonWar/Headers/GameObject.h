@@ -47,6 +47,7 @@ protected:
 	_float									m_fBazierCnt = 0.f;
 	_bool									m_IsBazier = false;
 	_bool									m_IsDead = false;
+	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 protected:
@@ -56,5 +57,7 @@ protected:
 	_vec3									m_vStartPoint = {};
 	_vec3									m_vEndPoint = {};
 	_vec3									m_vMidPoint = {};
+protected:
+	_float									m_fLifeTime = 0.f;
 };
 

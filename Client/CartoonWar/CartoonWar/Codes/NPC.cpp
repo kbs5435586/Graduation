@@ -3,10 +3,13 @@
 #include "NPC.h"
 
 CNPC::CNPC()
+	: CGameObject()
+
 {
 }
 
 CNPC::CNPC(const CNPC& rhs)
+	: CGameObject(rhs)
 {
 }
 
