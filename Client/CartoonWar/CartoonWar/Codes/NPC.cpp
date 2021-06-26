@@ -91,7 +91,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
 	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
-
+	m_pTransformCom->Set_PositionY(0.f);
 	Change_Class();
 	Obb_Collision();
 	Combat(fTimeDelta);

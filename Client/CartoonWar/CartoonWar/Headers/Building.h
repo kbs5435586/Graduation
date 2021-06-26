@@ -18,20 +18,22 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_GameObject_Shadow();
 private:
 	HRESULT									Ready_Component(const _tchar* pComTag);
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CBuilding* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx=0);
+	static CBuilding*						Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx=0);
 private:
 	virtual void							Free();
 private:
-	CTransform* m_pTransformCom = nullptr;
-	CRenderer* m_pRendererCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
-	CMesh* m_pMeshCom = nullptr;
-	CFrustum* m_pFrustumCom = nullptr;
+	CTransform*								m_pTransformCom = nullptr;
+	CRenderer*								m_pRendererCom = nullptr;
+	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pShaderCom_Shadow = nullptr;
+	CMesh*									m_pMeshCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	vector<CTexture*>						m_vecTexture;
 };

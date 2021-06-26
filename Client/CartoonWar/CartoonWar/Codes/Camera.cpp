@@ -103,8 +103,9 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tShadowCameraDesc.vEye);
-	//m_pTransform->Scaling(3.5f, 3.5f, 3.5f);
-	m_pTransform->Scaling(820.f, 820.f, 820.f);
+	//m_pTransform->Scaling(2.f, 2.f, 2.f);
+	//m_pTransform->Scaling(820.f, 820.f, 820.f);
+	m_pTransform->Scaling(400.f, 400.f, 400.f);
 
 	CCamera_Manager::GetInstance()->SetShadowMatWorld(m_pTransform->Get_Matrix());
 
