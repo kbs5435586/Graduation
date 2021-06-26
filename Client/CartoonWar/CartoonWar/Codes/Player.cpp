@@ -39,7 +39,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	//tagInfo(float hp, float mp, float att, float def)
 
-	m_tInfo = INFO(10, 1,1,0);
+	m_tInfo = INFO(10, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -135,11 +135,11 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 			return -1;
+		m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 	}
 
 	Set_Animation(fTimeDelta);
 
-	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 	Safe_Release(server);
 	return _int();
 }

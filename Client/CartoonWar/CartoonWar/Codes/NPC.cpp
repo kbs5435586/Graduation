@@ -126,17 +126,15 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
+		m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
+		m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+		m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 	}
-	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-		return -1;
-
-
+	
 	Set_Animation(fTimeDelta);
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
@@ -144,7 +142,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 	}
 
-	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 	Safe_Release(server);
 	return _int();
 }
