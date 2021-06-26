@@ -1073,24 +1073,23 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
 			}
 
-			if (m_eCurClass == CLASS::CLASS_ARCHER)
-			{
-				//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-				//_matrix matTemp = m_pTransformCom->Get_Matrix();
-				CTransform* pTemp = m_pTransformCom;
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&pTemp)))
-					return;
-			}
-
-			_uint iRand = rand() % 2;
-			if (iRand == 0)
-				m_iCurAnimIdx = m_iAttackMotion[0];
-			else
-				m_iCurAnimIdx = m_iAttackMotion[1];
-			m_IsOnce = true;
-			m_IsHit = true;
-			m_IsCombat = true;
+		if (m_eCurClass == CLASS::CLASS_ARCHER)
+		{
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			CTransform* pTemp = m_pTransformCom;
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+				return ;
 		}
+		_uint iRand = rand() % 2;
+		if (iRand == 0)
+			m_iCurAnimIdx = m_iAttackMotion[0];
+		else
+			m_iCurAnimIdx = m_iAttackMotion[1];
+		m_IsOnce = true;
+		m_IsHit = true;
+		m_IsCombat = true;
+	}
 
 		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 		{
@@ -1188,19 +1187,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 
 
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		if (m_IsCombat)
-		{
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-		else
-		{
-			m_iCurAnimIdx = 0;
-		}
-		m_IsOnce = false;
-		m_IsHit = false;
-	}
 
 
 
@@ -1213,15 +1199,28 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_iCurAnimIdx = 0;
 		m_eCurClass = (CLASS)m_iCurMeshNum;
 
-
-	//	m_iCurAnimIdx = 5;
-
 	}
 
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
 		m_tInfo.fHP -= 1.f;
+	}
+
+
+
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
+		{
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		}
+		else
+		{
+			m_iCurAnimIdx = 0;
+		}
+		m_IsOnce = false;
+		m_IsHit = false;
 	}
 
 	Safe_Release(server);

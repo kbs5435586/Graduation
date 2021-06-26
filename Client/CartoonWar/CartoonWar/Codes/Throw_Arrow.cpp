@@ -24,52 +24,39 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 
 	if (nullptr == pArg)
 		return E_FAIL;
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(-90.f));
 
-	CTransform* pTemp = (CTransform*)pArg;
-
-	_vec3 vRight, vUp, vLook;
-	_vec3 vPosition = *pTemp->Get_StateInfo(CTransform::STATE_POSITION);
-
-	vRight = *pTemp->Get_StateInfo(CTransform::STATE_RIGHT);
-	vUp = *pTemp->Get_StateInfo(CTransform::STATE_UP);
-	vLook = *pTemp->Get_StateInfo(CTransform::STATE_LOOK);
-
-	_matrix		matRot = Matrix_::Identity();
-	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(XMConvertToRadians(90.f))));
-
-	Vector3_::ScalarProduct(vRight, 0.1f, false);
-	Vector3_::ScalarProduct(vUp, 0.1f, false);
-	Vector3_::ScalarProduct(vLook, 0.1f, false);
-
-	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
-
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
-
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION,& vPosition);
+	_matrix pTemp = *(_matrix*)pArg;
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	pTemp._42 += 4.f;
+	matWorld *= pTemp;
+	//pTemp *= m_pTransformCom->Get_Matrix();
+	m_pTransformCom->Set_Matrix(matWorld);
 
 
-	_vec3 vColliderSize = {};
+
+	_vec3 vColliderSize = {50.f,5.f,5.f };
 	m_pColliderCom->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+
+
+
+
 	
 	return S_OK;
 }
 
 _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 {
-	//m_pColliderCom->Update_Collider(m_pTransformCom);
-	m_pTransformCom->Go_Straight(fTimeDelta);
+	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
+	m_pTransformCom->Go_Right(fTimeDelta);
 
+	//m_pTransformCom->Set_PositionY(2.f);
 	m_fLifeTime += fTimeDelta;
-	if (m_fLifeTime >= 15.f)
+	if (m_fLifeTime >= 10.f)
 	{
 		m_fLifeTime = 0.f;
 		return DEAD_OBJ;
@@ -240,7 +227,7 @@ HRESULT CThrow_Arrow::Ready_Component()
 
 	m_pColliderCom = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
 	NULL_CHECK_VAL(m_pColliderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider", m_pColliderCom)))
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom)))
 		return E_FAIL;
 
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Undead");
@@ -250,4 +237,42 @@ HRESULT CThrow_Arrow::Ready_Component()
 
 	Safe_Release(pManagement);
 	return S_OK;
+}
+
+void CThrow_Arrow::Obb_Collision()
+{
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vTemp = { vPos - vTargetPos };
+			vTemp.Normalize();
+			m_vStartPoint = vPos;
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			//m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
+}
+
+void CThrow_Arrow::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+{
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
 }

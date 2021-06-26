@@ -30,6 +30,9 @@ private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
+	void									Obb_Collision();
+	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom = nullptr;

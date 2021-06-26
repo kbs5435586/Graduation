@@ -464,7 +464,7 @@ void CCollider::Update_Collider(CTransform* pTransform, CLASS eCurClass)
 {
 	_matrix pTarget_matrix = pTransform->Get_Matrix();
 	m_matWorld = pTransform->Get_Matrix();
-	m_matWorld.m[3][1] += 10.f;
+	//m_matWorld.m[3][1] += 10.f;
 	switch (m_eType)
 	{
 	case COLLIDER_TYPE::COLLIDER_AABB:
@@ -515,6 +515,53 @@ void CCollider::Update_Collider(CTransform* pTransform, CLASS eCurClass)
 	}
 
 
+}
+
+void CCollider::Update_Collider_Ex(CTransform* pTransform)
+{
+	_matrix pTarget_matrix = pTransform->Get_Matrix();
+	m_matWorld = pTransform->Get_Matrix();
+	m_matWorld.m[3][1] += 10.f;
+	switch (m_eType)
+	{
+	case COLLIDER_TYPE::COLLIDER_AABB:
+	{
+		_matrix matTemp = Remove_Rotation(pTarget_matrix);
+		matTemp.m[0][0] *= m_vSize.x;
+		matTemp.m[1][1] *= m_vSize.y;
+		matTemp.m[2][2] *= m_vSize.z;
+		matTemp.m[3][1] += 3.f;
+		m_pTransformCom->Set_Matrix(matTemp);
+	}
+	break;
+	case COLLIDER_TYPE::COLLIDER_OBB:
+	{
+
+		_matrix matTemp_Rotate = pTarget_matrix;
+		_matrix matTemp;
+		matTemp.m[0][0] *= m_vSize.x;
+		matTemp.m[1][1] *= m_vSize.y;
+		matTemp.m[2][2] *= m_vSize.z;
+
+		matTemp = matTemp * matTemp_Rotate;
+		m_pTransformCom->Set_Matrix(matTemp);
+	}
+	break;
+	case COLLIDER_TYPE::COLLIDER_SPHERE:
+	{
+		_matrix matTemp_Rotate = pTarget_matrix;
+		_matrix matTemp;
+		matTemp.m[0][0] *= m_fRadius;
+		matTemp.m[1][1] *= m_fRadius;
+		matTemp.m[2][2] *= m_fRadius;
+
+		matTemp = matTemp * matTemp_Rotate;
+		m_pTransformCom->Set_Matrix(matTemp);
+	}
+	break;
+	default:
+		break;
+	}
 }
 
 _matrix CCollider::Compute_WorldTransform()

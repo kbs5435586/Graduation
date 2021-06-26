@@ -274,6 +274,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	if (iProcessCodes & 0x80000000)
 		return iProcessCodes;
 
+	CManagement::GetInstance()->Update_CollisionManager();
 	return _int(0);
 }
 
