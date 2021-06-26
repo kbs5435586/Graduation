@@ -25,6 +25,10 @@ public:
 	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _bool IsShadow);
 	HRESULT						SetUp_ViewProjMatrices(_bool IsShadow);
 	void						Invalidate_ViewProjMatrix(_bool IsShadow);
+public:
+	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, int n);
+	HRESULT						SetUp_ViewProjMatrices(int n);
+	void						Invalidate_ViewProjMatrix(int n);
 private:
 	HRESULT						SetUp_ViewProjMatrices();
 public:
@@ -47,6 +51,12 @@ protected:
 protected:
 	_matrix						m_matShadowProj;
 	PROJDESC					m_tShadowProjDesc;
+protected:
+	_matrix						m_matInventoryView;
+	CAMERADESC					m_tInventoryCameraDesc;
+protected:
+	_matrix						m_matInventoryProj;
+	PROJDESC					m_tInventoryProjDesc;
 protected:
 	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
 

@@ -22,6 +22,9 @@ HRESULT CUI_Button::Ready_GameObject(void* pArg)
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
+	buttonNum = 0;
+	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &buttonNum);
+
 	return S_OK;
 }
 
@@ -93,4 +96,20 @@ void CUI_Button::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTe
 	buffer->Render_VIBuffer();
 
 	Safe_Release(pManagement);
+}
+
+HRESULT CUI_Button::Ready_Component()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	NULL_CHECK_VAL(pManagement, E_FAIL);
+	pManagement->AddRef();
+
+
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
+
+	Safe_Release(pManagement);
+	return S_OK;
 }

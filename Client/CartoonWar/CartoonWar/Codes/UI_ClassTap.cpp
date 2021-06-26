@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "UI_ClassTap.h"
 #include "UI_Button.h"
+#include "UI_CharInterface.h"
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
@@ -34,7 +35,7 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 
 	m_button = new CUI_Button;
 	m_button->Ready_GameObject();
-
+	
 	a = new CUI_CharTap[5];
 
 	for (int i = 0; i < 5; ++i)
@@ -49,6 +50,7 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 
 	}
 
+
 	m_IsTap[0] = true;
 
 	
@@ -57,6 +59,12 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 
 _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 {
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+	pManagement->AddRef();
+
+
 	if (GetAsyncKeyState('I'))
 	{
 		m_cansee = !m_cansee;
@@ -66,7 +74,10 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	{
 		a[i].Update_GameObject(fTimeDelta, m_IsTap, i);
 	}
+
 	m_button->Update_GameObject(fTimeDelta, m_IsTap, 0);
+
+	Safe_Release(pManagement);
 	return _int();
 }
 
@@ -104,8 +115,10 @@ void CUI_ClassTap::Render_GameObject()
 		matWorld._41 = m_fX - (WINCX >> 1);
 		matWorld._42 = -m_fY + (WINCY >> 1);
 
-
+		//m_pInvenShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		//m_charInter->Render_GameObject(m_pInvenShaderCom, m_pBufferCom, m_pTextureCom);
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		
 		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
@@ -114,26 +127,9 @@ void CUI_ClassTap::Render_GameObject()
 		///////////////////////////////////////////////////////////////
 		for(int i=0;i<5;++i)
 			a[i].Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
-
+		
 		m_button->Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
-		//for (int i = 0; i < 5; ++i)
-		//{
-		//	matWorld._11 = m_fCharTapSizeX;
-		//	matWorld._22 = m_fCharTapSizeY;
-		//
-		//	matWorld._41 = m_fCharTapfX[i] - (WINCX >> 1);
-		//	matWorld._42 = -m_fCharTapfY[i] + (WINCY >> 1);
-		//
-		//
-		//	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		//	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		//	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-		//	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-		//	CDevice::GetInstance()->UpdateTable();
-		//	m_pBufferCom->Render_VIBuffer();
-		//}
-
-		//m_pBufferCom->Render_VIBuffer();
+	
 		Safe_Release(pManagement);
 	}
 	
@@ -149,7 +145,8 @@ HRESULT CUI_ClassTap::CreateInputLayout()
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
-
+	//if (FAILED(m_pInvenShaderCom->Create_Shader(vecDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -183,11 +180,13 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
+	//Safe_Release(m_pInvenShaderCom);
 	Safe_Release(m_pTextureCom);
 	//Safe_Release(m_pCompute_ShaderCom);
 
 	delete[] a;
 	delete m_button;
+	//delete m_charInter;
 	CGameObject::Free();
 }
 
@@ -211,6 +210,11 @@ HRESULT CUI_ClassTap::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
+
+	//m_pInvenShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU");
+	//NULL_CHECK_VAL(m_pInvenShaderCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_InvenShader", m_pInvenShaderCom)))
+	//	return E_FAIL;
 
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);

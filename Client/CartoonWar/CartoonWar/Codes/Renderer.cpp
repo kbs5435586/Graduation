@@ -46,11 +46,15 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
+	
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
+	
+
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+
 	Render_Blend();
 	
 	
@@ -58,6 +62,8 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Alpha();
 	Render_UI();
 
+	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear(true);
+	Render_Inventory(pManagement);
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -160,6 +166,22 @@ void CRenderer::Render_Light(CManagement* pManagement)
 
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->TargetToResBarrier();
 
+}
+
+void CRenderer::Render_Inventory(CManagement* pManagement)
+{
+	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->OM_Set(true);
+	for (auto& pGameObject : m_RenderList[RENDER_INVEN])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_INVEN].clear();
+
+	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->TargetToResBarrier();
 }
 
 

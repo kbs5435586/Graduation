@@ -3,6 +3,7 @@
 #include "Management.h"
 
 #include "Player.h"
+#include "Player_Inven.h"
 #include "NPC.h"
 
 // Shape
@@ -12,6 +13,7 @@
 #include "SkyBox.h"
 #include "Debug_Camera.h"
 #include "Light_Camera.h"
+#include "Inventory_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
 #include "Sphere.h"
@@ -104,6 +106,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Light", CLight_Camera::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Inventory", CInventory_Camera::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
@@ -144,6 +148,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Player", CPlayer::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Player_Inventory", CPlayer_Inven::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_NPC", CNPC::Create())))
 		return E_FAIL;
 	return S_OK;
@@ -156,14 +162,17 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Inventory_Camera(L"Layer_Inventory_Camera", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
-		return E_FAIL;
+	
 	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
@@ -256,6 +265,32 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, true)))
 		return E_FAIL;
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Inventory_Camera(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	CInventory_Camera* pICameraObject = nullptr;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
+		(CGameObject**)&pICameraObject)))
+		return E_FAIL;
+
+	CAMERADESC		tICameraDesc;
+	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
+	tICameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
+	tICameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+
+	PROJDESC		tIProjDesc;
+	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+	tIProjDesc.fFovY = XMConvertToRadians(60.f);
+	tIProjDesc.fAspect = _float(WINCX) / WINCY;
+	tIProjDesc.fNear = g_Near;
+	tIProjDesc.fFar = g_Far;
+
+	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -394,6 +429,8 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_TAN };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -404,9 +441,9 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_BROWN };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
-	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
-	//	return E_FAIL;
+	tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+		return E_FAIL;
 	return S_OK;
 }
 

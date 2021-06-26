@@ -9,7 +9,7 @@ class CObserver;
 
 class CUI_CharTap;
 class CUI_Button;
-
+class CUI_CharInterface;
 
 class CUI_ClassTap :
     public CUI
@@ -40,6 +40,7 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
+	CShader* m_pInvenShaderCom = nullptr;
 	CShader* m_pCompute_ShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
 
@@ -54,6 +55,9 @@ private:
 	//_float									m_fClassTapX,		m_fClassTapY{};
 	CUI_CharTap*							a = nullptr;
 	CUI_Button*								m_button = nullptr;
+	CUI_CharInterface*						m_charInter = nullptr;
+
+	POINT MousePos = {};
 };
 
 class CUI_CharTap :public CUI

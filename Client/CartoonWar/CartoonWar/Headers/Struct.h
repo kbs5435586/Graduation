@@ -183,7 +183,22 @@ typedef struct tagMainPass
 
 	XMFLOAT4	vCamPos;
 	XMFLOAT4	vLook;
+
+	////////////////////////////
+	XMFLOAT4X4	matInvenWorld;
+	XMFLOAT4X4	matInvenView;
+	XMFLOAT4X4	matInvenProj;
+	XMFLOAT4X4	matInvenWV;
+	XMFLOAT4X4	matInvenWVP;
+	XMFLOAT4X4	matInvenProjInv;
+	XMFLOAT4X4	matInvenViewInv;
+	XMFLOAT4X4	matInvenRev;
+
+	XMFLOAT4	vInvenCamPos;
+	XMFLOAT4	vInvenLook;
+
 }MAINPASS;
+
 
 typedef struct tagMaterial
 {

@@ -6,7 +6,7 @@ class CRenderer :
 	public CComponent
 {
 public:
-	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA,RENDER_UI, RENDER_BLEND, RENDER_SHADOW, RENDER_END };
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA, RENDER_UI, RENDER_BLEND, RENDER_SHADOW, RENDER_INVEN, RENDER_END };
 private:
 	explicit						CRenderer();
 	virtual							~CRenderer() = default;
@@ -24,6 +24,7 @@ private:
 	void							Render_Deffered(CManagement* pManagement);
 	void							Render_Shadow(CManagement* pManagement);
 	void							Render_Light(CManagement* pManagement);
+	void							Render_Inventory(CManagement* pManagement);
 public:
 	static CRenderer* Create();
 	virtual CComponent* Clone_Component(void* pArg = nullptr);

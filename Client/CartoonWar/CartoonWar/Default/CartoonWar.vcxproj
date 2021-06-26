@@ -77,7 +77,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IncludePath>../Library/include/;$(IncludePath)</IncludePath>
     <LibraryPath>../Library/lib/;../Library/lib/x64/debug/;$(LibraryPath)</LibraryPath>
@@ -126,11 +126,14 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -220,6 +223,7 @@
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
     <ClInclude Include="..\Headers\Player.h" />
+    <ClInclude Include="..\Headers\Player_Inven.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
@@ -255,6 +259,7 @@
     <ClInclude Include="..\Headers\UAV.h" />
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
+    <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
@@ -269,6 +274,7 @@
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="..\Headers\Inventory_Camera.h" />
     <ClInclude Include="protocol.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -335,6 +341,7 @@
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
+    <ClCompile Include="..\Codes\Player_Inven.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
@@ -367,6 +374,7 @@
     <ClCompile Include="..\Codes\UAV.cpp" />
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
+    <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
@@ -382,6 +390,7 @@
     <ClCompile Include="CartoonWar.cpp" />
     <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
     <ClCompile Include="..\Codes\UI_Button.cpp" />
+    <ClCompile Include="..\Codes\Inventory_Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
@@ -503,6 +512,12 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Shadow.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UUI.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UUU.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
