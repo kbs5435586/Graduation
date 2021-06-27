@@ -295,6 +295,8 @@ void Server::do_move(int user_id, char direction)
         if (newpos->z < WORLD_VERTICAL)
             g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
         break;
+    case GO_COLLIDE:
+        break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
         DebugBreak();
@@ -316,20 +318,24 @@ void Server::do_move(int user_id, char direction)
 
     bool isCollide = false;
 
-    for (auto& c : g_clients) // aabb 충돌체크
+    if (GO_COLLIDE != direction)
     {
-        if (c.second.m_id == user_id)
-            continue;
-        if (ST_ACTIVE != c.second.m_status)
-            continue;
-        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
-            continue;
-        if (check_collision(user_id, c.second.m_id))
+        for (auto& c : g_clients) // aabb 충돌체크
         {
-            //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
-            isCollide = true;
-            set_formation(user_id);
-            break;
+            if (c.second.m_id == user_id)
+                continue;
+            if (ST_ACTIVE != c.second.m_status)
+                continue;
+            if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
+                continue;
+            if (check_collision(user_id, c.second.m_id))
+            {
+                //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
+                isCollide = true;
+                set_formation(user_id);
+                do_move(c.second.m_id, GO_COLLIDE);
+                break;
+            }
         }
     }
 
@@ -708,7 +714,6 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
-    //bool isOnce = true;
     for (int i = 0; i < g_clients[g_clients[npc_id].m_owner_id].m_boid.size(); ++i)
     {
         if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
@@ -718,14 +723,22 @@ void Server::do_follow(int npc_id)
             _vec3 new_pos = *pos + Dir;
             if (*pos != new_pos)
             {
-                //isOnce = false;
                 g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+ 
+                for (int i = 0; i < OBJECT_START; ++i)
+                {
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+                    if (!is_near(i, npc_id))
+                        continue;
+                    if (check_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
+                        do_move(i, GO_COLLIDE);
+                }
 
                 for (int i = 0; i < NPC_START; ++i)
                 {
                     if (ST_ACTIVE != g_clients[i].m_status)
                         continue;
-
                     if (true == is_near(i, npc_id))
                     {
                         g_clients[i].m_cLock.lock();
@@ -1752,21 +1765,60 @@ bool Server::check_collision(int a, int b)
         (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
         (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
 
-    float overlap = 0.5f * (dist - a_rad - b_rad);
+    float overlap = (a_rad + b_rad - dist);
     
-    if (dist < (a_rad + b_rad))
+    if (dist > 0 && dist < (a_rad + b_rad))
     {
         //cout << "id " << a << " has collide with " << b << "\n";
         //a_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
         //a_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
         //a_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
 
-        //b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-        //b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-        //b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
+        b_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
+        b_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
 
         return true;
     }
     else
         return false;
+
+
+    //void CPlayer::Obb_Collision()
+    //{
+    //    if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+    //    {
+    //        if (!m_IsBazier)
+    //        {
+    //            _vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+    //            _vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+    //            _vec3 vTemp = { vPos - vTargetPos };
+    //            vTemp.Normalize();
+    //            m_vStartPoint = vPos;
+    //            m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+    //            //m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+    //            m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+    //            //m_vMidPoint.y += 2.f;
+    //            m_IsBazier = true;
+    //        }
+    //        Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+    //    }
+    //    if (m_fBazierCnt >= 1.f)
+    //    {
+    //        m_fBazierCnt = 0.f;
+    //        m_IsOBB_Collision = false;
+    //        m_IsBazier = false;
+    //    }
+    //}
+
+    //void CPlayer::Hit_Object(_float & fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+    //{
+    //    _float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+    //    _float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+    //    _float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+    //    _vec3 vPos = { fX, fY, fZ };
+    //    m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+    //    fCnt += 0.01f;
+    //}
 }

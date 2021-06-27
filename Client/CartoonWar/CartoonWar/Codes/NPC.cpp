@@ -93,7 +93,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 	m_pTransformCom->Set_PositionY(0.f);
 	Change_Class();
-	Obb_Collision();
+	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 	if (m_tInfo.fHP <= 0.f)

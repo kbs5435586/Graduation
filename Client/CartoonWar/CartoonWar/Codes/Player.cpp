@@ -95,7 +95,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	Change_Class();
 	Input_Key(fTimeDelta);
-	Obb_Collision();
+	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 	if (m_tInfo.fHP <= 0.f)

@@ -114,6 +114,7 @@ constexpr unsigned char GO_FORWARD = 5;
 constexpr unsigned char GO_FAST_FORWARD = 6;
 constexpr unsigned char TURN_LEFT = 7;
 constexpr unsigned char TURN_RIGHT = 8;
+constexpr unsigned char GO_COLLIDE = 9;
 
 struct sc_packet_time
 {
