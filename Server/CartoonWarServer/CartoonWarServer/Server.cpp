@@ -1056,8 +1056,8 @@ void Server::enter_game(int user_id, char name[])
 
             if (StartGame_PlayerCount < count)
             {
-                add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
-                add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
+                //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
+                //add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
                 isGameStart = true;
                 cout << "Game Routine Start!\n";
                 break;
@@ -1477,7 +1477,7 @@ void Server::is_flag_near(int flag)
     {
         if (true == flags[flag].isRed)
         {
-            cout << "flag " << flag << " is not red\n";
+            //cout << "flag " << flag << " is not red\n";
             flags[flag].isRed = false;
             for (int j = 0; j <= MAX_USER; ++j)
             {
@@ -1493,7 +1493,7 @@ void Server::is_flag_near(int flag)
     {
         if (true == flags[flag].isBlue)
         {
-            cout << "flag " << flag << " is not blue\n";
+            //cout << "flag " << flag << " is not blue\n";
             flags[flag].isBlue = false;
             for (int j = 0; j <= MAX_USER; ++j)
             {
