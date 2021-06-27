@@ -49,7 +49,7 @@ public:
     void send_position_packet(_vec3* pos);
     void update_key_input();
 
-    short player_index(unsigned short id);
+    //short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);
     short npc_id_to_idx(unsigned short id);
     short object_idx_to_id(unsigned short id);
@@ -81,8 +81,8 @@ public:
     void Set_Attack_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
     void Set_wParam(WPARAM p);
-    void Set_Anim(unsigned char anim);
-    void Set_AnimNPC(unsigned char anim);
+    void Set_Anim(unsigned short anim);
+    //void Set_AnimNPC(unsigned short anim);
 
     void init_client();
 

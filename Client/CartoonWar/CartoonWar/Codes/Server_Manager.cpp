@@ -585,10 +585,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_objects[recv_id].anim = 2;
 			break;
 		case A_ATTACK:
-			m_objects[recv_id].anim = 5;
+			m_objects[recv_id].anim = 6;
 			break;
 		case A_HIT:
-			m_objects[recv_id].anim = 6;
+			m_objects[recv_id].anim = 8;
 			break;
 		}
 	}
@@ -1088,7 +1088,7 @@ void CServer_Manager::Set_wParam(WPARAM p)
 	m_wparam = p;
 }
 
-void CServer_Manager::Set_Anim(unsigned char anim)
+void CServer_Manager::Set_Anim(unsigned short anim)
 {
 	m_objects[my_id].anim = anim;
 }

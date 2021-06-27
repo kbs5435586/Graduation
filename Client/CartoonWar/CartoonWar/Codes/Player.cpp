@@ -55,7 +55,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-	m_eCurClass = CLASS::CLASS_ARCHER;
+	m_eCurClass = CLASS::CLASS_INFANTRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
@@ -1067,7 +1067,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		{
 			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 				- server->Get_Attack_Cooltime());
-			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+			if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
 			{
 				server->send_attack_packet();
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
@@ -1081,14 +1081,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return ;
 		}
-		_uint iRand = rand() % 2;
-		if (iRand == 0)
-			m_iCurAnimIdx = m_iAttackMotion[0];
-		else
-			m_iCurAnimIdx = m_iAttackMotion[1];
+		server->send_animation_packet(A_ATTACK);
 		m_IsOnce = true;
 		m_IsHit = true;
-		m_IsCombat = true;
+		//m_IsCombat = true;
 	}
 
 		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
@@ -1218,6 +1214,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 		{
 			m_iCurAnimIdx = 0;
+			server->Set_Anim(m_iCurAnimIdx);
 		}
 		m_IsOnce = false;
 		m_IsHit = false;
