@@ -2,8 +2,10 @@
 //#define WINCX 1920
 //#define WINCY 1080
 
-#define WINCX 1920
-#define WINCY 1080
+//#define WINCX 1920
+//#define WINCY 1080
+#define WINCX 1200
+#define WINCY 800
 
 #define DEAD_OBJ 1
 #define NO_EVENT 0

@@ -46,7 +46,9 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
-	
+	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear(true);
+	Render_Inventory(pManagement);
+
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
@@ -62,8 +64,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Alpha();
 	Render_UI();
 
-	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear(true);
-	Render_Inventory(pManagement);
+	
 	Safe_Release(pManagement);
 	return S_OK;
 }

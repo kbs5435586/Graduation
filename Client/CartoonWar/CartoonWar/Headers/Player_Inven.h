@@ -19,12 +19,12 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
-	virtual void							Render_GameObject_Shadow();
+	//virtual void							Render_GameObject_Shadow();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CPlayer_Inven* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg, _uint iIdx = 0) override;
+	static CPlayer_Inven*					Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -37,7 +37,7 @@ private:
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 private:
-	void									Input_Key(const _float& fTimeDelta);
+	void									Input_Inven_Key(const _float& fTimeDelta);
 private:
 	void									Death(const _float& fTimeDelta);
 	void									Attack(const _float& fTimeDelta);
@@ -48,11 +48,12 @@ private:
 	CMesh* m_pMeshCom[(_uint)CLASS::CLASS_END] = { nullptr };
 	CShader* m_pShaderCom = nullptr;
 	CShader* m_pComputeShaderCom = nullptr;
-	CShader* m_pShaderCom_Shadow = nullptr;
+	//CShader* m_pShaderCom_Shadow = nullptr;
 	CAnimator* m_pAnimCom[(_uint)CLASS::CLASS_END] = { nullptr };
 	CNavigation* m_pNaviCom = nullptr;
 	CCollider* m_pColiider[2] = { nullptr };
 	CTexture* m_pTextureCom[2] = { nullptr };
+	CObserver* m_pObserverCom = nullptr;
 private:
 	CMesh* m_pCurMeshCom = nullptr;
 	CAnimator* m_pCurAnimCom = nullptr;
@@ -81,5 +82,6 @@ private:
 	_uint									m_iCurMeshNum = 0;
 
 	_vec3									m = {};
+	_bool									m_IsActive = {};
 
 };

@@ -53,6 +53,7 @@ private:
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = {nullptr};
+	CObserver*								m_pObserverCom = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
@@ -80,5 +81,6 @@ private:
 private:
 	_uint									m_iCurMeshNum = 0;
 
+	_bool	m_IsActive = {};
 };
 

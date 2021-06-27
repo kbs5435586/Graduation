@@ -26,7 +26,7 @@ private:
 private:
 	_bool						m_IsTrue = false;
 	_bool						m_IsFix = false;
-	CObserver* m_pObserverCom = nullptr;
+	CObserver*					m_pObserverCom = nullptr;
 	bool					canSee;
 };
 

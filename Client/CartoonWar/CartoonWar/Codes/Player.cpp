@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Management.h"
 #include "Player.h"
+#include "Inventory_Camera.h"
 
 CPlayer::CPlayer()
 {
@@ -58,28 +59,60 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+
 	return S_OK;
 }
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
+	
+	
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
 	m_pTransformCom->Set_PositionY(0.f);
 
+	m_iCurMeshNum = m_pObserverCom->GetIntInfo();
+	m_eCurClass = (CLASS)m_iCurMeshNum;
+
+
 	Change_Class();
-	Input_Key(fTimeDelta);
+	m_IsActive = m_pObserverCom->GetBoolInfo();
+
+	if (!m_IsActive)
+		Input_Key(fTimeDelta);
+	else
+	{
+		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+		{
+			if (m_IsCombat)
+			{
+				m_iCurAnimIdx = m_iCombatMotion[0];
+			}
+			else
+			{
+				m_iCurAnimIdx = 0;
+			}
+			m_IsOnce = false;
+			m_IsHit = false;
+		}
+	}
+
 	Obb_Collision();
 	Combat(fTimeDelta);
 
 	if (m_IsDead)
 		return DEAD_OBJ;
+	
+
+	
 	return NO_EVENT;
 }
 
 _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+	
 	if (nullptr == m_pRendererCom)
 		return -1;
 
@@ -88,14 +121,20 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 		return -1;
 
+
+
 	Death(fTimeDelta);
 	Set_Animation(fTimeDelta);
+	
 
 	return _int();
 }
 
 void CPlayer::Render_GameObject()
 {
+
+
+
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
@@ -207,6 +246,8 @@ HRESULT CPlayer::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;
+	
+
 
 	return S_OK;
 }
@@ -254,6 +295,7 @@ void CPlayer::Free()
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
+	Safe_Release(m_pObserverCom);
 	//Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
@@ -409,7 +451,10 @@ HRESULT CPlayer::Ready_Component()
 			return E_FAIL;
 	}
 
-
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);

@@ -60,157 +60,187 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+
 	return S_OK;
 }
 
 _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
-	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(0.f);
+		m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
+		m_pColiider[1]->Update_Collider(m_pTransformCom);
 
-	Change_Class();
-	Input_Key(fTimeDelta);
-	Obb_Collision();
-	Combat(fTimeDelta);
+		m_pTransformCom->Set_PositionY(0.f);
 
-	if (m_IsDead)
-		return DEAD_OBJ;
+		m_iCurMeshNum = m_pObserverCom->GetIntInfo();
+		m_eCurClass = (CLASS)m_iCurMeshNum;
+		if (true)
+			_uint i = m_iCurAnimIdx;
+		Change_Class();
+
+		m_IsActive = m_pObserverCom->GetBoolInfo();
+		if (m_IsActive)
+			Input_Inven_Key(fTimeDelta);
+		
+		Obb_Collision();
+		Combat(fTimeDelta);
+
+		if (m_IsDead)
+			return DEAD_OBJ;
+	
+	
 	return NO_EVENT;
 }
 
 _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (nullptr == m_pRendererCom)
-		return -1;
+	m_IsActive = m_pObserverCom->GetBoolInfo();
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_INVEN, this)))
-		return -1;
-	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-	//	return -1;
+	if (m_IsActive)
+	{
+		if (nullptr == m_pRendererCom)
+			return -1;
 
-	Death(fTimeDelta);
-	Set_Animation(fTimeDelta);
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_INVEN, this)))
+			return -1;
+		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+		//	return -1;
 
-	CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Inventory_Camera", 0));
-	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
-	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
-	CAMERADESC		tICameraDesc;
-	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-	tICameraDesc.vEye = m + _vec3(10.f, 10.f, 10.f);
-	tICameraDesc.vAt = m + _vec3(0.f, 5.f, 0.f);
-	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+		CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Inventory_Camera", 0));
+		m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
+		CAMERADESC		tICameraDesc;
+		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
+		tICameraDesc.vEye = m + _vec3(10.f, 10.f, 10.f);
+		tICameraDesc.vAt = m + _vec3(0.f, 5.f, 0.f);
+		tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
-	PROJDESC		tIProjDesc;
-	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
-	tIProjDesc.fFovY = XMConvertToRadians(60.f);
-	tIProjDesc.fAspect = _float(WINCX) / WINCY;
-	tIProjDesc.fNear = g_Near;
-	tIProjDesc.fFar = g_Far;
+		PROJDESC		tIProjDesc;
+		ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+		tIProjDesc.fFovY = XMConvertToRadians(60.f);
+		tIProjDesc.fAspect = _float(WINCX) / WINCY;
+		tIProjDesc.fNear = g_Near;
+		tIProjDesc.fFar = g_Far;
 
-	temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc,1);
+		temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1);
+
+		Death(fTimeDelta);
+		Set_Animation(fTimeDelta);
+	}
+
+	
+
+	
 
 	return _int();
 }
 
 void CPlayer_Inven::Render_GameObject()
 {
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
+	m_IsActive = m_pObserverCom->GetBoolInfo();
 
-
-	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
-	for (_uint i = 0; i < iSubsetNum; ++i)
+	if (m_IsActive)
 	{
-		MAINPASS tMainPass = {};
-		_matrix matWorld = m_pTransformCom->Get_Matrix();
-		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+		CManagement* pManagement = CManagement::GetInstance();
+		if (nullptr == pManagement)
+			return;
+		pManagement->AddRef();
 
-		_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
-		_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
 
-		REP tRep = {};
-		tRep.m_arrInt[0] = 1;
-		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
-
-		m_pShaderCom->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPass);
-
-		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-
-		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-		if (iSubsetNum >= 2)
+		_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+		for (_uint i = 0; i < iSubsetNum; ++i)
 		{
-			if (i == 0)
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+			MAINPASS tMainPass = {};
+			_matrix matWorld = m_pTransformCom->Get_Matrix();
+			_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+			_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+			_matrix I_matView = CCamera_Manager::GetInstance()->GetIMatView();
+			_matrix I_matProj = CCamera_Manager::GetInstance()->GetIMatProj();
+
+			REP tRep = {};
+			tRep.m_arrInt[0] = 1;
+			tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+
+			m_pShaderCom->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPass);
+
+			_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+				(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+			iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+				(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+			if (iSubsetNum >= 2)
+			{
+				if (i == 0)
+					CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+				else
+					CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			}
 			else
+			{
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
-		else
-		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			}
+
+			m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+			CDevice::GetInstance()->UpdateTable();
+			m_pCurMeshCom->Render_Mesh(i);
 		}
 
-		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
-		CDevice::GetInstance()->UpdateTable();
-		m_pCurMeshCom->Render_Mesh(i);
+
+		//m_pColiider[0]->Render_Collider();
+		//m_pColiider[1]->Render_Collider();
+		Safe_Release(pManagement);
 	}
 
 
-	//m_pColiider[0]->Render_Collider();
-	//m_pColiider[1]->Render_Collider();
-	Safe_Release(pManagement);
+	
 }
 
-void CPlayer_Inven::Render_GameObject_Shadow()
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
-
-	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
-	for (_uint i = 0; i < iSubsetNum; ++i)
-	{
-		MAINPASS tMainPass = {};
-		_matrix matWorld = m_pTransformCom->Get_Matrix();
-		_matrix matView = CCamera_Manager::GetInstance()->GetShadowView();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
-
-
-		//_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-		//_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
-		REP tRep = {};
-		tRep.m_arrInt[0] = 1;
-		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
-
-		m_pShaderCom_Shadow->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-
-		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
-		CDevice::GetInstance()->UpdateTable();
-		m_pCurMeshCom->Render_Mesh(i);
-	}
-	Safe_Release(pManagement);
-}
+//void CPlayer_Inven::Render_GameObject_Shadow()
+//{
+//	CManagement* pManagement = CManagement::GetInstance();
+//	if (nullptr == pManagement)
+//		return;
+//	pManagement->AddRef();
+//
+//
+//	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+//	for (_uint i = 0; i < iSubsetNum; ++i)
+//	{
+//		MAINPASS tMainPass = {};
+//		_matrix matWorld = m_pTransformCom->Get_Matrix();
+//		_matrix matView = CCamera_Manager::GetInstance()->GetShadowView();
+//		_matrix matProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
+//
+//
+//		//_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+//		//_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+//
+//		REP tRep = {};
+//		tRep.m_arrInt[0] = 1;
+//		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+//
+//		m_pShaderCom_Shadow->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+//
+//		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+//		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+//			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+//
+//		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+//		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+//			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+//
+//		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+//		CDevice::GetInstance()->UpdateTable();
+//		m_pCurMeshCom->Render_Mesh(i);
+//	}
+//	Safe_Release(pManagement);
+//}
 
 HRESULT CPlayer_Inven::CreateInputLayout()
 {
@@ -272,12 +302,13 @@ void CPlayer_Inven::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pShaderCom_Shadow);
+	//Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
+	Safe_Release(m_pObserverCom);
 	//Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
@@ -358,10 +389,10 @@ HRESULT CPlayer_Inven::Ready_Component()
 	if (FAILED(Add_Component(L"Com_ComputeShader", m_pComputeShaderCom)))
 		return E_FAIL;
 	//Component_Shader_Shadow
-	m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
-	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
-	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
-		return E_FAIL;
+	//m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
+	//NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
+	//	return E_FAIL;
 
 
 
@@ -433,7 +464,10 @@ HRESULT CPlayer_Inven::Ready_Component()
 			return E_FAIL;
 	}
 
-
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -1074,14 +1108,45 @@ void CPlayer_Inven::Compute_Matrix_Z()
 
 void CPlayer_Inven::Obb_Collision()
 {
+	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	{
+		if (!m_IsBazier)
+		{
+			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vTemp = { vPos - vTargetPos };
+			vTemp.Normalize();
+			m_vStartPoint = vPos;
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			//m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
+		}
+		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+	}
+	if (m_fBazierCnt >= 1.f)
+	{
+		m_fBazierCnt = 0.f;
+		m_IsOBB_Collision = false;
+		m_IsBazier = false;
+	}
 }
 
 void CPlayer_Inven::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 {
+	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+
+	_vec3 vPos = { fX, fY, fZ };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	fCnt += 0.01f;
 }
 
-void CPlayer_Inven::Input_Key(const _float& fTimeDelta)
+void CPlayer_Inven::Input_Inven_Key(const _float& fTimeDelta)
 {
+
 	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
 		_uint iRand = rand() % 2;

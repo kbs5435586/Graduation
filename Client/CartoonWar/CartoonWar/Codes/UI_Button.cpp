@@ -17,13 +17,14 @@ HRESULT CUI_Button::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 	
-	m_fX = 100.f;
+	m_fX = 200.f;
 	m_fY = WINCY - 200.f;
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
+	IsDown = false;
 	buttonNum = 0;
-	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &buttonNum);
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT, &buttonNum);
 
 	return S_OK;
 }
@@ -47,14 +48,29 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			{
 				m_fSizeX = 40.f;
 				m_fSizeY = 40.f;
+				IsDown = true;
 			}
 		}
 	}
-	if (pManagement->Key_Up(KEY_LBUTTON))
+	
+	if (IsDown)
 	{
-		m_fSizeX = 50.f;
-		m_fSizeY = 50.f;
+		if (pManagement->Key_Up(KEY_LBUTTON))
+		{
+			m_fSizeX = 50.f;
+			m_fSizeY = 50.f;
+
+
+			++buttonNum;
+			if (buttonNum >= (_uint)CLASS::CLASS_END - 1)
+				buttonNum = 0;
+
+			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &buttonNum);
+			IsDown = false;
+		}
+		
 	}
+	
 
 	Safe_Release(pManagement);
 	return _int();

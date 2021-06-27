@@ -50,6 +50,12 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 
 	}
 
+	m_charInter = new CUI_CharInterface; 
+	m_charInter->Ready_GameObject();
+
+	
+	IsSwitch = false;
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &IsSwitch);
 
 	m_IsTap[0] = true;
 
@@ -68,6 +74,9 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	if (GetAsyncKeyState('I'))
 	{
 		m_cansee = !m_cansee;
+
+		IsSwitch = !IsSwitch;
+		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &IsSwitch);
 	}
 
 	for (int i = 0; i < 5; ++i)
@@ -76,7 +85,7 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	m_button->Update_GameObject(fTimeDelta, m_IsTap, 0);
-
+	
 	Safe_Release(pManagement);
 	return _int();
 }
@@ -115,8 +124,8 @@ void CUI_ClassTap::Render_GameObject()
 		matWorld._41 = m_fX - (WINCX >> 1);
 		matWorld._42 = -m_fY + (WINCY >> 1);
 
-		//m_pInvenShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		//m_charInter->Render_GameObject(m_pInvenShaderCom, m_pBufferCom, m_pTextureCom);
+		m_pInvenShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		m_charInter->Render_GameObject(m_pInvenShaderCom, m_pBufferCom, m_pTextureCom);
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 		
 		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -129,7 +138,7 @@ void CUI_ClassTap::Render_GameObject()
 			a[i].Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
 		
 		m_button->Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
-	
+		
 		Safe_Release(pManagement);
 	}
 	
@@ -145,8 +154,8 @@ HRESULT CUI_ClassTap::CreateInputLayout()
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
-	//if (FAILED(m_pInvenShaderCom->Create_Shader(vecDesc)))
-	//	return E_FAIL;
+	if (FAILED(m_pInvenShaderCom->Create_Shader(vecDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -180,13 +189,13 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-	//Safe_Release(m_pInvenShaderCom);
+	Safe_Release(m_pInvenShaderCom);
 	Safe_Release(m_pTextureCom);
 	//Safe_Release(m_pCompute_ShaderCom);
 
 	delete[] a;
 	delete m_button;
-	//delete m_charInter;
+	delete m_charInter;
 	CGameObject::Free();
 }
 
@@ -211,10 +220,10 @@ HRESULT CUI_ClassTap::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	//m_pInvenShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU");
-	//NULL_CHECK_VAL(m_pInvenShaderCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_InvenShader", m_pInvenShaderCom)))
-	//	return E_FAIL;
+	m_pInvenShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU");
+	NULL_CHECK_VAL(m_pInvenShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_InvenShader", m_pInvenShaderCom)))
+		return E_FAIL;
 
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);

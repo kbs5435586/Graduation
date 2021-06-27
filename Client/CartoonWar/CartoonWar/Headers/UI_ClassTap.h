@@ -58,6 +58,7 @@ private:
 	CUI_CharInterface*						m_charInter = nullptr;
 
 	POINT MousePos = {};
+	_bool IsSwitch = {};
 };
 
 class CUI_CharTap :public CUI
