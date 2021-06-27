@@ -1215,6 +1215,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		{
 			m_iCurAnimIdx = 0;
 			server->Set_Anim(m_iCurAnimIdx);
+			server->send_animation_packet(A_IDLE);
 		}
 		m_IsOnce = false;
 		m_IsHit = false;
