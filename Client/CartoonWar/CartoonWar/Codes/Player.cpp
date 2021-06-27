@@ -39,7 +39,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	//tagInfo(float hp, float mp, float att, float def)
 
-	m_tInfo = INFO(10, 1, 1, 0);
+	m_tInfo = INFO(100, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -136,6 +136,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 			return -1;
 		m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
+		m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
 	}
 
 	Set_Animation(fTimeDelta);
@@ -480,7 +481,6 @@ void CPlayer::Set_Animation(const _float& fTimeDelta)
 		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
 		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
-
 }
 
 void CPlayer::Change_Class()
@@ -1094,7 +1094,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
+				server->send_animation_packet(A_WALK);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_rotate_packet(TURN_LEFT);
@@ -1102,7 +1102,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 		{
 			if (!m_IsCombat)
-				server->send_idle_packet();
+				server->send_animation_packet(A_IDLE);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
@@ -1110,7 +1110,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
+				server->send_animation_packet(A_WALK);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_rotate_packet(TURN_RIGHT);
@@ -1118,7 +1118,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
 		{
 			if (!m_IsCombat)
-				server->send_idle_packet();
+				server->send_animation_packet(A_IDLE);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
@@ -1126,7 +1126,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 2;
+				server->send_animation_packet(A_RUN);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[2];
 
@@ -1135,7 +1135,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
+				server->send_animation_packet(A_WALK);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_move_packet(GO_FORWARD);
@@ -1143,7 +1143,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
 		{
 			if (!m_IsCombat)
-				server->send_idle_packet();
+				server->send_animation_packet(A_IDLE);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
@@ -1151,7 +1151,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 		{
 			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
+				server->send_animation_packet(A_WALK);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_move_packet(GO_BACK);
@@ -1159,7 +1159,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
 		{
 			if (!m_IsCombat)
-				server->send_idle_packet();
+				server->send_animation_packet(A_IDLE);
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}

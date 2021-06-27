@@ -151,10 +151,10 @@ void Server::process_packet(int user_id, char* buf)
         do_attack(user_id);
     }
     break;
-    case CS_PACKET_IDLE:
+    case CS_PACKET_ANIMATION:
     {
-        cs_packet_idle* packet = reinterpret_cast<cs_packet_idle*>(buf);
-        do_idle(user_id);
+        cs_packet_animation* packet = reinterpret_cast<cs_packet_animation*>(buf);
+        do_animation(user_id, packet->anim);
     }
     break;
     case CS_PACKET_POSITION:
@@ -486,55 +486,55 @@ void Server::set_formation(int user_id)
         if (1 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos;
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
         }
         else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
         }
         else if (4 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
 
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
         }
@@ -545,68 +545,68 @@ void Server::set_formation(int user_id)
         if (1 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos;
         }
         else if (2 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
         }
         else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
+            set_pos.Go_Straight(FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
         }
         else if (4 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[0]->m_target_pos = *new_pos1;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.BackWard(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
+            set_pos.BackWard(FORMATION_SPACE);
             _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[1]->m_target_pos = *new_pos2;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Left(FORMATION_SPACE);
+            set_pos.Go_Straight(FORMATION_SPACE);
             _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[2]->m_target_pos = *new_pos3;
 
             set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(MOVE_SPEED_NPC * FORMATION_SPACE);
-            set_pos.Go_Straight(MOVE_SPEED_NPC * FORMATION_SPACE);
+            set_pos.Go_Right(FORMATION_SPACE);
+            set_pos.Go_Straight(FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
         }
@@ -752,11 +752,14 @@ void Server::do_follow(int npc_id)
                             g_clients[i].m_cLock.unlock();
                     }
                 }
+                if (g_clients[npc_id].m_anim != A_WALK)
+                    do_animation(npc_id, A_WALK);
                 break;
             }
             else //if (*pos == new_pos && !isOnce)
             {
-                do_idle(npc_id);
+                if (g_clients[npc_id].m_anim != A_IDLE)
+                    do_animation(npc_id, A_IDLE);
             }
         }
     }
@@ -1246,21 +1249,23 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
-void Server::do_idle(int user_id)
+void Server::do_animation(int user_id, unsigned char anim)
 {
-    if (user_id < NPC_START)
+    g_clients[user_id].m_anim = anim;
+    //cout << user_id << "is " << g_clients[user_id].m_anim << endl;
+    if (user_id < NPC_START) // 애니메이션 신호를 보내온 애가 플레이어면
     {
         g_clients[user_id].m_cLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
         g_clients[user_id].m_cLock.unlock();
-        send_idle_packet(user_id, user_id); // 임시
+        send_animation_packet(user_id, user_id, anim); // 임시
         for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
         {
-            send_idle_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-            // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+            if (is_player(cpy_vl)) // 다른 플레이어 에게만
+                send_animation_packet(cpy_vl, user_id, anim); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
         }
     }
-    else if (user_id >= NPC_START && user_id <= MAX_NPC)
+    else if (user_id >= NPC_START && user_id <= MAX_NPC) // 
     {
         for (int i = 0; i < NPC_START; ++i) // 모든 플레이어에 대해서
         {
@@ -1269,17 +1274,18 @@ void Server::do_idle(int user_id)
             if (ST_ACTIVE != g_clients[i].m_status) // 로그인 상태 아닌애면 보내지 마라
                 continue;
 
-            send_idle_packet(i, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+            send_animation_packet(i, user_id, anim); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
         }
     }
 }
 
-void Server::send_idle_packet(int user_id, int idler)
+void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
 {
-    sc_packet_idle packet;
+    sc_packet_animation packet;
     packet.id = idler;
     packet.size = sizeof(packet);
-    packet.type = SC_PACKET_IDLE;
+    packet.anim = anim;
+    packet.type = SC_PACKET_ANIMATION;
     //cout << idler << " do idle\n";
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }

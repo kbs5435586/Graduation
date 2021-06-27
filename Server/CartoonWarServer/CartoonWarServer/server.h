@@ -25,9 +25,9 @@ private:
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
 	float FORMATION_SPACE = 10.f;
 
-	float MOVE_SPEED_NPC = 0.05f;
-	float MOVE_SPEED_PLAYER = 0.05f;
-	float ROTATE_SPEED = 0.01f;
+	float MOVE_SPEED_NPC = 0.1f;
+	float MOVE_SPEED_PLAYER = 0.1f;
+	float ROTATE_SPEED = 0.05f;
 	int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 50;
@@ -51,7 +51,7 @@ public:
 	void send_time_packet(); // 모든 깃발 위치값 전송
 	void send_move_packet(int user_id, int mover); // 변경된 위치값 설정
 	void send_rotate_packet(int user_id, int mover); // 변경된 위치값 설정
-	void send_idle_packet(int user_id, int idler); // 변경된 위치값 설정
+	void send_animation_packet(int user_id, int idler, unsigned char anim); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_attacked_packet(int user_id, int other_id);
 	void send_attack_packet(int user_id, int other_id);
@@ -60,7 +60,7 @@ public:
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 
-	void do_idle(int user_id);
+	void do_animation(int user_id, unsigned char anim);
 	void do_attack(int user_id);
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void do_rotate(int user_id, char dir);

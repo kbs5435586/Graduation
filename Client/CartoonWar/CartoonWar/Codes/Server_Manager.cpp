@@ -93,7 +93,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._43 = my_packet->p_z;
 
 		m_objects[recv_id].showObject = true;
-		m_objects[recv_id].anim = 14;
+		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
 		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
@@ -144,7 +144,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
 		m_objects[recv_id].showObject = true;
-		m_objects[recv_id].anim = 14;
 		m_objects[recv_id].hp = my_packet->hp;
 		pTransform->Set_Matrix(Pos);
 		Safe_Release(managment);
@@ -171,7 +170,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_NPC", L"Com_Transform", npc_id);
 		}
-		m_objects[recv_id].anim = 29;
 		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		vPos.x = my_packet->x;
 		vPos.y = my_packet->y;
@@ -202,7 +200,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_NPC", L"Com_Transform", npc_id);
 		}
-		m_objects[recv_id].anim = 29;
 		_vec3 rPos = *pTransform->Get_StateInfo(CTransform::STATE_RIGHT);
 		_vec3 uPos = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 		_vec3 lPos = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
@@ -232,11 +229,368 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int npc_id = my_packet->id;
 	}
 	break;
-	case SC_PACKET_IDLE:
+	case SC_PACKET_ANIMATION:
 	{
-		sc_packet_idle* my_packet = reinterpret_cast<sc_packet_idle*>(ptr);
+		sc_packet_animation* my_packet = reinterpret_cast<sc_packet_animation*>(ptr);
 		int recv_id = my_packet->id;
-		m_objects[recv_id].anim = 14;
+		/*
+* 			case CLASS::CLASS_WORKER:
+		{
+			//idle
+			//walk
+			//run
+			//attack
+			//death a
+			//death b
+			//take damage
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 0;
+			m_iCombatMotion[1] = 1;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_INFANTRY:
+		{
+			//	idle
+			//	walk
+			//	run
+			//	charge
+			//	combat idle
+			//	combat walk
+			//	attack a
+			//	attack b
+			//	take damage
+			//	death a
+			//	death b
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_CAVALRY:
+		{
+			//idle
+			//walk
+			//run
+			//charge
+			//combat idle
+			//combat walk
+			//combat hit a
+			//combat hit b
+			//take damage
+			//death a
+			//death b
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_SPEARMAN:
+		{
+			//		idle
+			//		walk
+			//		run
+			//		charge
+			//		combat idle
+			//		combat walk
+			//		attack
+			//		take damage
+			//		death a
+			//		death b
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_MAGE:
+		{
+			//	idle
+			//	walk
+			//	run
+			//	charge
+			//	combat idle
+			//	combat walk
+			//	attack a
+			//	attack b
+			//	take damage
+			//	death a
+			//	death b
+			//	cast a
+			//	cast b
+			//	cast c
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_MMAGE:
+		{
+			//	idle
+			//	walk
+			//	run
+			//	attack
+			//	take damage
+			//	death a
+			//	death b
+			//	cast a
+			//	cast b
+			//	cast load
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_iCombatMotion[0] = 0;
+			m_iCombatMotion[1] = 1;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_ARCHER:
+		{
+
+			//	idle
+			//	walk
+			//	run
+			//	combat_idle
+			//	combat walk
+			//	attack a
+			//	take damage
+			//	death a
+			//	death b
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_PRIEST:
+		{
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
+			m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(367, 426, 12.500f, 14.199f));
+			m_vecAnimCtrl.push_back(AnimCtrl(327, 477, 14.233f, 15.900f));
+			m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
+			m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
+			m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+		}
+		break;
+		}
+	}
+	else
+	{
+	switch (m_eCurClass)
+	{
+	case CLASS::CLASS_WORKER:
+	{
+		//idle
+		//walk
+		//run
+		//attack
+		//death a
+		//death b
+		//take damage
+		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+		m_iCombatMotion[0] = 0;
+		m_iCombatMotion[1] = 1;
+		m_iCombatMotion[2] = 3;
+	}
+	break;
+	case CLASS::CLASS_INFANTRY:
+	{
+		//	idle
+		//	walk
+		//	run
+		//	charge
+		//	combat idle
+		//	combat walk
+		//	attack a
+		//	attack b
+		//	take damage
+		//	death a
+		//	death b
+		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+		m_iCombatMotion[0] = 4;
+		m_iCombatMotion[1] = 5;
+		m_iCombatMotion[2] = 3;
+	}
+	break;
+	case CLASS::CLASS_CAVALRY:
+	{
+		//idle
+		//walk
+		//run
+		//charge
+		//combat idle
+		//combat walk
+		//combat hit a
+		//combat hit b
+		//take damage
+		//death a
+		//death b
+		m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+		m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+		m_iCombatMotion[0] = 4;
+		m_iCombatMotion[1] = 5;
+		m_iCombatMotion[2] = 3;
+	}
+	break;
+	case CLASS(2):
+	{
+		//idle
+		//walk
+		//run
+		//charge
+		//combat idle
+		//combat walk
+		//combat hit a
+		//combat hit b
+		//take damage
+		//death a
+		//death b
+		m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+		m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+		m_iCombatMotion[0] = 4;
+		m_iCombatMotion[1] = 5;
+		m_iCombatMotion[2] = 3;
+	}
+		break;
+	case CLASS(4):
+	{
+		//	idle
+		//	walk
+		//	run
+		//	charge
+		//	combat idle
+		//	combat walk
+		//	attack a
+		//	attack b
+		//	take damage
+		//	death a
+		//	death b
+		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+		m_iCombatMotion[0] = 4;
+		m_iCombatMotion[1] = 5;
+		m_iCombatMotion[2] = 3;
+	}
+		break;
+	case CLASS::CLASS_SPEARMAN:
+	{
+		//		idle
+		//		walk
+		//		run
+		//		charge
+		//		combat idle
+		//		combat walk
+		//		attack
+		//		take damage
+		//		death a
+		//		death b
+		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+		m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+		m_iCombatMotion[0] = 4;
+		m_iCombatMotion[1] = 5;
+		m_iCombatMotion[2] = 3;
+	}
+	break;
+	case CLASS::CLASS_MAGE:
+	{
+		//	idle
+		//	walk
+		//	run
+		//	charge
+		//	combat idle
+		//	combat walk
+		//	attack a
+		//	attack b
+		//	take damage
+		//	death a
+		//	death b
+		//	cast a
+		//	cast b
+		//	cast c
+		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+		m_iCombatMotion[0] = 4;
+		m_iCombatMotion[1] = 5;
+		m_iCombatMotion[2] = 3;
+	}
+	break;
+	case CLASS::CLASS_MMAGE:
+	{
+
+		//	idle
+		//	walk
+		//	run
+		//	attack
+		//	take damage
+		//	death a
+		//	death b
+		//	cast a
+		//	cast b
+		//	cast load
+		m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+		m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+		m_iCombatMotion[0] = 0;
+		m_iCombatMotion[1] = 1;
+		m_iCombatMotion[2] = 2;
+	}
+	break;
+	case CLASS::CLASS_ARCHER:
+	{
+		//	idle
+		//	walk
+		//	run
+		//	combat_idle
+		//	combat walk
+		//	attack a
+		//	take damage
+		//	death a
+		//	death b
+		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+		m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+		m_iCombatMotion[0] = 3;
+		m_iCombatMotion[1] = 4;
+		m_iCombatMotion[2] = 2;
+	}
+	break;
+*/
+		switch (my_packet->anim)
+		{
+		case A_IDLE:
+			m_objects[recv_id].anim = 0;
+			break;
+		case A_WALK:
+			m_objects[recv_id].anim = 1;
+			break;
+		case A_RUN:
+			m_objects[recv_id].anim = 2;
+			break;
+		case A_ATTACK:
+			m_objects[recv_id].anim = 5;
+			break;
+		case A_HIT:
+			m_objects[recv_id].anim = 6;
+			break;
+		}
 	}
 	break;
 	case SC_PACKET_ATTACK:
@@ -499,11 +853,12 @@ void CServer_Manager::send_change_formation_packet()
 	send_packet(&l_packet);
 }
 
-void CServer_Manager::send_idle_packet()
+void CServer_Manager::send_animation_packet(unsigned char anim)
 {
-	cs_packet_idle l_packet;
+	cs_packet_animation l_packet;
 	l_packet.size = sizeof(l_packet);
-	l_packet.type = CS_PACKET_IDLE;
+	l_packet.type = CS_PACKET_ANIMATION;
+	l_packet.anim = anim;
 	send_packet(&l_packet);
 }
 
@@ -556,29 +911,24 @@ void CServer_Manager::update_key_input()
 	}
 }
 
-short CServer_Manager::player_index(unsigned short id)
-{
-	return id - 30;
-}
-
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {
-	return id + 30;
+	return id + NPC_START;
 }
 
 short CServer_Manager::npc_id_to_idx(unsigned short id)
 {
-	return id - 30;
+	return id - NPC_START;
 }
 
 short CServer_Manager::object_idx_to_id(unsigned short id)
 {
-	return id + 450;
+	return id + OBJECT_START;
 }
 
 short CServer_Manager::object_id_to_idx(unsigned short id)
 {
-	return id - 450;
+	return id - OBJECT_START;
 }
 
 
@@ -663,6 +1013,12 @@ short CServer_Manager::Get_Anim(int id)
 	return m_objects[id].anim;
 }
 
+short CServer_Manager::Get_AnimNPC(int id)
+{
+	int npc_id = npc_idx_to_id(id);
+	return m_objects[npc_id].anim;
+}
+
 float CServer_Manager::Get_GameTime()
 {
 	return game_time;
@@ -730,6 +1086,11 @@ void CServer_Manager::Set_ChangeFormation_CoolTime(high_resolution_clock::time_p
 void CServer_Manager::Set_wParam(WPARAM p)
 {
 	m_wparam = p;
+}
+
+void CServer_Manager::Set_Anim(unsigned char anim)
+{
+	m_objects[my_id].anim = anim;
 }
 
 void CServer_Manager::init_client()

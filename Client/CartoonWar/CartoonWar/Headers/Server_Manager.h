@@ -44,7 +44,7 @@ public:
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
     void send_change_formation_packet();
-    void send_idle_packet();
+    void send_animation_packet(unsigned char anim);
     void send_attack_packet();
     void send_position_packet(_vec3* pos);
     void update_key_input();
@@ -65,6 +65,7 @@ public:
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
+    short Get_AnimNPC(int id);
     float Get_GameTime();
 
     bool is_player(int id);
@@ -80,6 +81,8 @@ public:
     void Set_Attack_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
     void Set_wParam(WPARAM p);
+    void Set_Anim(unsigned char anim);
+    void Set_AnimNPC(unsigned char anim);
 
     void init_client();
 

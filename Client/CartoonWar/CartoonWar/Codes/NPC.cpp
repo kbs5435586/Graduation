@@ -39,7 +39,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
-	m_tInfo = INFO(10, 1, 1, 0);
+	m_tInfo = INFO(100, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -132,7 +132,9 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 			return -1;
+
 		m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+		m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
 	}
 	
 	Set_Animation(fTimeDelta);

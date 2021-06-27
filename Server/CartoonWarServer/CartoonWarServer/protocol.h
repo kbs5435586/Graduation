@@ -43,7 +43,7 @@ constexpr char CS_PACKET_ADD_NPC = 4;
 constexpr char CS_PACKET_NPC_ACT = 5;
 constexpr char CS_PACKET_CHANGE_FORMATION = 6;
 constexpr char CS_PACKET_ATTACK = 7;
-constexpr char CS_PACKET_IDLE = 8;
+constexpr char CS_PACKET_ANIMATION = 8;
 constexpr char CS_PACKET_POSITION = 9;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
@@ -53,7 +53,7 @@ constexpr char SC_PACKET_ENTER = 4;
 constexpr char SC_PACKET_LEAVE = 5;
 constexpr char SC_PACKET_CHAT = 6;
 constexpr char SC_PACKET_ADD_NPC_OK = 7;
-constexpr char SC_PACKET_IDLE = 8;
+constexpr char SC_PACKET_ANIMATION = 8;
 constexpr char SC_PACKET_ATTACKED = 9;
 constexpr char SC_PACKET_DEAD = 10;
 constexpr char SC_PACKET_ATTACK = 11;
@@ -104,6 +104,16 @@ struct sc_packet_move
 	float x, y, z;
 	//unsigned move_time; // 스트레스 테스트
 };
+
+constexpr unsigned char GO_UP = 0;
+constexpr unsigned char GO_DOWN = 1;
+constexpr unsigned char GO_LEFT = 2;
+constexpr unsigned char GO_RIGHT = 3;
+constexpr unsigned char GO_BACK = 4;
+constexpr unsigned char GO_FORWARD = 5;
+constexpr unsigned char GO_FAST_FORWARD = 6;
+constexpr unsigned char TURN_LEFT = 7;
+constexpr unsigned char TURN_RIGHT = 8;
 
 struct sc_packet_time
 {
@@ -185,27 +195,26 @@ struct sc_packet_npc_add_ok
 	char	act;
 };
 
-struct sc_packet_idle
+struct sc_packet_animation
 {
-	char	size;
-	char	type;
-	int		id;
+	char			size;
+	char			type;
+	unsigned char	anim;
+	int				id;
 };
-constexpr unsigned char GO_UP = 0;
-constexpr unsigned char GO_DOWN = 1;
-constexpr unsigned char GO_LEFT = 2;
-constexpr unsigned char GO_RIGHT = 3;
-constexpr unsigned char GO_BACK = 4;
-constexpr unsigned char GO_FORWARD = 5;
-constexpr unsigned char GO_FAST_FORWARD = 6;
-constexpr unsigned char TURN_LEFT = 7;
-constexpr unsigned char TURN_RIGHT = 8;
 
-struct cs_packet_idle
+struct cs_packet_animation
 {
-	char	size;
-	char	type;
+	char			size;
+	char			type;
+	unsigned char	anim;
 };
+
+constexpr unsigned char A_IDLE = 0;
+constexpr unsigned char A_WALK = 1;
+constexpr unsigned char A_ATTACK = 2;
+constexpr unsigned char A_HIT = 3;
+constexpr unsigned char A_RUN = 4;
 
 struct cs_packet_login
 {
