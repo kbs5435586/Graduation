@@ -43,7 +43,8 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
+	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+	//m_pTransformCom->Set_PositionY(7.f);
 	return _int();
 }
 

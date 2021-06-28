@@ -81,7 +81,7 @@ void CTerrain::Render_GameObject()
 
 
 	m_pBufferCom->Render_VIBuffer();
-	//m_pNaviCom->Render_Navigation();
+	m_pNaviCom->Render_Navigation();
 
 
 	Safe_Release(pManagement);;

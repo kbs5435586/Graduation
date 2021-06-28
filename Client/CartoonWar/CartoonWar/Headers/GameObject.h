@@ -39,6 +39,7 @@ protected:
 	typedef map<const _tchar*, CComponent*>	MAPCOMPONENT;
 protected:
 	INFO									m_tInfo = {};
+	ROTATE_DIR								m_eRot_Dir = ROTATE_DIR::ROT_DIR_END;
 public:
 	_uint									m_iLayerIdx = 0;
 protected:
@@ -48,6 +49,7 @@ protected:
 	_bool									m_IsBazier = false;
 	_bool									m_IsDead = false;
 	_bool									m_IsDeadMotion = false;
+	_bool									m_IsAttackMotion = false;
 	_bool									m_IsParticle = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 protected:
