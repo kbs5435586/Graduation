@@ -1203,7 +1203,7 @@ void Server::send_attacked_packet(int user_id, int other_id)
     packet.type = SC_PACKET_ATTACKED;
     packet.id = other_id;
     packet.hp = g_clients[other_id].m_hp;
-    cout << user_id << " saw " << other_id << " attacked\n";
+    //cout << user_id << " saw " << other_id << " attacked\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -1213,7 +1213,7 @@ void Server::send_dead_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_DEAD;
     packet.id = g_clients[other_id].m_id;
-    cout << user_id << " saw " << other_id << " dead\n";
+    //cout << user_id << " saw " << other_id << " dead\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -1301,7 +1301,7 @@ void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
 
 void Server::do_attack(int user_id)
 {
-    cout << user_id << "is do attack\n";
+    //cout << user_id << "is do attack\n";
     for (auto& c : g_clients)
     {
         if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
@@ -1659,6 +1659,7 @@ void Server::worker_thread()
             delete overEx;
             break;
         case FUNC_DEAD:
+            cout << id << "is dead\n";
             if (is_player(id))
             {
                 do_move(id, GO_COLLIDE);

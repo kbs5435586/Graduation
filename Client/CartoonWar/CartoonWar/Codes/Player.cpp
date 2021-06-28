@@ -1198,23 +1198,23 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				m_tInfo.fHP -= 1.f;
 			}
 		}
-
-		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-		{
-			if (m_IsCombat)
-			{
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			}
-			else
-			{
-				m_iCurAnimIdx = 0;
-				server->Set_Anim(m_iCurAnimIdx);
-				server->send_animation_packet(A_IDLE);
-			}
-			m_IsOnce = false;
-			m_IsHit = false; // 수정
-		}
 	}
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
+		{
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		}
+		else
+		{
+			m_iCurAnimIdx = 0;
+			server->Set_Anim(m_iCurAnimIdx);
+			server->send_animation_packet(A_IDLE);
+		}
+		m_IsOnce = false;
+		m_IsHit = false; // 수정
+	}
+
 	Safe_Release(server);
 }
 

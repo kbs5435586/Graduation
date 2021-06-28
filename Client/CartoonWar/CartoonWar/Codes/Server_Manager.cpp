@@ -588,7 +588,16 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_objects[recv_id].anim = 6;
 			break;
 		case A_HIT:
-			m_objects[recv_id].anim = 8;
+			if (is_player(recv_id))
+				m_objects[recv_id].anim = 8;
+			else
+				m_objects[recv_id].anim = 6;
+			break;
+		case A_DEAD:
+			if (is_player(recv_id))
+				m_objects[recv_id].anim = 9;
+			else
+				m_objects[recv_id].anim = 4;
 			break;
 		}
 	}

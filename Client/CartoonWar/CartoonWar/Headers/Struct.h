@@ -527,6 +527,7 @@ struct Session
 	short	anim;
 	char	name[MAX_ID_LEN + 1];
 	bool	showObject = false;
+	CLASS	m_class;
 };
 
 
