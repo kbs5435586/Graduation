@@ -89,7 +89,8 @@ public:
 	bool is_player(int id);
 	bool is_object(int id);
 	void is_flag_near(int flag);
-	bool check_collision(int a, int b);
+	bool check_basic_collision(int a, int b);
+	bool check_obb_collision(int a, int b);
 
 	//int API_SendMessage(lua_State* L);
 	//int API_get_x(lua_State* L);

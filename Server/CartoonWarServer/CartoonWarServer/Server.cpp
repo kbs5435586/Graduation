@@ -330,7 +330,7 @@ void Server::do_move(int user_id, char direction)
                 continue;
             if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
                 continue;
-            if (check_collision(user_id, c.second.m_id))
+            if (check_basic_collision(user_id, c.second.m_id))
             {
                 //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
                 isCollide = true;
@@ -338,6 +338,10 @@ void Server::do_move(int user_id, char direction)
                 do_move(c.second.m_id, GO_COLLIDE);
                 break;
             }
+            //if (check_obb_collision(user_id, c.second.m_id))
+            //{
+
+            //}
         }
     }
 
@@ -731,8 +735,12 @@ void Server::do_follow(int npc_id)
                         continue;
                     if (FUNC_DEAD == g_clients[i].m_last_order)
                         continue;
-                    if (check_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
+                    if (check_basic_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
                         do_move(i, GO_COLLIDE);
+                    //if (check_obb_collision(user_id, c.second.m_id))
+//{
+
+//}
                 }
 
                 for (int i = 0; i < NPC_START; ++i)
@@ -1753,7 +1761,7 @@ void Server::mainServer()
     WSACleanup();
 }
 
-bool Server::check_collision(int a, int b)
+bool Server::check_basic_collision(int a, int b)
 {
     _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
@@ -1800,6 +1808,86 @@ bool Server::check_collision(int a, int b)
     else
         return false;
 }
+
+//bool Server::check_obb_collision(int a, int b)
+//{
+//    _vec3 a_Points[4];
+//    _vec3 b_Points[4];
+//
+//    _vec3 a_pos = *g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+//    _vec3 b_pos = *g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    CTransform set_a_pos;
+//    set_a_pos.Set_StateInfo(CTransform::STATE_POSITION, &a_pos);
+//
+//    set_a_pos.Go_Left(g_clients[a].m_col.col_range.x / 2);
+//    set_a_pos.BackWard(g_clients[a].m_col.col_range.z / 2);
+//    a_Points[0] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    set_a_pos.Go_Right(g_clients[a].m_col.col_range.x / 2);
+//    set_a_pos.BackWard(g_clients[a].m_col.col_range.z / 2);
+//    a_Points[1] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    set_a_pos.Go_Left(g_clients[a].m_col.col_range.x / 2);
+//    set_a_pos.Go_Straight(g_clients[a].m_col.col_range.z / 2);
+//    a_Points[2] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    set_a_pos.Go_Right(g_clients[a].m_col.col_range.x / 2);
+//    set_a_pos.Go_Straight(g_clients[a].m_col.col_range.z / 2);
+//    a_Points[3] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    CTransform set_b_pos;
+//    set_b_pos.Set_StateInfo(CTransform::STATE_POSITION, &b_pos);
+//
+//    set_b_pos.Go_Left(g_clients[b].m_col.col_range.x / 2);
+//    set_b_pos.BackWard(g_clients[b].m_col.col_range.z / 2);
+//    b_Points[0] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    set_b_pos.Go_Right(g_clients[b].m_col.col_range.x / 2);
+//    set_b_pos.BackWard(g_clients[b].m_col.col_range.z / 2);
+//    b_Points[1] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    set_b_pos.Go_Left(g_clients[b].m_col.col_range.x / 2);
+//    set_b_pos.Go_Straight(g_clients[b].m_col.col_range.z / 2);
+//    b_Points[2] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    set_b_pos.Go_Right(g_clients[b].m_col.col_range.x / 2);
+//    set_b_pos.Go_Straight(g_clients[b].m_col.col_range.z / 2);
+//    b_Points[3] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    float a_rad = g_clients[a].m_col.radius;
+//    float b_rad = g_clients[b].m_col.radius;
+//    //_vec3 a_col = g_clients[a].m_col.col_range;
+//    //_vec3 b_col = g_clients[b].m_col.col_range;
+//
+//    //_vec3 a_min = { a_pos->x - a_col.x / 2,a_pos->y ,a_pos->z - a_col.z / 2 };
+//    //_vec3 a_max = { a_pos->x + a_col.x / 2,a_pos->y + a_col.y ,a_pos->z + a_col.z / 2 };
+//    //_vec3 b_min = { b_pos->x - b_col.x / 2,b_pos->y ,b_pos->z - b_col.z / 2 };
+//    //_vec3 b_max = { b_pos->x + b_col.x / 2,b_pos->y + b_col.y ,b_pos->z + b_col.z / 2 };
+//
+//    //if ((a_min.x <= b_max.x && a_max.x >= b_min.x) &&
+//    //    (a_min.y <= b_max.y && a_max.y >= b_min.y) &&
+//    //    (a_min.z <= b_max.z && a_max.z >= b_min.z))
+//    //{
+//    //    //Pos = PrevPos; 이전 위치로 되돌리기
+//    //    cout << "id " << a << " has collide with " << b << "\n";
+//    //    return true;
+//    //}
+//    //else
+//    //    return false;
+//
+//    float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
+//        (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
+//        (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
+//
+//    float overlap = (a_rad + b_rad - dist);
+//
+//   
+//        return true;
+//
+//    else
+//        return false;
+//}
 
 void Server::do_push(int pusher,int target)
 {

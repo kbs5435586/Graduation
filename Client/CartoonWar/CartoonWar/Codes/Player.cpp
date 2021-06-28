@@ -1199,6 +1199,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 		}
 	}
+
+	if (8 == server->Get_Anim(m_iLayerIdx) || 6 == server->Get_Anim(m_iLayerIdx))
+		m_IsOnce = true;
+
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
