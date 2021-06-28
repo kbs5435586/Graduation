@@ -1298,7 +1298,6 @@ void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
-
 void Server::do_attack(int user_id)
 {
     //cout << user_id << "is do attack\n";
@@ -1319,6 +1318,7 @@ void Server::do_attack(int user_id)
             c.second.m_hp -= ATTACK_DAMAGE;
             if (0 < c.second.m_hp) // 맞고 피가 남아있으면
             {
+                do_push(user_id, c.second.m_id);
                 for (int i = 0; i < NPC_START; ++i)
                 {
                     if (is_near(c.second.m_id, i)) // 맞은애 주변에 있는 플레이어에게
@@ -1331,31 +1331,38 @@ void Server::do_attack(int user_id)
             else // 죽으면
             {
                 c.second.m_hp = 0;
+                g_clients[c.second.m_id].m_last_order = FUNC_DEAD;
                 if (is_player(c.second.m_id)) // 죽은 애가 유저면
                 {
-                    for (int i = 0; i < NPC_START; ++i)
+                    send_dead_packet(c.second.m_id, c.second.m_id); // 자기 자신에게 먼저
+                    send_animation_packet(c.second.m_id, c.second.m_id, A_DEAD);
+                    do_dead(c.second.m_id);
+                    for (int npc_id = MY_NPC_START(c.second.m_id); npc_id <= MY_NPC_END(c.second.m_id); npc_id++)
                     {
-                        if (is_near(c.second.m_id, i)) // 죽은애 주변에 있는 플레이어에게
+                        if (ST_ACTIVE == g_clients[npc_id].m_status)
                         {
-                            send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
-                            send_animation_packet(i, c.second.m_id, A_DEAD);
+                            do_dead(npc_id);
                         }
                     }
                 }
                 else // 죽은 애가 npc 면
                 {
-                    g_clients[c.second.m_id].m_last_order = FUNC_DEAD;
-                    add_timer(c.second.m_id, FUNC_DEAD, 3000);
-                    for (int i = 0; i < NPC_START; ++i)
-                    {
-                        if (is_near(c.second.m_id, i)) // 죽은애 주변에 있는 플레이어에게
-                        {
-                            send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
-                            send_animation_packet(i, c.second.m_id, A_DEAD);
-                        }
-                    }
+                    do_dead(c.second.m_id);
                 }
             }
+        }
+    }
+}
+
+void Server::do_dead(int id)
+{
+    add_timer(id, FUNC_DEAD, 3000);
+    for (int i = 0; i < NPC_START; ++i)
+    {
+        if (is_near(id, i)) // 죽은애 주변에 있는 플레이어에게
+        {
+            send_dead_packet(i, id); // 깎이고 남은 체력 있으면
+            send_animation_packet(i, id, A_DEAD);
         }
     }
 }
@@ -1598,13 +1605,13 @@ void Server::worker_thread()
                 if (0 == user_id)
                 {
                     g_clients[user_id].m_team = TEAM_RED;
-                    _vec3 pos = { 50.f, 0.f, 90.f };
+                    _vec3 pos = { 50.f, 0.f, 70.f };
                     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 }
                 else
                 {
                     g_clients[user_id].m_team = TEAM_BLUE;
-                    _vec3 pos = { 90.f, 0.f, 30.f };
+                    _vec3 pos = { 70.f, 0.f, 70.f };
                     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 }
 
@@ -1792,45 +1799,27 @@ bool Server::check_collision(int a, int b)
     }
     else
         return false;
+}
 
+void Server::do_push(int pusher,int target)
+{
+    _vec3* a_pos = g_clients[pusher].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* b_pos = g_clients[target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    float a_rad = g_clients[pusher].m_col.radius;
+    float b_rad = g_clients[target].m_col.radius;
 
-    //void CPlayer::Obb_Collision()
-    //{
-    //    if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
-    //    {
-    //        if (!m_IsBazier)
-    //        {
-    //            _vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
-    //            _vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-    //            _vec3 vTemp = { vPos - vTargetPos };
-    //            vTemp.Normalize();
-    //            m_vStartPoint = vPos;
-    //            m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-    //            //m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-    //            m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-    //            //m_vMidPoint.y += 2.f;
-    //            m_IsBazier = true;
-    //        }
-    //        Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
-    //    }
-    //    if (m_fBazierCnt >= 1.f)
-    //    {
-    //        m_fBazierCnt = 0.f;
-    //        m_IsOBB_Collision = false;
-    //        m_IsBazier = false;
-    //    }
-    //}
+    float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
 
-    //void CPlayer::Hit_Object(_float & fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
-    //{
-    //    _float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
-    //    _float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
-    //    _float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+    if (dist > 0)
+    {
+        b_pos->x -= (a_pos->x - b_pos->x) / dist;
+        b_pos->y -= (a_pos->y - b_pos->y) / dist;
+        b_pos->z -= (a_pos->z - b_pos->z) / dist;
 
-    //    _vec3 vPos = { fX, fY, fZ };
-    //    m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-    //    fCnt += 0.01f;
-    //}
+        do_move(target, GO_COLLIDE);
+    }
 }
 
 bool Server::is_object(int id)

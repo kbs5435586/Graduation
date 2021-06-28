@@ -72,6 +72,8 @@ public:
 	void initialize_NPC(int player_id);
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
+	void do_dead(int id);
+	void do_push(int pusher, int target);
 	void do_change_formation(int player_id);
 	void do_npc_rotate(int user_id, char dir);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);

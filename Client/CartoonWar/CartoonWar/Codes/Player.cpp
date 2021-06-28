@@ -127,10 +127,10 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
+	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
+	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
 	{
-		m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-		m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
@@ -1071,7 +1071,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			{
 				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 					- server->Get_Attack_Cooltime());
-				if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
+				if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 				{
 					server->send_attack_packet();
 					server->Set_Attack_CoolTime(high_resolution_clock::now());
