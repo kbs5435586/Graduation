@@ -35,8 +35,8 @@ public:
 
 	//CObserver* m_pObserverCom = nullptr;
 
-	
-	_int buttonNum = {};
+	_bool* buttonnumptr = {};
+	_bool buttonNum = {};
 	_bool IsDown = {};
 	POINT MousePos;
 };

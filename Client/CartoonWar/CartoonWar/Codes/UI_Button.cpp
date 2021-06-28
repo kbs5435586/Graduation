@@ -23,9 +23,10 @@ HRESULT CUI_Button::Ready_GameObject(void* pArg)
 	m_fSizeY = 50.f;
 
 	IsDown = false;
-	buttonNum = 0;
+	buttonNum = false;
+	buttonnumptr = &buttonNum;
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT, &buttonNum);
-
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT_PTR, buttonnumptr);
 	return S_OK;
 }
 
@@ -61,10 +62,10 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeY = 50.f;
 
 
-			++buttonNum;
-			if (buttonNum >= (_uint)CLASS::CLASS_END - 1)
-				buttonNum = 0;
-
+			//++buttonNum;
+			//if (buttonNum >= (_uint)CLASS::CLASS_END - 1)
+			//	buttonNum = 0;
+			buttonNum = true;
 			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &buttonNum);
 			IsDown = false;
 		}

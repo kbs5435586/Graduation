@@ -6,6 +6,9 @@ class CShader;
 class CAnimator;
 class CNavigation;
 class CCollider;
+
+class CUI_OnHead;
+class CUI_OnHeadBack;
 class CPlayer :
 	public CGameObject
 {
@@ -40,6 +43,7 @@ private:
 	void									Input_Key(const _float& fTimeDelta);
 private:
 	void									Death(const _float& fTimeDelta);
+	void									DeathMontion_Init();
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
 private:
@@ -55,12 +59,14 @@ private:
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CObserver*								m_pObserverCom = nullptr;
 private:
+	CUI_OnHead*								m_pUI_OnHead = nullptr;
+	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;
+private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
 private:
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
-	_bool									m_IsDeath = false;
 	_bool									m_IsOnce = false;
 	_bool									m_IsCombat = false;
 	_uint									m_iCurAnimIdx = 0;
@@ -82,5 +88,7 @@ private:
 	_uint									m_iCurMeshNum = 0;
 
 	_bool	m_IsActive = {};
+	_bool check = {};
+	_bool* checkptr = {};
 };
 

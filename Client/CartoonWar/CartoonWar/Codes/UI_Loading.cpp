@@ -4,6 +4,7 @@
 
 
 CUI_Loading::CUI_Loading()
+	: CUI()
 {
 }
 
@@ -127,7 +128,7 @@ void CUI_Loading::Free()
 	Safe_Release(m_pShaderCom);
 
 
-	CGameObject::Free();
+	CUI::Free();
 }
 
 HRESULT CUI_Loading::Ready_Component()

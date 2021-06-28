@@ -301,10 +301,20 @@ typedef struct tagReflect
 
 typedef struct tagInfo
 {
-	float	fHP = 0;
-	float	fMP = 0;
-	float	fAtt = 0;
-	float	fDef = 0;
+	tagInfo() {};
+	tagInfo(float hp, float mp, float att, float def)
+	{
+		fHP = hp;
+		fMaxHP = fHP;
+		fMP = mp;
+		fAtt = att;
+		fDef = def;
+	};
+	float	fHP = 0.f;
+	float	fMaxHP = 0.f;
+	float	fMP = 0.f;
+	float	fAtt = 0.f;
+	float	fDef = 0.f;
 }INFO;
 
 

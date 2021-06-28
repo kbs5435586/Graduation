@@ -3,10 +3,12 @@
 #include "Management.h"
 
 CUI_Position::CUI_Position()
+	: CUI()
 {
 }
 
 CUI_Position::CUI_Position(const CUI_Position& rhs)
+	: CUI(rhs)
 {
 }
 

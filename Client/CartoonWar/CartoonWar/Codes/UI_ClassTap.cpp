@@ -27,6 +27,16 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	m_meshnum[0] = 0;
+	m_meshnum[1] = 8;
+	m_meshnum[2] = 6;
+	m_meshnum[3] = 4;
+	m_meshnum[4] = 2;
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT_ARRAY, m_meshnum);
+	which = 0;
+	pwhich = &which;
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT_WHICH, pwhich);
 	m_fX = WINCX/2;
 	m_fY = WINCY/2;
 
@@ -40,14 +50,17 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 
 	for (int i = 0; i < 5; ++i)
 	{
+		a[i].setObserver(m_pObserverCom);
 		a[i].Ready_GameObject();
-
+		
 		//set pos
 		if (i == 0)
 			a[i].setPos(m_fX - (m_fSizeX / 2) + a[i].getSizeX(), m_fY - (m_fSizeY / 2) - (a[i].getSizeY() / 2));
 		else
 			a[i].setPos(a[i - 1].getX() + a[i].getSizeX() + 10, m_fY - (m_fSizeY / 2) - (a[i].getSizeY() / 2));
 
+		a[i].setTapnum(i);
+		a[i].setTemp(pwhich);
 	}
 
 	m_charInter = new CUI_CharInterface; 
@@ -58,8 +71,9 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &IsSwitch);
 
 	m_IsTap[0] = true;
-
 	
+
+
 	return S_OK;
 }
 
@@ -191,6 +205,7 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pInvenShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pObserverCom);
 	//Safe_Release(m_pCompute_ShaderCom);
 
 	delete[] a;
@@ -230,7 +245,10 @@ HRESULT CUI_ClassTap::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -252,6 +270,9 @@ HRESULT CUI_CharTap::Ready_GameObject(void* pArg)
 
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
+	meshnum = 0;
+
+	a = m_pObserverCom->GetIntArrInfo(0);
 
 	return S_OK;
 }
@@ -263,6 +284,11 @@ _int CUI_CharTap::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx
 		return -1;
 	pManagement->AddRef();
 
+	
+	
+	for(int i=0;i<tapnum;++i)
+		++a;
+	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_ARRAY, m_pObserverCom->GetIntArrInfo(0));
 		
 	if (b[idx] == true)
 		m_fSizeX = 60.f;
@@ -286,7 +312,10 @@ _int CUI_CharTap::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx
 					else
 						b[i] = false;
 				}
-				
+				*temp = tapnum;
+				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_WHICH, temp);
+				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &(*a));
+
 			}
 		}
 	}
@@ -342,6 +371,26 @@ void CUI_CharTap::setPos(_float x, _float y)
 {
 	m_fX = x;
 	m_fY = y;
+}
+
+void CUI_CharTap::setMeshnum(_int num)
+{
+	meshnum = num;
+}
+
+void CUI_CharTap::setTapnum(_int num)
+{
+	tapnum = num;
+}
+
+void CUI_CharTap::setTemp(_int* num)
+{
+	temp = num;
+}
+
+void CUI_CharTap::setObserver(CObserver* obs)
+{
+	m_pObserverCom = obs;
 }
 
 _float CUI_CharTap::getSizeX()

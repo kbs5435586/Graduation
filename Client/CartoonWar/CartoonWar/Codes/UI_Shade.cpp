@@ -3,10 +3,12 @@
 #include "Management.h"
 
 CUI_Shade::CUI_Shade()
+	: CUI()
 {
 }
 
 CUI_Shade::CUI_Shade(const CUI_Shade& rhs)
+	: CUI(rhs)
 {
 }
 

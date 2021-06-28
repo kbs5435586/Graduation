@@ -43,6 +43,7 @@ private:
 	CShader* m_pInvenShaderCom = nullptr;
 	CShader* m_pCompute_ShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
+	CObserver* m_pObserverCom = nullptr;
 
 private:
 	REP										m_tRep = {};
@@ -59,6 +60,9 @@ private:
 
 	POINT MousePos = {};
 	_bool IsSwitch = {};
+	_int m_meshnum[5] = {};
+	_int which = {};
+	_int* pwhich = {};
 };
 
 class CUI_CharTap :public CUI
@@ -76,14 +80,24 @@ public:
 
 	void setSize(_float x, _float y);
 	void setPos(_float x, _float y);
+	void setMeshnum(_int num);
+	void setTapnum(_int num);
+	void setTemp(_int* num);
+	void setObserver(CObserver* obs);
 	_float getSizeX();
 	_float getSizeY();
 	_float getX();
 	_float getY();
 	bool getActive();
+	
 private:
+	CObserver* m_pObserverCom = nullptr;
 private:
 	POINT MousePos;
 	_bool isActive;
-
+	_int  WhichChar;
+	_int meshnum;
+	_int tapnum;
+	_int* temp;
+	_int* a = nullptr;
 };

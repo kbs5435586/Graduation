@@ -139,7 +139,7 @@ void CUI_WoL_Blue::Free()
 	Safe_Release(m_pCompute_ShaderCom);
 
 
-	CGameObject::Free();
+	CUI::Free();
 }
 
 HRESULT CUI_WoL_Blue::Ready_Component()

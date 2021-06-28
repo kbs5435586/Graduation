@@ -73,10 +73,25 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 
 		m_pTransformCom->Set_PositionY(0.f);
 
-		m_iCurMeshNum = m_pObserverCom->GetIntInfo();
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-		if (true)
-			_uint i = m_iCurAnimIdx;
+		_int which = m_pObserverCom->GetWhichInfo();
+		int* a = m_pObserverCom->GetIntArrInfo(0);
+
+
+		for (int i = 0; i < which; ++i)
+			++a;
+
+		m_iCurMeshNum = *a;
+		check = m_pObserverCom->GetIntInfo();
+		checkptr = m_pObserverCom->GetIntPtrInfo();
+		if (check == true)
+		{
+			++(*a);
+			check = false;
+			*checkptr = check;
+			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, checkptr);
+			if ((*a) >= (_uint)CLASS::CLASS_END - 1)
+				(*a) = 0;
+		}
 		Change_Class();
 
 		m_IsActive = m_pObserverCom->GetBoolInfo();
@@ -126,6 +141,33 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 
 		temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1);
 
+
+
+		_int which = m_pObserverCom->GetWhichInfo();
+		int* a = m_pObserverCom->GetIntArrInfo(0);
+		
+
+		for (int i = 0; i < which; ++i)
+			++a;
+
+		m_iCurMeshNum = *a;
+		check = m_pObserverCom->GetIntInfo();
+		checkptr = m_pObserverCom->GetIntPtrInfo();
+		if (check == true)
+		{
+			++(*a);
+			check = false;
+			*checkptr = check;
+			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, checkptr);
+
+			if((*a) >= (_uint)CLASS::CLASS_END - 1)
+				(*a) = 0;
+		}	
+		m_eCurClass = (CLASS)m_iCurMeshNum;
+		if (true)
+			_uint i = m_iCurAnimIdx;
+
+		Change_Class();
 		Death(fTimeDelta);
 		Set_Animation(fTimeDelta);
 	}

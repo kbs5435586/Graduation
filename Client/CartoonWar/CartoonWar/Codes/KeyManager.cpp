@@ -40,6 +40,12 @@ void CKeyManager::Key_Update()
 	if (GetAsyncKeyState('Q') & 0x8000)
 		m_dwKey |= KEY_Q;
 
+	if (GetAsyncKeyState('1') & 0x8000)
+		m_dwKey |= KEY_1;
+	if (GetAsyncKeyState('2') & 0x8000)
+		m_dwKey |= KEY_2;
+
+
 }
 _bool CKeyManager::Key_Up(DWORD dwKey)
 {

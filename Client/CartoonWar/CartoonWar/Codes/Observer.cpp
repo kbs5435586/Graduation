@@ -21,14 +21,15 @@ HRESULT CObserver::Ready_Observer()
 void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 {
 	list<void*>*	lstTemp = CManagement::GetInstance()->Get_List(eType);
-
+	
 	if (nullptr == lstTemp)
 		return;
 
 	auto iter_find = find(lstTemp->begin(), lstTemp->end(), pData);
 	if (lstTemp->end() == iter_find)
 		return;
-
+	int* num;
+	int test;
 	switch (eType)
 	{
 	case DATA_TYPE::DATA_INFO:
@@ -44,6 +45,18 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 		break;
 	case DATA_TYPE::DATA_BOOL:
 		m_bool = *reinterpret_cast<_bool*>(*iter_find);
+		break;
+	case DATA_TYPE::DATA_INT_ARRAY:
+		m_int_array = reinterpret_cast<_int*>(*iter_find);
+		num=  m_int_array;
+		++num;
+		test = *num;
+		break;
+	case DATA_TYPE::DATA_INT_WHICH:
+		m_which = *reinterpret_cast<_int*>(*iter_find);
+		break;
+	case DATA_TYPE::DATA_INT_PTR:
+		m_int_ptr = reinterpret_cast<_bool*>(*iter_find);
 		break;
 	}
 

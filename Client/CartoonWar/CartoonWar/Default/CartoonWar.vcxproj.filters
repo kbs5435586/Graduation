@@ -391,6 +391,21 @@
     <Filter Include="02. GameObject\98. Camera\01. Light_Camera">
       <UniqueIdentifier>{1531d645-66e8-49ff-8a24-fcc3e86344e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\05. UI_OnHead">
+      <UniqueIdentifier>{bfd6324d-6fcb-4213-aa3e-c56789d0d61d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\06. UI_OnHeadBack">
+      <UniqueIdentifier>{518d9245-9c67-4739-b2cd-6cdd321553df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\06. Throw">
+      <UniqueIdentifier>{b3a07c0e-e092-4a3d-98ab-bcccf833c22d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow">
+      <UniqueIdentifier>{6d03c9bc-e0db-4b2d-9d1e-59f2e6dfeef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\06. Throw\01. Throw_Stone">
+      <UniqueIdentifier>{39355462-9e93-4bf6-8768-9b0c94e5dd6c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\97. UI\05. UI_ClassTap">
       <UniqueIdentifier>{4c8da03f-32de-4fba-beb0-cd0eb03b809d}</UniqueIdentifier>
     </Filter>
@@ -762,6 +777,15 @@
     <ClInclude Include="..\Headers\UI_CharInterface.h">
       <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_OnHead.h">
+      <Filter>02. GameObject\97. UI\05. UI_OnHead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_OnHeadBack.h">
+      <Filter>02. GameObject\97. UI\06. UI_OnHeadBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Throw_Arrow.h">
+      <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1086,6 +1110,15 @@
     <ClCompile Include="..\Codes\UI_CharInterface.cpp">
       <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_OnHead.cpp">
+      <Filter>02. GameObject\97. UI\05. UI_OnHead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_OnHeadBack.cpp">
+      <Filter>02. GameObject\97. UI\06. UI_OnHeadBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Throw_Arrow.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1188,6 +1221,9 @@
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UUU.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
   </ItemGroup>

@@ -77,7 +77,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
-	m_pManagement->Update_CollisionManager();
+	
 	
 	return m_pManagement->Update_Management(fTimeDelta);
 }

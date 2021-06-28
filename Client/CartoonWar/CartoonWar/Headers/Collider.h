@@ -33,6 +33,7 @@ public:
     _bool                       Collision_OBB(CCollider* pTargetCollider);
 public:
     void                        Update_Collider(CTransform* pTransform, CLASS eCurClass = CLASS::CLASS_END);
+    void                        Update_Collider_Ex(CTransform* pTransform);
     _matrix				        Compute_WorldTransform();
 private:
     void				        Compute_AlignAxis(OBB* pOBB);
