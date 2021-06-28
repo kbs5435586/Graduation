@@ -81,8 +81,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 _int CNPC::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
-	m_pColiider[1]->Update_Collider(m_pTransformCom);
+	//m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
+	//m_pColiider[1]->Update_Collider(m_pTransformCom);
 
 	m_pUI_OnHead->Update_GameObject(fTimeDelta);
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);

@@ -165,6 +165,7 @@ void Server::process_packet(int user_id, char* buf)
         pos.y = packet->y;
         pos.z = packet->z;
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        do_move(user_id, GO_COLLIDE);
     }
     break;
     default:
