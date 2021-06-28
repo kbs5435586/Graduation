@@ -1090,42 +1090,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				m_IsHit = true;
 				//m_IsCombat = true;
 			}
-			else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-			{
-
-				if (!m_IsCombat)
-					m_iCurAnimIdx = 1;
-				else
-					m_iCurAnimIdx = m_iCombatMotion[1];
-				_vec3 vLook = {};
-				vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-				vLook = Vector3_::Normalize(vLook);
-
-
-				_vec3 vDirectionPerSec = (vLook * fTimeDelta);
-				_vec3 vSlide = {};
-				if (!m_IsSlide)
-				{
-					if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-					{
-
-						m_pTransformCom->BackWard(fTimeDelta);
-						server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-
-					}
-					else
-					{
-						m_pTransformCom->Go_There(vSlide);
-						server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-					}
-				}
-				else
-				{
-					m_pTransformCom->BackWard(fTimeDelta);
-					server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-					m_IsSlide = false;
-				}
-			}
 
 			if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 			{
@@ -1225,6 +1189,35 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				else
 					m_iCurAnimIdx = m_iCombatMotion[1];
 				server->send_move_packet(GO_FORWARD);
+
+				_vec3 vLook = {};
+				vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+				vLook = Vector3_::Normalize(vLook);
+
+
+				_vec3 vDirectionPerSec = (vLook * fTimeDelta);
+				_vec3 vSlide = {};
+				if (!m_IsSlide)
+				{
+					if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+					{
+
+						m_pTransformCom->BackWard(fTimeDelta);
+						server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+
+					}
+					else
+					{
+						m_pTransformCom->Go_There(vSlide);
+						server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+					}
+				}
+				else
+				{
+					m_pTransformCom->BackWard(fTimeDelta);
+					server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+					m_IsSlide = false;
+				}
 			}
 			if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
 			{
@@ -1233,33 +1226,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				else
 					m_iCurAnimIdx = m_iCombatMotion[0];
 			}
-			_vec3 vLook = {};
-			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-			vLook = Vector3_::Normalize(vLook);
-
-
-			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-			_vec3 vSlide = {};
-			if (!m_IsSlide)
-			{
-				if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-				{
-
-					m_pTransformCom->BackWard(fTimeDelta);
-
-				}
-				else
-				{
-					m_pTransformCom->Go_There(vSlide);
-
-				}
-			}
-			else
-			{
-				m_pTransformCom->BackWard(fTimeDelta);
-				m_IsSlide = false;
-			}
-
 		}
 	}
 
