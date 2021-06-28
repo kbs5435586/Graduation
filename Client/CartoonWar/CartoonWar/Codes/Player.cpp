@@ -112,8 +112,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	}
 
-	if (m_IsDead)
-		return DEAD_OBJ;
+	//if (m_IsDead)
+	//	return DEAD_OBJ;
 	return NO_EVENT;
 }
 
@@ -304,7 +304,7 @@ void CPlayer::Free()
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 
 
 	Safe_Release(m_pUI_OnHead);
@@ -464,10 +464,10 @@ HRESULT CPlayer::Ready_Component()
 
 
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -1147,6 +1147,83 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				else
 					m_iCurAnimIdx = m_iCombatMotion[0];
 			}
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+
+				m_pTransformCom->BackWard(fTimeDelta);
+
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+
+			}
+		}
+		else
+		{
+			m_pTransformCom->BackWard(fTimeDelta);
+			m_IsSlide = false;
+		}
+
+
+	
+
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	{
+
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+
+				m_pTransformCom->BackWard(fTimeDelta);
+
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+
+			}
+		}
+		else
+		{
+			m_pTransformCom->BackWard(fTimeDelta);
+			m_IsSlide = false;
+		}
+
+
+
+
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
+	{
+		m_IsSlide = true;
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
 
 			if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
 			{

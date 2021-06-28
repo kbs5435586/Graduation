@@ -56,11 +56,14 @@ _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 
 	//m_pTransformCom->Set_PositionY(2.f);
 	m_fLifeTime += fTimeDelta;
-	if (m_fLifeTime >= 10.f)
+	if (m_fLifeTime >= 3.f)
 	{
 		m_fLifeTime = 0.f;
 		return DEAD_OBJ;
 	}
+
+	if (m_IsDead)
+		return DEAD_OBJ;
 
 
 	return NO_EVENT;

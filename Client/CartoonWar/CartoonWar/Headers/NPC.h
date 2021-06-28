@@ -47,6 +47,11 @@ private:
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
 private:
+	void									Chase_Player(const _float& fTimeDelta, _float fLenght);
+	void									MeaningLess_Move(const _float& fTimeDelta);
+	void									ComputeDir();
+	void									Change_State(const _float fTimeDelta);
+private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom[(_uint)CLASS::CLASS_END] = { nullptr };
@@ -67,20 +72,23 @@ private:
 private:
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
+	_bool									m_IsOnce = false;
+	_bool									m_IsCombat = false;
+	_bool									m_IsDest = false;
+	_bool									m_IsRotateEnd = false;
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx = 0;
-	_bool									m_IsOnce = false;
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
 	_uint									m_iCombatMotion[3] = {};
-	_vec3									m_vOBB_Range[2] = {};
 	_float									m_fCombatTime = 0.f;
-	_bool									m_IsCombat = false;
+	_float									m_fDeathTime = 0.f;
+
 private:
+	_vec3									m_vOBB_Range[2] = {};
+	_vec3									m_vDest = {};
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
-	_float									m_fDeathTime = 0.f;
-	_bool									m_IsDeath = false;
 private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
