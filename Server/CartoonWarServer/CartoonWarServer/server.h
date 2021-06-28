@@ -30,7 +30,7 @@ private:
 	float ROTATE_SPEED = 0.05f;
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
-	int ATTACK_DAMAGE = 50;
+	int ATTACK_DAMAGE = 25;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 300;
@@ -54,7 +54,6 @@ public:
 	void send_animation_packet(int user_id, int idler, unsigned char anim); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_attacked_packet(int user_id, int other_id);
-	void send_attack_packet(int user_id, int other_id);
 	void send_dead_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
@@ -86,6 +85,7 @@ public:
 	bool is_near(int a, int b);
 	bool is_attackable(int a, int b);
 	bool is_player(int id);
+	bool is_object(int id);
 	void is_flag_near(int flag);
 	bool check_collision(int a, int b);
 

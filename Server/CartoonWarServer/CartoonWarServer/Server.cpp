@@ -326,6 +326,8 @@ void Server::do_move(int user_id, char direction)
                 continue;
             if (ST_ACTIVE != c.second.m_status)
                 continue;
+            if (FUNC_DEAD == c.second.m_last_order)
+                continue;
             if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
                 continue;
             if (check_collision(user_id, c.second.m_id))
@@ -361,10 +363,6 @@ void Server::do_move(int user_id, char direction)
             continue;
         if (c.second.m_id == user_id)
             continue;
-        //if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
-        //{
-
-        //}
         if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
         {
             OverEx* overEx = new OverEx;
@@ -731,6 +729,8 @@ void Server::do_follow(int npc_id)
                         continue;
                     if (!is_near(i, npc_id))
                         continue;
+                    if (FUNC_DEAD == g_clients[i].m_last_order)
+                        continue;
                     if (check_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
                         do_move(i, GO_COLLIDE);
                 }
@@ -886,6 +886,9 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 
     if (ST_ACTIVE == g_clients[g_clients[npc_id].m_owner_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
     {
+        if (FUNC_DEAD == g_clients[npc_id].m_last_order)
+            return;
+
         switch (func_id)
         {
         case FUNC_NPC_ATTACK:
@@ -915,6 +918,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         break;
         }
     }
+
     if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
         add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
     else
@@ -963,6 +967,7 @@ void Server::do_timer()
             case FUNC_NPC_ATTACK:
             case FUNC_NPC_DEFENCE:
             case FUNC_NPC_HOLD:
+            case FUNC_DEAD:
             case FUNC_NPC_FOLLOW:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
@@ -1191,16 +1196,6 @@ void Server::send_enter_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
-void Server::send_attack_packet(int user_id, int other_id)
-{
-    sc_packet_attack packet;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_ATTACK;
-    packet.id = other_id;
-    cout << user_id << " saw " << other_id << " attacking\n";
-    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
-}
-
 void Server::send_attacked_packet(int user_id, int other_id)
 {
     sc_packet_attacked packet;
@@ -1307,56 +1302,59 @@ void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
 void Server::do_attack(int user_id)
 {
     cout << user_id << "is do attack\n";
-    for (int i = 0; i < NPC_START; ++i) // 다른 플레이어들에게 내 공격모션 공유
-    {
-        if (false == is_near(i, user_id)) // 근처에 없는애들 무시
-            continue;
-        if (ST_ACTIVE != g_clients[i].m_status) // 비접속 상태인 애들 무시
-            continue;
-        if (i == user_id) // 나 자신 무시
-            continue;
-
-        send_attack_packet(i, user_id);
-    }
-
     for (auto& c : g_clients)
     {
-        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
-            continue;
         if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
+            continue;
+        if (is_object(c.second.m_id))
+            continue;
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
             continue;
         if (c.second.m_id == user_id) // 나 자신 무시
             continue;
         if (c.second.m_owner_id == user_id) // 내 npc들 무시
             continue;
-
-        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대가 있으면
+        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대 + 적npc 가 있으면
         {
-            g_clients[c.second.m_id].m_cLock.lock();
-            unordered_set<int> copy_viewlist = g_clients[c.second.m_id].m_view_list; // 죽은애의 시야범위 가져옴
-            g_clients[c.second.m_id].m_cLock.unlock();
-
             c.second.m_hp -= ATTACK_DAMAGE;
-
-            if (0 < c.second.m_hp)
+            if (0 < c.second.m_hp) // 맞고 피가 남아있으면
             {
-                send_attacked_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
-                for (auto cpy_vl : copy_viewlist)
+                for (int i = 0; i < NPC_START; ++i)
                 {
-                    send_attacked_packet(cpy_vl, c.second.m_id); // 깎이고 남은 체력 있으면
+                    if (is_near(c.second.m_id, i)) // 맞은애 주변에 있는 플레이어에게
+                    {
+                        send_attacked_packet(i, c.second.m_id);
+                        send_animation_packet(i, c.second.m_id, A_HIT);
+                    }
                 }
             }
             else // 죽으면
             {
-                if (c.second.m_id > MAX_USER)
+                c.second.m_hp = 0;
+                if (is_player(c.second.m_id)) // 죽은 애가 유저면
                 {
-
+                    for (int i = 0; i < NPC_START; ++i)
+                    {
+                        if (is_near(c.second.m_id, i)) // 죽은애 주변에 있는 플레이어에게
+                        {
+                            send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
+                            send_animation_packet(i, c.second.m_id, A_DEAD);
+                        }
+                    }
                 }
-                g_clients[c.second.m_id].m_hp = 0;
-                // g_clients[c.second.m_id].m_status = ST_SLEEP;
-                send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
-                for (auto cpy_vl : copy_viewlist)
-                    send_dead_packet(cpy_vl, c.second.m_id);
+                else // 죽은 애가 npc 면
+                {
+                    g_clients[c.second.m_id].m_last_order = FUNC_DEAD;
+                    add_timer(c.second.m_id, FUNC_DEAD, 3000);
+                    for (int i = 0; i < NPC_START; ++i)
+                    {
+                        if (is_near(c.second.m_id, i)) // 죽은애 주변에 있는 플레이어에게
+                        {
+                            send_dead_packet(c.second.m_id, c.second.m_id); // 깎이고 남은 체력 있으면
+                            send_animation_packet(i, c.second.m_id, A_DEAD);
+                        }
+                    }
+                }
             }
         }
     }
@@ -1660,6 +1658,17 @@ void Server::worker_thread()
             finite_state_machine(id, FUNC_NPC_RANDMOVE);
             delete overEx;
             break;
+        case FUNC_DEAD:
+            if (is_player(id))
+            {
+                do_move(id, GO_COLLIDE);
+            }
+            else
+            {
+                g_clients[id].m_status = ST_SLEEP;
+            }
+            delete overEx;
+            break;
         case FUNC_CHECK_FLAG:
             for (int i = 0; i < 5; ++i)
                 is_flag_near(i);
@@ -1821,4 +1830,12 @@ bool Server::check_collision(int a, int b)
     //    m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
     //    fCnt += 0.01f;
     //}
+}
+
+bool Server::is_object(int id)
+{
+    if (id >= OBJECT_START)
+        return true;
+    else
+        return false;
 }

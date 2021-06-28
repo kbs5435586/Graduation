@@ -1063,164 +1063,158 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (server->Get_PlayerID() == m_iLayerIdx)
 	{
-		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
-		{
-			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-				- server->Get_Attack_Cooltime());
-			if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
-			{
-				server->send_attack_packet();
-				server->Set_Attack_CoolTime(high_resolution_clock::now());
-			}
-
-		if (m_eCurClass == CLASS::CLASS_ARCHER)
-		{
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			CTransform* pTemp = m_pTransformCom;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-				return ;
-		}
-		server->send_animation_packet(A_ATTACK);
-		m_IsOnce = true;
-		m_IsHit = true;
-		//m_IsCombat = true;
-	}
-
-		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			server->send_rotate_packet(TURN_LEFT);
-		}
-		if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-
-		if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			server->send_rotate_packet(TURN_RIGHT);
-		}
-		if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-
-		if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_RUN);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[2];
-
-			server->send_move_packet(GO_FAST_FORWARD);
-		}
-		else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			server->send_move_packet(GO_FORWARD);
-		}
-		if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-
-		if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			server->send_move_packet(GO_BACK);
-		}
-		if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
-		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-
-		if ((GetAsyncKeyState('6') & 0x8000))
-		{
-			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-				- server->Get_ChangeFormation_Cooltime());
-			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-			{
-				server->send_change_formation_packet();
-				server->Set_ChangeFormation_CoolTime(high_resolution_clock::now());
-			}
-		}
-		if (GetAsyncKeyState('M') & 0x8000)
-		{
-			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-				- server->Get_AddNPC_Cooltime());
-			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-			{
-				server->send_add_npc_packet();
-				server->Set_AddNPC_CoolTime(high_resolution_clock::now());
-			}
-		}
-	}
-
-
-
-
-
-
-	if (CManagement::GetInstance()->Key_Down(KEY_1))
-	{
-		m_iCurMeshNum++;
-		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
-			m_iCurMeshNum = 0;
-		m_iCurAnimIdx = 0;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-
-	}
-
-
-	if (CManagement::GetInstance()->Key_Down(KEY_2))
-	{
-		m_tInfo.fHP -= 1.f;
-	}
-
-
-
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		if (m_IsCombat)
-		{
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		}
+		if (0 >= m_tInfo.fHP)
+			return;
 		else
 		{
-			m_iCurAnimIdx = 0;
-			server->Set_Anim(m_iCurAnimIdx);
-			server->send_animation_packet(A_IDLE);
-		}
-		m_IsOnce = false;
-		m_IsHit = false;
-	}
+			if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+			{
+				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+					- server->Get_Attack_Cooltime());
+				if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
+				{
+					server->send_attack_packet();
+					server->Set_Attack_CoolTime(high_resolution_clock::now());
+				}
 
+				if (m_eCurClass == CLASS::CLASS_ARCHER)
+				{
+					_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+					_matrix matTemp = m_pTransformCom->Get_Matrix();
+					CTransform* pTemp = m_pTransformCom;
+					if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+						return;
+				}
+				server->send_animation_packet(A_ATTACK);
+				m_IsOnce = true;
+				m_IsHit = true;
+				//m_IsCombat = true;
+			}
+
+			if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_WALK);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[1];
+				server->send_rotate_packet(TURN_LEFT);
+			}
+			if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_IDLE);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[0];
+			}
+
+			if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_WALK);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[1];
+				server->send_rotate_packet(TURN_RIGHT);
+			}
+			if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_IDLE);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[0];
+			}
+
+			if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_RUN);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[2];
+
+				server->send_move_packet(GO_FAST_FORWARD);
+			}
+			else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_WALK);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[1];
+				server->send_move_packet(GO_FORWARD);
+			}
+			if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_IDLE);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[0];
+			}
+
+			if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_WALK);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[1];
+				server->send_move_packet(GO_BACK);
+			}
+			if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
+			{
+				if (!m_IsCombat)
+					server->send_animation_packet(A_IDLE);
+				else
+					m_iCurAnimIdx = m_iCombatMotion[0];
+			}
+
+			if ((GetAsyncKeyState('6') & 0x8000))
+			{
+				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+					- server->Get_ChangeFormation_Cooltime());
+				if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+				{
+					server->send_change_formation_packet();
+					server->Set_ChangeFormation_CoolTime(high_resolution_clock::now());
+				}
+			}
+			if (GetAsyncKeyState('M') & 0x8000)
+			{
+				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+					- server->Get_AddNPC_Cooltime());
+				if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+				{
+					server->send_add_npc_packet();
+					server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+				}
+			}
+			if (CManagement::GetInstance()->Key_Down(KEY_1))
+			{
+				m_iCurMeshNum++;
+				if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
+					m_iCurMeshNum = 0;
+				m_iCurAnimIdx = 0;
+				m_eCurClass = (CLASS)m_iCurMeshNum;
+
+			}
+			if (CManagement::GetInstance()->Key_Down(KEY_2))
+			{
+				m_tInfo.fHP -= 1.f;
+			}
+		}
+
+		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+		{
+			if (m_IsCombat)
+			{
+				m_iCurAnimIdx = m_iCombatMotion[0];
+			}
+			else
+			{
+				m_iCurAnimIdx = 0;
+				server->Set_Anim(m_iCurAnimIdx);
+				server->send_animation_packet(A_IDLE);
+			}
+			m_IsOnce = false;
+			m_IsHit = false; // 수정
+		}
+	}
 	Safe_Release(server);
 }
 

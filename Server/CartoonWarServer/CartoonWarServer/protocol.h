@@ -166,13 +166,6 @@ struct sc_packet_attacked
 	short hp;
 };
 
-struct sc_packet_attack
-{
-	char size;
-	char type;
-	int id;
-};
-
 struct sc_packet_dead
 {
 	char size;
@@ -213,9 +206,13 @@ struct cs_packet_animation
 
 constexpr unsigned char A_IDLE = 0;
 constexpr unsigned char A_WALK = 1;
-constexpr unsigned char A_ATTACK = 2;
-constexpr unsigned char A_HIT = 3;
-constexpr unsigned char A_RUN = 4;
+constexpr unsigned char A_CIDLE = 2;
+constexpr unsigned char A_CWALK = 3;
+constexpr unsigned char A_ATTACK = 4;
+constexpr unsigned char A_HIT = 5;
+constexpr unsigned char A_RUN = 6;
+constexpr unsigned char A_CRUN = 7;
+constexpr unsigned char A_DEAD = 8;
 
 struct cs_packet_login
 {

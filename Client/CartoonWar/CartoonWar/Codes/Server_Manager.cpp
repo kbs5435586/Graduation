@@ -593,20 +593,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 	}
 	break;
-	case SC_PACKET_ATTACK:
-	{
-		sc_packet_attack* my_packet = reinterpret_cast<sc_packet_attack*>(ptr);
-		int recv_id = my_packet->id;
-		m_objects[recv_id].anim = 0;
-	}
-	break;
 	case SC_PACKET_ATTACKED:
 	{
 		sc_packet_attacked* my_packet = reinterpret_cast<sc_packet_attacked*>(ptr);
 		int recv_id = my_packet->id;
 		short recv_hp = my_packet->hp;
 		m_objects[recv_id].hp = recv_hp;
-		m_objects[recv_id].anim = 12;
 	}
 	break;
 	case SC_PACKET_DEAD:
@@ -614,55 +606,34 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_dead* my_packet = reinterpret_cast<sc_packet_dead*>(ptr);
 		int recv_id = my_packet->id;
 		m_objects[recv_id].hp = 0;
-		m_objects[recv_id].anim = 8;
 
-		if (is_player(recv_id))
-		for (int i = MY_NPC_START(recv_id); i <= MY_NPC_END(recv_id); ++i)
+		managment = CManagement::GetInstance();  // 플레이어의 죽는 애니메이션이 끝났을때 실행되게
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+
+		CTransform* pTransform;
+		if (0 == m_objects[my_id].hp)
 		{
-			if (0 != m_objects.count(i) /*&& m_objects[i].showObject*/)
-				m_objects[recv_id].anim = 8;
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", my_id);
+			_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+			if (0 == my_id)
+			{
+				vPos.x = 50.f;
+				vPos.y = 0.f;
+				vPos.z = 90.f;
+			}
+			else
+			{
+				vPos.x = 90.f;
+				vPos.y = 0.f;
+				vPos.z = 30.f;
+				_vec3 pos = { 90.f, 0.f, 30.f };
+			}
+			pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+			send_position_packet(&vPos);
 		}
-
-		//managment = CManagement::GetInstance();  // 플레이어의 죽는 애니메이션이 끝났을때 실행되게
-		//if (nullptr == managment)
-		//	return;
-		//managment->AddRef();
-
-		//CTransform* pTransform;
-		//if (0 == m_objects[my_id].hp)
-		//{
-		//	if (ENUM_PLAYER1 == my_id)
-		//	{
-		//		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//			L"Layer_Orc02", L"Com_Transform", 0);
-		//		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		//		vPos.x = 50.f;
-		//		vPos.y = 0.2f;
-		//		vPos.z = 90.f;
-		//		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		//		send_position_packet(&vPos);
-
-		//	}
-		//	else if (ENUM_PLAYER2 == my_id) // 다른 플레이어
-		//	{
-		//		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//			L"Layer_Orc04", L"Com_Transform", 0);
-		//		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		//		vPos.x = 450.f;
-		//		vPos.y = 0.2f;
-		//		vPos.z = 360.f;
-		//		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		//		send_position_packet(&vPos);
-		//	}
-		//}
-
-		//for (int i = MY_NPC_START(other_id); i <= MY_NPC_END(other_id); ++i)
-		//{
-		//	if (0 != m_objects.count(i))
-		//		m_objects[i].showObject = false;
-		//}
-
-		//Safe_Release(managment);
+		Safe_Release(managment);
 	}
 	break;
 	case SC_PACKET_FLAG_INFO:
