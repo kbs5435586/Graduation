@@ -28,14 +28,6 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 {
 	m_cSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-	int retval = WSAAsyncSelect(m_cSocket, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
-	if (retval == SOCKET_ERROR)
-	{
-		Free();
-		err_quit("WSAAsyncSelect Error\n");
-		return FALSE;
-	}
-
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
@@ -44,11 +36,25 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 
 	init_client();
 
-	retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
+	int retval = connect(m_cSocket, (SOCKADDR*)&server_a, sizeof(server_a));
 	if ((retval == SOCKET_ERROR) && (WSAEWOULDBLOCK != WSAGetLastError())) // 비동기 connect는 바로 리턴되면서 WSAEWOULDBLOCK 에러를 발생시킴
 	{
 		Free();
 		err_quit("connect Error\n");
+		return FALSE;
+	}
+	else
+	{
+		isConnected = true;
+		send_login_ok_packet();
+	}
+
+	m_EventArray = WSACreateEvent();
+	retval = WSAEventSelect(m_cSocket, m_EventArray, FD_READ | FD_CLOSE);
+	if (retval == SOCKET_ERROR)
+	{
+		Free();
+		err_quit("WSAAsyncSelect Error\n");
 		return FALSE;
 	}
 
@@ -98,8 +104,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
-		isLogin = true;
-
 		Safe_Release(managment);
 	}
 	break;
@@ -754,11 +758,48 @@ void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
 	break;
 	case FD_WRITE:
 		break;
-	case FD_CLOSE:
-		Free();
-		break;
 	default:
 		break;
+	}
+}
+
+HRESULT CServer_Manager::EventManager()
+{
+	if (isConnected)
+	{
+		int index = WSAWaitForMultipleEvents(1, &m_EventArray, FALSE, 0, FALSE);
+		if (index == WSA_WAIT_FAILED)
+			return E_FAIL;
+
+		index -= WSA_WAIT_EVENT_0;
+		WSANETWORKEVENTS NetworkEvents;
+
+		int retval = WSAEnumNetworkEvents(m_cSocket, m_EventArray, &NetworkEvents);
+		if (retval == SOCKET_ERROR)
+			return E_FAIL;
+
+		if (NetworkEvents.lNetworkEvents & FD_READ)
+		{
+			if (NetworkEvents.iErrorCode[FD_READ_BIT] != 0)
+				return E_FAIL;
+
+			char net_buf[MAX_BUF_SIZE];
+			auto recv_result = recv(m_cSocket, net_buf, MAX_BUF_SIZE, 0);
+			if (recv_result == SOCKET_ERROR)
+				return E_FAIL;
+			else if (recv_result == 0)
+				return E_FAIL;
+
+			if (recv_result > 0)
+				process_data(net_buf, recv_result);
+		}
+		if (NetworkEvents.lNetworkEvents & FD_CLOSE)
+		{
+			if (NetworkEvents.iErrorCode[FD_CLOSE_BIT] != 0)
+				return E_FAIL;
+
+			Free();
+		}
 	}
 }
 
@@ -963,9 +1004,9 @@ bool CServer_Manager::Get_Red(int id)
 	return flags[id].isRed;
 }
 
-bool CServer_Manager::Get_Login()
+bool CServer_Manager::Get_Connected()
 {
-	return isLogin;
+	return isConnected;
 }
 
 short CServer_Manager::Get_PlayerID()

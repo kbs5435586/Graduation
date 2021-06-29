@@ -201,16 +201,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    case WM_SOCKET:
-    {
-        CServer_Manager* server = CServer_Manager::GetInstance();
-        if (nullptr == server)
-            break;
-        server->AddRef();
-        server->SocketEventMessage(g_hWnd, lParam);
-        Safe_Release(server);
-    }
-    break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;

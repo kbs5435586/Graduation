@@ -16,10 +16,12 @@ private:
     short my_id;
     short my_hp;
     bool isSendOnePacket;
-    bool isLogin;
+    bool isConnected = false;
     bool isRed;
     bool isBlue;
     string m_ip;
+
+    WSAEVENT m_EventArray;
 
     SOCKET m_cSocket; // 서버와 연결할 소켓
     string m_client_IP; // 클라 IP
@@ -36,6 +38,7 @@ public:
     void ProcessPacket(char* ptr);
     void process_data(char* net_buf, size_t io_byte);
     void SocketEventMessage(HWND hWnd, LPARAM lParam);
+    HRESULT EventManager();
 
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);
@@ -59,7 +62,7 @@ public:
     bool Get_ShowNPC(int npc_index);
     bool Get_Blue(int id);
     bool Get_Red(int id);
-    bool Get_Login();
+    bool Get_Connected();
     short Get_PlayerID();
     short Get_PlayerHP(int id);
     short Get_NpcHP(int id);

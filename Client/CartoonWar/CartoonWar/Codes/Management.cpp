@@ -266,6 +266,12 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	
 	m_pKey_Manager->Key_Update();
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+	server->EventManager();
+
 	iProcessCodes = m_pScene->Update_Scene(fTimeDelta);
 	if (iProcessCodes & 0x80000000)
 		return iProcessCodes;
@@ -275,6 +281,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 		return iProcessCodes;
 
 	CManagement::GetInstance()->Update_CollisionManager();
+	Safe_Release(server);
 	return _int(0);
 }
 
