@@ -37,7 +37,6 @@ public:
 
     void ProcessPacket(char* ptr);
     void process_data(char* net_buf, size_t io_byte);
-    void SocketEventMessage(HWND hWnd, LPARAM lParam);
     HRESULT EventManager();
 
     void send_packet(void* packet);

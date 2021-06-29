@@ -727,42 +727,6 @@ void CServer_Manager::process_data(char* net_buf, size_t io_byte)
 	}
 }
 
-void CServer_Manager::SocketEventMessage(HWND hWnd, LPARAM lParam)
-{
-	static int count = 0;
-
-	switch (WSAGETSELECTEVENT(lParam))
-	{
-	case FD_CONNECT:
-	{
-		send_login_ok_packet();
-	}
-	break;
-	case FD_READ:
-	{
-		char net_buf[MAX_BUF_SIZE];
-		auto recv_result = recv(m_cSocket, net_buf, MAX_BUF_SIZE, 0);
-		if (recv_result == SOCKET_ERROR)
-		{
-			//Free();
-			//wcout << L"Recv ¿¡·¯!";pc
-			while (true);
-		}
-		else if (recv_result == 0)
-			break;
-
-		if (recv_result > 0)
-			process_data(net_buf, recv_result);
-	}
-	// ProcessPacket(char* ptr);
-	break;
-	case FD_WRITE:
-		break;
-	default:
-		break;
-	}
-}
-
 HRESULT CServer_Manager::EventManager()
 {
 	if (isConnected)

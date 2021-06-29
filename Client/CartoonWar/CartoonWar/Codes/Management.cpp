@@ -19,7 +19,7 @@ CManagement::CManagement()
 	, m_pLoad_Manager(CLoadManager::GetInstance())
 	, m_pUAV_Manager(CUAVManager::GetInstance())
 	, m_pCollision_Manager(CCollisionMgr::GetInstance())
-	//, m_pServer_Manager(CServer_Manager::GetInstance())
+	, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
 	m_pComponent_Manager->AddRef();
@@ -31,7 +31,7 @@ CManagement::CManagement()
 	m_pLoad_Manager->AddRef();
 	m_pUAV_Manager->AddRef();
 	m_pCollision_Manager->AddRef();
-	//m_pServer_Manager->AddRef();
+	m_pServer_Manager->AddRef();
 }
 
 CComponent* CManagement::Get_ComponentPointer(const _uint& iSceneID, const _tchar* pLayerTag, const _tchar* pComponentTag, const _uint& iIndex)
@@ -265,12 +265,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	_int	iProcessCodes = 0;
 	
 	m_pKey_Manager->Key_Update();
-
-	CServer_Manager* server = CServer_Manager::GetInstance();
-	if (nullptr == server)
-		return -1;
-	server->AddRef();
-	server->EventManager();
+	m_pServer_Manager->EventManager();
 
 	iProcessCodes = m_pScene->Update_Scene(fTimeDelta);
 	if (iProcessCodes & 0x80000000)
@@ -281,7 +276,6 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 		return iProcessCodes;
 
 	CManagement::GetInstance()->Update_CollisionManager();
-	Safe_Release(server);
 	return _int(0);
 }
 
@@ -355,8 +349,8 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CDevice::GetInstance()->DestroyInstance())
 		_MSG_BOX("CDevice Release Failed");
 
-	//if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
-	//	_MSG_BOX("CServer_Manager Release Failed");
+	if (dwRefCnt = CServer_Manager::GetInstance()->DestroyInstance())
+		_MSG_BOX("CServer_Manager Release Failed");
 }
 
 CGameObject* CManagement::Get_GameObject(const _uint& iSceneID, const _tchar* pLayerTag, const _uint& iIdx)
@@ -388,5 +382,5 @@ void CManagement::Free()
 	Safe_Release(m_pLoad_Manager);
 	Safe_Release(m_pCollision_Manager);
 	Safe_Release(m_pScene);
-	//Safe_Release(m_pServer_Manager);
+	Safe_Release(m_pServer_Manager);
 }

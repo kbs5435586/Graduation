@@ -98,6 +98,6 @@ private:
 	CLoadManager*				m_pLoad_Manager = nullptr;
 	CUAVManager*				m_pUAV_Manager = nullptr;
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
-	//CServer_Manager*			m_pServer_Manager = nullptr;
+	CServer_Manager*			m_pServer_Manager = nullptr;
 };
 
