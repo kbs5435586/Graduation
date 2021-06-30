@@ -32,6 +32,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_CollsionManager()))
 		return E_FAIL;
+	//if (FAILED(m_pManagement->Ready_Font(L"../Bin/Resource/Texture/Font/Font%d.png", "../Bin/Resource/Texture/Font/FontData.txt")))
+	//	return E_FAIL;
 	
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;

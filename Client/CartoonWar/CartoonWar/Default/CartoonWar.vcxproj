@@ -192,6 +192,7 @@
     <ClInclude Include="..\Headers\FbxLoader.h" />
     <ClInclude Include="..\Headers\Fire.h" />
     <ClInclude Include="..\Headers\Flag.h" />
+    <ClInclude Include="..\Headers\Font.h" />
     <ClInclude Include="..\Headers\Frame.h" />
     <ClInclude Include="..\Headers\FrameManager.h" />
     <ClInclude Include="..\Headers\Frustum.h" />
@@ -311,6 +312,7 @@
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
+    <ClCompile Include="..\Codes\Font.cpp" />
     <ClCompile Include="..\Codes\Frame.cpp" />
     <ClCompile Include="..\Codes\FrameManager.cpp" />
     <ClCompile Include="..\Codes\Frustum.cpp" />
@@ -508,6 +510,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

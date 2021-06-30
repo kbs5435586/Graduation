@@ -595,3 +595,12 @@ typedef struct tagParticleSet
 	float		fMinSpeed;
 	float		fMaxSpeed;
 }PARTICLESET;
+
+
+typedef struct tagStence
+{
+	int					iVertexCnt;
+	int					iIndexCnt;;
+	int					iMaxLenght;
+
+}SENTENCE;

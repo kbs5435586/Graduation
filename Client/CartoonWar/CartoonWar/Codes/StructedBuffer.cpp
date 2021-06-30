@@ -29,7 +29,7 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	tBufferDesc.SampleDesc.Count = 1;
 	tBufferDesc.SampleDesc.Quality = 0;
 
-	CDevice::GetInstance()->Open();
+	//CDevice::GetInstance()->Open();
 
 	CD3DX12_HEAP_PROPERTIES temp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	// Buffer Create
@@ -41,8 +41,8 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 		nullptr,
 		IID_PPV_ARGS(&m_pBuffer));
 
-	CDevice::GetInstance()->Close();
-	CDevice::GetInstance()->WaitForFenceEvent();
+	//CDevice::GetInstance()->Close();
+	//CDevice::GetInstance()->WaitForFenceEvent();
 
 	if (pArg)
 	{
@@ -95,7 +95,7 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 		CDevice::GetInstance()->WaitForFenceEvent();
 	}
 
-	CDevice::GetInstance()->Open();
+	//CDevice::GetInstance()->Open();
 
 	// UAV 생성
 	// UAV 를 저장할 DescriptorHeap Create
@@ -142,8 +142,8 @@ HRESULT CStructedBuffer::Ready_StructedBuffer(_uint iElementSize, _uint iElement
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 	CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pBuffer.Get(), &srvDesc, handle);
-	CDevice::GetInstance()->Close();
-	CDevice::GetInstance()->WaitForFenceEvent();
+	//CDevice::GetInstance()->Close();
+	//CDevice::GetInstance()->WaitForFenceEvent();
 	return S_OK;
 }   
 HRESULT CStructedBuffer::Ready_StructedBuffer()
