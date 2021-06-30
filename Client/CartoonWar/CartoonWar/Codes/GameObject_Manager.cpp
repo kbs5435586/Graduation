@@ -94,18 +94,24 @@ _int CGameObject_Manager::Update_GameObject_Manager(const _float& fTimeDelta)
 	if (nullptr == m_pMapLayers)
 		return -1;
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
 	for (size_t i = 0; i < m_iNumScene; i++)
 	{
 		for (auto& Pair : m_pMapLayers[i])
 		{
 			if (nullptr != Pair.second)
 			{
+				server->EventManager();
 				if (Pair.second->Update_Object(fTimeDelta) & 0x80000000)
 					return -1;
 			}
 		}
 	}
-
+	Safe_Release(server);
 	return _int();
 }
 

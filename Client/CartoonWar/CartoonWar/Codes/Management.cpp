@@ -265,7 +265,6 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	_int	iProcessCodes = 0;
 	
 	m_pKey_Manager->Key_Update();
-	m_pServer_Manager->EventManager();
 
 	iProcessCodes = m_pScene->Update_Scene(fTimeDelta);
 	if (iProcessCodes & 0x80000000)
