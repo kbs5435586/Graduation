@@ -106,27 +106,29 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		_vec3 vSour, vDest, vNormal, vCross;
 		//ÁÂÇÏ
 
-		vSour =	vecVertices[vecIndices[i + 1]].vPos - vecVertices[vecIndices[i]].vPos;
-		vDest = vecVertices[vecIndices[i + 2]].vPos - vecVertices[vecIndices[i]].vPos;
-		vCross = vSour.Cross(vDest);;
-		vCross.Normalize(vNormal);
+		vSour = Vector3_::Subtract(vecVertices[vecIndices[i + 1]].vPos, vecVertices[vecIndices[i]].vPos);
+		vDest = Vector3_::Subtract(vecVertices[vecIndices[i + 2]].vPos, vecVertices[vecIndices[i]].vPos);
+		vCross = Vector3_::CrossProduct(vSour, vDest);
+		vNormal = Vector3_::Normalize(vCross);
 
-		vecVertices[vecIndices[i]].vNormal = vecVertices[vecIndices[i]].vNormal + vNormal;
-		vecVertices[vecIndices[i + 1]].vNormal = vecVertices[vecIndices[i + 1]].vNormal+ vNormal;
-		vecVertices[vecIndices[i + 2]].vNormal = vecVertices[vecIndices[i + 2]].vNormal+ vNormal;
+
+		vecVertices[vecIndices[i]].vNormal = Vector3_::Add(vecVertices[vecIndices[i]].vNormal, vNormal);
+		vecVertices[vecIndices[i + 1]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 1]].vNormal, vNormal);
+		vecVertices[vecIndices[i + 2]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 2]].vNormal, vNormal);
 		++++++i;
 
 		//¿ì»ó
 
-		vSour =vecVertices[vecIndices[i + 2]].vPos- vecVertices[vecIndices[i + 1]].vPos;
-		vDest =vecVertices[vecIndices[i]].vPos- vecVertices[vecIndices[i + 1]].vPos;
-		vCross = vSour.Cross(vDest);;
-		vCross.Normalize(vNormal);
+		vSour = Vector3_::Subtract(vecVertices[vecIndices[i + 2]].vPos, vecVertices[vecIndices[i + 1]].vPos);
+		vDest = Vector3_::Subtract(vecVertices[vecIndices[i]].vPos, vecVertices[vecIndices[i + 1]].vPos);
+		vCross = Vector3_::CrossProduct(vSour, vDest);
+		vNormal = Vector3_::Normalize(vCross);
 
-		vecVertices[vecIndices[i]].vNormal = vecVertices[vecIndices[i]].vNormal + vNormal;
-		vecVertices[vecIndices[i + 1]].vNormal = vecVertices[vecIndices[i + 1]].vNormal + vNormal;
-		vecVertices[vecIndices[i + 2]].vNormal = vecVertices[vecIndices[i + 2]].vNormal + vNormal;
+		vecVertices[vecIndices[i]].vNormal = Vector3_::Add(vecVertices[vecIndices[i]].vNormal, vNormal);
+		vecVertices[vecIndices[i + 1]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 1]].vNormal, vNormal);
+		vecVertices[vecIndices[i + 2]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 2]].vNormal, vNormal);
 		++++++i;
+
 
 	}
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);

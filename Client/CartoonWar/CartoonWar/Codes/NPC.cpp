@@ -954,15 +954,15 @@ void CNPC::Obb_Collision()
 		{
 			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_vec3 vTemp = vPos -  vTargetPos;
+			_vec3 vTemp = Vector3_::Subtract(vPos, vTargetPos);
 			vTemp.Normalize();
 			m_vStartPoint = vPos;
-			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)+ vTemp;
+			m_vEndPoint = Vector3_::Add(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			m_vMidPoint =m_vStartPoint+ m_vEndPoint;
+			m_vMidPoint = Vector3_::Add(m_vStartPoint, m_vEndPoint);
 			m_vMidPoint /= 2.f;
 			m_vMidPoint.y += 2.f;
-			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)- vTemp;
+			_vec3 vParticlePos = Vector3_::Subtract(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), vTemp);
 			Create_Particle(vParticlePos);
 			m_IsBazier = true;		
 		}
@@ -1015,8 +1015,8 @@ void CNPC::Compute_Matrix_X()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3		vSize = m_pTransformCom->Get_Scale();
-	_matrix		matLeft = _matrix();
-	_matrix		matRight = _matrix();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
 
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationX(XMConvertToRadians(100.f)));
@@ -1024,9 +1024,9 @@ void CNPC::Compute_Matrix_X()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
-	vRight =_vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
@@ -1041,9 +1041,9 @@ void CNPC::Compute_Matrix_X()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	mat = ::XMLoadFloat4x4(&matRight);
-	vRight = _vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
@@ -1059,8 +1059,8 @@ void CNPC::Compute_Matrix_Z()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3		vSize = m_pTransformCom->Get_Scale();
-	_matrix		matLeft = _matrix();
-	_matrix		matRight = _matrix();
+	_matrix		matLeft = Matrix_::Identity();
+	_matrix		matRight = Matrix_::Identity();
 
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationZ(XMConvertToRadians(100.f)));
@@ -1068,9 +1068,9 @@ void CNPC::Compute_Matrix_Z()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
-	vRight = _vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
@@ -1085,9 +1085,9 @@ void CNPC::Compute_Matrix_Z()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	mat = ::XMLoadFloat4x4(&matRight);
-	vRight = _vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
@@ -1250,17 +1250,17 @@ void CNPC::Chase_Player(const _float& fTimeDelta, _float fLenght)
 	}
 
 	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vt = vPlayerPos -  *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vt = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 
 	_float fLength = vt.Length();
-	_vec3 vP_M =m_vDest- *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vP_M = Vector3_::Subtract(m_vDest, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 
 	vP_M.Normalize();
 
 	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 	vTemp *= -1.f;
 	vTemp.Normalize();
-	float fDot = vTemp.Dot(vP_M);
+	float fDot = Vector3_::DotProduct(vTemp, vP_M);
 
 	_float fAngle = XMConvertToDegrees(fDot);
 	if (fAngle >= 56.f && fAngle <= 57.f)
@@ -1301,17 +1301,17 @@ void CNPC::MeaningLess_Move(const _float& fTimeDelta)
 	}
 
 
-	_vec3 vt = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)- m_vDest;
+	_vec3 vt = Vector3_::Subtract(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_vDest);
 	_int	iDestLength = vt.Length();
 
 
-	_vec3 vP_M =m_vDest - *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vP_M = Vector3_::Subtract(m_vDest, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 	vP_M.Normalize();
 
 	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 	vTemp *= -1.f;
 	vTemp.Normalize();
-	float fDot = vTemp.Dot(vP_M);
+	float fDot = Vector3_::DotProduct(vTemp, vP_M);
 
 	if (!m_IsRotateEnd)
 	{
@@ -1393,14 +1393,14 @@ void CNPC::ComputeDir()
 
 	_vec3 vThisTransformOutput = {};
 	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vP_M = vPlayerPos- *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vP_M = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 
 	vP_M.Normalize();
 
 	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 	vTemp *= -1.f;
 	vTemp.Normalize(vThisTransformOutput);
-	_float fDot = vThisTransformOutput.Dot(vP_M);
+	_float fDot = Vector3_::DotProduct(vThisTransformOutput, vP_M);
 
 
 	if (!m_IsRotateEnd)
@@ -1460,7 +1460,7 @@ void CNPC::Change_State(const _float fTimeDelta)
 	}
 
 	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vP_M = vPlayerPos-*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vP_M = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 
 	_float fLength = vP_M.Length();
 	//_float fLength = 100.f;

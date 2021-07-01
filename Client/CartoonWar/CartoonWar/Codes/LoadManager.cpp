@@ -28,7 +28,7 @@ HRESULT CLoadManager::Load_File(const _tchar* pFilePath, void* pArg)
 
 	_matrix	mat;
 	_float  fAdd_PosY = 0.f;
-	mat = _matrix();
+	mat = Matrix_::Identity();
 	TCHAR szName[512] = L"";
 	TCHAR szLayerTag[512] = L"";
 	TCHAR szComTag[512] = L"";
@@ -100,7 +100,7 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 
 	_matrix	mat;
 	_float  fAdd_PosY = 0.f;
-	mat = _matrix();
+	mat = Matrix_::Identity();
 	TCHAR szName[512] = L"";
 	TCHAR szLayerTag[512] = L"";
 	TCHAR szComTag[512] = L"";
@@ -172,7 +172,7 @@ HRESULT CLoadManager::Load_File_Hatch(const _tchar* pFilePath, void* pArg)
 
 	_matrix	mat;
 	_float  fAdd_PosY = 0.f;
-	mat = _matrix();
+	mat = Matrix_::Identity();
 	TCHAR szName[512] = L"";
 	TCHAR szLayerTag[512] = L"";
 	TCHAR szComTag[512] = L"";

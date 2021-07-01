@@ -19,7 +19,7 @@ HRESULT CQuadTree::Ready_QuadTree(_vec3* pVerticesPos, const _uint& iNumVerticeX
 	m_iCenter = (m_iCorner[(_uint)CORNER::CORNER_LB] + m_iCorner[(_uint)CORNER::CORNER_RT]) >> 1;
 
 	_vec3 vTemp = m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_LT]] - m_pVerticesPos[m_iCenter];
-	m_fRadius = vTemp.Length();
+	m_fRadius = Vector3_::Length(vTemp);
 
 	SetUp_ChildNode();
 	SetUp_Neighbor();
@@ -39,7 +39,7 @@ HRESULT CQuadTree::Ready_QuadTree(_vec3* pVerticesPos, const _uint& iLT, const _
 	m_iCenter = (m_iCorner[(_uint)CORNER::CORNER_LB] + m_iCorner[(_uint)CORNER::CORNER_RT]) >> 1;
 
 	_vec3 vTemp = m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_LT]] - m_pVerticesPos[m_iCenter];
-	m_fRadius = vTemp.Length();
+	m_fRadius = Vector3_::Length(vTemp);
 	return S_OK;
 }
 
@@ -207,7 +207,7 @@ void CQuadTree::Culling_ToQuadTree(CFrustum* pFrustum, Plane* pLocalPlane, _uint
 _bool CQuadTree::Check_LOD()
 {
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	matView = matView.Invert();
+	matView = Matrix_::Inverse(matView);
 
 
 	_vec3			vCamPosition;
@@ -215,9 +215,9 @@ _bool CQuadTree::Check_LOD()
 
 	_vec3	vTempDist = vCamPosition - m_pVerticesPos[m_iCenter];
 	_vec3	vTempWidth = m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_RT]] - m_pVerticesPos[m_iCorner[(_uint)CORNER::CORNER_LT]];
-	_float	fDistance = vTempDist.Length();
+	_float	fDistance = Vector3_::Length(vTempDist);
 
-	_float	fWidth = vTempWidth.Length();
+	_float	fWidth = Vector3_::Length(vTempWidth);
 
 	if (fDistance * 0.1f > fWidth)
 		return true;

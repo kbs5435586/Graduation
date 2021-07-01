@@ -46,10 +46,6 @@ private:
 	void									DeathMontion_Init();
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
-public:
-	_uint&									GetCombatMotion(_uint iNum ){return m_iCombatMotion[iNum]; }
-	_uint&									GetCurAnimIdx(){return m_iCurAnimIdx;}
-	_bool									GetIsCombat() { return m_IsCombat; }
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;

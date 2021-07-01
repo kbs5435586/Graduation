@@ -2,14 +2,14 @@
 
 typedef struct tagVertexCol
 {
-	_vec3 vPosition;
-	_vec4 vColor;
-	_vec3 vNormal;
+	XMFLOAT3 vPosition;
+	XMFLOAT4 vColor;
+	XMFLOAT3 vNormal;
 	tagVertexCol()
 	{
 
 	}
-	tagVertexCol(_vec3 vPos, _vec4 vColor_, _vec3 vNormal_)
+	tagVertexCol(XMFLOAT3 vPos, XMFLOAT4 vColor_, XMFLOAT3 vNormal_)
 	{
 		vPosition = vPos; 
 		vColor = vColor_;
@@ -19,13 +19,13 @@ typedef struct tagVertexCol
 
 typedef struct tagVertexTex
 {
-	_vec3	vPosition;
-	_vec2	vTex;
+	XMFLOAT3	vPosition;
+	XMFLOAT2	vTex;
 	tagVertexTex()
 	{
 
 	}
-	tagVertexTex(_vec3 vPos, XMFLOAT2 vTex_)
+	tagVertexTex(XMFLOAT3 vPos, XMFLOAT2 vTex_)
 	{
 		vPosition = vPos;
 		vTex = vTex_;
@@ -34,13 +34,13 @@ typedef struct tagVertexTex
 
 typedef struct tagVertexTexCube
 {
-	_vec3 vPosition;
-	_vec3 vTex;
+	XMFLOAT3 vPosition;
+	XMFLOAT3 vTex;
 	tagVertexTexCube()
 	{
 
 	}
-	tagVertexTexCube(_vec3 vPos, _vec3 vTex_)
+	tagVertexTexCube(XMFLOAT3 vPos, XMFLOAT3 vTex_)
 	{
 		vPosition = vPos;
 		vTex = vTex_;
@@ -49,14 +49,14 @@ typedef struct tagVertexTexCube
 
 typedef struct tagVertexTexNorCube
 {
-	_vec3	vPosition;
-	_vec3	vTex;
-	_vec3	vNormal;
+	XMFLOAT3	vPosition;
+	XMFLOAT3	vTex;
+	XMFLOAT3	vNormal;
 	tagVertexTexNorCube()
 	{
 
 	}
-	tagVertexTexNorCube(_vec3 vPos, _vec3 vTex_, _vec3 vNor_)
+	tagVertexTexNorCube(XMFLOAT3 vPos, XMFLOAT3 vTex_, XMFLOAT3 vNor_)
 	{
 		vPosition = vPos;
 		vTex = vTex_;
@@ -66,14 +66,14 @@ typedef struct tagVertexTexNorCube
 
 typedef struct tagVertexTex2NorCube
 {
-	_vec3	vPosition;
-	_vec2	vTex;
-	_vec3	vNormal;
+	XMFLOAT3	vPosition;
+	XMFLOAT2	vTex;
+	XMFLOAT3	vNormal;
 	tagVertexTex2NorCube()
 	{
 
 	}
-	tagVertexTex2NorCube(_vec3 vPos, _vec2 vTex_, _vec3 vNor_)
+	tagVertexTex2NorCube(XMFLOAT3 vPos, XMFLOAT2 vTex_, XMFLOAT3 vNor_)
 	{
 		vPosition = vPos;
 		vTex = vTex_;
@@ -83,11 +83,11 @@ typedef struct tagVertexTex2NorCube
 
 typedef struct tagVertexTexNor
 {
-	_vec3	vPos = {};
-	_vec3	vNormal = {};
-	_vec2	vTexUV = {};
+	XMFLOAT3	vPos = {};
+	XMFLOAT3	vNormal = {};
+	XMFLOAT2	vTexUV = {};
 	tagVertexTexNor() {}
-	tagVertexTexNor(_vec3 _vPos, _vec3 _vNormal, _vec2 _vTexUV)
+	tagVertexTexNor(XMFLOAT3 _vPos, XMFLOAT3 _vNormal, XMFLOAT2 _vTexUV)
 	{
 		vPos = _vPos;
 		vNormal = _vNormal;
@@ -103,13 +103,13 @@ typedef struct tagMesh
 	{
 
 	}
-	tagMesh(_vec3 vPos, _vec3 vNor, _vec2 UV)
+	tagMesh(XMFLOAT3 vPos, XMFLOAT3 vNor, XMFLOAT2 UV)
 	{
 		vPosition = vPos;
 		vNormal = vNor;
 		vUV = UV;
 	}
-	tagMesh(_vec3 vPos, _vec3 vNor, _vec2 UV, _vec3 Tangent, _vec3 Binormal)
+	tagMesh(XMFLOAT3 vPos, XMFLOAT3 vNor, XMFLOAT2 UV, XMFLOAT3 Tangent, XMFLOAT3 Binormal)
 	{
 		vPosition = vPos;
 		vNormal = vNor;
@@ -117,14 +117,14 @@ typedef struct tagMesh
 		vTangent = Tangent;
 		vBinormal = Binormal;
 	}
-	_vec3		vPosition;
-	_vec4		vColor;
-	_vec2		vUV;
-	_vec3		vNormal;
-	_vec3		vTangent;
-	_vec3		vBinormal;
-	_vec4		vWeight;
-	_vec4		vIndices;
+	XMFLOAT3		vPosition;
+	XMFLOAT4		vColor;
+	XMFLOAT2		vUV;
+	XMFLOAT3		vNormal;
+	XMFLOAT3		vTangent;
+	XMFLOAT3		vBinormal;
+	XMFLOAT4		vWeight;
+	XMFLOAT4		vIndices;
 
 	bool operator==(const tagMesh& other) const
 	{
@@ -149,9 +149,9 @@ typedef struct tagMesh
 
 typedef struct tagCamera_Desc
 {
-	_vec3		vEye;
-	_vec3		vAt;
-	_vec3		vAxisY;
+	XMFLOAT3		vEye;
+	XMFLOAT3		vAt;
+	XMFLOAT3		vAxisY;
 }CAMERADESC;
 
 typedef struct tagProjection_Desc
@@ -165,43 +165,40 @@ typedef struct tagProjection_Desc
 typedef struct tagTextureInfo
 {
 	float		fFrameTime;
-	_vec3	vScrollSpeed;
-	_vec3	vScale;
+	XMFLOAT3	vScrollSpeed;
+	XMFLOAT3	vScale;
 	float		fPadding;
 }TEXINFO;
 
 typedef struct tagMainPass
 {
-	_matrix	matWorld;
-	_matrix	matView;
-	_matrix	matProj;
-	_matrix	matWV;
-	_matrix	matWVP;
-	_matrix	matProjInv;
-	_matrix	matViewInv;
-	_matrix	matRev;
+	XMFLOAT4X4	matWorld;
+	XMFLOAT4X4	matView;
+	XMFLOAT4X4	matProj;
+	XMFLOAT4X4	matWV;
+	XMFLOAT4X4	matWVP;
+	XMFLOAT4X4	matProjInv;
+	XMFLOAT4X4	matViewInv;
+	XMFLOAT4X4	matRev;
 
-	_vec4	vCamPos;
-	_vec4	vLook;
-
-	_matrix	matLightView;
-	_matrix	matLightProj;
+	XMFLOAT4	vCamPos;
+	XMFLOAT4	vLook;
 }MAINPASS;
 
 typedef struct tagMaterial
 {
-	_vec4		vMtrlDiff;
-	_vec4		vMtrlSpec;
-	_vec4		vMtrlAmb;
-	_vec4		vMtrlEmiv;
+	XMFLOAT4		vMtrlDiff;
+	XMFLOAT4		vMtrlSpec;
+	XMFLOAT4		vMtrlAmb;
+	XMFLOAT4		vMtrlEmiv;
 }MATERIAL;
 
 typedef struct tagMtrInfo
 {
-	_vec4		vMtrlDiff = { 1.f, 1.f,1.f, 1.f };
-	_vec4		vMtrlSpec = { 1.f, 1.f,1.f, 1.f };;
-	_vec4		vMtrlAmb = { 1.f, 1.f,1.f, 1.f };;
-	_vec4		vMtrlEmiv = { 1.f, 1.f,1.f, 1.f };
+	XMFLOAT4		vMtrlDiff = { 1.f, 1.f,1.f, 1.f };
+	XMFLOAT4		vMtrlSpec = { 1.f, 1.f,1.f, 1.f };;
+	XMFLOAT4		vMtrlAmb = { 1.f, 1.f,1.f, 1.f };;
+	XMFLOAT4		vMtrlEmiv = { 1.f, 1.f,1.f, 1.f };
 
 	wstring			strMtrlName;
 	wstring			strDiff;
@@ -250,9 +247,9 @@ typedef struct tagRenderSupport
 
 typedef struct tagLightColor
 {
-	_vec4	vDiffuse;
-	_vec4	vSpecular;
-	_vec4	vAmbient;
+	XMFLOAT4	vDiffuse;
+	XMFLOAT4	vSpecular;
+	XMFLOAT4	vAmbient;
 }LIGHTCOLOR;
 
 typedef struct tagLight
@@ -277,12 +274,12 @@ typedef struct tagLightInfo
 typedef struct tagRenderTarget
 {
 	ID3D12Resource* pTarget;
-	_vec4			fClear_Color;
+	XMFLOAT4			fClear_Color;
 }RENDERTARGER;
 
 typedef struct tagReflect
 {
-	_matrix	matReflect;
+	XMFLOAT4X4	matReflect;
 }REFLECT;
 
 
@@ -454,8 +451,8 @@ struct tMTBone
 	wstring				strBoneName;
 	int					iDepth;
 	int					iParentIndx;
-	_matrix				matOffset;	// Offset 행렬(뼈 -> 루트 까지의 행렬)
-	_matrix				matBone;   // 이거 안씀
+	Matrix				matOffset;	// Offset 행렬(뼈 -> 루트 까지의 행렬)
+	Matrix				matBone;   // 이거 안씀
 	vector<tMTKeyFrame>	vecKeyFrame;
 };
 

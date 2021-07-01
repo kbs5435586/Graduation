@@ -39,7 +39,7 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 	v.vPos = _vec3(0.f, fRadius, 0.f);
 	v.vTexUV = _vec2(0.5f, 0.f);
 	v.vNormal = v.vPos;
-	v.vNormal.Normalize();
+	v.vNormal= Vector3_::Normalize(v.vNormal);
 	vecVertices.push_back(v);
 
 
@@ -56,7 +56,7 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 				, fRadius * sinf(i * fStackAngle) * sinf(j * fSliceAngle));
 			v.vTexUV = _vec2(fUVXStep * j, fUVYStep * i);
 			v.vNormal = v.vPos;
-			v.vNormal.Normalize();
+			v.vNormal = Vector3_::Normalize(v.vNormal);
 		
 			vecVertices.push_back(v);
 		}
@@ -65,7 +65,7 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 	v.vPos = _vec3(0.f, -fRadius, 0.f);
 	v.vTexUV = _vec2(0.5f, 1.f);
 	v.vNormal = v.vPos;
-	v.vNormal.Normalize();
+	v.vNormal = Vector3_::Normalize(v.vNormal);
 	vecVertices.push_back(v);
 
 	vector<_uint>	vecIndices;

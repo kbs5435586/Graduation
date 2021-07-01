@@ -76,7 +76,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 
 
 	m_tPipeline.SampleMask = UINT_MAX;
-	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	m_tPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	m_tPipeline.SampleDesc.Count = 1;
 
 
@@ -200,7 +200,7 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 	_matrix	matTemp = matView;
-	matTemp = matTemp.Invert();;
+	matTemp = Matrix_::Inverse(matTemp);
 	_matrix matRev = _matrix();
 
 	output.matWorld = matWorld;
@@ -210,18 +210,11 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	output.matWVP = output.matWV * matProj;
 	output.vCamPos = (_vec4)&matTemp.m[3][0];
 	output.vLook = (_vec4)&matTemp.m[2][0];
-	output.matRev = output.matWV.Invert();;
-	output.matRev = output.matRev.Transpose();
+	output.matRev = Matrix_::Inverse(output.matWV);
+	output.matRev = Matrix_::Transpose(output.matRev);
 
-	output.matViewInv = matView.Invert();;
-	output.matProjInv = matProj.Invert();;
-
-	_vec3 g_vEyePt(30.f, 100.0f, -20.0f);
-	_vec3 g_vLookatPt(0.0f, 0.f, 0.f);
-
-	output.matLightView = XMMatrixLookAtLH(g_vEyePt, g_vLookatPt, _vec3(0.f, 1.f, 0.f));
-	output.matLightProj = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), _float(WINCX) / WINCY, 0.2f, 500.0f);
-
+	output.matViewInv = Matrix_::Inverse(matView);
+	output.matProjInv = Matrix_::Inverse(matProj);
 	return S_OK;
 }
 
@@ -231,7 +224,7 @@ HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matr
 	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
 
 	_matrix	matTemp = matView;
-	matTemp = matTemp.Invert();
+	matTemp = Matrix_::Inverse(matTemp);
 
 	tPass.matWorld = matWorld;
 	tPass.matView = matView;

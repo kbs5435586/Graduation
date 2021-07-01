@@ -118,7 +118,7 @@ _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionP
 			_vec3 vNormal = pLine->Get_Normal();
 			_vec3 vDirectionPerSec_ = *vDirectionPerSec;
 
-			float fDot = vDirectionPerSec_.Dot(vNormal);
+			float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
 			*vSliding = vDirectionPerSec_ - fDot* vNormal;
 			return false;
 		}

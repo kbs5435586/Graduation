@@ -28,16 +28,13 @@ VS_OUT VS_Main(VS_IN vIn)
         Skinning(vIn.vPosition, vIn.vWeight, vIn.vIndices, 0);
     }
 
-    //output.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-    //output.vProj = output.vPosition;
+    output.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
+    output.vProj = output.vPosition;
 
     return output;
 }
 
 float4 PS_Main(VS_OUT vIn) : SV_Target
 {
-    float Depth = vIn.vProj.z / vIn.vProj.w;
-    Depth -= 1;
-    Depth *= -1;
-    return float4(Depth.xxx, 1);
+    return float4(vIn.vProj.z / vIn.vProj.w, 0.f, 0.f, 0.f);
 }

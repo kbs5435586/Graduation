@@ -13,7 +13,7 @@ HRESULT CLine::Ready_Line(const _vec3& vStart, const _vec3 vEnd)
 	_vec3 vDir = vEnd - vStart;
 	m_vNormal = _vec3(vDir.z * -1.f, 0.f, vDir.x);
 
-	m_vNormal.Normalize();
+	m_vNormal = Vector3_::Normalize(m_vNormal);
 
 	return S_OK;
 }
@@ -24,9 +24,9 @@ _bool CLine::IsRight(const _vec3& vPos)
 	vTargetPos.y = 0.f;
 
 	_vec3 vSourDir = vTargetPos - m_vStart;
-	vSourDir.Normalize();
+	vSourDir = Vector3_::Normalize(vSourDir);
 
-	_float fDot = vSourDir.Dot(m_vNormal);
+	_float fDot = Vector3_::DotProduct(vSourDir, m_vNormal);
 	if (0 > fDot)
 		return true;
 

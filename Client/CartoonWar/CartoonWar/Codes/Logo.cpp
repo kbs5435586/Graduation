@@ -61,8 +61,8 @@ void CLogo::Render_GameObject()
 
 
 	MAINPASS tMainPass = {};
-	_matrix matWorld = _matrix();
-	_matrix matView = _matrix();
+	_matrix matWorld = Matrix_::Identity();
+	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
 	matWorld._11 = m_fSizeX;

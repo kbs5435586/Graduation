@@ -137,8 +137,8 @@ void CMyRect::Render_GameObject()
 		_vec3 vLen_Red = vThisPos - vRedPos;
 		_vec3 vLen_Blue = vThisPos - vBluePos;
 
-		_uint iLen_Red = vLen_Red.Length();
-		_uint iLen_Blue = vLen_Blue.Length();
+		_uint iLen_Red = Vector3_::Length(vLen_Red);
+		_uint iLen_Blue = Vector3_::Length(vLen_Blue);
 
 		if (iLen_Red < 30.f)
 		{

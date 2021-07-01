@@ -64,10 +64,10 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+		return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 
@@ -217,8 +217,8 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(0.f, 1.f, -5.f);
-	tCameraDesc.vAt = _vec3(0.f, -0.3f, 5.f);
+	tCameraDesc.vEye = _vec3(0.f, 5.f, -5.f);
+	tCameraDesc.vAt = _vec3(0.f, -1.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
@@ -244,7 +244,8 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
 	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
-	tCameraDesc.vAt = _vec3(1.f, -1.f, 2.f);
+	//tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
+	tCameraDesc.vAt = _vec3(1.f, -1.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
 	PROJDESC		tProjDesc;

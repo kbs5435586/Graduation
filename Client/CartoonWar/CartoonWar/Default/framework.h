@@ -26,7 +26,6 @@
 #include <wincodec.h>
 #include <chrono>
 
-
 using namespace std;
 using namespace chrono;
 

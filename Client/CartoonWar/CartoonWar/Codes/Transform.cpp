@@ -20,9 +20,9 @@ void CTransform::SetLook(const _vec3& vLook_)
 	_vec3 vLook = vLook_;
 	_vec3 vUp = { 0.f,1.f,0.f };
 	_vec3 vRight = {};
-	vLook.Normalize();
-	vRight = vUp.Cross(vLook);
-	vUp = vLook.Cross(vRight);
+	vLook = Vector3_::Normalize(vLook);
+	vRight = Vector3_::CrossProduct(vUp, vLook);
+	vUp = Vector3_::CrossProduct(vLook, vRight);
 
 	this->Set_StateInfo(STATE::STATE_RIGHT, &vRight);
 	this->Set_StateInfo(STATE::STATE_UP, &vUp);
@@ -50,10 +50,9 @@ _vec3* CTransform::Get_StateInfo(STATE eState)
 
 _vec3 CTransform::Get_Scale()
 {
-	
-	_float			fScaleX =Get_StateInfo(STATE_RIGHT)->Length();
-	_float			fScaleY =Get_StateInfo(STATE_UP)->Length();
-	_float			fScaleZ =Get_StateInfo(STATE_LOOK)->Length();
+	_float			fScaleX = Vector3_::Length(*Get_StateInfo(STATE_RIGHT));
+	_float			fScaleY = Vector3_::Length(*Get_StateInfo(STATE_UP));
+	_float			fScaleZ = Vector3_::Length(*Get_StateInfo(STATE_LOOK));
 
 	return _vec3(fScaleX, fScaleY, fScaleZ);
 }
@@ -62,13 +61,13 @@ _matrix CTransform::Get_Matrix_Inverse() const
 {
 	//XMFLOAT4X4
 	_matrix mat = m_matWorld;
-	mat = mat.Invert();
+	mat = Matrix_::Inverse(mat);
 	return mat;
 }
 
 void CTransform::Set_Matrix(_matrix matWorld, _bool IsMul)
 {
-	m_matWorld = matWorld;
+	m_matWorld = Matrix_::Multiply(m_matWorld, matWorld);
 }
 
 void CTransform::Set_StateInfo(STATE eState, const _vec3* pInfo)
@@ -89,9 +88,9 @@ void CTransform::Go_Straight(const _float& fTimeDelta)
 	vLook = *Get_StateInfo(STATE_LOOK);
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
-	vLook.Normalize();
-	vLook = vLook * m_fSpeed_Move * fTimeDelta;
-	vPosition =vPosition +  vLook;
+	vLook = Vector3_::Normalize(vLook);
+	vLook = Vector3_::ScalarProduct(vLook, m_fSpeed_Move * fTimeDelta, false);
+	vPosition = Vector3_::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
@@ -102,9 +101,9 @@ void CTransform::Go_Left(const _float& fTimeDelta)
 	vRight = *Get_StateInfo(STATE_RIGHT);
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
-	vRight.Normalize();
-	vRight = vRight * m_fSpeed_Move * -fTimeDelta;
-	vPosition = vPosition + vRight;
+	vRight = Vector3_::Normalize(vRight);
+	vRight = Vector3_::ScalarProduct(vRight, m_fSpeed_Move * -fTimeDelta, false);
+	vPosition = Vector3_::Add(vPosition, vRight);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
@@ -115,9 +114,9 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 	vRight = *Get_StateInfo(STATE_RIGHT);
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
-	vRight.Normalize();
-	vRight = vRight * m_fSpeed_Move * fTimeDelta;
-	vPosition =vPosition + vRight;
+	vRight = Vector3_::Normalize(vRight);
+	vRight = Vector3_::ScalarProduct(vRight, m_fSpeed_Move * fTimeDelta, false);
+	vPosition = Vector3_::Add(vPosition, vRight);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
@@ -134,28 +133,27 @@ void CTransform::BackWard(const _float& fTimeDelta)
 	vLook = *Get_StateInfo(STATE_LOOK);
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
-	vLook.Normalize();
-	vLook = vLook * m_fSpeed_Move * -fTimeDelta;
-	vPosition = vPosition + vLook;
+	vLook = Vector3_::Normalize(vLook);
+	vLook = Vector3_::ScalarProduct(vLook, m_fSpeed_Move * -fTimeDelta, false);
+	vPosition = Vector3_::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 void CTransform::SetUp_RotationX(const _float& fRadian)
 {
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 
-	_matrix		matRot = _matrix();
+	_matrix		matRot = Matrix_::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationX(fRadian)));
 
-	vRight *= Get_Scale().x;
-	vUp *= Get_Scale().y;
-	vLook *= Get_Scale().z;
+	Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
+	Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
+	Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 
-	vRight = _vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
-
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	Set_StateInfo(STATE_RIGHT, &vRight);
 	Set_StateInfo(STATE_UP, &vUp);
@@ -175,7 +173,7 @@ void CTransform::Rotation_Axis(const _float& fTimeDelta, const _vec3* pAxis)
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = _vec3::TransformNormal(vDir[i], mat);
+		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
 	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
@@ -185,18 +183,18 @@ void CTransform::SetUp_RotationY(const _float& fRadian)
 {
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 
-	_matrix		matRot = _matrix();
+	_matrix		matRot = Matrix_::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(fRadian)));
 
-	vRight *= Get_Scale().x;
-	vUp *= Get_Scale().y;
-	vLook *= Get_Scale().z;
+	Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
+	Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
+	Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 
-	vRight = _vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	Set_StateInfo(STATE_RIGHT, &vRight);
 	Set_StateInfo(STATE_UP, &vUp);
@@ -207,18 +205,18 @@ void CTransform::SetUp_RotationZ(const _float& fRadian)
 {
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 
-	_matrix		matRot = _matrix();
+	_matrix		matRot = Matrix_::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(fRadian)));
 
-	vRight *= Get_Scale().x;
-	vUp *= Get_Scale().y;
-	vLook *= Get_Scale().z;
+	Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
+	Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
+	Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 
-	vRight = _vec3::TransformNormal(vRight, mat);
-	vUp = _vec3::TransformNormal(vUp, mat);
-	vLook = _vec3::TransformNormal(vLook, mat);
+	vRight = Vector3_::TransformNormal(vRight, mat);
+	vUp = Vector3_::TransformNormal(vUp, mat);
+	vLook = Vector3_::TransformNormal(vLook, mat);
 
 	Set_StateInfo(STATE_RIGHT, &vRight);
 	Set_StateInfo(STATE_UP, &vUp);
@@ -237,7 +235,7 @@ void CTransform::Rotation_X(const _float& fTimeDelta)
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = _vec3::TransformNormal(vDir[i], mat);
+		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
@@ -257,7 +255,7 @@ void CTransform::Rotation_Y(const _float& fTimeDelta)
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = _vec3::TransformNormal(vDir[i], mat);
+		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
@@ -277,7 +275,7 @@ void CTransform::Rotation_Z(const _float& fTimeDelta)
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = _vec3::TransformNormal(vDir[i], mat);
+		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
@@ -303,7 +301,7 @@ void CTransform::RotationRev_Y(_matrix matWorld, const _float& fTimeDelta)
 	matRot = matRot * matRev;
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = _vec3::TransformNormal(vDir[i], mat);
+		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
@@ -318,13 +316,13 @@ void CTransform::Scaling(const _vec3& vScale)
 	for (size_t i = 0; i < 3; ++i)
 	{
 		vDir[i] = *Get_StateInfo(STATE(i));
-		vDir[i].Normalize();
+		vDir[i] = Vector3_::Normalize(vDir[i]);
 	}
 
 
-	vDir[STATE_RIGHT] = vDir[STATE_RIGHT] * vScale.x;
-	vDir[STATE_UP] = vDir[STATE_UP] * vScale.y;
-	vDir[STATE_LOOK] = vDir[STATE_LOOK] * vScale.z;
+	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], vScale.x, false);
+	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], vScale.y, false);
+	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], vScale.z, false);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
@@ -339,13 +337,13 @@ void CTransform::Scaling(const _float& fx, const _float& fy, const _float& fz)
 	for (size_t i = 0; i < 3; ++i)
 	{
 		vDir[i] = *Get_StateInfo(STATE(i));
-		vDir[i].Normalize();
+		vDir[i] = Vector3_::Normalize(vDir[i]);
 	}
 
 	_vec3 vScale = _vec3(fx,fy,fz);
-	vDir[STATE_RIGHT] = vDir[STATE_RIGHT] * vScale.x;
-	vDir[STATE_UP] = vDir[STATE_UP] * vScale.y;
-	vDir[STATE_LOOK] = vDir[STATE_LOOK] * vScale.z;
+	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], vScale.x, false);
+	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], vScale.y, false);
+	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], vScale.z, false);
 
 
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
@@ -358,10 +356,10 @@ void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)
 	_vec3		vLook, vPosition;
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
-	vLook =(*pTargetPos - vPosition);
-	vLook.Normalize();
-	vLook = vLook * m_fSpeed_Move * fTimeDelta;
-	vPosition =vPosition+ vLook ;
+	vLook = Vector3_::Subtract(*pTargetPos, vPosition);
+	vLook = Vector3_::Normalize(vLook);
+	vLook = Vector3_::ScalarProduct(vLook, m_fSpeed_Move * fTimeDelta, false);
+	vPosition = Vector3_::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
