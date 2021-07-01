@@ -961,7 +961,7 @@ void CNPC::Obb_Collision()
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = Vector3_::Add(m_vStartPoint, m_vEndPoint);
 			m_vMidPoint /= 2.f;
-			m_vMidPoint.y += 2.f;
+			//m_vMidPoint.y += 2.f;
 			_vec3 vParticlePos = Vector3_::Subtract(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), vTemp);
 			Create_Particle(vParticlePos);
 			m_IsBazier = true;		
