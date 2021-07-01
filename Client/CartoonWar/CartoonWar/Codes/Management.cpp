@@ -19,7 +19,6 @@ CManagement::CManagement()
 	, m_pLoad_Manager(CLoadManager::GetInstance())
 	, m_pUAV_Manager(CUAVManager::GetInstance())
 	, m_pCollision_Manager(CCollisionMgr::GetInstance())
-	, m_pFont(CFont::GetInstance())
 	//, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
@@ -32,7 +31,6 @@ CManagement::CManagement()
 	m_pLoad_Manager->AddRef();
 	m_pUAV_Manager->AddRef();
 	m_pCollision_Manager->AddRef();
-	m_pFont->AddRef();
 	//m_pServer_Manager->AddRef();
 }
 
@@ -219,11 +217,6 @@ void CManagement::Update_CollisionManager()
 	return m_pCollision_Manager->Update_CollisionManager();
 }
 
-HRESULT CManagement::Ready_Font(const _tchar* pFontTex, const char* pFontData)
-{
-	return m_pFont->Ready_Font(pFontTex, pFontData);
-}
-
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -309,8 +302,6 @@ void CManagement::Release_Engine()
 
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
-	if (dwRefCnt = CFont::GetInstance()->DestroyInstance())
-		_MSG_BOX("CFont Release Failed");
 
 	if (dwRefCnt = CCollisionMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CCollisionMgr Release Failed");
@@ -380,7 +371,6 @@ list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
-	Safe_Release(m_pFont);
 	Safe_Release(m_pUAV_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pObject_Manager);

@@ -12,7 +12,6 @@
 #include "CollisionMgr.h"
 #include "MRT.h"
 #include "Base.h"
-#include "Font.h"
 class CComponent;
 class CGameObject;
 class CLight;
@@ -77,8 +76,6 @@ public://UAV_Manager
 public://CCollisionMgr
 	HRESULT						Ready_CollsionManager();
 	void						Update_CollisionManager();
-public://Font
-	HRESULT						Ready_Font(const _tchar* pFontTex, const char* pFontData);
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -101,7 +98,6 @@ private:
 	CLoadManager*				m_pLoad_Manager = nullptr;
 	CUAVManager*				m_pUAV_Manager = nullptr;
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
-	CFont*						m_pFont = nullptr;
 	//CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

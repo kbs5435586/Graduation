@@ -38,6 +38,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
+	//tagInfo(float hp, float mp, float att, float def)
+
 	m_tInfo = INFO(10, 1,1,0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
@@ -47,6 +49,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_pAnimCom[i]->SetAnimClip(m_pMeshCom[i]->GetAnimClip());
 		m_pAnimCom[i]->LateInit();
 	}
+
 
 	_vec3 vColliderSize = { 40.f ,160.f,40.f };
 	//_vec3 vColliderSize = { 70.f ,160.f,70.f };
@@ -82,13 +85,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
-	//m_pUI_OnHead->Update_GameObject(fTimeDelta);
-	//m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	//m_pUI_OnHead->SetInfo(m_tInfo);	
-	//
-	//m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
-	//m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	//m_pUI_OnHeadBack->SetInfo(m_tInfo);
+	m_pUI_OnHead->Update_GameObject(fTimeDelta);
+	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
+	m_pUI_OnHead->SetInfo(m_tInfo);	
+
+	m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
+	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
+	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 
 	m_pTransformCom->Set_PositionY(0.f);
 
@@ -120,8 +123,8 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	//m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-	//m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
+	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
+	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
@@ -1018,7 +1021,7 @@ void CPlayer::Obb_Collision()
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			m_vMidPoint.y += 2.f;
+			//m_vMidPoint.y += 2.f;
 			m_IsBazier = true;
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
@@ -1233,7 +1236,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = 0;
 		}
 		m_IsOnce = false;
-		//m_IsHit = false;
+		m_IsHit = false;
 	}
 
 }

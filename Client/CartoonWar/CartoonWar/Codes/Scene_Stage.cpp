@@ -6,8 +6,6 @@
 #include "NPC.h"
 #include "Throw_Arrow.h"
 
-
-
 // Shape
 #include "MyRect.h"
 #include "Cube.h"
@@ -169,8 +167,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
@@ -407,14 +405,6 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 {
 	
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
-		return E_FAIL;
-
-	tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_BLUE };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
-		return E_FAIL;
-
-	 tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_BLACK };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
 	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };

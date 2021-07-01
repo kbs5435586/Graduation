@@ -25,8 +25,6 @@
 #include <fbxsdk.h>
 #include <wincodec.h>
 #include <chrono>
-#include <istream>
-#include <fstream>
 
 
 using namespace std;

@@ -1,7 +1,6 @@
 #include "framework.h"
 #include "Scene_Logo.h"
 #include "Management.h"
-#include "Font.h"
 // GameObject
 #include "Logo.h"
 // Defferd UI
@@ -289,7 +288,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh",
 		CNavigation::Create(L"../Data/Navi/NaviMesh_Demo.dat"))))
 		return E_FAIL;
-
 	return S_OK;
 }
 

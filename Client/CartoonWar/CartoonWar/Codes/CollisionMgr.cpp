@@ -39,8 +39,6 @@ void CCollisionMgr::Player_to_NPC_Collision()
 					(iter1)->GetOBBCollision() = true;
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
-					iter1->GetInfo().fHP -= 1.f;
-					iter0->GetIsHit() = false;
 				}
 				else
 				{

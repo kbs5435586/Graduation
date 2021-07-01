@@ -33,8 +33,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	_vec3 vPos = { _float(rand() % 150),0.f,_float(rand() % 150) };
-	//_vec3 vPos = {75.f,0.f,75.f };
+	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
+	_vec3 vPos = {75.f,0.f,75.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -53,9 +53,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
-
-	_uint iRand = rand() % (_uint)CLASS::CLASS_END;
-	m_eCurClass = CLASS(1);
+	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
@@ -139,7 +137,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 
 
-	Change_State(fTimeDelta);
+	//Change_State(fTimeDelta);
 
 	return _int();
 }
@@ -967,7 +965,6 @@ void CNPC::Obb_Collision()
 			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)- vTemp;
 			Create_Particle(vParticlePos);
 			m_IsBazier = true;		
-			m_pTransformCom->Set_PositionY(0.f);
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 	}
@@ -1466,6 +1463,7 @@ void CNPC::Change_State(const _float fTimeDelta)
 	_vec3 vP_M = vPlayerPos-*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 
 	_float fLength = vP_M.Length();
+	//_float fLength = 100.f;
 	if (fLength <= 15.f)
 	{
 	
