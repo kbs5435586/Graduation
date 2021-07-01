@@ -90,6 +90,7 @@ void CNavigation::Render_Navigation()
 {
 	for (auto& iter : m_vecCell)
 	{
+
 		iter->Render_Cell();
 	}
 }

@@ -32,7 +32,7 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 
 	m_fSizeX = 300.f;
 	m_fSizeY = 25.f;
-	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
+	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")->Get_BackObject()->GetInfo();
 	return S_OK;
 }
 

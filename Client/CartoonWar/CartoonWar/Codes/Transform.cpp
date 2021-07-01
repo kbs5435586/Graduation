@@ -123,7 +123,7 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 void CTransform::Go_There( const _vec3& vPos)
 {
 	m_matWorld._41 -= (vPos.x );
-	//m_matWorld._42 -= (vPos.y );
+	m_matWorld._42 -= (vPos.y );
 	m_matWorld._43 -= (vPos.z );
 }
 

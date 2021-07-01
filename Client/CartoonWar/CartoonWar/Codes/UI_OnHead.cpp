@@ -140,6 +140,7 @@ void CUI_OnHead::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	CUI::Free();
