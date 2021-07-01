@@ -31,9 +31,11 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	_vec3 vPos = { 50.f,0.f,50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(30.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(10, 1,1,0);
@@ -1064,37 +1066,37 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsCombat = true;
 	}
 
-	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 1;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[1];
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 0;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-	}
+	//if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 1;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[1];
+	//	m_pTransformCom->Rotation_Y(-fTimeDelta);
+	//}
+	//if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 0;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[0];
+	//}
 
-	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 1;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[1];
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 0;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-	}
+	//if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 1;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[1];
+	//	m_pTransformCom->Rotation_Y(fTimeDelta);
+	//}
+	//if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 0;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[0];
+	//}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{
@@ -1105,7 +1107,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		_vec3 vLook = {};
 		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		vLook = Vector3_::Normalize(vLook);
+		vLook.Normalize();
 
 
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
@@ -1143,10 +1145,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		_vec3 vLook = {};
 		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		vLook = Vector3_::Normalize(vLook);
+		vLook.Normalize();
 
 
-		_vec3 vDirectionPerSec = (vLook * fTimeDelta);
+		_vec3 vDirectionPerSec = (vLook *5.f* fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_IsSlide)
 		{
@@ -1240,8 +1242,8 @@ void CPlayer::Compute_Matrix_Z()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3		vSize = m_pTransformCom->Get_Scale();
-	_matrix		matLeft = Matrix_::Identity();
-	_matrix		matRight = Matrix_::Identity();
+	_matrix		matLeft = _matrix();
+	_matrix		matRight = _matrix();
 
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationZ(XMConvertToRadians(100.f)));
@@ -1249,9 +1251,9 @@ void CPlayer::Compute_Matrix_Z()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
+	vRight = _vec3::TransformNormal(vRight, mat);
+	vUp = _vec3::TransformNormal(vUp, mat);
+	vLook = _vec3::TransformNormal(vLook, mat);
 
 	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
@@ -1266,9 +1268,9 @@ void CPlayer::Compute_Matrix_Z()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	mat = ::XMLoadFloat4x4(&matRight);
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
+	vRight = _vec3::TransformNormal(vRight, mat);
+	vUp = _vec3::TransformNormal(vUp, mat);
+	vLook = _vec3::TransformNormal(vLook, mat);
 
 	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));
@@ -1284,8 +1286,8 @@ void CPlayer::Compute_Matrix_X()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3		vSize = m_pTransformCom->Get_Scale();
-	_matrix		matLeft = Matrix_::Identity();
-	_matrix		matRight = Matrix_::Identity();
+	_matrix		matLeft = _matrix();
+	_matrix		matRight = _matrix();
 
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);
 	DirectX::XMStoreFloat4x4(&matLeft, DirectX::XMMatrixRotationX(XMConvertToRadians(100.f)));
@@ -1293,9 +1295,9 @@ void CPlayer::Compute_Matrix_X()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	XMMATRIX mat = ::XMLoadFloat4x4(&matLeft);
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
+	vRight = _vec3::TransformNormal(vRight, mat);
+	vUp = _vec3::TransformNormal(vUp, mat);
+	vLook = _vec3::TransformNormal(vLook, mat);
 
 	memcpy(&matLeft.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matLeft.m[1][0], &vUp, sizeof(_vec3));
@@ -1310,9 +1312,9 @@ void CPlayer::Compute_Matrix_X()
 	vUp *= 0.1f;
 	vLook *= 0.1f;
 	mat = ::XMLoadFloat4x4(&matRight);
-	vRight = Vector3_::TransformNormal(vRight, mat);
-	vUp = Vector3_::TransformNormal(vUp, mat);
-	vLook = Vector3_::TransformNormal(vLook, mat);
+	vRight = _vec3::TransformNormal(vRight, mat);
+	vUp = _vec3::TransformNormal(vUp, mat);
+	vLook = _vec3::TransformNormal(vLook, mat);
 
 	memcpy(&matRight.m[0][0], &vRight, sizeof(_vec3));
 	memcpy(&matRight.m[1][0], &vUp, sizeof(_vec3));

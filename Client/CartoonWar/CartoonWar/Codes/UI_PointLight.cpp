@@ -57,8 +57,8 @@ void CUI_PointLight::Render_GameObject()
 
 	MAINPASS tMainPass = {};
 
-	_matrix matWorld = Matrix_::Identity();
-	_matrix matView = Matrix_::Identity();
+	_matrix matWorld = _matrix();
+	_matrix matView = _matrix();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
 	matWorld._11 = m_fSizeX;
@@ -73,7 +73,7 @@ void CUI_PointLight::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(1)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Get_RTT(0)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(pNormalTex.Get(), TEXTURE_REGISTER::t0);
 
 	CDevice::GetInstance()->UpdateTable();

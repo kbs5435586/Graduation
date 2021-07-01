@@ -40,7 +40,7 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 	{
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 
-		matView = Matrix_::Inverse(matView);
+		matView = matView.Invert();
 
 		_vec3		vRight, vUp, vLook;
 

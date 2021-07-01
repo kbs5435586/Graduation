@@ -232,7 +232,7 @@ HRESULT CDevice::Create_SwapChain(_bool IsWindowed)
 	if(FAILED(swapChain.As(&m_pSwapChain)))
 		return E_FAIL;
 
-
+	//DXGI_FORMAT_D32_FLOAT
 	return S_OK;
 }
 
@@ -972,7 +972,7 @@ HRESULT CDevice::Create_View()
 		tDesc.Height = WINCX;
 		tDesc.DepthOrArraySize = 1;
 		tDesc.MipLevels = 1;
-		tDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		tDesc.Format = DXGI_FORMAT_D32_FLOAT;
 		tDesc.SampleDesc.Count = 1;
 		tDesc.SampleDesc.Quality =  0;
 		tDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
@@ -987,7 +987,7 @@ HRESULT CDevice::Create_View()
 		tHeapProperties.VisibleNodeMask = 1;
 
 		D3D12_CLEAR_VALUE tClearView;
-		tClearView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		tClearView.Format = DXGI_FORMAT_D32_FLOAT;
 		tClearView.DepthStencil.Depth = 1.0f;
 		tClearView.DepthStencil.Stencil = 0;
 

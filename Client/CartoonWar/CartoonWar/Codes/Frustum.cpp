@@ -28,15 +28,15 @@ HRESULT CFrustum::Transform_ToWorld()
 	matView = CCamera_Manager::GetInstance()->GetMatView();
 	matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	matView = Matrix_::Inverse(matView);
-	matProj = Matrix_::Inverse(matProj);
+	matView = matView.Invert();
+	matProj = matProj.Invert();
 	XMMATRIX xmMatView = ::XMLoadFloat4x4(&matView);
 	XMMATRIX xmMatProj = ::XMLoadFloat4x4(&matProj);
 
 	for (_uint i = 0; i < 8; ++i)
 	{
-		m_vPoint[i] = Vector3_::TransformCoord(m_vOriginal_Point[i], xmMatProj);
-		m_vPoint[i] = Vector3_::TransformCoord(m_vPoint[i], xmMatView);
+		m_vPoint[i] = _vec3::Transform(m_vOriginal_Point[i], xmMatProj);
+		m_vPoint[i] = _vec3::Transform(m_vPoint[i], xmMatView);
 	}
 	return S_OK;
 }
@@ -51,10 +51,10 @@ _bool CFrustum::Culling_Frustum(CTransform* pTransform, const _float& fRadius)
 	_matrix	matWorldInv = pTransform->Get_Matrix_Inverse();
 
 	XMMATRIX temp = XMLoadFloat4x4(&matWorldInv);
-	vPosition = Vector3_::TransformCoord(vPosition, temp);
+	vPosition = _vec3::Transform(vPosition, temp);
 
 	for (_uint i = 0; i < 8; ++i)
-		vPoint[i] = Vector3_::TransformCoord(vPoint[i], temp);
+		vPoint[i] = _vec3::Transform(vPoint[i], temp);
 
 
 	m_Plane[0] = Plane(vPoint[0], vPoint[1], vPoint[2]);
@@ -91,12 +91,12 @@ HRESULT CFrustum::Get_LocalPlane(Plane* pOutPlane, const _matrix* pInMatWorld)
 	_matrix	matWorldInv;
 
 
-	matWorldInv = Matrix_::Inverse(matWorldInv);
+	matWorldInv = matWorldInv.Invert();
 
 	XMMATRIX temp = XMLoadFloat4x4(&matWorldInv);
 	for (_uint i = 0; i < 8; ++i)
 	{
-		vPoint[i]= Vector3_::TransformCoord(vPoint[i], temp);
+		vPoint[i]= _vec3::Transform(vPoint[i], temp);
 	}
 	pOutPlane[0] = Plane(vPoint[1], vPoint[5], vPoint[6]);
 	pOutPlane[1] = Plane(vPoint[4], vPoint[0], vPoint[3]);

@@ -55,13 +55,13 @@ HRESULT CCollider::Ready_Collider_OBB_BOX(CTransform* pTransform, const _vec3 vS
 	for (size_t i = 0; i < 3; ++i)
 	{
 		vDir[i] = *pTarget_Transform->Get_StateInfo(CTransform::STATE(i));
-		vDir[i] = Vector3_::Normalize(vDir[i]);
+		vDir[i].Normalize();
 	}
 
 
-	vDir[CTransform::STATE_RIGHT] = Vector3_::ScalarProduct(vDir[CTransform::STATE_RIGHT], vSize.x, false);
-	vDir[CTransform::STATE_UP] = Vector3_::ScalarProduct(vDir[CTransform::STATE_UP], vSize.y, false);
-	vDir[CTransform::STATE_LOOK] = Vector3_::ScalarProduct(vDir[CTransform::STATE_LOOK], vSize.z, false);
+	vDir[CTransform::STATE_RIGHT] = vDir[CTransform::STATE_RIGHT] * vSize.x;
+	vDir[CTransform::STATE_UP] = vDir[CTransform::STATE_UP] * vSize.y;
+	vDir[CTransform::STATE_LOOK] = vDir[CTransform::STATE_LOOK] * vSize.z;
 
 
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vDir[CTransform::STATE_RIGHT]);
@@ -223,13 +223,13 @@ void CCollider::Change_ColliderBoxSize(CTransform* pTransform, const _vec3 vSize
 		for (size_t i = 0; i < 3; ++i)
 		{
 			vDir[i] = *pTarget_Transform->Get_StateInfo(CTransform::STATE(i));
-			vDir[i] = Vector3_::Normalize(vDir[i]);
+			vDir[i].Normalize();
 		}
 
 
-		vDir[CTransform::STATE_RIGHT] = Vector3_::ScalarProduct(vDir[CTransform::STATE_RIGHT], vSize.x, false);
-		vDir[CTransform::STATE_UP] = Vector3_::ScalarProduct(vDir[CTransform::STATE_UP], vSize.y, false);
-		vDir[CTransform::STATE_LOOK] = Vector3_::ScalarProduct(vDir[CTransform::STATE_LOOK], vSize.z, false);
+		vDir[CTransform::STATE_RIGHT] = vDir[CTransform::STATE_RIGHT] * vSize.x;
+		vDir[CTransform::STATE_UP] = vDir[CTransform::STATE_UP] * vSize.y;
+		vDir[CTransform::STATE_LOOK] = vDir[CTransform::STATE_LOOK] * vSize.z;
 
 
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vDir[CTransform::STATE_RIGHT]);
@@ -306,12 +306,11 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 	XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
 	XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
 	//XMLoadFloat4x4
-	vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
-	vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
+	vSourMin = _vec3::Transform(m_vMin, xmMatSour);
+	vSourMax = _vec3::Transform(m_vMax, xmMatSour);
 
-	vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
-	vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
-
+	vDestMin = _vec3::Transform(pTargetCollider->m_vMin, xmMatDest);
+	vDestMax = _vec3::Transform(pTargetCollider->m_vMax, xmMatDest);
 
 	m_IsColl = false;
 	if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) && max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
@@ -404,7 +403,8 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 		for (size_t j = 0; j < 3; ++j)
 		{
 			_uint		iIndex = i * 3 + j;
-			vAlignAxis[iIndex] = Vector3_::CrossProduct(tOBB[0].vAlignAxis[i], tOBB[1].vAlignAxis[j], false);
+			vAlignAxis[iIndex] = tOBB[0].vAlignAxis[i].Cross(tOBB[1].vAlignAxis[j]);
+
 		}
 	}
 
@@ -583,21 +583,21 @@ void CCollider::Compute_AlignAxis(OBB* pOBB)
 
 	for (size_t i = 0; i < 3; ++i)
 	{
-		pOBB->vAlignAxis[i] = Vector3_::Normalize(pOBB->vAlignAxis[i]);
+		pOBB->vAlignAxis[i].Normalize();
 	}
 }
 
 void CCollider::Compute_ProjAxis(OBB* pOBB)
 {
 	_vec3 vAdd[3];
-	vAdd[0] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[2]);
-	vAdd[1] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[0]);
-	vAdd[2] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[7]);
+	vAdd[0] = pOBB->vPoint[5]+ pOBB->vPoint[2];
+	vAdd[1] = pOBB->vPoint[5]+ pOBB->vPoint[0];
+	vAdd[2] = pOBB->vPoint[5]+ pOBB->vPoint[7];
 
 	_vec3 vProd[3];
-	vProd[0] = Vector3_::ScalarProduct(vAdd[0], 0.5f,false);
-	vProd[1] = Vector3_::ScalarProduct(vAdd[1], 0.5f, false);
-	vProd[2] = Vector3_::ScalarProduct(vAdd[2], 0.5f, false);
+	vProd[0] = vAdd[0]* 0.5f;
+	vProd[1] = vAdd[1]* 0.5f;
+	vProd[2] = vAdd[2]* 0.5f;
 
 	pOBB->vProjAxis[0] = (vProd[0] -  pOBB->vCenter);
 	pOBB->vProjAxis[1] = (vProd[1] -  pOBB->vCenter);
@@ -614,9 +614,9 @@ _matrix CCollider::Remove_Rotation(_matrix matWorld)
 	_vec3 vUpTemp = _vec3(matWorld.m[1][0], matWorld.m[1][1], matWorld.m[1][2]);
 	_vec3 vLookTemp = _vec3(matWorld.m[2][0], matWorld.m[2][1], matWorld.m[2][2]);
 
-	vRight *= Vector3_::Length(vRightTemp);
-	vUp *= Vector3_::Length(vUpTemp);
-	vLook *= Vector3_::Length(vLookTemp);
+	vRight *= vRightTemp.Length();
+	vUp *= vUpTemp.Length();
+	vLook *= vLookTemp.Length();
 
 
 	memcpy(&matWorld.m[0][0], &vRight, sizeof(_vec3));

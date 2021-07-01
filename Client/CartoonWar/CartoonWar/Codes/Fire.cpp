@@ -40,7 +40,7 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 
 	_matrix		matView = CCamera_Manager::GetInstance()->GetMatView();
 
-	matView = Matrix_::Inverse(matView);
+	matView = matView.Invert();
 	_vec3		vRight, vUp, vLook;
 
 	vRight = *(_vec3*)&matView.m[0][0] * m_pTransformCom->Get_Scale().x;

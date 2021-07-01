@@ -35,6 +35,8 @@ private:
     CFrustum*                   m_pFrustum = nullptr;
     GLOBAL                      m_tGlobal;
 private:
+
+private:
     _float                      m_fTimeDelta=0.f;
 public:
     static				        CMainApp* Create();

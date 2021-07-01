@@ -21,8 +21,8 @@ CCamera::CCamera(const CCamera& rhs)
 
 HRESULT CCamera::Ready_Prototype()
 {
-	m_matView = Matrix_::Identity();
-	m_matProj = Matrix_:: Identity();
+	m_matView = _matrix();
+	m_matProj = _matrix();
 	return S_OK;
 }
 
@@ -88,24 +88,32 @@ HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDE
 HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 {
 	_vec3		vLook;
-	vLook = Vector3_::Subtract(m_tShadowCameraDesc.vAt, m_tShadowCameraDesc.vEye);
-	vLook = Vector3_::Normalize(vLook);
+	vLook = m_tShadowCameraDesc.vAt - m_tShadowCameraDesc.vEye;
+	vLook.Normalize();
 
 	_vec3		vRight;
-	vRight = Vector3_::CrossProduct(m_tShadowCameraDesc.vAxisY, vLook, false);
-	vRight = Vector3_::Normalize(vRight);
+	vRight = m_tShadowCameraDesc.vAxisY.Cross(vLook);
+	vRight.Normalize();
 
 	_vec3		vUp;
-	vUp = Vector3_::CrossProduct(vLook, vRight, false);
-	vUp = Vector3_::Normalize(vUp);
+	vUp = vLook.Cross(vRight);
+	vUp.Normalize();
 
 	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tShadowCameraDesc.vEye);
-	m_pTransform->Scaling(1.5f, 1.5f, 1.5f);
+	//m_pTransform->Scaling(2.f, 2.f, 2.f);
 
 	CCamera_Manager::GetInstance()->SetShadowMatWorld(m_pTransform->Get_Matrix());
+
+	m_matShadowProj._11 = (float)(1.f / tan((double)(m_tShadowProjDesc.fFovY * 0.5f))) / m_tShadowProjDesc.fAspect;
+	m_matShadowProj._22 = (float)(1.f / tan((double)(m_tShadowProjDesc.fFovY * 0.5f)));
+	m_matShadowProj._33 = m_tShadowProjDesc.fFar / (m_tShadowProjDesc.fFar - m_tShadowProjDesc.fNear);
+	m_matShadowProj._43 = (m_tShadowProjDesc.fFar * m_tShadowProjDesc.fNear) / (m_tShadowProjDesc.fFar - m_tShadowProjDesc.fNear) * -1.f;
+	m_matShadowProj._34 = 1.f;
+	m_matShadowProj._44 = 0.0f;
+
 
 	Invalidate_ViewProjMatrix(IsShadow);
 	return S_OK;
@@ -113,9 +121,18 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 
 void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 {
-	m_matShadowView = m_pTransform->Get_Matrix_Inverse();
-	m_matShadowProj = XMMatrixOrthographicLH((_float)600.f, (_float)600.f, 1.f, 100000.f);
+	//m_matShadowView = m_pTransform->Get_Matrix_Inverse();
+	//m_matShadowProj = XMMatrixOrthographicLH((_float)600.f, (_float)600.f, 1.f, 100000.f);
+	//m_matShadowProj = XMMatrixOrthographicLH((_float)512, (_float)512, 1.f, 100000.f);
 
+	//D3DXVECTOR3 g_vEyePt(30.f, 100.0f, -20.0f);
+	//D3DXVECTOR3 g_vLookatPt(0.0f, 0.f, 0.f);
+
+	_vec3 g_vEyePt(30.f, 100.0f, -20.0f);
+	_vec3 g_vLookatPt(0.0f, 0.f, 0.f);
+
+	m_matShadowView = XMMatrixLookAtLH(g_vEyePt, g_vLookatPt, _vec3(0.f,1.f,0.f));
+	m_matShadowProj = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), _float(WINCX) / WINCY, 0.2f, 500.0f);
 	CCamera_Manager::GetInstance()->SetShadowMatView(m_matShadowView);
 	CCamera_Manager::GetInstance()->SetShadowMatProj(m_matShadowProj);
 }
@@ -124,16 +141,16 @@ void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 HRESULT CCamera::SetUp_ViewProjMatrices()
 {
 	_vec3		vLook;
-	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, m_tCameraDesc.vEye);
-	vLook = Vector3_::Normalize(vLook);
+	vLook = m_tShadowCameraDesc.vAt - m_tShadowCameraDesc.vEye;
+	vLook.Normalize();
 
 	_vec3		vRight;
-	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
-	vRight = Vector3_::Normalize(vRight);
+	vRight = m_tShadowCameraDesc.vAxisY.Cross(vLook);
+	vRight.Normalize();
 
 	_vec3		vUp;
-	vUp = Vector3_::CrossProduct(vLook, vRight);
-	vUp = Vector3_::Normalize(vUp);
+	vUp = vLook.Cross(vRight);
+	vUp.Normalize();
 
 	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);

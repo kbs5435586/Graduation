@@ -39,7 +39,7 @@ void CLight::Render()
 	_matrix matShadowView = CCamera_Manager::GetInstance()->GetShadowView();
 	_matrix matShadowProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
 	tRep.m_arrMat[0] = matShadowView*matShadowProj ;
-	_matrix matWorld = Matrix_::Identity();
+	_matrix matWorld = _matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 	
