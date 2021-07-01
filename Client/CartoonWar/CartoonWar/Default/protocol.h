@@ -10,7 +10,7 @@ enum Players {
 };
 
 constexpr unsigned int MAX_PACKET_SIZE = 255;
-constexpr unsigned int MAX_BUF_SIZE = 1024;
+constexpr unsigned int MAX_BUF_SIZE = 512;
 
 const string SERVER_IP = "127.0.0.1"; // 123.215.109.236 // 127.0.0.1
 constexpr int MAX_ID_LEN = 50;

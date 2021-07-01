@@ -25,7 +25,7 @@ private:
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
 	float FORMATION_SPACE = 10.f;
 
-	float MOVE_SPEED_NPC = 0.08f;
+	float MOVE_SPEED_NPC = 1.5f;
 	float MOVE_SPEED_PLAYER = 0.05f;
 	float ROTATE_SPEED = 0.05f;
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯

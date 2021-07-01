@@ -59,6 +59,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     CMainApp* pMainApp = CMainApp::Create();
     NULL_CHECK_VAL(pMainApp, FALSE);
 
+    CServer_Manager* server = CServer_Manager::GetInstance();
+    NULL_CHECK_VAL(server, FALSE);
+    server->AddRef();
 
     if (FAILED(pSystem->Add_Timer(L"Timer_Default")))
         return FALSE;
@@ -91,6 +94,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if (true == pSystem->Permit_Call(L"Frame_60", fTimeDelta_Default))
         {
             _float		fTimeDelta_60 = pSystem->Get_TimeDelta(L"Timer_60");
+            server->EventManager();
             pMainApp->Update_MainApp(fTimeDelta_60);
             pMainApp->Render_MainApp();
         }
@@ -99,6 +103,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
     _ulong		dwRefCnt = 0;
+    Safe_Release(server);
     Safe_Release(pSystem);
 
     if (dwRefCnt = Safe_Release(pMainApp))
