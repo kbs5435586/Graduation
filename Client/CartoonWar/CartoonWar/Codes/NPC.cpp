@@ -34,7 +34,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {25.f,0.f,0.f };
+	_vec3 vPos = {75.f,0.f,75.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -127,12 +127,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 
 
-	Set_Animation(fTimeDelta);
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-	}
+	//Change_State(fTimeDelta);
 
 	return _int();
 }
@@ -954,10 +949,10 @@ void CNPC::Obb_Collision()
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			//m_vMidPoint.y += 2.f;
-
-			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
+			m_vMidPoint = Vector3_::Add(m_vStartPoint, m_vEndPoint);
+			m_vMidPoint /= 2.f;
+			m_vMidPoint.y += 2.f;
+			_vec3 vParticlePos = Vector3_::Subtract(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), vTemp);
 			Create_Particle(vParticlePos);
 			m_IsBazier = true;		
 		}
@@ -1235,3 +1230,231 @@ void CNPC::Combat(const _float& fTimeDelta)
 	}
 }
 
+	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vt = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+
+	_float fLength = vt.Length();
+	_vec3 vP_M = Vector3_::Subtract(m_vDest, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+
+	vP_M.Normalize();
+
+	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vTemp *= -1.f;
+	vTemp.Normalize();
+	float fDot = Vector3_::DotProduct(vTemp, vP_M);
+
+	_float fAngle = XMConvertToDegrees(fDot);
+	if (fAngle >= 56.f && fAngle <= 57.f)
+	{
+		m_IsRotateEnd = false;
+		if (fLength >= 6.f)
+		{
+			m_pTransformCom->Go_ToTarget(&vPlayerPos, fTimeDelta);
+			m_iCurAnimIdx = 1;
+		}
+	}
+	else
+	{
+		if (m_eRot_Dir == ROTATE_DIR::ROT_DIR_LEFT)
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
+		else if (m_eRot_Dir == ROTATE_DIR::ROT_DIR_RIGHT)
+			m_pTransformCom->Rotation_Y(fTimeDelta);
+
+	}
+
+
+
+	m_IsOnce = false;
+
+}
+
+void CNPC::MeaningLess_Move(const _float& fTimeDelta)
+{
+	if (!m_IsDest)
+	{
+		srand(unsigned(time(NULL)));
+		_int	iMoveX = rand() % 100 + 1;
+		_int	iMoveZ = rand() % 100 + 1;
+
+		m_vDest = { (_float)iMoveX, 0.f, (_float)iMoveZ };
+
+		m_IsDest = true;
+	}
+
+
+	_vec3 vt = Vector3_::Subtract(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_vDest);
+	_int	iDestLength = vt.Length();
+
+
+	_vec3 vP_M = Vector3_::Subtract(m_vDest, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+	vP_M.Normalize();
+
+	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vTemp *= -1.f;
+	vTemp.Normalize();
+	float fDot = Vector3_::DotProduct(vTemp, vP_M);
+
+	if (!m_IsRotateEnd)
+	{
+		if (fabs(m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z))
+		{
+			if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->x <= m_vDest.x)
+			{
+				m_eRot_Dir = ROTATE_DIR::ROT_DIR_RIGHT;
+			}
+			else
+			{
+				m_eRot_Dir = ROTATE_DIR::ROT_DIR_LEFT;
+			}
+			_int i = 0;
+		}
+		else
+		{
+			if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->z <= m_vDest.z)
+			{
+				if (m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_LEFT;
+				}
+				else
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_RIGHT;
+				}
+
+			}
+			else
+			{
+				if (m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_RIGHT;
+				}
+				else
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_LEFT;;
+				}
+			}
+		}
+
+
+		m_IsRotateEnd = true;
+	}
+	
+	_float fAngle = XMConvertToDegrees(fDot);
+	if (fAngle >= 56.f && fAngle <= 57.f)
+	{
+		m_IsRotateEnd = false;
+		if (iDestLength >= 3.f)
+		{
+			m_pTransformCom->Go_ToTarget(&m_vDest, fTimeDelta);
+			m_iCurAnimIdx = 1;
+		}
+		else
+		{
+			m_IsDest = false;
+		}
+
+	}
+	else
+	{
+		if (m_eRot_Dir == ROTATE_DIR::ROT_DIR_LEFT)
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
+		else if (m_eRot_Dir == ROTATE_DIR::ROT_DIR_RIGHT)
+			m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	m_IsOnce = false;
+
+}
+
+void CNPC::ComputeDir()
+{
+	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player").size() == 0)
+	{
+		return;
+	}
+
+	_vec3 vThisTransformOutput = {};
+	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vP_M = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+
+	vP_M.Normalize();
+
+	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vTemp *= -1.f;
+	vTemp.Normalize(vThisTransformOutput);
+	_float fDot = Vector3_::DotProduct(vThisTransformOutput, vP_M);
+
+
+	if (!m_IsRotateEnd)
+	{
+
+		if (fabs(m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z))
+		{
+			if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->x <= vPlayerPos.x)
+			{
+				m_eRot_Dir = ROTATE_DIR::ROT_DIR_RIGHT;
+			}
+			else
+			{
+				m_eRot_Dir = ROTATE_DIR::ROT_DIR_LEFT;
+			}
+			_int i = 0;
+		}
+		else
+		{
+			if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->z <= vPlayerPos.z)
+			{
+				if (m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_LEFT;
+				}
+				else
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_RIGHT;
+				}
+
+			}
+			else
+			{
+				if (m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_RIGHT;
+				}
+				else
+				{
+					m_eRot_Dir = ROTATE_DIR::ROT_DIR_LEFT;
+				}
+			}
+		}
+
+
+		m_IsRotateEnd = true;
+	}
+
+}
+
+void CNPC::Change_State(const _float fTimeDelta)
+{
+	ComputeDir();
+	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player").size() == 0)
+	{
+		return;
+	}
+
+	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vP_M = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+
+	_float fLength = vP_M.Length();
+	if (fLength <= 15.f)
+	{
+	
+		m_IsAttackMotion = false; 
+		Chase_Player(fTimeDelta, fLength);
+		m_IsHit = false;
+	}
+	else
+	{
+		MeaningLess_Move(fTimeDelta);
+		m_IsAttackMotion = false;
+		m_IsHit = false; 
+	}
+}
