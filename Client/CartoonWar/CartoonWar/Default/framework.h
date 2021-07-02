@@ -84,11 +84,11 @@ using namespace Microsoft::WRL;
 using namespace DirectX::SimpleMath;
 
 #include "d3dx12.h"
+#include "Typedef.h"
 #include "Define.h"
 #include "Enum.h"
 #include "Extern.h"
 #include "Function.h"
-#include "Typedef.h"
 #include "Struct.h"
 #include "Funtor.h"
 #include "Hash.h"

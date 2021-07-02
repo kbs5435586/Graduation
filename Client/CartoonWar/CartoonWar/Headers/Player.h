@@ -23,6 +23,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_PostEffect();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -53,6 +54,7 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };

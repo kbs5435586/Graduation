@@ -127,7 +127,8 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 		return -1;
-
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
+		return -1;
 
 	Set_Animation(fTimeDelta);
 
@@ -227,6 +228,56 @@ void CPlayer::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
+void CPlayer::Render_PostEffect()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+
+		m_pShaderCom_PostEffect->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		if (iSubsetNum >= 2)
+		{
+			if (i == 0)
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+			else
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+		else
+		{
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+	Safe_Release(pManagement);
+}
+
 HRESULT CPlayer::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -245,8 +296,9 @@ HRESULT CPlayer::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
+		return E_FAIL;	
+	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -289,6 +341,7 @@ void CPlayer::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
+	Safe_Release(m_pShaderCom_PostEffect);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
@@ -380,8 +433,11 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
-
-
+	//Component_Shader_PostEffect
+	m_pShaderCom_PostEffect = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect");
+	NULL_CHECK_VAL(m_pShaderCom_PostEffect, E_FAIL);
+	if (FAILED(Add_Component(L"Com_PostEffectShader", m_pShaderCom_PostEffect)))
+		return E_FAIL;
 
 	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
 	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);

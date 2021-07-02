@@ -53,6 +53,7 @@ public://RTT_Manager
 	HRESULT						Ready_RTT_Manager();
 	void                        Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
 	CMRT*						Get_RTT(const _uint& iIdx);
+	CRTT*						GetPostEffectTex(){return m_pRTT_Mananger->GetPostEffectTex(); }
 public://Key_Manager
 	void						Key_Update();
 	_bool						Key_Down(DWORD dwKey);

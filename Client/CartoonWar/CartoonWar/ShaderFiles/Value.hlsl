@@ -44,6 +44,8 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	float4				vCamPos;
 	float4				vLook;
 
+	row_major matrix	matLightView;
+	row_major matrix	matLightProj;
 };
 
 cbuffer MATERIAL : register (b1)
