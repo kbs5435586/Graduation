@@ -98,7 +98,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
+	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
 		_vec3 tempP = server->Get_NpcPos(m_iLayerIdx);
 		_vec3 tempL = server->Get_NpcLook(m_iLayerIdx);
