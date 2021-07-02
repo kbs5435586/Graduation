@@ -1060,8 +1060,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	server->AddRef();
 	//server->update_key_input();
 
-	if (server->Get_PlayerID() == m_iLayerIdx)
-	{
+	/*if (server->Get_PlayerID() == m_iLayerIdx)
+	{*/
 		if (0 >= m_tInfo.fHP)
 			return;
 		else
@@ -1188,35 +1188,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				else
 					m_iCurAnimIdx = m_iCombatMotion[1];
 				server->send_move_packet(GO_FORWARD);
-
-				_vec3 vLook = {};
-				vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-				vLook = Vector3_::Normalize(vLook);
-
-
-				_vec3 vDirectionPerSec = (vLook * fTimeDelta);
-				_vec3 vSlide = {};
-				if (!m_IsSlide)
-				{
-					if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-					{
-
-						m_pTransformCom->BackWard(fTimeDelta);
-						server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-
-					}
-					else
-					{
-						m_pTransformCom->Go_There(vSlide);
-						server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-					}
-				}
-				else
-				{
-					m_pTransformCom->BackWard(fTimeDelta);
-					server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-					m_IsSlide = false;
-				}
 			}
 			if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
 			{
@@ -1226,7 +1197,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 					m_iCurAnimIdx = m_iCombatMotion[0];
 			}
 		}
-	}
+	//}
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
 		m_IsOnce = true;
