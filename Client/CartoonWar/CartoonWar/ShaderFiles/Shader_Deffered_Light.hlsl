@@ -61,15 +61,15 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 			float fShadowDepth = g_texture2.Sample(Sampler0, vShadowUV).r;
 
 			// 그림자인 경우 빛을 약화시킨다.
-			if (fShadowDepth!=0.f && (fDepth > fShadowDepth + 0.00001f))
+			if (fShadowDepth && (fDepth > fShadowDepth + 0.00001f))
 			{
 				tCurCol.vDiffuse = 0.f;
 				//tCurCol.vSpec = (float4) 0.f;
 			}
-			//else if((fDepth <= fShadowDepth + 0.00001f))
-			//{
-			//	fTemp = 0.f;
-			//}
+			else if((fDepth <= fShadowDepth + 0.00001f))
+			{
+				fTemp = 0.f;
+			}
 		}
 
 
