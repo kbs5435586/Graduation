@@ -92,8 +92,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 	m_pTransformCom->Set_PositionY(0.f);
-
-
 	Change_Class();
 	//Obb_Collision();
 	Combat(fTimeDelta);
@@ -111,14 +109,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 
 	}
-
-	Set_Animation(fTimeDelta);
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-	}
-
 	if (m_IsDead)
 		return DEAD_OBJ;
 	return NO_EVENT;
@@ -206,7 +196,7 @@ void CNPC::Render_GameObject()
 	}
 
 
-	//m_pColiider[0]->Render_Collider();
+	m_pColiider[0]->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
@@ -970,10 +960,10 @@ void CNPC::Obb_Collision()
 		{
 			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_vec3 vTemp = Vector3_::Subtract(vPos, vTargetPos);
+			_vec3 vTemp = { vPos - vTargetPos };
 			vTemp.Normalize();
 			m_vStartPoint = vPos;
-			m_vEndPoint = Vector3_::Add(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), vTemp);
+			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = Vector3_::Add(m_vStartPoint, m_vEndPoint);
 			m_vMidPoint /= 2.f;
@@ -1120,7 +1110,7 @@ void CNPC::Death(const _float& fTimeDelta)
 	DeathMontion_Init();
 	if (m_iCurAnimIdx == m_iDeathMotion[1])
 	{
-		if (!m_IsDead)
+		if (!m_IsDeath)
 		{
 
 			m_fDeathTime += fTimeDelta * 1.2f;
@@ -1129,14 +1119,14 @@ void CNPC::Death(const _float& fTimeDelta)
 			if (m_fDeathTime >= 1.7f)
 			{
 				m_fDeathTime = 0.f;
-				m_IsDead = true;
+				m_IsDeath = true;
 			}
 		}
 
 	}
 	else if (m_iCurAnimIdx == m_iDeathMotion[0])
 	{
-		if (!m_IsDead)
+		if (!m_IsDeath)
 		{
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
@@ -1144,7 +1134,7 @@ void CNPC::Death(const _float& fTimeDelta)
 			if (m_fDeathTime >= 1.7f)
 			{
 				m_fDeathTime = 0.f;
-				m_IsDead = true;
+				m_IsDeath = true;
 			}
 		}
 	}
@@ -1161,7 +1151,6 @@ void CNPC::DeathMontion_Init()
 		Compute_Matrix_X();
 		m_iDeathMotion[0] = 4;
 		m_iDeathMotion[1] = 5;
-		break;
 	case CLASS::CLASS_INFANTRY:
 		Compute_Matrix_X();
 		m_iDeathMotion[0] = 9;
@@ -1256,14 +1245,6 @@ void CNPC::Combat(const _float& fTimeDelta)
 		m_IsCombat = false;
 	}
 }
-
-void CNPC::Chase_Player(const _float& fTimeDelta, _float fLenght)
-{
-
-	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player").size() == 0)
-	{
-		return;
-	}
 
 	_vec3 vPlayerPos = *dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vt = Vector3_::Subtract(vPlayerPos, *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));

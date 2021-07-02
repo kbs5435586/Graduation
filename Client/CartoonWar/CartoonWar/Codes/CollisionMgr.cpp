@@ -21,7 +21,6 @@ void CCollisionMgr::Update_CollisionManager()
 {
 	Player_to_NPC_Collision();
 	Throw_to_NPC_Collision();
-	NPC_to_Player_Collision();
 }
 
 void CCollisionMgr::Player_to_NPC_Collision()
@@ -56,40 +55,6 @@ void CCollisionMgr::Player_to_NPC_Collision()
 
 }
 
-void CCollisionMgr::NPC_to_Player_Collision()
-{
-	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
-	{
-		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
-		{
-
-			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_OBB"))
-				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_OBB"))))
-			{
-				if (iter0->GetIsHit())
-				{
-					(iter1)->GetOBBCollision() = true;
-					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-					iter1->GetIsParticle() = true;
-
-					iter1->GetInfo().fHP -= 1.f;
-					iter0->GetIsHit() = false;
-				}
-				else
-				{
-					(iter1)->GetOBBCollision() = true;
-					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-					(iter0)->GetOBBCollision() = true;
-					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-				}
-
-
-			}
-
-		}
-	}
-}
-
 
 void CCollisionMgr::Throw_to_NPC_Collision()
 {
@@ -115,7 +80,6 @@ void CCollisionMgr::Throw_to_NPC_Collision()
 				(iter1)->GetOBBCollision() = true;
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
-				iter1->GetInfo().fHP -= 1.f;
 				iter0->GetIsDead() = true;
 			}
 

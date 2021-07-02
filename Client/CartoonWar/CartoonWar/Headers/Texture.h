@@ -58,6 +58,6 @@ private:
     ScratchImage			 	                        m_Image;
 private:
     _vec2                                               m_vTextureResolution = {};
-
+    int i = 0;
 };
 

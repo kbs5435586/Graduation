@@ -31,7 +31,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//Compute_Matrix();
 	_vec3 vPos = { 10.f,0.f,10.f };
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
@@ -112,8 +111,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	}
 
-	//if (m_IsDead)
-	//	return DEAD_OBJ;
+	if (m_IsDead)
+		return DEAD_OBJ;
 	return NO_EVENT;
 }
 
@@ -304,7 +303,7 @@ void CPlayer::Free()
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	Safe_Release(m_pNaviCom);
+	//Safe_Release(m_pNaviCom);
 
 
 	Safe_Release(m_pUI_OnHead);
@@ -464,10 +463,10 @@ HRESULT CPlayer::Ready_Component()
 
 
 
-	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
-	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-		return E_FAIL;
+	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
