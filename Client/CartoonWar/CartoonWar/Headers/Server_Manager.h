@@ -64,6 +64,17 @@ public:
     bool Get_Connected();
     short Get_PlayerID();
     short Get_PlayerHP(int id);
+
+   _vec3 Get_PlayerPos(int id);
+   _vec3 Get_PlayerLook(int id);
+   _vec3 Get_PlayerRight(int id);
+   _vec3 Get_PlayerUp(int id);
+
+    _vec3 Get_NpcPos(int id);
+    _vec3 Get_NpcLook(int id);
+    _vec3 Get_NpcRight(int id);
+    _vec3 Get_NpcUp(int id);
+
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);

@@ -92,6 +92,24 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 	m_pTransformCom->Set_PositionY(0.f);
+
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
+	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
+	{
+		_vec3 tempP = server->Get_NpcPos(m_iLayerIdx);
+		_vec3 tempL = server->Get_NpcLook(m_iLayerIdx);
+		_vec3 tempR = server->Get_NpcRight(m_iLayerIdx);
+		_vec3 tempU = server->Get_NpcUp(m_iLayerIdx);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &tempP);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &tempL);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &tempR);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &tempU);
+	}
+
 	Change_Class();
 	//Obb_Collision();
 	Combat(fTimeDelta);
@@ -111,6 +129,8 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		return DEAD_OBJ;
+
+	Safe_Release(server);
 	return NO_EVENT;
 }
 

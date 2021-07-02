@@ -84,7 +84,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", recv_id);
 
-		_matrix Pos = pTransform->Get_Matrix();
+		_matrix Pos;;
 		Pos._11 = my_packet->r_x;
 		Pos._12 = my_packet->r_y;
 		Pos._13 = my_packet->r_z;
@@ -101,6 +101,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
+		m_objects[recv_id].pos = { Pos._41 ,Pos._42 ,Pos._43 };
+		m_objects[recv_id].look = { Pos._31 ,Pos._32 ,Pos._33 };
+		m_objects[recv_id].up = { Pos._21 ,Pos._22 ,Pos._23 };
+		m_objects[recv_id].right = { Pos._11 ,Pos._12 ,Pos._13 };
 		pTransform->Set_Matrix(Pos);
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
@@ -133,7 +137,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 
 		}
-		_matrix Pos = pTransform->Get_Matrix();
+		_matrix Pos;
 		strcpy_s(m_objects[recv_id].name, my_packet->name);
 		Pos._11 = my_packet->r_x;
 		Pos._12 = my_packet->r_y;
@@ -147,6 +151,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._41 = my_packet->p_x;
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
+		m_objects[recv_id].pos = { Pos._41 ,Pos._42 ,Pos._43 };
+		m_objects[recv_id].look = { Pos._31 ,Pos._32 ,Pos._33 };
+		m_objects[recv_id].up = { Pos._21 ,Pos._22 ,Pos._23 };
+		m_objects[recv_id].right = { Pos._11 ,Pos._12 ,Pos._13 };
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].hp = my_packet->hp;
 		pTransform->Set_Matrix(Pos);
@@ -155,67 +163,19 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	break;
 	case SC_PACKET_MOVE:
 	{
-		managment = CManagement::GetInstance();
-		if (nullptr == managment)
-			return;
-		managment->AddRef();
-
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
-		CTransform* pTransform;
-		if (is_player(recv_id)) // 플레이어
-		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
-		}
-		else if (is_npc(recv_id))
-		{
-			short npc_id = npc_id_to_idx(recv_id);
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_NPC", L"Com_Transform", npc_id);
-		}
-		_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		vPos.x = my_packet->x;
-		vPos.y = my_packet->y;
-		vPos.z = my_packet->z;
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		Safe_Release(managment);
+		m_objects[recv_id].pos = { my_packet->x ,my_packet->y ,my_packet->z };
 	}
 	break;
 	case SC_PACKET_ROTATE:
 	{
-		managment = CManagement::GetInstance();
-		if (nullptr == managment)
-			return;
-		managment->AddRef();
-
 		sc_packet_rotate* my_packet = reinterpret_cast<sc_packet_rotate*>(ptr);
 		int recv_id = my_packet->id;
-		CTransform* pTransform;
 
-		if (is_player(recv_id)) // 플레이어
-		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
-		}
-		else if (is_npc(recv_id))
-		{
-			short npc_id = npc_id_to_idx(recv_id);
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_NPC", L"Com_Transform", npc_id);
-		}
-		_vec3 rPos = *pTransform->Get_StateInfo(CTransform::STATE_RIGHT);
-		_vec3 uPos = *pTransform->Get_StateInfo(CTransform::STATE_UP);
-		_vec3 lPos = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
-
-		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-
-		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
-		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
-		Safe_Release(managment);
+		m_objects[recv_id].right = { my_packet->r_x ,my_packet->r_y ,my_packet->r_z };
+		m_objects[recv_id].up = { my_packet->u_x ,my_packet->u_y ,my_packet->u_z };
+		m_objects[recv_id].look = { my_packet->l_x ,my_packet->l_y ,my_packet->l_z };
 	}
 	break;
 	case SC_PACKET_LEAVE:
@@ -981,6 +941,50 @@ short CServer_Manager::Get_PlayerID()
 short CServer_Manager::Get_PlayerHP(int id)
 {
 	return m_objects[id].hp;
+}
+
+_vec3 CServer_Manager::Get_PlayerPos(int id)
+{
+	return m_objects[id].pos;
+}
+
+_vec3 CServer_Manager::Get_PlayerLook(int id)
+{
+	return m_objects[id].look;
+}
+
+_vec3 CServer_Manager::Get_PlayerRight(int id)
+{
+	return m_objects[id].right;
+}
+
+_vec3 CServer_Manager::Get_PlayerUp(int id)
+{
+	return m_objects[id].up;
+}
+
+_vec3 CServer_Manager::Get_NpcPos(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].pos;
+}
+
+_vec3 CServer_Manager::Get_NpcLook(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].look;
+}
+
+_vec3 CServer_Manager::Get_NpcRight(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].right;
+}
+
+_vec3 CServer_Manager::Get_NpcUp(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].up;
 }
 
 short CServer_Manager::Get_NpcHP(int id)
