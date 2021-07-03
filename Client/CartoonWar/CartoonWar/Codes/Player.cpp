@@ -35,9 +35,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-
-	//tagInfo(float hp, float mp, float att, float def)
-
 	m_tInfo = INFO(10, 1,1,0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
@@ -93,6 +90,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	m_pTransformCom->Set_PositionY(0.f);
 
+
+
 	Change_Class();
 	Input_Key(fTimeDelta);
 	Obb_Collision();
@@ -123,12 +122,16 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
+
+
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 		return -1;
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		return -1;
+	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+	//	return -1;
 
 	Set_Animation(fTimeDelta);
 
@@ -184,6 +187,9 @@ void CPlayer::Render_GameObject()
 
 	//m_pColiider[0]->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
+
+
+
 	Safe_Release(pManagement);
 }
 
@@ -270,6 +276,68 @@ void CPlayer::Render_PostEffect()
 	Safe_Release(pManagement);
 }
 
+void CPlayer::Render_Blur()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+		
+		tRep.m_arrMat[0]= m_matOldWorld;//OldWorld
+		tRep.m_arrMat[1] = m_matOldView;//OldView
+
+		m_pShaderCom_Blur->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		ComPtr<ID3D12DescriptorHeap>	pBlurTex = CManagement::GetInstance()->GetBlurTex()->GetSRV().Get();
+		CDevice::GetInstance()->SetTextureToShader(pBlurTex.Get(), TEXTURE_REGISTER::t0);
+
+
+		if (iSubsetNum >= 2)
+		{
+			if (i == 0)
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+			else
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+		else
+		{
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+
+	m_matOldWorld = m_pTransformCom->Get_Matrix();
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+
+	Safe_Release(pManagement);
+}
+
 HRESULT CPlayer::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -289,8 +357,12 @@ HRESULT CPlayer::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;	
-	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
+	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -334,6 +406,7 @@ void CPlayer::Free()
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pShaderCom_PostEffect);
+	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
@@ -362,52 +435,55 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	//enum class CLASS { CLASS_WORKER, CLASS_CAVALRY, CLASS_INFANTRY, CLASS_SPEARMAN, CLASS_MAGE, CLASS_MMAGE,
+	{
+		//enum class CLASS { CLASS_WORKER, CLASS_CAVALRY, CLASS_INFANTRY, CLASS_SPEARMAN, CLASS_MAGE, CLASS_MMAGE,
 	//CLASS_ARCHER, CLASS_PRIEST, CLASS_END };
-	m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_Worker", m_pMeshCom[(_uint)CLASS::CLASS_WORKER])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_Worker", m_pMeshCom[(_uint)CLASS::CLASS_WORKER])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Cavalry");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_LightCavalry", m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Cavalry");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_LightCavalry", m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY+1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY+1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_HeavyCavalry", m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY+1])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY + 1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Carvalry");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY + 1], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_HeavyCavalry", m_pMeshCom[(_uint)CLASS::CLASS_CAVALRY + 1])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Infantry");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_LightInfantry", m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Light_Infantry");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_LightInfantry", m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY+1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY+1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_HeavyInfantry", m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY+1])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY + 1] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Heavy_Infantry");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY + 1], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_HeavyInfantry", m_pMeshCom[(_uint)CLASS::CLASS_INFANTRY + 1])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_SpearMan");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_Spearman", m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_SpearMan");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_Spearman", m_pMeshCom[(_uint)CLASS::CLASS_SPEARMAN])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_MAGE] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mage");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_MAGE], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_Mage", m_pMeshCom[(_uint)CLASS::CLASS_MAGE])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_MAGE] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mage");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_MAGE], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_Mage", m_pMeshCom[(_uint)CLASS::CLASS_MAGE])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_MMAGE] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mounted_Mage");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_MMAGE], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_MountedMage", m_pMeshCom[(_uint)CLASS::CLASS_MMAGE])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_MMAGE] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Mounted_Mage");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_MMAGE], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_MountedMage", m_pMeshCom[(_uint)CLASS::CLASS_MMAGE])))
+			return E_FAIL;
 
-	m_pMeshCom[(_uint)CLASS::CLASS_ARCHER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Archer");
-	NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
-		return E_FAIL;
+		m_pMeshCom[(_uint)CLASS::CLASS_ARCHER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Archer");
+		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
+			return E_FAIL;
+	}
+	
 
 
 
@@ -429,6 +505,11 @@ HRESULT CPlayer::Ready_Component()
 	m_pShaderCom_PostEffect = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect");
 	NULL_CHECK_VAL(m_pShaderCom_PostEffect, E_FAIL);
 	if (FAILED(Add_Component(L"Com_PostEffectShader", m_pShaderCom_PostEffect)))
+		return E_FAIL;
+	//m_pShaderCom_Blur
+	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
+	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
+	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
 		return E_FAIL;
 
 	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");

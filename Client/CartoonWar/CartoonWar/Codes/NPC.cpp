@@ -121,11 +121,13 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-		return -1;
-
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+	}
 
 	Set_Animation(fTimeDelta);
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
@@ -289,6 +291,7 @@ void CNPC::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pColiider[0]);
@@ -450,7 +453,10 @@ HRESULT CNPC::Ready_Component()
 		if (FAILED(Add_Component(L"Com_Texture1", m_pTextureCom[1])))
 			return E_FAIL;
 	}
-
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
 
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");

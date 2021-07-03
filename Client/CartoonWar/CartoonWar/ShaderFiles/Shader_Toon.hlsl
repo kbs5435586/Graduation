@@ -67,29 +67,26 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
 	float4	vNormal = mul(vIn.vNormal, matViewInv);
-	float4	vShade;
 	
-		float4	vLightDir = -tLight[0].vLightDir;
-		float fDot = max(0, dot(vNormal, vLightDir));
-		fDot = (ceil(fDot * 5.f) / 5.f);
-		float4	vMtrlDif = float4(fDot, fDot, fDot,1.f);
-		float4	vMtrlAmb = float4(0.7f, 0.7f, 0.7f,1.f);
-		float3	fRimColor = float3(-2.f, -2.f, -2.f);
-		float4 vView = normalize(vCamPos - vPosition);
-		float	fRim = saturate(dot(vNormal, vView));
-		if (fRim > 0.3f)
-			fRim = 1.f;
-		else
-			fRim = -1.f;
-		float	fRimPower = 2.f;
-		float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
+	
+	float4	vLightDir = -tLight[0].vLightDir;
+	float fDot = max(0, dot(vNormal, vLightDir));
+	fDot = (ceil(fDot * 5.f) / 5.f);
+	float4	vMtrlDif = float4(fDot, fDot, fDot,1.f);
+	float4	vMtrlAmb = float4(0.7f, 0.7f, 0.7f,1.f);
+	float3	fRimColor = float3(-2.f, -2.f, -2.f);
+	float4 vView = normalize(vCamPos - vPosition);
+	float	fRim = saturate(dot(vNormal, vView));
+	if (fRim > 0.3f)
+		fRim = 1.f;
+	else
+		fRim = -1.f;
+	float	fRimPower = 2.f;
+	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
 
-		vShade = (vMtrlDif + vMtrlAmb + vMtrlEmiv);
+	float4	vShade = (vMtrlDif + vMtrlAmb + vMtrlEmiv);
 	
 
-
-
-	//vMtrlDif *= tLight[0].tColor.vDiffuse;
 	vOut.vDiffuseTex = saturate(vDiffuse * (vMtrlDif+ vMtrlAmb) + vMtrlEmiv);
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;

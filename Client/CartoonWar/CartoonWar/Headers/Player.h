@@ -24,6 +24,7 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_PostEffect();
+	virtual void							Render_Blur();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -55,10 +56,12 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_PostEffect = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = {nullptr};
+	
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
 	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;

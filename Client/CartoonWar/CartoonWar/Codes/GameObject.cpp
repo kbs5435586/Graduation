@@ -51,6 +51,10 @@ void CGameObject::Render_PostEffect()
 {
 }
 
+void CGameObject::Render_Blur()
+{
+}
+
 HRESULT CGameObject::CreateInputLayout()
 {
 	return S_OK;

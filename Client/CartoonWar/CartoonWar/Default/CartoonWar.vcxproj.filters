@@ -1178,6 +1178,9 @@
     <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_Blur.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
