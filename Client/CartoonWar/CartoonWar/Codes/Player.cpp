@@ -259,17 +259,9 @@ void CPlayer::Render_PostEffect()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		if (iSubsetNum >= 2)
-		{
-			if (i == 0)
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
-			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
-		else
-		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
+		ComPtr<ID3D12DescriptorHeap>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetSRV().Get();
+		CDevice::GetInstance()->SetTextureToShader(pPostEffectTex.Get(), TEXTURE_REGISTER::t0);
+
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
@@ -509,10 +501,10 @@ HRESULT CPlayer::Ready_Component()
 
 
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -1162,7 +1154,32 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[2];
 
-		m_pTransformCom->BackWard(fTimeDelta*2.f);
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+
+				m_pTransformCom->BackWard(fTimeDelta);
+
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+
+			}
+		}
+		else
+		{
+			m_pTransformCom->BackWard(fTimeDelta);
+			m_IsSlide = false;
+		}
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
@@ -1171,10 +1188,37 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = 1;
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
-		m_pTransformCom->BackWard(fTimeDelta);
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_vec3 vDirectionPerSec = (vLook * 5.f* fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+
+				m_pTransformCom->BackWard(fTimeDelta);
+
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+
+			}
+		}
+		else
+		{
+			m_pTransformCom->BackWard(fTimeDelta);
+			m_IsSlide = false;
+		}
+
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
+		m_IsSlide = true;
 		if (!m_IsCombat)
 			m_iCurAnimIdx = 0;
 		else
