@@ -17,6 +17,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_PostEffect();
 public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}

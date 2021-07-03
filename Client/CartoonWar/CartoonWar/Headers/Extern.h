@@ -13,3 +13,7 @@ extern float		g_MaxTime;
 	
 extern int			g_iRedNum;
 extern int			g_iBlueNum;
+
+
+extern _vec3 g_vEyePt;
+extern _vec3 g_vLookatPt;

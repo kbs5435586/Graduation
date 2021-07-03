@@ -62,6 +62,9 @@ _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 		return DEAD_OBJ;
 	}
 
+	if (m_IsDead)
+		return DEAD_OBJ;
+
 
 	return NO_EVENT;
 }

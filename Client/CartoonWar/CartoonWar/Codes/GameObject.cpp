@@ -47,6 +47,10 @@ void CGameObject::Render_GameObject_Shadow()
 {
 }
 
+void CGameObject::Render_PostEffect()
+{
+}
+
 HRESULT CGameObject::CreateInputLayout()
 {
 	return S_OK;

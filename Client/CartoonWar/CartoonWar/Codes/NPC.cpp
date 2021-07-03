@@ -34,7 +34,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {75.f,0.f,75.f };
+	_vec3 vPos = {25.f,0.f,0.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -985,10 +985,10 @@ void CNPC::Obb_Collision()
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			m_vMidPoint = Vector3_::Add(m_vStartPoint, m_vEndPoint);
-			m_vMidPoint /= 2.f;
+			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 			//m_vMidPoint.y += 2.f;
-			_vec3 vParticlePos = Vector3_::Subtract(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), vTemp);
+
+			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
 			Create_Particle(vParticlePos);
 			m_IsBazier = true;		
 		}
@@ -1265,3 +1265,4 @@ void CNPC::Combat(const _float& fTimeDelta)
 		m_IsCombat = false;
 	}
 }
+

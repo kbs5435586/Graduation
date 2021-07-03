@@ -6,7 +6,7 @@ class CRenderer :
 	public CComponent
 {
 public:
-	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA,RENDER_UI, RENDER_UI_BACK, RENDER_BLEND, RENDER_SHADOW, RENDER_END };
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA,RENDER_UI, RENDER_UI_BACK, RENDER_BLEND, RENDER_SHADOW, RENDER_POST, RENDER_END };
 private:
 	explicit						CRenderer();
 	virtual							~CRenderer() = default;
@@ -15,12 +15,15 @@ public:
 	HRESULT							Add_RenderGroup(RENDERGROUP eGroup, CGameObject* pGameObject);
 	HRESULT							Render_RenderGroup();
 private:
+	void							CopySwapToPosteffect();
+private:
 	void							Render_Priority();
 	void							Render_NoneAlpha();
 	void							Render_Alpha();
 	void							Render_UI();
 	void							Render_UI_Back();
 	void							Render_Blend();
+	void							Render_Post_Effect();
 private:
 	void							Render_Deffered(CManagement* pManagement);
 	void							Render_Shadow(CManagement* pManagement);

@@ -406,6 +406,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\06. Throw\01. Throw_Stone">
       <UniqueIdentifier>{39355462-9e93-4bf6-8768-9b0c94e5dd6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96. ShaderFiles\08. Effect">
+      <UniqueIdentifier>{7a2448c8-5a2b-4a1b-a5e7-56bc203b5a69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -1171,6 +1174,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

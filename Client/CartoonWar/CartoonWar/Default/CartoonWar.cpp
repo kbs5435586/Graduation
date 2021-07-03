@@ -18,6 +18,7 @@ HWND				g_hWnd;
 
 FbxManager*         g_FbxManager = nullptr;
 
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -26,6 +27,9 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 _float      g_MaxTime = 300.f;
 int			g_iRedNum=0;
 int			g_iBlueNum=0;
+
+_vec3 g_vEyePt = _vec3(30.f, 100.0f, -20.0f);
+_vec3 g_vLookatPt = _vec3(0.0f, 0.f, 0.f);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,

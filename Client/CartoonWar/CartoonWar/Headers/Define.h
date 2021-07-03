@@ -11,6 +11,9 @@
 const float	g_Near = 0.1f;
 const float g_Far = 1000.f;
 
+
+
+
 #define NO_COPY(CLASSNAME)									\
 	private:												\
 	CLASSNAME(const CLASSNAME&);							\
