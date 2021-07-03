@@ -36,6 +36,6 @@ public:
 private:
 	_matrix					m_matWorld={}; // 객체의 상태.
 	_float					m_fSpeed_Move = 1.f;
-	_float					m_fSpeed_Rotation = 1.f;
+	_float					m_fSpeed_Rotation = 0.5f;
 };
 

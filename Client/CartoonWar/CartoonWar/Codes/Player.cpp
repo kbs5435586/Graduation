@@ -289,17 +289,9 @@ void CPlayer::Render_PostEffect()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		if (iSubsetNum >= 2)
-		{
-			if (i == 0)
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
-			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
-		else
-		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
+		ComPtr<ID3D12DescriptorHeap>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetSRV().Get();
+		CDevice::GetInstance()->SetTextureToShader(pPostEffectTex.Get(), TEXTURE_REGISTER::t0);
+
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
@@ -539,10 +531,10 @@ HRESULT CPlayer::Ready_Component()
 
 
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

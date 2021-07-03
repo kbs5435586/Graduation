@@ -37,7 +37,6 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-	//pManagement->Update();
 
 
 	
@@ -57,7 +56,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	
 	Render_Priority();
 	Render_Alpha();
-	Render_Post_Effect();
+	//Render_Post_Effect();
 
 	Render_UI();
 	Render_UI_Back();

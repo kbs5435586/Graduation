@@ -70,6 +70,7 @@ private:
 private:
 	_bool									m_IsOnce = false;
 	_bool									m_IsCombat = false;
+	_bool									m_IsSlide = false;
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx =0;
 	_uint									m_iAttackMotion[2] = {};
