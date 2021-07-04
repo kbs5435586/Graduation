@@ -24,6 +24,8 @@ HRESULT CDebug_Camera::Ready_Prototype()
 
 HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 {
+	if (FAILED(Ready_Component()))
+		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
@@ -34,7 +36,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
 
-
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return NOERROR;
 }
@@ -101,19 +103,23 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 
 
+		m_Active = m_pObserverCom->GetBoolInfo();
 
-
-		_long	MouseMove = 0;
-		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+		if (!m_Active)
 		{
-			m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		}
+			_long	MouseMove = 0;
+			if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+			{
+				m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+			}
 
 
-		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-		{
-			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+			if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+			{
+				m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+			}
 		}
+		
 	}
 
 	{
@@ -200,6 +206,21 @@ void CDebug_Camera::Render_GameObject()
 {
 }
 
+HRESULT CDebug_Camera::Ready_Component()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	NULL_CHECK_VAL(pManagement, E_FAIL);
+	pManagement->AddRef();
+
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+	return S_OK;
+}
+
 CDebug_Camera* CDebug_Camera::Create()
 {
 	CDebug_Camera* pInstance = new CDebug_Camera();
@@ -227,6 +248,7 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg , _uint iIdx)
 
 void CDebug_Camera::Free()
 {
+	Safe_Release(m_pObserverCom);
 	Safe_Release(m_pNaviCom);
 	CCamera::Free();
 }

@@ -37,8 +37,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	
 	++npcnum;
 	whoami = npcnum;
-
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	
+	
 
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
@@ -69,7 +69,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
 
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)
@@ -85,13 +85,16 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	
 	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-	m_pObserverCom->Update_Observer(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
-	//CManagement::GetInstance()->Subscribe(m_pObserverComSub);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	//m_pObserverCom->Update_Observer(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	
 	return S_OK;
 }
 
 _int CNPC::Update_GameObject(const _float& fTimeDelta)
 {
+	m_pCurAnimCom;
+
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
@@ -105,23 +108,16 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_PositionY(0.f);
 
 
-	//_int which = m_pObserverCom->GetWhichInfo();
-	//int* a = m_pObserverCom->GetIntArrInfo(0);
-
-	//if (which == (npcnum+1))
-	//{
-	//	for (int i = 0; i < which; ++i)
-	//		++a;
-	//
-	//	m_iCurMeshNum = *a;
-	//	m_eCurClass = (CLASS)m_iCurMeshNum;
-	//}
-
 	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(whoami);
-	//m_iCurMeshNum = 0;
+	
 	m_eCurClass = (CLASS)m_iCurMeshNum;
-
 	Change_Class();
+
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		m_iCurAnimIdx = 0;
+		m_IsOnce = false;
+	}
 	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -158,11 +154,11 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 
 	Set_Animation(fTimeDelta);
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-	}
+	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//{
+	//	m_iCurAnimIdx = 0;
+	//	m_IsOnce = false;
+	//}
 
 	return _int();
 }
@@ -327,7 +323,6 @@ void CNPC::Free()
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
 	Safe_Release(m_pObserverCom);
-	Safe_Release(m_pObserverComSub);
 
 	Safe_Release(m_pUI_OnHead);
 	Safe_Release(m_pUI_OnHeadBack);
@@ -485,10 +480,6 @@ HRESULT CNPC::Ready_Component()
 	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
 	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
-	m_pObserverComSub = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverComSub, E_FAIL);
-	if (FAILED(Add_Component(L"Com_ObserverSub", m_pObserverComSub)))
 		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
@@ -838,6 +829,68 @@ void CNPC::Change_Class()
 				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
 				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
+			}
+			break;
+			case CLASS(2):
+			{
+				//idle 		
+				//walk 		
+				//run 		
+				//charge 	
+				//combat idle 
+				//combat walk
+				//combat hit a
+				//combat hit b 
+				//take damage 
+				//death a 	
+				//death b 	
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
+				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+				m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
+				m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
+				m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
+				m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
+				m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
+				m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 4;
+				m_iCombatMotion[1] = 5;
+				m_iCombatMotion[2] = 3;
+			}
+			break;
+			case CLASS(4):
+			{
+				//	idle		
+				//	walk		
+				//	run			
+				//	charge		
+				//	combat idle	
+				//	combat walk	
+				//	attack a	
+				//	attack b	
+				//	take damage	
+				//	death a		
+				//	death b		
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
+				m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
+				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 				m_iCombatMotion[0] = 4;
 				m_iCombatMotion[1] = 5;
 				m_iCombatMotion[2] = 3;

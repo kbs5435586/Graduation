@@ -66,6 +66,21 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &m_cansee);
 	}
+	
+	if (pManagement->Key_Up(KEY_E))
+	{
+		--which;
+		if (which < 0)
+			which = 5;
+		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
+	}
+	if (pManagement->Key_Up(KEY_Q))
+	{
+		++which;
+		if (which > 5)
+			which = 0;
+		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
+	}
 
 	//¹öÆ°
 	m_button->Update_GameObject(fTimeDelta, m_IsTap, 0);

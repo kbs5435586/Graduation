@@ -84,7 +84,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
-	
+	m_pCurAnimCom;
 	//list<void*>* lst = m_pObserverCom->GetNPC(0);
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
@@ -96,46 +96,23 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
 	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
-
 	m_pTransformCom->Set_PositionY(0.f);
 
-	//m_iCurMeshNum = m_pObserverCom->GetIntInfo();
-	//m_eCurClass = (CLASS)m_iCurMeshNum;
-	//_int which = m_pObserverCom->GetWhichInfo();
-	//int* a = m_pObserverCom->GetIntArrInfo(0);
-
-	//if (which == 0)
-	//{
-	//	for (int i = 0; i < which; ++i)
-	//		++a;
-	//
-	//	m_iCurMeshNum = *a;
-	//	m_eCurClass = (CLASS)m_iCurMeshNum;
-	//}
 	
-	//++*(int*)m_pObserverCom->GetNPC(0);
 	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(0);
 	
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
-	m_IsActive = m_pObserverCom->GetBoolInfo();
 
+	m_IsActive = m_pObserverCom->GetBoolInfo();
 	if (!m_IsActive)
 		Input_Key(fTimeDelta);
 	else
 	{
 		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 		{
-			if (m_IsCombat)
-			{
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			}
-			else
-			{
-				m_iCurAnimIdx = 0;
-			}
+			m_iCurAnimIdx = 0;
 			m_IsOnce = false;
-			m_IsHit = false;
 		}
 	}
 
@@ -158,8 +135,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsDead)
 		return DEAD_OBJ;
-	
-	
 	
 	return NO_EVENT;
 }
@@ -1200,10 +1175,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 
 
-
-
-
-
 	if (CManagement::GetInstance()->Key_Down(KEY_1))
 	{
 		m_iCurMeshNum++;
@@ -1214,13 +1185,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	}
 
-
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
 		m_tInfo.fHP -= 1.f;
 	}
-
-
 
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{

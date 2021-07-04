@@ -58,7 +58,6 @@ private:
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = { nullptr };
 	CObserver*								m_pObserverCom = nullptr;
-	CObserver*								m_pObserverComSub = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
 	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;
@@ -88,7 +87,7 @@ private:
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	PLAYER									m_tPlayer = {};
 private:
-	_uint									m_iCurMeshNum = 5;
+	_uint									m_iCurMeshNum{};
 
 	static _float poss;
 	static _int npcnum;

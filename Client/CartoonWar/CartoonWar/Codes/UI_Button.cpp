@@ -54,7 +54,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 	}
 	
 
-	m_pObserverCom;
 
 	if (IsDown)
 	{
@@ -67,25 +66,9 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			_int whichnum = m_pObserverCom->GetWhichInfo();
 			auto temp = (int*)m_pObserverCom->GetNPC(whichnum);
 			++*temp;
-			//void* aaa = 0;
-			//int bbb = 0;
-			//list<void*>* numLst = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_WHICH);
-			//_int num = *(_int*)numLst->front();
-			//
-			//auto iter = lstTemp->begin();
-			////list<void*>::iterator it;
-			//int temp = {};
-			//for (; iter != lstTemp->end(); ++iter)
-			//{
-			//	if (temp == num)
-			//	{
-			//	
-			//		aaa = *iter;
-			//		++*(int*)aaa;
-			//		break;
-			//	}
-			//	++temp;
-			//}
+			if (*temp >= (_uint)CLASS::CLASS_END - 1)
+				*temp = 0;
+			
 			m_pObserverCom->ReUpdate_Observer(DATA_TYPE::DATA_NPC);
 
 			IsDown = false;
