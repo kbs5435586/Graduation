@@ -12,7 +12,7 @@ CRenderer::CRenderer()
 HRESULT CRenderer::Ready_Renderer()
 {
 
-	
+
 	return S_OK;
 }
 
@@ -39,24 +39,25 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	pManagement->AddRef();
 
 
-	
+
 
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
- 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
- 	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 	Render_Blend();
-	
-	
+
+
 	Render_Priority();
 	Render_Alpha();
-	//Render_Post_Effect();
+	Render_Blur();
+	Render_Post_Effect();
 
 	Render_UI();
 	Render_UI_Back();
@@ -72,7 +73,7 @@ void CRenderer::CopySwapToPosteffect()
 	static ComPtr<ID3D12Resource>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetTex2D().Get();
 	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
 
-	CD3DX12_RESOURCE_BARRIER temp =CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
 	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
@@ -82,6 +83,24 @@ void CRenderer::CopySwapToPosteffect()
 	temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
 		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+}
+
+void CRenderer::CopySwapToBlur()
+{
+	static ComPtr<ID3D12Resource>	pBlurTex = CManagement::GetInstance()->GetBlurTex()->GetTex2D().Get();
+	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
+
+	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+
+	CDevice::GetInstance()->GetCmdLst()->CopyResource(pBlurTex.Get(), CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get());
+
+	temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+
 }
 
 void CRenderer::Render_Priority()
@@ -165,16 +184,30 @@ void CRenderer::Render_Blend()
 
 void CRenderer::Render_Post_Effect()
 {
+	CopySwapToPosteffect();
 	for (auto& pGameObject : m_RenderList[RENDER_POST])
 	{
 		if (nullptr != pGameObject)
 		{
-			CopySwapToPosteffect();
 			pGameObject->Render_PostEffect();
 			Safe_Release(pGameObject);
 		}
 	}
 	m_RenderList[RENDER_POST].clear();
+}
+
+void CRenderer::Render_Blur()
+{
+	CopySwapToBlur();
+	for (auto& pGameObject : m_RenderList[RENDER_BLUR])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_Blur();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_BLUR].clear();
 }
 
 void CRenderer::Render_Shadow(CManagement* pManagement)
@@ -213,7 +246,7 @@ void CRenderer::Render_Light(CManagement* pManagement)
 }
 
 
-CRenderer* CRenderer::Create( )
+CRenderer* CRenderer::Create()
 {
 	CRenderer* pInstance = new CRenderer();
 

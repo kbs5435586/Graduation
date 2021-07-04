@@ -16,6 +16,7 @@ public:
     void                                    Set_RenderTarget(const _tchar* pRTT_Tag, ID3D12DescriptorHeap* pDsv);
     CMRT*                                   Get_RTT(const _uint& iIdx) { return m_vecMRT[iIdx]; }
     CRTT*                                   GetPostEffectTex(){return m_pPostEffectTex;}
+    CRTT*                                   GetBlurTex(){return m_pBlurTex;}
 public:
     static CRTTMananger*                    Create();
     virtual void                            Free();
@@ -24,5 +25,6 @@ private:
     _uint                                   m_iSize = 0;
     CRTT*                                   m_pDsTex = nullptr;
     CRTT*                                   m_pPostEffectTex = nullptr;
+    CRTT*                                   m_pBlurTex = nullptr;
 };
 

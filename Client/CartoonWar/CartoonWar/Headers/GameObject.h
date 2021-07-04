@@ -18,6 +18,7 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_PostEffect();
+	virtual void							Render_Blur();
 public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
@@ -50,7 +51,11 @@ protected:
 	_bool									m_IsDead = false;
 	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;
+	_bool									m_IsOldMatrix = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
+protected:
+	_matrix									m_matOldWorld;
+	_matrix									m_matOldView;
 protected:
 	_bool									m_IsHit = false;
 	_matrix									m_matAttackedTarget = {};

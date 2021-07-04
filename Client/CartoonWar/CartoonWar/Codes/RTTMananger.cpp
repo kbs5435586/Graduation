@@ -110,7 +110,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		m_vecMRT.push_back(pMRT);
 	}
 
-	// Light MRT
+	// PostEffectTex
 	{
 
 		m_pPostEffectTex = CRTT::Create(L"PostEffectTargetTex"
@@ -120,6 +120,17 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (nullptr == m_pPostEffectTex)
 			return E_FAIL;
 	}
+
+	// Blur Tex
+	{
+		m_pBlurTex = CRTT::Create(L"BlurTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_NONE, arrRT[0].vClear_Color);
+
+		if (nullptr == m_pBlurTex)
+			return E_FAIL;
+	}
+
 
 
 
