@@ -36,8 +36,6 @@ VS_OUT	VS_Main(VS_IN vIn)
 	vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matWV).xyz);
 	vOut.vTexUV = vIn.vTexUV;
 
-	g_mat_0;//OldWorld
-	g_mat_1;//OldView
 	float4 vNewPos = vOut.vPosition;
 	float4 vOldPos = mul(float4(vIn.vPosition, 1.f), g_mat_0);
 	vOldPos = mul(vOldPos, g_mat_1);
@@ -62,8 +60,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 }
 float4	PS_Main(VS_OUT vIn) :SV_TARGET
 {
-	float4 vOut = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	//float4 vOut;
+	float4 vOut;
 	
 	vOut.xy = vIn.vDir.xy;
 	vOut.z = 1.f;

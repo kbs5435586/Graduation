@@ -19,6 +19,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_Blur();
 private:
 	HRESULT									Ready_Component(const _tchar* pComTag);
 	virtual HRESULT							CreateInputLayout();

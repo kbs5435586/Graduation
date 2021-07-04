@@ -46,9 +46,13 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Clear();
+
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
+	Render_Blur();
+
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 	Render_Blend();
@@ -56,8 +60,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 	Render_Priority();
 	Render_Alpha();
-	Render_Blur();
-	Render_Post_Effect();
+	//Render_Post_Effect();
 
 	Render_UI();
 	Render_UI_Back();
@@ -87,7 +90,7 @@ void CRenderer::CopySwapToPosteffect()
 
 void CRenderer::CopySwapToBlur()
 {
-	static ComPtr<ID3D12Resource>	pBlurTex = CManagement::GetInstance()->GetBlurTex()->GetTex2D().Get();
+	static ComPtr<ID3D12Resource>	pBlurTex = CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->Get_RTT(0)->pRtt->GetTex2D().Get();
 	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
 
 	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
@@ -198,6 +201,8 @@ void CRenderer::Render_Post_Effect()
 
 void CRenderer::Render_Blur()
 {
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->OM_Set();
+
 	CopySwapToBlur();
 	for (auto& pGameObject : m_RenderList[RENDER_BLUR])
 	{
@@ -208,6 +213,9 @@ void CRenderer::Render_Blur()
 		}
 	}
 	m_RenderList[RENDER_BLUR].clear();
+
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->TargetToResBarrier();
+
 }
 
 void CRenderer::Render_Shadow(CManagement* pManagement)
