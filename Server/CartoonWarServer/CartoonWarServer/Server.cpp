@@ -721,67 +721,86 @@ void Server::do_follow(int npc_id)
     {
         if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
         {
-            _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);
-            _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 new_pos = *pos + Dir;
-            if (*pos != new_pos)
+            _vec3 n_pos = *g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos)
             {
-                g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
- 
-                for (int i = 0; i < OBJECT_START; ++i)
-                {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (!is_near(i, npc_id))
-                        continue;
-                    if (FUNC_DEAD == g_clients[i].m_last_order)
-                        continue;
-                    if (check_basic_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
-                        do_move(i, GO_COLLIDE);
-                    //if (check_obb_collision(user_id, c.second.m_id))
-//{
+                // _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos); 이 방법은 최종 위치까지 그냥 순간이동
+                // g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos 이게 최종 위치값
+                _vec3 standard = { 0.f,0.f,1.f };
+                _vec3 p_pos = *g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
-//}
-                }
+                _vec3* playerLookAt = g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+                float PdotProduct = (playerLookAt->x * standard.x) + (playerLookAt->y * standard.y) + (playerLookAt->z * standard.z);
+                float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
+                float radius = sqrt((n_pos.x - p_pos.x) * (n_pos.x - p_pos.x) + (n_pos.y - p_pos.y) * (n_pos.y - p_pos.y)
+                    + (n_pos.z - p_pos.z) * (n_pos.z - p_pos.z)); // 플레이어와 npc 사이 거리 = 반지름
 
-                for (int i = 0; i < NPC_START; ++i)
+                _vec3* npcLookAt = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+                float NdotProduct = (npcLookAt->x * standard.x) + (npcLookAt->y * standard.y) + (npcLookAt->z * standard.z);
+
+
+                float lookSize = sqrt((playerLookAt->x * playerLookAt->x) + (playerLookAt->z * playerLookAt->z));
+                float stanSize = sqrt((standard.x * standard.x) + (standard.z * standard.z));
+                _vec3 new_pos = *pos + Dir;
+                if (*pos != new_pos)
                 {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (true == is_near(i, npc_id))
+                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+
+                    for (int i = 0; i < OBJECT_START; ++i)
                     {
-                        g_clients[i].m_cLock.lock();
-                        if (0 != g_clients[i].m_view_list.count(npc_id))
+                        if (ST_ACTIVE != g_clients[i].m_status)
+                            continue;
+                        if (!is_near(i, npc_id))
+                            continue;
+                        if (FUNC_DEAD == g_clients[i].m_last_order)
+                            continue;
+                        if (check_basic_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
+                            do_move(i, GO_COLLIDE);
+                        //if (check_obb_collision(user_id, c.second.m_id))
+    //{
+
+    //}
+                    }
+
+                    for (int i = 0; i < NPC_START; ++i)
+                    {
+                        if (ST_ACTIVE != g_clients[i].m_status)
+                            continue;
+                        if (true == is_near(i, npc_id))
                         {
-                            g_clients[i].m_cLock.unlock();
-                            send_move_packet(i, npc_id);
+                            g_clients[i].m_cLock.lock();
+                            if (0 != g_clients[i].m_view_list.count(npc_id))
+                            {
+                                g_clients[i].m_cLock.unlock();
+                                send_move_packet(i, npc_id);
+                            }
+                            else
+                            {
+                                g_clients[i].m_cLock.unlock();
+                                send_enter_packet(i, npc_id);
+                            }
                         }
                         else
                         {
-                            g_clients[i].m_cLock.unlock();
-                            send_enter_packet(i, npc_id);
+                            g_clients[i].m_cLock.lock();
+                            if (0 != g_clients[i].m_view_list.count(npc_id))
+                            {
+                                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                                send_leave_packet(i, npc_id);
+                            }
+                            else
+                                g_clients[i].m_cLock.unlock();
                         }
                     }
-                    else
-                    {
-                        g_clients[i].m_cLock.lock();
-                        if (0 != g_clients[i].m_view_list.count(npc_id))
-                        {
-                            g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                            send_leave_packet(i, npc_id);
-                        }
-                        else
-                            g_clients[i].m_cLock.unlock();
-                    }
+                    if (g_clients[npc_id].m_anim != A_WALK)
+                        do_animation(npc_id, A_WALK);
+                    break;
                 }
-                if (g_clients[npc_id].m_anim != A_WALK)
-                    do_animation(npc_id, A_WALK);
-                break;
-            }
-            else //if (*pos == new_pos && !isOnce)
-            {
-                if (g_clients[npc_id].m_anim != A_IDLE)
-                    do_animation(npc_id, A_IDLE);
+                else //if (*pos == new_pos && !isOnce)
+                {
+                    if (g_clients[npc_id].m_anim != A_IDLE)
+                        do_animation(npc_id, A_IDLE);
+                }
             }
         }
     }
