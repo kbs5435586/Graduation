@@ -43,7 +43,6 @@ private:
 	CShader* m_pInvenShaderCom = nullptr;
 	CShader* m_pCompute_ShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
-	CObserver* m_pObserverCom = nullptr;
 
 private:
 	REP										m_tRep = {};
@@ -58,46 +57,48 @@ private:
 	CUI_Button*								m_button = nullptr;
 	CUI_CharInterface*						m_charInter = nullptr;
 
+	CObserver* m_pObserverCom = {};
+
 	POINT MousePos = {};
-	_bool IsSwitch = {};
+	//_bool IsSwitch = {};
 	_int m_meshnum[5] = {};
 	_int which = {};
 	_int* pwhich = {};
 };
 
-class CUI_CharTap :public CUI
-{
-public:
-	CUI_CharTap();
-	CUI_CharTap(const CUI_ClassTap& rhs);
-	virtual ~CUI_CharTap() = default;
-public:
-	//virtual HRESULT							Ready_Prototype();
-	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float& fTimeDelta, _bool b[], int idx);
-	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
-	virtual void							Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture);
-
-	void setSize(_float x, _float y);
-	void setPos(_float x, _float y);
-	void setMeshnum(_int num);
-	void setTapnum(_int num);
-	void setTemp(_int* num);
-	void setObserver(CObserver* obs);
-	_float getSizeX();
-	_float getSizeY();
-	_float getX();
-	_float getY();
-	bool getActive();
-	
-private:
-	CObserver* m_pObserverCom = nullptr;
-private:
-	POINT MousePos;
-	_bool isActive;
-	_int  WhichChar;
-	_int meshnum;
-	_int tapnum;
-	_int* temp;
-	_int* a = nullptr;
-};
+//class CUI_CharTap :public CUI
+//{
+//public:
+//	CUI_CharTap();
+//	CUI_CharTap(const CUI_ClassTap& rhs);
+//	virtual ~CUI_CharTap() = default;
+//public:
+//	//virtual HRESULT							Ready_Prototype();
+//	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
+//	virtual _int							Update_GameObject(const _float& fTimeDelta, _bool b[], int idx);
+//	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
+//	virtual void							Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture);
+//
+//	void setSize(_float x, _float y);
+//	void setPos(_float x, _float y);
+//	void setMeshnum(_int num);
+//	void setTapnum(_int num);
+//	void setTemp(_int* num);
+//	void setObserver(CObserver* obs);
+//	_float getSizeX();
+//	_float getSizeY();
+//	_float getX();
+//	_float getY();
+//	bool getActive();
+//	
+//private:
+//	CObserver* m_pObserverCom = nullptr;
+//private:
+//	POINT MousePos;
+//	_bool isActive;
+//	_int  WhichChar;
+//	_int meshnum;
+//	_int tapnum;
+//	_int* temp;
+//	_int* a = nullptr;
+//};

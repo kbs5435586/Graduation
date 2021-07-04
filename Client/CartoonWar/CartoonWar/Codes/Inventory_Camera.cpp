@@ -114,7 +114,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//	canSee = !canSee;
 	//}
 
-
+	
 	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
 	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(15.f, 0.f, 15.f);
 	_vec3		vLook;

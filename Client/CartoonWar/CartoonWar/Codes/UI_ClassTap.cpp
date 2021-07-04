@@ -26,53 +26,28 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-	m_meshnum[0] = 0;
-	m_meshnum[1] = 8;
-	m_meshnum[2] = 6;
-	m_meshnum[3] = 4;
-	m_meshnum[4] = 2;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT_ARRAY, m_meshnum);
-	which = 0;
-	pwhich = &which;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT_WHICH, pwhich);
-	m_fX = WINCX/2;
-	m_fY = WINCY/2;
+	m_fX = WINCX / 2;
+	m_fY = WINCY / 2;
 
 	m_fSizeX = 450.f;
 	m_fSizeY = 650.f;
 
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	CManagement::GetInstance()->ReNotify(DATA_TYPE::DATA_NPC);
+	////////////////////
+	//버튼
 	m_button = new CUI_Button;
 	m_button->Ready_GameObject();
-	
-	a = new CUI_CharTap[5];
-
-	for (int i = 0; i < 5; ++i)
-	{
-		a[i].setObserver(m_pObserverCom);
-		a[i].Ready_GameObject();
-		
-		//set pos
-		if (i == 0)
-			a[i].setPos(m_fX - (m_fSizeX / 2) + a[i].getSizeX(), m_fY - (m_fSizeY / 2) - (a[i].getSizeY() / 2));
-		else
-			a[i].setPos(a[i - 1].getX() + a[i].getSizeX() + 10, m_fY - (m_fSizeY / 2) - (a[i].getSizeY() / 2));
-
-		a[i].setTapnum(i);
-		a[i].setTemp(pwhich);
-	}
-
-	m_charInter = new CUI_CharInterface; 
+	m_button->setObs(m_pObserverCom);
+	//다른 화면
+	m_charInter = new CUI_CharInterface;
 	m_charInter->Ready_GameObject();
-
 	
-	IsSwitch = false;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &IsSwitch);
+	//다른 UI들에게 켜짐을 알리는
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &m_cansee);
 
-	m_IsTap[0] = true;
-	
-
+	which = 0;
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_WHICH, &which);
 
 	return S_OK;
 }
@@ -84,20 +59,15 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-
+	
 	if (GetAsyncKeyState('I'))
 	{
 		m_cansee = !m_cansee;
 
-		IsSwitch = !IsSwitch;
-		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &IsSwitch);
+		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &m_cansee);
 	}
 
-	for (int i = 0; i < 5; ++i)
-	{
-		a[i].Update_GameObject(fTimeDelta, m_IsTap, i);
-	}
-
+	//버튼
 	m_button->Update_GameObject(fTimeDelta, m_IsTap, 0);
 	
 	Safe_Release(pManagement);
@@ -148,15 +118,11 @@ void CUI_ClassTap::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pBufferCom->Render_VIBuffer();
 		///////////////////////////////////////////////////////////////
-		for(int i=0;i<5;++i)
-			a[i].Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
 		
 		m_button->Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
 		
 		Safe_Release(pManagement);
 	}
-	
-	
 }
 
 HRESULT CUI_ClassTap::CreateInputLayout()
@@ -199,7 +165,6 @@ void CUI_ClassTap::Free()
 {
 	//CManagement::GetInstance()->UnSubscribe(m_pObserverCom);
 
-	//Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
@@ -250,172 +215,173 @@ HRESULT CUI_ClassTap::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 		return E_FAIL;
 
+
 	Safe_Release(pManagement);
 	return S_OK;
 }
 
-CUI_CharTap::CUI_CharTap()
-{
-}
-
-CUI_CharTap::CUI_CharTap(const CUI_ClassTap& rhs)
-{
-}
-
-
-HRESULT CUI_CharTap::Ready_GameObject(void* pArg)
-{
-	if (FAILED(CreateInputLayout()))
-		return E_FAIL;
-
-	m_fSizeX = 50.f;
-	m_fSizeY = 50.f;
-	meshnum = 0;
-
-	a = m_pObserverCom->GetIntArrInfo(0);
-
-	return S_OK;
-}
-
-_int CUI_CharTap::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return -1;
-	pManagement->AddRef();
-
-	
-	
-	for(int i=0;i<tapnum;++i)
-		++a;
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_ARRAY, m_pObserverCom->GetIntArrInfo(0));
-		
-	if (b[idx] == true)
-		m_fSizeX = 60.f;
-	else
-		m_fSizeX = 50.f;
-	
-		
-	if (pManagement->Key_Pressing(KEY_LBUTTON))
-	{
-		GetCursorPos(&MousePos);
-		ScreenToClient(g_hWnd, &MousePos);
-
-		if (MousePos.x > m_fX - (m_fSizeX/2) && MousePos.x < m_fX + (m_fSizeX / 2))
-		{
-			if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
-			{
-				for (int i = 0; i < 5; ++i)
-				{
-					if (i == idx)	
-						b[i] = true;
-					else
-						b[i] = false;
-				}
-				*temp = tapnum;
-				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_WHICH, temp);
-				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &(*a));
-
-			}
-		}
-	}
-
-	Safe_Release(pManagement);
-	return _int();
-}
-
-_int CUI_CharTap::LastUpdate_GameObject(const _float& fTimeDelta)
-{
-	return _int();
-}
-
-void CUI_CharTap::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
-
-	MAINPASS	tMainPass = {};
-
-
-	_matrix matWorld = Matrix_::Identity();
-	_matrix matView = Matrix_::Identity();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-
-	matWorld._11 = m_fSizeX;
-	matWorld._22 = m_fSizeY;
-
-	matWorld._41 = m_fX - (WINCX >> 1);
-	matWorld._42 = -m_fY + (WINCY >> 1);
-
-
-	shader->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->UpdateTable();
-	buffer->Render_VIBuffer();
-
-	Safe_Release(pManagement);
-}
-
-void CUI_CharTap::setSize(_float x, _float y)
-{
-	m_fSizeX = x;
-	m_fSizeY = y;
-}
-
-void CUI_CharTap::setPos(_float x, _float y)
-{
-	m_fX = x;
-	m_fY = y;
-}
-
-void CUI_CharTap::setMeshnum(_int num)
-{
-	meshnum = num;
-}
-
-void CUI_CharTap::setTapnum(_int num)
-{
-	tapnum = num;
-}
-
-void CUI_CharTap::setTemp(_int* num)
-{
-	temp = num;
-}
-
-void CUI_CharTap::setObserver(CObserver* obs)
-{
-	m_pObserverCom = obs;
-}
-
-_float CUI_CharTap::getSizeX()
-{
-	return m_fSizeX;
-}
-
-_float CUI_CharTap::getSizeY()
-{
-	return m_fSizeY;
-}
-
-_float CUI_CharTap::getX()
-{
-	return m_fX;
-}
-
-_float CUI_CharTap::getY()
-{
-	return m_fY;
-}
-
-bool CUI_CharTap::getActive()
-{
-	return isActive;
-}
+//CUI_CharTap::CUI_CharTap()
+//{
+//}
+//
+//CUI_CharTap::CUI_CharTap(const CUI_ClassTap& rhs)
+//{
+//}
+//
+//
+//HRESULT CUI_CharTap::Ready_GameObject(void* pArg)
+//{
+//	if (FAILED(CreateInputLayout()))
+//		return E_FAIL;
+//
+//	m_fSizeX = 50.f;
+//	m_fSizeY = 50.f;
+//	meshnum = 0;
+//
+//	a = m_pObserverCom->GetIntArrInfo(0);
+//
+//	return S_OK;
+//}
+//
+//_int CUI_CharTap::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
+//{
+//	CManagement* pManagement = CManagement::GetInstance();
+//	if (nullptr == pManagement)
+//		return -1;
+//	pManagement->AddRef();
+//
+//	
+//	
+//	for(int i=0;i<tapnum;++i)
+//		++a;
+//	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_ARRAY, m_pObserverCom->GetIntArrInfo(0));
+//		
+//	if (b[idx] == true)
+//		m_fSizeX = 60.f;
+//	else
+//		m_fSizeX = 50.f;
+//	
+//		
+//	if (pManagement->Key_Pressing(KEY_LBUTTON))
+//	{
+//		GetCursorPos(&MousePos);
+//		ScreenToClient(g_hWnd, &MousePos);
+//
+//		if (MousePos.x > m_fX - (m_fSizeX/2) && MousePos.x < m_fX + (m_fSizeX / 2))
+//		{
+//			if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
+//			{
+//				for (int i = 0; i < 5; ++i)
+//				{
+//					if (i == idx)	
+//						b[i] = true;
+//					else
+//						b[i] = false;
+//				}
+//				*temp = tapnum;
+//				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_WHICH, temp);
+//				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &(*a));
+//
+//			}
+//		}
+//	}
+//
+//	Safe_Release(pManagement);
+//	return _int();
+//}
+//
+//_int CUI_CharTap::LastUpdate_GameObject(const _float& fTimeDelta)
+//{
+//	return _int();
+//}
+//
+//void CUI_CharTap::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
+//{
+//	CManagement* pManagement = CManagement::GetInstance();
+//	if (nullptr == pManagement)
+//		return;
+//	pManagement->AddRef();
+//
+//
+//	MAINPASS	tMainPass = {};
+//
+//
+//	_matrix matWorld = Matrix_::Identity();
+//	_matrix matView = Matrix_::Identity();
+//	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+//
+//	matWorld._11 = m_fSizeX;
+//	matWorld._22 = m_fSizeY;
+//
+//	matWorld._41 = m_fX - (WINCX >> 1);
+//	matWorld._42 = -m_fY + (WINCY >> 1);
+//
+//
+//	shader->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+//	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+//	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+//	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(), TEXTURE_REGISTER::t0);
+//	CDevice::GetInstance()->UpdateTable();
+//	buffer->Render_VIBuffer();
+//
+//	Safe_Release(pManagement);
+//}
+//
+//void CUI_CharTap::setSize(_float x, _float y)
+//{
+//	m_fSizeX = x;
+//	m_fSizeY = y;
+//}
+//
+//void CUI_CharTap::setPos(_float x, _float y)
+//{
+//	m_fX = x;
+//	m_fY = y;
+//}
+//
+//void CUI_CharTap::setMeshnum(_int num)
+//{
+//	meshnum = num;
+//}
+//
+//void CUI_CharTap::setTapnum(_int num)
+//{
+//	tapnum = num;
+//}
+//
+//void CUI_CharTap::setTemp(_int* num)
+//{
+//	temp = num;
+//}
+//
+//void CUI_CharTap::setObserver(CObserver* obs)
+//{
+//	m_pObserverCom = obs;
+//}
+//
+//_float CUI_CharTap::getSizeX()
+//{
+//	return m_fSizeX;
+//}
+//
+//_float CUI_CharTap::getSizeY()
+//{
+//	return m_fSizeY;
+//}
+//
+//_float CUI_CharTap::getX()
+//{
+//	return m_fX;
+//}
+//
+//_float CUI_CharTap::getY()
+//{
+//	return m_fY;
+//}
+//
+//bool CUI_CharTap::getActive()
+//{
+//	return isActive;
+//}
 
 

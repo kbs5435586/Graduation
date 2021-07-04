@@ -63,7 +63,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
 
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)
@@ -85,7 +85,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
 	
-	
+	//list<void*>* lst = m_pObserverCom->GetNPC(0);
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
@@ -101,20 +101,22 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	//m_iCurMeshNum = m_pObserverCom->GetIntInfo();
 	//m_eCurClass = (CLASS)m_iCurMeshNum;
-	_int which = m_pObserverCom->GetWhichInfo();
-	int* a = m_pObserverCom->GetIntArrInfo(0);
+	//_int which = m_pObserverCom->GetWhichInfo();
+	//int* a = m_pObserverCom->GetIntArrInfo(0);
 
-	if (which == 0)
-	{
-		for (int i = 0; i < which; ++i)
-			++a;
-
-		m_iCurMeshNum = *a;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-	}
+	//if (which == 0)
+	//{
+	//	for (int i = 0; i < which; ++i)
+	//		++a;
+	//
+	//	m_iCurMeshNum = *a;
+	//	m_eCurClass = (CLASS)m_iCurMeshNum;
+	//}
 	
-
-
+	//++*(int*)m_pObserverCom->GetNPC(0);
+	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(0);
+	
+	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 	m_IsActive = m_pObserverCom->GetBoolInfo();
 
@@ -157,7 +159,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		return DEAD_OBJ;
 	
-
+	
 	
 	return NO_EVENT;
 }

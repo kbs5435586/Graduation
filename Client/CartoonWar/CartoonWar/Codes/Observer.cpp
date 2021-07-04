@@ -28,8 +28,7 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 	auto iter_find = find(lstTemp->begin(), lstTemp->end(), pData);
 	if (lstTemp->end() == iter_find)
 		return;
-	int* num;
-	int test;
+	
 	switch (eType)
 	{
 	case DATA_TYPE::DATA_INFO:
@@ -45,21 +44,49 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 		break;
 	case DATA_TYPE::DATA_BOOL:
 		m_bool = *reinterpret_cast<_bool*>(*iter_find);
+		//m_bool = true;
 		break;
-	case DATA_TYPE::DATA_INT_ARRAY:
-		m_int_array = reinterpret_cast<_int*>(*iter_find);
-		num=  m_int_array;
-		++num;
-		test = *num;
+	case DATA_TYPE::DATA_NPC:
+		m_lstData = lstTemp;
 		break;
-	case DATA_TYPE::DATA_INT_WHICH:
+	case DATA_TYPE::DATA_WHICH:
 		m_which = *reinterpret_cast<_int*>(*iter_find);
 		break;
-	case DATA_TYPE::DATA_INT_PTR:
-		m_int_ptr = reinterpret_cast<_bool*>(*iter_find);
+		}
+
+}
+
+void CObserver::ReUpdate_Observer(DATA_TYPE eType)
+{
+	list<void*>* lstTemp = CManagement::GetInstance()->Get_List(eType);
+
+	if (nullptr == lstTemp)
+		return;
+
+	switch (eType)
+	{
+	case DATA_TYPE::DATA_NPC:
+		m_lstData = lstTemp;
 		break;
 	}
+}
 
+
+void* CObserver::GetNPC(int num)
+{
+	auto iter = m_lstData->begin();
+	//list<void*>::iterator it;
+	int temp = {};
+	for (; iter != m_lstData->end(); ++iter)
+	{		
+		if (temp == num)
+		{
+			return *iter;
+		}
+		++temp;	
+	}
+
+	return &temp;
 }
 
 CObserver* CObserver::Create()

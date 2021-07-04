@@ -29,6 +29,7 @@ public:
     void                        Subscribe(CObserver* pObserver);	// 관찰자 등록
     void                        UnSubscribe(CObserver* pObserver); // 등록 해지
     void                        Notify(DATA_TYPE eType, void* pData = nullptr);	// 관찰자들에게 알림
+    void                        ReNotify(DATA_TYPE eType);
 private:
     list<CObserver*>            m_lstSubject;
 };

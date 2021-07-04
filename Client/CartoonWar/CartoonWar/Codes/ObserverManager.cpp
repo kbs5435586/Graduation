@@ -97,3 +97,11 @@ void CObserverManager::Notify(DATA_TYPE eType, void* pData)
 		(*iter)->Update_Observer(eType, pData);
 
 }
+
+void CObserverManager::ReNotify(DATA_TYPE eType)
+{
+	list<CObserver*>::iterator iter = m_lstSubject.begin();
+
+	for (; iter != m_lstSubject.end(); ++iter)
+		(*iter)->ReUpdate_Observer(eType);
+}

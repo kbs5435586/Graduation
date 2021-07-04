@@ -66,6 +66,7 @@ public://Observer_Manager
 	void                        Subscribe(CObserver* pObserver);
 	void                        UnSubscribe(CObserver* pObserver);
 	void                        Notify(DATA_TYPE eType, void* pData = nullptr);
+	void                        ReNotify(DATA_TYPE eType);
 public://Load_Manager
 	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
 	HRESULT						Load_File_Low(const _tchar* pFilePath, void* pArg = nullptr);

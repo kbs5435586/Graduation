@@ -5,6 +5,7 @@
 #include "UI_OnHeadBack.h"
 
 _int CNPC::npcnum = 0;
+_float CNPC::poss = 25.f;
 
 CNPC::CNPC()
 	: CGameObject()
@@ -33,12 +34,16 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	whoami = npcnum;
+	
 	++npcnum;
+	whoami = npcnum;
+
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
 
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {25.f,0.f,0.f };
+	_vec3 vPos = { poss,0.f,0.f };
+	poss += 10.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -79,7 +84,9 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	
-
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	m_pObserverCom->Update_Observer(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	//CManagement::GetInstance()->Subscribe(m_pObserverComSub);
 	return S_OK;
 }
 
@@ -98,17 +105,22 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_PositionY(0.f);
 
 
-	_int which = m_pObserverCom->GetWhichInfo();
-	int* a = m_pObserverCom->GetIntArrInfo(0);
+	//_int which = m_pObserverCom->GetWhichInfo();
+	//int* a = m_pObserverCom->GetIntArrInfo(0);
 
-	if (which == (npcnum+1))
-	{
-		for (int i = 0; i < which; ++i)
-			++a;
+	//if (which == (npcnum+1))
+	//{
+	//	for (int i = 0; i < which; ++i)
+	//		++a;
+	//
+	//	m_iCurMeshNum = *a;
+	//	m_eCurClass = (CLASS)m_iCurMeshNum;
+	//}
 
-		m_iCurMeshNum = *a;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-	}
+	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(whoami);
+	//m_iCurMeshNum = 0;
+	m_eCurClass = (CLASS)m_iCurMeshNum;
+
 	Change_Class();
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -128,6 +140,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		return DEAD_OBJ;
+
 	return NO_EVENT;
 }
 
@@ -314,6 +327,7 @@ void CNPC::Free()
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
 	Safe_Release(m_pObserverCom);
+	Safe_Release(m_pObserverComSub);
 
 	Safe_Release(m_pUI_OnHead);
 	Safe_Release(m_pUI_OnHeadBack);
@@ -472,7 +486,10 @@ HRESULT CNPC::Ready_Component()
 	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 		return E_FAIL;
-
+	m_pObserverComSub = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverComSub, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ObserverSub", m_pObserverComSub)))
+		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);

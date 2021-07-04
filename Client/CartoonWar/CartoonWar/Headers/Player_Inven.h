@@ -83,6 +83,5 @@ private:
 
 	_vec3									m = {};
 	_bool									m_IsActive = {};
-	_bool check = {};
-	_bool* checkptr = {};
+
 };

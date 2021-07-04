@@ -22,11 +22,8 @@ HRESULT CUI_Button::Ready_GameObject(void* pArg)
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
-	IsDown = false;
-	buttonNum = false;
-	buttonnumptr = &buttonNum;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT, &buttonNum);
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_INT_PTR, buttonnumptr);
+	lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
+	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC,)
 	return S_OK;
 }
 
@@ -37,6 +34,8 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 		return -1;
 	pManagement->AddRef();
 
+	//list<void*>* lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
+	//int* ttttemp =  (int*)lstTemp->front();
 
 	if (pManagement->Key_Down(KEY_LBUTTON))
 	{
@@ -49,11 +48,14 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			{
 				m_fSizeX = 40.f;
 				m_fSizeY = 40.f;
-				IsDown = true;
+				IsDown = true;		
 			}
 		}
 	}
 	
+
+	m_pObserverCom;
+
 	if (IsDown)
 	{
 		if (pManagement->Key_Up(KEY_LBUTTON))
@@ -62,14 +64,32 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeY = 50.f;
 
 
-			//++buttonNum;
-			//if (buttonNum >= (_uint)CLASS::CLASS_END - 1)
-			//	buttonNum = 0;
-			buttonNum = true;
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &buttonNum);
+			_int whichnum = m_pObserverCom->GetWhichInfo();
+			auto temp = (int*)m_pObserverCom->GetNPC(whichnum);
+			++*temp;
+			//void* aaa = 0;
+			//int bbb = 0;
+			//list<void*>* numLst = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_WHICH);
+			//_int num = *(_int*)numLst->front();
+			//
+			//auto iter = lstTemp->begin();
+			////list<void*>::iterator it;
+			//int temp = {};
+			//for (; iter != lstTemp->end(); ++iter)
+			//{
+			//	if (temp == num)
+			//	{
+			//	
+			//		aaa = *iter;
+			//		++*(int*)aaa;
+			//		break;
+			//	}
+			//	++temp;
+			//}
+			m_pObserverCom->ReUpdate_Observer(DATA_TYPE::DATA_NPC);
+
 			IsDown = false;
-		}
-		
+		}	
 	}
 	
 
@@ -122,11 +142,7 @@ HRESULT CUI_Button::Ready_Component()
 	pManagement->AddRef();
 
 
-	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-	//	return E_FAIL;
-
 	Safe_Release(pManagement);
 	return S_OK;
 }
+

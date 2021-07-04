@@ -182,6 +182,11 @@ void CManagement::Notify(DATA_TYPE eType, void* pData)
 	return m_pObserver_Manager->Notify(eType, pData);
 }
 
+void CManagement::ReNotify(DATA_TYPE eType)
+{
+	return m_pObserver_Manager->ReNotify(eType);
+}
+
 HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
 {
 	return m_pLoad_Manager->Load_File(pFilePath, pArg);

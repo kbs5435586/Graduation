@@ -27,16 +27,13 @@ public:
 
 	void setSize(_float x, _float y) { m_fSizeX = x; m_fSizeY = y; };
 	void setPos(_float x, _float y) { m_fX = x; m_fY = y; };
-	//_float getSizeX();
-	//_float getSizeY();
-	//_float getX();
-	//_float getY();
-	//bool getActive();
+	void setObs(CObserver* _obs) { m_pObserverCom = _obs; }
 
-	//CObserver* m_pObserverCom = nullptr;
+	CObserver* m_pObserverCom = {};
+	list<void*>* lstTemp = {};
 
-	_bool* buttonnumptr = {};
-	_bool buttonNum = {};
+
+	_bool m_cansee = {};
 	_bool IsDown = {};
 	POINT MousePos;
 };

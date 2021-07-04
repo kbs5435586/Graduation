@@ -73,38 +73,20 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 
 		m_pTransformCom->Set_PositionY(0.f);
 
-		_int which = m_pObserverCom->GetWhichInfo();
-		int* a = m_pObserverCom->GetIntArrInfo(0);
-
-
-		for (int i = 0; i < which; ++i)
-			++a;
-
-		m_iCurMeshNum = *a;
-		check = m_pObserverCom->GetIntInfo();
-		checkptr = m_pObserverCom->GetIntPtrInfo();
-		if (check == true)
-		{
-			++(*a);
-			check = false;
-			*checkptr = check;
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, checkptr);
-			if ((*a) >= (_uint)CLASS::CLASS_END - 1)
-				(*a) = 0;
-		}
+		int which = m_pObserverCom->GetWhichInfo();
+		m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(which);
+		m_eCurClass = (CLASS)m_iCurMeshNum;
 		Change_Class();
-
 		m_IsActive = m_pObserverCom->GetBoolInfo();
 		if (m_IsActive)
-			Input_Inven_Key(fTimeDelta);
-		
+			Input_Inven_Key(fTimeDelta);	
 		Obb_Collision();
 		Combat(fTimeDelta);
 
 		if (m_IsDead)
 			return DEAD_OBJ;
 	
-	
+		
 	return NO_EVENT;
 }
 
@@ -124,7 +106,7 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 
 		CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Inventory_Camera", 0));
 		m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INFO, &m_tInfo);
+		
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 		CAMERADESC		tICameraDesc;
 		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
@@ -141,40 +123,11 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 
 		temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1);
 
-
-
-		_int which = m_pObserverCom->GetWhichInfo();
-		int* a = m_pObserverCom->GetIntArrInfo(0);
 		
-
-		for (int i = 0; i < which; ++i)
-			++a;
-
-		m_iCurMeshNum = *a;
-		check = m_pObserverCom->GetIntInfo();
-		checkptr = m_pObserverCom->GetIntPtrInfo();
-		if (check == true)
-		{
-			++(*a);
-			check = false;
-			*checkptr = check;
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, checkptr);
-
-			if((*a) >= (_uint)CLASS::CLASS_END - 1)
-				(*a) = 0;
-		}	
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-		if (true)
-			_uint i = m_iCurAnimIdx;
-
-		Change_Class();
 		Death(fTimeDelta);
 		Set_Animation(fTimeDelta);
 	}
 
-	
-
-	
 
 	return _int();
 }
@@ -239,7 +192,6 @@ void CPlayer_Inven::Render_GameObject()
 		Safe_Release(pManagement);
 	}
 
-
 	
 }
 
@@ -301,8 +253,6 @@ HRESULT CPlayer_Inven::CreateInputLayout()
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
-	//if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
-	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -344,14 +294,12 @@ void CPlayer_Inven::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	//Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pObserverCom);
-	//Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }
@@ -430,11 +378,6 @@ HRESULT CPlayer_Inven::Ready_Component()
 	NULL_CHECK_VAL(m_pComputeShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ComputeShader", m_pComputeShaderCom)))
 		return E_FAIL;
-	//Component_Shader_Shadow
-	//m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
-	//NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
-	//	return E_FAIL;
 
 
 
@@ -511,10 +454,6 @@ HRESULT CPlayer_Inven::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 		return E_FAIL;
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
