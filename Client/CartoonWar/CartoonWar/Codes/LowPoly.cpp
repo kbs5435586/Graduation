@@ -43,7 +43,7 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
+	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
 	return _int();
 }
 
@@ -55,8 +55,8 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 			return -1;
-		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-		//	return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+			return -1;
 	}
 
 	return _int();
@@ -228,7 +228,7 @@ HRESULT CLowPoly::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;	
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }

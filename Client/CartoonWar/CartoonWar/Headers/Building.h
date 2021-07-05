@@ -33,6 +33,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
