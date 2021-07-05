@@ -17,6 +17,7 @@ public:
     _bool                   GetIntInfo() { return m_int; }
     _int                    GetWhichInfo() { return m_which; }
     _bool                   GetBoolInfo() { return m_bool; }
+    _bool                   GetTapInfo() { return m_tap; }
     void*                   GetNPC(int num);
 public:
     static CObserver*       Create();
@@ -29,7 +30,7 @@ private:
     _bool                    m_int = {};
     _int                    m_which = {};
     _bool                   m_bool = false;
-  
+    _bool                   m_tap = false;
     list<void*>*            m_lstData;
 };
 

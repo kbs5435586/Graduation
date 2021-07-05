@@ -1,47 +1,54 @@
 #include "framework.h"
-#include "UI_Button.h"
+#include "UI_ButtonNPC.h"
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
 
-_int CUI_Button::tempNum = 0;
 
-CUI_Button::CUI_Button()
+_int CUI_ButtonNPC::tempNum = 0;
+
+CUI_ButtonNPC::CUI_ButtonNPC()
 {
 }
 
-CUI_Button::CUI_Button(const CUI_Button& rhs)
+CUI_ButtonNPC::CUI_ButtonNPC(const CUI_ButtonNPC& rhs)
 {
 }
 
-HRESULT CUI_Button::Ready_GameObject(void* pArg)
+HRESULT CUI_ButtonNPC::Ready_GameObject(void* pArg)
 {
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	
-
-	//m_fX = 760.f + ((m_iClass % 5) * 45.f);
-	//m_fY = 475.f + ((m_iClass / 5) * 45.f);
 
 	m_iClass = tempNum;
 	++tempNum;
-	m_fX = 300.f + ((m_iClass % 3) * 100.f);
-	m_fY = 300 + ((m_iClass / 3) * 100.f);
-	m_fSizeX = 50.f;
-	m_fSizeY = 50.f;
+	m_fX = 760.f + ((m_iClass % 5) * 45.f);
+	m_fY = 475.f + ((m_iClass / 5) * 45.f);
+	
+	m_fSizeX = 40.f;
+	m_fSizeY = 40.f;
 
 	lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
 	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC,)
 	return S_OK;
 }
 
-_int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
+_int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return -1;
 	pManagement->AddRef();
 
+	
+
+	//*m_Active = m_pObserverCom->GetTapInfo();
+	if (*m_Active)
+	{
+		m_fX += 50.f;
+		*m_Active = !*m_Active;
+		//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_TAP, which);
+	}
 
 	if (pManagement->Key_Down(KEY_LBUTTON))
 	{
@@ -52,49 +59,42 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 		{
 			if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
 			{
-				m_fSizeX = 40.f;
-				m_fSizeY = 40.f;
-				IsDown = true;		
+				m_fSizeX = 30.f;
+				m_fSizeY = 30.f;
+				IsDown = true;
 			}
 		}
 	}
-	
 
 
 	if (IsDown)
 	{
 		if (pManagement->Key_Up(KEY_LBUTTON))
 		{
-			m_fSizeX = 50.f;
-			m_fSizeY = 50.f;
+			m_fSizeX = 40.f;
+			m_fSizeY = 40.f;
 
-
-			_int whichnum = m_pObserverCom->GetWhichInfo();
-			auto temp = (int*)m_pObserverCom->GetNPC(whichnum);
-			*temp = m_iClass;
-			//++*temp;
-			//if (*temp >= (_uint)CLASS::CLASS_END - 1)
-			//	*temp = 0;
-			
-			m_pObserverCom->ReUpdate_Observer(DATA_TYPE::DATA_NPC);
+			*which = m_iClass;
+			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, which);
 
 			IsDown = false;
-		}	
+		}
 	}
-	
+
+
+
 
 	Safe_Release(pManagement);
 	return _int();
 }
 
-_int CUI_Button::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_ButtonNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-void CUI_Button::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
+void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
 {
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
@@ -125,7 +125,7 @@ void CUI_Button::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTe
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Button::Ready_Component()
+HRESULT CUI_ButtonNPC::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -135,4 +135,3 @@ HRESULT CUI_Button::Ready_Component()
 	Safe_Release(pManagement);
 	return S_OK;
 }
-

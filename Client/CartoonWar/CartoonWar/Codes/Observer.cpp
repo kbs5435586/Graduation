@@ -44,7 +44,9 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 		break;
 	case DATA_TYPE::DATA_BOOL:
 		m_bool = *reinterpret_cast<_bool*>(*iter_find);
-		//m_bool = true;
+		break;
+	case DATA_TYPE::DATA_TAP:
+		m_tap = *reinterpret_cast<_bool*>(*iter_find);
 		break;
 	case DATA_TYPE::DATA_NPC:
 		m_lstData = lstTemp;

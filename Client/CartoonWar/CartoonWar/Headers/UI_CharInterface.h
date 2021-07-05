@@ -20,5 +20,7 @@ public:
 	virtual _int							Update_GameObject(const _float & fTimeDelta, _bool b[], int idx);
 	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void							Render_GameObject(CShader * shader, CBuffer_RectTex * buffer, CTexture * texture);
+
+	
 };
 

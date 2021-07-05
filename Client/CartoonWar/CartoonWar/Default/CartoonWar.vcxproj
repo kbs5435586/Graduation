@@ -286,6 +286,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="..\Headers\UI_ClassTap.h" />
     <ClInclude Include="..\Headers\UI_Button.h" />
+    <ClInclude Include="..\Headers\UI_ButtonNPC.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Animator.cpp" />
@@ -397,6 +398,7 @@
     <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
     <ClCompile Include="..\Codes\UI_Button.cpp" />
     <ClCompile Include="..\Codes\Inventory_Camera.cpp" />
+    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />

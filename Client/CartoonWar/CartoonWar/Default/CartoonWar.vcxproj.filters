@@ -424,6 +424,9 @@
     <Filter Include="02. GameObject\97. UI\98. default\01. UI_CharInterface">
       <UniqueIdentifier>{942d5b7d-bc49-4b94-92a6-c804c6a2b31f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\98. default\02. UI_NPCButton">
+      <UniqueIdentifier>{d591c17b-e856-44f2-add6-c96000124ea7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -786,6 +789,9 @@
     <ClInclude Include="..\Headers\Throw_Arrow.h">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_ButtonNPC.h">
+      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1118,6 +1124,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Throw_Arrow.cpp">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp">
+      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

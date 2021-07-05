@@ -9,6 +9,7 @@ class CObserver;
 
 class CUI_CharTap;
 class CUI_Button;
+class CUI_ButtonNPC;
 class CUI_CharInterface;
 
 class CUI_ClassTap :
@@ -40,21 +41,27 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
+	CShader* m_pBlendShaderCom = nullptr;
 	CShader* m_pInvenShaderCom = nullptr;
 	CShader* m_pCompute_ShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
+	CTexture* m_pButtonTextureCom = nullptr;
+	CTexture* m_pNPCTextureCom = nullptr;
+	CTexture* m_pPressedNPCTextureCom = nullptr;
 
 private:
 	REP										m_tRep = {};
 	_bool									m_IsTemp = false;
 	_bool									m_cansee = false;
+	_bool									m_tapActive = false;
 	_bool									m_IsTap[5] = {};
 	//_float									m_fCharTapSizeX, m_fCharTapSizeY{};
 	//_float									m_fCharTapfX[5],	m_fCharTapfY[5]{};
 	//_float									m_fClassTapSizeX,	m_fClassTapSizeY{};
 	//_float									m_fClassTapX,		m_fClassTapY{};
 	CUI_CharTap*							a = nullptr;
-	CUI_Button*								m_button = nullptr;
+	CUI_Button* m_button[9] = {};
+	CUI_ButtonNPC* m_buttonNPC[15] = {};
 	CUI_CharInterface*						m_charInter = nullptr;
 
 	CObserver* m_pObserverCom = {};

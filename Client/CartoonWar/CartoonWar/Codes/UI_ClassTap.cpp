@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "UI_ClassTap.h"
 #include "UI_Button.h"
+#include "UI_ButtonNPC.h"
 #include "UI_CharInterface.h"
 #include "Management.h"
 #include "Layer.h"
@@ -29,25 +30,41 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	m_fX = WINCX / 2;
 	m_fY = WINCY / 2;
 
-	m_fSizeX = 450.f;
-	m_fSizeY = 650.f;
+	m_fSizeX = 1000.f;
+	m_fSizeY = 500.f;
 
 	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 	CManagement::GetInstance()->ReNotify(DATA_TYPE::DATA_NPC);
+
+	//다른 UI들에게 켜짐을 알리는
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &m_cansee);
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_TAP, &m_tapActive);
+	which = 0;
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_WHICH, &which);
 	////////////////////
 	//버튼
-	m_button = new CUI_Button;
-	m_button->Ready_GameObject();
-	m_button->setObs(m_pObserverCom);
+	for (int i = 0; i < 9; ++i)
+	{
+		m_button[i] = new CUI_Button;
+		m_button[i]->Ready_GameObject();
+		m_button[i]->setObs(m_pObserverCom);
+	}
+	for (int i = 0; i < 15; ++i)
+	{
+		m_buttonNPC[i] = new CUI_ButtonNPC;
+		m_buttonNPC[i]->Ready_GameObject();
+		m_buttonNPC[i]->setObs(m_pObserverCom);
+		m_buttonNPC[i]->setWhich(&which);
+		m_buttonNPC[i]->setActive(&m_tapActive);
+	}
+
+
+	
 	//다른 화면
 	m_charInter = new CUI_CharInterface;
 	m_charInter->Ready_GameObject();
 	
-	//다른 UI들에게 켜짐을 알리는
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &m_cansee);
-
-	which = 0;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_WHICH, &which);
+	
 
 	return S_OK;
 }
@@ -71,20 +88,38 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	{
 		--which;
 		if (which < 0)
-			which = 5;
+			which = 14;
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
 	}
 	if (pManagement->Key_Up(KEY_Q))
 	{
 		++which;
-		if (which > 5)
+		if (which > 14)
 			which = 0;
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
 	}
 
+	//if (pManagement->Key_Up(KEY_SPACE))
+	//{
+	//	m_tapActive = !m_tapActive;
+	//	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_TAP, &m_tapActive);
+	//	for (int i = 0; i < 15; ++i)
+	//	{
+	//		m_buttonNPC[i]->setActive(&m_tapActive);
+	//	}
+	//}
+
+
 	//버튼
-	m_button->Update_GameObject(fTimeDelta, m_IsTap, 0);
+	if (m_cansee)
+	{
+		for (int i = 0; i < 9; ++i)
+			m_button[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
+		for (int i = 0; i < 15; ++i)
+			m_buttonNPC[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
+	}
 	
+
 	Safe_Release(pManagement);
 	return _int();
 }
@@ -110,6 +145,17 @@ void CUI_ClassTap::Render_GameObject()
 		pManagement->AddRef();
 
 
+		for(int i=0;i<9;++i)
+			m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
+
+		for (int i = 0; i < 15; ++i)
+		{
+			if(i == which)
+				m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pPressedNPCTextureCom);
+			else
+				m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pNPCTextureCom);
+		}
+
 		MAINPASS	tMainPass = {};
 
 
@@ -134,7 +180,6 @@ void CUI_ClassTap::Render_GameObject()
 		m_pBufferCom->Render_VIBuffer();
 		///////////////////////////////////////////////////////////////
 		
-		m_button->Render_GameObject(m_pShaderCom, m_pBufferCom, m_pTextureCom);
 		
 		Safe_Release(pManagement);
 	}
@@ -147,7 +192,11 @@ HRESULT CUI_ClassTap::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	
+
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS)))
+		return E_FAIL;
+	if (FAILED(m_pBlendShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::DEFAULT)))
 		return E_FAIL;
 	if (FAILED(m_pInvenShaderCom->Create_Shader(vecDesc)))
 		return E_FAIL;
@@ -183,8 +232,11 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pBlendShaderCom);
 	Safe_Release(m_pInvenShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pButtonTextureCom);
+	Safe_Release(m_pNPCTextureCom);
 	Safe_Release(m_pObserverCom);
 	//Safe_Release(m_pCompute_ShaderCom);
 
@@ -215,15 +267,36 @@ HRESULT CUI_ClassTap::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pBlendShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	NULL_CHECK_VAL(m_pBlendShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_BlendShader", m_pBlendShaderCom)))
+		return E_FAIL;
+
 	m_pInvenShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU");
 	NULL_CHECK_VAL(m_pInvenShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_InvenShader", m_pInvenShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ClassUI");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+
+	m_pButtonTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ButtonUI");
+	NULL_CHECK_VAL(m_pButtonTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ButtonTexture", m_pButtonTextureCom)))
+		return E_FAIL;
+
+	m_pNPCTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_RoundButtonUI");
+	NULL_CHECK_VAL(m_pNPCTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_NPCTexture", m_pNPCTextureCom)))
+		return E_FAIL;
+
+	m_pPressedNPCTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_RoundButtonUI_Pressed");
+	NULL_CHECK_VAL(m_pPressedNPCTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_PressedNPCTexture", m_pPressedNPCTextureCom)))
+		return E_FAIL;
+
 
 	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
 	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);

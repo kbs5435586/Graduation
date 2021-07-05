@@ -17,10 +17,10 @@ HRESULT CUI_CharInterface::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = WINCX / 2;
-	m_fY = WINCY / 2;
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
+	m_fX = 850;
+	m_fY = 325;
+	m_fSizeX = 200.f;
+	m_fSizeY = 250.f;
 
 	return S_OK;
 }

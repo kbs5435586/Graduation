@@ -110,7 +110,7 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 		CAMERADESC		tICameraDesc;
 		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-		tICameraDesc.vEye = m + _vec3(10.f, 10.f, 10.f);
+		tICameraDesc.vEye = m + _vec3(-10.f, 10.f, -10.f);
 		tICameraDesc.vAt = m + _vec3(0.f, 5.f, 0.f);
 		tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
