@@ -120,6 +120,10 @@ void CBuilding::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
+void CBuilding::Render_Blur()
+{
+}
+
 HRESULT CBuilding::Ready_Component(const _tchar* pComTag)
 {
 	CManagement* pManagement = CManagement::GetInstance();

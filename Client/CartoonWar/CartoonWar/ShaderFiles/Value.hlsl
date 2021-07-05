@@ -57,6 +57,8 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	float4				vInvenCamPos;
 	float4				vInvenLook;
 
+	row_major matrix	matLightView;
+	row_major matrix	matLightProj;
 };
 
 cbuffer MATERIAL : register (b1)

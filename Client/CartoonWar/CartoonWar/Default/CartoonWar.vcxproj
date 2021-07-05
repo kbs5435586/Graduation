@@ -525,6 +525,12 @@
     <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Blur.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <None Include="..\ShaderFiles\Shader_UUI.hlsl">
       <FileType>Document</FileType>
     </None>

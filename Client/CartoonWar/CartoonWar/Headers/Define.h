@@ -11,7 +11,10 @@
 #define NO_EVENT 0
 
 const float	g_Near = 0.1f;
-const float g_Far = 1000.f;
+const float g_Far = 300.f;
+
+
+
 
 #define NO_COPY(CLASSNAME)									\
 	private:												\

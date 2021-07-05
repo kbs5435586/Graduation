@@ -12,7 +12,7 @@ CRenderer::CRenderer()
 HRESULT CRenderer::Ready_Renderer()
 {
 
-	
+
 	return S_OK;
 }
 
@@ -37,7 +37,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	if (nullptr == pManagement)
 		return E_FAIL;
 	pManagement->AddRef();
-	//pManagement->Update();
+
 
 
 
@@ -47,27 +47,66 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
  	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear(true);
+	pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Clear();
 	Render_Inventory(pManagement);
 
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
-	
+	Render_Blur();
 
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
 
 	Render_Blend();
-	
-	
+
+
 	Render_Priority();
 	Render_Alpha();
+	//Render_Post_Effect();
+
 	Render_UI();
 	Render_UI_Back();
 
 	
 	Safe_Release(pManagement);
 	return S_OK;
+}
+
+void CRenderer::CopySwapToPosteffect()
+{
+
+	static ComPtr<ID3D12Resource>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetTex2D().Get();
+	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
+
+	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+
+	CDevice::GetInstance()->GetCmdLst()->CopyResource(pPostEffectTex.Get(), CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get());
+
+	temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+}
+
+void CRenderer::CopySwapToBlur()
+{
+	static ComPtr<ID3D12Resource>	pBlurTex = CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->Get_RTT(0)->pRtt->GetTex2D().Get();
+	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
+
+	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+
+	CDevice::GetInstance()->GetCmdLst()->CopyResource(pBlurTex.Get(), CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get());
+
+	temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+
 }
 
 void CRenderer::Render_Priority()
@@ -149,6 +188,39 @@ void CRenderer::Render_Blend()
 	m_RenderList[RENDER_BLEND].clear();
 }
 
+void CRenderer::Render_Post_Effect()
+{
+	CopySwapToPosteffect();
+	for (auto& pGameObject : m_RenderList[RENDER_POST])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_PostEffect();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_POST].clear();
+}
+
+void CRenderer::Render_Blur()
+{
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->OM_Set();
+
+	CopySwapToBlur();
+	for (auto& pGameObject : m_RenderList[RENDER_BLUR])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_Blur();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_BLUR].clear();
+
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->TargetToResBarrier();
+
+}
+
 void CRenderer::Render_Shadow(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->OM_Set();
@@ -201,7 +273,7 @@ void CRenderer::Render_Inventory(CManagement* pManagement)
 }
 
 
-CRenderer* CRenderer::Create( )
+CRenderer* CRenderer::Create()
 {
 	CRenderer* pInstance = new CRenderer();
 

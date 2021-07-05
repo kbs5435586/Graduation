@@ -427,6 +427,9 @@
     <Filter Include="02. GameObject\97. UI\98. default\02. UI_NPCButton">
       <UniqueIdentifier>{d591c17b-e856-44f2-add6-c96000124ea7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96. ShaderFiles\08. Effect">
+      <UniqueIdentifier>{7a2448c8-5a2b-4a1b-a5e7-56bc203b5a69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -1234,6 +1237,12 @@
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Blur.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

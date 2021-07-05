@@ -23,6 +23,8 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_PostEffect();
+	virtual void							Render_Blur();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -53,11 +55,14 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_PostEffect = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CObserver*								m_pObserverCom = nullptr;
+	
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
 	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;
@@ -69,6 +74,7 @@ private:
 private:
 	_bool									m_IsOnce = false;
 	_bool									m_IsCombat = false;
+	_bool									m_IsSlide = false;
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx =0;
 	_uint									m_iAttackMotion[2] = {};

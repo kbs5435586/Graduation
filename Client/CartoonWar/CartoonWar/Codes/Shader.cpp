@@ -108,6 +108,14 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.NumRenderTargets = 1;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32_FLOAT;
 		break;
+	case SHADER_TYPE::SHADER_POST_EFFECT:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	case SHADER_TYPE::SHADER_BLUR:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		break;
 	}
 
 	switch (eTopology)
@@ -215,6 +223,10 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 
 	output.matViewInv = Matrix_::Inverse(matView);
 	output.matProjInv = Matrix_::Inverse(matProj);
+
+	_vec3 vUp = _vec3(0.f, 1.f, 0.f);
+	output.matLightView = Matrix_::LookAtLH(g_vEyePt, g_vLookatPt, vUp);
+	output.matLightProj = Matrix_::PerspectiveFovLH(XMConvertToRadians(60.f), _float(WINCX)/WINCY, 0.2f, 500.f);
 	return S_OK;
 }
 

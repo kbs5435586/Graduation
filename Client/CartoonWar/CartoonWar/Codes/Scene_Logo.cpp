@@ -1008,6 +1008,15 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 			CShader::Create(L"../ShaderFiles/Shader_Shadow.hlsl", "VS_Main", "PS_Main"))))
 			return E_FAIL;
 	}
+	//Effect
+	{
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect",
+			CShader::Create(L"../ShaderFiles/Shader_PostEffect.hlsl", "VS_Main", "PS_Main"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur",
+			CShader::Create(L"../ShaderFiles/Shader_Blur.hlsl", "VS_Main", "PS_Main"))))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
