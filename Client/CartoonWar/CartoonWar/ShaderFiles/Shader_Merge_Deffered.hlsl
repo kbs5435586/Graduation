@@ -32,12 +32,29 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vDiffuseTex		= g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vShadeTex		= g_texture1.Sample(Sampler0, vIn.vTexUV);
 	float4	vSpecularTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
+	float4	vBlurTex		= g_texture3.Sample(Sampler0, vIn.vTexUV);
 
+	int iNumBlurSample = 30;
+
+	vBlurTex.xy /= (float)iNumBlurSample;
+	int iCnt = 1;
+
+
+	for (int i = iCnt; i < iNumBlurSample; ++i)
+	{
+		float4 BColor = g_texture0.Sample(Sampler0, vIn.vTexUV + vBlurTex.xy * (float)i);
+		if (vBlurTex.a < vDiffuseTex.a + 20.f)
+		{
+			vDiffuseTex += BColor;
+			iCnt++;
+		}
+	}
+	vDiffuseTex /= (float)iCnt;
 
 
 
 	float4	vTexMerge = vDiffuseTex * (vShadeTex * vSpecularTex);
-	//float4	vTexMerge = (vDiffuseTex* vShadeTex)+ vSpecularTex;
+	//float4	vTexMerge = vDiffuseTex;
 
 	//vTexMerge *= float4(0.3f, 0.3f, 0.3f, 0.3f);
 	return  vTexMerge;

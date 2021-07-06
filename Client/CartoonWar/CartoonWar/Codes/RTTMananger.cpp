@@ -123,12 +123,18 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 
 	// Blur Tex
 	{
-		m_pBlurTex = CRTT::Create(L"BlurTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_NONE, arrRT[0].vClear_Color);
+		tRtt arrRT[1] = {};
+		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 
-		if (nullptr == m_pBlurTex)
+		arrRT[0].pRtt = CRTT::Create(L"BlurTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
+
+		if (nullptr == arrRT[0].pRtt)
 			return E_FAIL;
+
+		CMRT* pMRT = CMRT::Create(1, arrRT, m_pDsTex);
+		m_vecMRT.push_back(pMRT);
 	}
 
 

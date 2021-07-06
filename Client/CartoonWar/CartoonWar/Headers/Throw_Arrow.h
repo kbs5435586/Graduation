@@ -21,6 +21,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_Blur();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -38,6 +39,7 @@ private:
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
 	CCollider*								m_pColliderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 private:

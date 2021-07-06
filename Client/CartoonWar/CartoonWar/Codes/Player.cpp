@@ -155,6 +155,8 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+			return -1;
 		m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 		m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
 	}
@@ -337,23 +339,8 @@ void CPlayer::Render_Blur()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-		ComPtr<ID3D12DescriptorHeap>	pBlurTex = CManagement::GetInstance()->GetBlurTex()->GetSRV().Get();
-		CDevice::GetInstance()->SetTextureToShader(pBlurTex.Get(), TEXTURE_REGISTER::t0);
 
-
-		if (iSubsetNum >= 2)
-		{
-			if (i == 0)
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
-			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
-		else
-		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
-		}
-
-
+		 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
 		CDevice::GetInstance()->UpdateTable();
 		m_pCurMeshCom->Render_Mesh(i);
@@ -386,7 +373,7 @@ HRESULT CPlayer::CreateInputLayout()
 		return E_FAIL;	
 	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 
 
