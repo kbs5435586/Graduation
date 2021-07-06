@@ -485,33 +485,44 @@ void Server::do_rotate(int user_id, char dir)
 void Server::set_formation(int user_id)
 {
     SESSION& c = g_clients[user_id];
-    CTransform set_pos;
-    _matrix temp = c.m_transform.Get_Matrix();
+    _matrix playerMat = c.m_transform.Get_Matrix();
+    _vec3 playerLookAt = *c.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    playerLookAt = Vector3_::Normalize(playerLookAt);
+    _vec3 playerPos = *c.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
+    _vec3 standard = { 0.f,0.f,1.f };
+    _vec3 set_pos = {};
+
+    float PdotProduct = (playerLookAt.x * standard.x) + (playerLookAt.y * standard.y) + (playerLookAt.z * standard.z);
+    float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
+    float angle = radian * 180.f / PIE; // 0,0,1z 와 플레이어 look 사이의 각도
+    float radius = FORMATION_SPACE;
+    
     switch (c.m_formation)
     {
     case FM_FLOCK:
     {
         if (1 == c.m_boid.size())
         {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos;
+            set_pos.x = radius * cosf((angle + 90.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((angle + 90.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0]->m_target_pos = new_pos;
         }
         else if (2 == c.m_boid.size())
         {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
+            set_pos.x = radius * cosf((angle + 90.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((angle + 90.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0]->m_target_pos = new_pos;
 
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
+            set_pos = {};
+            set_pos.x = radius * cosf((angle - 90.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((angle - 90.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1]->m_target_pos = new_pos1;
         }
-        else if (3 == c.m_boid.size())
+      /*  else if (3 == c.m_boid.size())
         {
             set_pos.Set_Matrix(&temp);
             set_pos.Go_Left(FORMATION_SPACE);
@@ -618,7 +629,7 @@ void Server::set_formation(int user_id)
             set_pos.Go_Straight(FORMATION_SPACE);
             _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
             c.m_boid[3]->m_target_pos = *new_pos4;
-        }
+        }*/
     }
     break;
     case FM_PIRAMID:
@@ -724,23 +735,23 @@ void Server::do_follow(int npc_id)
             _vec3 n_pos = *g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos)
             {
-                // _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos); 이 방법은 최종 위치까지 그냥 순간이동
-                // g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos 이게 최종 위치값
-                _vec3 standard = { 0.f,0.f,1.f };
-                _vec3 p_pos = *g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+                _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);// 이 방법은 최종 위치까지 그냥 순간이동
+                //g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos 이게 최종 위치값
+                //_vec3 standard = { 0.f,0.f,1.f };
+                _vec3 *pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
-                _vec3* playerLookAt = g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-                float PdotProduct = (playerLookAt->x * standard.x) + (playerLookAt->y * standard.y) + (playerLookAt->z * standard.z);
-                float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
-                float radius = sqrt((n_pos.x - p_pos.x) * (n_pos.x - p_pos.x) + (n_pos.y - p_pos.y) * (n_pos.y - p_pos.y)
-                    + (n_pos.z - p_pos.z) * (n_pos.z - p_pos.z)); // 플레이어와 npc 사이 거리 = 반지름
+                //_vec3* playerLookAt = g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+                //float PdotProduct = (playerLookAt->x * standard.x) + (playerLookAt->y * standard.y) + (playerLookAt->z * standard.z);
+                //float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
+                //float radius = sqrt((n_pos.x - p_pos.x) * (n_pos.x - p_pos.x) + (n_pos.y - p_pos.y) * (n_pos.y - p_pos.y)
+                //    + (n_pos.z - p_pos.z) * (n_pos.z - p_pos.z)); // 플레이어와 npc 사이 거리 = 반지름
 
-                _vec3* npcLookAt = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-                float NdotProduct = (npcLookAt->x * standard.x) + (npcLookAt->y * standard.y) + (npcLookAt->z * standard.z);
+                //_vec3* npcLookAt = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+                //float NdotProduct = (npcLookAt->x * standard.x) + (npcLookAt->y * standard.y) + (npcLookAt->z * standard.z);
 
 
-                float lookSize = sqrt((playerLookAt->x * playerLookAt->x) + (playerLookAt->z * playerLookAt->z));
-                float stanSize = sqrt((standard.x * standard.x) + (standard.z * standard.z));
+                //float lookSize = sqrt((playerLookAt->x * playerLookAt->x) + (playerLookAt->z * playerLookAt->z));
+                //float stanSize = sqrt((standard.x * standard.x) + (standard.z * standard.z));
                 _vec3 new_pos = *pos + Dir;
                 if (*pos != new_pos)
                 {

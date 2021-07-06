@@ -24,6 +24,7 @@ private:
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
 	float FORMATION_SPACE = 10.f;
+	float PIE = 3.141592;
 
 	float MOVE_SPEED_NPC = 0.2f;
 	float MOVE_SPEED_PLAYER = 0.15f;
