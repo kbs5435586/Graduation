@@ -18,8 +18,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_Management((_uint)SCENEID::SCENE_END)))
 		return E_FAIL;
-	if (FAILED(Create_FbxManager()))
-		return E_FAIL;
+	//if (FAILED(Create_FbxManager()))
+	//	return E_FAIL;
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
@@ -72,6 +72,19 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	if (nullptr == m_pManagement)
 		return - 1;
 
+	if (GetAsyncKeyState('O'))
+		g_DefferedUIRender ^= true;
+	if (GetAsyncKeyState('P'))
+	{
+		if (g_DefferedRender == 0)
+		{
+			g_DefferedRender = 1;
+		}
+		else
+		{
+			g_DefferedRender = 0;
+		}
+	}
 	
 	m_fTimeAcc += fTimeDelta;
 	CInput::GetInstance()->SetUp_InputState();

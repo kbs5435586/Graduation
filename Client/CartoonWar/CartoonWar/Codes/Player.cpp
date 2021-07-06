@@ -108,11 +108,16 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 				m_iCurAnimIdx = m_iDeathMotion[1];
 			m_IsDeadMotion = true;
 		}
-
 	}
 
-	if (m_IsDead)
-		return DEAD_OBJ;
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+	pTerrainBuffer;
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY);
+
+
 	return NO_EVENT;
 }
 
@@ -156,6 +161,7 @@ void CPlayer::Render_GameObject()
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
 		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+		tRep.m_arrInt[2] = g_DefferedRender;
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -344,7 +350,7 @@ HRESULT CPlayer::CreateInputLayout()
 		return E_FAIL;	
 	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 
 

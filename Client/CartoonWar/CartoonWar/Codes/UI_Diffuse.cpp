@@ -77,9 +77,8 @@ void CUI_Diffuse::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
-	
-	//DXGI_FORMAT_R32G32B32A32_FLOAT
-	m_pBufferCom->Render_VIBuffer();
+	if(!g_DefferedUIRender)
+		m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 

@@ -59,10 +59,34 @@ VS_OUT VS_Main(VS_IN vIn)
 PS_OUT PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
-	AD_Light tCol = (AD_Light)0;
-	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
+	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
+	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
+	float4	vNormal = mul(vIn.vNormal, matViewInv);
 
-	vOut.vDiffuseTex = vOutColor;
+
+
+	float4	vLightDir = -normalize(tLight[0].vLightDir);
+	float	fDot = saturate(dot(vNormal, vLightDir));
+	fDot = (ceil(fDot * 3.f) / 3.f);
+	float4	vMtrlDif = float4(fDot, fDot, fDot, 0.f);
+	float4	vMtrlAmb = float4(0.3f, 0.3f, 0.3f, 0.f);
+
+
+	float3	fRimColor = float3(-2.f, -2.f, -2.f);
+	float4	vView = normalize(vCamPos - vPosition);
+	float	fRim = saturate(dot(vNormal, vView));
+	float	fRimPower = 10.f;
+	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
+
+	if (g_int_2)
+	{
+		vOut.vDiffuseTex = vDiffuse;
+	}
+	else
+	{
+		vOut.vDiffuseTex = (vDiffuse +  vMtrlEmiv);
+	}
+
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	return vOut;

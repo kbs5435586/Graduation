@@ -111,6 +111,16 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		return DEAD_OBJ;
+
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+	pTerrainBuffer;
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	fY += 1.f;
+	m_pTransformCom->Set_PositionY(fY);
+
+
 	return NO_EVENT;
 }
 
@@ -158,6 +168,7 @@ void CNPC::Render_GameObject()
 		REP tRep = {};
 		tRep.m_arrInt[0] = 1;
 		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+		tRep.m_arrInt[2] = g_DefferedRender;
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 

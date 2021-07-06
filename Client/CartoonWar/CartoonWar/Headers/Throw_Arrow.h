@@ -6,7 +6,7 @@ class CRenderer;
 class CTexture;
 class CShader;
 class CCollider;
-
+class CFrustum;
 class CThrow_Arrow :
     public CGameObject
 {
@@ -42,6 +42,8 @@ private:
 	CShader*								m_pShaderCom_Blur = nullptr;
 	CCollider*								m_pColliderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
+
 private:
 	_vec3									m_vPos = {};
 };
