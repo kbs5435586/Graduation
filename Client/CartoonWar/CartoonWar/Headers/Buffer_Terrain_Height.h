@@ -10,6 +10,8 @@ private:
     CBuffer_Terrain_Height();
     CBuffer_Terrain_Height(const CBuffer_Terrain_Height& rhs);
     virtual ~CBuffer_Terrain_Height() = default;
+private:
+    void                            Calculate_TanBi(VTXTEXBUMP Vertex1, VTXTEXBUMP Vertex2, VTXTEXBUMP Vertex3, _vec3& vTangent, _vec3& vBinormal);
 public:
     HRESULT                         Ready_VIBuffer(const _tchar* pFilePath, const _float& fInterval);
 public:
