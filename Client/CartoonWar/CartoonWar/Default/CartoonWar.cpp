@@ -27,6 +27,8 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 _float      g_MaxTime = 300.f;
 int			g_iRedNum=0;
 int			g_iBlueNum=0;
+bool        g_DefferedUIRender = false;
+int         g_DefferedRender = 0;
 
 _vec3 g_vEyePt = _vec3(30.f, 100.0f, -20.0f);
 _vec3 g_vLookatPt = _vec3(0.0f, 0.f, 0.f);
@@ -113,7 +115,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     if (dwRefCnt = Safe_Release(pMainApp))
         _MSG_BOX("CMainApp Release Failed");
-    g_FbxManager->Destroy();
+    //g_FbxManager->Destroy();
 
     return (int) msg.wParam;
 }

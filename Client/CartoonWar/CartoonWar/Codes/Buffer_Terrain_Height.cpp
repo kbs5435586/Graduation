@@ -29,8 +29,6 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	HANDLE		hFile = 0;
 	_ulong		dwByte = 0;
 
-	m_fInterval = fInterval;
-
 	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 		return E_FAIL;
@@ -45,8 +43,14 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	iNumVerticesZ = m_ih.biHeight;
 
 	m_pPosition = new _vec3[iNumVerticesX * iNumVerticesZ];
-
 	m_pPixel = new _ulong[iNumVerticesX * iNumVerticesZ];
+
+	_float fTemp = 0.f;
+
+	if (iNumVerticesX >= 1500.f)
+		fTemp = 1.f;
+	else
+		fTemp = 10.f;
 
 	// ÇÈ¼¿Á¤º¸
 	ReadFile(hFile, m_pPixel, sizeof(_ulong) * (iNumVerticesX * iNumVerticesZ), &dwByte, nullptr);
@@ -61,7 +65,6 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	m_iStride = sizeof(VTXTEXNOR);
 	m_iNumPolygons = (iNumVerticesX - 1) * (iNumVerticesZ - 1) * 2;
 
-	//m_pVertices = new VTXTEXNOR[m_iVertices];
 	vector<VTXTEXNOR>		vecVertices;
 	vecVertices.resize(m_iNumVertices);
 	for (size_t i = 0; i < iNumVerticesZ; i++)
@@ -69,8 +72,10 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		for (size_t j = 0; j < iNumVerticesX; j++)
 		{
 			_uint		iIndex = i * iNumVerticesX + j;
+			_ulong		fY = (m_pPixel[iIndex] & 0x000000ff) / fTemp;
 
-			vecVertices[iIndex].vPos = _vec3(j * m_fInterval, (m_pPixel[iIndex] & 0x000000ff) / 10.0f, i * m_fInterval);
+			vecVertices[iIndex].vPos = _vec3(j * m_fInterval, fY, i * m_fInterval);
+			vecVertices[iIndex].vNormal = {};
 			m_pPosition[iIndex] = vecVertices[iIndex].vPos;
 			vecVertices[iIndex].vTexUV = _vec2(j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
 		}
@@ -221,7 +226,8 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 	_float		fRatioX = (pTargetPos->x - m_pPosition[iCurrentIdx + m_iNumVerticesX].x) / m_fInterval;
 	_float		fRatioZ = (m_pPosition[iCurrentIdx + m_iNumVerticesX].z - pTargetPos->z) / m_fInterval;
 
-	_float		fHeight[4] = {
+	_float		fHeight[4] = 
+	{
 		m_pPosition[iCurrentIdx + m_iNumVerticesX].y,
 		m_pPosition[iCurrentIdx + m_iNumVerticesX + 1].y,
 		m_pPosition[iCurrentIdx + 1].y,
@@ -278,13 +284,11 @@ HRESULT CBuffer_Terrain_Height::Culling_Frustum(CFrustum* pFrustum, const _matri
 		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
 
 	m_tIndexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_tIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * iNumPolygon;
-
-	CDevice::GetInstance()->WaitForFenceEvent();
-
 
 	m_iNumIndices = iNumPolygon;
 

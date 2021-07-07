@@ -100,10 +100,15 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		pValue = &depthOptimizedClearValue;
 	}
 
-
-	if(FAILED(CDevice ::GetInstance()->GetDevice()->
+	CDevice::GetInstance()->Open();
+	if (FAILED(CDevice::GetInstance()->GetDevice()->
 		CreateCommittedResource(&_HeapProperty, _eHeapFlag, &m_tDesc, m_eState, pValue, IID_PPV_ARGS(&m_pTexture))))
+	{
+		CDevice::GetInstance()->Close();
+		CDevice::GetInstance()->WaitForFenceEvent();
 		return E_FAIL;
+	}
+	
 
 	// Texture 甫 包府且 View 积己(SRV, RTV, DSV)
 	if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
@@ -114,7 +119,11 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		tDesc.NodeMask = 0;
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV))))
+		{
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 
 		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
 		CDevice::GetInstance()->GetDevice()->CreateDepthStencilView(m_pTexture.Get(), nullptr, hDSVHandle);
@@ -152,7 +161,8 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		srvDesc.Texture2D.MipLevels = 1;
 		CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pSRV->GetCPUDescriptorHandleForHeapStart());
 	}
-
+	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
 	return S_OK;
 }
 

@@ -52,6 +52,7 @@ protected:
 	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;
 	_bool									m_IsOldMatrix = false;
+	_bool									m_IsOldMatrix_Temp = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 protected:
 	_matrix									m_matOldWorld;
