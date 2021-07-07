@@ -31,6 +31,7 @@ private:
     _int                    m_which = {};
     _bool                   m_bool = false;
     _bool                   m_tap = false;
+    _bool                   m_skill{};
     list<void*>*            m_lstData;
 };
 

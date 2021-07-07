@@ -27,6 +27,7 @@
 #include "UI_WoL_Blue.h"
 #include "UI_OnHead.h"
 #include "UI_ClassTap.h"
+#include "UI_Skill.h"
 
 // Environment
 #include "Fire.h"
@@ -129,6 +130,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead", CUI_OnHead::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_ClassTap", CUI_ClassTap::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Skill", CUI_Skill::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
@@ -327,6 +330,8 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_ClassTap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;

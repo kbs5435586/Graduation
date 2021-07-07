@@ -107,11 +107,20 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Inventory_Camera", 0));
 		m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 		
+		//1,2,7
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 		CAMERADESC		tICameraDesc;
 		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-		tICameraDesc.vEye = m + _vec3(-10.f, 10.f, -10.f);
-		tICameraDesc.vAt = m + _vec3(0.f, 5.f, 0.f);
+		if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
+		{
+			tICameraDesc.vEye = m + _vec3(-4.f, 8.5f, -7.f);
+			tICameraDesc.vAt = m + _vec3(0.f, 6.f, 0.f);
+		}
+		else
+		{
+			tICameraDesc.vEye = m + _vec3(-4.f, 5.5f, -4.f);
+			tICameraDesc.vAt = m + _vec3(0.f, 3.f, 0.f);
+		}
 		tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
 		PROJDESC		tIProjDesc;

@@ -430,6 +430,9 @@
     <Filter Include="96. ShaderFiles\08. Effect">
       <UniqueIdentifier>{7a2448c8-5a2b-4a1b-a5e7-56bc203b5a69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\08. UI_Skill">
+      <UniqueIdentifier>{49b1f019-4214-4902-812e-2e9bc58becf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -795,6 +798,9 @@
     <ClInclude Include="..\Headers\UI_ButtonNPC.h">
       <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Skill.h">
+      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1131,6 +1137,9 @@
     <ClCompile Include="..\Codes\UI_ButtonNPC.cpp">
       <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Skill.cpp">
+      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1243,6 +1252,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Blur.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

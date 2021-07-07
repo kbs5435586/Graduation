@@ -287,6 +287,7 @@
     <ClInclude Include="..\Headers\UI_ClassTap.h" />
     <ClInclude Include="..\Headers\UI_Button.h" />
     <ClInclude Include="..\Headers\UI_ButtonNPC.h" />
+    <ClInclude Include="..\Headers\UI_Skill.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Animator.cpp" />
@@ -399,6 +400,7 @@
     <ClCompile Include="..\Codes\UI_Button.cpp" />
     <ClCompile Include="..\Codes\Inventory_Camera.cpp" />
     <ClCompile Include="..\Codes\UI_ButtonNPC.cpp" />
+    <ClCompile Include="..\Codes\UI_Skill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
@@ -535,6 +537,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_UUU.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

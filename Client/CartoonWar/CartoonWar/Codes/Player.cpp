@@ -160,9 +160,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CPlayer::Render_GameObject()
 {
-
-
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;

@@ -40,15 +40,6 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int i
 		return -1;
 	pManagement->AddRef();
 
-	
-
-	//*m_Active = m_pObserverCom->GetTapInfo();
-	if (*m_Active)
-	{
-		m_fX += 50.f;
-		*m_Active = !*m_Active;
-		//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_TAP, which);
-	}
 
 	if (pManagement->Key_Down(KEY_LBUTTON))
 	{
@@ -80,8 +71,6 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int i
 			IsDown = false;
 		}
 	}
-
-
 
 
 	Safe_Release(pManagement);
