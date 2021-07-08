@@ -99,16 +99,29 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	server->AddRef();
 
 	if (server->Get_ShowNPC(m_iLayerIdx))
-	{
-		_vec3 tempP = server->Get_NpcPos(m_iLayerIdx);
-		_vec3 tempL = server->Get_NpcLook(m_iLayerIdx);
-		_vec3 tempR = server->Get_NpcRight(m_iLayerIdx);
-		_vec3 tempU = server->Get_NpcUp(m_iLayerIdx);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &tempP);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &tempL);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &tempR);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &tempU);
-	}
+		switch (server->Get_NpcCon(m_iLayerIdx))
+		{
+			//case CON_IDLE:
+			//	break;
+		case CON_STRAIGHT:
+			m_pTransformCom->Go_Straight(fTimeDelta);
+			break;
+		case CON_BACK:
+			m_pTransformCom->BackWard(fTimeDelta);
+			break;
+		case CON_LEFT:
+			m_pTransformCom->Go_Left(fTimeDelta);
+			break;
+		case CON_RIGHT:
+			m_pTransformCom->Go_Right(fTimeDelta);
+			break;
+		case CON_ROTATE_L:
+			m_pTransformCom->Rotation_Y(fTimeDelta);
+			break;
+		case CON_ROTATE_R:
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
+			break;
+		}
 
 	Change_Class();
 	//Obb_Collision();
