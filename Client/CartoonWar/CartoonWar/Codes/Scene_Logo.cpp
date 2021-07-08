@@ -80,14 +80,6 @@ HRESULT CScene_Logo::Ready_Scene()
 	InitializeCriticalSection(&m_tCritical_Section_Shader);
 	m_hThread_Handle_Shader = (HANDLE)_beginthreadex(nullptr, 0, ShaderCompileThread, this, 0, nullptr);
 
-	CManagement* pManagement = CManagement::GetInstance();
-
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	pManagement->AddRef();
-
-
 
 	WaitForSingleObject(m_hThread_Handle_Mesh, INFINITE);
 	CloseHandle(m_hThread_Handle_Mesh);
@@ -98,6 +90,12 @@ HRESULT CScene_Logo::Ready_Scene()
 	CloseHandle(m_hThread_Handle_Shader);
 	DeleteCriticalSection(&m_tCritical_Section_Shader);
 
+	CManagement* pManagement = CManagement::GetInstance();
+
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	pManagement->AddRef();
 
 	if (FAILED(Ready_Prototype_Component(pManagement)))
 		return E_FAIL;
