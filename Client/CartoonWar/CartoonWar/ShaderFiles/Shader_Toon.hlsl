@@ -63,6 +63,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float	fDot = saturate(dot(vNormal, vLightDir));
 	fDot = (ceil(fDot * 3.f) / 3.f);
 	float4	vMtrlDif = float4(fDot, fDot, fDot,0.f);
+	float4	vMtrlAmb = float4(0.3f, 0.3f, 0.3f,0.f);
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);
 	float4	vView = normalize(vCamPos - vPosition);
 	float	fRim = saturate(dot(vNormal, vView));
@@ -72,7 +73,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 		fRim = 1.f;
 	else
 		fRim = -1.f;
-	float	fRimPower = 10.f;
+	float	fRimPower = 2.f;
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
 
 	if (g_int_2)
@@ -81,7 +82,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	}
 	else
 	{
-		vOut.vDiffuseTex = vDiffuse * vMtrlDif + (vMtrlEmiv);
+		vOut.vDiffuseTex = vDiffuse * (vMtrlDif+ vMtrlAmb + vMtrlEmiv);
 	}
 
 	vOut.vNormalTex = vIn.vNormal;

@@ -1,6 +1,40 @@
 #include "Value.hlsl"
 #include "Function.hlsl"
 
+
+float4 Calculate_Toon(float4 InvNormal, float4 InvPosition)
+{
+	float4 vOut;
+	matrix matInvView = g_mat_1;
+
+	float4 vNormal = mul(InvNormal, matInvView);
+	float4 vPosition = mul(InvPosition, matInvView);
+
+	float4	vLightDir = -1.f * normalize(tLight[0].vLightDir);
+	float	fDot = saturate(dot(vNormal, vLightDir));
+	fDot = (ceil(fDot * 3.f) / 3.f);
+
+	float4	vMtrlDif = float4(fDot, fDot, fDot, 0.f);
+	float3	fRimColor = float3(-2.f,-2.f,-2.f);
+
+	float4	vView = normalize(vCamPos - vPosition);
+	float	fRim = saturate(dot(vNormal, vView));
+
+	if (fRim > 0.3f)
+		fRim = 1.f;
+	else
+		fRim = -1.f;
+
+	float	fRimPower = 10.f;
+
+	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
+
+	vOut = vMtrlDif + vMtrlEmiv;
+
+	return vOut;
+	
+}
+
 struct VS_IN
 {
 	float3	vPosition	: POSITION;
@@ -38,13 +72,13 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 	float4 vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4 vPosition = g_texture1.Sample(Sampler0, vIn.vTexUV);
 	//vNormalTex = float4(vNormalTex.xyz * 2.f - 1.f, 0.f);
+	//vPosition = float4(vPosition.xyz * 2.f - 1.f, 0.f);
 	if (vPosition.z <= 1.f)
 	{
 		clip(-1);
 	}
 
 	LIGHT tCurCol = Calculate_Light(0, vNormalTex.xyz, vPosition.xyz);
-
 	if (dot(tCurCol.vDiffuse, tCurCol.vDiffuse) != 0.f)
 	{
 		float4 vWorldPos = mul(vPosition, matViewInv); // 메인카메라 view 역행렬을 곱해서 월드좌표를 알아낸다.
@@ -63,16 +97,12 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 			// 그림자인 경우 빛을 약화시킨다.
 			if (fShadowDepth && (fDepth > fShadowDepth + 0.00001f))
 			{
-				tCurCol.vDiffuse *= 0.1f;
+				tCurCol.vDiffuse = 0.f;
 				tCurCol.vSpecular *= 0.01f;
-				//tCurCol.vSpec = (float4) 0.f;
 			}
 
 		}
-
-
 	}
-
 	vOut.vDiffuse = tCurCol.vDiffuse + tCurCol.vAmbient;
 	vOut.vSpecular = tCurCol.vSpecular;
 
