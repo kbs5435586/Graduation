@@ -98,17 +98,30 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	server->AddRef();
 
 	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
-	{
-		_vec3 tempP = server->Get_PlayerPos(m_iLayerIdx);
-		_vec3 tempL = server->Get_PlayerLook(m_iLayerIdx);
-		_vec3 tempR = server->Get_PlayerRight(m_iLayerIdx);
-		_vec3 tempU = server->Get_PlayerUp(m_iLayerIdx);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &tempP);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &tempL);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &tempR);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &tempU);
-	}
+		switch (server->Get_PlayerCon(m_iLayerIdx))
+		{
+		case CON_IDLE:
 
+			break;
+		case CON_STRAIGHT:
+
+			break;
+		case CON_BACK:
+
+			break;
+		case CON_LEFT:
+
+			break;
+		case CON_RIGHT:
+
+			break;
+		case CON_ROTATE_L:
+
+			break;
+		case CON_ROTATE_R:
+
+			break;
+		}
 	Change_Class();
 	Input_Key(fTimeDelta);
 	//Obb_Collision();
@@ -134,7 +147,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
 
-
+	Safe_Release(server);
 	return NO_EVENT;
 }
 

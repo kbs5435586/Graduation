@@ -496,7 +496,7 @@ void Server::set_formation(int user_id)
     float PdotProduct = (playerLookAt.x * standard.x) + (playerLookAt.y * standard.y) + (playerLookAt.z * standard.z);
     float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
     float angle = radian * 180.f / PIE; // 0,0,1z 와 플레이어 look 사이의 각도
-    float radius = FORMATION_SPACE;
+    float radius = FORMATION_SPACE; // npc 플레이어 간격
     
     switch (c.m_formation)
     {
@@ -964,6 +964,59 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
+void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
+{
+    if (ST_ACTIVE == g_clients[player_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
+    {
+        if (FUNC_DEAD == g_clients[player_id].m_last_order)
+            return;
+
+        switch (func_id)
+        {
+        case FUNC_PLAYER_IDLE:
+        {
+
+        }
+        break;
+        case FUNC_PLAYER_STRAIGHT:
+        {
+
+        }
+        break;
+        case FUNC_PLAYER_BACK:
+        {
+
+        }
+        break;
+        case FUNC_PLAYER_LEFT:
+        {
+            do_follow(npc_id);
+        }
+        break;
+        case FUNC_PLAYER_RIGHT:
+        {
+            do_random_move(npc_id);
+        }
+        break;
+        case FUNC_PLAYER_ROTATE_L:
+        {
+            do_random_move(npc_id);
+        }
+        break;
+        case FUNC_PLAYER_ROTATE_R:
+        {
+            do_random_move(npc_id);
+        }
+        break;
+        }
+    }
+
+    if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
+        add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
+    else
+        add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
+}
+
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
 {
     timer_lock.lock();
@@ -1010,6 +1063,13 @@ void Server::do_timer()
             case FUNC_NPC_FOLLOW:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
+            case FUNC_PLAYER_IDLE:
+            case FUNC_PLAYER_STRAIGHT:
+            case FUNC_PLAYER_BACK:
+            case FUNC_PLAYER_LEFT:
+            case FUNC_PLAYER_RIGHT:
+            case FUNC_PLAYER_ROTATE_L:
+            case FUNC_PLAYER_ROTATE_R:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;

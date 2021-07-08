@@ -554,7 +554,8 @@ struct Session
 	_vec3	look;
 	_vec3	right;
 	_vec3	up;
-	CLASS	m_class;
+	CLASS	class;
+	char	con;
 };
 
 

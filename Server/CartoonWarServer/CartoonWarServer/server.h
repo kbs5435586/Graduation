@@ -60,6 +60,7 @@ public:
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 
+	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);
 	void do_attack(int user_id);
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때

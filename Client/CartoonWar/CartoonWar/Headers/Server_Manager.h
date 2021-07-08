@@ -65,6 +65,9 @@ public:
     short Get_PlayerID();
     short Get_PlayerHP(int id);
 
+    char Get_PlayerCon(int id);
+    char Get_NpcCon(int id);
+
    _vec3 Get_PlayerPos(int id);
    _vec3 Get_PlayerLook(int id);
    _vec3 Get_PlayerRight(int id);

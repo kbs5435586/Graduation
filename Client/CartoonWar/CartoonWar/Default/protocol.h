@@ -2,7 +2,7 @@
 // 서버 클라 같이 맞춰줘야 되는 모든건 프로토콜 헤더에
 #define MY_NPC_START(p) 30 + (14 * p)
 #define MY_NPC_END(p) 43 + (14 * p)
-enum Players {
+enum PLAYERS {
 	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
 	ENUM_PLAYER9, ENUM_PLAYER10, ENUM_PLAYER11, ENUM_PLAYER12, ENUM_PLAYER13, ENUM_PLAYER14, ENUM_PLAYER15, ENUM_PLAYER16,
 	ENUM_PLAYER17, ENUM_PLAYER18, ENUM_PLAYER19, ENUM_PLAYER20, ENUM_PLAYER21, ENUM_PLAYER22, ENUM_PLAYER23, ENUM_PLAYER24,
@@ -47,19 +47,18 @@ constexpr char CS_PACKET_ANIMATION = 8;
 constexpr char CS_PACKET_POSITION = 9;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
-constexpr char SC_PACKET_MOVE = 2;
-constexpr char SC_PACKET_ROTATE = 3;
-constexpr char SC_PACKET_ENTER = 4;
-constexpr char SC_PACKET_LEAVE = 5;
-constexpr char SC_PACKET_CHAT = 6;
-constexpr char SC_PACKET_ADD_NPC_OK = 7;
-constexpr char SC_PACKET_ANIMATION = 8;
-constexpr char SC_PACKET_ATTACKED = 9;
-constexpr char SC_PACKET_DEAD = 10;
-constexpr char SC_PACKET_ATTACK = 11;
-constexpr char SC_PACKET_FLAG_INFO = 12;
-constexpr char SC_PACKET_FLAG_BOOL = 13;
-constexpr char SC_PACKET_TIME = 14;
+constexpr char SC_PACKET_CONDITION = 2;
+constexpr char SC_PACKET_ENTER = 3;
+constexpr char SC_PACKET_LEAVE = 4;
+constexpr char SC_PACKET_CHAT = 5;
+constexpr char SC_PACKET_ADD_NPC_OK = 6;
+constexpr char SC_PACKET_ANIMATION = 7;
+constexpr char SC_PACKET_ATTACKED = 8;
+constexpr char SC_PACKET_DEAD = 9;
+constexpr char SC_PACKET_ATTACK = 10;
+constexpr char SC_PACKET_FLAG_INFO = 11;
+constexpr char SC_PACKET_FLAG_BOOL = 12;
+constexpr char SC_PACKET_TIME = 13;
 
 #pragma pack(push ,1)
 
@@ -96,41 +95,11 @@ struct sc_packet_flag_bool
 	bool isBlue;
 };
 
-struct sc_packet_move
-{
-	char size;
-	char type;
-	int id;
-	float x, y, z;
-	//unsigned move_time; // 스트레스 테스트
-};
-
-constexpr unsigned char GO_UP = 0;
-constexpr unsigned char GO_DOWN = 1;
-constexpr unsigned char GO_LEFT = 2;
-constexpr unsigned char GO_RIGHT = 3;
-constexpr unsigned char GO_BACK = 4;
-constexpr unsigned char GO_FORWARD = 5;
-constexpr unsigned char GO_FAST_FORWARD = 6;
-constexpr unsigned char TURN_LEFT = 7;
-constexpr unsigned char TURN_RIGHT = 8;
-constexpr unsigned char GO_COLLIDE = 9;
-
 struct sc_packet_time
 {
 	char size;
 	char type;
 	float time;
-};
-
-struct sc_packet_rotate
-{
-	char size;
-	char type;
-	int id;
-	float r_x, r_y, r_z;
-	float u_x, u_y, u_z;
-	float l_x, l_y, l_z;
 };
 
 constexpr unsigned char O_HUMAN = 0;
@@ -145,6 +114,7 @@ struct sc_packet_enter
 	short hp;
 	char name[MAX_ID_LEN];
 	char o_type;
+	char condition;
 	float p_x, p_y, p_z;
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
@@ -165,6 +135,22 @@ struct sc_packet_attacked
 	int id;
 	short hp;
 };
+
+struct sc_packet_condition
+{
+	char size;
+	char type;
+	int id;
+	char condition;
+};
+
+constexpr unsigned char CON_IDLE = 0;
+constexpr unsigned char CON_STRAIGHT = 1;
+constexpr unsigned char CON_BACK = 2;
+constexpr unsigned char CON_LEFT = 3;
+constexpr unsigned char CON_RIGHT = 4;
+constexpr unsigned char CON_ROTATE_L = 5;
+constexpr unsigned char CON_ROTATE_R = 6;
 
 struct sc_packet_dead
 {
@@ -225,9 +211,27 @@ struct cs_packet_move
 {
 	char	size;
 	char	type;
-	char	direction;
+	char	dir;
 	//unsigned move_time; // 스트레스 테스트
 };
+
+struct cs_packet_rotate
+{
+	char	size;
+	char	type;
+	char	dir;
+};
+
+constexpr unsigned char GO_UP = 0;
+constexpr unsigned char GO_DOWN = 1;
+constexpr unsigned char GO_LEFT = 2;
+constexpr unsigned char GO_RIGHT = 3;
+constexpr unsigned char GO_BACK = 4;
+constexpr unsigned char GO_FORWARD = 5;
+constexpr unsigned char GO_FAST_FORWARD = 6;
+constexpr unsigned char TURN_LEFT = 7;
+constexpr unsigned char TURN_RIGHT = 8;
+constexpr unsigned char GO_COLLIDE = 9;
 
 struct cs_packet_attack
 {
@@ -242,13 +246,6 @@ struct cs_packet_position
 	float	x;
 	float	y;
 	float	z;
-};
-
-struct cs_packet_rotate
-{
-	char	size;
-	char	type;
-	char	dir;
 };
 
 struct cs_packet_add_npc

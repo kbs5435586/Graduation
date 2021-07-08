@@ -157,25 +157,18 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].right = { Pos._11 ,Pos._12 ,Pos._13 };
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].hp = my_packet->hp;
+		m_objects[recv_id].con = my_packet->condition;
 		pTransform->Set_Matrix(Pos);
 		Safe_Release(managment);
 	}
 	break;
-	case SC_PACKET_MOVE:
+	case SC_PACKET_CONDITION:
 	{
-		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
+		sc_packet_condition* my_packet = reinterpret_cast<sc_packet_condition*>(ptr);
 		int recv_id = my_packet->id;
-		m_objects[recv_id].pos = { my_packet->x ,my_packet->y ,my_packet->z };
-	}
-	break;
-	case SC_PACKET_ROTATE:
-	{
-		sc_packet_rotate* my_packet = reinterpret_cast<sc_packet_rotate*>(ptr);
-		int recv_id = my_packet->id;
+		char con = my_packet->condition;
 
-		m_objects[recv_id].right = { my_packet->r_x ,my_packet->r_y ,my_packet->r_z };
-		m_objects[recv_id].up = { my_packet->u_x ,my_packet->u_y ,my_packet->u_z };
-		m_objects[recv_id].look = { my_packet->l_x ,my_packet->l_y ,my_packet->l_z };
+		m_objects[recv_id].con = con;
 	}
 	break;
 	case SC_PACKET_LEAVE:
@@ -740,7 +733,7 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	cs_packet_move m_packet;
 	m_packet.type = CS_PACKET_MOVE;
 	m_packet.size = sizeof(m_packet);
-	m_packet.direction = dir;
+	m_packet.dir = dir;
 	send_packet(&m_packet);
 }
 
@@ -941,6 +934,17 @@ short CServer_Manager::Get_PlayerID()
 short CServer_Manager::Get_PlayerHP(int id)
 {
 	return m_objects[id].hp;
+}
+
+char CServer_Manager::Get_PlayerCon(int id)
+{
+	return m_objects[id].con;
+}
+
+char CServer_Manager::Get_NpcCon(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].con;
 }
 
 _vec3 CServer_Manager::Get_PlayerPos(int id)
