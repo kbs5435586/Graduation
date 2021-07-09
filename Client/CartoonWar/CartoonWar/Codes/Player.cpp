@@ -57,6 +57,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_eCurClass = CLASS::CLASS_INFANTRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
+	m_cCondition = CON_IDLE;
+	m_cLastCondition = CON_IDLE;
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
@@ -96,14 +98,17 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
-
+	m_cCondition = server->Get_PlayerCon(m_iLayerIdx);
 	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
-		switch (server->Get_PlayerCon(m_iLayerIdx))
+		switch (m_cCondition)
 		{
 		//case CON_IDLE:
 		//	break;
 		case CON_STRAIGHT:
 			m_pTransformCom->Go_Straight(fTimeDelta);
+			break;
+		case CON_RUN:
+			m_pTransformCom->Go_Straight(fTimeDelta * 2.f);
 			break;
 		case CON_BACK:
 			m_pTransformCom->BackWard(fTimeDelta);
@@ -121,8 +126,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			m_pTransformCom->Rotation_Y(-fTimeDelta);
 			break;
 		}
+
 	Change_Class();
-	Input_Key(fTimeDelta);
+
+	if (m_iLayerIdx == server->Get_PlayerID())
+		Input_Key(fTimeDelta);
+
 	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -1210,165 +1219,220 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (0 >= m_tInfo.fHP)
 		return;
-	else
+
+	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
-		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_Attack_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
-			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-				- server->Get_Attack_Cooltime());
-			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-			{
-				server->send_attack_packet();
-				server->Set_Attack_CoolTime(high_resolution_clock::now());
-			}
-
-			if (m_eCurClass == CLASS::CLASS_ARCHER)
-			{
-				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				CTransform* pTemp = m_pTransformCom;
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-					return;
-			}
-			server->send_animation_packet(A_ATTACK);
-			m_IsOnce = true;
-			m_IsHit = true;
-			//m_IsCombat = true;
+			server->send_attack_packet();
+			server->Set_Attack_CoolTime(high_resolution_clock::now());
 		}
 
-		if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+		if (m_eCurClass == CLASS::CLASS_ARCHER)
 		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
+			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			CTransform* pTemp = m_pTransformCom;
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+				return;
+		}
+		server->send_animation_packet(A_ATTACK);
+		m_IsOnce = true;
+		m_IsHit = true;
+		//m_IsCombat = true;
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	{
+		if (!m_IsCombat)
+			server->send_animation_packet(A_WALK);
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+
+		m_cCondition = CON_BACK;
+		if (m_cLastCondition != m_cCondition)
+		{
 			server->send_move_packet(GO_BACK);
+			m_cLastCondition = m_cCondition;
 		}
-		if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
+	}
+	if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
+	{
+		if (!m_IsCombat)
 		{
-			if (!m_IsCombat)
+			m_cCondition = CON_IDLE;
+			if (m_cLastCondition != m_cCondition)
+			{
 				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-
-		if ((GetAsyncKeyState('6') & 0x8000))
-		{
-			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-				- server->Get_ChangeFormation_Cooltime());
-			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-			{
-				server->send_change_formation_packet();
-				server->Set_ChangeFormation_CoolTime(high_resolution_clock::now());
+				m_cLastCondition = m_cCondition;
 			}
 		}
-		if (GetAsyncKeyState('M') & 0x8000)
-		{
-			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-				- server->Get_AddNPC_Cooltime());
-			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-			{
-				server->send_add_npc_packet();
-				server->Set_AddNPC_CoolTime(high_resolution_clock::now());
-			}
-		}
-		if (CManagement::GetInstance()->Key_Down(KEY_1))
-		{
-			m_iCurMeshNum++;
-			if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
-				m_iCurMeshNum = 0;
-			m_iCurAnimIdx = 0;
-			m_eCurClass = (CLASS)m_iCurMeshNum;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
 
-		}
-		if (CManagement::GetInstance()->Key_Down(KEY_2))
+	if ((GetAsyncKeyState('6') & 0x8000))
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_ChangeFormation_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
 		{
-			m_tInfo.fHP -= 1.f;
+			server->send_change_formation_packet();
+			server->Set_ChangeFormation_CoolTime(high_resolution_clock::now());
 		}
+	}
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_AddNPC_Cooltime());
+		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			server->send_add_npc_packet();
+			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+		}
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_1))
+	{
+		m_iCurMeshNum++;
+		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
+			m_iCurMeshNum = 0;
+		m_iCurAnimIdx = 0;
+		m_eCurClass = (CLASS)m_iCurMeshNum;
 
-		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
+	{
+		m_tInfo.fHP -= 1.f;
+	}
+
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			server->send_animation_packet(A_WALK);
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+
+		m_cCondition = CON_LEFT;
+		if (m_cLastCondition != m_cCondition)
 		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_rotate_packet(TURN_LEFT);
+			m_cLastCondition = m_cCondition;
 		}
-		if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	{
+		if (!m_IsCombat)
 		{
-			if (!m_IsCombat)
+			m_cCondition = CON_IDLE;
+			if (m_cLastCondition != m_cCondition)
+			{
 				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
+				m_cLastCondition = m_cCondition;
+			}
 		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
 
-		if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			server->send_animation_packet(A_WALK);
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+
+		m_cCondition = CON_RIGHT;
+		if (m_cLastCondition != m_cCondition)
 		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_rotate_packet(TURN_RIGHT);
+			m_cLastCondition = m_cCondition;
 		}
-		if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
+	}
+	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
 		{
-			if (!m_IsCombat)
+			m_cCondition = CON_IDLE;
+			if (m_cLastCondition != m_cCondition)
+			{
 				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
+				m_cLastCondition = m_cCondition;
+			}
 		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
 
-		if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
+	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
+	{
+		if (!m_IsCombat)
+			server->send_animation_packet(A_RUN);
+		else
+			m_iCurAnimIdx = m_iCombatMotion[2];
+
+		m_cCondition = CON_RUN;
+		if (m_cLastCondition != m_cCondition)
 		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_RUN);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[2];
-
 			server->send_move_packet(GO_FAST_FORWARD);
+			m_cLastCondition = m_cCondition;
 		}
-		else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	}
+	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
+	{
+		if (!m_IsCombat)
+			server->send_animation_packet(A_WALK);
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+
+		m_cCondition = CON_STRAIGHT;
+		if (m_cLastCondition != m_cCondition)
 		{
-			if (!m_IsCombat)
-				server->send_animation_packet(A_WALK);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
 			server->send_move_packet(GO_FORWARD);
-
-			//_vec3 vLook = {};
-			//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-			//vLook = Vector3_::Normalize(vLook);
-
-
-			//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-			//_vec3 vSlide = {};
-			//if (!m_IsSlide)
-			//{
-			//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			//	{
-			//		m_pTransformCom->BackWard(fTimeDelta);
-			//		server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-			//	}
-			//	else
-			//	{
-			//		m_pTransformCom->Go_There(vSlide);
-			//		server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-			//	}
-			//}
-			//else
-			//{
-			//	m_pTransformCom->BackWard(fTimeDelta);
-			//	server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
-			//	m_IsSlide = false;
-			//}
+			m_cLastCondition = m_cCondition;
 		}
-		if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
+
+		//_vec3 vLook = {};
+		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		//vLook = Vector3_::Normalize(vLook);
+
+
+		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		//_vec3 vSlide = {};
+		//if (!m_IsSlide)
+		//{
+		//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		//	{
+		//		m_pTransformCom->BackWard(fTimeDelta);
+		//		server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+		//	}
+		//	else
+		//	{
+		//		m_pTransformCom->Go_There(vSlide);
+		//		server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+		//	}
+		//}
+		//else
+		//{
+		//	m_pTransformCom->BackWard(fTimeDelta);
+		//	server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+		//	m_IsSlide = false;
+		//}
+	}
+	if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
+	{
+		if (!m_IsCombat)
 		{
-			if (!m_IsCombat)
+			m_cCondition = CON_IDLE;
+			if (m_cLastCondition != m_cCondition)
+			{
 				server->send_animation_packet(A_IDLE);
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
+				m_cLastCondition = m_cCondition;
+			}
 		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
 	}
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
@@ -1382,8 +1446,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 		{
 			m_iCurAnimIdx = 0;
-			server->Set_Anim(m_iCurAnimIdx);
-			server->send_animation_packet(A_IDLE);
+			m_cCondition = CON_IDLE;
+			if (m_cLastCondition != m_cCondition)
+			{
+				server->Set_Anim(m_iCurAnimIdx);
+				server->send_animation_packet(A_IDLE);
+				m_cLastCondition = m_cCondition;
+			}
 		}
 		m_IsOnce = false;
 		m_IsHit = false; // 수정

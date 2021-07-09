@@ -151,6 +151,7 @@ constexpr unsigned char CON_LEFT = 3;
 constexpr unsigned char CON_RIGHT = 4;
 constexpr unsigned char CON_ROTATE_L = 5;
 constexpr unsigned char CON_ROTATE_R = 6;
+constexpr unsigned char CON_RUN = 7;
 
 struct sc_packet_dead
 {

@@ -82,6 +82,8 @@ private:
 	_float									m_fCombatTime = 0.f;
 	_uint									m_iCombatMotion[3] = {};
 	_vec3									m_vOBB_Range[2] = {};
+	_ubyte									m_cCondition;
+	_ubyte									m_cLastCondition;
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};

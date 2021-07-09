@@ -67,16 +67,7 @@ public:
 
     char Get_PlayerCon(int id);
     char Get_NpcCon(int id);
-
-   _vec3 Get_PlayerPos(int id);
-   _vec3 Get_PlayerLook(int id);
-   _vec3 Get_PlayerRight(int id);
-   _vec3 Get_PlayerUp(int id);
-
-    _vec3 Get_NpcPos(int id);
-    _vec3 Get_NpcLook(int id);
-    _vec3 Get_NpcRight(int id);
-    _vec3 Get_NpcUp(int id);
+    void Set_PlayerCon(char cond);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);

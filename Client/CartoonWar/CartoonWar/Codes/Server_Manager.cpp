@@ -947,48 +947,9 @@ char CServer_Manager::Get_NpcCon(int id)
 	return m_objects[npc_index].con;
 }
 
-_vec3 CServer_Manager::Get_PlayerPos(int id)
+void CServer_Manager::Set_PlayerCon(char cond)
 {
-	return m_objects[id].pos;
-}
-
-_vec3 CServer_Manager::Get_PlayerLook(int id)
-{
-	return m_objects[id].look;
-}
-
-_vec3 CServer_Manager::Get_PlayerRight(int id)
-{
-	return m_objects[id].right;
-}
-
-_vec3 CServer_Manager::Get_PlayerUp(int id)
-{
-	return m_objects[id].up;
-}
-
-_vec3 CServer_Manager::Get_NpcPos(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].pos;
-}
-
-_vec3 CServer_Manager::Get_NpcLook(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].look;
-}
-
-_vec3 CServer_Manager::Get_NpcRight(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].right;
-}
-
-_vec3 CServer_Manager::Get_NpcUp(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].up;
+	m_objects[my_id].con = cond;
 }
 
 short CServer_Manager::Get_NpcHP(int id)
