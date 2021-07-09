@@ -38,27 +38,25 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 
 	m_iNum = tFlag.iNum;
 
-
 	return S_OK;
 }
 
 _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 {
-	if (m_fTempTime >= 1000.f)
+	
+	if (!m_IsFix)
 	{
-		if (!m_IsFix)
+		if (m_tRep.m_arrInt[0])
 		{
-			if (m_tRep.m_arrInt[0])
-			{
-				g_iRedNum++;
-			}
-			else if (m_tRep.m_arrInt[1])
-			{
-				g_iBlueNum++;
-			}
+			g_iRedNum++;
 		}
-		m_IsFix = true;
+		else if (m_tRep.m_arrInt[1])
+		{
+			g_iBlueNum++;
+		}
 	}
+	m_IsFix = true;
+	
 
 	return _int();
 }
@@ -71,19 +69,9 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
-	m_fDeltaTime = fTimeDelta;
-	//m_fTempTime += fTimeDelta * 100.f;
-	//if (m_fTempTime <= 1000.f)
-	//{
-	//	m_tRep.m_arrInt[2] = 0;
-	//	m_tRep.m_arrFloat[0] += fTimeDelta;
-	//}
-	//else
-	//{
-	//	m_tRep.m_arrInt[2] = 1;
-	//	m_tRep.m_arrFloat[0] -= fTimeDelta;
-	//}
-	//
+	m_fDeltaTime += fTimeDelta;
+	if (m_fDeltaTime > 10.f)
+		m_fDeltaTime = 0;
 
 	return _int();
 }
@@ -96,156 +84,69 @@ void CMyRect::Render_GameObject()
 	pManagement->AddRef();
 
 
+	REP tRep = {};
+	tRep.m_arrFloat[0] = m_fDeltaTime;
+
 	MAINPASS tMainPass = {};
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	m_pShaderCom[0]->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
+	
+
+	CTransform* pTransform_Red = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Player", L"Com_Transform", 0);
+
+	CTransform* pTransform_Blue = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_NPC", L"Com_Transform", 0);
+
+	_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vRedPos = *pTransform_Red->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vBluePos = *pTransform_Blue->Get_StateInfo(CTransform::STATE_POSITION);
+
+	_vec3 vLen_Red = vThisPos - vRedPos;
+	_vec3 vLen_Blue = vThisPos - vBluePos;
+
+	_uint iLen_Red = Vector3_::Length(vLen_Red);
+	_uint iLen_Blue = Vector3_::Length(vLen_Blue);
+
+	if (iLen_Red < 30.f)
+	{
+		m_tRep.m_arrInt[0] = 1;
+		m_eCurTeam = TEAM::TEAM_RED;
+	}
+	if (iLen_Blue < 30.f)
+	{
+		m_tRep.m_arrInt[1] = 1;
+		m_eCurTeam = TEAM::TEAM_BLUE;
+	}
+	if (iLen_Blue > 30.f)
+	{
+		m_tRep.m_arrInt[1] = 0;
+		m_eCurTeam = TEAM::TEAM_END;
+	}
+	if (iLen_Red > 30.f)
+	{
+		m_tRep.m_arrInt[0] = 0;
+		m_eCurTeam = TEAM::TEAM_END;
+	}
 
 
-	if (m_iNum == 0)
-		CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default")->GetSRV().Get(), TEXTURE_REGISTER::t0);
-	else if (m_iNum == 1)
-		CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default_1")->GetSRV().Get(), TEXTURE_REGISTER::t0);
-	else if (m_iNum == 2)
-		CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default_2")->GetSRV().Get(), TEXTURE_REGISTER::t0);
-	else if (m_iNum == 3)
-		CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default_3")->GetSRV().Get(), TEXTURE_REGISTER::t0);
-	else if (m_iNum == 4)
-		CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_Default_4")->GetSRV().Get(), TEXTURE_REGISTER::t0);
+ 	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+	
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
-
-
-
-	CDevice::GetInstance()->ClearDummyDesc_CS();
-	{
-		CTransform* pTransform_Red = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc02", L"Com_Transform", 0);
-
-		CTransform* pTransform_Blue = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc03", L"Com_Transform", 0);
-
-		_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3 vRedPos = *pTransform_Red->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3 vBluePos = *pTransform_Blue->Get_StateInfo(CTransform::STATE_POSITION);
-
-		_vec3 vLen_Red = vThisPos - vRedPos;
-		_vec3 vLen_Blue = vThisPos - vBluePos;
-
-		_uint iLen_Red = Vector3_::Length(vLen_Red);
-		_uint iLen_Blue = Vector3_::Length(vLen_Blue);
-
-		if (iLen_Red < 30.f)
-		{
-			m_tRep.m_arrInt[0] = 1;
-			m_eCurTeam = TEAM::TEAM_RED;
-		}
-		if (iLen_Blue < 30.f)
-		{
-			m_tRep.m_arrInt[1] = 1;
-			m_eCurTeam = TEAM::TEAM_BLUE;
-		}
-		if (iLen_Blue > 30.f)
-		{
-			m_tRep.m_arrInt[1] = 0;
-			m_eCurTeam = TEAM::TEAM_END;
-		}
-		if (iLen_Red > 30.f)
-		{
-			m_tRep.m_arrInt[0] = 0;
-			m_eCurTeam = TEAM::TEAM_END;
-		}
-
-
- 		iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
-		CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
-		if(m_iNum ==0 )
-			CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default"), UAV_REGISTER::u0);
-		else if (m_iNum == 1)
-			CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default_1"), UAV_REGISTER::u0);
-		else if (m_iNum == 2)
-			CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default_2"), UAV_REGISTER::u0);
-		else if (m_iNum == 3)
-			CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default_3"), UAV_REGISTER::u0);
-		else if (m_iNum == 4)
-			CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_Default_4"), UAV_REGISTER::u0);
-
-		if ((m_tRep.m_arrInt[0] ^ m_tRep.m_arrInt[1]))
-		{
-			if (!m_IsFix)
-			{
-				m_tRep.m_arrFloat[0] += m_fDeltaTime;
-				m_fTempTime += m_fDeltaTime * 100.f;
-				m_IsTemp = false;
-				m_eCurTeam;
-				if (m_eCurTeam != m_ePreTeam)
-				{
-					m_fDeltaTime = 0.f;
-					m_fTempTime = 0.f;
-					m_IsTemp = true;
-					m_tRep.m_arrFloat[0] = 0.f;
-					switch (m_eCurTeam)
-					{
-					case TEAM::TEAM_RED:
-						m_eCurTeam = TEAM::TEAM_RED;
-						break;
-					case TEAM::TEAM_BLUE:
-						m_eCurTeam = TEAM::TEAM_BLUE;
-						break;
-					default:
-						break;
-					}
-					m_ePreTeam = m_eCurTeam;
-
-				}
-
-				m_tRep.m_arrInt[3] = (_uint)m_IsTemp;
-				m_pShaderCom[1]->UpdateData_CS();
-
-				if (m_iNum == 0)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 1)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_1")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 2)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_2")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 3)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_3")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 4)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_4")->Dispatch(1, 1000, 1);
-			}
 	
-		}
-		else
-		{
-			if (!m_IsFix)
-			{
-				m_tRep.m_arrFloat[0] = 0.f;
-				m_fDeltaTime = 0.f;
-				m_IsTemp = true;
-				m_tRep.m_arrInt[3] = (_uint)m_IsTemp;
-				m_pShaderCom[1]->UpdateData_CS();
-				if (m_iNum == 0)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 1)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_1")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 2)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_2")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 3)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_3")->Dispatch(1, 1000, 1);
-				else if (m_iNum == 4)
-					CManagement::GetInstance()->Get_UAV(L"UAV_Default_4")->Dispatch(1, 1000, 1);
-			}
-
-		}
-
-	}
 	
 
+
+	
 	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
@@ -257,7 +158,7 @@ HRESULT CMyRect::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom[0]->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 
 
@@ -295,9 +196,9 @@ void CMyRect::Free()
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pShaderCom[0]);
-	Safe_Release(m_pShaderCom[1]);
-
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	
 	CGameObject::Free();
 }
 
@@ -322,47 +223,16 @@ HRESULT CMyRect::Ready_Component(_uint iNum)
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom[0] = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Flag");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Shader0", m_pShaderCom[0])))
+	if (FAILED(Add_Component(L"Com_Shader0", m_pShaderCom)))
 		return E_FAIL;
 
-	if (iNum == 0)
-	{
-		m_pShaderCom[1] = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default");
-		NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-		if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
-			return E_FAIL;
-	}
-	else if (iNum == 1)
-	{
-		m_pShaderCom[1] = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_1");
-		NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-		if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
-			return E_FAIL;
-	}
-	else if (iNum == 2)
-	{
-		m_pShaderCom[1] = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_2");
-		NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-		if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
-			return E_FAIL;
-	}
-	else if (iNum == 3)
-	{
-		m_pShaderCom[1] = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_3");
-		NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-		if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
-			return E_FAIL;
-	}
-	else if (iNum == 4)
-	{
-		m_pShaderCom[1] = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default_4");
-		NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-		if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
-			return E_FAIL;
-	}
 
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ClassUI");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
 
 
 	Safe_Release(pManagement);

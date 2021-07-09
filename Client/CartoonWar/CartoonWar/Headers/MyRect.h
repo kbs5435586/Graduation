@@ -31,8 +31,8 @@ private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
-	CShader*								m_pShaderCom[2] = {nullptr};
-
+	CShader*								m_pShaderCom = {nullptr};
+	CTexture*								m_pTextureCom = nullptr;
 private:
 	REP										m_tRep = {};
 	TEAM									m_eCurTeam = TEAM::TEAM_END;

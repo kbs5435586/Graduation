@@ -433,6 +433,9 @@
     <Filter Include="02. GameObject\97. UI\08. UI_Skill">
       <UniqueIdentifier>{49b1f019-4214-4902-812e-2e9bc58becf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\09. UI_Shop">
+      <UniqueIdentifier>{c828c80b-fd18-4476-a88d-3fe9470ac81b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -801,6 +804,9 @@
     <ClInclude Include="..\Headers\UI_Skill.h">
       <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Shop.h">
+      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1140,6 +1146,9 @@
     <ClCompile Include="..\Codes\UI_Skill.cpp">
       <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Shop.cpp">
+      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1254,6 +1263,9 @@
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Flag.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
   </ItemGroup>

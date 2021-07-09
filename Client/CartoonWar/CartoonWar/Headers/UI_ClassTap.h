@@ -11,6 +11,7 @@ class CUI_CharTap;
 class CUI_Button;
 class CUI_ButtonNPC;
 class CUI_CharInterface;
+class CUI_Shop;
 
 class CUI_ClassTap :
     public CUI
@@ -47,6 +48,7 @@ private:
 	CTexture* m_pTextureCom = nullptr;
 	CTexture* m_pButtonTextureCom = nullptr;
 	CTexture* m_pNPCTextureCom = nullptr;
+	CTexture* m_pIconTextureCom = nullptr;
 	CTexture* m_pPressedNPCTextureCom = nullptr;
 
 private:
@@ -55,57 +57,19 @@ private:
 	_bool									m_cansee = false;
 	_bool									m_tapActive = false;
 	_bool									m_IsTap[5] = {};
-	//_float									m_fCharTapSizeX, m_fCharTapSizeY{};
-	//_float									m_fCharTapfX[5],	m_fCharTapfY[5]{};
-	//_float									m_fClassTapSizeX,	m_fClassTapSizeY{};
-	//_float									m_fClassTapX,		m_fClassTapY{};
+	
 	CUI_CharTap*							a = nullptr;
-	CUI_Button* m_button[9] = {};
-	CUI_ButtonNPC* m_buttonNPC[15] = {};
+	CUI_Button*								m_button[9] = {};
+	CUI_ButtonNPC*							m_buttonNPC[15] = {};
 	CUI_CharInterface*						m_charInter = nullptr;
+	CUI_Shop* m_shop = nullptr;
 
 	CObserver* m_pObserverCom = {};
 
 	POINT MousePos = {};
-	//_bool IsSwitch = {};
+	
 	_int m_meshnum[5] = {};
 	_int which = {};
 	_int* pwhich = {};
+	_int npcnumm{};
 };
-
-//class CUI_CharTap :public CUI
-//{
-//public:
-//	CUI_CharTap();
-//	CUI_CharTap(const CUI_ClassTap& rhs);
-//	virtual ~CUI_CharTap() = default;
-//public:
-//	//virtual HRESULT							Ready_Prototype();
-//	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-//	virtual _int							Update_GameObject(const _float& fTimeDelta, _bool b[], int idx);
-//	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
-//	virtual void							Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture);
-//
-//	void setSize(_float x, _float y);
-//	void setPos(_float x, _float y);
-//	void setMeshnum(_int num);
-//	void setTapnum(_int num);
-//	void setTemp(_int* num);
-//	void setObserver(CObserver* obs);
-//	_float getSizeX();
-//	_float getSizeY();
-//	_float getX();
-//	_float getY();
-//	bool getActive();
-//	
-//private:
-//	CObserver* m_pObserverCom = nullptr;
-//private:
-//	POINT MousePos;
-//	_bool isActive;
-//	_int  WhichChar;
-//	_int meshnum;
-//	_int tapnum;
-//	_int* temp;
-//	_int* a = nullptr;
-//};

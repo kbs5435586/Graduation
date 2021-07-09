@@ -33,8 +33,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 10.f,0.f,10.f };
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	_vec3 vPos = { 100.f,0.f,100.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_tInfo = INFO(10, 1,1,0);

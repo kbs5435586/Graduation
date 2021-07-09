@@ -3,6 +3,7 @@
 #include "UI_Button.h"
 #include "UI_ButtonNPC.h"
 #include "UI_CharInterface.h"
+#include "UI_Shop.h"
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
@@ -42,11 +43,14 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	which = 0;
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_WHICH, &which);
 	////////////////////
+	float xxx[9] = { 350, 220, 220, 350, 350, 285, 480, 480, 415 };
+	float yyy[9] = { 315, 375, 440, 375, 440, 375, 375, 440, 375 };
 	//버튼
 	for (int i = 0; i < 9; ++i)
 	{
 		m_button[i] = new CUI_Button;
 		m_button[i]->Ready_GameObject();
+		m_button[i]->setPos(xxx[i], yyy[i]);
 		m_button[i]->setObs(m_pObserverCom);
 	}
 	for (int i = 0; i < 15; ++i)
@@ -62,7 +66,9 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	m_charInter = new CUI_CharInterface;
 	m_charInter->Ready_GameObject();
 	
-
+	m_shop = new CUI_Shop;
+	m_shop->Ready_GameObject();
+	m_shop->setObs(m_pObserverCom);
 	return S_OK;
 }
 
@@ -73,49 +79,45 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
+	if(npcnumm < 14)
+		npcnumm = m_pObserverCom->GetNPCNUMInfo();
 	
-	if (GetAsyncKeyState('I'))
+	if (pManagement->Key_Up(KEY_I))
 	{
 		m_cansee = !m_cansee;
 
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &m_cansee);
 	}
 	
-	if (pManagement->Key_Up(KEY_E))
+	if (pManagement->Key_Up(KEY_Q))
 	{
 		--which;
 		if (which < 0)
-			which = 14;
+			which = npcnumm;
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
 	}
-	if (pManagement->Key_Up(KEY_Q))
+	if (pManagement->Key_Up(KEY_E))
 	{
 		++which;
-		if (which > 14)
+		if (which > npcnumm)
 			which = 0;
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
 	}
 
-	//if (pManagement->Key_Up(KEY_SPACE))
-	//{
-	//	m_tapActive = !m_tapActive;
-	//	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_TAP, &m_tapActive);
-	//	for (int i = 0; i < 15; ++i)
-	//	{
-	//		m_buttonNPC[i]->setActive(&m_tapActive);
-	//	}
-	//}
-
-
+	
 	//버튼
 	if (m_cansee)
 	{
 		for (int i = 0; i < 9; ++i)
 			m_button[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
 		for (int i = 0; i < 15; ++i)
-			m_buttonNPC[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
+		{
+			if(i-1 < npcnumm)
+				m_buttonNPC[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
+		}
 	}
-	
+
+	m_shop->Update_GameObject(fTimeDelta, m_IsTap, 0);
 
 	Safe_Release(pManagement);
 	return _int();
@@ -141,16 +143,22 @@ void CUI_ClassTap::Render_GameObject()
 			return;
 		pManagement->AddRef();
 
-
+		m_shop->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
 		for(int i=0;i<9;++i)
-			m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
+			m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
 
 		for (int i = 0; i < 15; ++i)
 		{
-			if(i == which)
-				m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pPressedNPCTextureCom);
-			else
-				m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pNPCTextureCom);
+			
+			if (i - 1 < npcnumm)
+			{ 
+				if (i == which)
+					m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
+				else
+					m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
+			}
+			
+			
 		}
 
 		MAINPASS	tMainPass = {};
@@ -232,11 +240,14 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pButtonTextureCom);
 	Safe_Release(m_pNPCTextureCom);
 	Safe_Release(m_pObserverCom);
-	//Safe_Release(m_pCompute_ShaderCom);
+	Safe_Release(m_pIconTextureCom);
+	
 
-	delete[] a;
-	delete m_button;
+	delete a;
+	delete[] m_button;
+	delete[] m_buttonNPC;
 	delete m_charInter;
+	delete m_shop;
 	CGameObject::Free();
 }
 
@@ -286,6 +297,11 @@ HRESULT CUI_ClassTap::Ready_Component()
 	if (FAILED(Add_Component(L"Com_NPCTexture", m_pNPCTextureCom)))
 		return E_FAIL;
 
+	m_pIconTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon");
+	NULL_CHECK_VAL(m_pIconTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_IconTexture", m_pIconTextureCom)))
+		return E_FAIL;
+
 	m_pPressedNPCTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_RoundButtonUI_Pressed");
 	NULL_CHECK_VAL(m_pPressedNPCTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_PressedNPCTexture", m_pPressedNPCTextureCom)))
@@ -301,169 +317,3 @@ HRESULT CUI_ClassTap::Ready_Component()
 	Safe_Release(pManagement);
 	return S_OK;
 }
-
-//CUI_CharTap::CUI_CharTap()
-//{
-//}
-//
-//CUI_CharTap::CUI_CharTap(const CUI_ClassTap& rhs)
-//{
-//}
-//
-//
-//HRESULT CUI_CharTap::Ready_GameObject(void* pArg)
-//{
-//	if (FAILED(CreateInputLayout()))
-//		return E_FAIL;
-//
-//	m_fSizeX = 50.f;
-//	m_fSizeY = 50.f;
-//	meshnum = 0;
-//
-//	a = m_pObserverCom->GetIntArrInfo(0);
-//
-//	return S_OK;
-//}
-//
-//_int CUI_CharTap::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
-//{
-//	CManagement* pManagement = CManagement::GetInstance();
-//	if (nullptr == pManagement)
-//		return -1;
-//	pManagement->AddRef();
-//
-//	
-//	
-//	for(int i=0;i<tapnum;++i)
-//		++a;
-//	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_ARRAY, m_pObserverCom->GetIntArrInfo(0));
-//		
-//	if (b[idx] == true)
-//		m_fSizeX = 60.f;
-//	else
-//		m_fSizeX = 50.f;
-//	
-//		
-//	if (pManagement->Key_Pressing(KEY_LBUTTON))
-//	{
-//		GetCursorPos(&MousePos);
-//		ScreenToClient(g_hWnd, &MousePos);
-//
-//		if (MousePos.x > m_fX - (m_fSizeX/2) && MousePos.x < m_fX + (m_fSizeX / 2))
-//		{
-//			if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
-//			{
-//				for (int i = 0; i < 5; ++i)
-//				{
-//					if (i == idx)	
-//						b[i] = true;
-//					else
-//						b[i] = false;
-//				}
-//				*temp = tapnum;
-//				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT_WHICH, temp);
-//				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_INT, &(*a));
-//
-//			}
-//		}
-//	}
-//
-//	Safe_Release(pManagement);
-//	return _int();
-//}
-//
-//_int CUI_CharTap::LastUpdate_GameObject(const _float& fTimeDelta)
-//{
-//	return _int();
-//}
-//
-//void CUI_CharTap::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
-//{
-//	CManagement* pManagement = CManagement::GetInstance();
-//	if (nullptr == pManagement)
-//		return;
-//	pManagement->AddRef();
-//
-//
-//	MAINPASS	tMainPass = {};
-//
-//
-//	_matrix matWorld = Matrix_::Identity();
-//	_matrix matView = Matrix_::Identity();
-//	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-//
-//	matWorld._11 = m_fSizeX;
-//	matWorld._22 = m_fSizeY;
-//
-//	matWorld._41 = m_fX - (WINCX >> 1);
-//	matWorld._42 = -m_fY + (WINCY >> 1);
-//
-//
-//	shader->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-//	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-//	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-//	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(), TEXTURE_REGISTER::t0);
-//	CDevice::GetInstance()->UpdateTable();
-//	buffer->Render_VIBuffer();
-//
-//	Safe_Release(pManagement);
-//}
-//
-//void CUI_CharTap::setSize(_float x, _float y)
-//{
-//	m_fSizeX = x;
-//	m_fSizeY = y;
-//}
-//
-//void CUI_CharTap::setPos(_float x, _float y)
-//{
-//	m_fX = x;
-//	m_fY = y;
-//}
-//
-//void CUI_CharTap::setMeshnum(_int num)
-//{
-//	meshnum = num;
-//}
-//
-//void CUI_CharTap::setTapnum(_int num)
-//{
-//	tapnum = num;
-//}
-//
-//void CUI_CharTap::setTemp(_int* num)
-//{
-//	temp = num;
-//}
-//
-//void CUI_CharTap::setObserver(CObserver* obs)
-//{
-//	m_pObserverCom = obs;
-//}
-//
-//_float CUI_CharTap::getSizeX()
-//{
-//	return m_fSizeX;
-//}
-//
-//_float CUI_CharTap::getSizeY()
-//{
-//	return m_fSizeY;
-//}
-//
-//_float CUI_CharTap::getX()
-//{
-//	return m_fX;
-//}
-//
-//_float CUI_CharTap::getY()
-//{
-//	return m_fY;
-//}
-//
-//bool CUI_CharTap::getActive()
-//{
-//	return isActive;
-//}
-
-

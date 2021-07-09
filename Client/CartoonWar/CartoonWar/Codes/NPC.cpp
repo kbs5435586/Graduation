@@ -6,6 +6,7 @@
 
 _int CNPC::npcnum = 0;
 _float CNPC::poss = 25.f;
+_bool CNPC::first = true;
 
 CNPC::CNPC()
 	: CGameObject()
@@ -70,6 +71,12 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	if (first)
+	{
+		CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC_NUM, &npcnum);
+		first = false;
+	}
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC_NUM, &npcnum);
 
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)

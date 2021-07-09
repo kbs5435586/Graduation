@@ -57,6 +57,9 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 	case DATA_TYPE::DATA_SKILL:
 		m_skill = *reinterpret_cast<_bool*>(*iter_find);
 		break;
+	case DATA_TYPE::DATA_NPC_NUM:
+		m_npcNum = *reinterpret_cast<_int*>(*iter_find);
+		break;
 		}
 
 }

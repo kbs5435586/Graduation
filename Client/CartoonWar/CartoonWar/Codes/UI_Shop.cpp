@@ -1,45 +1,41 @@
 #include "framework.h"
-#include "UI_ButtonNPC.h"
+#include "UI_Shop.h"
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
 
-
-_int CUI_ButtonNPC::tempNum = 0;
-
-CUI_ButtonNPC::CUI_ButtonNPC()
+CUI_Shop::CUI_Shop()
 {
 }
 
-CUI_ButtonNPC::CUI_ButtonNPC(const CUI_ButtonNPC& rhs)
+CUI_Shop::CUI_Shop(const CUI_Shop& rhs)
 {
 }
 
-HRESULT CUI_ButtonNPC::Ready_GameObject(void* pArg)
+HRESULT CUI_Shop::Ready_GameObject(void* pArg)
 {
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_iClass = tempNum;
-	++tempNum;
-	m_fX = 610.f + ((m_iClass % 5) * 45.f);
-	m_fY = 475.f + ((m_iClass / 5) * 45.f);
 	
-	m_fSizeX = 40.f;
-	m_fSizeY = 40.f;
+	m_fX = 900.f;
+	m_fY = 400.f;
+	m_fSizeX = 50.f;
+	m_fSizeY = 50.f;
 
 	lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC,)
+	
 	return S_OK;
 }
 
-_int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
+_int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return -1;
 	pManagement->AddRef();
 
+	
 
 	if (pManagement->Key_Down(KEY_LBUTTON))
 	{
@@ -50,23 +46,32 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int i
 		{
 			if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
 			{
-				m_fSizeX = 30.f;
-				m_fSizeY = 30.f;
+				m_fSizeX = 40.f;
+				m_fSizeY = 40.f;
 				IsDown = true;
 			}
 		}
 	}
 
 
+
 	if (IsDown)
 	{
 		if (pManagement->Key_Up(KEY_LBUTTON))
 		{
-			m_fSizeX = 40.f;
-			m_fSizeY = 40.f;
+			m_fSizeX = 50.f;
+			m_fSizeY = 50.f;
 
-			*which = m_iClass;
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, which);
+			npcNum = m_pObserverCom->GetNPCNUMInfo();
+
+			if (npcNum < 14)
+			{
+				PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+
+				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", nullptr, (void*)&tPlayerInfo)))
+					return E_FAIL;
+			}
+		
 
 			IsDown = false;
 		}
@@ -77,21 +82,17 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int i
 	return _int();
 }
 
-_int CUI_ButtonNPC::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_Shop::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
+void CUI_Shop::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
-
-
-	REP tRep = {};
-	tRep.m_arrInt[0] = 1;
 
 
 	MAINPASS	tMainPass = {};
@@ -111,25 +112,14 @@ void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, 
 	shader->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-
-	_int iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(m_iClass), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	buffer->Render_VIBuffer();
 
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_ButtonNPC::Ready_Component()
+HRESULT CUI_Shop::Ready_Component()
 {
-	CManagement* pManagement = CManagement::GetInstance();
-	NULL_CHECK_VAL(pManagement, E_FAIL);
-	pManagement->AddRef();
-
-
-	Safe_Release(pManagement);
-	return S_OK;
+	return E_NOTIMPL;
 }

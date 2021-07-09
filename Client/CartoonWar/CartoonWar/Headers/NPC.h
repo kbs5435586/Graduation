@@ -92,6 +92,7 @@ private:
 
 	static _float poss;
 	static _int npcnum;
+	static _bool first;
 	_int whoami;
 };
 

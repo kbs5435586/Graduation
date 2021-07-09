@@ -113,19 +113,19 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
 		if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
 		{
-			tICameraDesc.vEye = m + _vec3(-4.f, 8.5f, -7.f);
+			tICameraDesc.vEye = m + _vec3(0.f, 8.5f, -12.f);
 			tICameraDesc.vAt = m + _vec3(0.f, 6.f, 0.f);
 		}
 		else
 		{
-			tICameraDesc.vEye = m + _vec3(-4.f, 5.5f, -4.f);
-			tICameraDesc.vAt = m + _vec3(0.f, 3.f, 0.f);
+			tICameraDesc.vEye = m + _vec3(0.f, 6.5f, -7.f);
+			tICameraDesc.vAt = m + _vec3(0.f, 4.f, 0.f);
 		}
 		tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
 		PROJDESC		tIProjDesc;
 		ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
-		tIProjDesc.fFovY = XMConvertToRadians(60.f);
+		tIProjDesc.fFovY = XMConvertToRadians(30.f);
 		tIProjDesc.fAspect = _float(WINCX) / WINCY;
 		tIProjDesc.fNear = g_Near;
 		tIProjDesc.fFar = g_Far;

@@ -31,7 +31,8 @@ HRESULT CUI_Skill::Ready_GameObject(void* pArg)
 	m_fSizeX = 300.f;
 	m_fSizeY = 300.f;
 	
-	m_CoolTime = 0;
+	m_CoolTime = 10.f;
+	m_Active = false;
 
 	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_SKILL, &m_Active);
 	return S_OK;
@@ -44,42 +45,44 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
+	
+	
 
-	if (pManagement->Key_Down(KEY_LBUTTON))
+	if (m_Active)
 	{
-		GetCursorPos(&MousePos);
-		ScreenToClient(g_hWnd, &MousePos);
-
-		if (MousePos.x > m_fX - (m_fSizeX / 2) && MousePos.x < m_fX + (m_fSizeX / 2))
+		m_CoolTime += fTimeDelta;
+		if (m_CoolTime > 10.f)
 		{
-			if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
+			m_Active = !m_Active;
+			m_CoolTime = 10.f;
+		}
+	}
+	else
+	{
+		if (pManagement->Key_Down(KEY_Z))
+		{
+
+			m_fSizeX = 250.f;
+			m_fSizeY = 250.f;
+			IsDown = true;
+
+		}
+
+		if (IsDown)
+		{
+			if (pManagement->Key_Up(KEY_Z))
 			{
-				m_fSizeX = 250.f;
-				m_fSizeY = 250.f;
-				IsDown = true;
+				m_fSizeX = 300.f;
+				m_fSizeY = 300.f;
+
+				m_CoolTime = 0.f;
+				m_Active = true;
+				//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
+
+				IsDown = false;
 			}
 		}
 	}
-
-
-	if (IsDown)
-	{
-		if (pManagement->Key_Up(KEY_LBUTTON))
-		{
-			m_fSizeX = 300.f;
-			m_fSizeY = 300.f;
-
-
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &m_Active);
-
-			IsDown = false;
-			
-		}
-	}
-
-	m_CoolTime += fTimeDelta;
-	if (m_CoolTime > 10.f)
-		m_CoolTime = 0;
 
 	Safe_Release(pManagement);
 	return _int();
@@ -105,12 +108,9 @@ void CUI_Skill::Render_GameObject()
 
 	MAINPASS	tMainPass = {};
 
-
 	REP tRep = {};
 	tRep.m_arrFloat[0] = m_CoolTime;
 	
-
-
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();

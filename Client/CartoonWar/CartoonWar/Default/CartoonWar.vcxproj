@@ -272,6 +272,7 @@
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
+    <ClInclude Include="..\Headers\UI_Shop.h" />
     <ClInclude Include="..\Headers\UI_WoL.h" />
     <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
@@ -392,6 +393,7 @@
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
+    <ClCompile Include="..\Codes\UI_Shop.cpp" />
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
@@ -540,6 +542,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Flag.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
