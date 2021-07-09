@@ -79,17 +79,17 @@ PS_OUT PS_Main(VS_OUT vIn)
 	float4	vMtrlAmb = float4(0.3f, 0.3f, 0.3f, 0.f);
 
 	float3 vTSNormal = g_texture1.Sample(Sampler0, vIn.vTexUV * 30.f).xyz;
-	vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
+	//vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
 		
 	float3x3 matTBN = { vIn.vTanget.xyz, vIn.vBinormal.xyz, vIn.vNormal.xyz };
-	vNormal = float4(normalize(mul(vTSNormal, matTBN)), 0.f);
+	//vNormal = float4(normalize(mul(vTSNormal, matTBN)), 0.f);
 		
 	
 
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);
 	float4	vView = normalize(vCamPos - vPosition);
 	float	fRim = saturate(dot(vNormal, vView));
-	float	fRimPower = 50.f;
+	float	fRimPower = 30.f;
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
 
 	if (g_int_2)
@@ -99,8 +99,8 @@ PS_OUT PS_Main(VS_OUT vIn)
 	else
 	{
 		
-		vOut.vDiffuseTex = vDiffuse;
-		//vOut.vDiffuseTex = (vDiffuse +  vMtrlEmiv);
+		//vOut.vDiffuseTex = vDiffuse;
+		vOut.vDiffuseTex = (vDiffuse +  vMtrlEmiv);
 	}
 
 	vOut.vNormalTex = vIn.vNormal;

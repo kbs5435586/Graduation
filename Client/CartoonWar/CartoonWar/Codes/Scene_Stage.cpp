@@ -169,8 +169,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -219,7 +219,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 10000.f;
+	tProjDesc.fFar = 300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -238,7 +238,6 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
 	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
-	//tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
 	tCameraDesc.vAt = _vec3(1.f, -1.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
@@ -386,7 +385,7 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_RED };
+	PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
 	//GameObject_ThrowArrow
@@ -399,7 +398,7 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	
-	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_PURPLE };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
 	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };

@@ -5,6 +5,7 @@ class CRenderer;
 class CBuffer_RectTex;
 class CTexture;
 class CShader;
+class CFrustum;
 
 class CUI_OnHead :
     public CUI
@@ -36,6 +37,7 @@ private:
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	_vec3									m_vPos = {};
 	_vec3									m_vBarPos = {};
