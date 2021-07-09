@@ -50,8 +50,7 @@ public:
 	void send_flag_info_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
 	void send_flag_bool_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
 	void send_time_packet(); // 모든 깃발 위치값 전송
-	void send_move_packet(int user_id, int mover); // 변경된 위치값 설정
-	void send_rotate_packet(int user_id, int mover); // 변경된 위치값 설정
+	void send_condition_packet(int user_id, int other_id, unsigned char type); // 변경된 위치값 설정
 	void send_animation_packet(int user_id, int idler, unsigned char anim); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_attacked_packet(int user_id, int other_id);
@@ -63,7 +62,8 @@ public:
 	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);
 	void do_attack(int user_id);
-	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
+	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
+	void do_rotate(int user_id, char con);
 	void set_formation(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initialize_clients(); // 플레이어 기본 초기화
@@ -76,7 +76,7 @@ public:
 	void do_dead(int id);
 	void do_push(int pusher, int target);
 	void do_change_formation(int player_id);
-	void do_npc_rotate(int user_id, char dir);
+	void do_npc_rotate(int user_id, char con);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);

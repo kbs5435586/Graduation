@@ -46,6 +46,8 @@ struct SESSION // 클라이언트 정보
 	short m_team;
 	unsigned char m_anim;
 	ENUM_FUNCTION m_last_order;
+	ENUM_FUNCTION m_last_move;
+	ENUM_FUNCTION m_last_rotate;
 	OverEx m_recv_over;
 	int m_prev_size; // 잘린 파일의 경우 이전에 저장해둔 버퍼 크기
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
@@ -58,7 +60,8 @@ struct SESSION // 클라이언트 정보
 	vector <SESSION*> m_boid;
 	ENUM_FORMATION m_formation;
 	CLASS m_class;
-	char m_condition;
+	char m_Mcondition;
+	char m_Rcondition;
 
 	_vec3 m_target_pos;
 	CTransform m_transform;
