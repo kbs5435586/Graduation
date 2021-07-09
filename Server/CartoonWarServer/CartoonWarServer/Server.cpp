@@ -261,15 +261,20 @@ void Server::send_packet(int user_id, void* packet)
 void Server::do_rotate(int user_id, char con)
 {
     if (CON_IDLE == con)
+    {
+        g_clients[user_id].m_curr_rotate = FUNC_PLAYER_IDLE;
         g_clients[user_id].m_Rcondition = CON_IDLE;
+    }
     else if (CON_RIGHT == con)
     {
+        g_clients[user_id].m_curr_rotate = FUNC_PLAYER_RIGHT;
         g_clients[user_id].m_Rcondition = CON_RIGHT;
         //g_clients[user_id].m_transform.Rotation_Y(ROTATE_SPEED);
         add_timer(user_id, FUNC_PLAYER_RIGHT, FRAME_TIME);
     }
     else if (CON_LEFT == con)
     {
+        g_clients[user_id].m_curr_rotate = FUNC_PLAYER_LEFT;
         g_clients[user_id].m_Rcondition = CON_LEFT;
         //g_clients[user_id].m_transform.Rotation_Y(-ROTATE_SPEED);
         add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
@@ -297,11 +302,15 @@ void Server::do_move(int user_id, char con)
     switch (con)
     {
     case CON_IDLE:
+    {
+        g_clients[user_id].m_curr_move = FUNC_PLAYER_IDLE;
         g_clients[user_id].m_Mcondition = CON_IDLE;
+    }
     break;
     case CON_STRAIGHT:
         //if (newpos->z >= 0 || newpos->x >= 0)
     {
+        g_clients[user_id].m_curr_move = FUNC_PLAYER_STRAIGHT;
         g_clients[user_id].m_Mcondition = CON_STRAIGHT;
         //g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
         add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
@@ -310,6 +319,7 @@ void Server::do_move(int user_id, char con)
     case CON_RUN:
         //if (newpos->z >= 0 || newpos->x >= 0)
     {
+        g_clients[user_id].m_curr_move = FUNC_PLAYER_RUN;
         g_clients[user_id].m_Mcondition = CON_RUN;
         //g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
         add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
@@ -318,6 +328,7 @@ void Server::do_move(int user_id, char con)
     case CON_BACK:
         //if (newpos->z < WORLD_VERTICAL || newpos->x < WORLD_HORIZONTAL)
     {
+        g_clients[user_id].m_curr_move = FUNC_PLAYER_BACK;
         g_clients[user_id].m_Mcondition = CON_BACK;
         //g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
         add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
@@ -566,7 +577,7 @@ void Server::do_random_move(int npc_id)
             if (0 != g_clients[i].m_view_list.count(npc_id))
             {
                 g_clients[i].m_cLock.unlock();
-                send_move_packet(i, npc_id);
+                //send_move_packet(i, npc_id);
             }
             else
             {
@@ -647,7 +658,7 @@ void Server::do_follow(int npc_id)
                             if (0 != g_clients[i].m_view_list.count(npc_id))
                             {
                                 g_clients[i].m_cLock.unlock();
-                                send_move_packet(i, npc_id);
+                                //send_move_packet(i, npc_id);
                             }
                             else
                             {
@@ -707,7 +718,7 @@ void Server::do_npc_rotate(int user_id, char con)
                 if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
                     continue;
 
-                send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+                //send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
             }
         }
     }
@@ -837,53 +848,38 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
 
         switch (func_id)
         {
-        case FUNC_PLAYER_IDLE:
-        {
-
-        }
-        break;
         case FUNC_PLAYER_STRAIGHT:
         {
-            g_clients[player_id].m_LMcondition = CON_STRAIGHT;
+            g_clients[player_id].m_last_move = FUNC_PLAYER_STRAIGHT;
             g_clients[player_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
-            add_timer(player_id, FUNC_PLAYER_LEFT, FRAME_TIME);
         }
         break;
         case FUNC_PLAYER_RUN:
         {
-            g_clients[player_id].m_LMcondition = CON_RUN;
+            g_clients[player_id].m_last_move = FUNC_PLAYER_RUN;
             g_clients[player_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
-            add_timer(player_id, FUNC_PLAYER_RUN, FRAME_TIME);
         }
         break;
         case FUNC_PLAYER_BACK:
         {
-            g_clients[player_id].m_LMcondition = CON_BACK;
+            g_clients[player_id].m_last_move = FUNC_PLAYER_BACK;
             g_clients[player_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
-            add_timer(player_id, FUNC_PLAYER_LEFT, FRAME_TIME);
         }
         break;
         case FUNC_PLAYER_LEFT:
         {
-            g_clients[player_id].m_LRcondition = CON_LEFT;
+            g_clients[player_id].m_last_rotate = FUNC_PLAYER_LEFT;
             g_clients[player_id].m_transform.Rotation_Y(MOVE_SPEED_PLAYER);
-            add_timer(player_id, FUNC_PLAYER_RIGHT, FRAME_TIME);
         }
         break;
         case FUNC_PLAYER_RIGHT:
         {
-            g_clients[player_id].m_LRcondition = CON_RIGHT;
+            g_clients[player_id].m_last_rotate = FUNC_PLAYER_RIGHT;
             g_clients[player_id].m_transform.Rotation_Y(-MOVE_SPEED_PLAYER);
-            add_timer(player_id, FUNC_PLAYER_LEFT, FRAME_TIME);
         }
         break;
         }
     }
-
-    if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
-        add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
-    else
-        add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 
     _vec3* newpos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     //_vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
@@ -923,44 +919,28 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
     }
     set_formation(player_id);
 
-
-
-
-    g_clients[user_id].m_cLock.lock();
-    unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
+    g_clients[player_id].m_cLock.lock();
+    unordered_set<int> old_viewlist = g_clients[player_id].m_view_list;
     // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[player_id].m_cLock.unlock();
     unordered_set<int> new_viewlist;
 
     for (auto& c : g_clients)
     {
-        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
+        if (false == is_near(c.second.m_id, player_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-        //    activate_npc(c.second.m_id, c.second.m_last_order);
         if (ST_ACTIVE != c.second.m_status)
             continue;
-        if (c.second.m_id == user_id)
+        if (c.second.m_id == player_id)
             continue;
-        if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
-        {
-            OverEx* overEx = new OverEx;
-            overEx->function = FUNC_PLAYER_MOVE_FOR_NPC; // NPC에게 주변 플레이어가 움직였다는걸 알림
-            overEx->player_id = user_id;
-            PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
-        }
-
         new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
-
-    // send_move_packet 해주는 부분
-    // send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도
 
     for (auto new_vl : new_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         if (0 == old_viewlist.count(new_vl)) // 이전 뷰리스트에 new_vl의 개수가 0개 일때 = 이전 시야에 없던 애일때
         {
-            send_enter_packet(user_id, new_vl); // 다른 객체들의 정보를 나에게 전송
+            send_enter_packet(player_id, new_vl); // 다른 객체들의 정보를 나에게 전송
 
             if (false == is_player(new_vl)) // 새로 시야에 들어온 애가 플레이어가 아니면 걍 반복문 넘김 / 이 아니라 npc 발동해주고 넘김
             {
@@ -968,15 +948,15 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             }
 
             g_clients[new_vl].m_cLock.lock();
-            if (0 == g_clients[new_vl].m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
+            if (0 == g_clients[new_vl].m_view_list.count(player_id)) // 상대의 뷰리스트에 내가 없다면
             {
                 g_clients[new_vl].m_cLock.unlock();
-                send_enter_packet(new_vl, user_id); // 나의 입장 정보를 다른 객체들에게 전송
+                send_enter_packet(new_vl, player_id); // 나의 입장 정보를 다른 객체들에게 전송
             }
             else
             {
                 g_clients[new_vl].m_cLock.unlock();
-                send_move_packet(new_vl, user_id); // 나의 움직임 정보를 다른 객체들에게 전송
+                //send_move_packet(new_vl, player_id); // 나의 움직임 정보를 다른 객체들에게 전송
             }
         }
         else // 이동 한 후에 새 시야에 보이는 플레이어인데 이전에도 보였던 애다 = 기존 시야에 있던 애
@@ -985,15 +965,15 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
                 continue;
 
             g_clients[new_vl].m_cLock.lock();
-            if (0 != g_clients[new_vl].m_view_list.count(user_id))
+            if (0 != g_clients[new_vl].m_view_list.count(player_id))
             {
                 g_clients[new_vl].m_cLock.unlock();
-                send_move_packet(new_vl, user_id);
+                //send_move_packet(new_vl, player_id);
             }
             else
             {
                 g_clients[new_vl].m_cLock.unlock();
-                send_enter_packet(new_vl, user_id);
+                send_enter_packet(new_vl, player_id);
             }
         }
     }
@@ -1002,16 +982,16 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
     {
         if (0 == new_viewlist.count(old_vl)) // 새 시야범위에 old_vl 갯수가 0일때 = 시야 범위에서 벗어난 객체일때
         {
-            send_leave_packet(user_id, old_vl); // 나에게 상대 객체가 나갔다 알림
+            send_leave_packet(player_id, old_vl); // 나에게 상대 객체가 나갔다 알림
 
             if (false == is_player(old_vl)) // npc에게 내가 나갔다는거 안알려도 된다
                 continue;
 
             g_clients[old_vl].m_cLock.lock();
-            if (0 != g_clients[old_vl].m_view_list.count(user_id))
+            if (0 != g_clients[old_vl].m_view_list.count(player_id))
             {
                 g_clients[old_vl].m_cLock.unlock();
-                send_leave_packet(old_vl, user_id); // 상대 객체에게 내가 나갔다 알림
+                send_leave_packet(old_vl, player_id); // 상대 객체에게 내가 나갔다 알림
             }
             else // 실수하기 쉬움, else에 뭐 없더라고 unlock 해줄것, 안그러면 조건 불만족시 락 안풀림
             {
@@ -1019,6 +999,11 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             }
         }
     }
+
+    if (g_clients[player_id].m_last_move == g_clients[player_id].m_curr_move)
+        add_timer(player_id, g_clients[player_id].m_last_move, FRAME_TIME); // 생성 이후 반복 간격
+    if (g_clients[player_id].m_last_rotate == g_clients[player_id].m_curr_rotate)
+        add_timer(player_id, g_clients[player_id].m_last_rotate, FRAME_TIME); // 생성 이후 반복 간격
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)

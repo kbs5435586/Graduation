@@ -46,6 +46,8 @@ struct SESSION // 클라이언트 정보
 	short m_team;
 	unsigned char m_anim;
 	ENUM_FUNCTION m_last_order;
+	ENUM_FUNCTION m_curr_move;
+	ENUM_FUNCTION m_curr_rotate;
 	ENUM_FUNCTION m_last_move;
 	ENUM_FUNCTION m_last_rotate;
 	OverEx m_recv_over;

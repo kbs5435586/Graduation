@@ -108,13 +108,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		switch (m_cMoveCondition)
 		{
 		case CON_STRAIGHT:
-			m_pTransformCom->Go_Straight(fTimeDelta);
+			m_pTransformCom->BackWard(fTimeDelta);
 			break;
 		case CON_RUN:
-			m_pTransformCom->Go_Straight(fTimeDelta * 2.f);
+			m_pTransformCom->BackWard(fTimeDelta * 2.f);
 			break;
 		case CON_BACK:
-			m_pTransformCom->BackWard(fTimeDelta);
+			m_pTransformCom->Go_Straight(fTimeDelta);
 			break;
 		}
 

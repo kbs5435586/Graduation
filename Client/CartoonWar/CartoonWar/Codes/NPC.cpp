@@ -100,30 +100,24 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	if (server->Get_ShowNPC(m_iLayerIdx))
-		switch (server->Get_NpcCon(m_iLayerIdx))
-		{
-			//case CON_IDLE:
-			//	break;
-		case CON_STRAIGHT:
-			m_pTransformCom->Go_Straight(fTimeDelta);
-			break;
-		case CON_BACK:
-			m_pTransformCom->BackWard(fTimeDelta);
-			break;
-		case CON_LEFT:
-			m_pTransformCom->Go_Left(fTimeDelta);
-			break;
-		case CON_RIGHT:
-			m_pTransformCom->Go_Right(fTimeDelta);
-			break;
-		case CON_ROTATE_L:
-			m_pTransformCom->Rotation_Y(fTimeDelta);
-			break;
-		case CON_ROTATE_R:
-			m_pTransformCom->Rotation_Y(-fTimeDelta);
-			break;
-		}
+	//if (server->Get_ShowNPC(m_iLayerIdx))
+	//	switch (server->Get_NpcCon(m_iLayerIdx))
+	//	{
+	//		//case CON_IDLE:
+	//		//	break;
+	//	case CON_STRAIGHT:
+	//		m_pTransformCom->Go_Straight(fTimeDelta);
+	//		break;
+	//	case CON_BACK:
+	//		m_pTransformCom->BackWard(fTimeDelta);
+	//		break;
+	//	case CON_LEFT:
+	//		m_pTransformCom->Rotation_Y(fTimeDelta);
+	//		break;
+	//	case CON_RIGHT:
+	//		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	//		break;
+	//	}
 
 	Change_Class();
 	//Obb_Collision();
