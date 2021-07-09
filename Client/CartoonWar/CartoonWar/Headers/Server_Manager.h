@@ -40,8 +40,7 @@ public:
     HRESULT EventManager();
 
     void send_packet(void* packet);
-    void send_move_packet(unsigned char dir);
-    void send_rotate_packet(unsigned char dir);
+    void send_condition_packet(unsigned char con_type, unsigned char con);
     void send_login_ok_packet();
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
@@ -65,9 +64,12 @@ public:
     short Get_PlayerID();
     short Get_PlayerHP(int id);
 
-    char Get_PlayerCon(int id);
-    char Get_NpcCon(int id);
-    void Set_PlayerCon(char cond);
+    char Get_PlayerMCon(int id);
+    char Get_NpcMCon(int id);
+    void Set_PlayerMCon(char cond);
+    char Get_PlayerRCon(int id);
+    char Get_NpcRCon(int id);
+    void Set_PlayerRCon(char cond);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);

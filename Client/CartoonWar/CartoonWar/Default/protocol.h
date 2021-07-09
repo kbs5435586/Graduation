@@ -37,14 +37,13 @@ constexpr int WORLD_VERTICAL = 500; // 월드 세로 z
 constexpr int SERVER_PORT = 9000;
 
 constexpr char CS_PACKET_LOGIN = 1;
-constexpr char CS_PACKET_MOVE = 2;
-constexpr char CS_PACKET_ROTATE = 3;
-constexpr char CS_PACKET_ADD_NPC = 4;
-constexpr char CS_PACKET_NPC_ACT = 5;
-constexpr char CS_PACKET_CHANGE_FORMATION = 6;
-constexpr char CS_PACKET_ATTACK = 7;
-constexpr char CS_PACKET_ANIMATION = 8;
-constexpr char CS_PACKET_POSITION = 9;
+constexpr char CS_PACKET_CONDITION = 2;
+constexpr char CS_PACKET_ADD_NPC = 3;
+constexpr char CS_PACKET_NPC_ACT = 4;
+constexpr char CS_PACKET_CHANGE_FORMATION = 5;
+constexpr char CS_PACKET_ATTACK = 6;
+constexpr char CS_PACKET_ANIMATION = 7;
+constexpr char CS_PACKET_POSITION = 8;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
@@ -114,7 +113,8 @@ struct sc_packet_enter
 	short hp;
 	char name[MAX_ID_LEN];
 	char o_type;
-	char condition;
+	char con_move;
+	char con_rotate;
 	float p_x, p_y, p_z;
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
@@ -140,18 +140,20 @@ struct sc_packet_condition
 {
 	char size;
 	char type;
+	char con_type;
 	int id;
 	char condition;
 };
+
+constexpr unsigned char CON_TYPE_MOVE = 0;
+constexpr unsigned char CON_TYPE_ROTATE = 1;
 
 constexpr unsigned char CON_IDLE = 0;
 constexpr unsigned char CON_STRAIGHT = 1;
 constexpr unsigned char CON_BACK = 2;
 constexpr unsigned char CON_LEFT = 3;
 constexpr unsigned char CON_RIGHT = 4;
-constexpr unsigned char CON_ROTATE_L = 5;
-constexpr unsigned char CON_ROTATE_R = 6;
-constexpr unsigned char CON_RUN = 7;
+constexpr unsigned char CON_RUN = 5;
 
 struct sc_packet_dead
 {
@@ -208,19 +210,13 @@ struct cs_packet_login
 	char	name[MAX_ID_LEN];
 };
 
-struct cs_packet_move
+struct cs_packet_condition
 {
 	char	size;
 	char	type;
-	char	dir;
+	char	con_type;
+	char	con;
 	//unsigned move_time; // 스트레스 테스트
-};
-
-struct cs_packet_rotate
-{
-	char	size;
-	char	type;
-	char	dir;
 };
 
 constexpr unsigned char GO_UP = 0;
@@ -230,8 +226,6 @@ constexpr unsigned char GO_RIGHT = 3;
 constexpr unsigned char GO_BACK = 4;
 constexpr unsigned char GO_FORWARD = 5;
 constexpr unsigned char GO_FAST_FORWARD = 6;
-constexpr unsigned char TURN_LEFT = 7;
-constexpr unsigned char TURN_RIGHT = 8;
 constexpr unsigned char GO_COLLIDE = 9;
 
 struct cs_packet_attack

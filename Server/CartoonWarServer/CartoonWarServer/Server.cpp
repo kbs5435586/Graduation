@@ -78,17 +78,15 @@ void Server::process_packet(int user_id, char* buf)
         // true할때 같이 락을 걸던가 둘 중 하나로 해야함
     }
     break;
-    case CS_PACKET_MOVE:
+    case CS_PACKET_CONDITION:
     {
-        cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+        cs_packet_condition* packet = reinterpret_cast<cs_packet_condition*>(buf);
         // g_clients[user_id].m_move_time = packet->move_time; // 스트레스 테스트
-        do_move(user_id, packet->direction);
-    }
-    break;
-    case CS_PACKET_ROTATE:
-    {
-        cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
-        do_rotate(user_id, packet->direction);
+        if (CON_TYPE_MOVE == packet->con_type)
+            do_move(user_id, packet->dir);
+        else if (CON_TYPE_ROTATE == packet->con_type)
+            do_rotate(user_id, packet->dir);
+        
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -261,40 +259,98 @@ void Server::send_packet(int user_id, void* packet)
     WSASend(g_clients[user_id].m_socket, &overEx->wsabuf, 1, NULL, 0, &overEx->over, NULL);
 }
 
+void Server::do_rotate(int user_id, char dir)
+{
+    if (TURN_RIGHT == dir)
+    {
+        g_clients[user_id].m_transform.Rotation_Y(ROTATE_SPEED);
+        add_timer(user_id, FUNC_PLAYER_ROTATE_R, FRAME_TIME);
+    }
+    else if (TURN_LEFT == dir)
+    {
+        g_clients[user_id].m_transform.Rotation_Y(-ROTATE_SPEED);
+        add_timer(user_id, FUNC_PLAYER_ROTATE_L, FRAME_TIME);
+    }
+
+
+    for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
+    {
+        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애면 보내지도 마라
+            continue;
+        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
+        //    activate_npc(c.second.m_id, c.second.m_last_order);
+        if (ST_ACTIVE != c.second.m_status)
+            continue;
+        if (c.second.m_id == user_id)
+            continue;
+    }
+
+    set_formation(user_id);
+
+    g_clients[user_id].m_cLock.lock();
+    unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
+    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
+    g_clients[user_id].m_cLock.unlock();
+
+    send_rotate_packet(user_id, user_id); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
+    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+    {
+        send_rotate_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+    }
+    do_npc_rotate(user_id, dir);
+}
+
 void Server::do_move(int user_id, char direction)
 {
     _vec3* newpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    //_vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     switch (direction)
     {
     case GO_UP:
-        if (newpos->y >= 0)
-            newpos->y--;
         break;
     case GO_DOWN:
-        if (newpos->y < WORLD_HEIGHT)
-            newpos->y++;
         break;
     case GO_LEFT:
-        if (newpos->x >= 0)
-            g_clients[user_id].m_transform.Go_Left(MOVE_SPEED_PLAYER);
+        {
+            g_clients[user_id].m_transform.Rotation_Y(-MOVE_SPEED_PLAYER);
+            g_clients[user_id].m_condition = CON_LEFT;
+            do_npc_rotate(user_id, GO_LEFT);
+            add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        }
         break;
     case GO_RIGHT:
-        if (newpos->x < WORLD_HORIZONTAL)
-            g_clients[user_id].m_transform.Go_Right(MOVE_SPEED_PLAYER);
+        {
+            g_clients[user_id].m_transform.Rotation_Y(MOVE_SPEED_PLAYER);
+            g_clients[user_id].m_condition = CON_RIGHT;
+            do_npc_rotate(user_id, GO_RIGHT);
+            add_timer(user_id, FUNC_PLAYER_RIGHT, FRAME_TIME);
+        }
         break;
     case GO_FORWARD:
-        if (newpos->z >= 0)
+        //if (newpos->z >= 0 || newpos->x >= 0)
+        {
             g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
+            g_clients[user_id].m_condition = CON_STRAIGHT;
+            add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        }
         break;
     case GO_FAST_FORWARD:
-        if (newpos->z >= 0)
+        //if (newpos->z >= 0 || newpos->x >= 0)
+        {
             g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
+            g_clients[user_id].m_condition = CON_RUN;
+            add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        }
         break;
     case GO_BACK:
-        if (newpos->z < WORLD_VERTICAL)
+        //if (newpos->z < WORLD_VERTICAL || newpos->x < WORLD_HORIZONTAL)
+        {
             g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
+            g_clients[user_id].m_condition = CON_BACK;
+            add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        }
         break;
     case GO_COLLIDE:
         break;
@@ -351,7 +407,7 @@ void Server::do_move(int user_id, char direction)
         //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, newpos);
         set_formation(user_id);
     }
-   
+
     g_clients[user_id].m_cLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
     // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
@@ -380,7 +436,7 @@ void Server::do_move(int user_id, char direction)
     }
 
     // send_move_packet 해주는 부분
-    send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도
+    // send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도
 
     for (auto new_vl : new_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
@@ -447,40 +503,7 @@ void Server::do_move(int user_id, char direction)
     }
 }
 
-void Server::do_rotate(int user_id, char dir)
-{
-    if (TURN_RIGHT == dir)
-        g_clients[user_id].m_transform.Rotation_Y(ROTATE_SPEED);
-    else if (TURN_LEFT == dir)
-        g_clients[user_id].m_transform.Rotation_Y(-ROTATE_SPEED);
 
-    for (auto& c : g_clients) // 모든 객체랑 돌아간애 비교
-    {
-        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애면 보내지도 마라
-            continue;
-        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-        //    activate_npc(c.second.m_id, c.second.m_last_order);
-        if (ST_ACTIVE != c.second.m_status)
-            continue;
-        if (c.second.m_id == user_id)
-            continue;
-    }
-
-    set_formation(user_id);
-
-    g_clients[user_id].m_cLock.lock();
-    unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
-    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
-    g_clients[user_id].m_cLock.unlock();
-
-    send_rotate_packet(user_id, user_id); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
-    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
-    {
-        send_rotate_packet(cpy_vl, user_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
-    }
-    do_npc_rotate(user_id, dir);
-}
 
 void Server::set_formation(int user_id)
 {
@@ -831,9 +854,9 @@ void Server::do_npc_rotate(int user_id, char dir)
     {
         if (ST_ACTIVE == g_clients[i].m_status)
         {
-            if (TURN_RIGHT == dir)
+            if (GO_RIGHT == dir)
                 g_clients[i].m_transform.Rotation_Y(ROTATE_SPEED);
-            else if (TURN_LEFT == dir)
+            else if (GO_LEFT == dir)
                 g_clients[i].m_transform.Rotation_Y(-ROTATE_SPEED);
 
             for (int player = 0; player < NPC_START; ++player)
@@ -980,12 +1003,20 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         break;
         case FUNC_PLAYER_STRAIGHT:
         {
-
+            g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
+            add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        }
+        break;
+        case FUNC_PLAYER_RUN:
+        {
+            g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
+            add_timer(user_id, FUNC_PLAYER_RUN, FRAME_TIME);
         }
         break;
         case FUNC_PLAYER_BACK:
         {
-
+            g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
+            add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
         }
         break;
         case FUNC_PLAYER_LEFT:
@@ -998,16 +1029,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             do_random_move(npc_id);
         }
         break;
-        case FUNC_PLAYER_ROTATE_L:
-        {
-            do_random_move(npc_id);
-        }
-        break;
-        case FUNC_PLAYER_ROTATE_R:
-        {
-            do_random_move(npc_id);
-        }
-        break;
         }
     }
 
@@ -1015,6 +1036,103 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
     else
         add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
+
+    _vec3* newpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    //_vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    switch (direction)
+    {
+    case GO_UP:
+        break;
+    case GO_DOWN:
+        break;
+    case GO_LEFT:
+    {
+        g_clients[user_id].m_transform.Rotation_Y(-MOVE_SPEED_PLAYER);
+        do_npc_rotate(user_id, GO_LEFT);
+        add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+    }
+    break;
+    case GO_RIGHT:
+    {
+        g_clients[user_id].m_transform.Rotation_Y(MOVE_SPEED_PLAYER);
+        do_npc_rotate(user_id, GO_RIGHT);
+        add_timer(user_id, FUNC_PLAYER_RIGHT, FRAME_TIME);
+    }
+    break;
+    case GO_FORWARD:
+        //if (newpos->z >= 0 || newpos->x >= 0)
+    {
+        
+    }
+    break;
+    case GO_FAST_FORWARD:
+        //if (newpos->z >= 0 || newpos->x >= 0)
+    {
+        g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
+        add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+    }
+    break;
+    case GO_BACK:
+        //if (newpos->z < WORLD_VERTICAL || newpos->x < WORLD_HORIZONTAL)
+    {
+    }
+    break;
+    case GO_COLLIDE:
+        break;
+    default:
+        cout << "Unknown Direction From cs_move_packet !\n";
+        DebugBreak();
+        exit(-1);
+    }
+
+    if (newpos->y < 0)
+        newpos->y = 0;
+    if (newpos->y >= (WORLD_HEIGHT - 1))
+        newpos->y = WORLD_HEIGHT - 1;
+    if (newpos->x < 0)
+        newpos->x = 0;
+    if (newpos->x >= (WORLD_HORIZONTAL - 1))
+        newpos->x = WORLD_HORIZONTAL - 1;
+    if (newpos->z >= (WORLD_VERTICAL - 1))
+        newpos->z = WORLD_VERTICAL - 1;
+    if (newpos->z < 0)
+        newpos->z = 0;
+
+    bool isCollide = false;
+
+    if (GO_COLLIDE != direction)
+    {
+        for (auto& c : g_clients) // aabb 충돌체크
+        {
+            if (c.second.m_id == user_id)
+                continue;
+            if (ST_ACTIVE != c.second.m_status)
+                continue;
+            if (FUNC_DEAD == c.second.m_last_order)
+                continue;
+            if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
+                continue;
+            if (check_basic_collision(user_id, c.second.m_id))
+            {
+                //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &oldpos);
+                isCollide = true;
+                set_formation(user_id);
+                do_move(c.second.m_id, GO_COLLIDE);
+                break;
+            }
+            //if (check_obb_collision(user_id, c.second.m_id))
+            //{
+
+            //}
+        }
+    }
+
+    if (!isCollide)
+    {
+        //g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, newpos);
+        set_formation(user_id);
+    }
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
@@ -1068,8 +1186,7 @@ void Server::do_timer()
             case FUNC_PLAYER_BACK:
             case FUNC_PLAYER_LEFT:
             case FUNC_PLAYER_RIGHT:
-            case FUNC_PLAYER_ROTATE_L:
-            case FUNC_PLAYER_ROTATE_R:
+            case FUNC_PLAYER_RUN:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -1086,7 +1203,7 @@ void Server::do_timer()
     }
 }
 
-void Server::send_move_packet(int user_id, int mover)
+void Server::send_condition_packet(int user_id, int mover)
 {
     sc_packet_move packet;
     packet.id = mover;
@@ -1229,6 +1346,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[player_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
             g_clients[npc_id].m_speed = MOVE_SPEED_NPC;
             g_clients[npc_id].m_class = CLASS::CLASS_WORKER;
+            g_clients[npc_id].m_condition = CON_IDLE;
             g_clients[npc_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
             g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
             g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
@@ -1284,6 +1402,7 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.p_x = pos._41;
     packet.p_y = pos._42;
     packet.p_z = pos._43;
+    packet.condition = g_clients[other_id].m_condition;
 
     strcpy_s(packet.name, g_clients[other_id].m_name);
     packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
@@ -1700,6 +1819,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_col.radius = 20.f * SCALE.x;
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_hp = 100;
+                g_clients[user_id].m_condition = CON_IDLE;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 if (0 == user_id)
                 {
@@ -1791,6 +1911,25 @@ void Server::worker_thread()
             }
             delete overEx;
             break;
+        case FUNC_PLAYER_BACK:
+            dead_reckoning(id, FUNC_PLAYER_BACK);
+            delete overEx;
+            break;
+        case FUNC_PLAYER_STRAIGHT:
+            dead_reckoning(id, FUNC_PLAYER_STRAIGHT);
+            delete overEx;
+            break;
+        case FUNC_PLAYER_RUN:
+            dead_reckoning(id, FUNC_PLAYER_RUN);
+            delete overEx;
+            break;
+        case FUNC_PLAYER_ROTATE_L:
+            dead_reckoning(id, FUNC_PLAYER_ROTATE_L);
+            delete overEx;
+            break;
+        case FUNC_PLAYER_ROTATE_R:
+            dead_reckoning(id, FUNC_PLAYER_ROTATE_R);
+            delete overEx;
             break;
         default:
             cout << "Unknown Operation in Worker_Thread\n";

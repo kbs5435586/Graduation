@@ -26,8 +26,8 @@ private:
 	float FORMATION_SPACE = 10.f;
 	float PIE = 3.141592;
 
-	float MOVE_SPEED_NPC = 0.2f;
-	float MOVE_SPEED_PLAYER = 0.15f;
+	float MOVE_SPEED_NPC = 0.0166692995f;
+	float MOVE_SPEED_PLAYER = 0.0166692995f;
 	float ROTATE_SPEED = 0.05f;
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
@@ -64,7 +64,6 @@ public:
 	void do_animation(int user_id, unsigned char anim);
 	void do_attack(int user_id);
 	void do_move(int user_id, char direction); // 클라에서 키 입력 받고 객체 움직이게 할때
-	void do_rotate(int user_id, char dir);
 	void set_formation(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initialize_clients(); // 플레이어 기본 초기화

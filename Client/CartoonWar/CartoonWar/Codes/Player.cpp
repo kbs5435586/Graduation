@@ -57,8 +57,10 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_eCurClass = CLASS::CLASS_INFANTRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
-	m_cCondition = CON_IDLE;
-	m_cLastCondition = CON_IDLE;
+	m_cMoveCondition = CON_IDLE;
+	m_cLastMoveCondition = CON_IDLE;
+	m_cRotateCondition = CON_IDLE;
+	m_cLastRotateCondition = CON_IDLE;
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
@@ -98,12 +100,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
-	m_cCondition = server->Get_PlayerCon(m_iLayerIdx);
+	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
+	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
+
 	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
-		switch (m_cCondition)
+	{
+		switch (m_cMoveCondition)
 		{
-		//case CON_IDLE:
-		//	break;
 		case CON_STRAIGHT:
 			m_pTransformCom->Go_Straight(fTimeDelta);
 			break;
@@ -113,19 +116,18 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		case CON_BACK:
 			m_pTransformCom->BackWard(fTimeDelta);
 			break;
+		}
+
+		switch (m_cRotateCondition)
+		{
 		case CON_LEFT:
-			m_pTransformCom->Go_Left(fTimeDelta);
-			break;
-		case CON_RIGHT:
-			m_pTransformCom->Go_Right(fTimeDelta);
-			break;
-		case CON_ROTATE_L:
-			m_pTransformCom->Rotation_Y(fTimeDelta);
-			break;
-		case CON_ROTATE_R:
 			m_pTransformCom->Rotation_Y(-fTimeDelta);
 			break;
+		case CON_RIGHT:
+			m_pTransformCom->Rotation_Y(fTimeDelta);
+			break;
 		}
+	}
 
 	Change_Class();
 
@@ -1251,22 +1253,23 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		m_cCondition = CON_BACK;
-		if (m_cLastCondition != m_cCondition)
+		m_cMoveCondition = CON_BACK;
+		if (m_cLastMoveCondition != m_cMoveCondition)
 		{
-			server->send_move_packet(GO_BACK);
-			m_cLastCondition = m_cCondition;
+			server->send_condition_packet(CON_TYPE_MOVE, CON_BACK);
+			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
 	if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
 	{
 		if (!m_IsCombat)
 		{
-			m_cCondition = CON_IDLE;
-			if (m_cLastCondition != m_cCondition)
+			m_cMoveCondition = CON_IDLE;
+			if (m_cLastMoveCondition != m_cMoveCondition)
 			{
+				server->send_condition_packet(CON_TYPE_MOVE, CON_IDLE);
 				server->send_animation_packet(A_IDLE);
-				m_cLastCondition = m_cCondition;
+				m_cLastMoveCondition = m_cMoveCondition;
 			}
 		}
 		else
@@ -1314,22 +1317,23 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		m_cCondition = CON_LEFT;
-		if (m_cLastCondition != m_cCondition)
+		m_cRotateCondition = CON_LEFT;
+		if (m_cLastRotateCondition != m_cRotateCondition)
 		{
-			server->send_rotate_packet(TURN_LEFT);
-			m_cLastCondition = m_cCondition;
+			server->send_condition_packet(CON_TYPE_ROTATE, CON_LEFT);
+			m_cLastRotateCondition = m_cRotateCondition;
 		}
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 	{
 		if (!m_IsCombat)
 		{
-			m_cCondition = CON_IDLE;
-			if (m_cLastCondition != m_cCondition)
+			m_cRotateCondition = CON_IDLE;
+			if (m_cLastRotateCondition != m_cRotateCondition)
 			{
+				server->send_condition_packet(CON_TYPE_ROTATE, CON_IDLE);
 				server->send_animation_packet(A_IDLE);
-				m_cLastCondition = m_cCondition;
+				m_cLastRotateCondition = m_cRotateCondition;
 			}
 		}
 		else
@@ -1343,22 +1347,23 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		m_cCondition = CON_RIGHT;
-		if (m_cLastCondition != m_cCondition)
+		m_cRotateCondition = CON_RIGHT;
+		if (m_cLastRotateCondition != m_cRotateCondition)
 		{
-			server->send_rotate_packet(TURN_RIGHT);
-			m_cLastCondition = m_cCondition;
+			server->send_condition_packet(CON_TYPE_ROTATE, CON_RIGHT);
+			m_cLastRotateCondition = m_cRotateCondition;
 		}
 	}
 	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
 	{
 		if (!m_IsCombat)
 		{
-			m_cCondition = CON_IDLE;
-			if (m_cLastCondition != m_cCondition)
+			m_cRotateCondition = CON_IDLE;
+			if (m_cLastRotateCondition != m_cRotateCondition)
 			{
+				server->send_condition_packet(CON_TYPE_ROTATE, CON_IDLE);
 				server->send_animation_packet(A_IDLE);
-				m_cLastCondition = m_cCondition;
+				m_cLastRotateCondition = m_cRotateCondition;
 			}
 		}
 		else
@@ -1372,11 +1377,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[2];
 
-		m_cCondition = CON_RUN;
-		if (m_cLastCondition != m_cCondition)
+		m_cMoveCondition = CON_RUN;
+		if (m_cLastMoveCondition != m_cMoveCondition)
 		{
-			server->send_move_packet(GO_FAST_FORWARD);
-			m_cLastCondition = m_cCondition;
+			server->send_condition_packet(CON_TYPE_MOVE, CON_RUN);
+			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
@@ -1386,11 +1391,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		m_cCondition = CON_STRAIGHT;
-		if (m_cLastCondition != m_cCondition)
+		m_cMoveCondition = CON_STRAIGHT;
+		if (m_cLastMoveCondition != m_cMoveCondition)
 		{
-			server->send_move_packet(GO_FORWARD);
-			m_cLastCondition = m_cCondition;
+			server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
+			m_cLastMoveCondition = m_cMoveCondition;
 		}
 
 		//_vec3 vLook = {};
@@ -1424,11 +1429,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	{
 		if (!m_IsCombat)
 		{
-			m_cCondition = CON_IDLE;
-			if (m_cLastCondition != m_cCondition)
+			m_cMoveCondition = CON_IDLE;
+			if (m_cLastMoveCondition != m_cMoveCondition)
 			{
+				server->send_condition_packet(CON_TYPE_MOVE, CON_IDLE);
 				server->send_animation_packet(A_IDLE);
-				m_cLastCondition = m_cCondition;
+				m_cLastMoveCondition = m_cMoveCondition;
 			}
 		}
 		else
@@ -1446,13 +1452,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 		{
 			m_iCurAnimIdx = 0;
-			m_cCondition = CON_IDLE;
-			if (m_cLastCondition != m_cCondition)
-			{
+			//m_cCondition = CON_IDLE;
+			//if (m_cLastCondition != m_cCondition)
+			//{
 				server->Set_Anim(m_iCurAnimIdx);
 				server->send_animation_packet(A_IDLE);
-				m_cLastCondition = m_cCondition;
-			}
+			//	m_cLastCondition = m_cCondition;
+			//}
 		}
 		m_IsOnce = false;
 		m_IsHit = false; // ¼öÁ¤
