@@ -168,16 +168,24 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
-		m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
-		m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+				return -1;
+			m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
+			m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
 	}
 
 

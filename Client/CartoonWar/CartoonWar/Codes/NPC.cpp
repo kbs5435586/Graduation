@@ -163,20 +163,23 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
-		m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-		m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
+		{
+			m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
+			m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
 
-		m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
-		m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
-	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+			m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
 	}
 
 	Set_Animation(fTimeDelta);
