@@ -200,9 +200,14 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_NPC", L"Com_Transform", npc_id);
 		}
-		_vec3 vPos;
-		vPos.x = my_packet->p_x;
-		vPos.z = my_packet->p_z;
+		_vec3 vPos, rPos, uPos, lPos;
+		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+		vPos.x = my_packet->p_x; vPos.z = my_packet->p_z;
+		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
+		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
 		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		Safe_Release(managment);
 	}

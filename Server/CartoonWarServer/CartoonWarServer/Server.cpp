@@ -207,9 +207,18 @@ void Server::send_move_fix_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_MOVE_FIX;
     packet.id = other_id;
-    _vec3* pos = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    packet.p_x = pos->x;
-    packet.p_z = pos->z;
+    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_z = pos._43;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -889,29 +898,31 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 
 void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
 {
+    bool isMove = false;
     if (ST_ACTIVE == g_clients[player_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
     {
         if (FUNC_DEAD == g_clients[player_id].m_last_order)
             return;
-
-
-
+        
         switch (func_id)
         {
         case FUNC_PLAYER_STRAIGHT:
         {
+            isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_STRAIGHT;
             g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE);
         }
         break;
         case FUNC_PLAYER_RUN:
         {
+            isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_RUN;
             g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE * 2.f);
         }
         break;
         case FUNC_PLAYER_BACK:
         {
+            isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_BACK;
             g_clients[player_id].m_transform.Go_Straight(MOVE_TIME_ELAPSE);
         }
@@ -933,7 +944,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
 
     _vec3* newpos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     //_vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    cout << newpos->x << " , " << newpos->z << endl;
+    //cout << newpos->x << " , " << newpos->z << endl;
     if (newpos->y < 0)
         newpos->y = 0;
     if (newpos->y >= (WORLD_HEIGHT - 1))
@@ -1049,23 +1060,22 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             }
         }
     }
-
-    g_clients[player_id].m_cLock.lock();
-    if (g_clients[player_id].m_last_move == g_clients[player_id].m_curr_move)
+;
+    if (isMove)
     {
-        g_clients[player_id].m_cLock.unlock();
-        add_timer(player_id, g_clients[player_id].m_last_move, FRAME_TIME); // 생성 이후 반복 간격
+        if (g_clients[player_id].m_last_move == g_clients[player_id].m_curr_move)
+        {
+            add_timer(player_id, g_clients[player_id].m_last_move, FRAME_TIME); // 생성 이후 반복 간격
+            return;
+        }
     }
     else
-        g_clients[player_id].m_cLock.unlock();
-    g_clients[player_id].m_cLock.lock();
-    if (g_clients[player_id].m_last_rotate == g_clients[player_id].m_curr_rotate)
     {
-        g_clients[player_id].m_cLock.unlock();
-        add_timer(player_id, g_clients[player_id].m_last_rotate, FRAME_TIME); // 생성 이후 반복 간격
+        if (g_clients[player_id].m_last_rotate == g_clients[player_id].m_curr_rotate)
+        {
+            add_timer(player_id, g_clients[player_id].m_last_rotate, FRAME_TIME); // 생성 이후 반복 간격
+        }
     }
-    else
-        g_clients[player_id].m_cLock.unlock();
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
