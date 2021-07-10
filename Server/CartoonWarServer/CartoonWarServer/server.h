@@ -58,6 +58,8 @@ public:
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
+	void send_move_fix_packet(int user_id, int other_id);
+	void send_rotate_fix_packet(int user_id, int other_id);
 
 	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);

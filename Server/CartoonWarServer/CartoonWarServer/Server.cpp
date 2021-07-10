@@ -199,6 +199,39 @@ void Server::send_login_ok_packet(int user_id)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
+void Server::send_move_fix_packet(int user_id, int other_id)
+{
+    sc_packet_move_fix packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_MOVE_FIX;
+    packet.id = other_id;
+    _vec3* pos = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    packet.p_x = pos->x;
+    packet.p_z = pos->z;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_rotate_fix_packet(int user_id, int other_id)
+{
+    sc_packet_rotate_fix packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ROTATE_FIX;
+    packet.id = other_id;
+    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+
+    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
 void Server::send_flag_info_packet(int object_id, int user_id)
 {
     sc_packet_flag_info packet;
@@ -286,10 +319,14 @@ void Server::do_rotate(int user_id, char con)
     g_clients[user_id].m_cLock.unlock();
 
     send_condition_packet(user_id, user_id, CON_TYPE_ROTATE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
+    if (CON_IDLE == con)
+        send_rotate_fix_packet(user_id, user_id);
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         send_condition_packet(cpy_vl, user_id, CON_TYPE_ROTATE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
         // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
+        if (CON_IDLE == con)
+            send_rotate_fix_packet(cpy_vl, user_id);
     }
     do_npc_rotate(user_id, con);
 }
@@ -334,8 +371,6 @@ void Server::do_move(int user_id, char con)
         add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
     }
     break;
-    case GO_COLLIDE:
-        break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
         DebugBreak();
@@ -348,9 +383,13 @@ void Server::do_move(int user_id, char con)
     g_clients[user_id].m_cLock.unlock();
 
     send_condition_packet(user_id, user_id, CON_TYPE_MOVE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
+    if (CON_IDLE == con)
+        send_move_fix_packet(user_id, user_id);
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         send_condition_packet(cpy_vl, user_id, CON_TYPE_MOVE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        if (CON_IDLE == con)
+            send_move_fix_packet(cpy_vl, user_id);
         // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
     }
 }
@@ -1082,9 +1121,15 @@ void Server::send_condition_packet(int user_id, int other_id, unsigned char type
     packet.type = SC_PACKET_CONDITION;
     packet.con_type = type;
     if (CON_TYPE_MOVE == type)
+    {
         packet.condition = g_clients[other_id].m_Mcondition;
+    }
     else if (CON_TYPE_ROTATE == type)
+    {
         packet.condition = g_clients[other_id].m_Rcondition;
+    }
+
+
 
     //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것

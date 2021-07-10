@@ -175,6 +175,72 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_objects[recv_id].con_rotate = con;
 	}
 	break;
+	case SC_PACKET_MOVE_FIX:
+	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+		CTransform* pTransform;
+
+		sc_packet_move_fix* my_packet = reinterpret_cast<sc_packet_move_fix*>(ptr);
+		int recv_id = my_packet->id;
+		my_packet->p_x;
+		my_packet->p_z;
+
+
+		if (is_player(recv_id))
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+		}
+		else if (is_npc(recv_id))
+		{
+			short npc_id = npc_id_to_idx(recv_id);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_NPC", L"Com_Transform", npc_id);
+		}
+		_vec3 vPos;
+		vPos.x = my_packet->p_x;
+		vPos.z = my_packet->p_z;
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		Safe_Release(managment);
+	}
+	break;
+	case SC_PACKET_ROTATE_FIX:
+	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+		CTransform* pTransform;
+
+		sc_packet_rotate_fix* my_packet = reinterpret_cast<sc_packet_rotate_fix*>(ptr);
+		int recv_id = my_packet->id;
+
+		if (is_player(recv_id))
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+		}
+		else if (is_npc(recv_id))
+		{
+			short npc_id = npc_id_to_idx(recv_id);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_NPC", L"Com_Transform", npc_id);
+		}
+		_vec3 rPos, uPos, lPos;
+
+		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+
+		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
+		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+		Safe_Release(managment);
+	}
+	break;
 	case SC_PACKET_LEAVE:
 	{
 		sc_packet_leave* my_packet = reinterpret_cast<sc_packet_leave*>(ptr);
