@@ -26,8 +26,10 @@ private:
 	float FORMATION_SPACE = 10.f;
 	float PIE = 3.141592;
 
-	float MOVE_SPEED_NPC = 0.0166692995f;
-	float MOVE_SPEED_PLAYER = 0.0166692995f;
+	float MOVE_TIME_ELAPSE = 0.0266692995f;
+	float ROTATE_TIME_ELAPSE = 0.0266692995f;
+	float MOVE_SPEED_NPC = 50.f;
+	float MOVE_SPEED_PLAYER = 50.f;
 	float ROTATE_SPEED = 0.05f;
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };

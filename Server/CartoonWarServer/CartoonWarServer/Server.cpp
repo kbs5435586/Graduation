@@ -86,6 +86,8 @@ void Server::process_packet(int user_id, char* buf)
             do_move(user_id, packet->con);
         else if (CON_TYPE_ROTATE == packet->con_type)
             do_rotate(user_id, packet->con);
+
+        cout << user_id << "send condition" << packet->con << endl;
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -293,9 +295,13 @@ void Server::send_packet(int user_id, void* packet)
 
 void Server::do_rotate(int user_id, char con)
 {
+    g_clients[user_id].m_transform.SetUp_Speed(MOVE_SPEED_PLAYER, XMConvertToRadians(90.f));
+
     if (CON_IDLE == con)
     {
+        g_clients[user_id].m_cLock.lock();
         g_clients[user_id].m_curr_rotate = FUNC_PLAYER_IDLE;
+        g_clients[user_id].m_cLock.unlock();
         g_clients[user_id].m_Rcondition = CON_IDLE;
     }
     else if (CON_RIGHT == con)
@@ -333,6 +339,7 @@ void Server::do_rotate(int user_id, char con)
 
 void Server::do_move(int user_id, char con)
 {
+    g_clients[user_id].m_transform.SetUp_Speed(MOVE_SPEED_PLAYER, XMConvertToRadians(90.f));
     //_vec3* newpos = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     //_vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -340,7 +347,9 @@ void Server::do_move(int user_id, char con)
     {
     case CON_IDLE:
     {
+        g_clients[user_id].m_cLock.lock();
         g_clients[user_id].m_curr_move = FUNC_PLAYER_IDLE;
+        g_clients[user_id].m_cLock.unlock();
         g_clients[user_id].m_Mcondition = CON_IDLE;
     }
     break;
@@ -350,7 +359,7 @@ void Server::do_move(int user_id, char con)
         g_clients[user_id].m_curr_move = FUNC_PLAYER_STRAIGHT;
         g_clients[user_id].m_Mcondition = CON_STRAIGHT;
         //g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
-        add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        add_timer(user_id, FUNC_PLAYER_STRAIGHT, FRAME_TIME);
     }
     break;
     case CON_RUN:
@@ -359,7 +368,7 @@ void Server::do_move(int user_id, char con)
         g_clients[user_id].m_curr_move = FUNC_PLAYER_RUN;
         g_clients[user_id].m_Mcondition = CON_RUN;
         //g_clients[user_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
-        add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        add_timer(user_id, FUNC_PLAYER_RUN, FRAME_TIME);
     }
     break;
     case CON_BACK:
@@ -368,7 +377,7 @@ void Server::do_move(int user_id, char con)
         g_clients[user_id].m_curr_move = FUNC_PLAYER_BACK;
         g_clients[user_id].m_Mcondition = CON_BACK;
         //g_clients[user_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
-        add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
+        add_timer(user_id, FUNC_PLAYER_BACK, FRAME_TIME);
     }
     break;
     default:
@@ -885,36 +894,38 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         if (FUNC_DEAD == g_clients[player_id].m_last_order)
             return;
 
+
+
         switch (func_id)
         {
         case FUNC_PLAYER_STRAIGHT:
         {
             g_clients[player_id].m_last_move = FUNC_PLAYER_STRAIGHT;
-            g_clients[player_id].m_transform.BackWard(MOVE_SPEED_PLAYER);
+            g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE);
         }
         break;
         case FUNC_PLAYER_RUN:
         {
             g_clients[player_id].m_last_move = FUNC_PLAYER_RUN;
-            g_clients[player_id].m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
+            g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE * 2.f);
         }
         break;
         case FUNC_PLAYER_BACK:
         {
             g_clients[player_id].m_last_move = FUNC_PLAYER_BACK;
-            g_clients[player_id].m_transform.Go_Straight(MOVE_SPEED_PLAYER);
+            g_clients[player_id].m_transform.Go_Straight(MOVE_TIME_ELAPSE);
         }
         break;
         case FUNC_PLAYER_LEFT:
         {
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_LEFT;
-            g_clients[player_id].m_transform.Rotation_Y(MOVE_SPEED_PLAYER);
+            g_clients[player_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
         }
         break;
         case FUNC_PLAYER_RIGHT:
         {
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_RIGHT;
-            g_clients[player_id].m_transform.Rotation_Y(-MOVE_SPEED_PLAYER);
+            g_clients[player_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
         }
         break;
         }
@@ -922,7 +933,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
 
     _vec3* newpos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     //_vec3 oldpos = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-
+    cout << newpos->x << " , " << newpos->z << endl;
     if (newpos->y < 0)
         newpos->y = 0;
     if (newpos->y >= (WORLD_HEIGHT - 1))
@@ -1039,10 +1050,22 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         }
     }
 
+    g_clients[player_id].m_cLock.lock();
     if (g_clients[player_id].m_last_move == g_clients[player_id].m_curr_move)
+    {
+        g_clients[player_id].m_cLock.unlock();
         add_timer(player_id, g_clients[player_id].m_last_move, FRAME_TIME); // 생성 이후 반복 간격
+    }
+    else
+        g_clients[player_id].m_cLock.unlock();
+    g_clients[player_id].m_cLock.lock();
     if (g_clients[player_id].m_last_rotate == g_clients[player_id].m_curr_rotate)
+    {
+        g_clients[player_id].m_cLock.unlock();
         add_timer(player_id, g_clients[player_id].m_last_rotate, FRAME_TIME); // 생성 이후 반복 간격
+    }
+    else
+        g_clients[player_id].m_cLock.unlock();
 }
 
 void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
