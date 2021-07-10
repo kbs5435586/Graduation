@@ -76,7 +76,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 
 
 	m_tPipeline.SampleMask = UINT_MAX;
-	m_tPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	m_tPipeline.SampleDesc.Count = 1;
 
 

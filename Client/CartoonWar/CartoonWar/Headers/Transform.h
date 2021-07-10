@@ -24,6 +24,8 @@ public: // Setter
 	void					Set_Add_PosY(_float fY) { m_fAdd_PosY = fY; }
 	void					SetLook(const _vec3& vLook);
 public:
+	void					SetSpeed(const _float& fSpeed);
+public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();
 	void					Scaling(const _vec3& vScale);

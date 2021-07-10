@@ -31,6 +31,11 @@ void CTransform::SetLook(const _vec3& vLook_)
 
 }
 
+void CTransform::SetSpeed(const _float& fSpeed)
+{
+	m_fSpeed_Move = fSpeed;
+}
+
 HRESULT CTransform::Ready_Transform()
 {
 	XMStoreFloat4x4(&m_matWorld, XMMatrixIdentity());

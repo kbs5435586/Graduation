@@ -48,12 +48,12 @@ void CBuffer_Terrain_Height::Calculate_TanBi(VTXTEXBUMP Vertex1, VTXTEXBUMP Vert
 	_float fDen  = 1.f / (tuVector[0] * tvVector[1] - tuVector[1]* tvVector[0]);
 
 	vTangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * fDen;
-	vTangent.x = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * fDen;
-	vTangent.x = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * fDen;
+	vTangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * fDen;
+	vTangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * fDen;
 
 	vBinormal.x = (tuVector[0] * vector1[0] - tuVector[1] * vector2[0]) * fDen;
-	vBinormal.x = (tuVector[0] * vector1[1] - tuVector[1] * vector2[1]) * fDen;
-	vBinormal.x = (tuVector[0] * vector1[2] - tuVector[1] * vector2[2]) * fDen;
+	vBinormal.y = (tuVector[0] * vector1[1] - tuVector[1] * vector2[1]) * fDen;
+	vBinormal.z = (tuVector[0] * vector1[2] - tuVector[1] * vector2[2]) * fDen;
 
 	_float fLen_Tan = (_float)sqrt((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
 	_float fLen_Bin = (_float)sqrt((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
