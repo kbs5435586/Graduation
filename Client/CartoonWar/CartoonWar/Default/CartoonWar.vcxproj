@@ -270,6 +270,7 @@
     <ClInclude Include="..\Headers\UI_WoL.h" />
     <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
+    <ClInclude Include="..\Headers\Water.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="protocol.h">
@@ -383,6 +384,7 @@
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
+    <ClCompile Include="..\Codes\Water.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -514,6 +516,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Blur.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_InGame_UI.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

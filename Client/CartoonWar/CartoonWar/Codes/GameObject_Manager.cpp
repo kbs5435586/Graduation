@@ -46,7 +46,8 @@ HRESULT CGameObject_Manager::Add_Prototype_GameObject(const _tchar* pGameObjectT
 	return S_OK;
 }
 
-HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject, void* pArg, _uint iIdx)
+HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, 
+	const _uint& iSceneID, const _tchar* pLayerTag, CGameObject** ppCloneObject, void* pArg, _uint iIdx)
 {
 	if (nullptr == m_pMapLayers)
 		return E_FAIL;
@@ -82,7 +83,7 @@ HRESULT CGameObject_Manager::Add_GameObjectToLayer(const _tchar* pProtoTag, cons
 
 		m_pMapLayers[iSceneID].insert(MAPLAYERS::value_type(pLayerTag, pLayer));
 	}
-	else // 레이거가 이미 있었어.
+	else
 		if (FAILED(pLayer->Add_Object(pGameObject)))
 			return E_FAIL;
 

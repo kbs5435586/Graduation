@@ -28,6 +28,7 @@ HRESULT CLight::Ready_Light(LIGHT& tLightInfo)
 
 void CLight::Update()
 {
+
 }
 
 void CLight::Render()

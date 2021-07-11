@@ -31,11 +31,12 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 10.f,0.f,10.f };
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	_vec3 vPos = { 50.f,0.f,50.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-	m_tInfo = INFO(10, 1,1,0);
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
+	m_tInfo = INFO(100, 1,1,0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -57,9 +58,9 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
+	
 
-
-
+	
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)
 		return E_FAIL;
@@ -1014,37 +1015,37 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsCombat = true;
 	}
 
-	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 1;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[1];
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 0;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-	}
+	//if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 1;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[1];
+	//	m_pTransformCom->Rotation_Y(-fTimeDelta);
+	//}
+	//if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 0;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[0];
+	//}
 
-	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 1;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[1];
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
-	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 0;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-	}
+	//if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 1;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[1];
+	//	m_pTransformCom->Rotation_Y(fTimeDelta);
+	//}
+	//if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
+	//{
+	//	if (!m_IsCombat)
+	//		m_iCurAnimIdx = 0;
+	//	else
+	//		m_iCurAnimIdx = m_iCombatMotion[0];
+	//}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{

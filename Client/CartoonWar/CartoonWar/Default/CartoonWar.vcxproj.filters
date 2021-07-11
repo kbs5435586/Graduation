@@ -409,6 +409,12 @@
     <Filter Include="96. ShaderFiles\08. Effect">
       <UniqueIdentifier>{7a2448c8-5a2b-4a1b-a5e7-56bc203b5a69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96. ShaderFiles\09. UI">
+      <UniqueIdentifier>{79be4ae1-0b50-4d1d-bf77-b191b204bd53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\06. Water">
+      <UniqueIdentifier>{b0c1038e-5088-45ef-8ded-31915d159d86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -756,6 +762,9 @@
     <ClInclude Include="..\Headers\Throw_Arrow.h">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Water.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1074,6 +1083,9 @@
     <ClCompile Include="..\Codes\Throw_Arrow.cpp">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Water.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1124,16 +1136,10 @@
     <None Include="..\ShaderFiles\Shader_Environment.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Fire.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_SkyBox.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
-    </None>
-    <None Include="..\ShaderFiles\Shader_UI.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
@@ -1172,13 +1178,22 @@
     <None Include="..\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
-      <Filter>96. ShaderFiles\04. Default</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Blur.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OnHead.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_InGame_UI.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Fire.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
   </ItemGroup>

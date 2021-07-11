@@ -34,9 +34,18 @@ void CLight_Manager::SetUp_OnShader()
 {
 	LIGHTINFO tInfo = {};
 
+
+
 	for (int i = 0; i < m_vecLightInfo.size(); ++i)
 	{
 		LIGHT tLight = m_vecLightInfo[i]->Get_LightInfo();
+		//_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		//matView = Matrix_::Inverse(matView);
+		//_vec3 vTemp = _vec3(matView._31, matView._32, matView._33);
+		//vTemp = Vector3_::Normalize(vTemp);
+		//_vec4 vTemp_ = _vec4(vTemp.x, vTemp.y, vTemp.z, 0.f);
+		//
+		//tLight.vLightDir = vTemp_;
 		tInfo.arrLight[i] = tLight;
 	}
 	tInfo.iCurLightCnt = (UINT)m_vecLightInfo.size();
