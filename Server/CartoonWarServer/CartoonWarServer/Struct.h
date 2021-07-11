@@ -36,6 +36,14 @@ struct Collision
 	float radius;
 };
 
+struct FormationInfo
+{
+	int id;
+	_vec3 final_pos;
+	float angle;
+	float radius;
+};
+
 struct SESSION // 클라이언트 정보
 {
 	mutex m_cLock;
@@ -60,7 +68,7 @@ struct SESSION // 클라이언트 정보
 	float m_rotate;
 	
 	Collision m_col;
-	vector <SESSION*> m_boid;
+	vector <FormationInfo> m_boid;
 	ENUM_FORMATION m_formation;
 	CLASS m_class;
 	char m_Mcondition;

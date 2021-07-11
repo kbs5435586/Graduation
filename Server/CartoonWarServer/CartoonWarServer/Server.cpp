@@ -106,7 +106,8 @@ void Server::process_packet(int user_id, char* buf)
         {
             for (int i = 0; i < g_clients[p_id].m_boid.size(); i++)
             {
-                if (ST_SLEEP == g_clients[p_id].m_boid[i]->m_status || ST_FREE == g_clients[p_id].m_boid[i]->m_status)
+                FormationInfo& c = g_clients[p_id].m_boid[i];
+                if (ST_SLEEP == g_clients[c.id].m_status || ST_FREE == g_clients[c.id].m_status)
                 {
                     continue;
                 }
@@ -114,25 +115,25 @@ void Server::process_packet(int user_id, char* buf)
                 {
                     if (DO_ATTACK == p_act)
                     {
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_ATTACK;
+                        g_clients[c.id].m_last_order = FUNC_NPC_ATTACK;
                     }
                     if (DO_DEFENCE == p_act)
                     {
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_DEFENCE;
+                        g_clients[c.id].m_last_order = FUNC_NPC_DEFENCE;
                     }
                     if (DO_HOLD == p_act)
                     {
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_HOLD;
+                        g_clients[c.id].m_last_order = FUNC_NPC_HOLD;
                     }
                     if (DO_FOLLOW == p_act)
                     {
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_FOLLOW;
+                        g_clients[c.id].m_last_order = FUNC_NPC_FOLLOW;
                     }
                     if (DO_RANDMOVE == p_act)
                     {
-                        g_clients[p_id].m_boid[i]->m_last_order = FUNC_NPC_RANDMOVE;
+                        g_clients[c.id].m_last_order = FUNC_NPC_RANDMOVE;
                     }
-                    activate_npc(i, g_clients[p_id].m_boid[i]->m_last_order);
+                    activate_npc(i, g_clients[c.id].m_last_order);
                 }
             }
         }
@@ -438,7 +439,6 @@ void Server::set_formation(int user_id)
     float PLangle = radian * 180.f / PIE;
     g_clients[user_id].m_rotate = PLangle;
     float NPCangle = -PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
-    float radius = FORMATION_SPACE;
     
     switch (c.m_formation)
     {
@@ -446,137 +446,160 @@ void Server::set_formation(int user_id)
     {
         if (1 == c.m_boid.size())
         {
-            set_pos.x = radius * cosf((NPCangle) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle) * (PIE / 180.f));
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
-            c.m_boid[0]->m_target_pos = new_pos;
-            c.m_boid[0]->m_rotate = NPCangle;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = NPCangle;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
         }
         else if (2 == c.m_boid.size())
         {
-            set_pos.x = radius * cosf((NPCangle) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle) * (PIE / 180.f));
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
-            c.m_boid[0]->m_target_pos = new_pos;
-            c.m_boid[0]->m_rotate = NPCangle;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = NPCangle;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
 
             set_pos = {};
-            set_pos.x = radius * cosf((NPCangle + 180.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
-            c.m_boid[1]->m_target_pos = new_pos1;
-            c.m_boid[0]->m_rotate = NPCangle - 180.f;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = NPCangle - 180.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
         }
-      /*  else if (3 == c.m_boid.size())
+      else if (3 == c.m_boid.size())
         {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = NPCangle;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
 
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = NPCangle - 180.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
 
-            set_pos.Go_Right(FORMATION_SPACE);
-            _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[2]->m_target_pos = *new_pos3;
-        }
-        else if (4 == c.m_boid.size())
-        {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
-
-            set_pos.Go_Left(FORMATION_SPACE);
-            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
-
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[2]->m_target_pos = *new_pos3;
-
-            set_pos.Go_Right(FORMATION_SPACE);
-            _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[3]->m_target_pos = *new_pos4;
-        }
-    }
-    break;
-    case FM_SQUARE:
-    {
-        if (1 == c.m_boid.size())
-        {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos;
-        }
-        else if (2 == c.m_boid.size())
-        {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
-
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
-        }
-        else if (3 == c.m_boid.size())
-        {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
-
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
-
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            set_pos.Go_Straight(FORMATION_SPACE);
-            _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[2]->m_target_pos = *new_pos3;
+            set_pos.x = 2 * BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = 2 * BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = NPCangle;
+            c.m_boid[2].radius = 2 * BASIC_FORM_RAD;
         }
         else if (4 == c.m_boid.size())
         {
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[0]->m_target_pos = *new_pos1;
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = NPCangle;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
 
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            set_pos.BackWard(FORMATION_SPACE);
-            _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[1]->m_target_pos = *new_pos2;
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * cosf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = NPCangle - 180.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
 
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Left(FORMATION_SPACE);
-            set_pos.Go_Straight(FORMATION_SPACE);
-            _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[2]->m_target_pos = *new_pos3;
+            set_pos.x = 2 * BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = 2 * BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = NPCangle;
+            c.m_boid[2].radius = 2 * BASIC_FORM_RAD;
 
-            set_pos.Set_Matrix(&temp);
-            set_pos.Go_Right(FORMATION_SPACE);
-            set_pos.Go_Straight(FORMATION_SPACE);
-            _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-            c.m_boid[3]->m_target_pos = *new_pos4;
-        }*/
+            set_pos = {};
+            set_pos.x = 2 * BASIC_FORM_RAD * cosf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.z = 2 * BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
+            _vec3 new_pos3 = playerPos + set_pos;
+            c.m_boid[3].final_pos = new_pos3;
+            c.m_boid[3].angle = NPCangle - 180.f;
+            c.m_boid[3].radius = BASIC_FORM_RAD;
+        }
     }
     break;
+    //case FM_SQUARE:
+    //{
+    //    if (1 == c.m_boid.size())
+    //    {
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Left(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[0]->m_target_pos = *new_pos;
+    //    }
+    //    else if (2 == c.m_boid.size())
+    //    {
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Left(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[0]->m_target_pos = *new_pos1;
+
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Right(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[1]->m_target_pos = *new_pos2;
+    //    }
+    //    else if (3 == c.m_boid.size())
+    //    {
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Left(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[0]->m_target_pos = *new_pos1;
+
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Right(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[1]->m_target_pos = *new_pos2;
+
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Left(FORMATION_SPACE);
+    //        set_pos.Go_Straight(FORMATION_SPACE);
+    //        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[2]->m_target_pos = *new_pos3;
+    //    }
+    //    else if (4 == c.m_boid.size())
+    //    {
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Left(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[0]->m_target_pos = *new_pos1;
+
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Right(FORMATION_SPACE);
+    //        set_pos.BackWard(FORMATION_SPACE);
+    //        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[1]->m_target_pos = *new_pos2;
+
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Left(FORMATION_SPACE);
+    //        set_pos.Go_Straight(FORMATION_SPACE);
+    //        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[2]->m_target_pos = *new_pos3;
+
+    //        set_pos.Set_Matrix(&temp);
+    //        set_pos.Go_Right(FORMATION_SPACE);
+    //        set_pos.Go_Straight(FORMATION_SPACE);
+    //        _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+    //        c.m_boid[3]->m_target_pos = *new_pos4;
+    //    }
+    //}
+    //break;
     case FM_PIRAMID:
     {
 
@@ -675,88 +698,81 @@ void Server::do_follow(int npc_id)
 {
     for (int i = 0; i < g_clients[g_clients[npc_id].m_owner_id].m_boid.size(); ++i)
     {
-        if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
+        if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].id == g_clients[npc_id].m_id)
         {
             _vec3 n_pos = *g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos) // 만약 해당 위치가 아니라면
+            if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos) // 만약 해당 위치가 아니라면
             {
-                _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);// 이 방법은 최종 위치까지 그냥 순간이동
-                //g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos 이게 최종 위치값
-                //_vec3 standard = { 0.f,0.f,1.f };
-                _vec3 *pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+                _vec3 p_pos = *g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+                float now_radius = acosf((n_pos.x - p_pos.x) / g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius) / (PIE / 180.f);
 
-                //_vec3* playerLookAt = g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-                //float PdotProduct = (playerLookAt->x * standard.x) + (playerLookAt->y * standard.y) + (playerLookAt->z * standard.z);
-                //float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
-                //float radius = sqrt((n_pos.x - p_pos.x) * (n_pos.x - p_pos.x) + (n_pos.y - p_pos.y) * (n_pos.y - p_pos.y)
-                //    + (n_pos.z - p_pos.z) * (n_pos.z - p_pos.z)); // 플레이어와 npc 사이 거리 = 반지름
-
-                //_vec3* npcLookAt = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-                //float NdotProduct = (npcLookAt->x * standard.x) + (npcLookAt->y * standard.y) + (npcLookAt->z * standard.z);
-
-
-                //float lookSize = sqrt((playerLookAt->x * playerLookAt->x) + (playerLookAt->z * playerLookAt->z));
-                //float stanSize = sqrt((standard.x * standard.x) + (standard.z * standard.z));
-                _vec3 new_pos = *pos + Dir;
-                if (*pos != new_pos)
+                if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle > now_radius) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
                 {
-                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius + 1.f) * (PIE / 180.f));
+                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius + 1.f) * (PIE / 180.f));
+                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                }
+                else
+                {
+                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius - 1.f) * (PIE / 180.f));
+                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius - 1.f) * (PIE / 180.f));
+                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                }
 
-                    for (int i = 0; i < OBJECT_START; ++i)
+                //_vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos);// 이 방법은 최종 위치까지 그냥 순간이동
+                //_vec3 new_pos = *pos + Dir;
+
+                for (int i = 0; i < OBJECT_START; ++i) // npc가 움직일때마다 충돌체크
+                {
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+                    if (!is_near(i, npc_id))
+                        continue;
+                    if (FUNC_DEAD == g_clients[i].m_last_order)
+                        continue;
+                    if (check_basic_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
+                        do_move(i, GO_COLLIDE);
+                    //if (check_obb_collision(user_id, c.second.m_id))
+                }
+
+                for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
+                {
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+                    if (true == is_near(i, npc_id))
                     {
-                        if (ST_ACTIVE != g_clients[i].m_status)
-                            continue;
-                        if (!is_near(i, npc_id))
-                            continue;
-                        if (FUNC_DEAD == g_clients[i].m_last_order)
-                            continue;
-                        if (check_basic_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
-                            do_move(i, GO_COLLIDE);
-                        //if (check_obb_collision(user_id, c.second.m_id))
-    //{
-
-    //}
-                    }
-
-                    for (int i = 0; i < NPC_START; ++i)
-                    {
-                        if (ST_ACTIVE != g_clients[i].m_status)
-                            continue;
-                        if (true == is_near(i, npc_id))
+                        g_clients[i].m_cLock.lock();
+                        if (0 != g_clients[i].m_view_list.count(npc_id))
                         {
-                            g_clients[i].m_cLock.lock();
-                            if (0 != g_clients[i].m_view_list.count(npc_id))
-                            {
-                                g_clients[i].m_cLock.unlock();
-                                //send_move_packet(i, npc_id);
-                            }
-                            else
-                            {
-                                g_clients[i].m_cLock.unlock();
-                                send_enter_packet(i, npc_id);
-                            }
+                            g_clients[i].m_cLock.unlock();
+                            //send_move_packet(i, npc_id);
                         }
                         else
                         {
-                            g_clients[i].m_cLock.lock();
-                            if (0 != g_clients[i].m_view_list.count(npc_id))
-                            {
-                                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                                send_leave_packet(i, npc_id);
-                            }
-                            else
-                                g_clients[i].m_cLock.unlock();
+                            g_clients[i].m_cLock.unlock();
+                            send_enter_packet(i, npc_id);
                         }
                     }
-                    if (g_clients[npc_id].m_anim != A_WALK)
-                        do_animation(npc_id, A_WALK);
-                    break;
+                    else
+                    {
+                        g_clients[i].m_cLock.lock();
+                        if (0 != g_clients[i].m_view_list.count(npc_id))
+                        {
+                            g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                            send_leave_packet(i, npc_id);
+                        }
+                        else
+                            g_clients[i].m_cLock.unlock();
+                    }
                 }
-                else //if (*pos == new_pos && !isOnce)
-                {
-                    if (g_clients[npc_id].m_anim != A_IDLE)
-                        do_animation(npc_id, A_IDLE);
-                }
+                if (g_clients[npc_id].m_anim != A_WALK)
+                    do_animation(npc_id, A_WALK);
+                break;
+            }
+            else // n_pos == g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos
+            {
+                if (g_clients[npc_id].m_anim != A_IDLE)
+                    do_animation(npc_id, A_IDLE);
             }
         }
     }
@@ -1290,14 +1306,16 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_Rcondition = CON_IDLE;
             g_clients[npc_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
             g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
-            g_clients[player_id].m_boid.push_back(&g_clients[npc_id]);
+            FormationInfo formTemp;
+            formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
+            g_clients[player_id].m_boid.push_back(formTemp);
             set_formation(player_id);
             for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
             {
-                if (g_clients[player_id].m_boid[j]->m_id == g_clients[npc_id].m_id)
+                if (g_clients[player_id].m_boid[j].id == g_clients[npc_id].m_id)
                 {
                     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
-                        &g_clients[player_id].m_boid[j]->m_target_pos);
+                        &g_clients[player_id].m_boid[j].final_pos);
                 }
             }
             activate_npc(npc_id, g_clients[npc_id].m_last_order);

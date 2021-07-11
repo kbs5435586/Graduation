@@ -23,7 +23,7 @@ private:
 	int ATTACK_RADIUS = 7; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
-	float FORMATION_SPACE = 10.f;
+	float BASIC_FORM_RAD = 10.f;
 	float PIE = 3.141592;
 
 	float MOVE_TIME_ELAPSE = 0.0310692995f;
