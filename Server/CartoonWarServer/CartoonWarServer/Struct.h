@@ -57,6 +57,7 @@ struct SESSION // 클라이언트 정보
 	unsigned m_move_time; // 스트레스 테스트
 
 	float m_speed;
+	float m_rotate;
 	
 	Collision m_col;
 	vector <SESSION*> m_boid;

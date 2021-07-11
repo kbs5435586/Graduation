@@ -433,10 +433,11 @@ void Server::set_formation(int user_id)
     PoutProduct.z = (standard.x * playerLookAt.y) - (standard.y * playerLookAt.x);
 
     float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
-    if (PoutProduct.y > 0)
+    if (PoutProduct.y < 0)
         radian *= -1.f;
     float PLangle = radian * 180.f / PIE;
-    float NPCangle = 180.f + PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
+    g_clients[user_id].m_rotate = PLangle;
+    float NPCangle = -PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
     float radius = FORMATION_SPACE;
     
     switch (c.m_formation)
@@ -449,19 +450,22 @@ void Server::set_formation(int user_id)
             set_pos.z = radius * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
             c.m_boid[0]->m_target_pos = new_pos;
+            c.m_boid[0]->m_rotate = NPCangle;
         }
         else if (2 == c.m_boid.size())
         {
-            set_pos.x = radius * cosf((NPCangle + 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle + 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
             c.m_boid[0]->m_target_pos = new_pos;
+            c.m_boid[0]->m_rotate = NPCangle;
 
             set_pos = {};
-            set_pos.x = radius * cosf((NPCangle - 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle - 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
             c.m_boid[1]->m_target_pos = new_pos1;
+            c.m_boid[0]->m_rotate = NPCangle - 180.f;
         }
       /*  else if (3 == c.m_boid.size())
         {
@@ -674,7 +678,7 @@ void Server::do_follow(int npc_id)
         if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_id == g_clients[npc_id].m_id)
         {
             _vec3 n_pos = *g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos)
+            if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos) // 만약 해당 위치가 아니라면
             {
                 _vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos);// 이 방법은 최종 위치까지 그냥 순간이동
                 //g_clients[g_clients[npc_id].m_owner_id].m_boid[i]->m_target_pos 이게 최종 위치값
@@ -1280,6 +1284,7 @@ void Server::initialize_NPC(int player_id)
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
             g_clients[player_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
             g_clients[npc_id].m_speed = MOVE_SPEED_NPC;
+            g_clients[npc_id].m_rotate = 0.f;
             g_clients[npc_id].m_class = CLASS::CLASS_WORKER;
             g_clients[npc_id].m_Mcondition = CON_IDLE;
             g_clients[npc_id].m_Rcondition = CON_IDLE;
@@ -1756,6 +1761,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_col.radius = 20.f * SCALE.x;
                 g_clients[user_id].m_speed = MOVE_SPEED_PLAYER;
                 g_clients[user_id].m_hp = 100;
+                g_clients[user_id].m_rotate = 0.f;
                 g_clients[user_id].m_Mcondition = CON_IDLE;
                 g_clients[user_id].m_Rcondition = CON_IDLE;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
