@@ -344,7 +344,6 @@ void Server::do_rotate(int user_id, char con)
         if (CON_IDLE == con)
             send_rotate_fix_packet(cpy_vl, user_id);
     }
-    do_npc_rotate(user_id, con);
 }
 
 void Server::do_move(int user_id, char con)
@@ -441,6 +440,7 @@ void Server::set_formation(int user_id)
     float NPCangle = -PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
     
     switch (c.m_formation)
+
     {
     case FM_FLOCK:
     {
@@ -708,14 +708,14 @@ void Server::do_follow(int npc_id)
 
                 if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle > now_radius) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
                 {
-                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius + 1.f) * (PIE / 180.f));
-                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius + 1.f) * (PIE / 180.f));
+                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius + 1.f) * (PIE / 180.f)) + p_pos.x;
+                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius + 1.f) * (PIE / 180.f)) + p_pos.z;
                     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                 }
                 else
                 {
-                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius - 1.f) * (PIE / 180.f));
-                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius - 1.f) * (PIE / 180.f));
+                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius - 1.f) * (PIE / 180.f)) + p_pos.x;
+                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius - 1.f) * (PIE / 180.f)) + p_pos.z;
                     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                 }
 
@@ -730,8 +730,8 @@ void Server::do_follow(int npc_id)
                         continue;
                     if (FUNC_DEAD == g_clients[i].m_last_order)
                         continue;
-                    if (check_basic_collision(npc_id, i)) // 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
-                        do_move(i, GO_COLLIDE);
+                    check_basic_collision(npc_id, i);// 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
+                       // do_move(i, GO_COLLIDE);
                     //if (check_obb_collision(user_id, c.second.m_id))
                 }
 
@@ -745,7 +745,7 @@ void Server::do_follow(int npc_id)
                         if (0 != g_clients[i].m_view_list.count(npc_id))
                         {
                             g_clients[i].m_cLock.unlock();
-                            //send_move_packet(i, npc_id);
+                            send_move_fix_packet(i, npc_id);
                         }
                         else
                         {
@@ -793,19 +793,19 @@ void Server::do_npc_rotate(int user_id, char con)
         if (ST_ACTIVE == g_clients[i].m_status)
         {
             if (CON_LEFT == con)
-                g_clients[i].m_transform.Rotation_Y(-MOVE_SPEED_NPC);
+                g_clients[i].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
             else if (CON_RIGHT == con)
-                g_clients[i].m_transform.Rotation_Y(MOVE_SPEED_NPC);
+                g_clients[i].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
 
-            for (int player = 0; player < NPC_START; ++player)
-            {
-                if (ST_ACTIVE != g_clients[player].m_status)
-                    continue;
-                if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
-                    continue;
+            //for (int player = 0; player < NPC_START; ++player)
+            //{
+            //    if (ST_ACTIVE != g_clients[player].m_status)
+            //        continue;
+            //    if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
+            //        continue;
 
-                //send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-            }
+            //    send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+            //}
         }
     }
 }
@@ -959,12 +959,14 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         case FUNC_PLAYER_LEFT:
         {
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_LEFT;
+            do_npc_rotate(player_id, CON_LEFT);
             g_clients[player_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
         }
         break;
         case FUNC_PLAYER_RIGHT:
         {
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_RIGHT;
+            do_npc_rotate(player_id, CON_RIGHT);
             g_clients[player_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
         }
         break;
@@ -1017,11 +1019,11 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
 
     for (auto& c : g_clients)
     {
+        if (c.second.m_id == player_id)
+            continue;
         if (false == is_near(c.second.m_id, player_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
         if (ST_ACTIVE != c.second.m_status)
-            continue;
-        if (c.second.m_id == player_id)
             continue;
         new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
@@ -1284,6 +1286,7 @@ void Server::initialize_NPC(int player_id)
     {
         if (ST_ACTIVE != g_clients[npc_id].m_status)
         {
+            cout << npc_id << " is intit\n";
             g_clients[npc_id].m_socket = 0;
             g_clients[npc_id].m_id = npc_id;
             g_clients[npc_id].m_owner_id = player_id;
