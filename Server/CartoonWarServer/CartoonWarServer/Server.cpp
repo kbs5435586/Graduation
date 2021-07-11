@@ -501,12 +501,12 @@ void Server::set_formation(int user_id)
     PoutProduct.z = (standard.x * playerLookAt.y) - (standard.y * playerLookAt.x);
 
     float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
-    if (PoutProduct.y > 0)
+    if (PoutProduct.y < 0)
         radian *= -1.f;
     float PLangle = radian * 180.f / PIE;
-    float NPCangle = 180.f + PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
+    float NPCangle = -PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
     float radius = FORMATION_SPACE;
-    
+
     switch (c.m_formation)
     {
     case FM_FLOCK:
@@ -520,14 +520,14 @@ void Server::set_formation(int user_id)
         }
         else if (2 == c.m_boid.size())
         {
-            set_pos.x = radius * cosf((NPCangle + 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle + 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
             c.m_boid[0]->m_target_pos = new_pos;
 
             set_pos = {};
-            set_pos.x = radius * cosf((NPCangle - 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((NPCangle - 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle + 180.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
             c.m_boid[1]->m_target_pos = new_pos1;
         }
