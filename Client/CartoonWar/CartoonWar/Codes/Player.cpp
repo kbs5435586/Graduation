@@ -134,7 +134,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
 
-
+	Safe_Release(server);
 	return NO_EVENT;
 }
 

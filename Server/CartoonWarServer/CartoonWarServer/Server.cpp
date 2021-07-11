@@ -487,15 +487,24 @@ void Server::set_formation(int user_id)
     SESSION& c = g_clients[user_id];
     _matrix playerMat = c.m_transform.Get_Matrix();
     _vec3 playerLookAt = *c.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    playerLookAt = playerLookAt * -1.f;
     playerLookAt = Vector3_::Normalize(playerLookAt);
     _vec3 playerPos = *c.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     _vec3 standard = { 0.f,0.f,1.f };
     _vec3 set_pos = {};
 
-    float PdotProduct = (playerLookAt.x * standard.x) + (playerLookAt.y * standard.y) + (playerLookAt.z * standard.z);
+    float PdotProduct = (playerLookAt.x * standard.x) + (playerLookAt.y * standard.y) + (playerLookAt.z * standard.z); // 플레이어 내적
+    _vec3 PoutProduct;
+    PoutProduct.x = (standard.y * playerLookAt.z) - (standard.z * playerLookAt.y); // 플레이어 외적
+    PoutProduct.y = (standard.z * playerLookAt.x) - (standard.x * playerLookAt.z);
+    PoutProduct.z = (standard.x * playerLookAt.y) - (standard.y * playerLookAt.x);
+
     float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
-    float angle = radian * 180.f / PIE; // 0,0,1z 와 플레이어 look 사이의 각도
+    if (PoutProduct.y > 0)
+        radian *= -1.f;
+    float PLangle = radian * 180.f / PIE;
+    float NPCangle = 180.f + PLangle; // 0,0,1z 와 플레이어 look 사이의 각도
     float radius = FORMATION_SPACE;
     
     switch (c.m_formation)
@@ -504,21 +513,21 @@ void Server::set_formation(int user_id)
     {
         if (1 == c.m_boid.size())
         {
-            set_pos.x = radius * cosf((angle + 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((angle + 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
             c.m_boid[0]->m_target_pos = new_pos;
         }
         else if (2 == c.m_boid.size())
         {
-            set_pos.x = radius * cosf((angle + 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((angle + 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle + 90.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle + 90.f) * (PIE / 180.f));
             _vec3 new_pos = playerPos + set_pos;
             c.m_boid[0]->m_target_pos = new_pos;
 
             set_pos = {};
-            set_pos.x = radius * cosf((angle - 90.f) * (PIE / 180.f));
-            set_pos.z = radius * sinf((angle - 90.f) * (PIE / 180.f));
+            set_pos.x = radius * cosf((NPCangle - 90.f) * (PIE / 180.f));
+            set_pos.z = radius * sinf((NPCangle - 90.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
             c.m_boid[1]->m_target_pos = new_pos1;
         }

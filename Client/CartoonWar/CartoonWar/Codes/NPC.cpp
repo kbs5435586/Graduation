@@ -138,7 +138,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	fY += 1.f;
 	m_pTransformCom->Set_PositionY(fY);
 
-
+	Safe_Release(server);
 	return NO_EVENT;
 }
 
