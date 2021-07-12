@@ -415,6 +415,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\06. Water">
       <UniqueIdentifier>{b0c1038e-5088-45ef-8ded-31915d159d86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor">
+      <UniqueIdentifier>{9e68e0b0-1d99-4dc9-8cba-704a58b8e83d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -765,6 +768,9 @@
     <ClInclude Include="..\Headers\Water.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_RectTexNor.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1085,6 +1091,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Water.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_RectTexNor.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

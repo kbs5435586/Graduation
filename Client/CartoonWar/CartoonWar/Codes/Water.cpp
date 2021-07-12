@@ -61,18 +61,10 @@ void CWater::Render_GameObject()
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-	m_tTexInfo.fFrameTime += 0.01f;
 
-	if (m_tTexInfo.fFrameTime > 1000.0f)
-	{
-		m_tTexInfo.fFrameTime = 0.0f;
-	}
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b4)->SetData((void*)&m_tTexInfo);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b4)->GetCBV().Get(), iOffeset, CONST_REGISTER::b4);
-
 
 	CDevice::GetInstance()->UpdateTable();
 
@@ -125,12 +117,35 @@ void CWater::Free()
 
 HRESULT CWater::Ready_Component()
 {
-	CManagement* pInstance = CManagement::GetInstance();
-	if (pInstance == nullptr)
+	CManagement* pManagement = CManagement::GetInstance();
+	if (pManagement == nullptr)
 		return E_FAIL;
-	pInstance->AddRef();
+	pManagement->AddRef();
 
+	m_pTransformCom = (CTransform*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Transform");
+	NULL_CHECK_VAL(m_pTransformCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Transform", m_pTransformCom)))
+		return E_FAIL;
 
-	Safe_Release(pInstance);
+	m_pRendererCom = (CRenderer*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer");
+	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
+		return E_FAIL;
+
+	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTexNor");
+	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
+		return E_FAIL;
+
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+	//m_pTextureCom
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader", m_pTextureCom)))
+		return E_FAIL;
+	Safe_Release(pManagement);
 	return S_OK;
 }

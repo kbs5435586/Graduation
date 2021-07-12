@@ -141,17 +141,10 @@ void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 	_vec3 vPos = *dynamic_cast<CTransform*>
 		(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	matView = Matrix_::Inverse(matView);
-	_vec3 vTemp = _vec3(matView._31, matView._32, matView._33);
-	//	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
-
-	Once_SetUp_ViewProjMatrices(IsShadow, _vec3(1000.f, 1000.f, 1000.f));
-
-	//vPos.x += 1000.f;
-	//vPos.y += 1000.f;
-	//vPos.z += 1000.f;
-	//m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	vPos.y += 1000.f;
+	vPos.x += -1000.f;
+	vPos.z += -1000.f;
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	m_matShadowView = m_pTransform->Get_Matrix_Inverse();
 	m_matShadowProj = XMMatrixOrthographicLH((_float)150.f, (_float)150.f, 1.f, 100000.f);

@@ -194,7 +194,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	_vec4 vTemp = _vec4(matView._31, matView._32, matView._33, 0.f);
 	tLightInfo.vLightDir = vTemp;*/
 	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
-	tLightInfo.vLightDir = _vec4(-1.f, -1.f, -1.f,0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
@@ -248,7 +248,7 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(1000.f, 1000.f, 1000.f);
+	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
 	tCameraDesc.vAt = _vec3(1.f, -1.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 

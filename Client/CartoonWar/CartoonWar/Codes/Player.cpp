@@ -999,9 +999,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		if (m_eCurClass == CLASS::CLASS_ARCHER)
 		{
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			CTransform* pTemp = m_pTransformCom;
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return ;
 		}

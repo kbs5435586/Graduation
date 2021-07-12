@@ -32,7 +32,5 @@ private:
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
-private:
-	TEXINFO									m_tTexInfo = {};
 };
 

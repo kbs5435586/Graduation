@@ -165,6 +165,7 @@
     <ClInclude Include="..\Headers\Buffer_Point.h" />
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
     <ClInclude Include="..\Headers\Buffer_RectTex.h" />
+    <ClInclude Include="..\Headers\Buffer_RectTexNor.h" />
     <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
@@ -289,6 +290,7 @@
     <ClCompile Include="..\Codes\Buffer_Point.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
+    <ClCompile Include="..\Codes\Buffer_RectTexNor.cpp" />
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
