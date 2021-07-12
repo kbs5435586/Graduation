@@ -467,7 +467,7 @@ void Server::set_formation(int user_id)
             set_pos.z = BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
             c.m_boid[1].final_pos = new_pos1;
-            c.m_boid[1].angle = NPCangle - 180.f;
+            c.m_boid[1].angle = NPCangle + 180.f;
             c.m_boid[1].radius = BASIC_FORM_RAD;
         }
       else if (3 == c.m_boid.size())
@@ -484,9 +484,10 @@ void Server::set_formation(int user_id)
             set_pos.z = BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
             c.m_boid[1].final_pos = new_pos1;
-            c.m_boid[1].angle = NPCangle - 180.f;
+            c.m_boid[1].angle = NPCangle + 180.f;
             c.m_boid[1].radius = BASIC_FORM_RAD;
 
+            set_pos = {};
             set_pos.x = 2 * BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
             set_pos.z = 2 * BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos2 = playerPos + set_pos;
@@ -508,9 +509,10 @@ void Server::set_formation(int user_id)
             set_pos.z = BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos1 = playerPos + set_pos;
             c.m_boid[1].final_pos = new_pos1;
-            c.m_boid[1].angle = NPCangle - 180.f;
+            c.m_boid[1].angle = NPCangle + 180.f;
             c.m_boid[1].radius = BASIC_FORM_RAD;
 
+            set_pos = {};
             set_pos.x = 2 * BASIC_FORM_RAD * cosf((NPCangle) * (PIE / 180.f));
             set_pos.z = 2 * BASIC_FORM_RAD * sinf((NPCangle) * (PIE / 180.f));
             _vec3 new_pos2 = playerPos + set_pos;
@@ -523,8 +525,8 @@ void Server::set_formation(int user_id)
             set_pos.z = 2 * BASIC_FORM_RAD * sinf((NPCangle + 180.f) * (PIE / 180.f));
             _vec3 new_pos3 = playerPos + set_pos;
             c.m_boid[3].final_pos = new_pos3;
-            c.m_boid[3].angle = NPCangle - 180.f;
-            c.m_boid[3].radius = BASIC_FORM_RAD;
+            c.m_boid[3].angle = NPCangle + 180.f;
+            c.m_boid[3].radius = 2 * BASIC_FORM_RAD;
         }
     }
     break;
@@ -704,18 +706,33 @@ void Server::do_follow(int npc_id)
             if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos) // 만약 해당 위치가 아니라면
             {
                 _vec3 p_pos = *g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-                float now_radius = acosf((n_pos.x - p_pos.x) / g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius) / (PIE / 180.f);
 
-                if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle > now_radius) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
+                _vec3 npcLookAt = n_pos - p_pos;
+                npcLookAt = Vector3_::Normalize(npcLookAt);
+                _vec3 standard = { 1.f,0.f,0.f };
+                _vec3 set_pos = {};
+
+                float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 플레이어 내적
+                _vec3 PoutProduct;
+                PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // 플레이어 외적
+                PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
+                PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
+
+                float radian = acosf(PdotProduct); // 플레이어가 바라보는 방향과 0,0,1 벡터 사이의 각도
+                if (PoutProduct.y > 0)
+                    radian *= -1.f;
+                float NPCangle = radian * 180.f / PIE;
+
+                if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle > NPCangle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
                 {
-                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius + 1.f) * (PIE / 180.f)) + p_pos.x;
-                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius + 1.f) * (PIE / 180.f)) + p_pos.z;
+                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((NPCangle + 1.f) * (PIE / 180.f)) + p_pos.x;
+                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((NPCangle + 1.f) * (PIE / 180.f)) + p_pos.z;
                     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                 }
                 else
                 {
-                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((now_radius - 1.f) * (PIE / 180.f)) + p_pos.x;
-                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((now_radius - 1.f) * (PIE / 180.f)) + p_pos.z;
+                    n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((NPCangle - 1.f) * (PIE / 180.f)) + p_pos.x;
+                    n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((NPCangle - 1.f) * (PIE / 180.f)) + p_pos.z;
                     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                 }
 
