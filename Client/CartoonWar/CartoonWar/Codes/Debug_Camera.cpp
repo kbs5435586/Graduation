@@ -79,7 +79,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-		/*if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+	/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
 			m_pTransform->Go_Straight(fTimeDelta);
 		}
@@ -149,8 +149,8 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		else
 		{
 			vPos.y +=5.f;
-			vUp  *= 150.f;
-			vLook *= -150.f;
+			vUp  *= 100.f;
+			vLook *= -250.f;
 		}
 
 
@@ -231,7 +231,7 @@ CDebug_Camera* CDebug_Camera::Create()
 }
 
 CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, _uint iIdx)
-{
+{ 
 	CDebug_Camera* pInstance = new CDebug_Camera(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))

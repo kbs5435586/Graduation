@@ -78,12 +78,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 	float4	vMtrlDif = float4(fDot, fDot, fDot, 0.f);
 	float4	vMtrlAmb = float4(0.3f, 0.3f, 0.3f, 0.f);
 
-	float3 vTSNormal = g_texture1.Sample(Sampler0, vIn.vTexUV * 30.f).xyz;
-	//vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
-		
-	float3x3 matTBN = { vIn.vTanget.xyz, vIn.vBinormal.xyz, vIn.vNormal.xyz };
-	//vNormal = float4(normalize(mul(vTSNormal, matTBN)), 0.f);
-		
+	
 	
 
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);

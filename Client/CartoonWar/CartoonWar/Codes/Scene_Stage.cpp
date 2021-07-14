@@ -13,6 +13,7 @@
 #include "SkyBox.h"
 #include "Debug_Camera.h"
 #include "Light_Camera.h"
+#include "Reflection_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
 #include "Sphere.h"
@@ -38,6 +39,8 @@
 #include "Building.h"
 #include "LowPoly.h"
 #include "Flag.h"
+
+#include "Water.h"
 
 
 CScene_Stage::CScene_Stage()
@@ -105,6 +108,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Light", CLight_Camera::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Reflection", CReflection_Camera::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
@@ -144,7 +149,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_ThrowArrow", CThrow_Arrow::Create())))
 		return E_FAIL;
 
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;
 	return S_OK;
@@ -164,6 +170,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
+		return E_FAIL;	
+	if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
 		return E_FAIL;	
@@ -171,8 +179,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -222,9 +230,9 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(0.f, 20.f, -40.f);
+	tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
-	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
+	tCameraDesc.vAxisY = _vec3(0.f, 1.f, -0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
@@ -262,6 +270,33 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, true)))
 		return E_FAIL;
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Reflection_Camera(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	CReflection_Camera* pCameraObject = nullptr;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Reflection", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
+		(CGameObject**)&pCameraObject)))
+		return E_FAIL;
+
+	CAMERADESC		tCameraDesc;
+	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
+	tCameraDesc.vEye = _vec3(50.f, -10.f, 50.f);
+	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tCameraDesc.vAxisY = _vec3(0.f, 1.f, -0.f);
+	PROJDESC		tProjDesc;
+	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
+	tProjDesc.fFovY = XMConvertToRadians(60.f);
+	tProjDesc.fAspect = _float(WINCX) / WINCY;
+	tProjDesc.fNear = g_Near;
+	tProjDesc.fFar = 300.f;
+
+	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, 1)))
+		return E_FAIL;
+
 
 
 	return S_OK;
@@ -324,7 +359,7 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 
 HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	return S_OK;

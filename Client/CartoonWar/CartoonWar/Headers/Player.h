@@ -25,6 +25,7 @@ public:
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_PostEffect();
 	virtual void							Render_Blur();
+	virtual void							Render_Ref();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -48,6 +49,7 @@ private:
 	void									DeathMontion_Init();
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
+	void									SetSpeed();
 public:
 	CLASS&									GetClass(){return m_eCurClass;}
 private:
@@ -59,6 +61,7 @@ private:
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+	CShader*								m_pShaderCom_Reflection = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };
@@ -85,6 +88,9 @@ private:
 	_float									m_fCombatTime = 0.f;
 	_uint									m_iCombatMotion[3] = {};
 	_vec3									m_vOBB_Range[2] = {};
+	_float									m_fSpeed = 0.f;
+	_float									m_fArrSpeed[(_uint)CLASS::CLASS_END] = {};
+	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};

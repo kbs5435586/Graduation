@@ -765,7 +765,7 @@ void CNPC::Change_Class()
 				m_iCombatMotion[2] = 3;
 			}
 			break;
-			case CLASS::CLASS_PRIEST:
+			/*case CLASS::CLASS_PRIEST:
 			{
 				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
 				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
@@ -784,7 +784,7 @@ void CNPC::Change_Class()
 				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			}
-			break;
+			break;*/
 			}
 		}
 		else
@@ -1259,7 +1259,6 @@ void CNPC::Attack(const _float& fTimeDelta)
 	case CLASS::CLASS_INFANTRY:
 	case CLASS::CLASS_CAVALRY:
 	case CLASS::CLASS_MAGE:
-	case CLASS::CLASS_PRIEST:
 		m_iAttackMotion[0] = 6;
 		m_iAttackMotion[1] = 7;
 		break;

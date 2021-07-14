@@ -53,7 +53,7 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
-	m_pTransformCom->Go_Right(fTimeDelta*0.01f);
+	m_pTransformCom->Go_Right(fTimeDelta);
 	m_fLifeTime += fTimeDelta;
 	if (m_fLifeTime >= 10.f)
 	{

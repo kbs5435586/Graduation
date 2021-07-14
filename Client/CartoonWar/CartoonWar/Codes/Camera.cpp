@@ -36,6 +36,7 @@ HRESULT CCamera::Ready_GameObject(void* pArg)
 
 	if (FAILED(Add_Component(L"Com_Transform", m_pTransform)))
 		return E_FAIL;
+	m_pTransform->AddRef();
 	return S_OK;
 }
 
@@ -53,13 +54,6 @@ void CCamera::Render_GameObject()
 {
 }
 
-void CCamera::ShadowMatView()
-{
-
-}
-
-
-
 HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc)
 {
 	m_tCameraDesc = CameraDesc;
@@ -71,12 +65,60 @@ HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDE
 
 void CCamera::Invalidate_ViewProjMatrix()
 {
+
 	m_matView = m_pTransform->Get_Matrix_Inverse();
 	_matrix matOrtho = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 0.f, 1.f);
 	CCamera_Manager::GetInstance()->SetMatView(m_matView);
 	CCamera_Manager::GetInstance()->SetMatProj(m_matProj);
 	CCamera_Manager::GetInstance()->SetMatOrtho(matOrtho);
 }
+HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _int iTemp)
+{
+	m_tReflectionCameraDesc = CameraDesc;
+	m_tReflectionProjDesc = ProjDesc;
+	SetUp_ViewProjMatrices(iTemp);
+	return S_OK;
+}
+void CCamera::Invalidate_ViewProjMatrix(_int iTemp)
+{
+	m_pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
+	m_matReflectionView = m_pTransform->Get_Matrix_Inverse();
+	CCamera_Manager::GetInstance()->SetReflectionView(m_matReflectionView);
+	CCamera_Manager::GetInstance()->SetReflectionProj(m_matReflectionProj);
+}
+
+HRESULT CCamera::SetUp_ViewProjMatrices(_int iTemp)
+{
+	_vec3		vLook;
+	vLook = Vector3_::Subtract(m_tReflectionCameraDesc.vAt, m_tReflectionCameraDesc.vEye);
+	vLook = Vector3_::Normalize(vLook);
+
+	_vec3		vRight;
+	vRight = Vector3_::CrossProduct(m_tReflectionCameraDesc.vAxisY, vLook, false);
+	vRight = Vector3_::Normalize(vRight);
+
+	_vec3		vUp;
+	vUp = Vector3_::CrossProduct(vLook, vRight);
+	vUp = Vector3_::Normalize(vUp);
+
+	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tReflectionCameraDesc.vEye);
+
+
+	m_matReflectionProj._11 = (float)(1.f / tan((double)(m_tReflectionProjDesc.fFovY * 0.5f))) / m_tReflectionProjDesc.fAspect;
+	m_matReflectionProj._22 = (float)(1.f / tan((double)(m_tReflectionProjDesc.fFovY * 0.5f)));
+	m_matReflectionProj._33 = m_tReflectionProjDesc.fFar / (m_tReflectionProjDesc.fFar - m_tReflectionProjDesc.fNear);
+	m_matReflectionProj._43 = (m_tReflectionProjDesc.fFar * m_tReflectionProjDesc.fNear) / (m_tReflectionProjDesc.fFar - m_tReflectionProjDesc.fNear) * -1.f;
+	m_matReflectionProj._34 = 1.f;
+	m_matReflectionProj._44 = 0.0f;
+
+	Invalidate_ViewProjMatrix(iTemp);
+	return S_OK;
+}
+
+
 HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _bool IsShadow)
 {
 	m_tShadowCameraDesc = CameraDesc;

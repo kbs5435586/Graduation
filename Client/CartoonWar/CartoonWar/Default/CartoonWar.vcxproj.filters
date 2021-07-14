@@ -418,6 +418,9 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor">
       <UniqueIdentifier>{9e68e0b0-1d99-4dc9-8cba-704a58b8e83d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\98. Camera\02. Reflection_Camera">
+      <UniqueIdentifier>{773764c8-a39c-4fd7-ad2a-73ead5481932}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -771,6 +774,9 @@
     <ClInclude Include="..\Headers\Buffer_RectTexNor.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Reflection_Camera.h">
+      <Filter>02. GameObject\98. Camera\02. Reflection_Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1095,6 +1101,9 @@
     <ClCompile Include="..\Codes\Buffer_RectTexNor.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Reflection_Camera.cpp">
+      <Filter>02. GameObject\98. Camera\02. Reflection_Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1151,9 +1160,6 @@
     <None Include="..\ShaderFiles\Shader_Terrain.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
@@ -1204,6 +1210,12 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Fire.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Reflection.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Water.hlsl">
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

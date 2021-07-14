@@ -222,6 +222,7 @@
     <ClInclude Include="..\Headers\Particle_Default.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
+    <ClInclude Include="..\Headers\Reflection_Camera.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -340,6 +341,7 @@
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\Reflection_Camera.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
@@ -502,7 +504,7 @@
     <None Include="..\ShaderFiles\Shader_PointLIght.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
+    <None Include="..\ShaderFiles\Shader_Reflection.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
@@ -521,6 +523,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_InGame_UI.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Water.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
