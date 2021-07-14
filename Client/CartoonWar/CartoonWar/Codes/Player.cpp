@@ -31,14 +31,12 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 10.f,0.f,10.f };
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	_vec3 vPos = { 50.f,0.f,50.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
-	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-
-	//tagInfo(float hp, float mp, float att, float def)
-
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
+	m_tInfo = INFO(100, 1,1,0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -64,7 +62,9 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
+	
 
+	
 	m_pUI_OnHead = CUI_OnHead::Create();
 
 	if (nullptr == m_pUI_OnHead)
@@ -1061,9 +1061,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		if (m_eCurClass == CLASS::CLASS_ARCHER)
 		{
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			CTransform* pTemp = m_pTransformCom;
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return;
 		}

@@ -87,7 +87,7 @@ void Server::process_packet(int user_id, char* buf)
         else if (CON_TYPE_ROTATE == packet->con_type)
             do_rotate(user_id, packet->con);
 
-        cout << user_id << "send condition" << packet->con << endl;
+        //cout << user_id << "send condition" << packet->con << endl;
     }
     break;
     case CS_PACKET_ADD_NPC:

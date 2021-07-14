@@ -104,7 +104,6 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tShadowCameraDesc.vEye);
-	//m_pTransform->Scaling(1.5f, 1.5f, 1.5f);
 
 	CCamera_Manager::GetInstance()->SetShadowMatWorld(m_pTransform->Get_Matrix());
 
@@ -112,10 +111,36 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 	return S_OK;
 }
 
+HRESULT CCamera::Once_SetUp_ViewProjMatrices(_bool IsShadow, _vec3 vPos)
+{
+
+	m_tShadowCameraDesc.vEye = vPos;
+	m_tShadowCameraDesc.vAt = vPos / 1000.f;
+	_vec3		vLook;
+	vLook = Vector3_::Subtract(m_tShadowCameraDesc.vAt, m_tShadowCameraDesc.vEye);
+	vLook = Vector3_::Normalize(vLook);
+
+	_vec3		vRight;
+	vRight = Vector3_::CrossProduct(m_tShadowCameraDesc.vAxisY, vLook, false);
+	vRight = Vector3_::Normalize(vRight);
+
+	_vec3		vUp;
+	vUp = Vector3_::CrossProduct(vLook, vRight, false);
+	vUp = Vector3_::Normalize(vUp);
+
+	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tShadowCameraDesc.vEye);
+
+	return S_OK;
+}
+
 void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 {
 	_vec3 vPos = *dynamic_cast<CTransform*>
 		(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
 	vPos.y += 1000.f;
 	vPos.x += -1000.f;
 	vPos.z += -1000.f;

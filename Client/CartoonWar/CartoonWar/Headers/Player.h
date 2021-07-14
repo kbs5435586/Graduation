@@ -48,6 +48,8 @@ private:
 	void									DeathMontion_Init();
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
+public:
+	CLASS&									GetClass(){return m_eCurClass;}
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;

@@ -1,17 +1,17 @@
 #pragma once
-#include "UI.h"
+#include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Main :
-    public CUI
+class CBuffer_RectTex;
+class CWater :
+    public CGameObject
 {
 private:
-    CUI_Main();
-    CUI_Main(const CUI_Main& rhs);
-    virtual ~CUI_Main() = default;
+	CWater();
+	CWater(const CWater& rhs);
+	virtual ~CWater() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,8 +21,8 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Main*						Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx= 0) override;
+	static CWater*							Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -31,7 +31,6 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-private:
-	_uint									m_iTemp = 0;
+	CTexture*								m_pTextureCom = nullptr;
 };
 

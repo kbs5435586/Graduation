@@ -33,7 +33,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CShader*								m_pCompute_ShaderCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
 private:
 	REP										m_tRep = {};
 	_bool									m_IsTemp = false;
