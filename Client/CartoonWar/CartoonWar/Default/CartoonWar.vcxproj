@@ -528,6 +528,9 @@
     <None Include="..\ShaderFiles\Shader_Water.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\ShaderFiles\Shader_Water_Tess.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>

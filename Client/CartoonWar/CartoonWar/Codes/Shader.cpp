@@ -60,6 +60,28 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 		}
 		m_tPipeline.GS = { m_pGSBlob->GetBufferPointer(), m_pGSBlob->GetBufferSize() };
 	}
+	if (DSEntry)
+	{
+		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, DSEntry, "ds_5_1", 0, 0, &m_pDSBlob, &m_pErrBlob)))
+		{
+			pErr = (char*)m_pErrBlob->GetBufferPointer();
+			MessageBoxA(nullptr, pErr, "DS_Shader Create Failed !!!", MB_OK);
+			return E_FAIL;
+		}
+		m_tPipeline.DS = { m_pDSBlob->GetBufferPointer(), m_pDSBlob->GetBufferSize() };
+	}
+	if (HSEntry)
+	{
+		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, HSEntry, "hs_5_1", 0, 0, &m_pHSBlob, &m_pErrBlob)))
+		{
+			pErr = (char*)m_pErrBlob->GetBufferPointer();
+			MessageBoxA(nullptr, pErr, "HS_Shader Create Failed !!!", MB_OK);
+			return E_FAIL;
+		}
+		m_tPipeline.HS = { m_pHSBlob->GetBufferPointer(), m_pHSBlob->GetBufferSize() };
+	}
 
 	return S_OK;
 }
@@ -84,7 +106,7 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	{
 	case SHADER_TYPE::SHADER_FORWARD:
 		m_tPipeline.NumRenderTargets = 1;
-		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 	case SHADER_TYPE::SHADER_DEFFERED:
 		m_tPipeline.NumRenderTargets = 3;

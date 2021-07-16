@@ -40,12 +40,34 @@ VS_OUT VS_Main(VS_IN vIn)
 }
 
 
-PS_OUT PS_Main(VS_OUT vIn) 
+//PS_OUT PS_Main(VS_OUT vIn) 
+//{
+//	PS_OUT vOut;
+//
+//	vIn.vTexUV.x += fFrameTime;
+//	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
+//	float4	vNormal = mul(vIn.vNormal, matViewInv);
+//
+//
+//	float3 vTSNormal = g_texture1.Sample(Sampler0, vIn.vTexUV * 30.f).xyz;
+//	vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
+//
+//	float3x3 matTBN = { vIn.vTangent.xyz, vIn.vBinormal.xyz, vIn.vNormal.xyz };
+//	vNormal = float4(normalize(mul(vTSNormal, matTBN)), 0.f);
+//
+//
+//	vOut.vDiffuseTex= vDiffuse;
+//	vOut.vNormalTex= vNormal;
+//	vOut.vPositionTex = vIn.vWorldPos;
+//	return vOut;
+//}
+
+float4 PS_Main(VS_OUT vIn) :SV_TARGET
 {
-	PS_OUT vOut;
+	float4 vOut;
 
 	vIn.vTexUV.x += fFrameTime;
-	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
+	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV * 30.f);
 	float4	vNormal = mul(vIn.vNormal, matViewInv);
 
 
@@ -56,9 +78,6 @@ PS_OUT PS_Main(VS_OUT vIn)
 	vNormal = float4(normalize(mul(vTSNormal, matTBN)), 0.f);
 
 
-	vOut.vDiffuseTex= vDiffuse;
-	vOut.vNormalTex= vNormal;
-	vOut.vPositionTex = vIn.vWorldPos;
+	vOut = vDiffuse;
 	return vOut;
 }
-

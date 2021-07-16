@@ -936,6 +936,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Water",
 		CShader::Create(L"../ShaderFiles/Shader_Water.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Water_Tess",
+	//	CShader::Create(L"../ShaderFiles/Shader_Water_Tess.hlsl", "VS_Tess", "PS_Tess", nullptr, "DS_Tess","HS_Tess"))))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Water_Tess",
+		CShader::Create(L"../ShaderFiles/Shader_Water_Tess.hlsl", "VS_Tess", "PS_Tess", nullptr, nullptr, nullptr))))
+		return E_FAIL;
 	//Compute_Shader_Compile
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default",
