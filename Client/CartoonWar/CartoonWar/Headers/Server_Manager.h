@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 class CManagement;
+class CTransform;
 class CServer_Manager :
     public CBase
 {
@@ -40,7 +41,7 @@ public:
     HRESULT EventManager();
 
     void send_packet(void* packet);
-    void send_condition_packet(unsigned char con_type, unsigned char con);
+    void send_condition_packet(unsigned char con_type, unsigned char con, CTransform* pTransform);
     void send_login_ok_packet();
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);

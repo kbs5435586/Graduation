@@ -58,8 +58,7 @@ constexpr char SC_PACKET_ATTACK = 10;
 constexpr char SC_PACKET_FLAG_INFO = 11;
 constexpr char SC_PACKET_FLAG_BOOL = 12;
 constexpr char SC_PACKET_TIME = 13;
-constexpr char SC_PACKET_MOVE_FIX = 14;
-constexpr char SC_PACKET_ROTATE_FIX = 15;
+constexpr char SC_PACKET_FIX = 14;
 
 #pragma pack(push ,1)
 
@@ -145,9 +144,13 @@ struct sc_packet_condition
 	char con_type;
 	int id;
 	char condition;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
+	float p_x, p_z;
 };
 
-struct sc_packet_move_fix
+struct sc_packet_fix
 {
 	char size;
 	char type;
@@ -156,16 +159,6 @@ struct sc_packet_move_fix
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
 	float p_x, p_z;
-};
-
-struct sc_packet_rotate_fix
-{
-	char size;
-	char type;
-	int id;
-	float r_x, r_y, r_z;
-	float u_x, u_y, u_z;
-	float l_x, l_y, l_z;
 };
 
 constexpr unsigned char CON_TYPE_MOVE = 0;
@@ -239,6 +232,10 @@ struct cs_packet_condition
 	char	type;
 	char	con_type;
 	char	con;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
+	float p_x, p_z;
 	//unsigned move_time; // 스트레스 테스트
 };
 

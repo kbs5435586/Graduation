@@ -165,6 +165,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	break;
 	case SC_PACKET_CONDITION:
 	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+
 		sc_packet_condition* my_packet = reinterpret_cast<sc_packet_condition*>(ptr);
 		int recv_id = my_packet->id;
 		char con = my_packet->condition;
@@ -173,9 +178,33 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_objects[recv_id].con_move = con;
 		else if (CON_TYPE_ROTATE == my_packet->con_type)
 			m_objects[recv_id].con_rotate = con;
+
+		CTransform* pTransform;
+		if (is_player(recv_id))
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+		}
+		else if (is_npc(recv_id))
+		{
+			short npc_id = npc_id_to_idx(recv_id);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_NPC", L"Com_Transform", npc_id);
+		}
+		_vec3* vPos = pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 rPos, uPos, lPos;
+		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+		vPos->x = my_packet->p_x; vPos->z = my_packet->p_z;
+		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
+		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+		pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
+		Safe_Release(managment);
 	}
 	break;
-	case SC_PACKET_MOVE_FIX:
+	case SC_PACKET_FIX:
 	{
 		managment = CManagement::GetInstance();
 		if (nullptr == managment)
@@ -183,7 +212,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		managment->AddRef();
 		CTransform* pTransform;
 
-		sc_packet_move_fix* my_packet = reinterpret_cast<sc_packet_move_fix*>(ptr);
+		sc_packet_fix* my_packet = reinterpret_cast<sc_packet_fix*>(ptr);
 		int recv_id = my_packet->id;
 		my_packet->p_x;
 		my_packet->p_z;
@@ -210,40 +239,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
 		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
 		pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
-		Safe_Release(managment);
-	}
-	break;
-	case SC_PACKET_ROTATE_FIX:
-	{
-		managment = CManagement::GetInstance();
-		if (nullptr == managment)
-			return;
-		managment->AddRef();
-		CTransform* pTransform;
-
-		sc_packet_rotate_fix* my_packet = reinterpret_cast<sc_packet_rotate_fix*>(ptr);
-		int recv_id = my_packet->id;
-
-		if (is_player(recv_id))
-		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
-		}
-		else if (is_npc(recv_id))
-		{
-			short npc_id = npc_id_to_idx(recv_id);
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_NPC", L"Com_Transform", npc_id);
-		}
-		_vec3 rPos, uPos, lPos;
-
-		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-
-		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
-		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
 		Safe_Release(managment);
 	}
 	break;
@@ -804,13 +799,27 @@ void CServer_Manager::send_packet(void* packet)
 	//g_socket.send(p, p[0], sent);
 }
 
-void CServer_Manager::send_condition_packet(unsigned char con_type, unsigned char con)
+void CServer_Manager::send_condition_packet(unsigned char con_type, unsigned char con, CTransform* pTransform)
 {
 	cs_packet_condition m_packet;
 	m_packet.type = CS_PACKET_CONDITION;
 	m_packet.size = sizeof(m_packet);
 	m_packet.con_type = con_type;
 	m_packet.con = con;
+
+	_matrix mat = pTransform->Get_Matrix();
+	m_packet.r_x = mat._11;
+	m_packet.r_y = mat._12;
+	m_packet.r_z = mat._13;
+	m_packet.u_x = mat._21;
+	m_packet.u_y = mat._22;
+	m_packet.u_z = mat._23;
+	m_packet.l_x = mat._31;
+	m_packet.l_y = mat._32;
+	m_packet.l_z = mat._33;
+	m_packet.p_x = mat._41;
+	m_packet.p_z = mat._43;
+
 	send_packet(&m_packet);
 }
 

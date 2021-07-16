@@ -87,7 +87,23 @@ void Server::process_packet(int user_id, char* buf)
         else if (CON_TYPE_ROTATE == packet->con_type)
             do_rotate(user_id, packet->con);
 
-        //cout << user_id << "send condition" << packet->con << endl;
+        _matrix mat = g_clients[user_id].m_transform.Get_Matrix();
+
+        mat._11 = packet->r_x;
+        mat._12 = packet->r_y;
+        mat._13 = packet->r_z;
+        mat._21 = packet->u_x;
+        mat._22 = packet->u_y;
+        mat._23 = packet->u_z;
+        mat._31 = packet->l_x;
+        mat._32 = packet->l_y;
+        mat._33 = packet->l_z;
+        mat._41 = packet->p_x;
+        mat._43 = packet->p_z;
+
+        g_clients[user_id].m_transform.Set_Matrix(&mat);
+
+        cout << user_id << "send condition" << packet->con << endl;
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -202,11 +218,11 @@ void Server::send_login_ok_packet(int user_id)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
-void Server::send_move_fix_packet(int user_id, int other_id)
+void Server::send_fix_packet(int user_id, int other_id)
 {
-    sc_packet_move_fix packet;
+    sc_packet_fix packet;
     packet.size = sizeof(packet);
-    packet.type = SC_PACKET_MOVE_FIX;
+    packet.type = SC_PACKET_FIX;
     packet.id = other_id;
     _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
@@ -220,26 +236,6 @@ void Server::send_move_fix_packet(int user_id, int other_id)
     packet.l_z = pos._33;
     packet.p_x = pos._41;
     packet.p_z = pos._43;
-
-    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
-}
-
-void Server::send_rotate_fix_packet(int user_id, int other_id)
-{
-    sc_packet_rotate_fix packet;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_ROTATE_FIX;
-    packet.id = other_id;
-    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
-    packet.r_x = pos._11;
-    packet.r_y = pos._12;
-    packet.r_z = pos._13;
-    packet.u_x = pos._21;
-    packet.u_y = pos._22;
-    packet.u_z = pos._23;
-    packet.l_x = pos._31;
-    packet.l_y = pos._32;
-    packet.l_z = pos._33;
 
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
@@ -336,13 +332,13 @@ void Server::do_rotate(int user_id, char con)
 
     send_condition_packet(user_id, user_id, CON_TYPE_ROTATE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
     if (CON_IDLE == con)
-        send_rotate_fix_packet(user_id, user_id);
+        send_fix_packet(user_id, user_id);
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         send_condition_packet(cpy_vl, user_id, CON_TYPE_ROTATE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
         // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
         if (CON_IDLE == con)
-            send_rotate_fix_packet(cpy_vl, user_id);
+            send_fix_packet(cpy_vl, user_id);
     }
 }
 
@@ -402,12 +398,12 @@ void Server::do_move(int user_id, char con)
 
     send_condition_packet(user_id, user_id, CON_TYPE_MOVE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
     if (CON_IDLE == con)
-        send_move_fix_packet(user_id, user_id);
+        send_fix_packet(user_id, user_id);
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         send_condition_packet(cpy_vl, user_id, CON_TYPE_MOVE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
         if (CON_IDLE == con)
-            send_move_fix_packet(cpy_vl, user_id);
+            send_fix_packet(cpy_vl, user_id);
         // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
     }
 }
@@ -735,7 +731,7 @@ void Server::do_follow(int npc_id)
                         if (0 != g_clients[i].m_view_list.count(npc_id))
                         {
                             g_clients[i].m_cLock.unlock();
-                            send_move_fix_packet(i, npc_id);
+                            send_fix_packet(i, npc_id);
                         }
                         else
                         {
@@ -930,6 +926,13 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_STRAIGHT;
             g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE);
+            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+            {
+                if (ST_ACTIVE == g_clients[npc_id].m_status)
+                {
+                    g_clients[npc_id].m_transform.BackWard(MOVE_TIME_ELAPSE);
+                }
+            }
         }
         break;
         case FUNC_PLAYER_RUN:
@@ -937,6 +940,13 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_RUN;
             g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE * 2.f);
+            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+            {
+                if (ST_ACTIVE == g_clients[npc_id].m_status)
+                {
+                    g_clients[npc_id].m_transform.BackWard(MOVE_TIME_ELAPSE * 2.f);
+                }
+            }
         }
         break;
         case FUNC_PLAYER_BACK:
@@ -944,6 +954,13 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_BACK;
             g_clients[player_id].m_transform.Go_Straight(MOVE_TIME_ELAPSE);
+            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+            {
+                if (ST_ACTIVE == g_clients[npc_id].m_status)
+                {
+                    g_clients[npc_id].m_transform.Go_Straight(MOVE_TIME_ELAPSE);
+                }
+            }
         }
         break;
         case FUNC_PLAYER_LEFT:
@@ -951,6 +968,13 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_LEFT;
             do_npc_rotate(player_id, CON_LEFT);
             g_clients[player_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+            {
+                if (ST_ACTIVE == g_clients[npc_id].m_status)
+                {
+                    g_clients[npc_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                }
+            }
             g_clients[player_id].m_rotate += (-ROTATE_TIME_ELAPSE * ROTATE_SPEED) * 180.f / PIE;
         }
         break;
@@ -959,6 +983,13 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_RIGHT;
             do_npc_rotate(player_id, CON_RIGHT);
             g_clients[player_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+            {
+                if (ST_ACTIVE == g_clients[npc_id].m_status)
+                {
+                    g_clients[npc_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+                }
+            }
             g_clients[player_id].m_rotate += ROTATE_TIME_ELAPSE * ROTATE_SPEED * 180.f / PIE;
         }
         break;
@@ -1185,7 +1216,18 @@ void Server::send_condition_packet(int user_id, int other_id, unsigned char type
         packet.condition = g_clients[other_id].m_Rcondition;
     }
 
-
+    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_z = pos._43;
 
     //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것

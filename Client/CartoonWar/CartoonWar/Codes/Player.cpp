@@ -1081,7 +1081,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_cMoveCondition = CON_BACK;
 		if (m_cLastMoveCondition != m_cMoveCondition)
 		{
-			server->send_condition_packet(CON_TYPE_MOVE, CON_BACK);
+			server->send_condition_packet(CON_TYPE_MOVE, CON_BACK, m_pTransformCom);
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
@@ -1092,7 +1092,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cMoveCondition = CON_IDLE;
 			if (m_cLastMoveCondition != m_cMoveCondition)
 			{
-				server->send_condition_packet(CON_TYPE_MOVE, CON_IDLE);
+				server->send_condition_packet(CON_TYPE_MOVE, CON_IDLE, m_pTransformCom);
 				server->send_animation_packet(A_IDLE);
 				m_cLastMoveCondition = m_cMoveCondition;
 			}
@@ -1145,7 +1145,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_cRotateCondition = CON_LEFT;
 		if (m_cLastRotateCondition != m_cRotateCondition)
 		{
-			server->send_condition_packet(CON_TYPE_ROTATE, CON_LEFT);
+			server->send_condition_packet(CON_TYPE_ROTATE, CON_LEFT, m_pTransformCom);
 			m_cLastRotateCondition = m_cRotateCondition;
 		}
 	}
@@ -1156,7 +1156,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cRotateCondition = CON_IDLE;
 			if (m_cLastRotateCondition != m_cRotateCondition)
 			{
-				server->send_condition_packet(CON_TYPE_ROTATE, CON_IDLE);
+				server->send_condition_packet(CON_TYPE_ROTATE, CON_IDLE, m_pTransformCom);
 				server->send_animation_packet(A_IDLE);
 				m_cLastRotateCondition = m_cRotateCondition;
 			}
@@ -1175,7 +1175,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_cRotateCondition = CON_RIGHT;
 		if (m_cLastRotateCondition != m_cRotateCondition)
 		{
-			server->send_condition_packet(CON_TYPE_ROTATE, CON_RIGHT);
+			server->send_condition_packet(CON_TYPE_ROTATE, CON_RIGHT, m_pTransformCom);
 			m_cLastRotateCondition = m_cRotateCondition;
 		}
 	}
@@ -1186,7 +1186,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cRotateCondition = CON_IDLE;
 			if (m_cLastRotateCondition != m_cRotateCondition)
 			{
-				server->send_condition_packet(CON_TYPE_ROTATE, CON_IDLE);
+				server->send_condition_packet(CON_TYPE_ROTATE, CON_IDLE, m_pTransformCom);
 				server->send_animation_packet(A_IDLE);
 				m_cLastRotateCondition = m_cRotateCondition;
 			}
@@ -1205,7 +1205,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_cMoveCondition = CON_RUN;
 		if (m_cLastMoveCondition != m_cMoveCondition)
 		{
-			server->send_condition_packet(CON_TYPE_MOVE, CON_RUN);
+			server->send_condition_packet(CON_TYPE_MOVE, CON_RUN, m_pTransformCom);
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
@@ -1219,7 +1219,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_cMoveCondition = CON_STRAIGHT;
 		if (m_cLastMoveCondition != m_cMoveCondition)
 		{
-			server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
+			server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT, m_pTransformCom);
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 
@@ -1257,7 +1257,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cMoveCondition = CON_IDLE;
 			if (m_cLastMoveCondition != m_cMoveCondition)
 			{
-				server->send_condition_packet(CON_TYPE_MOVE, CON_IDLE);
+				server->send_condition_packet(CON_TYPE_MOVE, CON_IDLE, m_pTransformCom);
 				server->send_animation_packet(A_IDLE);
 				m_cLastMoveCondition = m_cMoveCondition;
 			}
