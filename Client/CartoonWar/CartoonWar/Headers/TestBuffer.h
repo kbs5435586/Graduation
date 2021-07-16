@@ -5,13 +5,13 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CBuffer_RectTex;
-class CWater :
-    public CGameObject
+class CTestBuffer :
+	public CGameObject
 {
 private:
-	CWater();
-	CWater(const CWater& rhs);
-	virtual ~CWater() = default;
+	CTestBuffer();
+	CTestBuffer(const CTestBuffer& rhs);
+	virtual ~CTestBuffer() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -21,7 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CWater*							Create();
+	static CTestBuffer*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();

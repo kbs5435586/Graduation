@@ -618,3 +618,20 @@ typedef struct tagParticleSet
 	float		fMinSpeed;
 	float		fMaxSpeed;
 }PARTICLESET;
+
+
+struct FontType
+{
+	int CharNum;
+	float left;
+	float right;
+	int size;
+};
+
+
+struct FontInfo
+{
+	D3D12_VERTEX_BUFFER_VIEW	tVertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW		tIndexBufferView;
+	int							iIndices;
+};

@@ -61,6 +61,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 
 	Render_Priority();
+	pManagement->Render_Font();
 	Render_Alpha();
 	Render_Post_Effect();
 

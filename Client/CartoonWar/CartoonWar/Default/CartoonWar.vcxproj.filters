@@ -421,6 +421,12 @@
     <Filter Include="02. GameObject\98. Camera\02. Reflection_Camera">
       <UniqueIdentifier>{773764c8-a39c-4fd7-ad2a-73ead5481932}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test\96. TestBuffer">
+      <UniqueIdentifier>{5753f984-0ce4-410d-8add-fe7a5010ebc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\12. FontMgr">
+      <UniqueIdentifier>{d69c99c1-a4c5-47d6-9805-ffefcf1c8094}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -777,6 +783,12 @@
     <ClInclude Include="..\Headers\Reflection_Camera.h">
       <Filter>02. GameObject\98. Camera\02. Reflection_Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\TestBuffer.h">
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\96. TestBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FontMgr.h">
+      <Filter>97. Engine\01. Utility\12. FontMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1104,6 +1116,12 @@
     <ClCompile Include="..\Codes\Reflection_Camera.cpp">
       <Filter>02. GameObject\98. Camera\02. Reflection_Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\TestBuffer.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\96. TestBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FontMgr.cpp">
+      <Filter>97. Engine\01. Utility\12. FontMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1217,7 +1235,7 @@
     <None Include="..\ShaderFiles\Shader_Water.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Water_Tess.hlsl">
+    <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
   </ItemGroup>
