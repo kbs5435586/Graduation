@@ -193,6 +193,7 @@
     <ClInclude Include="..\Headers\FbxLoader.h" />
     <ClInclude Include="..\Headers\Fire.h" />
     <ClInclude Include="..\Headers\Flag.h" />
+    <ClInclude Include="..\Headers\FontMgr.h" />
     <ClInclude Include="..\Headers\Frame.h" />
     <ClInclude Include="..\Headers\FrameManager.h" />
     <ClInclude Include="..\Headers\Frustum.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="..\Headers\Particle_Default.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
+    <ClInclude Include="..\Headers\Reflection_Camera.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -245,6 +247,7 @@
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
     <ClInclude Include="..\Headers\TestAnimMesh.h" />
+    <ClInclude Include="..\Headers\TestBuffer.h" />
     <ClInclude Include="..\Headers\TestCube.h" />
     <ClInclude Include="..\Headers\TestHatchMesh.h" />
     <ClInclude Include="..\Headers\TestMesh.h" />
@@ -314,6 +317,7 @@
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
+    <ClCompile Include="..\Codes\FontMgr.cpp" />
     <ClCompile Include="..\Codes\Frame.cpp" />
     <ClCompile Include="..\Codes\FrameManager.cpp" />
     <ClCompile Include="..\Codes\Frustum.cpp" />
@@ -340,6 +344,7 @@
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\Reflection_Camera.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
@@ -361,6 +366,7 @@
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\TestAnimMesh.cpp" />
+    <ClCompile Include="..\Codes\TestBuffer.cpp" />
     <ClCompile Include="..\Codes\TestCube.cpp" />
     <ClCompile Include="..\Codes\TestHatchMesh.cpp" />
     <ClCompile Include="..\Codes\TestMesh.cpp" />
@@ -502,7 +508,7 @@
     <None Include="..\ShaderFiles\Shader_PointLIght.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
+    <None Include="..\ShaderFiles\Shader_Reflection.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
@@ -521,6 +527,12 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_InGame_UI.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Water.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

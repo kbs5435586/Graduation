@@ -125,6 +125,13 @@ cbuffer MATERIAL_PARAM : register(b8)
 	row_major float4x4 g_mat_3;
 
 };
+struct tFontInfo
+{
+	int CharNum;
+	float left;
+	float right;
+	int size;
+};
 
 Texture2D					g_texture0			: register(t0);
 Texture2D					g_texture1			: register(t1);
@@ -135,6 +142,7 @@ Texture2D					g_texture5			: register(t5);
 TextureCube					g_textureCube		: register(t6);    
 StructuredBuffer<float4x4>	g_arrFinalBoneMat	: register(t7);
 StructuredBuffer<matrix>	g_matTemp			: register(t8);
+StructuredBuffer<tFontInfo>	g_arrFont			: register(t9);
 
 SamplerState				Sampler0			: register(s0);
 SamplerState				Sampler1			: register(s1);
@@ -166,5 +174,6 @@ cbuffer GLOBAL : register(b9)
 	float   g_fAccTime;
 	
 }
+
 
 #endif

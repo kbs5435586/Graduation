@@ -10,6 +10,7 @@
 #include "FBXLoader.h"
 #include "UAVManager.h"
 #include "CollisionMgr.h"
+#include "FontMgr.h"
 #include "MRT.h"
 #include "Base.h"
 class CComponent;
@@ -78,6 +79,10 @@ public://UAV_Manager
 public://CCollisionMgr
 	HRESULT						Ready_CollsionManager();
 	void						Update_CollisionManager();
+public://FontMgr
+	HRESULT						Ready_FontMgr(const char* pFilePath);
+	HRESULT						Create_Font_Buffer(const char* pSentence, _uint iDrawX, _uint iDrawY);
+	void						Render_Font();
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -100,6 +105,8 @@ private:
 	CLoadManager*				m_pLoad_Manager = nullptr;
 	CUAVManager*				m_pUAV_Manager = nullptr;
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
+	CFontMgr*					m_pFont_Manager = nullptr;
+	CServer_Manager*			m_pServer_Manager = nullptr;
 	CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

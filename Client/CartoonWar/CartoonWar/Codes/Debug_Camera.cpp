@@ -28,7 +28,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(100.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(20.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -149,8 +149,8 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		//else
 		//{
 		//	vPos.y +=5.f;
-		//	vUp  *= 150.f;
-		//	vLook *= -150.f;
+		//	vUp  *= 100.f;
+		//	vLook *= -250.f;
 		//}
 
 
@@ -173,7 +173,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 		//	if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 		//	{
-		//		m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		//		//m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 		//	}
 
 		//}
@@ -231,7 +231,7 @@ CDebug_Camera* CDebug_Camera::Create()
 }
 
 CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, _uint iIdx)
-{
+{ 
 	CDebug_Camera* pInstance = new CDebug_Camera(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))

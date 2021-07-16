@@ -77,7 +77,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(m_pUI_OnHeadBack->Ready_GameObject((void*)&vPos)))
 		return E_FAIL;
-
+	SetSpeed();
 	return S_OK;
 }
 
@@ -384,6 +384,58 @@ void CPlayer::Render_Blur()
 	Safe_Release(pManagement);
 }
 
+void CPlayer::Render_Ref()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matReflectionView = CCamera_Manager::GetInstance()->GetReflectionView();
+		_matrix matReflectionProj = CCamera_Manager::GetInstance()->GetReflectionMatProj();
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+		tRep.m_arrInt[2] = g_DefferedRender;
+
+		m_pShaderCom_Reflection->SetUp_OnShader(matWorld, matReflectionView, matReflectionProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		if (iSubsetNum >= 2)
+		{
+			if (i == 0)
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+			else
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+		else
+		{
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+
+
+	Safe_Release(pManagement);
+}
+
 HRESULT CPlayer::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -407,8 +459,8 @@ HRESULT CPlayer::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
-
-
+	if (FAILED(m_pShaderCom_Reflection->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST, SHADER_TYPE::SHADER_REF)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -453,6 +505,7 @@ void CPlayer::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pShaderCom_PostEffect);
 	Safe_Release(m_pShaderCom_Blur);
+	Safe_Release(m_pShaderCom_Reflection);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pColiider[0]);
 	Safe_Release(m_pColiider[1]);
@@ -607,6 +660,12 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
 	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
 		return E_FAIL;
+	//m_pShaderCom_Reflection
+	m_pShaderCom_Reflection = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflection");
+	NULL_CHECK_VAL(m_pShaderCom_Reflection, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ReflectionShader", m_pShaderCom_Reflection)))
+		return E_FAIL;
+
 
 	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
 	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -729,7 +788,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(50.f);
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -761,7 +819,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(50.f);
 		}
 		break;
 		case CLASS::CLASS_CAVALRY:
@@ -793,7 +850,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(100.f);
 		}
 		break;
 		case CLASS(2):
@@ -825,7 +881,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(50.f);
 		}
 		break;
 		case CLASS(4):
@@ -857,7 +912,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(100.f);
 		}
 		break;
 		case CLASS::CLASS_SPEARMAN:
@@ -887,7 +941,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(50.f);
 		}
 		break;
 		case CLASS::CLASS_MAGE:
@@ -925,7 +978,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
-			m_pTransformCom->SetSpeed(50.f);
 		}
 		break;
 		case CLASS::CLASS_MMAGE:
@@ -956,7 +1008,6 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(100.f);
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -984,11 +1035,10 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 3;
 			m_iCombatMotion[1] = 4;
 			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(70.f);
 		}
 		break;
 		}
-		
+		m_pTransformCom->SetSpeed(m_fSpeed);
 		m_ePreClass = m_eCurClass;
 	}
 }
@@ -1167,6 +1217,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 	{
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		if (!m_IsCombat)
 			server->send_animation_packet(A_WALK);
 		else
@@ -1181,6 +1232,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
 	{
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		if (!m_IsCombat)
 		{
 			m_cRotateCondition = CON_IDLE;
@@ -1483,7 +1535,6 @@ void CPlayer::Attack(const _float& fTimeDelta)
 	case CLASS::CLASS_INFANTRY:
 	case CLASS::CLASS_CAVALRY:
 	case CLASS::CLASS_MAGE:
-	case CLASS::CLASS_PRIEST:
 		m_iAttackMotion[0] = 6;
 		m_iAttackMotion[1] = 7;
 		break;
@@ -1528,5 +1579,36 @@ void CPlayer::Combat(const _float& fTimeDelta)
 		m_fCombatTime = 0.f;
 		m_IsCombat = false;
 	}
+}
+
+void CPlayer::SetSpeed()
+{
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+
+	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+
 }
 
