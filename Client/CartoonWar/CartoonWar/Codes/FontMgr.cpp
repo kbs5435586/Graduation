@@ -52,14 +52,15 @@ HRESULT CFontMgr::Ready_FontMgr(const char* pFilePath)
 
 
 	m_pShaderCom = CShader::Create(L"../ShaderFiles/Shader_Font.hlsl", "VS_Main", "PS_Main");
-	m_pTextureCom = CTexture::Create(L"../Bin/Resource/Texture/Font/Font%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG);
+	m_pTextureCom = CTexture::Create(L"../Bin/Resource/Texture/Font/font%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS);
 	m_pTransformCom = CTransform::Create();
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
 	_vec3 vPos = _vec3(0.f, 10.f, 0.f);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	return S_OK;
 }
 
@@ -85,7 +86,7 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 		}
 		else
 		{
-			m_iNumVertices = 4;
+			m_iNumVertices = 6;
 			m_iStride = sizeof(VTXTEX);
 			m_PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			vector<VTXTEX>		vecVertices;
@@ -93,14 +94,14 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 
 			vecVertices[0].vPosition = XMFLOAT3(drawX, drawY, 0.0f);  // 왼쪽 위
 			vecVertices[0].vTex = XMFLOAT2(m_vecFont[letter].left, 0.0f);
-
+			
 			vecVertices[1].vPosition = XMFLOAT3((drawX + m_vecFont[letter].size), (drawY - 16), 0.0f);  // 오른쪽 아래
 			vecVertices[1].vTex = XMFLOAT2(m_vecFont[letter].right, 1.0f);
-
+			
 			vecVertices[2].vPosition = XMFLOAT3(drawX, (drawY - 16), 0.0f);  // 왼쪽 아래
 			vecVertices[2].vTex = XMFLOAT2(m_vecFont[letter].left, 1.0f);
-
-			vecVertices[3].vPosition = XMFLOAT3(drawX + m_vecFont[letter].size, drawY, 0.0f);  // 오른쪽 위
+			
+			vecVertices[3].vPosition = XMFLOAT3(drawX + m_vecFont[letter].size , drawY, 0.0f);  // 오른쪽 위
 			vecVertices[3].vTex = XMFLOAT2(m_vecFont[letter].right, 0.0f);
 
 
@@ -112,7 +113,7 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 			vector<_uint>	vecIndices;
 			vecIndices.resize(m_vecFontInfo[i].iIndices);
 			vecIndices[0] = 0; vecIndices[1] = 1; vecIndices[2] = 2;
-			vecIndices[3] = 0; vecIndices[4] = 2; vecIndices[5] = 3;
+			vecIndices[3] = 0; vecIndices[4] = 3; vecIndices[5] = 1;
 
 			D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 			D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
@@ -123,11 +124,11 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 
 
 				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pVertexBuffer))))
+					&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pVertexBuffer))))
 					return E_FAIL;
 
 				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pVertexUploadBuffer))))
+					&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pVertexUploadBuffer))))
 					return E_FAIL;
 
 				D3D12_SUBRESOURCE_DATA vertexData = {};
@@ -135,8 +136,8 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 				vertexData.RowPitch = m_iStride * m_iNumVertices;;
 				vertexData.SlicePitch = m_iStride * m_iNumVertices;
 
-				UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer.Get(), m_pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
-				D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+				UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_vecFontInfo[i].pVertexBuffer.Get(), m_vecFontInfo[i].pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
+				D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_vecFontInfo[i].pVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 				CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
 			}
 			{
@@ -144,10 +145,10 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 
 
 				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))
+					&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pIndexBuffer))))
 					return E_FAIL;
 				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pIndexUploadBuffer))))
+					&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pIndexUploadBuffer))))
 					return E_FAIL;
 
 				D3D12_SUBRESOURCE_DATA indexData = {};
@@ -155,17 +156,17 @@ HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
 				indexData.RowPitch = sizeof(_uint) * m_vecFontInfo[i].iIndices;
 				indexData.SlicePitch = sizeof(_uint) * m_vecFontInfo[i].iIndices;
 
-				UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
-				D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+				UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_vecFontInfo[i].pIndexBuffer.Get(), m_vecFontInfo[i].pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
+				D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_vecFontInfo[i].pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 				CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
 			}
 			CDevice::GetInstance()->Close();
 
-			m_vecFontInfo[i].tVertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
+			m_vecFontInfo[i].tVertexBufferView.BufferLocation = m_vecFontInfo[i].pVertexBuffer->GetGPUVirtualAddress();
 			m_vecFontInfo[i].tVertexBufferView.StrideInBytes = m_iStride;
 			m_vecFontInfo[i].tVertexBufferView.SizeInBytes = m_iStride * m_iNumVertices;
 
-			m_vecFontInfo[i].tIndexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
+			m_vecFontInfo[i].tIndexBufferView.BufferLocation = m_vecFontInfo[i].pIndexBuffer->GetGPUVirtualAddress();
 			m_vecFontInfo[i].tIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 			m_vecFontInfo[i].tIndexBufferView.SizeInBytes = sizeof(_uint) * m_vecFontInfo[i].iIndices;
 
@@ -182,10 +183,21 @@ void CFontMgr::Render_Font()
 {
 	for (auto& iter : m_vecFontInfo)
 	{
+		_float m_fX = (_float)WINCX/2;
+		_float m_fY = (_float)WINCY / 2;
+		_float m_fSizeX = 1.5f;
+		_float m_fSizeY = 1.5f;
+
 		MAINPASS tMainPass = {};
-		_matrix matWorld = m_pTransformCom->Get_Matrix();
-		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matWorld = Matrix_::Identity();
+		_matrix matView = Matrix_::Identity();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+		//matWorld._11 = m_fSizeX;
+		//matWorld._22 = m_fSizeY;
+		//
+		//matWorld._41 = m_fX - (WINCX >> 1);
+		//matWorld._42 = -m_fY + (WINCY >> 1);
+
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -213,7 +225,7 @@ HRESULT CFontMgr::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::DEFAULT)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 
 	return S_OK;

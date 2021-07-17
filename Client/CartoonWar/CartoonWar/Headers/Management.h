@@ -81,7 +81,7 @@ public://CCollisionMgr
 	void						Update_CollisionManager();
 public://FontMgr
 	HRESULT						Ready_FontMgr(const char* pFilePath);
-	HRESULT						Create_Font_Buffer(const char* pSentence, _uint iDrawX, _uint iDrawY);
+	HRESULT						Create_Font_Buffer(const char* pSentence, float iDrawX, float iDrawY);
 	void						Render_Font();
 public:
 	CScene*						Get_Scene(){return m_pScene;}

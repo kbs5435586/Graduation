@@ -224,7 +224,7 @@ HRESULT CManagement::Ready_FontMgr(const char* pFilePath)
 	return m_pFont_Manager->Ready_FontMgr(pFilePath);
 }
 
-HRESULT CManagement::Create_Font_Buffer(const char* pSentence, _uint iDrawX, _uint iDrawY)
+HRESULT CManagement::Create_Font_Buffer(const char* pSentence, float iDrawX, float iDrawY)
 {
 	return m_pFont_Manager->Create_Buffer(pSentence, iDrawX, iDrawY);
 }

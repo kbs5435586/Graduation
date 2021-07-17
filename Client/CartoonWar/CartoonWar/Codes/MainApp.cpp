@@ -36,7 +36,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	float drawX = (float)((((_float)WINCX / 2) * -1) + 10);
 	float drawY = (float)(((_float)WINCY / 2) - 10);
-	if (FAILED(m_pManagement->Create_Font_Buffer("Update", drawX, drawY)))
+	if (FAILED(m_pManagement->Create_Font_Buffer("Update Test", 0, 0)))
 		return E_FAIL;
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
