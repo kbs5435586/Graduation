@@ -799,27 +799,13 @@ void CServer_Manager::send_packet(void* packet)
 	//g_socket.send(p, p[0], sent);
 }
 
-void CServer_Manager::send_condition_packet(unsigned char con_type, unsigned char con, CTransform* pTransform)
+void CServer_Manager::send_condition_packet(unsigned char con_type, unsigned char con)
 {
 	cs_packet_condition m_packet;
 	m_packet.type = CS_PACKET_CONDITION;
 	m_packet.size = sizeof(m_packet);
 	m_packet.con_type = con_type;
 	m_packet.con = con;
-
-	_matrix mat = pTransform->Get_Matrix();
-	m_packet.r_x = mat._11;
-	m_packet.r_y = mat._12;
-	m_packet.r_z = mat._13;
-	m_packet.u_x = mat._21;
-	m_packet.u_y = mat._22;
-	m_packet.u_z = mat._23;
-	m_packet.l_x = mat._31;
-	m_packet.l_y = mat._32;
-	m_packet.l_z = mat._33;
-	m_packet.p_x = mat._41;
-	m_packet.p_z = mat._43;
-
 	send_packet(&m_packet);
 }
 

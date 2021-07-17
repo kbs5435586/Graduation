@@ -107,6 +107,5 @@ private:
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
 	CFontMgr*					m_pFont_Manager = nullptr;
 	CServer_Manager*			m_pServer_Manager = nullptr;
-	CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

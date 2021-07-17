@@ -87,22 +87,6 @@ void Server::process_packet(int user_id, char* buf)
         else if (CON_TYPE_ROTATE == packet->con_type)
             do_rotate(user_id, packet->con);
 
-        _matrix mat = g_clients[user_id].m_transform.Get_Matrix();
-
-        mat._11 = packet->r_x;
-        mat._12 = packet->r_y;
-        mat._13 = packet->r_z;
-        mat._21 = packet->u_x;
-        mat._22 = packet->u_y;
-        mat._23 = packet->u_z;
-        mat._31 = packet->l_x;
-        mat._32 = packet->l_y;
-        mat._33 = packet->l_z;
-        mat._41 = packet->p_x;
-        mat._43 = packet->p_z;
-
-        g_clients[user_id].m_transform.Set_Matrix(&mat);
-
         cout << user_id << "send condition" << packet->con << endl;
     }
     break;
@@ -218,28 +202,6 @@ void Server::send_login_ok_packet(int user_id)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
-void Server::send_fix_packet(int user_id, int other_id)
-{
-    sc_packet_fix packet;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_FIX;
-    packet.id = other_id;
-    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
-    packet.r_x = pos._11;
-    packet.r_y = pos._12;
-    packet.r_z = pos._13;
-    packet.u_x = pos._21;
-    packet.u_y = pos._22;
-    packet.u_z = pos._23;
-    packet.l_x = pos._31;
-    packet.l_y = pos._32;
-    packet.l_z = pos._33;
-    packet.p_x = pos._41;
-    packet.p_z = pos._43;
-
-    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
-}
-
 void Server::send_flag_info_packet(int object_id, int user_id)
 {
     sc_packet_flag_info packet;
@@ -331,14 +293,9 @@ void Server::do_rotate(int user_id, char con)
     g_clients[user_id].m_cLock.unlock();
 
     send_condition_packet(user_id, user_id, CON_TYPE_ROTATE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
-    if (CON_IDLE == con)
-        send_fix_packet(user_id, user_id);
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         send_condition_packet(cpy_vl, user_id, CON_TYPE_ROTATE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
-        if (CON_IDLE == con)
-            send_fix_packet(cpy_vl, user_id);
     }
 }
 
@@ -397,14 +354,9 @@ void Server::do_move(int user_id, char con)
     g_clients[user_id].m_cLock.unlock();
 
     send_condition_packet(user_id, user_id, CON_TYPE_MOVE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
-    if (CON_IDLE == con)
-        send_fix_packet(user_id, user_id);
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
         send_condition_packet(cpy_vl, user_id, CON_TYPE_MOVE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-        if (CON_IDLE == con)
-            send_fix_packet(cpy_vl, user_id);
-        // 시야 범위 처리는 move 통해서만 하고 회전은 정보만 주고받으면 된다
     }
 }
 
@@ -731,7 +683,7 @@ void Server::do_follow(int npc_id)
                         if (0 != g_clients[i].m_view_list.count(npc_id))
                         {
                             g_clients[i].m_cLock.unlock();
-                            send_fix_packet(i, npc_id);
+                            send_condition_packet(i, npc_id, CON_TYPE_MOVE);
                         }
                         else
                         {

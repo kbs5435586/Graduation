@@ -232,10 +232,6 @@ struct cs_packet_condition
 	char	type;
 	char	con_type;
 	char	con;
-	float r_x, r_y, r_z;
-	float u_x, u_y, u_z;
-	float l_x, l_y, l_z;
-	float p_x, p_z;
 	//unsigned move_time; // 스트레스 테스트
 };
 
