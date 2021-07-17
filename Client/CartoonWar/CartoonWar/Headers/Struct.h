@@ -550,10 +550,6 @@ struct Session
 	short	anim;
 	char	name[MAX_ID_LEN + 1];
 	bool	showObject = false;
-	_vec3	pos;
-	_vec3	look;
-	_vec3	right;
-	_vec3	up;
 	CLASS	m_class;
 	char	con_rotate = CON_IDLE;
 	char	con_move = CON_IDLE;

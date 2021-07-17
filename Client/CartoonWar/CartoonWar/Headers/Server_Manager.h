@@ -50,6 +50,7 @@ public:
     void send_attack_packet();
     void send_position_packet(_vec3* pos);
     void update_key_input();
+    void update_client_class(unsigned short id, unsigned short cs);
 
     //short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);
@@ -64,6 +65,8 @@ public:
     bool Get_Connected();
     short Get_PlayerID();
     short Get_PlayerHP(int id);
+    CLASS Get_PlayerClass(int id);
+    CLASS Get_NpcClass(int id);
 
     char Get_PlayerMCon(int id);
     char Get_NpcMCon(int id);

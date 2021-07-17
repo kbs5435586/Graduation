@@ -84,28 +84,27 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", recv_id);
 
-		_matrix Pos;;
-		Pos._11 = my_packet->r_x;
-		Pos._12 = my_packet->r_y;
-		Pos._13 = my_packet->r_z;
-		Pos._21 = my_packet->u_x;
-		Pos._22 = my_packet->u_y;
-		Pos._23 = my_packet->u_z;
-		Pos._31 = my_packet->l_x;
-		Pos._32 = my_packet->l_y;
-		Pos._33 = my_packet->l_z;
-		Pos._41 = my_packet->p_x;
-		Pos._42 = my_packet->p_y;
-		Pos._43 = my_packet->p_z;
+		_matrix mat;
+		mat._11 = my_packet->r_x;
+		mat._12 = my_packet->r_y;
+		mat._13 = my_packet->r_z;
+		mat._21 = my_packet->u_x;
+		mat._22 = my_packet->u_y;
+		mat._23 = my_packet->u_z;
+		mat._31 = my_packet->l_x;
+		mat._32 = my_packet->l_y;
+		mat._33 = my_packet->l_z;
+		mat._41 = my_packet->p_x;
+		mat._42 = my_packet->p_y;
+		mat._43 = my_packet->p_z;
+		pTransform->Set_Matrix(mat);
 
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
-		m_objects[recv_id].pos = { Pos._41 ,Pos._42 ,Pos._43 };
-		m_objects[recv_id].look = { Pos._31 ,Pos._32 ,Pos._33 };
-		m_objects[recv_id].up = { Pos._21 ,Pos._22 ,Pos._23 };
-		m_objects[recv_id].right = { Pos._11 ,Pos._12 ,Pos._13 };
-		pTransform->Set_Matrix(Pos);
+
+		update_client_class(my_id, my_packet->p_class);
+
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		Safe_Release(managment);
@@ -151,15 +150,14 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Pos._41 = my_packet->p_x;
 		Pos._42 = my_packet->p_y;
 		Pos._43 = my_packet->p_z;
-		m_objects[recv_id].pos = { Pos._41 ,Pos._42 ,Pos._43 };
-		m_objects[recv_id].look = { Pos._31 ,Pos._32 ,Pos._33 };
-		m_objects[recv_id].up = { Pos._21 ,Pos._22 ,Pos._23 };
-		m_objects[recv_id].right = { Pos._11 ,Pos._12 ,Pos._13 };
+		pTransform->Set_Matrix(Pos);
+
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].con_move = my_packet->con_move;
 		m_objects[recv_id].con_rotate = my_packet->con_rotate;
-		pTransform->Set_Matrix(Pos);
+		update_client_class(recv_id, my_packet->p_class);
+
 		Safe_Release(managment);
 	}
 	break;
@@ -913,6 +911,24 @@ void CServer_Manager::update_key_input()
 	}
 }
 
+void CServer_Manager::update_client_class(unsigned short id, unsigned short cs)
+{
+	if (C_WORKER == cs)
+		m_objects[id].m_class = CLASS::CLASS_WORKER;
+	else if (C_CAVALRY == cs)
+		m_objects[id].m_class = CLASS::CLASS_CAVALRY;
+	else if (C_INFANTRY == cs)
+		m_objects[id].m_class = CLASS::CLASS_INFANTRY;
+	else if (C_SPEARMAN == cs)
+		m_objects[id].m_class = CLASS::CLASS_SPEARMAN;
+	else if (C_MAGE == cs)
+		m_objects[id].m_class = CLASS::CLASS_MAGE;
+	else if (C_MMAGE == cs)
+		m_objects[id].m_class = CLASS::CLASS_MMAGE;
+	else if (C_ARCHER == cs)
+		m_objects[id].m_class = CLASS::CLASS_ARCHER;
+}
+
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {
 	return id + NPC_START;
@@ -1007,6 +1023,17 @@ char CServer_Manager::Get_PlayerMCon(int id)
 char CServer_Manager::Get_PlayerRCon(int id)
 {
 	return m_objects[id].con_rotate;
+}
+
+CLASS CServer_Manager::Get_PlayerClass(int id)
+{
+	return m_objects[id].m_class;
+}
+
+CLASS CServer_Manager::Get_NpcClass(int id)
+{
+	short npc_index = npc_idx_to_id(id);
+	return m_objects[npc_index].m_class;
 }
 
 char CServer_Manager::Get_NpcMCon(int id)

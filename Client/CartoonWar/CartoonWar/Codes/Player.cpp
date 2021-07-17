@@ -128,7 +128,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 
+	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
 	Change_Class();
+	m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 
 	if (m_iLayerIdx == server->Get_PlayerID())
 		Input_Key(fTimeDelta);
@@ -1217,7 +1219,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 	{
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		if (!m_IsCombat)
 			server->send_animation_packet(A_WALK);
 		else
@@ -1232,7 +1233,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
 	{
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		if (!m_IsCombat)
 		{
 			m_cRotateCondition = CON_IDLE;

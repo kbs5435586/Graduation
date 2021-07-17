@@ -74,7 +74,16 @@ struct sc_packet_login_ok
 	short hp;
 	short level;
 	int	exp;
+	short p_class;
 };
+
+constexpr unsigned short C_WORKER = 0;
+constexpr unsigned short C_CAVALRY = 1;
+constexpr unsigned short C_INFANTRY = 3;
+constexpr unsigned short C_SPEARMAN = 5;
+constexpr unsigned short C_MAGE = 6;
+constexpr unsigned short C_MMAGE = 7;
+constexpr unsigned short C_ARCHER = 8;
 
 struct sc_packet_flag_info
 {
@@ -120,6 +129,7 @@ struct sc_packet_enter
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
+	short p_class;
 };
 
 struct sc_packet_leave
