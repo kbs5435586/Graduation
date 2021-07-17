@@ -52,7 +52,7 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
-	m_pTransformCom->Go_Right(fTimeDelta);
+	m_pTransformCom->Go_Right(fTimeDelta*0.1f);
 
 	//m_pTransformCom->Set_PositionY(2.f);
 	m_fLifeTime += fTimeDelta;
@@ -73,11 +73,20 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-		return -1;
-
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+			return -1;
+	}
+	else
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();;
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	}
 
 	return _int();
 }
@@ -97,13 +106,17 @@ void CThrow_Arrow::Render_GameObject()
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-
+		REP tRep = {};
+		tRep.m_arrInt[2] = g_DefferedRender;
 
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 
 		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
@@ -113,7 +126,7 @@ void CThrow_Arrow::Render_GameObject()
 	}
 
 
-	m_pColliderCom->Render_Collider();
+	//m_pColliderCom->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -145,6 +158,49 @@ void CThrow_Arrow::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
+void CThrow_Arrow::Render_Blur()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrMat[0] = m_matOldWorld;//OldWorld
+		tRep.m_arrMat[1] = m_matOldView;//OldView
+
+		m_pShaderCom_Blur->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+
+		CDevice::GetInstance()->UpdateTable();
+		m_pMeshCom->Render_Mesh(i);
+	}
+
+	m_matOldWorld = m_pTransformCom->Get_Matrix();
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+
+	Safe_Release(pManagement);
+}
+
 HRESULT CThrow_Arrow::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -164,7 +220,8 @@ HRESULT CThrow_Arrow::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;
-
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -191,8 +248,10 @@ void CThrow_Arrow::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Shadow);
+	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
 }
@@ -228,6 +287,11 @@ HRESULT CThrow_Arrow::Ready_Component()
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
 
+	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
+	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader_Blur", m_pShaderCom_Blur)))
+		return E_FAIL;
+
 	m_pColliderCom = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
 	NULL_CHECK_VAL(m_pColliderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom)))
@@ -237,7 +301,10 @@ HRESULT CThrow_Arrow::Ready_Component()
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
-
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
 	Safe_Release(pManagement);
 	return S_OK;
 }

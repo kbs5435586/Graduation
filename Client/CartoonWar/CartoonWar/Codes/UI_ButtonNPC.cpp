@@ -90,9 +90,13 @@ void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, 
 	pManagement->AddRef();
 
 
+	int* now = (int*)m_pObserverCom->GetNPC(m_iClass); 
+	int w = m_pObserverCom->GetWhichInfo();
 	REP tRep = {};
-	tRep.m_arrInt[0] = 1;
-
+	if(w == m_iClass)
+		tRep.m_arrInt[0] = 1;
+	else
+		tRep.m_arrInt[0] = 99;
 
 	MAINPASS	tMainPass = {};
 
@@ -116,7 +120,7 @@ void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(m_iClass), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(*now), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	buffer->Render_VIBuffer();
 

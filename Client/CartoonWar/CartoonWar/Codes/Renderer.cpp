@@ -63,7 +63,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 	Render_Priority();
 	Render_Alpha();
-	//Render_Post_Effect();
+	Render_Post_Effect();
 
 	Render_UI();
 	Render_UI_Back();
@@ -205,8 +205,6 @@ void CRenderer::Render_Post_Effect()
 void CRenderer::Render_Blur()
 {
 	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->OM_Set();
-
-	CopySwapToBlur();
 	for (auto& pGameObject : m_RenderList[RENDER_BLUR])
 	{
 		if (nullptr != pGameObject)

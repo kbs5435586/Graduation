@@ -51,10 +51,11 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	if (m_Active)
 	{
 		m_CoolTime += fTimeDelta;
-		if (m_CoolTime > 10.f)
+		if (m_CoolTime > 20.f)
 		{
 			m_Active = !m_Active;
-			m_CoolTime = 10.f;
+			m_CoolTime = 20.f;
+			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
 		}
 	}
 	else
@@ -77,11 +78,14 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 
 				m_CoolTime = 0.f;
 				m_Active = true;
-				//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
+				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
 
 				IsDown = false;
 			}
 		}
+
+
+		
 	}
 
 	Safe_Release(pManagement);

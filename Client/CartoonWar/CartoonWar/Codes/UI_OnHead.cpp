@@ -58,10 +58,13 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 
 _int CUI_OnHead::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (m_pRendererCom != nullptr)
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		if (m_pRendererCom != nullptr)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
 	}
 	return _int();
 }
@@ -143,6 +146,7 @@ void CUI_OnHead::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
+	Safe_Release(m_pFrustumCom);
 	CUI::Free();
 }
 
@@ -171,7 +175,10 @@ HRESULT CUI_OnHead::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
-
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

@@ -88,7 +88,7 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 
 	if (_eResFlag & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
 	{
-		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D24_UNORM_S8_UINT, 1.0f, 0);
+		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
 		pValue = &depthOptimizedClearValue;
 		m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE;
 	}
@@ -100,10 +100,12 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		pValue = &depthOptimizedClearValue;
 	}
 
-
-	if(FAILED(CDevice ::GetInstance()->GetDevice()->
+	if (FAILED(CDevice::GetInstance()->GetDevice()->
 		CreateCommittedResource(&_HeapProperty, _eHeapFlag, &m_tDesc, m_eState, pValue, IID_PPV_ARGS(&m_pTexture))))
+	{
 		return E_FAIL;
+	}
+	
 
 	// Texture 甫 包府且 View 积己(SRV, RTV, DSV)
 	if (_eResFlag & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)
@@ -114,7 +116,11 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		tDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		tDesc.NodeMask = 0;
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateDescriptorHeap(&tDesc, IID_PPV_ARGS(&m_pDSV))))
+		{
+			CDevice::GetInstance()->Close();
+			CDevice::GetInstance()->WaitForFenceEvent();
 			return E_FAIL;
+		}
 
 		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSV->GetCPUDescriptorHandleForHeapStart();
 		CDevice::GetInstance()->GetDevice()->CreateDepthStencilView(m_pTexture.Get(), nullptr, hDSVHandle);
@@ -152,7 +158,6 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 		srvDesc.Texture2D.MipLevels = 1;
 		CDevice::GetInstance()->GetDevice()->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pSRV->GetCPUDescriptorHandleForHeapStart());
 	}
-
 	return S_OK;
 }
 

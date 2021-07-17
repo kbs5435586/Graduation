@@ -24,6 +24,8 @@ public: // Setter
 	void					Set_Add_PosY(_float fY) { m_fAdd_PosY = fY; }
 	void					SetLook(const _vec3& vLook);
 public:
+	void					SetSpeed(const _float& fSpeed);
+public:
 	HRESULT					Ready_Transform();
 	HRESULT					SetUp_OnGraphicDev();
 	void					Scaling(const _vec3& vScale);
@@ -35,6 +37,8 @@ public:
 	void					Go_Right(const _float& fTimeDelta);
 	void					Go_There(const _vec3& vPos);
 	void					BackWard(const _float& fTimeDelta);
+	void					UP(const _float& fTimeDelta);
+	void					Fallen(const _float& fTimeDelta);
 	void					SetUp_RotationX(const _float& fRadian);
 	void					SetUp_RotationY(const _float& fRadian);
 	void					SetUp_RotationZ(const _float& fRadian);
@@ -51,6 +55,9 @@ private:
 	_float					m_fSpeed_Move = 0.f;
 	_float					m_fSpeed_Rotation=0.f;
 	_float					m_fAdd_PosY = 0.f;
+
+public:
+	_float					m_fVel = 0.f;
 public:
 	static CTransform*		Create();
 	virtual CComponent*		Clone_Component(void* pArg = nullptr);

@@ -15,6 +15,13 @@ public:
 													DEPTH_STENCIL_TYPE eDepthType = DEPTH_STENCIL_TYPE::LESS, 
 													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD,
 													BLEND_TYPE eBlendType = BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY eTopology = D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	HRESULT								Create_SkillShader( RS_TYPE eType = RS_TYPE::DEFAULT,
+													DEPTH_STENCIL_TYPE eDepthType = DEPTH_STENCIL_TYPE::LESS,
+													SHADER_TYPE eShaderType = SHADER_TYPE::SHADER_FORWARD,
+													BLEND_TYPE eBlendType = BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY eTopology = D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+
 	HRESULT								Ready_Shader(const _tchar* pFilePath, const char* CSEntry);
 public:
 	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, 

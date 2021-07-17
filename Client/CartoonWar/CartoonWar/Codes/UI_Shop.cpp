@@ -66,7 +66,7 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 
 			if (npcNum < 14)
 			{
-				PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+				PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
 
 				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", nullptr, (void*)&tPlayerInfo)))
 					return E_FAIL;

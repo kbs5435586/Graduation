@@ -24,7 +24,7 @@ LIGHT Calculate_Light(int _iLightIdx, float3 _vViewNormal, float3 _vViewPos)
 	float3 vReflect = normalize(vViewLightDir + 2 * (dot(-vViewLightDir, _vViewNormal) * _vViewNormal));
 	float3 vEye = normalize(_vViewPos);
 	fSpecPow = saturate(dot(-vEye, vReflect));
-	fSpecPow = pow(fSpecPow, 10);
+	fSpecPow = pow(fSpecPow, 100.f);
 
 	tCol.vDiffuse = fDiffPow * tLight[_iLightIdx].tColor.vDiffuse * fRatio;
 	tCol.vSpecular = fSpecPow * tLight[_iLightIdx].tColor.vSpecular * fRatio;

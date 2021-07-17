@@ -78,7 +78,7 @@ public://UAV_Manager
 	CUAV*						Get_UAV(const _tchar* pUAVTag);
 public://CCollisionMgr
 	HRESULT						Ready_CollsionManager();
-	void						Update_CollisionManager();
+	void						Update_CollisionManager(const _float& fTimeDelta);
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	

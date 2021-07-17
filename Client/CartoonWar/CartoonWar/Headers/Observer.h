@@ -19,6 +19,7 @@ public:
     _int                    GetNPCNUMInfo() { return m_npcNum; }
     _bool                   GetBoolInfo() { return m_bool; }
     _bool                   GetTapInfo() { return m_tap; }
+    _bool                   GetSkillInfo() { return m_skill; }
     void*                   GetNPC(int num);
 public:
     static CObserver*       Create();

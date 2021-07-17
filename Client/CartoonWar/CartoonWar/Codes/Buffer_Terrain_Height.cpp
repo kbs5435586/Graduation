@@ -21,6 +21,52 @@ CBuffer_Terrain_Height::CBuffer_Terrain_Height(const CBuffer_Terrain_Height& rhs
 	m_IsClone = true;
 }
 
+void CBuffer_Terrain_Height::Calculate_TanBi(VTXTEXBUMP Vertex1, VTXTEXBUMP Vertex2, VTXTEXBUMP Vertex3, _vec3& vTangent, _vec3& vBinormal)
+{
+	_float vector1[3] = {};
+	_float vector2[3] = {};
+
+	_float tuVector[2] = {};
+	_float tvVector[2] = {};
+
+
+	vector1[0] = Vertex2.vPos.x = Vertex1.vPos.x;
+	vector1[1] = Vertex2.vPos.y = Vertex1.vPos.y;
+	vector1[2] = Vertex2.vPos.z = Vertex1.vPos.z;
+
+	vector2[0] = Vertex3.vPos.x = Vertex1.vPos.x;
+	vector2[1] = Vertex3.vPos.y = Vertex1.vPos.y;
+	vector2[2] = Vertex3.vPos.z = Vertex1.vPos.z;
+
+
+	tuVector[0] = Vertex2.vTexUV.x - Vertex1.vTexUV.x;
+	tvVector[0] = Vertex2.vTexUV.y - Vertex1.vTexUV.y;
+
+	tuVector[1] = Vertex3.vTexUV.x - Vertex1.vTexUV.x;
+	tvVector[1] = Vertex3.vTexUV.y - Vertex1.vTexUV.y;
+
+	_float fDen  = 1.f / (tuVector[0] * tvVector[1] - tuVector[1]* tvVector[0]);
+
+	vTangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * fDen;
+	vTangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * fDen;
+	vTangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * fDen;
+
+	vBinormal.x = (tuVector[0] * vector1[0] - tuVector[1] * vector2[0]) * fDen;
+	vBinormal.y = (tuVector[0] * vector1[1] - tuVector[1] * vector2[1]) * fDen;
+	vBinormal.z = (tuVector[0] * vector1[2] - tuVector[1] * vector2[2]) * fDen;
+
+	_float fLen_Tan = (_float)sqrt((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
+	_float fLen_Bin = (_float)sqrt((vTangent.x * vTangent.x) + (vTangent.y * vTangent.y) + (vTangent.z * vTangent.z));
+
+	vTangent.x = vTangent.x / fLen_Tan;
+	vTangent.y = vTangent.y / fLen_Tan;
+	vTangent.z = vTangent.z / fLen_Tan;
+
+	vBinormal.x = vBinormal.x / fLen_Bin;
+	vBinormal.y = vBinormal.y / fLen_Bin;
+	vBinormal.z = vBinormal.z / fLen_Bin;
+}
+
 HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _float& fInterval)
 {
 
@@ -28,8 +74,6 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 
 	HANDLE		hFile = 0;
 	_ulong		dwByte = 0;
-
-	m_fInterval = fInterval;
 
 	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
@@ -45,8 +89,14 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	iNumVerticesZ = m_ih.biHeight;
 
 	m_pPosition = new _vec3[iNumVerticesX * iNumVerticesZ];
-
 	m_pPixel = new _ulong[iNumVerticesX * iNumVerticesZ];
+
+	_float fTemp = 0.f;
+
+	if (iNumVerticesX >= 1500.f)
+		fTemp = 1.f;
+	else
+		fTemp = 10.f;
 
 	// ÇÈ¼¿Á¤º¸
 	ReadFile(hFile, m_pPixel, sizeof(_ulong) * (iNumVerticesX * iNumVerticesZ), &dwByte, nullptr);
@@ -58,19 +108,22 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	m_fInterval = fInterval;
 
 	m_iNumVertices = iNumVerticesX * iNumVerticesZ;
-	m_iStride = sizeof(VTXTEXNOR);
+	m_iStride = sizeof(VTXTEXBUMP);
 	m_iNumPolygons = (iNumVerticesX - 1) * (iNumVerticesZ - 1) * 2;
 
-	//m_pVertices = new VTXTEXNOR[m_iVertices];
-	vector<VTXTEXNOR>		vecVertices;
+	vector<VTXTEXBUMP>		vecVertices;
 	vecVertices.resize(m_iNumVertices);
 	for (size_t i = 0; i < iNumVerticesZ; i++)
 	{
 		for (size_t j = 0; j < iNumVerticesX; j++)
 		{
 			_uint		iIndex = i * iNumVerticesX + j;
+			_ulong		fY = (m_pPixel[iIndex] & 0x000000ff) / fTemp;
 
-			vecVertices[iIndex].vPos = _vec3(j * m_fInterval, (m_pPixel[iIndex] & 0x000000ff) / 10.0f, i * m_fInterval);
+			vecVertices[iIndex].vPos = _vec3(j * m_fInterval, fY, i * m_fInterval);
+			vecVertices[iIndex].vNormal = {};
+			vecVertices[iIndex].vBiNormal = {};
+			vecVertices[iIndex].vTangent = {};
 			m_pPosition[iIndex] = vecVertices[iIndex].vPos;
 			vecVertices[iIndex].vTexUV = _vec2(j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
 		}
@@ -104,8 +157,9 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	for (_uint i = 0; i < m_iNumPolygons * 3;)
 	{
 		_vec3 vSour, vDest, vNormal, vCross;
-		//ÁÂÇÏ
+		_vec3 vTangent, vBinormal;
 
+		//ÁÂÇÏ
 		vSour = Vector3_::Subtract(vecVertices[vecIndices[i + 1]].vPos, vecVertices[vecIndices[i]].vPos);
 		vDest = Vector3_::Subtract(vecVertices[vecIndices[i + 2]].vPos, vecVertices[vecIndices[i]].vPos);
 		vCross = Vector3_::CrossProduct(vSour, vDest);
@@ -115,10 +169,18 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		vecVertices[vecIndices[i]].vNormal = Vector3_::Add(vecVertices[vecIndices[i]].vNormal, vNormal);
 		vecVertices[vecIndices[i + 1]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 1]].vNormal, vNormal);
 		vecVertices[vecIndices[i + 2]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 2]].vNormal, vNormal);
+
+		Calculate_TanBi(vecVertices[vecIndices[i]], vecVertices[vecIndices[i+1]], vecVertices[vecIndices[i+2]], vTangent, vBinormal);
+		vecVertices[vecIndices[i]].vTangent = vTangent;
+		vecVertices[vecIndices[i + 1]].vTangent = vTangent;
+		vecVertices[vecIndices[i + 2]].vTangent = vTangent;
+
+		vecVertices[vecIndices[i]].vBiNormal = vBinormal;
+		vecVertices[vecIndices[i + 1]].vBiNormal = vBinormal;
+		vecVertices[vecIndices[i + 2]].vBiNormal = vBinormal;
 		++++++i;
 
 		//¿ì»ó
-
 		vSour = Vector3_::Subtract(vecVertices[vecIndices[i + 2]].vPos, vecVertices[vecIndices[i + 1]].vPos);
 		vDest = Vector3_::Subtract(vecVertices[vecIndices[i]].vPos, vecVertices[vecIndices[i + 1]].vPos);
 		vCross = Vector3_::CrossProduct(vSour, vDest);
@@ -127,9 +189,15 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		vecVertices[vecIndices[i]].vNormal = Vector3_::Add(vecVertices[vecIndices[i]].vNormal, vNormal);
 		vecVertices[vecIndices[i + 1]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 1]].vNormal, vNormal);
 		vecVertices[vecIndices[i + 2]].vNormal = Vector3_::Add(vecVertices[vecIndices[i + 2]].vNormal, vNormal);
+		Calculate_TanBi(vecVertices[vecIndices[i]], vecVertices[vecIndices[i + 1]], vecVertices[vecIndices[i + 2]], vTangent, vBinormal);
+		vecVertices[vecIndices[i]].vTangent = vTangent;
+		vecVertices[vecIndices[i + 1]].vTangent = vTangent;
+		vecVertices[vecIndices[i + 2]].vTangent = vTangent;
+
+		vecVertices[vecIndices[i]].vBiNormal = vBinormal;
+		vecVertices[vecIndices[i + 1]].vBiNormal = vBinormal;
+		vecVertices[vecIndices[i + 2]].vBiNormal = vBinormal;
 		++++++i;
-
-
 	}
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES	tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
@@ -221,7 +289,8 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 	_float		fRatioX = (pTargetPos->x - m_pPosition[iCurrentIdx + m_iNumVerticesX].x) / m_fInterval;
 	_float		fRatioZ = (m_pPosition[iCurrentIdx + m_iNumVerticesX].z - pTargetPos->z) / m_fInterval;
 
-	_float		fHeight[4] = {
+	_float		fHeight[4] = 
+	{
 		m_pPosition[iCurrentIdx + m_iNumVerticesX].y,
 		m_pPosition[iCurrentIdx + m_iNumVerticesX + 1].y,
 		m_pPosition[iCurrentIdx + 1].y,
@@ -278,13 +347,11 @@ HRESULT CBuffer_Terrain_Height::Culling_Frustum(CFrustum* pFrustum, const _matri
 		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	CDevice::GetInstance()->Close();
+	CDevice::GetInstance()->WaitForFenceEvent();
 
 	m_tIndexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_tIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * iNumPolygon;
-
-	CDevice::GetInstance()->WaitForFenceEvent();
-
 
 	m_iNumIndices = iNumPolygon;
 

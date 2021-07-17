@@ -40,6 +40,7 @@ private:
 	void									Input_Inven_Key(const _float& fTimeDelta);
 private:
 	void									Death(const _float& fTimeDelta);
+	void									DeathMontion_Init();
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
 private:

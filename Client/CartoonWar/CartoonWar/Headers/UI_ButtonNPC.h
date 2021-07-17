@@ -40,5 +40,6 @@ public:
 
 	_bool* m_Active{};
 	_int* which{};
+	int* now;
 };
 

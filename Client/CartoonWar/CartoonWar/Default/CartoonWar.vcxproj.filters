@@ -1268,6 +1268,9 @@
     <None Include="..\ShaderFiles\Shader_UI_Flag.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_Decal.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

@@ -96,6 +96,25 @@ typedef struct tagVertexTexNor
 
 }VTXTEXNOR;
 
+typedef struct tagVertexBump
+{
+	XMFLOAT3	vPos = {};
+	XMFLOAT3	vNormal = {};
+	XMFLOAT2	vTexUV = {};
+	XMFLOAT3	vBiNormal= {};
+	XMFLOAT3	vTangent = {};
+	tagVertexBump() {}
+	tagVertexBump(XMFLOAT3 _vPos, XMFLOAT3 _vNormal, XMFLOAT2 _vTexUV, XMFLOAT3 _vBiNormal, XMFLOAT3 _vTangent)
+	{
+		vPos = _vPos;
+		vNormal = _vNormal;
+		vTexUV = _vTexUV;
+		vBiNormal = _vBiNormal;
+		vTangent = _vTangent;
+	}
+
+}VTXTEXBUMP;
+
 
 typedef struct tagMesh
 {

@@ -28,15 +28,13 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	m_pTransformCom->Scaling(_vec3(1.f, 1.f, 1.f));
+	//m_pTransformCom->Scaling(_vec3(10.f, 1.f, 10.f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
 
 _int CTerrain_Height::Update_GameObject(const _float& fTimeDelta)
 {
-
-	//m_pBufferCom->Culling_Frustum(m_pFrustumCom, m_pTransformCom->Get_Matrix());
 	return _int();
 }
 
@@ -63,33 +61,35 @@ void CTerrain_Height::Render_GameObject()
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-	FOG tFog = {0.f, 5.f};
+	REP tRep = {};
+	tRep.m_arrInt[2] = g_DefferedRender;
 
 
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b6)->SetData((void*)&tFog);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b6)->GetCBV().Get(), iOffeset, CONST_REGISTER::b6);
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,  TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1),  TEXTURE_REGISTER::t1);
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(4)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t1);
-	
+
 	CDevice::GetInstance()->UpdateTable();
-
-
 	m_pBufferCom->Render_VIBuffer();
-	//m_pNaviCom->Render_Navigation();
+	m_pNaviCom->Render_Navigation();
 
 
 	Safe_Release(pManagement);
+}
+
+void CTerrain_Height::Render_GameObject_Shadow()
+{
 }
 
 HRESULT CTerrain_Height::CreateInputLayout()
@@ -99,6 +99,9 @@ HRESULT CTerrain_Height::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
@@ -122,7 +125,7 @@ CGameObject* CTerrain_Height::Clone_GameObject(void* pArg , _uint iIdx)
 {
 	CTerrain_Height* pInstance = new CTerrain_Height(*this);
 
-	if (FAILED(pInstance->Ready_GameObject()))
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CTerrain_Height Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
@@ -138,8 +141,8 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	//Safe_Release(m_pNaviCom);
-	Safe_Release(m_pFrustumCom);
+	Safe_Release(m_pNaviCom);
+
 	
 	CGameObject::Free();
 }
@@ -170,20 +173,18 @@ HRESULT CTerrain_Height::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
-
-	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
-	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
+
+
 
 	Safe_Release(pManagement);
 	return S_OK;

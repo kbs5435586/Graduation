@@ -217,9 +217,9 @@ HRESULT CManagement::Ready_CollsionManager()
 	return m_pCollision_Manager->Ready_CollsionManager();
 }
 
-void CManagement::Update_CollisionManager()
+void CManagement::Update_CollisionManager(const _float& fTimeDelta)
 {
-	return m_pCollision_Manager->Update_CollisionManager();
+	return m_pCollision_Manager->Update_CollisionManager(fTimeDelta);
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
@@ -279,7 +279,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	if (iProcessCodes & 0x80000000)
 		return iProcessCodes;
 
-	CManagement::GetInstance()->Update_CollisionManager();
+	CManagement::GetInstance()->Update_CollisionManager(fTimeDelta);
 	return _int(0);
 }
 

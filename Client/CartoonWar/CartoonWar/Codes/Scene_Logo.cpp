@@ -73,20 +73,12 @@ CScene_Logo::CScene_Logo()
 HRESULT CScene_Logo::Ready_Scene()
 {
 	m_eSceneID = SCENEID::SCENE_LOGO;
+
+
 	InitializeCriticalSection(&m_tCritical_Section_Mesh);
 	m_hThread_Handle_Mesh = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
-
-
 	InitializeCriticalSection(&m_tCritical_Section_Shader);
 	m_hThread_Handle_Shader = (HANDLE)_beginthreadex(nullptr, 0, ShaderCompileThread, this, 0, nullptr);
-
-	CManagement* pManagement = CManagement::GetInstance();
-
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	pManagement->AddRef();
-
 
 
 	WaitForSingleObject(m_hThread_Handle_Mesh, INFINITE);
@@ -98,6 +90,12 @@ HRESULT CScene_Logo::Ready_Scene()
 	CloseHandle(m_hThread_Handle_Shader);
 	DeleteCriticalSection(&m_tCritical_Section_Shader);
 
+	CManagement* pManagement = CManagement::GetInstance();
+
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	pManagement->AddRef();
 
 	if (FAILED(Ready_Prototype_Component(pManagement)))
 		return E_FAIL;
@@ -185,8 +183,6 @@ HRESULT CScene_Logo::Ready_Prototype_Component(CManagement* pManagement)
 	if (FAILED(Ready_Add_Prototype_Function(pManagement)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Add_Prototype_NaviMesh(pManagement)))
-		return E_FAIL;
 
 
 	return S_OK;
@@ -250,7 +246,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		CBuffer_Terrain::Create(500,500))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
-		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height.bmp"))))
+		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Height3.bmp", 1.f))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
 		CBuffer_Sphere::Create())))
@@ -291,13 +287,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 	return S_OK;
 }
 
-HRESULT CScene_Logo::Ready_Add_Prototype_NaviMesh(CManagement* pManagement)
-{
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test",
-	//	CNavigation::Create(L"../Data/Demo/Navi_Demo.dat"))))
-	//	return E_FAIL;
-	return S_OK;
-}
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
 
@@ -900,7 +889,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//TGA
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
-			CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+			CTexture::Create(L"../Bin/Resource/Texture/Grass/GrassRock_%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex",
 			CTexture::Create(L"../Bin/Resource/Mesh/Static/LowPoly/rpgpp_lt_tex_a%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
@@ -938,6 +927,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Texture",
 		CShader::Create(L"../ShaderFiles/Shader_Texture.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Decal",
+		CShader::Create(L"../ShaderFiles/Shader_Decal.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Merge_Deffered",
 		CShader::Create(L"../ShaderFiles/Shader_Merge_Deffered.hlsl", "VS_Main", "PS_Main"))))

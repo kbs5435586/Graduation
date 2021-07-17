@@ -57,11 +57,16 @@ private:
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+
+	CShader*								m_pShaderCom_Skill = nullptr;
+
+
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CObserver*								m_pObserverCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 	
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
@@ -95,6 +100,22 @@ private:
 
 	_bool	m_IsActive = {};
 	_bool check = {};
+	_bool IsFly = {};
+	_bool skillz = {};
+	_bool skillz_ing = {};
+	_bool skillz_end = {};
+	_bool skillz_start = {};
 	_bool* checkptr = {};
+
+	_bool skillx = {};
+	_bool fire = {};
+
+	CGameObject* fireskill = nullptr;
+	CInput* m_pInput_Device = nullptr;
+
+	CBuffer_CubeTex* m_pBufferCom = nullptr;
+
+	_float m_fCoolTime_ONE{};
+	_float m_fCoolTime_TWO{};
 };
 

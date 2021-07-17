@@ -79,7 +79,8 @@ void CUI_Shade::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 
 	
-	m_pBufferCom->Render_VIBuffer();
+	if (!g_DefferedUIRender)
+		m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 

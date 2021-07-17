@@ -26,9 +26,11 @@ HRESULT CCube_Texture::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	_vec3 vPos = _vec3(5.f, 5.f, 5.f);
+	_vec3 vPos = _vec3(50.f, 5.f, 50.f);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
+	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+
 	return S_OK;
 }
 
@@ -84,7 +86,7 @@ void CCube_Texture::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t7);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t6);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -163,7 +165,7 @@ HRESULT CCube_Texture::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Test");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;

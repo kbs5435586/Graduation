@@ -32,8 +32,7 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 
 	m_fSizeX = 300.f;
 	m_fSizeY = 25.f;
-	//m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Orc02")->Get_BackObject()->GetInfo();
-	m_tInfo = { 100.f,100.f,10.f,10.f };
+	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
 	return S_OK;
 }
 
@@ -74,25 +73,19 @@ void CUI_HP::Render_GameObject()
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
+	m_tRep.m_arrInt[0] = m_tInfo.fHP;
+	m_tRep.m_arrInt[1] = (_uint)m_IsTemp;
+
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
-	CDevice::GetInstance()->SetTextureToShader(pManagement->Get_UAV(L"UAV_HP")->GetSRV().Get(), TEXTURE_REGISTER::t0);
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->UpdateTable();
 
 
-	m_tRep.m_arrInt[0] = m_tInfo.fHP;
-	m_tRep.m_arrInt[1] = (_uint)m_IsTemp;
-
-	CDevice::GetInstance()->ClearDummyDesc_CS();
-	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
-	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
-	CDevice::GetInstance()->SetUpUAVToRegister(pManagement->Get_UAV(L"UAV_HP"), UAV_REGISTER::u0);
-
-	m_pCompute_ShaderCom->UpdateData_CS();
-	CManagement::GetInstance()->Get_UAV(L"UAV_HP")->Dispatch(1, 100, 1);
 
 
 	m_pBufferCom->Render_VIBuffer();

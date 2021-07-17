@@ -33,16 +33,16 @@ void CLight::Update()
 void CLight::Render()
 {
 	MAINPASS tMainPass = {};
-	REP tRep = {};
-	tRep.m_arrInt[0] = 1;
-	//_matrix matShadowWorld =dynamic_cast<CTransform*>(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_Matrix();
+
 	_matrix matShadowView = CCamera_Manager::GetInstance()->GetShadowView();
 	_matrix matShadowProj = CCamera_Manager::GetInstance()->GetShadowMatProj();
-	tRep.m_arrMat[0] = matShadowView*matShadowProj ;
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-	
+
+	REP tRep = {};
+	tRep.m_arrMat[0] = matShadowView*matShadowProj ;
+	tRep.m_arrMat[1] = tMainPass.matViewInv ;
 
 	m_pShader_Dir->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffeset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
