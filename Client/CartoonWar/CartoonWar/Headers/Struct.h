@@ -641,3 +641,9 @@ struct FontInfo
 	ComPtr<ID3D12Resource>		pIndexUploadBuffer = nullptr;
 
 };
+
+typedef struct tagBrushInfo
+{
+	Vector4		vBrushPos;
+	float		fBrushRange;
+}BRUSHINFO;

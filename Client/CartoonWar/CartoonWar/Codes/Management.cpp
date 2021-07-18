@@ -224,14 +224,24 @@ HRESULT CManagement::Ready_FontMgr(const char* pFilePath)
 	return m_pFont_Manager->Ready_FontMgr(pFilePath);
 }
 
-HRESULT CManagement::Create_Font_Buffer(const char* pSentence, float iDrawX, float iDrawY)
+HRESULT CManagement::Create_Font_Buffer(const _tchar* pFontTag, const char* pSentence, float iDrawX, float iDrawY)
 {
-	return m_pFont_Manager->Create_Buffer(pSentence, iDrawX, iDrawY);
+	return m_pFont_Manager->Create_Buffer(pFontTag, pSentence, iDrawX, iDrawY);
 }
 
 void CManagement::Render_Font()
 {
 	return m_pFont_Manager->Render_Font();
+}
+
+void CManagement::Delete_Font(const _tchar* pFontTag)
+{
+	return m_pFont_Manager->Delete_Font(pFontTag);
+}
+
+void CManagement::Delete_All_Font()
+{
+	return m_pFont_Manager->Delete_All_Fo1nt();
 }
 
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)

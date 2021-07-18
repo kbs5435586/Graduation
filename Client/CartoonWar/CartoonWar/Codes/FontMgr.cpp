@@ -2,9 +2,8 @@
 #include "FontMgr.h"
 #include "Management.h"
 #include "StructedBuffer.h"
-#include "Shader.h"
-#include "Texture.h"
-#include "Transform.h"
+
+#include "Font.h"
 
 _IMPLEMENT_SINGLETON(CFontMgr)
 CFontMgr::CFontMgr()
@@ -15,15 +14,12 @@ CFontMgr::CFontMgr()
 HRESULT CFontMgr::Ready_FontMgr(const char* pFilePath)
 {
 
-	// 문자 사이의 글꼴 크기와 간격을 읽습니다.
 	ifstream fin;
 	fin.open(pFilePath);
 	if (fin.fail())
 	{
 		return E_FAIL;
 	}
-
-	// 텍스트에 사용 된 ASCII 문자 95 개를 읽습니다.
 	for (int i = 0; i < 95; i++)
 	{
 		FontType pFont;
@@ -43,10 +39,9 @@ HRESULT CFontMgr::Ready_FontMgr(const char* pFilePath)
 		fin >> pFont.right;
 		fin >> pFont.size;
 
-		m_vecFont.push_back(pFont);
+		m_vecFontData.push_back(pFont);
 	}
 
-	// 파일을 닫습니다.
 	fin.close();
 
 
@@ -54,167 +49,68 @@ HRESULT CFontMgr::Ready_FontMgr(const char* pFilePath)
 	m_pShaderCom = CShader::Create(L"../ShaderFiles/Shader_Font.hlsl", "VS_Main", "PS_Main");
 	m_pTextureCom = CTexture::Create(L"../Bin/Resource/Texture/Font/font%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS);
 	m_pTransformCom = CTransform::Create();
-
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
-	_vec3 vPos = _vec3(0.f, 10.f, 0.f);
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	return S_OK;
 }
 
-HRESULT CFontMgr::Create_Buffer(const char* sentence, float drawX, float drawY)
+HRESULT CFontMgr::Create_Buffer(const _tchar* pFontTag,const char* sentence, float drawX, float drawY)
 {
-
-	int numLetters = (int)strlen(sentence);
-
-	// 정점 배열에 대한 인덱스를 초기화합니다.
-	int index = 0;
-	int letter = 0;
-
-	m_vecFontInfo.resize(numLetters);
-	// 각 문자를 쿼드 위에 그립니다.
-	for (int i = 0; i < numLetters; i++)
-	{
-		letter = ((int)sentence[i]) - 32;
-
-		// 문자가 공백이면 3 픽셀 위로 이동합니다.
-		if (letter == 0)
-		{
-			drawX = drawX + 3.0f;
-		}
-		else
-		{
-			m_iNumVertices = 6;
-			m_iStride = sizeof(VTXTEX);
-			m_PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			vector<VTXTEX>		vecVertices;
-			vecVertices.resize(m_iNumVertices);
-
-			vecVertices[0].vPosition = XMFLOAT3(drawX, drawY, 0.0f);  // 왼쪽 위
-			vecVertices[0].vTex = XMFLOAT2(m_vecFont[letter].left, 0.0f);
-			
-			vecVertices[1].vPosition = XMFLOAT3((drawX + m_vecFont[letter].size), (drawY - 16), 0.0f);  // 오른쪽 아래
-			vecVertices[1].vTex = XMFLOAT2(m_vecFont[letter].right, 1.0f);
-			
-			vecVertices[2].vPosition = XMFLOAT3(drawX, (drawY - 16), 0.0f);  // 왼쪽 아래
-			vecVertices[2].vTex = XMFLOAT2(m_vecFont[letter].left, 1.0f);
-			
-			vecVertices[3].vPosition = XMFLOAT3(drawX + m_vecFont[letter].size , drawY, 0.0f);  // 오른쪽 위
-			vecVertices[3].vTex = XMFLOAT2(m_vecFont[letter].right, 0.0f);
-
-
-			drawX = drawX + m_vecFont[letter].size + 1.0f;
-
-
-			m_vecFontInfo[i].iIndices = 6;
-
-			vector<_uint>	vecIndices;
-			vecIndices.resize(m_vecFontInfo[i].iIndices);
-			vecIndices[0] = 0; vecIndices[1] = 1; vecIndices[2] = 2;
-			vecIndices[3] = 0; vecIndices[4] = 3; vecIndices[5] = 1;
-
-			D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-			D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-			CDevice::GetInstance()->Open();
-			{
-				D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iNumVertices);
-
-
-
-				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pVertexBuffer))))
-					return E_FAIL;
-
-				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pVertexUploadBuffer))))
-					return E_FAIL;
-
-				D3D12_SUBRESOURCE_DATA vertexData = {};
-				vertexData.pData = (void*)(vecVertices.data());
-				vertexData.RowPitch = m_iStride * m_iNumVertices;;
-				vertexData.SlicePitch = m_iStride * m_iNumVertices;
-
-				UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_vecFontInfo[i].pVertexBuffer.Get(), m_vecFontInfo[i].pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
-				D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_vecFontInfo[i].pVertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-				CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
-			}
-			{
-				D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_vecFontInfo[i].iIndices);
-
-
-				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pIndexBuffer))))
-					return E_FAIL;
-				if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
-					&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_vecFontInfo[i].pIndexUploadBuffer))))
-					return E_FAIL;
-
-				D3D12_SUBRESOURCE_DATA indexData = {};
-				indexData.pData = (void*)(vecIndices.data());
-				indexData.RowPitch = sizeof(_uint) * m_vecFontInfo[i].iIndices;
-				indexData.SlicePitch = sizeof(_uint) * m_vecFontInfo[i].iIndices;
-
-				UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_vecFontInfo[i].pIndexBuffer.Get(), m_vecFontInfo[i].pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
-				D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_vecFontInfo[i].pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-				CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &tResource_Barrier);
-			}
-			CDevice::GetInstance()->Close();
-
-			m_vecFontInfo[i].tVertexBufferView.BufferLocation = m_vecFontInfo[i].pVertexBuffer->GetGPUVirtualAddress();
-			m_vecFontInfo[i].tVertexBufferView.StrideInBytes = m_iStride;
-			m_vecFontInfo[i].tVertexBufferView.SizeInBytes = m_iStride * m_iNumVertices;
-
-			m_vecFontInfo[i].tIndexBufferView.BufferLocation = m_vecFontInfo[i].pIndexBuffer->GetGPUVirtualAddress();
-			m_vecFontInfo[i].tIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-			m_vecFontInfo[i].tIndexBufferView.SizeInBytes = sizeof(_uint) * m_vecFontInfo[i].iIndices;
-
-			CDevice::GetInstance()->WaitForFenceEvent();
-		}
-	}
-
-
+	CFont* pFont = CFont::Create(sentence, drawX, drawY, m_vecFontData);
+	if (nullptr == pFont)
+		return E_FAIL;
+	//m_vecFont.push_back(pFont);
+	m_mapFont.insert({ pFontTag , pFont});
 
 	return S_OK;
+}
+
+void CFontMgr::Update_Font()
+{
+	//if (nullptr != m_pRendererCom)
+	{
+		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
+		//	return ;
+	}
 }
 
 void CFontMgr::Render_Font()
 {
-	for (auto& iter : m_vecFontInfo)
+	for (auto& iter : m_mapFont)
+		iter.second->Render_Font(m_pShaderCom, m_pTextureCom);
+}
+
+void CFontMgr::Delete_Font(const _tchar* pFontTag)
+{
+
+	auto iter_find = find_if(m_mapFont.begin(), m_mapFont.end(), CFinder_Tag(pFontTag));
+	if (iter_find == m_mapFont.end())
+		return;
+
+	auto iter = m_mapFont.begin();
+	for (; iter != m_mapFont.end();)
 	{
-		_float m_fX = (_float)WINCX/2;
-		_float m_fY = (_float)WINCY / 2;
-		_float m_fSizeX = 1.5f;
-		_float m_fSizeY = 1.5f;
+		if (!lstrcmp(iter->first, pFontTag))
+		{
+			Safe_Release(iter->second);
+			iter = m_mapFont.erase(iter);
+		}
+		else iter++;
+	}
+}
 
-		MAINPASS tMainPass = {};
-		_matrix matWorld = Matrix_::Identity();
-		_matrix matView = Matrix_::Identity();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-		//matWorld._11 = m_fSizeX;
-		//matWorld._22 = m_fSizeY;
-		//
-		//matWorld._41 = m_fX - (WINCX >> 1);
-		//matWorld._42 = -m_fY + (WINCY >> 1);
-
-
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-
-		_uint iOffeset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
-
-
-
-
-		CDevice::GetInstance()->UpdateTable();
-
-		CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(m_PrimitiveTopology);
-		CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(m_iSlot, 1, &iter.tVertexBufferView);
-		CDevice::GetInstance()->GetCmdLst()->IASetIndexBuffer(&iter.tIndexBufferView);
-		CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(iter.iIndices, 1, 0, 0, 0);
+void CFontMgr::Delete_All_Fo1nt()
+{
+	auto iter = m_mapFont.begin();
+	for (; iter != m_mapFont.end();)
+	{
+		if (iter->first)
+		{
+			Safe_Release(iter->second);
+			iter = m_mapFont.erase(iter);
+		}
+		else iter++;
 	}
 }
 
@@ -241,7 +137,12 @@ CFontMgr* CFontMgr::Create(const char* pFilePath)
 
 void CFontMgr::Free()
 {
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pShaderCom);
+	for (auto& iter : m_mapFont)
+	{
+		Safe_Release(iter.second);
+	}
+
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
 }
