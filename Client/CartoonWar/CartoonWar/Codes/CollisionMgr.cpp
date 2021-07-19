@@ -52,7 +52,8 @@ void CCollisionMgr::Player_to_NPC_Collision()
 				{
 					(iter1)->GetOBBCollision() = true;
 					iter1->GetIsParticle() = true;
-					iter1->GetIsDead() = true;
+					//iter1->GetIsDead() = true;
+					//asdasdasd
 				}
 				
 
