@@ -195,7 +195,7 @@ void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 	CCamera_Manager::GetInstance()->SetShadowMatProj(m_matShadowProj);
 }
 
-HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, int n)
+HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _float n)
 {
 	m_tCameraDesc = CameraDesc;
 	m_tProjDesc = ProjDesc;
@@ -204,7 +204,7 @@ HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDE
 	return S_OK;
 }
 
-HRESULT CCamera::SetUp_ViewProjMatrices(int n)
+HRESULT CCamera::SetUp_ViewProjMatrices(_float n)
 {
 	_vec3		vLook;
 	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, m_tCameraDesc.vEye);
@@ -235,7 +235,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices(int n)
 	return S_OK;
 }
 
-void CCamera::Invalidate_ViewProjMatrix(int n)
+void CCamera::Invalidate_ViewProjMatrix(_float n)
 {
 	m_matView = m_pTransform->Get_Matrix_Inverse();
 	_matrix matOrtho = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 0.f, 1.f);

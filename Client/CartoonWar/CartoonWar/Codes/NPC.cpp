@@ -982,67 +982,69 @@ void CNPC::Change_Class()
 			case CLASS::CLASS_MMAGE:
 			{
 
-			//	idle	
-			//	walk	
-			//	run		
-			//	attack	
-			//	take damage
-			//	death a	
-			//	death b	
-			//	cast a	
-			//	cast b	
-			//	cast load
-			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-			m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
-			m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
-			m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
-			m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
-			m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
-			m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
-			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
-			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
-			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-			m_iCombatMotion[0] = 0;
-			m_iCombatMotion[1] = 1;
-			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(100.f);
-		}
-		break;
-		case CLASS::CLASS_ARCHER:
-		{
-			//	idle		
-			//	walk		
-			//	run			
-			//	combat_idle	
-			//	combat walk	
-			//	attack a	
-			//	take damage	
-			//	death a		
-			//	death b	
-			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-			m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
-			m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
-			m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
-			m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
-			m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
-			m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
-			m_iCombatMotion[0] = 3;
-			m_iCombatMotion[1] = 4;
-			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(70.f);
-		}
-		break;
-		}
+				//	idle	
+				//	walk	
+				//	run		
+				//	attack	
+				//	take damage
+				//	death a	
+				//	death b	
+				//	cast a	
+				//	cast b	
+				//	cast load
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
+				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+				m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
+				m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
+				m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
+				m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
+				m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
+				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
+				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+				m_iCombatMotion[0] = 0;
+				m_iCombatMotion[1] = 1;
+				m_iCombatMotion[2] = 2;
+				m_pTransformCom->SetSpeed(100.f);
+			}
+			break;
+			case CLASS::CLASS_ARCHER:
+			{
+				//	idle		
+				//	walk		
+				//	run			
+				//	combat_idle	
+				//	combat walk	
+				//	attack a	
+				//	take damage	
+				//	death a		
+				//	death b	
+				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+				m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
+				m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
+				m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
+				m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
+				m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
+				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+				m_iCombatMotion[0] = 3;
+				m_iCombatMotion[1] = 4;
+				m_iCombatMotion[2] = 2;
+				m_pTransformCom->SetSpeed(70.f);
+			}
+			break;
+			}
 
-		m_ePreClass = m_eCurClass;
+			m_ePreClass = m_eCurClass;
+		}
 	}
 }
+
 
 void CNPC::AnimVectorClear()
 {

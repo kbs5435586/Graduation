@@ -1143,9 +1143,6 @@ void CPlayer_Inven::Attack(const _float& fTimeDelta)
 	case CLASS::CLASS_INFANTRY:
 	case CLASS::CLASS_CAVALRY:
 	case CLASS::CLASS_MAGE:
-	case CLASS::CLASS_PRIEST:
-		m_iAttackMotion[0] = 6;
-		m_iAttackMotion[1] = 7;
 		break;
 	case CLASS::CLASS_SPEARMAN:
 		m_iAttackMotion[0] = 6;

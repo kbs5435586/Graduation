@@ -28,9 +28,12 @@ public:
 	HRESULT						SetUp_ViewProjMatrices(_bool IsShadow);
 	void						Invalidate_ViewProjMatrix(_bool IsShadow);
 public:
-	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, int n);
-	HRESULT						SetUp_ViewProjMatrices(int n);
-	void						Invalidate_ViewProjMatrix(int n);
+	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _float n);
+	HRESULT						SetUp_ViewProjMatrices(_float n);
+	void						Invalidate_ViewProjMatrix(_float n);
+
+
+
 	HRESULT						Once_SetUp_ViewProjMatrices(_bool IsShadow, _vec3 vPos);
 private:
 	HRESULT						SetUp_ViewProjMatrices();
