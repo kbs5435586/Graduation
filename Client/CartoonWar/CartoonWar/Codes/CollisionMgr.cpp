@@ -47,12 +47,12 @@ void CCollisionMgr::Player_to_NPC_Collision()
 					(iter0)->GetOBBCollision() = true;
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				}
-
+				/////////
 				if (iter0->GetIsDash())
 				{
 					(iter1)->GetOBBCollision() = true;
 					iter1->GetIsParticle() = true;
-					iter0->GetIsDead() = true;
+					iter1->GetIsDead() = true;
 				}
 				
 
