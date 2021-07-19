@@ -19,6 +19,7 @@ public:
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_PostEffect();
 	virtual void							Render_Blur();
+	virtual void							Render_Ref();
 public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}

@@ -20,6 +20,9 @@ public:
     const _matrix           GetIMatProj() { return m_ImatProj; }
     const _matrix           GetIMatOrtho() { return m_ImatOrtho; }
 public:
+    const _matrix           GetReflectionView() { return m_matReflectionView; }
+    const _matrix           GetReflectionMatProj() { return m_matReflectionProj; }
+public:
     void                    SetMatView(_matrix matView) { m_matView = matView; }
     void                    SetMatProj(_matrix matProj) { m_matProj = matProj; }
     void                    SetMatOrtho(_matrix matOrtho) { m_matOrtho = matOrtho; }
@@ -31,6 +34,12 @@ public:
     void                    SetIMatView(_matrix matView) { m_ImatView = matView; }
     void                    SetIMatProj(_matrix matProj) { m_ImatProj = matProj; }
     void                    SetIMatOrtho(_matrix matOrtho) { m_ImatOrtho = matOrtho; }
+public:
+    void                    SetReflectionView(_matrix matView) { m_matReflectionView = matView; }
+    void                    SetReflectionProj(_matrix matProj) { m_matReflectionProj = matProj; }
+private:
+    _matrix                 m_matReflectionView = {};
+    _matrix                 m_matReflectionProj = {};
 private:
     _matrix                 m_matView = {};
     _matrix                 m_matProj = {};

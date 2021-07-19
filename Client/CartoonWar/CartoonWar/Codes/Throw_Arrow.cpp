@@ -24,17 +24,18 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 
 	if (nullptr == pArg)
 		return E_FAIL;
+	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(-90.f));
+	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 
 	_matrix pTemp = *(_matrix*)pArg;
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	pTemp._42 += 4.f;
+	//pTemp._43 += 10.f;
 	matWorld *= pTemp;
-	//pTemp *= m_pTransformCom->Get_Matrix();
 	m_pTransformCom->Set_Matrix(matWorld);
 
 
@@ -52,9 +53,7 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 {
 	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
-	m_pTransformCom->Go_Right(fTimeDelta*0.1f);
-
-	//m_pTransformCom->Set_PositionY(2.f);
+	m_pTransformCom->Go_Right(fTimeDelta);
 	m_fLifeTime += fTimeDelta;
 	if (m_fLifeTime >= 10.f)
 	{
@@ -78,8 +77,6 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 			return -1;
 	}
 	else

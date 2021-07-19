@@ -48,12 +48,14 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
  	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear(true);
 	pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_REF)->Clear();
 	Render_Inventory(pManagement);
 
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
 	Render_Blur();
+	Render_Reflection();
 
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
@@ -63,7 +65,9 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 	Render_Priority();
 	Render_Alpha();
+	pManagement->Render_Font();
 	Render_Post_Effect();
+
 
 	Render_UI();
 	Render_UI_Back();
@@ -109,6 +113,23 @@ void CRenderer::CopySwapToBlur()
 
 }
 
+void CRenderer::CopySwapToReflection()
+{
+	static ComPtr<ID3D12Resource>	pRefTex = CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_REF)->Get_RTT(0)->pRtt->GetTex2D().Get();
+	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
+
+	CD3DX12_RESOURCE_BARRIER temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+
+	CDevice::GetInstance()->GetCmdLst()->CopyResource(pRefTex.Get(), CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get());
+
+	temp = CD3DX12_RESOURCE_BARRIER::Transition(CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Get_RTT(iIdx)->pRtt->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	CDevice::GetInstance()->GetCmdLst()->ResourceBarrier(1, &temp);
+}
+
 void CRenderer::Render_Priority()
 {
 	for (auto& pGameObject : m_RenderList[RENDER_PRIORITY])
@@ -133,6 +154,19 @@ void CRenderer::Render_NoneAlpha()
 		}
 	}
 	m_RenderList[RENDER_NONEALPHA].clear();
+}
+
+void CRenderer::Render_NoneAlpha_PRO()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_NONEALPHA_PRO])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_NONEALPHA_PRO].clear();
 }
 
 void CRenderer::Render_Alpha()
@@ -204,6 +238,7 @@ void CRenderer::Render_Post_Effect()
 
 void CRenderer::Render_Blur()
 {
+	CopySwapToReflection();
 	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->OM_Set();
 	for (auto& pGameObject : m_RenderList[RENDER_BLUR])
 	{
@@ -217,6 +252,23 @@ void CRenderer::Render_Blur()
 
 	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->TargetToResBarrier();
 
+}
+
+void CRenderer::Render_Reflection()
+{
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_REF)->OM_Set();
+
+	for (auto& pGameObject : m_RenderList[RENDER_REF])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_Ref();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_REF].clear();
+
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_REF)->TargetToResBarrier();
 }
 
 void CRenderer::Render_Shadow(CManagement* pManagement)
@@ -238,7 +290,7 @@ void CRenderer::Render_Shadow(CManagement* pManagement)
 void CRenderer::Render_Deffered(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
-
+	Render_NoneAlpha_PRO();
 	Render_NoneAlpha();
 
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();

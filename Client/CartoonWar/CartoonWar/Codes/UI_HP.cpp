@@ -27,17 +27,18 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	m_fX = 100.f;
+	m_fX = 1800.f;
 	m_fY = WINCY - 200.f;
 
 	m_fSizeX = 300.f;
-	m_fSizeY = 25.f;
-	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
+	m_fSizeY = 40.f;
+	//m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
 	return S_OK;
 }
 
 _int CUI_HP::Update_GameObject(const _float& fTimeDelta)
 {
+	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
 	return _int();
 }
 
@@ -74,7 +75,6 @@ void CUI_HP::Render_GameObject()
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
 	m_tRep.m_arrInt[0] = m_tInfo.fHP;
-	m_tRep.m_arrInt[1] = (_uint)m_IsTemp;
 
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
@@ -83,6 +83,8 @@ void CUI_HP::Render_GameObject()
 
 	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -135,7 +137,7 @@ void CUI_HP::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pCompute_ShaderCom);
+	Safe_Release(m_pTextureCom);
 
 
 	CUI::Free();
@@ -162,16 +164,16 @@ HRESULT CUI_HP::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_InGame_UI");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pCompute_ShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_HP");
-	NULL_CHECK_VAL(m_pCompute_ShaderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Compute_Shader", m_pCompute_ShaderCom)))
+	//Component_Texture_HPBar
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_HPBar");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
-
 	Safe_Release(pManagement);
 	return S_OK;
 }

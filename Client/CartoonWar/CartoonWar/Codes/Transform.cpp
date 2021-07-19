@@ -198,9 +198,9 @@ void CTransform::SetUp_RotationX(const _float& fRadian)
 	_matrix		matRot = Matrix_::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationX(fRadian)));
 
-	Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
-	Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
-	Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
+	vRight = Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
+	vUp = Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
+	vLook = Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 
@@ -239,9 +239,9 @@ void CTransform::SetUp_RotationY(const _float& fRadian)
 	_matrix		matRot = Matrix_::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(fRadian)));
 
-	Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
-	Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
-	Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
+	vRight = Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
+	vUp = Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
+	vLook = Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 
@@ -261,9 +261,9 @@ void CTransform::SetUp_RotationZ(const _float& fRadian)
 	_matrix		matRot = Matrix_::Identity();
 	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(fRadian)));
 
-	Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
-	Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
-	Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
+	vRight = Vector3_::ScalarProduct(vRight, Get_Scale().x, false);
+	vUp = Vector3_::ScalarProduct(vUp, Get_Scale().y, false);
+	vLook = Vector3_::ScalarProduct(vLook, Get_Scale().z, false);
 
 	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
 

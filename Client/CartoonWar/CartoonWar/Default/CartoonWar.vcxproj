@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -168,6 +168,7 @@
     <ClInclude Include="..\Headers\Buffer_Point.h" />
     <ClInclude Include="..\Headers\Buffer_RectCol.h" />
     <ClInclude Include="..\Headers\Buffer_RectTex.h" />
+    <ClInclude Include="..\Headers\Buffer_RectTexNor.h" />
     <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h" />
@@ -195,6 +196,8 @@
     <ClInclude Include="..\Headers\FbxLoader.h" />
     <ClInclude Include="..\Headers\Fire.h" />
     <ClInclude Include="..\Headers\Flag.h" />
+    <ClInclude Include="..\Headers\Font.h" />
+    <ClInclude Include="..\Headers\FontMgr.h" />
     <ClInclude Include="..\Headers\Frame.h" />
     <ClInclude Include="..\Headers\FrameManager.h" />
     <ClInclude Include="..\Headers\Frustum.h" />
@@ -225,6 +228,7 @@
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\Player_Inven.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
+    <ClInclude Include="..\Headers\Reflection_Camera.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
@@ -248,6 +252,7 @@
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
     <ClInclude Include="..\Headers\TestAnimMesh.h" />
+    <ClInclude Include="..\Headers\TestBuffer.h" />
     <ClInclude Include="..\Headers\TestCube.h" />
     <ClInclude Include="..\Headers\TestHatchMesh.h" />
     <ClInclude Include="..\Headers\TestMesh.h" />
@@ -276,6 +281,7 @@
     <ClInclude Include="..\Headers\UI_WoL.h" />
     <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
+    <ClInclude Include="..\Headers\Water.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="..\Headers\Inventory_Camera.h" />
@@ -299,6 +305,7 @@
     <ClCompile Include="..\Codes\Buffer_Point.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp" />
+    <ClCompile Include="..\Codes\Buffer_RectTexNor.cpp" />
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp" />
@@ -322,6 +329,8 @@
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
+    <ClCompile Include="..\Codes\Font.cpp" />
+    <ClCompile Include="..\Codes\FontMgr.cpp" />
     <ClCompile Include="..\Codes\Frame.cpp" />
     <ClCompile Include="..\Codes\FrameManager.cpp" />
     <ClCompile Include="..\Codes\Frustum.cpp" />
@@ -349,6 +358,7 @@
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\Player_Inven.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\Reflection_Camera.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
@@ -370,6 +380,7 @@
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\TestAnimMesh.cpp" />
+    <ClCompile Include="..\Codes\TestBuffer.cpp" />
     <ClCompile Include="..\Codes\TestCube.cpp" />
     <ClCompile Include="..\Codes\TestHatchMesh.cpp" />
     <ClCompile Include="..\Codes\TestMesh.cpp" />
@@ -397,6 +408,7 @@
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
+    <ClCompile Include="..\Codes\Water.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
     <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
     <ClCompile Include="..\Codes\UI_Button.cpp" />
@@ -517,7 +529,7 @@
     <None Include="..\ShaderFiles\Shader_PointLIght.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Weapon.hlsl">
+    <None Include="..\ShaderFiles\Shader_Reflection.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Deffered_Light.hlsl">
@@ -548,6 +560,15 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Decal.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_InGame_UI.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Water.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

@@ -9,18 +9,6 @@
 #include "StructedBuffer.h"
 
 _IMPLEMENT_SINGLETON(CDevice)
-
-_float CDevice::m_fHDRMetaDataPool[4][4] =
-{
-	{ 1000.0f, 0.001f, 2000.0f, 500.0f },
-
-	{ 500.0f, 0.001f, 2000.0f, 500.0f },
-
-	{ 500.0f, 0.100f, 500.0f, 100.0f },
-
-	{ 2000.0f, 1.000f, 2000.0f, 1000.0f }
-};
-
 CDevice::CDevice()
 {
 }
@@ -78,6 +66,16 @@ array<const CD3DX12_STATIC_SAMPLER_DESC, 6> CDevice::GetStaticSamplers()
 		linearWrap, linearClamp,
 		anisotropicWrap, anisotropicClamp };
 }
+_float CDevice::m_fHDRMetaDataPool[4][4] =
+{
+	{ 1000.0f, 0.001f, 2000.0f, 500.0f },
+
+	{ 500.0f, 0.001f, 2000.0f, 500.0f },
+
+	{ 500.0f, 0.100f, 500.0f, 100.0f },
+
+	{ 2000.0f, 1.000f, 2000.0f, 1000.0f }
+};
 
 HRESULT CDevice::Initialize()
 {
@@ -685,9 +683,9 @@ HRESULT CDevice::Create_RootSignature()
 	D3D12_ROOT_SIGNATURE_DESC sigDesc = {};
 	sigDesc.NumParameters = 1;
 	sigDesc.pParameters = &slotParam;
-	sigDesc.NumStaticSamplers = 2;// m_vecSamplerDesc.size();
-	sigDesc.pStaticSamplers = &m_vecSamplerDesc[0]; // 사용 될 Sampler 정보
-	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; // 입력 조립기 단계 허용
+	sigDesc.NumStaticSamplers = 2;
+	sigDesc.pStaticSamplers = &m_vecSamplerDesc[0];
+	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; 
 
 	ComPtr<ID3DBlob> pSignature;
 	ComPtr<ID3DBlob> pError;
@@ -742,8 +740,8 @@ HRESULT CDevice::Create_RootSignature()
 	sigDesc.NumParameters = 1;
 	sigDesc.pParameters = &slotParam;
 	sigDesc.NumStaticSamplers = 0;
-	sigDesc.pStaticSamplers = nullptr; // 컴퓨트 쉐이더에서는 Sampler 사용 불가능
-	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE; // 컴퓨트 쉐이더용 Signature 는 기본 플래그 값으로 설정
+	sigDesc.pStaticSamplers = nullptr; 
+	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;
 
 	pSignature = nullptr;
 	pError = nullptr;

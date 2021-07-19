@@ -22,6 +22,7 @@
 #include "Buffer_Sphere.h"
 #include "Buffer_Point.h"
 #include "Buffer_Circle.h"
+#include "Buffer_RectTexNor.h"
 
 class CComponent;
 class CComponent_Manager :

@@ -44,6 +44,14 @@ _int CUI_Main::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this)))
 			return E_FAIL;
 	}
+	if (GetAsyncKeyState('7'))
+		m_iTemp = 0;
+	if (GetAsyncKeyState('8'))
+		m_iTemp = 1;
+	if (GetAsyncKeyState('9'))
+		m_iTemp = 2;
+	if (GetAsyncKeyState('0'))
+		m_iTemp = 3;
 	return _int();
 }
 
@@ -61,12 +69,18 @@ void CUI_Main::Render_GameObject()
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
+	REP		tRep = {};
+	tRep.m_arrInt[0] = m_iTemp;
+
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+
 	ComPtr<ID3D12DescriptorHeap>	pDiffuseTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(0)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pSpecularTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(1)->pRtt->GetSRV().Get();

@@ -34,6 +34,8 @@ void CLight_Manager::SetUp_OnShader()
 {
 	LIGHTINFO tInfo = {};
 
+
+
 	for (int i = 0; i < m_vecLightInfo.size(); ++i)
 	{
 		LIGHT tLight = m_vecLightInfo[i]->Get_LightInfo();

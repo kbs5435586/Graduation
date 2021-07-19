@@ -71,8 +71,7 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 
 	float4 vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4 vPosition = g_texture1.Sample(Sampler0, vIn.vTexUV);
-	//vNormalTex = float4(vNormalTex.xyz * 2.f - 1.f, 0.f);
-	//vPosition = float4(vPosition.xyz * 2.f - 1.f, 0.f);
+
 	if (vPosition.z <= 1.f)
 	{
 		clip(-1);

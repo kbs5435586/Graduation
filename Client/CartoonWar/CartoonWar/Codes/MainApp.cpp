@@ -18,8 +18,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_Management((_uint)SCENEID::SCENE_END)))
 		return E_FAIL;
-	//if (FAILED(Create_FbxManager()))
-	//	return E_FAIL;
+	if (FAILED(Create_FbxManager()))
+		return E_FAIL;
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
@@ -32,7 +32,12 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_CollsionManager()))
 		return E_FAIL;
-	
+	if (FAILED(m_pManagement->Ready_FontMgr("../Bin/Resource/Texture/Font/fontdata.txt")))
+		return E_FAIL;
+
+
+
+
 	if (FAILED(CInput::GetInstance()->Ready_Input_Device(g_hInstance, g_hWnd)))
 		return E_FAIL;
 
@@ -57,7 +62,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(GLOBAL), 1, CONST_REGISTER::b9, true)))
 		return E_FAIL;
-
+	if (FAILED(m_pManagement->Create_Constant_Buffer(sizeof(BRUSHINFO), 512, CONST_REGISTER::b10)))
+		return E_FAIL;
 
 	if (FAILED(Ready_Start_Scene(SCENEID::SCENE_LOGO)))
 		return E_FAIL;
@@ -90,7 +96,6 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
-	
 	
 	return m_pManagement->Update_Management(fTimeDelta);
 }

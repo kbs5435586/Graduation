@@ -55,6 +55,10 @@ void CGameObject::Render_Blur()
 {
 }
 
+void CGameObject::Render_Ref()
+{
+}
+
 HRESULT CGameObject::CreateInputLayout()
 {
 	return S_OK;

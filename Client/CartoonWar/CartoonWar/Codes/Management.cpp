@@ -19,6 +19,7 @@ CManagement::CManagement()
 	, m_pLoad_Manager(CLoadManager::GetInstance())
 	, m_pUAV_Manager(CUAVManager::GetInstance())
 	, m_pCollision_Manager(CCollisionMgr::GetInstance())
+	, m_pFont_Manager(CFontMgr::GetInstance())
 	//, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
@@ -31,6 +32,7 @@ CManagement::CManagement()
 	m_pLoad_Manager->AddRef();
 	m_pUAV_Manager->AddRef();
 	m_pCollision_Manager->AddRef();
+	m_pFont_Manager->AddRef();
 	//m_pServer_Manager->AddRef();
 }
 
@@ -222,6 +224,31 @@ void CManagement::Update_CollisionManager(const _float& fTimeDelta)
 	return m_pCollision_Manager->Update_CollisionManager(fTimeDelta);
 }
 
+HRESULT CManagement::Ready_FontMgr(const char* pFilePath)
+{
+	return m_pFont_Manager->Ready_FontMgr(pFilePath);
+}
+
+HRESULT CManagement::Create_Font_Buffer(const _tchar* pFontTag, const char* pSentence, float iDrawX, float iDrawY)
+{
+	return m_pFont_Manager->Create_Buffer(pFontTag, pSentence, iDrawX, iDrawY);
+}
+
+void CManagement::Render_Font()
+{
+	return m_pFont_Manager->Render_Font();
+}
+
+void CManagement::Delete_Font(const _tchar* pFontTag)
+{
+	return m_pFont_Manager->Delete_Font(pFontTag);
+}
+
+void CManagement::Delete_All_Font()
+{
+	return m_pFont_Manager->Delete_All_Fo1nt();
+}
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -308,6 +335,9 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
 
+	if (dwRefCnt = CFontMgr::GetInstance()->DestroyInstance())
+		_MSG_BOX("CFontMgr Release Failed");
+
 	if (dwRefCnt = CCollisionMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CCollisionMgr Release Failed");
 
@@ -376,6 +406,7 @@ list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
+	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pUAV_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pObject_Manager);

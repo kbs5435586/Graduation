@@ -2,30 +2,26 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CBuffer_Terrain_Height;
-class CTexture;
 class CShader;
-class CNavigation;
-class CFrustum;
-
-class CTerrain_Height :
-    public CGameObject
+class CTexture;
+class CBuffer_RectTex;
+class CTestBuffer :
+	public CGameObject
 {
 private:
-    CTerrain_Height();
-    CTerrain_Height(const CTerrain_Height& rhs);
-    virtual ~CTerrain_Height() = default;
+	CTestBuffer();
+	CTestBuffer(const CTestBuffer& rhs);
+	virtual ~CTestBuffer() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
-	virtual void							Render_GameObject_Shadow();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CTerrain_Height*					Create();
+	static CTestBuffer*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
@@ -33,10 +29,10 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_Terrain_Height*					m_pBufferCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
-	CTexture*								m_pBrushTextureCom = nullptr;
-	CNavigation*							m_pNaviCom = nullptr;
+private:
+	TEXINFO									m_tTexInfo = {};
 };
 

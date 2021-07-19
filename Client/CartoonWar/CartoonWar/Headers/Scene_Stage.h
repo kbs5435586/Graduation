@@ -21,6 +21,7 @@ private:
 	HRESULT					Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Inventory_Camera(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Reflection_Camera(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_SkyBox(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement);
