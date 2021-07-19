@@ -430,6 +430,9 @@
     <Filter Include="97. Engine\01. Utility\12. FontMgr\00. Font">
       <UniqueIdentifier>{7d8126fe-aa58-42b9-8e59-60e1a3cb3c9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\12. Picking">
+      <UniqueIdentifier>{1404fc5e-7bb4-4966-b744-af1fd36c8787}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -795,6 +798,9 @@
     <ClInclude Include="..\Headers\Font.h">
       <Filter>97. Engine\01. Utility\12. FontMgr\00. Font</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Picking.h">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1130,6 +1136,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Font.cpp">
       <Filter>97. Engine\01. Utility\12. FontMgr\00. Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Picking.cpp">
+      <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

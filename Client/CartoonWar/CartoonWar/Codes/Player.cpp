@@ -78,6 +78,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
+
+
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
@@ -89,11 +91,16 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 
-
+	_vec3 vPickPos = {};
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
-		return -1;
-	pTerrainBuffer;
+		return NO_EVENT;
+	CTransform* pTerrainTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Transform");
+	if (nullptr == pTerrainBuffer)
+		return NO_EVENT;
+
+
+
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
 
@@ -466,7 +473,6 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
 
-
 	Safe_Release(m_pUI_OnHead);
 	Safe_Release(m_pUI_OnHeadBack);
 	CGameObject::Free();
@@ -694,6 +700,7 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
+
 
 	Safe_Release(pManagement);
 	return S_OK;
