@@ -83,11 +83,25 @@ void Server::process_packet(int user_id, char* buf)
         cs_packet_condition* packet = reinterpret_cast<cs_packet_condition*>(buf);
         // g_clients[user_id].m_move_time = packet->move_time; // 스트레스 테스트
         if (CON_TYPE_MOVE == packet->con_type)
+        {
+            if (CON_IDLE == packet->con)
+                cout << user_id << " send move condition : CON_IDLE\n";
+            else if (CON_STRAIGHT == packet->con)
+                cout << user_id << " send condition : CON_STRAIGHT\n";
+            else if (CON_BACK == packet->con)
+                cout << user_id << " send condition : CON_BACK\n";
             do_move(user_id, packet->con);
+        }
         else if (CON_TYPE_ROTATE == packet->con_type)
+        {
+            if (CON_IDLE == packet->con)
+                cout << user_id << " send rote condition : CON_IDLE\n";
+            else if (CON_LEFT == packet->con)
+                cout << user_id << " send condition : CON_LEFT\n";
+            else if (CON_RIGHT == packet->con)
+                cout << user_id << " send condition : CON_RIGHT\n";
             do_rotate(user_id, packet->con);
-
-        cout << user_id << "send condition" << packet->con << endl;
+        }        
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -657,56 +671,63 @@ void Server::do_follow(int npc_id)
             _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
-               if (dist_between(npc_id, n.m_owner_id)> g_clients[n.m_owner_id].m_boid[i].radius)// 자신의 포메이션 반지름 밖일때
+                if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 2.f)// 자신의 포메이션 반지름 밖일때
                 {
+                   float dist= dist_between(npc_id, n.m_owner_id);
                    _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);// 일단 반지름 이내까진 최종 목표지로만 이동
                    _vec3 new_pos = n_pos + Dir;
                    n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                   n.m_isOut = true;
                 }
                else // 자신의 포메이션 반지름과 같거나 이내일때
                {
-                   _vec3 npcLookAt = n_pos - p_pos;
-                   npcLookAt = Vector3_::Normalize(npcLookAt);
-                   _vec3 standard = { 1.f,0.f,0.f };
-                   _vec3 set_pos = {};
-
-                   float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // ?÷???? ????
-                   _vec3 PoutProduct;
-                   PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // ?÷???? ????
-                   PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
-                   PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
-
-                   float radian = acosf(PdotProduct); // ?÷???? ????? ????? 0,0,1 ???? ?????? ????
-                   if (PoutProduct.y > 0)
-                       radian *= -1.f;
-                   float NPCangle = radian * 180.f / PIE;
-
-
-
-
-
-
-                   if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
-                       || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle)
+                   if (n.m_isOut)
                    {
-                       if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
-                       {
-                           n.m_total_angle += 1.5f;
-                           n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                           n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                           n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos); // 각도 안맞는 상태에서 반지름 밖으로 나가버리면 문제발생
-                       }
-                       else
-                       {
-                           n.m_total_angle -= 1.5f;
-                           n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                           n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                           n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
-                       }
+                       n.m_isOut = false;
+                       _vec3 p_look = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+                       _vec3 standard = -1.f * Vector3_::Normalize(p_look);
+                       _vec3 npcLookAt = n_pos - p_pos;
+                       npcLookAt = Vector3_::Normalize(npcLookAt);
+
+                       _vec3 set_pos = {};
+
+                       float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 내각
+                       _vec3 PoutProduct;
+                       PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // 외각
+                       PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
+                       PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
+
+                       float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                       if (PoutProduct.y < 0)
+                           radian *= -1.f;
+                       float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+                       int rotate_count = g_clients[n.m_owner_id].m_total_angle / 360;
+                       n.m_total_angle = rotate_count * 360 + NPCangle;
+                       n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                       n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                       n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                    }
                    else
                    {
-                       if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos)
+                       if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
+                           || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle)
+                       {
+                           if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
+                           {
+                               n.m_total_angle += 1.5f;
+                               n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                               n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                               n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos); // 각도 안맞는 상태에서 반지름 밖으로 나가버리면 문제발생
+                           }
+                           else
+                           {
+                               n.m_total_angle -= 1.5f;
+                               n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                               n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                               n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                           }
+                       }
+                       else
                        {
                            _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);// 일단 반지름 이내까진 최종 목표지로만 이동
                            _vec3 new_pos = n_pos + Dir;
@@ -1328,6 +1349,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_Rcondition = CON_IDLE;
             g_clients[npc_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
             g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
+            g_clients[npc_id].m_isOut = false;
             FormationInfo formTemp;
             formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
             g_clients[player_id].m_boid.push_back(formTemp);

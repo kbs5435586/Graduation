@@ -66,6 +66,7 @@ struct SESSION // 클라이언트 정보
 	float m_move_speed;
 	float m_rotate_speed;
 	float m_total_angle;
+	bool m_isOut;
 	
 	Collision m_col;
 	vector <FormationInfo> m_boid;
