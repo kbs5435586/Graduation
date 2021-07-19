@@ -48,5 +48,5 @@ float4 PS_Main(VS_OUT vIn) :SV_TARGET
 		vOut = vOut;
 	}
 
-	return float4(0.f,0.f,0.f,1.f);
+	return vOut;
 }

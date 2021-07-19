@@ -176,4 +176,9 @@ cbuffer GLOBAL : register(b9)
 }
 
 
+cbuffer BRUSHINFO: register(b10)
+{
+	float4		vBrushPos;
+	float		fBrushRange;
+}
 #endif

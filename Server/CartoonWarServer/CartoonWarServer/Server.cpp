@@ -648,38 +648,73 @@ void Server::do_random_move(int npc_id)
 
 void Server::do_follow(int npc_id)
 {
-    for (int i = 0; i < g_clients[g_clients[npc_id].m_owner_id].m_boid.size(); ++i)
+    SESSION& n = g_clients[npc_id];
+    for (int i = 0; i < g_clients[n.m_owner_id].m_boid.size(); ++i)
     {
-        if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].id == g_clients[npc_id].m_id)
+        if (g_clients[n.m_owner_id].m_boid[i].id == n.m_id)
         {
-            _vec3 n_pos = *g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            if (n_pos != g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos) // 만약 해당 위치가 아니라면
+            _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
-                _vec3 p_pos = *g_clients[g_clients[npc_id].m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-
-                _vec3 set_pos = {};
-
-                if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle + 3.f < g_clients[npc_id].m_total_angle
-                    || g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle - 3.f > g_clients[npc_id].m_total_angle)
+               if (dist_between(npc_id, n.m_owner_id)> g_clients[n.m_owner_id].m_boid[i].radius)// 자신의 포메이션 반지름 밖일때
                 {
-                    if (g_clients[g_clients[npc_id].m_owner_id].m_boid[i].angle > g_clients[npc_id].m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
-                    {
-                        g_clients[npc_id].m_total_angle += 1.5f;
-                        n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((g_clients[npc_id].m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                        n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((g_clients[npc_id].m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                        g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
-                    }
-                    else
-                    {
-                        g_clients[npc_id].m_total_angle -= 1.5f;
-                        n_pos.x = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * sinf((g_clients[npc_id].m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                        n_pos.z = g_clients[g_clients[npc_id].m_owner_id].m_boid[i].radius * cosf((g_clients[npc_id].m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                        g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
-                    }
+                   _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);// 일단 반지름 이내까진 최종 목표지로만 이동
+                   _vec3 new_pos = n_pos + Dir;
+                   n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
                 }
+               else // 자신의 포메이션 반지름과 같거나 이내일때
+               {
+                   _vec3 npcLookAt = n_pos - p_pos;
+                   npcLookAt = Vector3_::Normalize(npcLookAt);
+                   _vec3 standard = { 1.f,0.f,0.f };
+                   _vec3 set_pos = {};
 
-                //_vec3 Dir = move_to_spot(npc_id, &g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos);// 이 방법은 최종 위치까지 그냥 순간이동
-                //_vec3 new_pos = *pos + Dir;
+                   float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // ?÷???? ????
+                   _vec3 PoutProduct;
+                   PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // ?÷???? ????
+                   PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
+                   PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
+
+                   float radian = acosf(PdotProduct); // ?÷???? ????? ????? 0,0,1 ???? ?????? ????
+                   if (PoutProduct.y > 0)
+                       radian *= -1.f;
+                   float NPCangle = radian * 180.f / PIE;
+
+
+
+
+
+
+                   if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
+                       || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle)
+                   {
+                       if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
+                       {
+                           n.m_total_angle += 1.5f;
+                           n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                           n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                           n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos); // 각도 안맞는 상태에서 반지름 밖으로 나가버리면 문제발생
+                       }
+                       else
+                       {
+                           n.m_total_angle -= 1.5f;
+                           n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                           n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                           n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                       }
+                   }
+                   else
+                   {
+                       if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos)
+                       {
+                           _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);// 일단 반지름 이내까진 최종 목표지로만 이동
+                           _vec3 new_pos = n_pos + Dir;
+                           n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                       }
+                   }
+
+               }
 
                 for (int i = 0; i < OBJECT_START; ++i) // npc가 움직일때마다 충돌체크
                 {
@@ -724,13 +759,13 @@ void Server::do_follow(int npc_id)
                             g_clients[i].m_cLock.unlock();
                     }
                 }
-                if (g_clients[npc_id].m_anim != A_WALK)
+                if (n.m_anim != A_WALK)
                     do_animation(npc_id, A_WALK);
                 break;
             }
             else // n_pos == g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos
             {
-                if (g_clients[npc_id].m_anim != A_IDLE)
+                if (n.m_anim != A_IDLE)
                     do_animation(npc_id, A_IDLE);
             }
         }
@@ -769,6 +804,17 @@ void Server::do_npc_rotate(int user_id, char con)
     }
 }
 
+float Server::dist_between(int user_id, int other_id)
+{
+    _vec3* pos1 = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* pos2 = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    float dist = sqrt((pos1->x - pos2->x) * (pos1->x - pos2->x) + (pos1->y - pos2->y) * (pos1->y - pos2->y)
+        + (pos1->z - pos2->z) * (pos1->z - pos2->z));
+
+    return dist;
+}
+
 _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
 {
     _vec3* new_pos = goto_pos;
@@ -789,7 +835,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
             float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
             Dir = Dir / hyp; // 여기가 노멀값
-            Dir = Dir * MOVE_SPEED_NPC; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * 0.1f; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
@@ -899,13 +945,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_STRAIGHT;
             g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE);
-            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
-            {
-                if (ST_ACTIVE == g_clients[npc_id].m_status)
-                {
-                    g_clients[npc_id].m_transform.BackWard(MOVE_TIME_ELAPSE);
-                }
-            }
         }
         break;
         case FUNC_PLAYER_RUN:
@@ -913,13 +952,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_RUN;
             g_clients[player_id].m_transform.BackWard(MOVE_TIME_ELAPSE * 2.f);
-            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
-            {
-                if (ST_ACTIVE == g_clients[npc_id].m_status)
-                {
-                    g_clients[npc_id].m_transform.BackWard(MOVE_TIME_ELAPSE * 2.f);
-                }
-            }
         }
         break;
         case FUNC_PLAYER_BACK:
@@ -927,13 +959,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             g_clients[player_id].m_last_move = FUNC_PLAYER_BACK;
             g_clients[player_id].m_transform.Go_Straight(MOVE_TIME_ELAPSE);
-            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
-            {
-                if (ST_ACTIVE == g_clients[npc_id].m_status)
-                {
-                    g_clients[npc_id].m_transform.Go_Straight(MOVE_TIME_ELAPSE);
-                }
-            }
         }
         break;
         case FUNC_PLAYER_LEFT:
@@ -941,13 +966,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_LEFT;
             do_npc_rotate(player_id, CON_LEFT);
             g_clients[player_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
-            {
-                if (ST_ACTIVE == g_clients[npc_id].m_status)
-                {
-                    g_clients[npc_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                }
-            }
             g_clients[player_id].m_total_angle += (-ROTATE_TIME_ELAPSE * g_clients[player_id].m_rotate_speed) * 180.f / PIE;
         }
         break;
@@ -956,13 +974,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_RIGHT;
             do_npc_rotate(player_id, CON_RIGHT);
             g_clients[player_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-            for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
-            {
-                if (ST_ACTIVE == g_clients[npc_id].m_status)
-                {
-                    g_clients[npc_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-                }
-            }
             g_clients[player_id].m_total_angle += ROTATE_TIME_ELAPSE * g_clients[player_id].m_rotate_speed * 180.f / PIE;
         }
         break;

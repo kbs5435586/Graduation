@@ -41,28 +41,8 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-
-
-//PS_OUT PS_Main(VS_OUT vIn)
-//{
-//	PS_OUT vOut = (PS_OUT)0;
-//
-//	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vIn.vNormal, vIn.vWorldPos);
-//	AD_Light	tLight_Point_Red = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
-//
-//	float4	vOutColor = g_texture0.Sample(Sampler0, vIn.vTexUV);
-//	float4	vFogColor = float4(0.5f, 0.5f, 0.5f, 1.f);
-//
-//	vOut.vDiffuseTex = vOutColor;
-//	vOut.vNormalTex = vIn.vNormal;
-//	vOut.vPositionTex = vIn.vWorldPos;
-//	vOut.vShadeTex = tLight_Point_Red.vShade + tLight_Default.vShade;
-//	vOut.vPointLightTex = tLight_Point_Red.vDiffuse;
-//
-//
-//	return vOut;
-//}
-
+//float4		vBrushPos;
+//float		fBrushRange;
 PS_OUT PS_Main(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;
@@ -70,6 +50,19 @@ PS_OUT PS_Main(VS_OUT vIn)
 	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
 	float4	vNormal = mul(vIn.vNormal, matViewInv);
 
+	float4	vBrushTex = (float4)0;
+
+
+	if (vBrushPos.x - fBrushRange < vPosition.x && vPosition.x <= vBrushPos.x + fBrushRange &&
+		vBrushPos.z - fBrushRange < vPosition.z && vPosition.z <= vBrushPos.z + fBrushRange)
+	{
+		float2		vTexUV;
+
+		vTexUV.x = (vPosition.x - (vBrushPos.x - fBrushRange)) / (fBrushRange * 2.f);
+		vTexUV.y = ((vBrushPos.z + fBrushRange) - vPosition.z) / (fBrushRange * 2.f);
+
+		vBrushTex = g_texture2.Sample(Sampler0, vTexUV);
+	}
 
 
 	float4	vLightDir = -normalize(tLight[0].vLightDir);
@@ -94,8 +87,8 @@ PS_OUT PS_Main(VS_OUT vIn)
 	else
 	{
 		
-		//vOut.vDiffuseTex = vDiffuse;
-		vOut.vDiffuseTex = (vDiffuse +  vMtrlEmiv);
+		//vOut.vDiffuseTex = vDiffuse + vBrushTex;
+		vOut.vDiffuseTex = (vDiffuse +  vMtrlEmiv) + vBrushTex;
 	}
 
 	vOut.vNormalTex = vIn.vNormal;

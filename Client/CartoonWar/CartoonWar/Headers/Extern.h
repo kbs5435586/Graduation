@@ -15,7 +15,8 @@ extern int			g_iRedNum;
 extern int			g_iBlueNum;
 
 
-extern _vec3 g_vEyePt;
-extern _vec3 g_vLookatPt;
-extern bool        g_DefferedUIRender;
-extern int        g_DefferedRender;
+extern _vec3		g_vEyePt;
+extern _vec3		g_vLookatPt;
+extern bool			g_DefferedUIRender;
+extern int			g_DefferedRender;
+extern bool			g_InputMode;

@@ -427,6 +427,9 @@
     <Filter Include="97. Engine\01. Utility\12. FontMgr">
       <UniqueIdentifier>{d69c99c1-a4c5-47d6-9805-ffefcf1c8094}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\12. FontMgr\00. Font">
+      <UniqueIdentifier>{7d8126fe-aa58-42b9-8e59-60e1a3cb3c9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -789,6 +792,9 @@
     <ClInclude Include="..\Headers\FontMgr.h">
       <Filter>97. Engine\01. Utility\12. FontMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Font.h">
+      <Filter>97. Engine\01. Utility\12. FontMgr\00. Font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1121,6 +1127,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FontMgr.cpp">
       <Filter>97. Engine\01. Utility\12. FontMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Font.cpp">
+      <Filter>97. Engine\01. Utility\12. FontMgr\00. Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

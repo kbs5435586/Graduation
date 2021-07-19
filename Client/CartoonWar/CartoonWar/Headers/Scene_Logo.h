@@ -29,7 +29,8 @@ public:
 private:
 	HRESULT					Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement);
-
+private:
+	void					Input_ID_IP();
 public:
 	CRITICAL_SECTION		m_tCritical_Section_Shader = {};
 	HANDLE					m_hThread_Handle_Shader = {};
@@ -41,6 +42,13 @@ public:
 public:
 	CRITICAL_SECTION		m_tCritical_Section_Component = {};
 	HANDLE					m_hThread_Handle_Component = {};
+private:
+	string					m_strIP = {};
+	string					m_strID = {};
+private:
+	_bool					m_IsIP = true;
+private:
+	CInput*					m_pInput = nullptr;
 public:
 	static CScene_Logo* Create();
 protected:

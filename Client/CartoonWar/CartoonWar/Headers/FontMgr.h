@@ -1,9 +1,10 @@
 #pragma once
 #include "Base.h"
+class CFont;
+class CTransform;
 class CShader;
 class CTexture;
-class CStructedBuffer;
-class CTransform;
+class CRenderer;
 class CFontMgr :
     public CBase
 {
@@ -13,30 +14,20 @@ private:
     virtual ~CFontMgr() = default;
 public:
     HRESULT						Ready_FontMgr(const char* pFilePath);
-	HRESULT						Create_Buffer(const char* sentence, float drawX, float drawY);
+	HRESULT						Create_Buffer(const _tchar* pFontTag, const char* sentence, float drawX, float drawY);
+    void                        Update_Font();
 	void						Render_Font();
+    void                        Delete_Font(const _tchar* pFontTag);
+    void                        Delete_All_Fo1nt();
 private:
-    vector<FontType>			m_vecFont;
-    CStructedBuffer*			m_pFontOffset;
-	CShader*					m_pShaderCom = nullptr;
-	CTexture*					m_pTextureCom = nullptr;
-	CTransform*					m_pTransformCom = nullptr;
+    vector<FontType>			m_vecFontData;
+    map<const _tchar*, CFont*>  m_mapFont;
 private:
-	ComPtr<ID3D12Resource>		m_pVertexBuffer = nullptr;
-	ComPtr<ID3D12Resource>		m_pVertexUploadBuffer = nullptr;
-	ComPtr<ID3D12Resource>		m_pIndexBuffer = nullptr;
-	ComPtr<ID3D12Resource>		m_pIndexUploadBuffer = nullptr;
-	D3D12_PRIMITIVE_TOPOLOGY	m_PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	_uint						m_iSlot = 0;
-	_uint						m_iStride = 0;
-	_uint						m_iOffset = 0;
-private:
-	vector<FontInfo>			m_vecFontInfo;
-	_uint						m_iNumVertices = 0;
+    CTransform*                 m_pTransformCom = nullptr;
+    CShader*                    m_pShaderCom = nullptr;
+    CTexture*                   m_pTextureCom = nullptr;
 private:
 	HRESULT						CreateInputLayout();
-public:
-    CStructedBuffer*			GetFontOffset(){return m_pFontOffset;}
 public:
     static CFontMgr*			Create(const char* pFilePath);
 private:

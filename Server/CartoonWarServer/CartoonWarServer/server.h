@@ -81,6 +81,7 @@ public:
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
 	_vec3 move_to_spot(int id, _vec3* goto_pos);
+	float dist_between(int user_id, int other_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();

@@ -66,6 +66,10 @@ void CTerrain_Height::Render_GameObject()
 	REP tRep = {};
 	tRep.m_arrInt[2] = g_DefferedRender;
 
+	BRUSHINFO tBrush = {};
+	tBrush.fBrushRange = 50.f;
+	tBrush.vBrushPos = _vec4(50.f,0.f,50.f,1.f);
+
 
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -75,9 +79,14 @@ void CTerrain_Height::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b10)->SetData((void*)&tBrush);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
+
 
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1),  TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(0),  TEXTURE_REGISTER::t2);
 
 
 	CDevice::GetInstance()->UpdateTable();
@@ -141,6 +150,7 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pBrushTextureCom);
 	Safe_Release(m_pNaviCom);
 
 	
@@ -183,8 +193,10 @@ HRESULT CTerrain_Height::Ready_Component()
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
 		return E_FAIL;
-
-
+	m_pBrushTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_BrushTemp");
+	NULL_CHECK_VAL(m_pBrushTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture_Brush", m_pBrushTextureCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

@@ -645,4 +645,16 @@ struct FontInfo
 	D3D12_VERTEX_BUFFER_VIEW	tVertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		tIndexBufferView;
 	int							iIndices;
+
+	ComPtr<ID3D12Resource>		pVertexBuffer = nullptr;
+	ComPtr<ID3D12Resource>		pVertexUploadBuffer = nullptr;
+	ComPtr<ID3D12Resource>		pIndexBuffer = nullptr;
+	ComPtr<ID3D12Resource>		pIndexUploadBuffer = nullptr;
+
 };
+
+typedef struct tagBrushInfo
+{
+	Vector4		vBrushPos;
+	float		fBrushRange;
+}BRUSHINFO;
