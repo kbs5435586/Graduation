@@ -20,7 +20,7 @@ HRESULT CCollisionMgr::Ready_CollsionManager()
 void CCollisionMgr::Update_CollisionManager()
 {
 	Player_to_NPC_Collision();
-	Throw_to_NPC_Collision();
+	//Throw_to_NPC_Collision();
 }
 
 void CCollisionMgr::Player_to_NPC_Collision()
@@ -45,6 +45,10 @@ void CCollisionMgr::Player_to_NPC_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					(iter0)->GetOBBCollision() = true;
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+
+					//(iter0)->GetOBBCollision() = true;
+					//iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+					//iter0->GetIsParticle() = true;
 				}
 				
 

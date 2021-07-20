@@ -83,14 +83,13 @@ HRESULT CScene_Stage::Ready_Scene()
 	server->InitServer(g_hWnd);
 
 	Safe_Release(server);
+	g_IsCollisionStart = true;
 	Safe_Release(pManagement);
 	return S_OK;
 }
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
-	
-
 	return CScene::Update_Scene(fTimeDelta);
 }
 
