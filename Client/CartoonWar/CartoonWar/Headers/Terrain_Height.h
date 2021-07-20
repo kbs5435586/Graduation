@@ -7,6 +7,7 @@ class CTexture;
 class CShader;
 class CNavigation;
 class CFrustum;
+class CPicking;
 
 class CTerrain_Height :
     public CGameObject
@@ -38,5 +39,8 @@ private:
 	CTexture*								m_pTextureCom = nullptr;
 	CTexture*								m_pBrushTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
+	CPicking*								m_pPickingCom = nullptr;
+private:
+	BRUSHINFO								m_tBrush = {};
 };
 

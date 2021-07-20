@@ -1,8 +1,9 @@
-#include "framework.h"
+ï»¿#include "framework.h"
 #include "Buffer_Terrain_Height.h"
 #include "Transform.h"
 #include "QuadTree.h"
 #include "Frustum.h"
+#include "Picking.h"
 CBuffer_Terrain_Height::CBuffer_Terrain_Height()
 	: CVIBuffer()
 {
@@ -79,10 +80,10 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	if (0 == hFile)
 		return E_FAIL;
 
-	// ÆÄÀÏÁ¤º¸
+	// íŒŒì¼ì •ë³´
 	ReadFile(hFile, &m_fh, sizeof(BITMAPFILEHEADER), &dwByte, nullptr);
 
-	// ÀÌ¹ÌÁöÁ¤º¸
+	// ì´ë¯¸ì§€ì •ë³´
 	ReadFile(hFile, &m_ih, sizeof(BITMAPINFOHEADER), &dwByte, nullptr);
 
 	iNumVerticesX = m_ih.biWidth;
@@ -98,7 +99,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	else
 		fTemp = 10.f;
 
-	// ÇÈ¼¿Á¤º¸
+	// í”½ì…€ì •ë³´
 	ReadFile(hFile, m_pPixel, sizeof(_ulong) * (iNumVerticesX * iNumVerticesZ), &dwByte, nullptr);
 
 	CloseHandle(hFile);
@@ -159,7 +160,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		_vec3 vSour, vDest, vNormal, vCross;
 		_vec3 vTangent, vBinormal;
 
-		//ÁÂÇÏ
+		//ì¢Œí•˜
 		vSour = Vector3_::Subtract(vecVertices[vecIndices[i + 1]].vPos, vecVertices[vecIndices[i]].vPos);
 		vDest = Vector3_::Subtract(vecVertices[vecIndices[i + 2]].vPos, vecVertices[vecIndices[i]].vPos);
 		vCross = Vector3_::CrossProduct(vSour, vDest);
@@ -180,7 +181,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 		vecVertices[vecIndices[i + 2]].vBiNormal = vBinormal;
 		++++++i;
 
-		//¿ì»ó
+		//ìš°ìƒ
 		vSour = Vector3_::Subtract(vecVertices[vecIndices[i + 2]].vPos, vecVertices[vecIndices[i + 1]].vPos);
 		vDest = Vector3_::Subtract(vecVertices[vecIndices[i]].vPos, vecVertices[vecIndices[i + 1]].vPos);
 		vCross = Vector3_::CrossProduct(vSour, vDest);
@@ -297,12 +298,12 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 		m_pPosition[iCurrentIdx].y
 	};
 
-	// ¿À¸¥ÂÊÀ§¿¡ÀÖ´Â»ï°¢Çü
+	// ì˜¤ë¥¸ìª½ìœ„ì—ìžˆëŠ”ì‚¼ê°í˜•
 	if (fRatioX >= fRatioZ)
 	{
 		return fHeight[0] + (fHeight[1] - fHeight[0]) * fRatioX + (fHeight[2] - fHeight[1]) * fRatioZ;
 	}
-	// ¿ÞÂÊ ¾Æ·¡¿¡ÀÖ´Â»ï°¢Çü
+	// ì™¼ìª½ ì•„ëž˜ì—ìžˆëŠ”ì‚¼ê°í˜•
 	else
 	{
 		return fHeight[0] + (fHeight[3] - fHeight[0]) * fRatioZ + (fHeight[2] - fHeight[3]) * fRatioX;
@@ -356,6 +357,81 @@ HRESULT CBuffer_Terrain_Height::Culling_Frustum(CFrustum* pFrustum, const _matri
 	m_iNumIndices = iNumPolygon;
 
 	return S_OK;
+}
+
+_bool CBuffer_Terrain_Height::Picking_ToBuffer(_vec4* pOut, const CTransform* pTransformCOm, const CPicking* pPickingCom)
+{
+
+	_vec3	vRayPivot = pPickingCom->Get_MouseRayPivot();
+	_vec3	vRay = pPickingCom->Get_MouseRay();
+
+	_matrix		matWorldInv = pTransformCOm->Get_Matrix_Inverse();
+
+
+	vRayPivot = _vec3::Transform(vRayPivot, matWorldInv);
+	vRay = _vec3::TransformNormal(vRay, matWorldInv);
+	//D3DXVec3TransformCoord(&vRayPivot, &vRayPivot, &matWorldInv);
+	//D3DXVec3TransformNormal(&vRay, &vRay, &matWorldInv);
+
+	_float fU, fV, fDist;
+	_bool	isPick = false;
+
+	_vec3		vMapPos[4];
+
+	vMapPos[0] = m_pPosition[0];
+	vMapPos[1] = m_pPosition[m_iNumVerticesX - 1];
+	vMapPos[2] = m_pPosition[m_iNumVertices - m_iNumVerticesX];
+	vMapPos[3] = m_pPosition[m_iNumVertices - 1];
+
+	//XMVector3Inter
+	if (IntersectTriangle(vMapPos[1], vMapPos[0], vMapPos[2], vRayPivot, vRay, &fDist ,&fU, &fV ))
+		isPick = true;
+
+	if (IntersectTriangle(vMapPos[3], vMapPos[2], vMapPos[1], vRayPivot, vRay, &fDist, &fU, &fV))
+		isPick = true;
+
+	if (pOut != nullptr)
+	{
+		_vec3 vTemp;
+		vTemp = vRayPivot + vRay * fDist;
+		*pOut = _vec4(vTemp.x, vTemp.y, vTemp.z, 1.f);
+	}
+	return isPick;
+}
+
+_bool CBuffer_Terrain_Height::IntersectTriangle(_vec3& v0, _vec3& v1, _vec3& v2, _vec3 vPos, _vec3 vDir, _float* t, _float* u, _float* v)
+{
+	_vec3 edge1 = v1 - v0;
+	_vec3 edge2 = v2 - v0;
+	_vec3 pvec;
+	pvec = Vector3_::CrossProduct(vDir, edge2, false);
+	FLOAT det = Vector3_::DotProduct(edge1, pvec);
+	_vec3 tvec;
+	if (det > 0)
+	{
+		tvec = vPos - v0;
+	}
+	else
+	{
+		tvec = v0 - vPos;
+		det = -det;
+	}
+	if (det < 0.0001f)
+		return FALSE;
+	*u = Vector3_::DotProduct(tvec, pvec);
+	if (*u < 0.0f || *u > det)
+		return FALSE;
+	_vec3 qvec;
+	qvec = Vector3_::CrossProduct(tvec, edge1, false);
+	*v = Vector3_::DotProduct(tvec, pvec);
+	if (*v < 0.0f || *u + *v > det)
+		return FALSE;
+	*t = Vector3_::DotProduct(edge2, qvec);
+	FLOAT fInvDet = 1.0f / det;
+	*t *= fInvDet;
+	*u *= fInvDet;
+	*v *= fInvDet;
+	return TRUE;
 }
 
 void CBuffer_Terrain_Height::Free()
