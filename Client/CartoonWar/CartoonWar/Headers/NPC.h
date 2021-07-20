@@ -60,7 +60,6 @@ private:
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
-	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;

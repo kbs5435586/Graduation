@@ -82,9 +82,8 @@ void CUI_OnHeadBack::Render_GameObject()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
 	REP tRep = {};
-	tRep.m_arrFloat[0] = m_tInfo.fHP;
-	tRep.m_arrFloat[1] = m_tInfo.fMaxHP;
-	tRep.m_arrInt[0] = 0;
+	tRep.m_arrInt[0] = m_tInfo.fHP;
+	tRep.m_arrInt[1] = 0;
 
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);

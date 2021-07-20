@@ -25,6 +25,8 @@
 #include "UI_WoL.h"
 #include "UI_WoL_Blue.h"
 #include "UI_OnHead.h"
+#include "UI_MiniMap.h"
+#include "UI_Aim.h"
 
 // Environment
 #include "Fire.h"
@@ -126,6 +128,10 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_WoL_Blue", CUI_WoL_Blue::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead", CUI_OnHead::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_MiniMap", CUI_MiniMap::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Aim", CUI_Aim::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
@@ -233,7 +239,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
 	tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
-	tCameraDesc.vAxisY = _vec3(0.f, 1.f, -0.f);
+	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
@@ -327,6 +333,10 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MiniMap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Aim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;	

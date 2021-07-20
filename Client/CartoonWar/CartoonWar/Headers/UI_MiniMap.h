@@ -7,23 +7,23 @@ class CShader;
 class CTexture;
 class CObserver;
 
-class CUI_HP :
-    public CUI
+class CUI_MiniMap :
+	public CUI
 {
 private:
-	CUI_HP();
-	CUI_HP(const CUI_HP& rhs);
-	virtual ~CUI_HP() = default;
+	CUI_MiniMap();
+	CUI_MiniMap(const CUI_MiniMap& rhs);
+	virtual ~CUI_MiniMap() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float & fTimeDelta);
-	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
+	virtual _int							Update_GameObject(const _float& fTimeDelta);
+	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_HP*							Create();
+	static CUI_MiniMap*						Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
@@ -35,6 +35,9 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 private:
+	REP										m_tRep = {};
 	_bool									m_IsTemp = false;
+	_int									m_iMaxTexCnt = 11;
+	_float									m_fCurCnt = 0.f;
 };
 

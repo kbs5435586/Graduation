@@ -67,11 +67,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
 		return E_FAIL;
 
-	m_pUI_OnHeadBack = CUI_OnHeadBack::Create();
-	if (nullptr == m_pUI_OnHeadBack)
-		return E_FAIL;
-	if (FAILED(m_pUI_OnHeadBack->Ready_GameObject((void*)&vPos)))
-		return E_FAIL;
 	SetSpeed();
 	return S_OK;
 }
@@ -85,9 +80,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHead->SetInfo(m_tInfo);	
 
-	m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
-	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 
 	_vec3 vPickPos = {};
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
@@ -131,7 +123,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 
 
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
@@ -472,7 +463,6 @@ void CPlayer::Free()
 	Safe_Release(m_pNaviCom);
 
 	Safe_Release(m_pUI_OnHead);
-	Safe_Release(m_pUI_OnHeadBack);
 	CGameObject::Free();
 }
 
@@ -746,7 +736,7 @@ void CPlayer::Change_Class()
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
-			m_iCombatMotion[2] = 3;
+			m_iCombatMotion[2] = 2;
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -1068,6 +1058,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsHit = true;
 		m_IsCombat = true;
 	}
+
+
+
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
