@@ -75,15 +75,13 @@ HRESULT CScene_Stage::Ready_Scene()
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 
-
+	g_IsCollisionStart = true;
 	Safe_Release(pManagement);
 	return S_OK;
 }
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
-	
-
 	return CScene::Update_Scene(fTimeDelta);
 }
 

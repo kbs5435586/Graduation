@@ -78,8 +78,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
-
-
 	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
 	m_pColiider[1]->Update_Collider(m_pTransformCom);
 
@@ -209,7 +207,7 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	//m_pColiider[0]->Render_Collider();
+	m_pColiider[0]->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
 
@@ -1021,12 +1019,11 @@ void CPlayer::Obb_Collision()
 			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vTemp = { vPos - vTargetPos };
-			vTemp.Normalize();
+			vTemp *= 5.f;
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			//m_vMidPoint.y += 2.f;
+			m_vMidPoint.y +=10.f;
 			m_IsBazier = true;
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
@@ -1047,7 +1044,7 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 
 	_vec3 vPos = { fX, fY, fZ };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	fCnt += 0.01f;
+	fCnt += 0.02f;
 }
 
 void CPlayer::Input_Key(const _float& fTimeDelta)
@@ -1072,37 +1069,37 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsCombat = true;
 	}
 
-	//if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-	//{
-	//	if (!m_IsCombat)
-	//		m_iCurAnimIdx = 1;
-	//	else
-	//		m_iCurAnimIdx = m_iCombatMotion[1];
-	//	m_pTransformCom->Rotation_Y(-fTimeDelta);
-	//}
-	//if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
-	//{
-	//	if (!m_IsCombat)
-	//		m_iCurAnimIdx = 0;
-	//	else
-	//		m_iCurAnimIdx = m_iCombatMotion[0];
-	//}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
 
-	//if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-	//{
-	//	if (!m_IsCombat)
-	//		m_iCurAnimIdx = 1;
-	//	else
-	//		m_iCurAnimIdx = m_iCombatMotion[1];
-	//	m_pTransformCom->Rotation_Y(fTimeDelta);
-	//}
-	//if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
-	//{
-	//	if (!m_IsCombat)
-	//		m_iCurAnimIdx = 0;
-	//	else
-	//		m_iCurAnimIdx = m_iCombatMotion[0];
-	//}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+	}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{

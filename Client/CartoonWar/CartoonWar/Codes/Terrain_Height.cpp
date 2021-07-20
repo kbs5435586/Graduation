@@ -50,10 +50,10 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
-	if (GetKeyState(VK_LBUTTON) < 0)
-	{
-		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
-	}
+	//if (GetKeyState(VK_LBUTTON) < 0)
+	//{
+	//	m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
+	//}
 
 	return _int();
 }
@@ -78,8 +78,6 @@ void CTerrain_Height::Render_GameObject()
 
 	m_tBrush.fBrushRange = 50.f;
 
-
-
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
@@ -99,7 +97,7 @@ void CTerrain_Height::Render_GameObject()
 
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
-	//m_pNaviCom->Render_Navigation();
+	m_pNaviCom->Render_Navigation();
 
 
 	Safe_Release(pManagement);

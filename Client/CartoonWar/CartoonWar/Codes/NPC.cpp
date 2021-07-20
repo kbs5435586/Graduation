@@ -34,7 +34,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {25.f,0.f,0.f };
+	_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -92,6 +92,14 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 	m_pTransformCom->Set_PositionY(0.f);
+
+
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY);
+
 	Change_Class();
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -111,15 +119,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		return DEAD_OBJ;
-
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return -1;
-	pTerrainBuffer;
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	fY += 1.f;
-	m_pTransformCom->Set_PositionY(fY);
-
 
 	return NO_EVENT;
 }
@@ -203,7 +202,7 @@ void CNPC::Render_GameObject()
 	}
 
 
-	//m_pColiider[0]->Render_Collider();
+	m_pColiider[0]->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
@@ -1014,6 +1013,34 @@ void CNPC::AnimVectorClear()
 
 void CNPC::Obb_Collision()
 {
+	//if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	//{
+	//	if (!m_IsBazier)
+	//	{
+	//		_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+	//		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	//		_vec3 vTemp = { vPos - vTargetPos };
+	//		vTemp *= 5.f;
+	//		//vTemp.Normalize();
+	//		m_vStartPoint = vPos;
+	//		m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+	//		//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	//		m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+	//		m_vMidPoint.y += 10.f;
+
+	//		_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
+	//		Create_Particle(vParticlePos);
+	//		m_IsBazier = true;	
+	//	}
+	//	Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+	//}
+	//if (m_fBazierCnt >= 1.f)
+	//{
+	//	m_fBazierCnt = 0.f;
+	//	m_IsOBB_Collision = false;
+	//	m_IsBazier = false;
+	//}
+
 	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
 	{
 		if (!m_IsBazier)
@@ -1021,16 +1048,17 @@ void CNPC::Obb_Collision()
 			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vTemp = { vPos - vTargetPos };
-			vTemp.Normalize();
+			vTemp *= 5.f;
+			//vTemp.Normalize();
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			//m_vMidPoint.y += 2.f;
+			m_vMidPoint.y += 10.f;
 
 			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
 			Create_Particle(vParticlePos);
-			m_IsBazier = true;		
+			m_IsBazier = true;
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 	}
@@ -1050,7 +1078,7 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 
 	_vec3 vPos = { fX, fY, fZ };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	fCnt += 0.01f;
+	fCnt += 0.02f;
 
 
 }
