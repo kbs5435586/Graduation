@@ -6,7 +6,6 @@ class CShader;
 class CAnimator;
 class CNavigation;
 class CCollider;
-
 class CUI_OnHead;
 class CUI_OnHeadBack;
 class CPlayer :
@@ -67,7 +66,6 @@ private:
 	CCollider*								m_pColiider[2] = { nullptr };
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CFrustum*								m_pFrustumCom = nullptr;
-	
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
 	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;

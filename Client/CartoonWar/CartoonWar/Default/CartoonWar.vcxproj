@@ -222,6 +222,7 @@
     <ClInclude Include="..\Headers\Observer.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
+    <ClInclude Include="..\Headers\Picking.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\Reflection_Camera.h" />
@@ -344,6 +345,7 @@
     <ClCompile Include="..\Codes\Observer.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
+    <ClCompile Include="..\Codes\Picking.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\Reflection_Camera.cpp" />

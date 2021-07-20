@@ -12,6 +12,7 @@
 #include "Mesh.h"
 #include "Particle.h"
 #include "Animator.h"
+#include "Picking.h"
 
 #include "Buffer_RectCol.h"
 #include "Buffer_RectTex.h"

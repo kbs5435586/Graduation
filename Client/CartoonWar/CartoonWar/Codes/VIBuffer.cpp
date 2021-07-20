@@ -48,3 +48,8 @@ void CVIBuffer::Free()
 
 	CComponent::Free();
 }
+
+_bool CVIBuffer::IntersectTriangle(_vec3& v0, _vec3& v1, _vec3& v2, _vec3 vPos, _vec3 vDir, _float* t, _float* u, _float* v)
+{
+	return _bool();
+}

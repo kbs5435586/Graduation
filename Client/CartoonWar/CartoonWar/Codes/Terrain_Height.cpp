@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Terrain_Height.h"
 #include "Management.h"
+#include "Picking.h"
 
 CTerrain_Height::CTerrain_Height()
 	: CGameObject()
@@ -35,6 +36,9 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 
 _int CTerrain_Height::Update_GameObject(const _float& fTimeDelta)
 {
+	if (nullptr != m_pPickingCom)
+		m_pPickingCom->Update_Ray();
+
 	return _int();
 }
 
@@ -45,6 +49,11 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
+
+	if (GetKeyState(VK_LBUTTON) < 0)
+	{
+		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
+	}
 
 	return _int();
 }
@@ -66,9 +75,8 @@ void CTerrain_Height::Render_GameObject()
 	REP tRep = {};
 	tRep.m_arrInt[2] = g_DefferedRender;
 
-	BRUSHINFO tBrush = {};
-	tBrush.fBrushRange = 50.f;
-	tBrush.vBrushPos = _vec4(50.f,0.f,50.f,1.f);
+
+	m_tBrush.fBrushRange = 50.f;
 
 
 
@@ -79,7 +87,7 @@ void CTerrain_Height::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b10)->SetData((void*)&tBrush);
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b10)->SetData((void*)&m_tBrush);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
 
@@ -152,6 +160,7 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pBrushTextureCom);
 	Safe_Release(m_pNaviCom);
+	Safe_Release(m_pPickingCom);
 
 	
 	CGameObject::Free();
@@ -196,6 +205,11 @@ HRESULT CTerrain_Height::Ready_Component()
 	m_pBrushTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_BrushTemp");
 	NULL_CHECK_VAL(m_pBrushTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture_Brush", m_pBrushTextureCom)))
+		return E_FAIL;
+
+	m_pPickingCom = (CPicking*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Picking");
+	NULL_CHECK_VAL(m_pPickingCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Picking", m_pPickingCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

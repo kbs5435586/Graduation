@@ -45,15 +45,16 @@ protected:
 public:
 	_uint									m_iLayerIdx = 0;
 protected:
+	_float									m_fBazierCnt = 0.f;
 	_bool									m_IsClone = false;
 	_bool									m_IsOBB_Collision = false; 
-	_float									m_fBazierCnt = 0.f;
 	_bool									m_IsBazier = false;
 	_bool									m_IsDead = false;
 	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;
 	_bool									m_IsOldMatrix = false;
 	_bool									m_IsOldMatrix_Temp = false;
+	_bool									m_IsPick = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 protected:
 	_matrix									m_matOldWorld;
