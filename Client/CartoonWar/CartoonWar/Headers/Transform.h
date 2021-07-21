@@ -43,9 +43,7 @@ public:
 	void					Rotation_X(const _float& fTimeDelta);
 	void					Rotation_Y(const _float& fTimeDelta);
 	void					Rotation_Z(const _float& fTimeDelta);
-public:
-	void					RotationRev_Y(_matrix matWorld, const _float& fTimeDelta);
-
+	void					Rotation_Rev(const _float& fTimeDelta, CTransform* matWorld);
 	void					Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta);
 	void					Rotation_Axis(const _float& fTimeDelta,const _vec3* pAxis);
 private:

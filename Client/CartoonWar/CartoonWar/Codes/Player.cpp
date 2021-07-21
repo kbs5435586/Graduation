@@ -1219,7 +1219,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		m_tInfo.fHP =0.f;;
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_NPC", L"Com_Transform", 0);
+		//m_tInfo.fHP =0.f;;
+		m_pTransformCom->Rotation_Rev(fTimeDelta, pTransform);
 	}
 
 

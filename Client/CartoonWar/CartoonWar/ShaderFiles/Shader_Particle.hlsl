@@ -117,8 +117,11 @@ float4	PS_Main(GS_OUT _in) : SV_TARGET
 
 
 	float fRatio = tData[_in.iInstID].m_fCurTime / tData[_in.iInstID].m_fLifeTime;
-	float4 vCurColor = (g_vec4_1 - g_vec4_0) * fRatio + g_vec4_0;
-	 vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
+	//float4 vCurColor = (g_vec4_1 - g_vec4_0) * fRatio + g_vec4_0;
+	// vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
+
+	float4 vCurColor = g_texture0.Sample(Sampler0, _in.vUV);
+	 //vCurColor *= g_texture0.Sample(Sampler0, _in.vUV);
 
 	vOut = vCurColor;
 
