@@ -79,36 +79,37 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-	/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
-		{
-			m_pTransform->Go_Straight(fTimeDelta);
-		}
-		if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
-		{
-			m_pTransform->BackWard(fTimeDelta);
-		}
-		if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
-		{
-			m_pTransform->Go_Left(fTimeDelta);
-		}
-		if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
-		{
-			m_pTransform->Go_Right(fTimeDelta);
-		}
-		_long	MouseMove = 0;
-		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-		{
-			m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		}
-		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-		{
-			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-		}*/
+		/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+			{
+				m_pTransform->Go_Straight(fTimeDelta);
+			}
+			if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
+			{
+				m_pTransform->BackWard(fTimeDelta);
+			}
+			if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
+			{
+				m_pTransform->Go_Left(fTimeDelta);
+			}
+			if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
+			{
+				m_pTransform->Go_Right(fTimeDelta);
+			}
+			_long	MouseMove = 0;
+			if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+			{
+				m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+			}
+			if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+			{
+				m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+			}*/
 	}
 
-	//{
+	{
 
-		//{
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Player", L"Com_Transform", 0);
 
 		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
 
@@ -167,24 +168,24 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,L"Layer_Player", L"Com_Transform", 0);
 		//m_pTransform->Rotation_Rev(fTimeDelta, pTransform);
 
-		
+
 		//if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 		//{
 		//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, 
 		//	m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 		//}
 
-	//		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-	//		{
-	//			//m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-	//		}
-	//		Safe_Release(server);
-	//	}
+
+	}
 
 
-	//}
 
-
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RBUTTON))
+	{
+		m_tProjDesc.fFovY = XMConvertToRadians(30.f);
+		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
+		m_tProjDesc.fNear = g_Near;
+		m_tProjDesc.fFar = 600.f;
 
 
 		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
@@ -203,13 +204,13 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_tProjDesc.fFar = 600.f;
 
 
-	//	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
-	//	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
-	//	m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
-	//	m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
-	//	m_matProj._34 = 1.f;
-	//	m_matProj._44 = 0.0f;
-	//}
+		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
+		m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
+		m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
+		m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
+		m_matProj._34 = 1.f;
+		m_matProj._44 = 0.0f;
+	}
 
 	return _int();
 }
