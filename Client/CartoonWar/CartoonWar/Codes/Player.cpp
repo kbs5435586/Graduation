@@ -47,10 +47,11 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	}
 
 
-	_vec3 vColliderSize = { 40.f ,160.f,40.f };
-	//_vec3 vColliderSize = { 70.f ,160.f,70.f };
-	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	_vec3 vColliderSize = { 400.f ,160.f,40.f };
+	//_vec3 vColliderSize = { 60.f ,80.f,60.f };
+	m_pCollider_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pCollider_Attack->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
@@ -73,8 +74,11 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
-	m_pColiider[1]->Update_Collider(m_pTransformCom);
+	Change_Class();
+	Attack(fTimeDelta);
+	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0]);
+	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
 	m_pUI_OnHead->Update_GameObject(fTimeDelta);
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
@@ -95,8 +99,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_PositionY(fY);
 
 
-	Change_Class();
+
 	Input_Key(fTimeDelta);
+
 	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -112,6 +117,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
+	if (m_IsDead)
+		Resurrection();
 
 
 
@@ -133,8 +140,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 			return -1;
-		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REF, this)))
-		//	return -1;
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
@@ -146,7 +151,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 
 	Set_Animation(fTimeDelta);
-
 	return _int();
 }
 
@@ -198,7 +202,8 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	m_pColiider[0]->Render_Collider();
+	m_pCollider_OBB->Render_Collider();
+	m_pCollider_Attack->Render_Collider(1);
 	//m_pColiider[1]->Render_Collider();
 
 
@@ -456,8 +461,9 @@ void CPlayer::Free()
 	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pShaderCom_Reflection);
 	Safe_Release(m_pFrustumCom);
-	Safe_Release(m_pColiider[0]);
-	Safe_Release(m_pColiider[1]);
+	Safe_Release(m_pCollider_OBB);
+	Safe_Release(m_pCollider_AABB);
+	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
@@ -652,14 +658,19 @@ HRESULT CPlayer::Ready_Component()
 		return E_FAIL;
 
 
-	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColiider[0])))
+	m_pCollider_OBB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pCollider_OBB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pCollider_OBB)))
 		return E_FAIL;
 
-	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
-	NULL_CHECK_VAL(m_pColiider[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColiider[1])))
+	m_pCollider_AABB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pCollider_AABB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pCollider_AABB)))
+		return E_FAIL;
+
+	m_pCollider_Attack = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_ATTACK");
+	NULL_CHECK_VAL(m_pCollider_Attack, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_Attack", m_pCollider_Attack)))
 		return E_FAIL;
 
 	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
@@ -698,7 +709,7 @@ void CPlayer::Set_Animation(const _float& fTimeDelta)
 {
 	if (m_iCurAnimIdx != m_iPreAnimIdx)
 	{		
-		Attack(fTimeDelta);
+	
 		m_vecAnimCtrl[m_iCurAnimIdx].fCurTime = 0.f;
 		m_iPreAnimIdx = m_iCurAnimIdx;
 	}
@@ -732,7 +743,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
@@ -763,7 +774,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
 			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -794,8 +805,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[1] = { 70.f ,80.f,70.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -825,8 +836,8 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[1] = { 70.f ,80.f,70.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -856,7 +867,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
 			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -886,7 +897,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,100.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -987,7 +998,6 @@ void CPlayer::Change_Class()
 		}
 		break;
 		}
-		m_pTransformCom->SetSpeed(m_fSpeed);
 		m_ePreClass = m_eCurClass;
 	}
 }
@@ -1209,7 +1219,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		m_tInfo.fHP -= 1.f;
+		m_tInfo.fHP =0.f;;
 	}
 
 
@@ -1442,17 +1452,6 @@ void CPlayer::Attack(const _float& fTimeDelta)
 		m_iAttackMotion[1] = 7;
 		break;
 	}
-
-	if (m_iCurAnimIdx == m_iAttackMotion[1] || m_iCurAnimIdx == m_iAttackMotion[0])
-	{
-		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
-		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
-	}
-	else
-	{
-		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
-		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
-	}
 }
 
 void CPlayer::Combat(const _float& fTimeDelta)
@@ -1497,5 +1496,18 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
 
+}
+
+void CPlayer::Resurrection()
+{
+	m_eCurClass = CLASS::CLASS_WORKER;
+	m_iCurAnimIdx = 0;
+	_vec3 vPos = { 5.f,0.f,5.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
+	m_tInfo = INFO(100, 1, 1, 0);
+	m_IsDead = false;
 }
 

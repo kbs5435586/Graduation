@@ -22,18 +22,25 @@ HRESULT CBuffer_CubeTex::Ready_VIBuffer()
 
 	vecVertices[0].vPosition = _vec3(-0.5f, 0.5f, -0.5f);
 	vecVertices[0].vTex = vecVertices[0].vPosition;
+
 	vecVertices[1].vPosition = _vec3(0.5f, 0.5f, -0.5f);
 	vecVertices[1].vTex = vecVertices[1].vPosition;
+
 	vecVertices[2].vPosition = _vec3(0.5f, -0.5f, -0.5f);
 	vecVertices[2].vTex = vecVertices[2].vPosition;
+
 	vecVertices[3].vPosition = _vec3(-0.5f, -0.5f, -0.5f);
 	vecVertices[3].vTex = vecVertices[3].vPosition;
+
 	vecVertices[4].vPosition = _vec3(-0.5f, 0.5f, 0.5f);
 	vecVertices[4].vTex = vecVertices[4].vPosition;
+
 	vecVertices[5].vPosition = _vec3(0.5f, 0.5f, 0.5f);
 	vecVertices[5].vTex = vecVertices[5].vPosition;
+
 	vecVertices[6].vPosition = _vec3(0.5f, -0.5f, 0.5f);
 	vecVertices[6].vTex = vecVertices[6].vPosition;
+
 	vecVertices[7].vPosition = _vec3(-0.5f, -0.5f, 0.5f);
 	vecVertices[7].vTex = vecVertices[7].vPosition;
 

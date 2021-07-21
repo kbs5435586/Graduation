@@ -38,7 +38,7 @@ HRESULT CUI_MiniMap::Ready_GameObject(void* pArg)
 
 _int CUI_MiniMap::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
+	//m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
 
 	m_fCurCnt += fTimeDelta*10.f;
 	if (m_fCurCnt >= m_iMaxTexCnt)
@@ -50,8 +50,8 @@ _int CUI_MiniMap::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+		//	return E_FAIL;
 	}
 
 	return _int();

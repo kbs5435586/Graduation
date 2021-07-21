@@ -15,7 +15,7 @@ private:
     virtual ~CCollider() = default;
 public:
     HRESULT                     Ready_Collider(COLLIDER_TYPE eType);
-    HRESULT                     Ready_Collider_AABB_BOX(CTransform* pTransform, const _vec3 vSize = {1.f,1.f,1.f});
+    HRESULT                     Ready_Collider_AABB_BOX(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
     HRESULT                     Ready_Collider_OBB_BOX(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
     HRESULT                     Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
@@ -32,7 +32,7 @@ public:
     void				        Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform);
     _bool                       Collision_OBB(CCollider* pTargetCollider);
 public:
-    void                        Update_Collider(CTransform* pTransform, CLASS eCurClass = CLASS::CLASS_END);
+    void                        Update_Collider(CTransform* pTransform, _vec3 vSize ,CLASS eCurClass = CLASS::CLASS_END);
     void                        Update_Collider_Ex(CTransform* pTransform);
     _matrix				        Compute_WorldTransform();
 private:
@@ -41,7 +41,7 @@ private:
     _matrix                     Remove_Rotation(_matrix matWorld);
     HRESULT                     Create_InputLayOut();
 public:
-    void                        Render_Collider(CStructedBuffer* pArg = nullptr);
+    void                        Render_Collider(_uint iColorTemp = 0);
 public:
     static CCollider*           Create(COLLIDER_TYPE eType);
     virtual CComponent*         Clone_Component(void* pArg);

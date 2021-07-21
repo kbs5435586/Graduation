@@ -55,6 +55,7 @@ protected:
 	_bool									m_IsOldMatrix = false;
 	_bool									m_IsOldMatrix_Temp = false;
 	_bool									m_IsPick = false;
+	_bool									m_IsRun = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 protected:
 	_matrix									m_matOldWorld;
