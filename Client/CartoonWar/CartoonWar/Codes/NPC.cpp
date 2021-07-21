@@ -147,6 +147,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		return DEAD_OBJ;
 
+	Safe_Release(server);
 	return NO_EVENT;
 }
 
