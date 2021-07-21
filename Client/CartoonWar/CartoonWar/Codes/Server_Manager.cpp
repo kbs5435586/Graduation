@@ -815,6 +815,15 @@ void CServer_Manager::send_attack_packet()
 	send_packet(&m_packet);
 }
 
+void CServer_Manager::send_mouse_packet(float rotate)
+{
+	cs_packet_mouse m_packet;
+	m_packet.type = CS_PACKET_MOUSE;
+	m_packet.size = sizeof(m_packet);
+	m_packet.mouse = rotate;
+	send_packet(&m_packet);
+}
+
 void CServer_Manager::send_position_packet(_vec3* pos)
 {
 	cs_packet_position m_packet;

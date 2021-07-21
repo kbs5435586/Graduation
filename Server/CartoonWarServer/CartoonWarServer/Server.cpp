@@ -182,6 +182,12 @@ void Server::process_packet(int user_id, char* buf)
         do_move(user_id, GO_COLLIDE);
     }
     break;
+    case CS_PACKET_MOUSE:
+    {
+        cs_packet_mouse* packet = reinterpret_cast<cs_packet_mouse*>(buf);
+        cout << packet->mouse << endl;
+    }
+    break;
     default:
         cout << "Unknown Packet Type Error\n";
         DebugBreak();

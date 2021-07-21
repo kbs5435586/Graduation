@@ -43,7 +43,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -158,13 +158,20 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		vPos = vPos + vTemp;
 		_long	MouseMove = 0;
 
+	
+
 		{
+			CServer_Manager* server = CServer_Manager::GetInstance();
+			if (nullptr == server)
+				return -1;
+			server->AddRef();
 
 			m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		//	if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-		//	{
-		//		pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
-		//	}
+			if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+			{
+				pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
+				server->send_mouse_packet(MouseMove);
+			}
 			if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
 			{
 				m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
@@ -175,9 +182,8 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			{
 				//m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 			}
-
+			Safe_Release(server);
 		}
-
 
 
 	}

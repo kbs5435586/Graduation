@@ -44,6 +44,7 @@ constexpr char CS_PACKET_CHANGE_FORMATION = 5;
 constexpr char CS_PACKET_ATTACK = 6;
 constexpr char CS_PACKET_ANIMATION = 7;
 constexpr char CS_PACKET_POSITION = 8;
+constexpr char CS_PACKET_MOUSE = 9;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
@@ -210,6 +211,13 @@ struct sc_packet_animation
 	char			type;
 	unsigned char	anim;
 	int				id;
+};
+
+struct cs_packet_mouse
+{
+	char			size;
+	char			type;
+	float			mouse;
 };
 
 struct cs_packet_animation
