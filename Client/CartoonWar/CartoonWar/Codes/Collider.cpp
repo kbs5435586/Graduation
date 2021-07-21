@@ -460,8 +460,9 @@ _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 	return _bool(m_IsColl = true);
 }
 
-void CCollider::Update_Collider(CTransform* pTransform, CLASS eCurClass)
+void CCollider::Update_Collider(CTransform* pTransform, _vec3 vSize, CLASS eCurClass)
 {
+	m_vSize = vSize;
 	_matrix pTarget_matrix = pTransform->Get_Matrix();
 	m_matWorld = pTransform->Get_Matrix();
 	//m_matWorld.m[3][1] += 10.f;
@@ -487,7 +488,7 @@ void CCollider::Update_Collider(CTransform* pTransform, CLASS eCurClass)
 		matTemp.m[2][2] *= m_vSize.z;
 
 		matTemp = matTemp * matTemp_Rotate;
-		if (eCurClass == CLASS::CLASS_MMAGE || eCurClass == CLASS::CLASS_CAVALRY)
+		if (eCurClass == CLASS::CLASS_MMAGE || eCurClass == CLASS::CLASS_CAVALRY || eCurClass == CLASS(2))
 		{
 			matTemp.m[3][1] += 5.f;
 		}
@@ -496,6 +497,21 @@ void CCollider::Update_Collider(CTransform* pTransform, CLASS eCurClass)
 			matTemp.m[3][1] += 3.f;
 		}
 		m_pTransformCom->Set_Matrix(matTemp);
+		m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+		m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
+
+		if (m_pOBB)
+		{
+			m_pOBB->vPoint[0] = _vec3(m_vMin.x, m_vMax.y, m_vMin.z);
+			m_pOBB->vPoint[1] = _vec3(m_vMax.x, m_vMax.y, m_vMin.z);
+			m_pOBB->vPoint[2] = _vec3(m_vMax.x, m_vMin.y, m_vMin.z);
+			m_pOBB->vPoint[3] = _vec3(m_vMin.x, m_vMin.y, m_vMin.z);
+
+			m_pOBB->vPoint[4] = _vec3(m_vMin.x, m_vMax.y, m_vMax.z);
+			m_pOBB->vPoint[5] = _vec3(m_vMax.x, m_vMax.y, m_vMax.z);
+			m_pOBB->vPoint[6] = _vec3(m_vMax.x, m_vMin.y, m_vMax.z);
+			m_pOBB->vPoint[7] = _vec3(m_vMin.x, m_vMin.y, m_vMax.z);
+		}
 	}
 	break;
 	case COLLIDER_TYPE::COLLIDER_SPHERE:
@@ -632,6 +648,7 @@ HRESULT CCollider::Create_InputLayOut()
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
@@ -640,7 +657,7 @@ HRESULT CCollider::Create_InputLayOut()
 	return S_OK;
 }
 
-void CCollider::Render_Collider(CStructedBuffer* pArg)
+void CCollider::Render_Collider(_uint iColorTemp)
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -655,16 +672,8 @@ void CCollider::Render_Collider(CStructedBuffer* pArg)
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 	REP tRep = {};
-	if (pArg)
-	{
-		tRep.m_arrInt[1] = 27;
-		tRep.m_arrInt[0] = 1;
-		pArg->Update_Data(TEXTURE_REGISTER::t8);
-	}
-	else
-	{
-		tRep.m_arrInt[0] = 0;
-	}
+	tRep.m_arrInt[0] = iColorTemp;
+
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(),

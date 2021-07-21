@@ -48,6 +48,7 @@ private:
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
 	void									SetSpeed();
+	void									Resurrection();
 public:
 	CLASS&									GetClass(){return m_eCurClass;}
 private:
@@ -62,7 +63,9 @@ private:
 	CShader*								m_pShaderCom_Reflection = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
-	CCollider*								m_pColiider[2] = { nullptr };
+	CCollider*								m_pCollider_OBB =  nullptr;
+	CCollider*								m_pCollider_AABB = nullptr;
+	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CFrustum*								m_pFrustumCom = nullptr;
 private:

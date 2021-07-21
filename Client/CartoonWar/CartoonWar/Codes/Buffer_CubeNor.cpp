@@ -14,43 +14,19 @@ CBuffer_CubeNor::CBuffer_CubeNor(const CBuffer_CubeNor& rhs)
 HRESULT CBuffer_CubeNor::Ready_VIBuffer()
 {
 	m_iNumVertices = 8;
-	m_iStride = sizeof(VTXTEXCUBENOR);
-	m_PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_iStride = sizeof(VTXCOL);
 
-	vector< VTXTEXCUBENOR> vecVertices;
-	vecVertices.resize(8);
+	vector<VTXCOL>	vecVertices;
+	vecVertices.resize(m_iNumVertices);
 
-	vecVertices[0].vPosition = _vec3(-0.5f, 0.5f, -0.5f);
-	vecVertices[0].vTex = vecVertices[0].vPosition;
-	vecVertices[0].vNormal = vecVertices[0].vPosition;
-
-	vecVertices[1].vPosition = _vec3(0.5f, 0.5f, -0.5f);
-	vecVertices[1].vTex = vecVertices[1].vPosition;
-	vecVertices[1].vNormal = vecVertices[1].vPosition;
-
-	vecVertices[2].vPosition = _vec3(0.5f, -0.5f, -0.5f);
-	vecVertices[2].vTex = vecVertices[2].vPosition;
-	vecVertices[2].vNormal = vecVertices[2].vPosition;
-
-	vecVertices[3].vPosition = _vec3(-0.5f, -0.5f, -0.5f);
-	vecVertices[3].vTex = vecVertices[3].vPosition;
-	vecVertices[3].vNormal = vecVertices[3].vPosition;
-
-	vecVertices[4].vPosition = _vec3(-0.5f, 0.5f, 0.5f);
-	vecVertices[4].vTex = vecVertices[4].vPosition;
-	vecVertices[4].vNormal = vecVertices[4].vPosition;
-
-	vecVertices[5].vPosition = _vec3(0.5f, 0.5f, 0.5f);
-	vecVertices[5].vTex = vecVertices[5].vPosition;
-	vecVertices[5].vNormal = vecVertices[5].vPosition;
-
-	vecVertices[6].vPosition = _vec3(0.5f, -0.5f, 0.5f);
-	vecVertices[6].vTex = vecVertices[6].vPosition;
-	vecVertices[6].vNormal = vecVertices[6].vPosition;
-
-	vecVertices[7].vPosition = _vec3(-0.5f, -0.5f, 0.5f);
-	vecVertices[7].vTex = vecVertices[7].vPosition;
-	vecVertices[7].vNormal = vecVertices[7].vPosition;
+	vecVertices[0] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(-0.5f, 0.5f, -0.5f));
+	vecVertices[1] = VTXCOL(XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(0.5f, 0.5f, -0.5f));
+	vecVertices[2] = VTXCOL(XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(0.5f, -0.5f, -0.5f));
+	vecVertices[3] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(-0.5f, -0.5f, -0.5f));
+	vecVertices[4] = VTXCOL(XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(-0.5f, 0.5f, 0.5f));
+	vecVertices[5] = VTXCOL(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(0.5f, 0.5f, 0.5f));
+	vecVertices[6] = VTXCOL(XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(0.5f, -0.5f, 0.5f));
+	vecVertices[7] = VTXCOL(XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.f), XMFLOAT3(-0.5f, -0.5f, 0.5f));
 
 	m_iNumIndices = 36;
 
@@ -76,6 +52,7 @@ HRESULT CBuffer_CubeNor::Ready_VIBuffer()
 
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
 	CDevice::GetInstance()->Open();
 	{
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(m_iStride * m_iNumVertices);
@@ -87,10 +64,9 @@ HRESULT CBuffer_CubeNor::Ready_VIBuffer()
 			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pVertexUploadBuffer))))
 			return E_FAIL;
 
-
 		D3D12_SUBRESOURCE_DATA vertexData = {};
 		vertexData.pData = (void*)(vecVertices.data());
-		vertexData.RowPitch = m_iStride * m_iNumVertices;
+		vertexData.RowPitch = m_iStride * m_iNumVertices;;
 		vertexData.SlicePitch = m_iStride * m_iNumVertices;
 
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pVertexBuffer.Get(), m_pVertexUploadBuffer.Get(), 0, 0, 1, &vertexData);
@@ -101,11 +77,9 @@ HRESULT CBuffer_CubeNor::Ready_VIBuffer()
 		D3D12_RESOURCE_DESC		tResource_Desc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(_uint) * m_iNumIndices);
 
 
-		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE,
-			&tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Default, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&m_pIndexBuffer))))
 			return E_FAIL;
-		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE,
-			&tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pIndexUploadBuffer))))
+		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pIndexUploadBuffer))))
 			return E_FAIL;
 
 		D3D12_SUBRESOURCE_DATA indexData = {};
@@ -129,8 +103,11 @@ HRESULT CBuffer_CubeNor::Ready_VIBuffer()
 	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * m_iNumIndices;
 
 	CDevice::GetInstance()->WaitForFenceEvent();
+
+
 	return S_OK;
 }
+
 
 CBuffer_CubeNor* CBuffer_CubeNor::Create()
 {

@@ -38,7 +38,8 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 
 _int CUI_HP::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
+	if(CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player").size())
+		m_tInfo = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",0)->GetInfo();
 	return _int();
 }
 
