@@ -79,6 +79,12 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
+	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
 	Change_Class();
 	Attack(fTimeDelta);
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
@@ -91,10 +97,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	_vec3 vPickPos = {};
 
-	CServer_Manager* server = CServer_Manager::GetInstance();
-	if (nullptr == server)
-		return -1;
-	server->AddRef();
+	
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
 
@@ -124,8 +127,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 
-	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
-	Change_Class();
 	m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 
 	if (m_iLayerIdx == server->Get_PlayerID())
