@@ -83,6 +83,11 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHead->SetInfo(m_tInfo);
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
@@ -128,7 +133,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
 		{
 			m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-			m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
