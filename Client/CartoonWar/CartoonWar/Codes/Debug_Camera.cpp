@@ -79,7 +79,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+	/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
 			m_pTransform->Go_Straight(fTimeDelta);
 		}
@@ -103,80 +103,76 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 		{
 			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-		}
+		}*/
 	}
 
 	//{
 
-	//	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-	//		L"Layer_Player", L"Com_Transform", 0);
+		//{
 
-	//	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
-	//
-
-	//	_vec3 vPos, vUp, vLook;
-	//	_vec3 vTempUp, vTempLook, vTempRight;
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
 
 
-	//	vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	//	vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
-	//	vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+		_vec3 vPos, vRight, vUp, vLook;
+		vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		vRight = {};
+		vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
+		vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+
+		if (m_IsFix)
+		{
+			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+			{
+				vPos.y += 5.f;
+				vUp *= 20.f;
+				vLook *= -5.f;
+			}
+			else
+			{
+				vPos.y += 5.f;
+				vUp *= 40.f;
+				vLook *= -5.f;
+			}
+
+		}
+		else
+		{
+			vPos.y += 5.f;
+			vUp *= 100.f;
+			vLook *= -250.f;
+		}
+		_vec3 vTemp = vUp - vLook;
+		vPos = vPos + vTemp;
+		vRight = Vector3_::CrossProduct(vUp, vLook);
+		vUp = Vector3_::Normalize(vUp);
+		vLook = Vector3_::Normalize(vLook);
 
 
+		_long	MouseMove = 0;
+		m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-	//	if (m_IsFix)
-	//	{
-	//		if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER || 
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) || 
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
-	//		{
-	//			vPos.y += 5.f;
-	//			vUp *= 20.f;
-	//			vLook *= -5.f;
-	//		}
-	//		else
-	//		{
-	//			vPos.y += 5.f;
-	//			vUp *= 40.f;
-	//			vLook *= -5.f;
-	//		}
-	//	
+		//if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+		//{
+		//	m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
+		//	//pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
+		//}
+		//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,L"Layer_Player", L"Com_Transform", 0);
+		//m_pTransform->Rotation_Rev(fTimeDelta, pTransform);
 
-	//	}
-	//	else
-	//	{
-	//		vPos.y +=5.f;
-	//		vUp  *= 100.f;
-	//		vLook *= -250.f;
-	//	}
-
-
-	//	_vec3 vTemp = vUp - vLook;
-	//	vPos = vPos + vTemp;
-	//	_long	MouseMove = 0;
-
-	//
-
-	//	{
-	//		CServer_Manager* server = CServer_Manager::GetInstance();
-	//		if (nullptr == server)
-	//			return -1;
-	//		server->AddRef();
-
-	//		m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	//		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-	//		{
-	//			pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
-	//			server->send_mouse_packet(MouseMove);
-	//		}
-	//		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-	//		{
-	//			m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
-	//		}
-
+		
+		//if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+		//{
+		//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, 
+		//	m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		//}
 
 	//		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 	//		{
@@ -190,28 +186,21 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 
 
-	//if (CManagement::GetInstance()->Key_Pressing(KEY_RBUTTON))
-	//{
-	//	m_tProjDesc.fFovY = XMConvertToRadians(30.f);
-	//	m_tProjDesc.fAspect = _float(WINCX) / WINCY;
-	//	m_tProjDesc.fNear = g_Near;
-	//	m_tProjDesc.fFar = 600.f;
 
-	//	
-	//	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
-	//	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
-	//	m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
-	//	m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
-	//	m_matProj._34 = 1.f;
-	//	m_matProj._44 = 0.0f;
+		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
+		m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
+		m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
+		m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
+		m_matProj._34 = 1.f;
+		m_matProj._44 = 0.0f;
 
-	//}
-	//if(CManagement::GetInstance()->Key_Up(KEY_RBUTTON))
-	//{
-	//	m_tProjDesc.fFovY = XMConvertToRadians(60.f);
-	//	m_tProjDesc.fAspect = _float(WINCX) / WINCY;
-	//	m_tProjDesc.fNear = g_Near;
-	//	m_tProjDesc.fFar = 600.f;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_RBUTTON))
+	{
+		m_tProjDesc.fFovY = XMConvertToRadians(60.f);
+		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
+		m_tProjDesc.fNear = g_Near;
+		m_tProjDesc.fFar = 600.f;
 
 
 	//	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
@@ -271,7 +260,7 @@ CDebug_Camera* CDebug_Camera::Create()
 }
 
 CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, _uint iIdx)
-{ 
+{
 	CDebug_Camera* pInstance = new CDebug_Camera(*this);
 
 	if (FAILED(pInstance->Ready_GameObject()))

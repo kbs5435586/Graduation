@@ -132,6 +132,20 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_iLayerIdx == server->Get_PlayerID())
 		Input_Key(fTimeDelta);
 
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
+		{
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		}
+		else
+		{
+			m_iCurAnimIdx = 0;
+		}
+		m_IsOnce = false;
+		m_IsHit = false; // 수정
+	}
+
 	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -1324,26 +1338,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
 		m_IsOnce = true;
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		if (m_IsCombat)
-		{
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-		else
-		{
-			m_iCurAnimIdx = 0;
-			//m_cCondition = CON_IDLE;
-			//if (m_cLastCondition != m_cCondition)
-			//{
-				server->Set_Anim(m_iCurAnimIdx);
-				server->send_animation_packet(A_IDLE);
-			//	m_cLastCondition = m_cCondition;
-			//}
-		}
-		m_IsOnce = false;
-		m_IsHit = false; // 수정
-	}
+	
 	Safe_Release(server);
 }
 
