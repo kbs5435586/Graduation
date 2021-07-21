@@ -25,5 +25,6 @@ private:
 private:
 	_bool						m_IsTrue = false;
 	_bool						m_IsFix = false;
+	_bool						m_IsChangeIn = false;
 };
 

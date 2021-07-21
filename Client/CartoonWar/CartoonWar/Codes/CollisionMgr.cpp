@@ -20,7 +20,7 @@ HRESULT CCollisionMgr::Ready_CollsionManager()
 void CCollisionMgr::Update_CollisionManager()
 {
 	Player_to_NPC_Collision();
-	//Throw_to_NPC_Collision();
+	Throw_to_NPC_Collision();
 }
 
 void CCollisionMgr::Player_to_NPC_Collision()

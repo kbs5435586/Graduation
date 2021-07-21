@@ -79,7 +79,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 		return - 1;
 
 	if (GetAsyncKeyState('O'))
-		g_DefferedUIRender ^= true;
+		g_DefferedUIRender = true;
 	if (GetAsyncKeyState('P'))
 	{
 		if (g_DefferedRender == 0)

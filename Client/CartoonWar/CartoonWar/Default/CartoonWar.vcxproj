@@ -262,9 +262,10 @@
     <ClInclude Include="..\Headers\UAV.h" />
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
+    <ClInclude Include="..\Headers\UI_Aim.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_MiniMap.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
-    <ClInclude Include="..\Headers\UI_OnHeadBack.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
     <ClInclude Include="..\Headers\UI_MP.h" />
@@ -382,9 +383,10 @@
     <ClCompile Include="..\Codes\UAV.cpp" />
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
+    <ClCompile Include="..\Codes\UI_Aim.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />
-    <ClCompile Include="..\Codes\UI_OnHeadBack.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
     <ClCompile Include="..\Codes\UI_MP.cpp" />
