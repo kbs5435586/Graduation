@@ -5,6 +5,7 @@
 #include "NPC.h"
 #include "Collider.h"
 #include "Transform.h"
+#include "Fire.h"
 _IMPLEMENT_SINGLETON(CCollisionMgr)
 
 CCollisionMgr::CCollisionMgr()
@@ -22,6 +23,7 @@ void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
 	Player_to_NPC_Collision();
 	Throw_to_NPC_Collision();
 	Skill_to_NPC_Collision(fTimeDelta);
+	Teleport_to_NPC_Collision(fTimeDelta);
 }
 
 void CCollisionMgr::Player_to_NPC_Collision()
@@ -50,9 +52,17 @@ void CCollisionMgr::Player_to_NPC_Collision()
 				/////////
 				if (iter0->GetIsDash())
 				{
-					(iter1)->GetOBBCollision() = true;
-					iter1->GetIsParticle() = true;
-					iter1->GetIsDead() = true;
+					if (dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)2 ||
+						dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)4 ||
+						dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)7)
+					{
+						(iter1)->GetOBBCollision() = true;
+						(iter0)->GetOBBCollision() = true;
+						iter1->GetIsParticle() = true;
+						iter0->GetIsDead() = true;
+						//iter1->GetIsDead() = true;
+					}
+					
 				}
 				
 
@@ -127,8 +137,6 @@ void CCollisionMgr::Skill_to_NPC_Collision(const _float& fTimeDelta)
 		}
 	}
 	
-
-
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
@@ -152,21 +160,83 @@ void CCollisionMgr::Skill_to_NPC_Collision(const _float& fTimeDelta)
 				iter1->GetIsParticle() = true;
 				if (!damage)
 				{
-					iter1->GetInfo().fHP -= 0.1f;
-					damage = true;
+					if (dynamic_cast<CFire*>(iter0)->getCheck())
+					{
+						iter1->GetInfo().fHP -= 0.1f;
+						damage = true;
+					}	
 				}
 				if (iter1->GetInfo().fHP < 0)
 					iter1->GetIsDead() = true;
-				iter0->GetIsDead() = true;
-			}
-			
-
-		
+				
+			}	
 		}
-
-
-
 	}
+}
+
+void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
+{
+
+
+	_bool one{};
+	_bool two{};
+	CGameObject* oneP{};
+	CGameObject* twoP{};
+	//리스트로 포문을 돌리지 말고 각각 받아와서 체크
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
+	{
+		if (dynamic_cast<CFire*>(iter0)->getfirend() == 0)
+			one = true;
+		if (dynamic_cast<CFire*>(iter0)->getfirend() == 1)
+			two = true;
+	}
+	if(one)
+		oneP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 0);
+	if(two)
+		twoP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 1);
+	
+	if (one && two)
+	{
+		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
+		{
+			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+			{
+				_float fLength = 0.f;
+
+				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
+				_vec3 iter1_Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// NPC
+
+				_vec3 vDistance = iter1_Pos - iter0_Pos;
+
+				fLength = vDistance.Length();
+
+
+				if (fLength <= 10.f)
+				{
+					
+						if (oneP == iter0)
+						{
+							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
+								*dynamic_cast<CTransform*>(twoP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+							twoP = nullptr;
+						}
+						else if (twoP == iter0)
+						{
+							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
+								*dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+							oneP = nullptr;
+						}
+						iter1->GetInfo().fHP -= 0.1f;
+						iter1->GetIsParticle() = true;
+						
+
+
+					
+				}
+			}
+		}
+	}
+	
 }
 
 CCollisionMgr* CCollisionMgr::Create()

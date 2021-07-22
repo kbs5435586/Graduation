@@ -114,6 +114,12 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pUI_OnHeadBack->SetInfo(m_tInfo);
 	m_pTransformCom->Set_PositionY(0.f);
 
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY);
+
 
 	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(whoami);
 	
@@ -144,13 +150,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		return DEAD_OBJ;
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return -1;
-	pTerrainBuffer;
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	fY += 1.f;
-	m_pTransformCom->Set_PositionY(fY);
+
 	Set_Animation(fTimeDelta);
 
 	return NO_EVENT;
@@ -1061,16 +1061,32 @@ void CNPC::Obb_Collision()
 			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vTemp = { vPos - vTargetPos };
+			vTemp *= 5.f;
 			vTemp.Normalize();
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			m_vMidPoint.y += 3.f;
 			//m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
 
-			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
-			Create_Particle(vParticlePos);
-			m_IsBazier = true;		
+			//_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+			//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			//_vec3 vTemp = { vPos - vTargetPos };
+			//vTemp *= 5.f;
+			//vTemp.Normalize();
+			//m_vStartPoint = vPos;
+			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			////m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			//
+			//m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			//m_vMidPoint.y += 3.f;
+			////m_vMidPoint.y += 2.f;
+			//
+			//_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
+			//Create_Particle(vParticlePos);
+			//m_IsBazier = true;		
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 	}
@@ -1090,9 +1106,7 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 
 	_vec3 vPos = { fX, fY, fZ };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	fCnt += 0.01f;
-
-
+	fCnt += 0.02f;
 }
 
 void CNPC::Create_Particle(const _vec3& vPos)

@@ -84,8 +84,21 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	
 	if (pManagement->Key_Up(KEY_I))
 	{
-		m_cansee = !m_cansee;
+		if (m_cansee)
+		{
+			pManagement->Delete_All_Font();
+		}
+		else
+		{
+			float drawX = (float)((((_float)WINCX / 2) * -1) + 40);
+			float drawY = (float)(((_float)WINCY / 2) - 10);
 
+			m_strGold = "Gold";
+			if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strGold.c_str(), 0, 0)))
+				return E_FAIL;
+		}
+
+		m_cansee = !m_cansee;
 		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &m_cansee);
 	}
 	

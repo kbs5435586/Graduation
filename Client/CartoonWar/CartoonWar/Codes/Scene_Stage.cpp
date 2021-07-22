@@ -80,6 +80,9 @@ HRESULT CScene_Stage::Ready_Scene()
 	//	return E_FAIL;
 
 
+
+
+
 	Safe_Release(pManagement);
 	return S_OK;
 }

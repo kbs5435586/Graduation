@@ -72,4 +72,6 @@ private:
 	_int which = {};
 	_int* pwhich = {};
 	_int npcnumm{};
+
+	string m_strGold{};
 };

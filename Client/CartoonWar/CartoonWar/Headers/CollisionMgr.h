@@ -14,6 +14,7 @@ private:
     void                    Player_to_NPC_Collision();
     void                    Throw_to_NPC_Collision();
     void                    Skill_to_NPC_Collision(const _float& fTimeDelta);
+    void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
 public:
     static CCollisionMgr*   Create();
 private:

@@ -58,7 +58,12 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 
 	//m_pTransformCom->Set_PositionY(fY + 0.8f);
 
+	
+
 	Safe_Release(pManagement);
+
+	if (m_IsDead)
+		return DEAD_OBJ;
 
 	return _int();
 }

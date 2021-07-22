@@ -8,6 +8,7 @@ class CNavigation;
 class CCollider;
 class CUI_OnHead;
 class CUI_OnHeadBack;
+class CTerrain_Height;
 class CPlayer :
 	public CGameObject
 {
@@ -41,6 +42,8 @@ private:
 	void									Compute_Matrix_Z();
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+public:
+	void									Create_Particle(const _vec3& vPoistion);
 private:
 	void									Input_Key(const _float& fTimeDelta);
 private:
@@ -115,13 +118,28 @@ private:
 
 	_bool skillx = {};
 	_bool fire = {};
+	_bool fireCheck = {};
 
 	CGameObject* fireskill = nullptr;
+	_int fireCnt = {};
 	CInput* m_pInput_Device = nullptr;
 
 	CBuffer_CubeTex* m_pBufferCom = nullptr;
 
+
+	_bool skillf = {};
+	_bool teleport = {};
+	_bool teleportCheck = {};
+
+	_int teleportNum = {};
+
+
+
+
+
 	_float m_fCoolTime_ONE{};
 	_float m_fCoolTime_TWO{};
+	_float m_fCoolTime_THR{};
+	_float m_fCoolTime_Four{};
 };
 

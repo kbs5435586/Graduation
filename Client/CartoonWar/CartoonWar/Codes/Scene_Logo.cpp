@@ -112,11 +112,12 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	float drawX = (float)((((_float)WINCX / 2) * -1) + 40);
 	float drawY = (float)(((_float)WINCY / 2) - 10);
+	
 	if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strIP.c_str(), 0, 0)))
 		return E_FAIL;
 	drawX = (float)((((_float)WINCX / 2) * -1) + 30);
 	drawY = (float)(((_float)WINCY / 2) - 30);
-	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strIP.c_str(), 100, 100)))
+	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strID.c_str(), 100, 100)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -1520,7 +1521,7 @@ void CScene_Logo::Free()
 	pManagement->AddRef();
 
 	pManagement->Clear_Layers((_uint)SCENEID::SCENE_LOGO);
-	//pManagement->Delete_All_Font();
+	pManagement->Delete_All_Font();
 
 
 	Safe_Release(pManagement);

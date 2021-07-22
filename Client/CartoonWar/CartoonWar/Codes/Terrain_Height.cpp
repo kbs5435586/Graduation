@@ -50,10 +50,14 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
-	if (GetKeyState(VK_LBUTTON) < 0)
+	//if (GetKeyState(VK_LBUTTON) < 0)
 	{
 		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
 	}
+
+	_long	MouseMove = 0;
+	//MouseMove = CInputMgr::GetInstance()->Get_DIMouseMove(DIM_X);
+
 
 	return _int();
 }

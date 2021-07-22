@@ -42,5 +42,7 @@ private:
 	CPicking*								m_pPickingCom = nullptr;
 private:
 	BRUSHINFO								m_tBrush = {};
+public:
+	BRUSHINFO&								GetBrushINFO() { return m_tBrush; }
 };
 
