@@ -120,7 +120,6 @@ void CCollisionMgr::Player_to_Player_Collision()
 	}
 }
 
-
 void CCollisionMgr::Throw_to_NPC_Collision()
 {
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow"))
@@ -144,7 +143,7 @@ void CCollisionMgr::Throw_to_NPC_Collision()
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				//iter1->GetInfo().fHP -= 1.f;
-				iter0->GetIsDead() = true;
+				//iter0->GetIsDead() = true;
 			}
 
 

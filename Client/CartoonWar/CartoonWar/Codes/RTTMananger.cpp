@@ -43,7 +43,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 
 	// Defferd MRT
 	{
-		tRtt arrRT[3] = {};
+		tRtt arrRT[4] = {};
 		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[0].pRtt= CRTT::Create(L"DiffuseTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
@@ -61,29 +61,35 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[2].vClear_Color);
 
+		arrRT[3].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[3].pRtt = CRTT::Create(L"DepthTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[3].vClear_Color);
 
-
-		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsTex);
+		CMRT* pMRT = CMRT::Create(4, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
 
 	}
 
 	// Light MRT
 	{
-		tRtt arrRT[2] = {};
+		tRtt arrRT[3] = {};
 		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[0].pRtt = CRTT::Create(L"DiffuseLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
-
-
 
 		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[1].pRtt = CRTT::Create(L"SpecularLightTargetTex"
 			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
 
-		CMRT* pMRT = CMRT::Create(2, arrRT, m_pDsTex);
+		arrRT[2].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[2].pRtt = CRTT::Create(L"AmbientLightTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[2].vClear_Color);
+
+		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
 
 	}

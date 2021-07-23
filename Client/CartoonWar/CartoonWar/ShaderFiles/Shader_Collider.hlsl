@@ -13,12 +13,14 @@ struct VS_OUT
 	float4	vColor		: COLOR;
 	float4	vNormal		: NORMAL;
 	float4  vWorldPos	: TEXCOORD1;
+	float4	vProjPos	: TEXCOORD2;
 };
 struct PS_OUT
 {
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vPositionTex			: SV_TARGET2;
+	float4 vDepthTex			: SV_TARGET3;
 };
 
 VS_OUT	VS_Main(VS_IN vIn)
@@ -26,6 +28,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 	VS_OUT	vOut;
 
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vProjPos = mul(float4(vIn.vPosition, 1.f), matWVP);
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWV);
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWV));
 	vOut.vColor = vIn.vColor;
@@ -45,10 +48,11 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	{
 		vColor = float4(1.f, 0.f, 0.f, 1.f);
 	}
-
+	float	fDepth = vIn.vWorldPos.z / 300.f;
 	vOut.vDiffuseTex = vColor;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
+	vOut.vDepthTex = float4(fDepth, fDepth, fDepth, 1.f);
 	return vOut;
 }
 

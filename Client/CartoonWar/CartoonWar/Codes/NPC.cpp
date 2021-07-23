@@ -635,7 +635,7 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
-			m_vOBB_Range[1] = { 70.f ,80.f,70.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -666,7 +666,7 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
 			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
-			m_vOBB_Range[1] = { 70.f ,80.f,70.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -792,8 +792,8 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_vOBB_Range[0] = { 20.f ,80.f,60.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
@@ -827,8 +827,6 @@ void CNPC::Change_Class()
 		}
 		break;
 		}
-
-		m_pTransformCom->SetSpeed(m_fSpeed);
 		m_ePreClass = m_eCurClass;
 	}
 }
@@ -878,6 +876,12 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
 
 	_vec3 vPos = { fX, fY, fZ };
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return ;
+	_float		fY_ = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	if (vPos.y <= fY_)
+		vPos.y = fY_;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	fCnt += 0.02f;
 

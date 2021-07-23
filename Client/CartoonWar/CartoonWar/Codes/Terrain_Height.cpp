@@ -50,6 +50,7 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+
 	//if (GetKeyState(VK_LBUTTON) < 0)
 	//{
 	//	m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
@@ -159,6 +160,7 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pBrushTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pPickingCom);
+	Safe_Release(m_pFrustumCom);
 
 	
 	CGameObject::Free();
@@ -208,6 +210,10 @@ HRESULT CTerrain_Height::Ready_Component()
 	m_pPickingCom = (CPicking*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Picking");
 	NULL_CHECK_VAL(m_pPickingCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Picking", m_pPickingCom)))
+		return E_FAIL;
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

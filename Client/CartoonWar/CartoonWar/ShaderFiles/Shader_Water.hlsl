@@ -24,8 +24,8 @@ struct PS_OUT
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vPositionTex			: SV_TARGET2;
+	float4 vDepthTex			: SV_TARGET3;
 };
-
 
 VS_OUT VS_Main(VS_IN vIn)
 {
@@ -39,36 +39,22 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-//
-//PS_OUT PS_Main(VS_OUT vIn) 
-//{
-//	PS_OUT vOut;
-//
-//	vIn.vTexUV.x += fFrameTime;
-//	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV*30.f);
-//	float4	vNormal = mul(vIn.vNormal, matViewInv);
-//
-//
-//	float3 vTSNormal = g_texture1.Sample(Sampler0, vIn.vTexUV * 30.f).xyz;
-//	vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
-//
-//	float3x3 matTBN = { vIn.vTangent.xyz, vIn.vBinormal.xyz, vIn.vNormal.xyz };
-//	vNormal = float4(normalize(mul(vTSNormal, matTBN)), 0.f);
-//
-//
-//	vOut.vDiffuseTex= vDiffuse;
-//	vOut.vNormalTex= vNormal;
-//	vOut.vPositionTex = vIn.vWorldPos;
-//	return vOut;
-//}
-
 float4 PS_Main(VS_OUT vIn) :SV_TARGET
 {
-	float4 vOut;
+	float4	vOut;
+	float	fDepth = vIn.vWorldPos / 300.f;
+	float4	vWorldPos = mul(vIn.vWorldPos, matViewInv);
 
+	float2 vScreenUV = float2(vIn.vPosition.x / 1920, vIn.vPosition.y / 1080);
+	float2 vDir = normalize(float2(0.5f, 0.5f) - vScreenUV);
+	float fDist = distance(float2(0.5f, 0.5f), vScreenUV);
+
+	float fRatio = (fDist / 0.5f);
+	fRatio = fRatio * (0.2f + (fRatio) * 0.4f);
+
+	vIn.vTexUV += vDir * sin(abs((fRatio - g_fAccTime * 0.16f) * 40.f)) * 0.03f;
 	vIn.vTexUV.x += fFrameTime;
-	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV * 100.f);
+	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
-	vOut = vDiffuse;
-	return vOut;
+	return vDiffuse;
 }

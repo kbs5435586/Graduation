@@ -1,6 +1,7 @@
 #include "Value.hlsl"
 #include "Function.hlsl"
 
+
 struct VS_IN
 {
 	float3	vPosition	: POSITION;
@@ -21,6 +22,7 @@ struct VS_OUT
 	float3	vBinormal	: BINORMAL;
 	float2	vTexUV		: TEXCOORD0;
 	float4  vWorldPos	: TEXCOORD1;
+	float4	vProjPos	: TEXCOORD2;
 };
 
 struct PS_OUT
@@ -28,6 +30,7 @@ struct PS_OUT
 	float4 vDiffuseTex			: SV_TARGET0;
 	float4 vNormalTex			: SV_TARGET1;
 	float4 vPositionTex			: SV_TARGET2;
+	float4 vDepthTex			: SV_TARGET3;
 };
 
 VS_OUT	VS_Main(VS_IN vIn)
@@ -39,6 +42,7 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 	
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vProjPos = vOut.vPosition;
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWV);
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWV));
 	vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matWV).xyz);
@@ -57,8 +61,6 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
 	float4	vNormal = mul(vIn.vNormal, matViewInv);
 
-
-
 	float4	vLightDir = -normalize(tLight[0].vLightDir);
 	float	fDot = saturate(dot(vNormal, vLightDir));
 	fDot = (ceil(fDot * 3.f) / 3.f);
@@ -67,6 +69,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float3	fRimColor = float3(-2.f, -2.f, -2.f);
 	float4	vView = normalize(vCamPos - vPosition);
 	float	fRim = saturate(dot(vNormal, vView));
+
+	float	fDepth = vIn.vWorldPos.z/300.f;
 
 
 	if (fRim > 0.3f)
@@ -87,7 +91,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
-
+	vOut.vDepthTex = float4(fDepth, fDepth, fDepth,1.f);
 	return vOut;
 }
 

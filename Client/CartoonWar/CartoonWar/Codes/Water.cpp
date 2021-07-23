@@ -34,7 +34,7 @@ HRESULT CWater::Ready_GameObject(void* pArg)
 
 _int CWater::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tTexInfo.fFrameTime += fTimeDelta*0.01f;
+	m_tTexInfo.fFrameTime += fTimeDelta*0.1f;
 	if (m_tTexInfo.fFrameTime > 1.f)
 	{
 		m_tTexInfo.fFrameTime = -1.f;
@@ -75,11 +75,16 @@ void CWater::Render_GameObject()
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b4)->SetData((void*)&m_tTexInfo);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b4)->GetCBV().Get(), iOffeset, CONST_REGISTER::b4);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
 	Safe_Release(pManagement);
+}
+
+void CWater::Render_PostEffect()
+{
 }
 
 HRESULT CWater::CreateInputLayout()

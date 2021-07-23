@@ -40,6 +40,7 @@ private:
 	CTexture*								m_pBrushTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CPicking*								m_pPickingCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	BRUSHINFO								m_tBrush = {};
 };
