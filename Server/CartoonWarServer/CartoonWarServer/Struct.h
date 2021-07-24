@@ -8,7 +8,6 @@ enum ENUM_FUNCTION
 	FUNC_PLAYER_RIGHT, FUNC_PLAYER_RUN, FUNC_END
 };
 enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_DEAD, ST_END };
-enum ENUM_FORMATION { FM_FLOCK, FM_SQUARE, FM_PIRAMID, FM_CIRCLE, FM_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
 enum ENUM_TEAM { TEAM_RED, TEAM_BLUE, TEAM_END };
 
@@ -70,7 +69,7 @@ struct SESSION // 클라이언트 정보
 	
 	Collision m_col;
 	vector <FormationInfo> m_boid;
-	ENUM_FORMATION m_formation;
+	char m_formation;
 	CLASS m_class;
 	char m_Mcondition;
 	char m_Rcondition;

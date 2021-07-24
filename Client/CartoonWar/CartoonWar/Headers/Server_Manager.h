@@ -50,8 +50,10 @@ public:
     void send_attack_packet();
     void send_mouse_packet(float rotate);
     void send_position_packet(_vec3* pos);
+
     void update_key_input();
     void update_client_class(unsigned short id, unsigned short cs);
+    void update_formation(int id);
 
     //short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);

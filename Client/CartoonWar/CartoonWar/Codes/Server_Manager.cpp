@@ -102,6 +102,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
+		m_objects[recv_id].formation = my_packet->form;
 
 		update_client_class(my_id, my_packet->p_class);
 
@@ -719,6 +720,13 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		game_time = my_packet->time;
 	}
 	break;
+	case SC_PACKET_FORMATION:
+	{
+		sc_packet_formation* my_packet = reinterpret_cast<sc_packet_formation*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].formation = my_packet->form;
+	}
+	break;
 	default:
 		printf("Unknown PACKET type [%d]\n", ptr[1]);
 	}
@@ -937,6 +945,197 @@ void CServer_Manager::update_client_class(unsigned short id, unsigned short cs)
 	else if (C_ARCHER == cs)
 		m_objects[id].m_class = CLASS::CLASS_ARCHER;
 }
+
+//void CServer_Manager::update_formation(int id)
+//{
+//	managment = CManagement::GetInstance();
+//	if (nullptr == managment)
+//		return;
+//	managment->AddRef();
+//
+//	CTransform* pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+//		L"Layer_Player", L"Com_Transform", id);
+//
+//	_vec3 playerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+//	_vec3 set_pos = {};
+//
+//	switch (m_objects[id].formation)
+//
+//	{
+//	case F_SQUARE:
+//	{
+//		if (1 == c.m_boid.size())
+//		{
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			_vec3 new_pos = playerPos + set_pos;
+//			c.m_boid[0].final_pos = new_pos;
+//			c.m_boid[0].angle = c.m_total_angle - 45.f;
+//			c.m_boid[0].radius = BASIC_FORM_RAD;
+//		}
+//		else if (2 == c.m_boid.size())
+//		{
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			_vec3 new_pos = playerPos + set_pos;
+//			c.m_boid[0].final_pos = new_pos;
+//			c.m_boid[0].angle = c.m_total_angle - 45.f;
+//			c.m_boid[0].radius = BASIC_FORM_RAD;
+//
+//			set_pos = {};
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+//			_vec3 new_pos1 = playerPos + set_pos;
+//			c.m_boid[1].final_pos = new_pos1;
+//			c.m_boid[1].angle = c.m_total_angle + 45.f;
+//			c.m_boid[1].radius = BASIC_FORM_RAD;
+//		}
+//		else if (3 == c.m_boid.size())
+//		{
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			_vec3 new_pos = playerPos + set_pos;
+//			c.m_boid[0].final_pos = new_pos;
+//			c.m_boid[0].angle = c.m_total_angle - 45.f;
+//			c.m_boid[0].radius = BASIC_FORM_RAD;
+//
+//			set_pos = {};
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+//			_vec3 new_pos1 = playerPos + set_pos;
+//			c.m_boid[1].final_pos = new_pos1;
+//			c.m_boid[1].angle = c.m_total_angle + 45.f;
+//			c.m_boid[1].radius = BASIC_FORM_RAD;
+//
+//			set_pos = {};
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+//			_vec3 new_pos2 = playerPos + set_pos;
+//			c.m_boid[2].final_pos = new_pos2;
+//			c.m_boid[2].angle = c.m_total_angle - 135.f;
+//			c.m_boid[2].radius = BASIC_FORM_RAD;
+//		}
+//		else if (4 == c.m_boid.size())
+//		{
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+//			_vec3 new_pos = playerPos + set_pos;
+//			c.m_boid[0].final_pos = new_pos;
+//			c.m_boid[0].angle = c.m_total_angle - 45.f;
+//			c.m_boid[0].radius = BASIC_FORM_RAD;
+//
+//			set_pos = {};
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+//			_vec3 new_pos1 = playerPos + set_pos;
+//			c.m_boid[1].final_pos = new_pos1;
+//			c.m_boid[1].angle = c.m_total_angle + 45.f;
+//			c.m_boid[1].radius = BASIC_FORM_RAD;
+//
+//			set_pos = {};
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+//			_vec3 new_pos2 = playerPos + set_pos;
+//			c.m_boid[2].final_pos = new_pos2;
+//			c.m_boid[2].angle = c.m_total_angle - 135.f;
+//			c.m_boid[2].radius = BASIC_FORM_RAD;
+//
+//			set_pos = {};
+//			set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 135.f) * (PIE / 180.f));
+//			set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 135.f) * (PIE / 180.f));
+//			_vec3 new_pos3 = playerPos + set_pos;
+//			c.m_boid[3].final_pos = new_pos3;
+//			c.m_boid[3].angle = c.m_total_angle + 135.f;
+//			c.m_boid[3].radius = BASIC_FORM_RAD;
+//		}
+//	}
+//	break;
+//	//case FM_SQUARE:
+//	//{
+//	//    if (1 == c.m_boid.size())
+//	//    {
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Left(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[0]->m_target_pos = *new_pos;
+//	//    }
+//	//    else if (2 == c.m_boid.size())
+//	//    {
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Left(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[0]->m_target_pos = *new_pos1;
+//
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Right(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[1]->m_target_pos = *new_pos2;
+//	//    }
+//	//    else if (3 == c.m_boid.size())
+//	//    {
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Left(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[0]->m_target_pos = *new_pos1;
+//
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Right(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[1]->m_target_pos = *new_pos2;
+//
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Left(FORMATION_SPACE);
+//	//        set_pos.Go_Straight(FORMATION_SPACE);
+//	//        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[2]->m_target_pos = *new_pos3;
+//	//    }
+//	//    else if (4 == c.m_boid.size())
+//	//    {
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Left(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[0]->m_target_pos = *new_pos1;
+//
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Right(FORMATION_SPACE);
+//	//        set_pos.BackWard(FORMATION_SPACE);
+//	//        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[1]->m_target_pos = *new_pos2;
+//
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Left(FORMATION_SPACE);
+//	//        set_pos.Go_Straight(FORMATION_SPACE);
+//	//        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[2]->m_target_pos = *new_pos3;
+//
+//	//        set_pos.Set_Matrix(&temp);
+//	//        set_pos.Go_Right(FORMATION_SPACE);
+//	//        set_pos.Go_Straight(FORMATION_SPACE);
+//	//        _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
+//	//        c.m_boid[3]->m_target_pos = *new_pos4;
+//	//    }
+//	//}
+//	//break;
+//	case FM_PIRAMID:
+//	{
+//
+//	}
+//	break;
+//	case FM_CIRCLE:
+//	{
+//
+//	}
+//	break;
+//	}
+//
+//	Safe_Release(managment);
+//}
 
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {

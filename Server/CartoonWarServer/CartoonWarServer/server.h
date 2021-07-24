@@ -23,8 +23,6 @@ private:
 	int ATTACK_RADIUS = 7; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
-	float BASIC_FORM_RAD = 10.f;
-	float PIE = 3.141592;
 
 	float MOVE_TIME_ELAPSE = 0.0310692995f;
 	float ROTATE_TIME_ELAPSE = 0.0286692995f;
@@ -58,6 +56,7 @@ public:
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_add_ok_packet(int user_id, int other_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
+	void send_formation_packet(int user_id, int other_id);
 
 	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);

@@ -2,6 +2,7 @@
 // 서버 클라 같이 맞춰줘야 되는 모든건 프로토콜 헤더에
 #define MY_NPC_START(p) 30 + (14 * p)
 #define MY_NPC_END(p) 43 + (14 * p)
+
 enum PLAYERS {
 	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
 	ENUM_PLAYER9, ENUM_PLAYER10, ENUM_PLAYER11, ENUM_PLAYER12, ENUM_PLAYER13, ENUM_PLAYER14, ENUM_PLAYER15, ENUM_PLAYER16,
@@ -36,6 +37,9 @@ constexpr int WORLD_VERTICAL = 500; // 월드 세로 z
 
 constexpr int SERVER_PORT = 9000;
 
+constexpr float BASIC_FORM_RAD = 10.f;
+constexpr float PIE = 3.141592;
+
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_CONDITION = 2;
 constexpr char CS_PACKET_ADD_NPC = 3;
@@ -60,6 +64,7 @@ constexpr char SC_PACKET_FLAG_INFO = 11;
 constexpr char SC_PACKET_FLAG_BOOL = 12;
 constexpr char SC_PACKET_TIME = 13;
 constexpr char SC_PACKET_FIX = 14;
+constexpr char SC_PACKET_FORMATION = 15;
 
 #pragma pack(push ,1)
 
@@ -76,6 +81,7 @@ struct sc_packet_login_ok
 	short level;
 	int	exp;
 	short p_class;
+	char form;
 };
 
 constexpr unsigned short C_WORKER = 0;
@@ -85,6 +91,11 @@ constexpr unsigned short C_SPEARMAN = 5;
 constexpr unsigned short C_MAGE = 6;
 constexpr unsigned short C_MMAGE = 7;
 constexpr unsigned short C_ARCHER = 8;
+
+constexpr unsigned char F_SQUARE = 0;
+constexpr unsigned char F_PIRAMID = 1;
+constexpr unsigned char F_CIRCLE = 2;
+constexpr unsigned char F_FLOCK = 3;
 
 struct sc_packet_flag_info
 {
@@ -103,6 +114,14 @@ struct sc_packet_flag_bool
 	int id;
 	bool isRed;
 	bool isBlue;
+};
+
+struct sc_packet_formation
+{
+	char size;
+	char type;
+	int id;
+	char form;
 };
 
 struct sc_packet_time

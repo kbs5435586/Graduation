@@ -157,6 +157,7 @@ void Server::process_packet(int user_id, char* buf)
     {
         cs_packet_change_formation* packet = reinterpret_cast<cs_packet_change_formation*>(buf);
         do_change_formation(user_id);
+
     }
     break;
     case CS_PACKET_ATTACK:
@@ -317,7 +318,8 @@ void Server::do_rotate(int user_id, char con)
     send_condition_packet(user_id, user_id, CON_TYPE_ROTATE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
-        send_condition_packet(cpy_vl, user_id, CON_TYPE_ROTATE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        if (is_player(cpy_vl))
+            send_condition_packet(cpy_vl, user_id, CON_TYPE_ROTATE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
     }
 }
 
@@ -397,7 +399,8 @@ void Server::do_move(int user_id, char con)
     send_condition_packet(user_id, user_id, CON_TYPE_MOVE); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
     for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
-        send_condition_packet(cpy_vl, user_id, CON_TYPE_MOVE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+        if (is_player(cpy_vl))
+            send_condition_packet(cpy_vl, user_id, CON_TYPE_MOVE); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
     }
 }
 
@@ -412,7 +415,7 @@ void Server::set_formation(int user_id)
     switch (c.m_formation)
 
     {
-    case FM_FLOCK:
+    case F_SQUARE:
     {
         if (1 == c.m_boid.size())
         {
@@ -572,12 +575,12 @@ void Server::set_formation(int user_id)
     //    }
     //}
     //break;
-    case FM_PIRAMID:
+    case F_PIRAMID:
     {
 
     }
     break;
-    case FM_CIRCLE:
+    case F_CIRCLE:
     {
 
     }
@@ -674,16 +677,39 @@ void Server::do_follow(int npc_id)
         if (g_clients[n.m_owner_id].m_boid[i].id == n.m_id)
         {
             _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
                 if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
                     || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f)// 자신의 포메이션 반지름 밖일때
                 {
-                   float dist= dist_between(npc_id, n.m_owner_id);
-                   _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);// 일단 반지름 이내까진 최종 목표지로만 이동
-                   _vec3 new_pos = n_pos + Dir;
-                   n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                    _vec3 finalLookAt = g_clients[n.m_owner_id].m_boid[i].final_pos - n_pos;
+                    finalLookAt = Vector3_::Normalize(finalLookAt);
+                    _vec3 npcLookAt = -1.f * Vector3_::Normalize(n_look);
+
+                    _vec3 set_pos = {};
+
+                    float PdotProduct = (npcLookAt.x * finalLookAt.x) + (npcLookAt.y * finalLookAt.y) + (npcLookAt.z * finalLookAt.z); // 내각
+                    _vec3 PoutProduct;
+                    PoutProduct.x = (finalLookAt.y * npcLookAt.z) - (finalLookAt.z * npcLookAt.y); // 외각
+                    PoutProduct.y = (finalLookAt.z * npcLookAt.x) - (finalLookAt.x * npcLookAt.z);
+                    PoutProduct.z = (finalLookAt.x * npcLookAt.y) - (finalLookAt.y * npcLookAt.x);
+
+                    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                    if (PoutProduct.y < 0)
+                        radian *= -1.f;
+                    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+                    if (NPCangle > 0)
+                        n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                    else if (NPCangle < 0)
+                        n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+
+                   //float dist= dist_between(npc_id, n.m_owner_id);
+                   //_vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);// 일단 반지름 이내까진 최종 목표지로만 이동
+                   //_vec3 new_pos = n_pos + Dir;
+                   //n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
                    n.m_isOut = true;
                 }
                 else // 자신의 포메이션 반지름과 같거나 이내일때
@@ -796,9 +822,26 @@ void Server::do_follow(int npc_id)
 
 void Server::do_change_formation(int player_id)
 {
-    g_clients[player_id].m_formation = ENUM_FORMATION(g_clients[player_id].m_formation + 1);
-    if (FM_PIRAMID == g_clients[player_id].m_formation)
-        g_clients[player_id].m_formation = FM_FLOCK;
+    if (F_SQUARE == g_clients[player_id].m_formation)
+        g_clients[player_id].m_formation = F_PIRAMID;
+    else if (F_PIRAMID == g_clients[player_id].m_formation)
+        g_clients[player_id].m_formation = F_CIRCLE;
+    else if (F_CIRCLE == g_clients[player_id].m_formation)
+        g_clients[player_id].m_formation = F_FLOCK;
+    else  if (F_FLOCK == g_clients[player_id].m_formation)
+        g_clients[player_id].m_formation = F_SQUARE;
+
+    g_clients[player_id].m_cLock.lock();
+    unordered_set<int> copy_viewlist = g_clients[player_id].m_view_list;
+    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
+    g_clients[player_id].m_cLock.unlock();
+
+    send_formation_packet(player_id, player_id); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
+    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+    {
+        if (is_player(cpy_vl))
+            send_formation_packet(cpy_vl, player_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+    }
     set_formation(player_id);
 }
 
@@ -986,7 +1029,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         case FUNC_PLAYER_LEFT:
         {
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_LEFT;
-            do_npc_rotate(player_id, CON_LEFT);
+            //do_npc_rotate(player_id, CON_LEFT);
             g_clients[player_id].m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
             g_clients[player_id].m_total_angle += (-ROTATE_TIME_ELAPSE * g_clients[player_id].m_rotate_speed) * 180.f / PIE;
         }
@@ -994,7 +1037,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         case FUNC_PLAYER_RIGHT:
         {
             g_clients[player_id].m_last_rotate = FUNC_PLAYER_RIGHT;
-            do_npc_rotate(player_id, CON_RIGHT);
+            //do_npc_rotate(player_id, CON_RIGHT);
             g_clients[player_id].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
             g_clients[player_id].m_total_angle += ROTATE_TIME_ELAPSE * g_clients[player_id].m_rotate_speed * 180.f / PIE;
         }
@@ -1204,6 +1247,17 @@ void Server::do_timer()
             }
         }
     }
+}
+
+void Server::send_formation_packet(int user_id, int other_id)
+{
+    sc_packet_formation packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_FORMATION;
+    packet.form = g_clients[other_id].m_formation;
+
+    send_packet(user_id, &packet);
 }
 
 void Server::send_condition_packet(int user_id, int other_id, unsigned char type)
@@ -1822,6 +1876,8 @@ void Server::worker_thread()
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
                 g_clients[user_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
                 g_clients[user_id].m_class = CLASS::CLASS_WORKER;
+                g_clients[user_id].m_last_order = FUNC_END;
+                g_clients[user_id].m_formation = F_SQUARE;
                 g_clients[user_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
                 g_clients[user_id].m_col.radius = 20.f * SCALE.x;
                 g_clients[user_id].m_move_speed = 5.f;
@@ -1831,6 +1887,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_Mcondition = CON_IDLE;
                 g_clients[user_id].m_Rcondition = CON_IDLE;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
+                g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
                 if (0 == user_id)
                 {
                     g_clients[user_id].m_team = TEAM_RED;
@@ -1843,15 +1900,10 @@ void Server::worker_thread()
                     _vec3 pos = { 70.f, 0.f, 70.f };
                     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 }
-
                 //{ // 스트레스 테스트
                 //    _vec3 pos = { (float)(rand()%WORLD_HORIZONTAL), 0.f, (float)(rand() % WORLD_HORIZONTAL) };
                 //    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
                 //}
-                g_clients[user_id].m_last_order = FUNC_END;
-                g_clients[user_id].m_formation = FM_FLOCK;
-                g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
-
                 DWORD flags = 0;
                 WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
                     &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
