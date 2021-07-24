@@ -195,13 +195,13 @@ void CQuadTree::Culling_ToQuadTree(CFrustum* pFrustum, Plane* pLocalPlane, _uint
 		return;
 	}
 
-	if (true == pFrustum->Isin_Frustum(pLocalPlane, &m_pVerticesPos[m_iCenter], m_fRadius))
-	{
-		for (size_t i = 0; i < (_uint)CHILD::CHILD_END; i++)
-		{
-			m_pChild[i]->Culling_ToQuadTree(pFrustum, pLocalPlane, pVertexIndex, iNumPolygons);
-		}
-	}
+	//if (true == pFrustum->Isin_Frustum(pLocalPlane, &m_pVerticesPos[m_iCenter], m_fRadius))
+	//{
+	//	for (size_t i = 0; i < (_uint)CHILD::CHILD_END; i++)
+	//	{
+	//		m_pChild[i]->Culling_ToQuadTree(pFrustum, pLocalPlane, pVertexIndex, iNumPolygons);
+	//	}
+	//}
 }
 
 _bool CQuadTree::Check_LOD()

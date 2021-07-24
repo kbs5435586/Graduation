@@ -209,7 +209,7 @@ void CUI_OnHead::SetPosition(_vec3 vPos, CLASS eClass)
 		m_vPos.y += 8.f;
 		break;
 	default:
-		m_vPos.y += 10.f;
+		m_vPos.y += 15.f;
 		//m_vPos.z -= 2.f;
 		break;
 	}

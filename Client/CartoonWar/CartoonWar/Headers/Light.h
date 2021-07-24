@@ -34,7 +34,8 @@ private:
 	CShader*					m_pShader_Dir = nullptr;
 	CShader*					m_pShader_Point = nullptr;
 	CShader*					m_pShader_Merge = nullptr;
-	CBuffer_RectTex*			m_pBufferCom = nullptr;
+	CBuffer_RectTex*			m_pBufferCom_Dir = nullptr;
+	CBuffer_RectTex*			m_pBufferCom_Point = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	_uint						m_iArridx = 0;
 private:

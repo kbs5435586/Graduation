@@ -211,20 +211,22 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	/*_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	matView = Matrix_::Inverse(matView);
-	_vec4 vTemp = _vec4(matView._31, matView._32, matView._33, 0.f);
-	tLightInfo.vLightDir = vTemp;*/
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
-
-
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(100.f, 5.f, 0.f, 1.f);
+	tLightInfo.fRange = 100;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
 
 	return S_OK;
 }

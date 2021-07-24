@@ -337,19 +337,19 @@ HRESULT CBuffer_Terrain_Height::Culling_Frustum(CFrustum* pFrustum, const _matri
 		if (FAILED(CDevice::GetInstance()->GetDevice()->CreateCommittedResource(&tHeap_Pro_Upload, D3D12_HEAP_FLAG_NONE, &tResource_Desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_pIndexUploadBuffer))))
 			return E_FAIL;
 		m_pIndexUploadBuffer->SetName(L"Upload IndexBuffer");
-
+	
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = (void*)vecIndices.data();
 		indexData.RowPitch = sizeof(_uint) * iNumPolygon;
 		indexData.SlicePitch = sizeof(_uint) * iNumPolygon;
-
+	
 		D3D12_RESOURCE_BARRIER	tResource_Barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_pIndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		UpdateSubresources(CDevice::GetInstance()->GetCmdLst().Get(), m_pIndexBuffer.Get(), m_pIndexUploadBuffer.Get(), 0, 0, 1, &indexData);
 		CDevice::GetInstance()->GetCmdLst().Get()->ResourceBarrier(1, &tResource_Barrier);
 	}
 	CDevice::GetInstance()->Close();
 	CDevice::GetInstance()->WaitForFenceEvent();
-
+	
 	m_tIndexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_tIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * iNumPolygon;
@@ -441,8 +441,8 @@ void CBuffer_Terrain_Height::Free()
 		Safe_Delete_Array(m_pPosition);
 		Safe_Delete_Array(m_pPixel);
 		Safe_Delete_Array(m_pPolygonVertexIndex);
+		Safe_Release(m_pQuadTree);
 	}
-	//Safe_Release(m_pQuadTree);
 	
 	CVIBuffer::Free();
 }

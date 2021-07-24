@@ -19,6 +19,20 @@ LIGHT Calculate_Light(int _iLightIdx, float3 _vViewNormal, float3 _vViewPos)
 		vViewLightDir = normalize(mul(float4(tLight[_iLightIdx].vLightDir.xyz, 0.f), matView).xyz);
 		fDiffPow = saturate(dot(-vViewLightDir, _vViewNormal));
 	}
+	else if (tLight[_iLightIdx].iLightType == 1)
+	{
+		float3 vViewLightPos = mul(float4(tLight[_iLightIdx].vLightPos.xyz, 1.f), matView).xyz;
+		vViewLightDir = normalize(_vViewPos - vViewLightPos);
+
+		fDiffPow = saturate(dot(-vViewLightDir, _vViewNormal));
+
+		// Ratio 계산
+		float fDistance = distance(_vViewPos, vViewLightPos);
+		if (0.f == tLight[_iLightIdx].fRange)
+			fRatio = 0.f;
+		else
+			fRatio = saturate(1.f - fDistance / tLight[_iLightIdx].fRange);
+	}
 
 	// 반사 방향
 	float3 vReflect = normalize(vViewLightDir + 2 * (dot(-vViewLightDir, _vViewNormal) * _vViewNormal));
@@ -262,6 +276,19 @@ float gaussian5x5Sample(in int2 _uv, in Texture2D _tex)
 		}
 	}
 	return fOut.x;
+}
+
+float3 gaussian5x5Sample_2(in int2 _uv, in Texture2D _tex)
+{
+	float4 fOut = (float4) 0.f;
+	for (int i = 0; i < 5; ++i)
+	{
+		for (int j = 0; j < 5; ++j)
+		{
+			fOut += _tex[_uv + int2(i - 2, j - 2)] * gaussian5x5[i * 5 + j];
+		}
+	}
+	return fOut.xyz;
 }
 
 struct tSkinningInfo
