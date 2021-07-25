@@ -42,6 +42,7 @@
 #include "Building.h"
 #include "LowPoly.h"
 #include "Flag.h"
+#include "Castle.h"
 
 #include "Water.h"
 
@@ -69,10 +70,13 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
-
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
 		return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
@@ -142,6 +146,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_LowPoly", CLowPoly::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle", CCastle::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Flag", CFlag::Create())))
 		return E_FAIL;
@@ -215,7 +221,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(100.f, 5.f, 0.f, 1.f);
+	tLightInfo.vLightPos = _vec4(100.f, 5.f, 50.f, 1.f);
 	tLightInfo.fRange = 100;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
@@ -247,7 +253,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 300.f;
+	tProjDesc.fFar = 1300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;

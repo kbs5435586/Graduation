@@ -31,13 +31,13 @@ void CBuffer_Terrain_Height::Calculate_TanBi(VTXTEXBUMP Vertex1, VTXTEXBUMP Vert
 	_float tvVector[2] = {};
 
 
-	vector1[0] = Vertex2.vPos.x = Vertex1.vPos.x;
-	vector1[1] = Vertex2.vPos.y = Vertex1.vPos.y;
-	vector1[2] = Vertex2.vPos.z = Vertex1.vPos.z;
+	vector1[0] = Vertex2.vPos.x - Vertex1.vPos.x;
+	vector1[1] = Vertex2.vPos.y - Vertex1.vPos.y;
+	vector1[2] = Vertex2.vPos.z - Vertex1.vPos.z;
 
-	vector2[0] = Vertex3.vPos.x = Vertex1.vPos.x;
-	vector2[1] = Vertex3.vPos.y = Vertex1.vPos.y;
-	vector2[2] = Vertex3.vPos.z = Vertex1.vPos.z;
+	vector2[0] = Vertex3.vPos.x - Vertex1.vPos.x;
+	vector2[1] = Vertex3.vPos.y - Vertex1.vPos.y;
+	vector2[2] = Vertex3.vPos.z - Vertex1.vPos.z;
 
 
 	tuVector[0] = Vertex2.vTexUV.x - Vertex1.vTexUV.x;
@@ -253,12 +253,6 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	m_tIndexBufferView.SizeInBytes = sizeof(_uint) * m_iNumIndices;
 
 	CDevice::GetInstance()->WaitForFenceEvent();
-
-
-
-	//m_pQuadTree = CQuadTree::Create(m_pPosition, m_iNumVerticesX, m_iNumVerticesZ);
-	//if (nullptr == m_pQuadTree)
-	//	return E_FAIL;
 
 	return S_OK;
 }	

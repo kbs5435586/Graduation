@@ -436,6 +436,9 @@
     <Filter Include="02. GameObject\97. UI\07. UI_Aim">
       <UniqueIdentifier>{7843105d-83e0-4e99-934c-332f0fd3f17d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\07. Castle">
+      <UniqueIdentifier>{4f0bb95b-3cf0-475c-8d37-5e13f9f36899}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -807,6 +810,9 @@
     <ClInclude Include="..\Headers\UI_Aim.h">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Castle.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\07. Castle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1148,6 +1154,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Aim.cpp">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Castle.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\07. Castle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

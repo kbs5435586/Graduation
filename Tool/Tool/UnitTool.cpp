@@ -118,7 +118,7 @@ BOOL CUnitTool::OnInitDialog()
 	if (iter_find != m_mapGameObject.end())
 		return FALSE;
 
-	for (_int i = 0; i < 40; ++i)
+	for (_int i = 0; i < 47; ++i)
 	{
 
 		if (i == 0)
@@ -279,10 +279,36 @@ BOOL CUnitTool::OnInitDialog()
 		}
 		else if (i == 39)
 		{
-			strName = L"build_wall_panel_01_low";
+			strName = L"Rampart_Wall_10M0";
 		}
-
-
+		else if (i == 40)
+		{
+			strName = L"Rampart_Gate_Small_A0";
+		}
+		else if (i == 41)
+		{
+			strName = L"RoundTower_Small_8M0";
+		}
+		else if (i == 42)
+		{
+			strName = L"Base_RoundTower_Medium0";
+		}
+		else if (i == 43)
+		{
+			strName = L"Tower_Top_Round_Medium0";
+		}
+		else if (i == 44)
+		{
+			strName = L"Tower_Top_Round_Medium1";
+		}
+		else if (i == 45)
+		{
+			strName = L"Tower_Top_Round_Medium2";
+		}
+		else if (i == 46)
+		{
+			strName = L"Castle";
+		}
 
 		m_mapGameObject.insert({ strName, i });
 		m_ListBox_Static.AddString(strName);
@@ -503,8 +529,43 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 	}
 	else if (iSelect == 39)
 	{
-		m_pComponentTag = L"Component_StaticMesh_build_wall_panel_01_low";
-		m_pLayerTag = L"Layer_build_wall_panel_01_low";
+		m_pComponentTag = L"Component_StaticMesh_Rampart_Wall_10M0";
+		m_pLayerTag = L"Layer_Rampart_Wall_10M0";
+	}
+	else if (iSelect == 40)
+	{
+		m_pComponentTag = L"Component_StaticMesh_Rampart_Gate_Small_A0";
+		m_pLayerTag = L"Layer_Rampart_Gate_Small_A0";
+	}
+	else if (iSelect == 41)
+	{
+		m_pComponentTag = L"Component_StaticMesh_build_RoundTower_Small_8M0";
+		m_pLayerTag = L"Layer_RoundTower_Small_8M0";
+	}
+	else if (iSelect == 42)
+	{
+		m_pComponentTag = L"Component_StaticMesh_Base_RoundTower_Medium0";
+		m_pLayerTag = L"Layer_Base_RoundTower_Medium0";
+	}
+	else if (iSelect == 43)
+	{
+		m_pComponentTag = L"Component_StaticMesh_Tower_Top_Round_Medium0";
+		m_pLayerTag = L"Layer_Tower_Top_Round_Medium0";
+	}
+	else if (iSelect == 44)
+	{
+		m_pComponentTag = L"Component_StaticMesh_Tower_Top_Round_Medium1";
+		m_pLayerTag = L"Layer_Tower_Top_Round_Medium1";
+	}
+	else if (iSelect == 45)
+	{
+		m_pComponentTag = L"Component_StaticMesh_Tower_Top_Round_Medium2";
+		m_pLayerTag = L"Layer_Tower_Top_Round_Medium2";
+	}
+	else if (iSelect == 46)
+	{
+		m_pComponentTag = L"Component_StaticMesh_Castle";
+		m_pLayerTag = L"Layer_Castle";
 	}
 
 

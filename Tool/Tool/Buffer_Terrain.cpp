@@ -141,7 +141,7 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _tchar * pFilePath, const _float &
 		{
 			_uint		iIndex = i * iNumVerticesX + j;
 
-			pVertices[iIndex].vPosition = _vec3(j * m_fInterval, (m_pPixel[iIndex] & 0x000000ff) / 10.0f, i * m_fInterval);
+			pVertices[iIndex].vPosition = _vec3(j * m_fInterval, (m_pPixel[iIndex] & 0x000000ff) / 1.f, i * m_fInterval);
 			pVertices[iIndex].vNormal = _vec3(0.f, 0.f, 0.f);
 			m_pPosition[iIndex] = pVertices[iIndex].vPosition;
 			pVertices[iIndex].vTexUV = _vec2(j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));

@@ -91,10 +91,15 @@ void CTerrain_Height::Render_GameObject()
 		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
 
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1),  TEXTURE_REGISTER::t1);
-	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(0),  TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(),  TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(1),  TEXTURE_REGISTER::t1);
 
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t3);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
+	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(),  TEXTURE_REGISTER::t9);
 
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
@@ -156,13 +161,15 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pBrushTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pPickingCom);
 	Safe_Release(m_pFrustumCom);
 
-	
+	Safe_Release(m_pTextureCom_Grass_Mix);
+	Safe_Release(m_pTextureCom_Ground);
+
+
 	CGameObject::Free();
 }
 
@@ -193,10 +200,21 @@ HRESULT CTerrain_Height::Ready_Component()
 		return E_FAIL;
 
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
+	{
+		m_pTextureCom_Grass_Mix = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass_Mix");
+		NULL_CHECK_VAL(m_pTextureCom_Grass_Mix, E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture_Grass_Mix", m_pTextureCom_Grass_Mix)))
+			return E_FAIL;
+		m_pTextureCom_Ground = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Ground");
+		NULL_CHECK_VAL(m_pTextureCom_Ground, E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture_Ground", m_pTextureCom_Ground)))
+			return E_FAIL;
+		m_pTextureCom_Fillter = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Fillter");
+		NULL_CHECK_VAL(m_pTextureCom_Fillter, E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture_Fillter", m_pTextureCom_Fillter)))
+			return E_FAIL;
+	}
+
 
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);

@@ -205,6 +205,7 @@
     <ClInclude Include="Buffer_CubeTex.h" />
     <ClInclude Include="Buffer_RcTex.h" />
     <ClInclude Include="Buffer_Terrain.h" />
+    <ClInclude Include="Buffer_Terrain_Height.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Camera_Debug.h" />
     <ClInclude Include="Cell.h" />
@@ -274,6 +275,7 @@
     <ClCompile Include="Buffer_CubeTex.cpp" />
     <ClCompile Include="Buffer_RcTex.cpp" />
     <ClCompile Include="Buffer_Terrain.cpp" />
+    <ClCompile Include="Buffer_Terrain_Height.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Camera_Debug.cpp" />
     <ClCompile Include="Cell.cpp" />
