@@ -37,17 +37,20 @@ private:
 	TEXINFO									m_tTexInfo = {};
 
 private:
-	_float									deltaTime{};
+	_float									damageTime{};
+	_float									endTime{};
 	_bool check{};
 public:
-	void setTime(_float _t) { deltaTime = _t; }
-	_float& getTime() {	return deltaTime;	}
+	void setDTime(_float _t) { damageTime = _t; }
+	_float& getDTime() {	return damageTime;	}
+	void setETime(_float _t) { endTime = _t; }
+	_float& getETime() { return endTime; }
 	void setCheck(_bool _b) { check = _b; }
 	_bool& getCheck() {	return check; }
 	
 	
 	_int  myfriend{};
 	void setfriend(_int _f) { myfriend = _f; }
-	_int getfirend() { return myfriend; }
+	_int& getfirend() { return myfriend; }
 };
 

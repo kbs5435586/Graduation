@@ -94,7 +94,13 @@ void CCollisionMgr::Throw_to_NPC_Collision()
 			if (fLength <= 5.f)
 			{
 				(iter1)->GetOBBCollision() = true;
-				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+				_vec3 vTargetPos = *dynamic_cast<CTransform*>(iter1)->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vPos = *dynamic_cast<CTransform*>(iter0)->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				iter1->GetAttackedObject_Matrix()._41 = vTemp.x;
+				iter1->GetAttackedObject_Matrix()._42 = vTemp.y;
+				iter1->GetAttackedObject_Matrix()._43 = vTemp.z;
+				//iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
 			}
@@ -125,52 +131,78 @@ void CCollisionMgr::Throw_to_NPC_Collision()
 }
 
 void CCollisionMgr::Skill_to_NPC_Collision(const _float& fTimeDelta)
-{
-
-	if (damage)
-	{
-		time += fTimeDelta;
-		if (time > 1.f)
-		{
-			time = 0.f;
-			damage = false;
-		}
-	}
+{	
 	
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
 	{
-		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+		if (dynamic_cast<CFire*>(iter0)->getCheck())
 		{
-			
-			_float fLength = 0.f;
-
-			_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
-			_vec3 iter1_Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// NPC
-
-
-			_vec3 vDistance = iter1_Pos - iter0_Pos;
-
-			fLength = vDistance.Length();
-
-
-			if (fLength <= 50.f)
+			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 			{
-				//(iter1)->GetOBBCollision() = true;
-				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-				iter1->GetIsParticle() = true;
-				if (!damage)
+
+				_float fLength = 0.f;
+
+				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
+				_vec3 iter1_Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// NPC
+
+
+				_vec3 vDistance = iter1_Pos - iter0_Pos;
+
+				fLength = vDistance.Length();
+
+
+				if (fLength <= 50.f)
 				{
-					if (dynamic_cast<CFire*>(iter0)->getCheck())
+					_float t = dynamic_cast<CPlayer*>(iter1)->getDTime();
+					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+					iter1->GetIsParticle() = true;
+
+					dynamic_cast<CPlayer*>(iter1)->setDTime(t += fTimeDelta);
+					if (t > 1.f)
 					{
-						iter1->GetInfo().fHP -= 0.1f;
-						damage = true;
-					}	
+						iter1->GetInfo().fHP -= 1.f;
+						dynamic_cast<CPlayer*>(iter1)->setDTime(0.f);
+					}
+					if (iter1->GetInfo().fHP < 0)
+						iter1->GetIsDead() = true;
+
 				}
-				if (iter1->GetInfo().fHP < 0)
-					iter1->GetIsDead() = true;
-				
-			}	
+			}
+
+			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
+			{
+
+				_float fLength = 0.f;
+
+				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
+				_vec3 iter1_Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// NPC
+
+
+				_vec3 vDistance = iter1_Pos - iter0_Pos;
+
+				fLength = vDistance.Length();
+
+
+				if (fLength <= 50.f)
+				{
+					_float t = dynamic_cast<CNPC*>(iter1)->getDTime();
+					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+					iter1->GetIsParticle() = true;
+
+					dynamic_cast<CNPC*>(iter1)->setDTime(t += fTimeDelta);
+					if (t > 1.f)
+					{
+						iter1->GetInfo().fHP -= 1.f;
+						dynamic_cast<CNPC*>(iter1)->setDTime(0.f);
+					}
+					if (iter1->GetInfo().fHP < 0)
+						iter1->GetIsDead() = true;
+
+				}
+			}
 		}
+
+		
 	}
 }
 
@@ -219,12 +251,18 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
 								*dynamic_cast<CTransform*>(twoP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 							twoP = nullptr;
+							one = -1;
+							two = -1;
+							iter0->GetIsDead() = true;
 						}
 						else if (twoP == iter0)
 						{
 							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
 								*dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 							oneP = nullptr;
+							one = -1;
+							two = -1;
+							iter0->GetIsDead() = true;
 						}
 						iter1->GetInfo().fHP -= 0.1f;
 						iter1->GetIsParticle() = true;

@@ -29,7 +29,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_tPlayer = *(PLAYER*)pArg;
 	}
 	
-	fireCnt = -1;
+	
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -37,7 +37,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	IsFly = false;
 
 	_vec3 vPos = { 130.f,0.f,300.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
@@ -113,7 +112,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	if (!skillz && !skillz_ing && !skillz_end)
+	if (!m_IsFly_START && !m_IsFly_ING && !m_IsFly_END)
 	{	
 		m_pTransformCom->Set_PositionY(fY);
 	}
@@ -152,102 +151,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 
-	if (!skillz_start)
-	{
-		skillz = m_pObserverCom->GetSkillInfo();
-	}
-	if (skillz)
-	{
-		skillz_start = !skillz_start;
-		if (m_pTransformCom->Get_Scale().x > 0.05f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
-				m_pTransformCom->Get_Scale().z - 0.001f);
-		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
-			m_pTransformCom->UP(fTimeDelta);
-		else
-		{
-			skillz_ing = !skillz_ing;
-		}
-			
-	}
-	if (skillz_ing)
-	{
-		if (IsFly)
-		{
-			m_pTransformCom->Fallen(fTimeDelta);
-			if (m_pTransformCom->m_fVel < -5)
-				IsFly = !IsFly;
-		}
-		else
-		{
-			m_pTransformCom->UP(fTimeDelta);
-			if (m_pTransformCom->m_fVel > 5)
-				IsFly = !IsFly;
-		}
-	}
-	
-	if (skillz_end)
-	{
-		if (m_pTransformCom->Get_Scale().x < 0.1f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
-				m_pTransformCom->Get_Scale().z + 0.001f);
-		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
-			m_pTransformCom->Fallen(fTimeDelta);
-		else
-		{
-			skillz_ing = false;
-			skillz_end = !skillz_end;
-			skillz_start = !skillz_start;
 
-			m_pTransformCom->m_fVel = 0.f;
-		}
-	}
-		
+	Skill_Fly(fTimeDelta, fY);
+	Skill_Invisible(fTimeDelta);
+	Skill_CastFire(fTimeDelta);
 	
 	
-	if (skillx)
-	{
-		m_fCoolTime_TWO += fTimeDelta;
-		if (m_fCoolTime_TWO > 20.f)
-		{
-			skillx = !skillx;
-			m_fCoolTime_TWO = 0.f;
-		}
-	}
-	
-	
-	if (skillz || skillz_ing)
-	{
-		m_fCoolTime_ONE += fTimeDelta;
-		if (m_fCoolTime_ONE > 20.f)
-		{		
-			skillz_end = !skillz_end;
-			m_fCoolTime_ONE = 0.f;
-		}
-	}
-
-
-
-	if (fireCheck)
-	{
-		if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size() > 0)
-		{
-			for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
-			{
-				_float t = dynamic_cast<CFire*>(iter0)->getTime();
-				if (t < 10.f)
-				{
-					dynamic_cast<CFire*>(iter0)->setTime(t + fTimeDelta);
-				}
-				else
-				{
-					dynamic_cast<CFire*>(iter0)->setTime(0.f);
-					dynamic_cast<CGameObject*>(iter0)->GetIsDead() = true;
-					fireCheck = false;
-				}
-			}
-		}
-	}
 	
 
 	if (m_IsParticle)
@@ -281,7 +190,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 			return -1;
-		if (skillx)
+		if (m_IsInvisible)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 				return -1;
@@ -1266,16 +1175,20 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsOnce = true;
 		m_IsHit = true;
 		m_IsCombat = true;
-		if (fire)
+		if (m_IsFire)
 		{
-			fire = false;
-			fireCheck = true;
+			m_IsFire = false;
+			m_IsFireCheck = true;
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
 		}
-		if (teleport)
+		if (m_IsTeleport)
 		{
 			
-			teleport = false;
-			teleportCheck = true;
+			m_IsTeleport = false;
+			m_IsTeleportCheck = true;
 			if (teleportNum == 0)
 				++teleportNum;
 			else if (teleportNum == 1)
@@ -1433,17 +1346,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
 	{
-		skillx = !skillx;
+		m_IsInvisible = !m_IsInvisible;
 	}
-	//if (CManagement::GetInstance()->Key_Up(KEY_Z))
-	//{
-	//	//skillz = !skillz;
-	//	//m_pTransformCom->Scaling(0.05f, 0.05f, 0.05f);
-	//}
+
 
 
 	
-	if (!fire)
+	if (!m_IsFire)
 	{
 		if (CManagement::GetInstance()->Key_Up(KEY_N))
 		{
@@ -1457,7 +1366,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
 				return;
 
-			fire = !fire;	//true
+			m_IsFire = !m_IsFire;	//true
 			//list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
 			//fireCnt = lst.size()-1;
 			//if (lst.size() == 0)
@@ -1485,16 +1394,16 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
-	if (fireCheck)
-	{
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-		int numver = lst.size();
-		CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-		dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
-	}
+	//if (m_IsFireCheck)
+	//{
+	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+	//	int numver = lst.size();
+	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
+	//}
 
 	//////////////////////////////////
-	if (!teleport)
+	if (!m_IsTeleport)
 	{
 		if (CManagement::GetInstance()->Key_Up(KEY_M))
 		{
@@ -1507,7 +1416,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
 				return;
 
-			teleport = !teleport;	//true
+			m_IsTeleport = !m_IsTeleport;	//true
 			
 			Safe_Release(pManagement);
 		}
@@ -1531,12 +1440,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
-	if (teleportCheck)
+	if (m_IsTeleportCheck)
 	{
 		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
 		int numver = lst.size();
 		CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-		dynamic_cast<CFire*>(fire)->setCheck(teleportCheck);
+		dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
 	}
 
 
@@ -1825,5 +1734,108 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
 
+}
+
+void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
+{
+	if (m_IsFly_START || m_IsFly_ING)
+	{
+		m_fCoolTime_ONE += fTimeDelta;
+		if (m_fCoolTime_ONE > 20.f)
+		{
+			m_IsFly_END = !m_IsFly_END;
+			m_fCoolTime_ONE = 0.f;
+		}
+	}
+
+
+	if (!m_IsStart)
+	{
+		m_IsFly_START = m_pObserverCom->GetSkillInfo();
+	}
+
+	if (m_IsFly_START)
+	{
+		m_IsStart = !m_IsStart;
+		if (m_pTransformCom->Get_Scale().x > 0.05f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
+				m_pTransformCom->Get_Scale().z - 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
+			m_pTransformCom->UP(fTimeDelta);
+		else
+		{
+			m_IsFly_ING = !m_IsFly_ING;
+		}
+
+	}
+	if (m_IsFly_ING)
+	{
+		if (m_IsUandD)
+		{
+			m_pTransformCom->Fallen(fTimeDelta);
+			if (m_pTransformCom->m_fVel < -5)
+				m_IsUandD = !m_IsUandD;
+		}
+		else
+		{
+			m_pTransformCom->UP(fTimeDelta);
+			if (m_pTransformCom->m_fVel > 5)
+				m_IsUandD = !m_IsUandD;
+		}
+	}
+
+	if (m_IsFly_END)
+	{
+		if (m_pTransformCom->Get_Scale().x < 0.1f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
+				m_pTransformCom->Get_Scale().z + 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
+			m_pTransformCom->Fallen(fTimeDelta);
+		else
+		{
+			m_IsFly_ING = false;
+			m_IsFly_END = !m_IsFly_END;
+			m_IsStart = !m_IsStart;
+
+			m_pTransformCom->m_fVel = 0.f;
+		}
+	}
+
+}
+
+void CPlayer::Skill_Invisible(const _float& fTimeDelta)
+{
+	if (m_IsInvisible)
+	{
+		m_fCoolTime_TWO += fTimeDelta;
+		if (m_fCoolTime_TWO > 20.f)
+		{
+			m_IsInvisible = !m_IsInvisible;
+			m_fCoolTime_TWO = 0.f;
+		}
+	}
+}
+
+void CPlayer::Skill_CastFire(const _float& fTimeDelta)
+{
+	
+	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size() > 0)
+	{
+		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
+		{
+			_float t = dynamic_cast<CFire*>(iter0)->getETime();
+			if (t < 10.f)
+			{
+				dynamic_cast<CFire*>(iter0)->setETime(t + fTimeDelta);
+			}
+			else
+			{
+				dynamic_cast<CFire*>(iter0)->setETime(0.f);
+				dynamic_cast<CGameObject*>(iter0)->GetIsDead() = true;
+				m_IsFireCheck = false;
+			}
+		}
+	}
+	
 }
 

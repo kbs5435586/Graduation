@@ -94,5 +94,10 @@ private:
 	static _int npcnum;
 	static _bool first;
 	_int whoami;
+
+	_float m_DamageTime{};
+public:
+	void setDTime(_float _t) { m_DamageTime = _t; }
+	_float& getDTime() { return m_DamageTime; }
 };
 

@@ -108,38 +108,47 @@ private:
 	_uint									m_iCurMeshNum = 0;
 
 	_bool	m_IsActive = {};
-	_bool check = {};
-	_bool IsFly = {};
-	_bool skillz = {};
-	_bool skillz_ing = {};
-	_bool skillz_end = {};
-	_bool skillz_start = {};
-	_bool* checkptr = {};
-
-	_bool skillx = {};
-	_bool fire = {};
-	_bool fireCheck = {};
-
-	CGameObject* fireskill = nullptr;
-	_int fireCnt = {};
-	CInput* m_pInput_Device = nullptr;
 
 	CBuffer_CubeTex* m_pBufferCom = nullptr;
 
 
-	_bool skillf = {};
-	_bool teleport = {};
-	_bool teleportCheck = {};
-
-	_int teleportNum = {};
 
 
-
-
+	_bool m_IsStart = {};
+private:
+	void Skill_Fly(const _float& fTimeDelta, _float fY);
+	
+	_bool m_IsFly_START = {};
+	_bool m_IsFly_ING = {};
+	_bool m_IsFly_END = {};
+	_bool m_IsUandD = {};
+	
 
 	_float m_fCoolTime_ONE{};
+private:
+	void Skill_Invisible(const _float& fTimeDelta);
+
+	_bool m_IsInvisible = {};
 	_float m_fCoolTime_TWO{};
+
+private:
+	void Skill_CastFire(const _float& fTimeDelta);
+
+	//CGameObject* fireskill = nullptr;
+	//_int fireCnt = {};
+	_bool m_IsFire = {};
+	_bool m_IsFireCheck = {};
+
+	_float m_DamageTime{};
+public:
+	void setDTime(_float _t) { m_DamageTime = _t; }
+	_float& getDTime() { return m_DamageTime; }
 	_float m_fCoolTime_THR{};
+private:
+	_bool m_IsTeleport = {};
+	_bool m_IsTeleportCheck = {};
+	_int teleportNum = {};
+	
 	_float m_fCoolTime_Four{};
 };
 
