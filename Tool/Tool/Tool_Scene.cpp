@@ -188,6 +188,32 @@ HRESULT CTool_Scene::Ready_Component_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_wall_panel_01_low",
 		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"build_wall_panel_01_low.x"))))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Rampart_Wall_10M0",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Rampart_Wall_10M0.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Rampart_Gate_Small_A0",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Rampart_Gate_Small_A0.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_build_RoundTower_Small_8M0",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"RoundTower_Small_8M0.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Base_RoundTower_Medium0",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Base_RoundTower_Medium0.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Tower_Top_Round_Medium0",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Tower_Top_Round_Medium0.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Tower_Top_Round_Medium1",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Tower_Top_Round_Medium1.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Tower_Top_Round_Medium2",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Tower_Top_Round_Medium2.x"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_StaticMesh_Castle",
+		CStatic_Mesh::Create(m_pGraphic_Device, L"../Resource/Mesh/StaticMesh/", L"Castle.x"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -211,8 +237,12 @@ HRESULT CTool_Scene::Ready_Component_Shader(CManagement* pManagement)
 HRESULT CTool_Scene::Ready_Component_Buffer(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Terrain",
-		CBuffer_Terrain::Create(m_pGraphic_Device, 500, 500, 1.f))))
+		CBuffer_Terrain::Create(m_pGraphic_Device, 1500, 1500, 1.f))))
 		return E_FAIL;
+
+	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Terrain",
+	//	CBuffer_Terrain::Create(m_pGraphic_Device,L"../Resource/Texture/HightMap/tttt.bmp", 1.f))))
+	//	return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Texture",
 		CBuffer_RcTex::Create(m_pGraphic_Device))))
@@ -330,7 +360,7 @@ HRESULT CTool_Scene::Ready_Camera_Layer(const _tchar * pLayerTag)
 	ProjDesc.fFovY = D3DXToRadian(60.0f);
 	ProjDesc.fAspect = _float(g_iBackCX) / g_iBackCY;
 	ProjDesc.fNear = 0.2f;
-	ProjDesc.fFar = 500.0f;
+	ProjDesc.fFar = 10000.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(CameraDesc, ProjDesc)))
 		return E_FAIL;

@@ -36,11 +36,14 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_Terrain_Height*					m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
 	CTexture*								m_pBrushTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CPicking*								m_pPickingCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
+private:
+	CTexture*								m_pTextureCom_Grass_Mix = nullptr;
+	CTexture*								m_pTextureCom_Ground = nullptr;
+	CTexture*								m_pTextureCom_Fillter = nullptr;
 private:
 	BRUSHINFO								m_tBrush = {};
 };

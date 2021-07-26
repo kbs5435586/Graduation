@@ -1227,33 +1227,20 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
-	if ((GetAsyncKeyState('6') & 0x8000))
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_ChangeFormation_Cooltime());
-		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		_vec3 vDirectionPerSec = (vLook * 5.f* fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
 		{
-			server->send_change_formation_packet();
-			server->Set_ChangeFormation_CoolTime(high_resolution_clock::now());
-		}
-	}
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_AddNPC_Cooltime());
-		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
-		{
-			server->send_add_npc_packet();
-			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
-		}
-	}
-	if (CManagement::GetInstance()->Key_Down(KEY_1))
-	{
-		m_iCurMeshNum++;
-		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
-			m_iCurMeshNum = 0;
-		m_iCurAnimIdx = 0;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+
+				m_pTransformCom->BackWard(fTimeDelta);
+
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
 
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_2))

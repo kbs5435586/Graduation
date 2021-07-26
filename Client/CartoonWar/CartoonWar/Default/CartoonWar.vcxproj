@@ -172,6 +172,7 @@
     <ClInclude Include="..\Headers\Building.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
+    <ClInclude Include="..\Headers\Castle.h" />
     <ClInclude Include="..\Headers\Catapult.h" />
     <ClInclude Include="..\Headers\Cell.h" />
     <ClInclude Include="..\Headers\Circle.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="..\Codes\Building.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
+    <ClCompile Include="..\Codes\Castle.cpp" />
     <ClCompile Include="..\Codes\Catapult.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
     <ClCompile Include="..\Codes\Circle.cpp" />

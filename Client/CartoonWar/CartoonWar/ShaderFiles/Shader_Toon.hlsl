@@ -86,6 +86,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	}
 	else
 	{
+		//vOut.vDiffuseTex = vDiffuse;
 		vOut.vDiffuseTex = vDiffuse * (vMtrlDif+ vMtrlAmb + vMtrlEmiv);
 	}
 

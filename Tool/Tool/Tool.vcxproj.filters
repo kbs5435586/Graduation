@@ -238,6 +238,9 @@
     <Filter Include="01. GameApp\02. GameObject\98. Test\01. Tree">
       <UniqueIdentifier>{fda82830-6bee-4189-858f-88c75eef854a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. GameApp\97. Engine\01. Utility\02. Component\00. Component\03. VIBuffer\04. Buffer_Terrain_Height">
+      <UniqueIdentifier>{72e6c660-b536-4d92-9bc9-52a48774601a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ToolDoc.h">
@@ -441,6 +444,9 @@
     <ClInclude Include="Tree.h">
       <Filter>01. GameApp\02. GameObject\98. Test\01. Tree</Filter>
     </ClInclude>
+    <ClInclude Include="Buffer_Terrain_Height.h">
+      <Filter>01. GameApp\97. Engine\01. Utility\02. Component\00. Component\03. VIBuffer\04. Buffer_Terrain_Height</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ToolDoc.cpp">
@@ -610,6 +616,9 @@
     </ClCompile>
     <ClCompile Include="Tree.cpp">
       <Filter>01. GameApp\02. GameObject\98. Test\01. Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer_Terrain_Height.cpp">
+      <Filter>01. GameApp\97. Engine\01. Utility\02. Component\00. Component\03. VIBuffer\04. Buffer_Terrain_Height</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

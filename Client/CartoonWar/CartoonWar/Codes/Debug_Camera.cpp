@@ -28,7 +28,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(20.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -165,16 +165,12 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		//	//pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.25f);
 		//}
 		//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,L"Layer_Player", L"Com_Transform", 0);
-		//m_pTransform->Rotation_Rev(fTimeDelta, pTransform);
-
-		
+		//m_pTransform->Rotation_Rev(fTimeDelta, pTransform);		
 		//if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 		//{
 		//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, 
 		//	m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 		//}
-
-
 	}
 
 
@@ -217,61 +213,61 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransform);
-	_float		fThisY = m_pTransform->Get_Matrix()._42;
-	if (fThisY <= fY)
-	{
-		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Player", L"Com_Transform", 0);
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransform);
+	//_float		fThisY = m_pTransform->Get_Matrix()._42;
+	//if (fThisY <= fY)
+	//{
+	//	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+	//		L"Layer_Player", L"Com_Transform", 0);
+	//	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
 
 
-		_vec3 vPos, vRight, vUp, vLook;
-		vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		vRight = {};
-		vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
-		vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+	//	_vec3 vPos, vRight, vUp, vLook;
+	//	vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	//	vRight = {};
+	//	vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
+	//	vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
 
-		if (m_IsFix)
-		{
-			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
-			{
-				vPos.y += 5.f;
-				vUp *= 20.f;
-				vLook *= -5.f;
-			}
-			else
-			{
-				vPos.y += 5.f;
-				vUp *= 40.f;
-				vLook *= -5.f;
-			}
+	//	if (m_IsFix)
+	//	{
+	//		if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
+	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
+	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
+	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
+	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
+	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+	//		{
+	//			vPos.y += 5.f;
+	//			vUp *= 20.f;
+	//			vLook *= -5.f;
+	//		}
+	//		else
+	//		{
+	//			vPos.y += 5.f;
+	//			vUp *= 40.f;
+	//			vLook *= -5.f;
+	//		}
 
-		}
-		else
-		{
-			vPos.y += 5.f;
-			vUp *= 50.f;
-			vLook *= -20.f;
-		}
-		_vec3 vTemp = vUp - vLook;
-		vPos = vPos + vTemp;
-		vRight = Vector3_::CrossProduct(vUp, vLook);
-		vUp = Vector3_::Normalize(vUp);
-		vLook = Vector3_::Normalize(vLook);
+	//	}
+	//	else
+	//	{
+	//		vPos.y += 5.f;
+	//		vUp *= 50.f;
+	//		vLook *= -20.f;
+	//	}
+	//	_vec3 vTemp = vUp - vLook;
+	//	vPos = vPos + vTemp;
+	//	vRight = Vector3_::CrossProduct(vUp, vLook);
+	//	vUp = Vector3_::Normalize(vUp);
+	//	vLook = Vector3_::Normalize(vLook);
 
 
-		_long	MouseMove = 0;
-		m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	}
+	//	_long	MouseMove = 0;
+	//	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	//	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	//	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	//}
 
 
 
