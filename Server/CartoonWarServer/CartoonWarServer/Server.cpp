@@ -206,6 +206,7 @@ void Server::send_login_ok_packet(int user_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_LOGIN_OK;
     packet.p_class = g_clients[user_id].m_class;
+    packet.total_angle = g_clients[user_id].m_total_angle;
     _matrix pos = g_clients[user_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
     packet.r_y = pos._12;
@@ -679,6 +680,7 @@ void Server::do_follow(int npc_id)
             _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 p_look = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
                 if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
@@ -714,10 +716,9 @@ void Server::do_follow(int npc_id)
                 }
                 else // 자신의 포메이션 반지름과 같거나 이내일때
                 {
-                    if (n.m_isOut)
+                    if (n.m_isOut) // 최초로 반지름 범위에 들어왔을때
                     {
                         n.m_isOut = false;
-                        _vec3 p_look = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
                         _vec3 standard = -1.f * Vector3_::Normalize(p_look);
                         _vec3 npcLookAt = n_pos - p_pos;
                         npcLookAt = Vector3_::Normalize(npcLookAt);
@@ -741,10 +742,10 @@ void Server::do_follow(int npc_id)
                         n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
                         n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                     }
-                    else
+                    else // 반지름 범위에 있는 동안
                     {
                         if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
-                            || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle)
+                            || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle) // 자기가 있어야할 각도 위치가 아닐경우
                         {
                             if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
                             {
@@ -760,6 +761,27 @@ void Server::do_follow(int npc_id)
                                 n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
                                 n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                             }
+                        }
+
+                        if (n_look != p_look) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+                        {
+                            _vec3 standard = -1.f * Vector3_::Normalize(p_look);
+                            _vec3 npcLookAt = -1.f * Vector3_::Normalize(n_look);
+
+                            float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 내각
+                            _vec3 PoutProduct;
+                            PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // 외각
+                            PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
+                            PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
+
+                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                            if (PoutProduct.y < 0)
+                                radian *= -1.f;
+                            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+                            if (NPCangle > 0)
+                                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                            else if (NPCangle < 0)
+                                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
                         }
                     }
                 }
@@ -1267,6 +1289,7 @@ void Server::send_condition_packet(int user_id, int other_id, unsigned char type
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_CONDITION;
     packet.con_type = type;
+    packet.total_angle = g_clients[other_id].m_total_angle;
     if (CON_TYPE_MOVE == type)
     {
         packet.condition = g_clients[other_id].m_Mcondition;

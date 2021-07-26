@@ -10,6 +10,14 @@ enum PLAYERS {
 	ENUM_PLAYER25, ENUM_PLAYER26, ENUM_PLAYER27, ENUM_PLAYER28, ENUM_PLAYER29, ENUM_PLAYER30, ENUM_PLAYER_END
 };
 
+struct FormationInfo
+{
+	int id;
+	_vec3 final_pos;
+	float angle;
+	float radius;
+};
+
 constexpr unsigned int MAX_PACKET_SIZE = 255;
 constexpr unsigned int MAX_BUF_SIZE = 512;
 
@@ -77,6 +85,7 @@ struct sc_packet_login_ok
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
+	float total_angle;
 	short hp;
 	short level;
 	int	exp;
@@ -174,6 +183,7 @@ struct sc_packet_condition
 	char con_type;
 	int id;
 	char condition;
+	float total_angle;
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;

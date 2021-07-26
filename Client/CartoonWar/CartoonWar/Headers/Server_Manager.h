@@ -77,6 +77,7 @@ public:
     char Get_PlayerRCon(int id);
     char Get_NpcRCon(int id);
     void Set_PlayerRCon(char cond);
+    void Set_PlayerTotalRotate(int id, float cal);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);

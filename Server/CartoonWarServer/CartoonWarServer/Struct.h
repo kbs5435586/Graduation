@@ -34,14 +34,6 @@ struct Collision
 	float radius;
 };
 
-struct FormationInfo
-{
-	int id;
-	_vec3 final_pos;
-	float angle;
-	float radius;
-};
-
 struct SESSION // 클라이언트 정보
 {
 	mutex m_cLock;
