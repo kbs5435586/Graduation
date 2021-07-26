@@ -1438,6 +1438,7 @@ void Server::initialize_NPC(int player_id)
                 {
                     g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
                         &g_clients[player_id].m_boid[j].final_pos);
+                    g_clients[npc_id].m_boid_num = j;
                     g_clients[npc_id].m_total_angle = g_clients[player_id].m_boid[j].angle;
                 }
             }

@@ -111,38 +111,35 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
 
-	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
+	switch (m_cMoveCondition)
 	{
-		switch (m_cMoveCondition)
-		{
-		case CON_STRAIGHT:
-			m_pTransformCom->BackWard(fTimeDelta);
-			break;
-		case CON_RUN:
-			m_pTransformCom->BackWard(fTimeDelta * 2.f);
-			break;
-		case CON_BACK:
-			m_pTransformCom->Go_Straight(fTimeDelta);
-			break;
-		}
+	case CON_STRAIGHT:
+		m_pTransformCom->BackWard(fTimeDelta);
+		break;
+	case CON_RUN:
+		m_pTransformCom->BackWard(fTimeDelta * 2.f);
+		break;
+	case CON_BACK:
+		m_pTransformCom->Go_Straight(fTimeDelta);
+		break;
+	}
 
-		switch (m_cRotateCondition)
-		{
-		case CON_LEFT:
-		{
-			m_pTransformCom->Rotation_Y(-fTimeDelta);
-			float cal = (-fTimeDelta * XMConvertToRadians(90.f)) * 180.f / PIE;
-			server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
-		}
-		break;
-		case CON_RIGHT:
-		{
-			m_pTransformCom->Rotation_Y(fTimeDelta);
-			float cal = fTimeDelta * XMConvertToRadians(90.f) * 180.f / PIE;
-			server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
-		}
-		break;
-		}
+	switch (m_cRotateCondition)
+	{
+	case CON_LEFT:
+	{
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+		float cal = (-fTimeDelta * XMConvertToRadians(90.f)) * 180.f / PIE;
+		server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
+	}
+	break;
+	case CON_RIGHT:
+	{
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+		float cal = fTimeDelta * XMConvertToRadians(90.f) * 180.f / PIE;
+		server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
+	}
+	break;
 	}
 
 	m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
@@ -1226,23 +1223,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
-
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-		_vec3 vDirectionPerSec = (vLook * 5.f* fTimeDelta);
-		_vec3 vSlide = {};
-		if (!m_IsSlide)
-		{
-			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			{
-
-				m_pTransformCom->BackWard(fTimeDelta);
-
-			}
-			else
-			{
-				m_pTransformCom->Go_There(vSlide);
-
-	}
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
 		m_tInfo.fHP -= 1.f;
@@ -1333,6 +1313,16 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//	server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 		//	m_IsSlide = false;
 		//}
+	}
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_AddNPC_Cooltime());
+		if (cool_time.count() > 2)
+		{
+			server->send_add_npc_packet();
+			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+		}
 	}
 
 	if (8 == server->Get_Anim(m_iLayerIdx))

@@ -46,7 +46,7 @@ constexpr int WORLD_VERTICAL = 500; // 월드 세로 z
 constexpr int SERVER_PORT = 9000;
 
 constexpr float BASIC_FORM_RAD = 10.f;
-constexpr float PIE = 3.141592;
+constexpr float PIE = 3.141592f;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_CONDITION = 2;

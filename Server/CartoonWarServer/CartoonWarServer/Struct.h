@@ -61,6 +61,7 @@ struct SESSION // 클라이언트 정보
 	
 	Collision m_col;
 	vector <FormationInfo> m_boid;
+	unsigned short m_boid_num;
 	char m_formation;
 	CLASS m_class;
 	char m_Mcondition;
