@@ -153,7 +153,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		//vLook = Vector3_::Normalize(vLook);
 
 
-	}
+	//}
 
 
 
