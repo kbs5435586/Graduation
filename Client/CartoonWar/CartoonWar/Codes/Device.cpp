@@ -716,10 +716,7 @@ HRESULT CDevice::Create_RootSignature()
 	m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
 
 
-
-
 	// Create ComputeShader RootSignature
-
 	range = {};
 	range.BaseShaderRegister = 0;  // u0 에서
 	range.NumDescriptors = 4;	   // u3 까지 4 개 UAV 레지스터 사용여부 

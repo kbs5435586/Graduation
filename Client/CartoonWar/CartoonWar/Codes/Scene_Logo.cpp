@@ -669,7 +669,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex",
 		CBuffer_RectTex::Create())))
-		return E_FAIL;
+		return E_FAIL; 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeCol",
 		CBuffer_CubeCol::Create())))
 		return E_FAIL;
@@ -1480,6 +1480,13 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflection",
 			CShader::Create(L"../ShaderFiles/Shader_Reflection.hlsl", "VS_Main", "PS_Main"))))
+			return E_FAIL;
+	}
+
+	//Tess
+	{
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain_Tess",
+			CShader::Create(L"../ShaderFiles/Shader_Terrain_Tess.hlsl", "VS_Main", "PS_Main", nullptr, "DS_Main", "HS_Main"))))
 			return E_FAIL;
 	}
 
