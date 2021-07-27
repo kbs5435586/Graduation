@@ -1,24 +1,24 @@
 #include "framework.h"
-#include "Throw_Arrow.h"
+#include "Deffend.h"
 #include "Management.h"
 
-CThrow_Arrow::CThrow_Arrow()
+CDeffend::CDeffend()
 	: CGameObject()
 {
 }
 
-CThrow_Arrow::CThrow_Arrow(const CThrow_Arrow& rhs)
+CDeffend::CDeffend(const CDeffend& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CThrow_Arrow::Ready_Prototype()
+HRESULT CDeffend::Ready_Prototype()
 {
 
 	return S_OK;
 }
 
-HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
+HRESULT CDeffend::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -27,52 +27,47 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 
 	if (nullptr == pArg)
 		return E_FAIL;
-	//m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(-90.f));
+
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(-180.f));
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
+
 
 	_matrix pTemp = *(_matrix*)pArg;
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	pTemp._42 += 4.f;
-	//pTemp._43 += 10.f;
-	matWorld *= pTemp;
-	m_pTransformCom->Set_Matrix(matWorld);
+	m_pTransformCom->Set_Matrix(pTemp);
+	m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
 
-
-
-	_vec3 vColliderSize = {50.f,5.f,5.f };
+	_vec3 vColliderSize = { 50.f,50.f,50.f };
 	m_pColliderCom->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 
-
-
-	
 	return S_OK;
 }
 
-_int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
+_int CDeffend::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
-	m_pTransformCom->Go_Right(fTimeDelta);
-	m_fLifeTime += fTimeDelta;
-	if (m_fLifeTime >= 10.f)
-	{
-		m_fLifeTime = 0.f;
-		return DEAD_OBJ;
-	}
+	m_pColliderCom->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+
+
+	Obb_Collision();
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return NO_EVENT;
+
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY);
+
 
 	if (m_IsDead)
 		return DEAD_OBJ;
-
-
 	return NO_EVENT;
 }
 
-_int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CDeffend::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 30.f)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
@@ -88,7 +83,7 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CThrow_Arrow::Render_GameObject()
+void CDeffend::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -116,18 +111,22 @@ void CThrow_Arrow::Render_GameObject()
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+		CTexture* pTexture = m_pMeshCom->m_pTexture[i];
+		if (pTexture)
+		{
+			CDevice::GetInstance()->SetTextureToShader(pTexture->GetSRV_().Get(), TEXTURE_REGISTER::t0);
+		}
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
 
 
-	//m_pColliderCom->Render_Collider();
+	m_pColliderCom->Render_Collider();
 	Safe_Release(pManagement);
 }
 
-void CThrow_Arrow::Render_GameObject_Shadow()
+void CDeffend::Render_GameObject_Shadow()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -155,7 +154,7 @@ void CThrow_Arrow::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
-void CThrow_Arrow::Render_Blur()
+void CDeffend::Render_Blur()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -198,7 +197,7 @@ void CThrow_Arrow::Render_Blur()
 	Safe_Release(pManagement);
 }
 
-HRESULT CThrow_Arrow::CreateInputLayout()
+HRESULT CDeffend::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -222,23 +221,23 @@ HRESULT CThrow_Arrow::CreateInputLayout()
 	return S_OK;
 }
 
-CThrow_Arrow* CThrow_Arrow::Create()
-{	
-	CThrow_Arrow* pInstnace = new CThrow_Arrow;
+CDeffend* CDeffend::Create()
+{
+	CDeffend* pInstnace = new CDeffend;
 	if (FAILED(pInstnace->Ready_Prototype()))
 		Safe_Release(pInstnace);
 	return pInstnace;
 }
 
-CGameObject* CThrow_Arrow::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* CDeffend::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CThrow_Arrow* pInstnace = new CThrow_Arrow;
+	CDeffend* pInstnace = new CDeffend;
 	if (FAILED(pInstnace->Ready_GameObject(pArg)))
 		Safe_Release(pInstnace);
 	return pInstnace;
 }
 
-void CThrow_Arrow::Free()
+void CDeffend::Free()
 {
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pRendererCom);
@@ -247,13 +246,12 @@ void CThrow_Arrow::Free()
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
 }
 
-HRESULT CThrow_Arrow::Ready_Component()
+HRESULT CDeffend::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -269,7 +267,7 @@ HRESULT CThrow_Arrow::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pMeshCom= (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Arrow");
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
@@ -293,11 +291,6 @@ HRESULT CThrow_Arrow::Ready_Component()
 	NULL_CHECK_VAL(m_pColliderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom)))
 		return E_FAIL;
-
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Undead");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
@@ -306,7 +299,7 @@ HRESULT CThrow_Arrow::Ready_Component()
 	return S_OK;
 }
 
-void CThrow_Arrow::Obb_Collision()
+void CDeffend::Obb_Collision()
 {
 	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
 	{
@@ -315,12 +308,11 @@ void CThrow_Arrow::Obb_Collision()
 			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vTemp = { vPos - vTargetPos };
-			vTemp.Normalize();
+			vTemp *= 5.f;
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			//m_vMidPoint.y += 2.f;
+			m_vMidPoint.y += 10.f;
 			m_IsBazier = true;
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
@@ -333,7 +325,7 @@ void CThrow_Arrow::Obb_Collision()
 	}
 }
 
-void CThrow_Arrow::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+void CDeffend::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 {
 	_float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
 	_float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);

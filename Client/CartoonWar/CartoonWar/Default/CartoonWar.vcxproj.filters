@@ -439,6 +439,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\07. Castle">
       <UniqueIdentifier>{4f0bb95b-3cf0-475c-8d37-5e13f9f36899}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\07. Deffend">
+      <UniqueIdentifier>{98c3211d-687d-4440-91bf-7d82f0d52de8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -813,6 +816,9 @@
     <ClInclude Include="..\Headers\Castle.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\07. Castle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Deffend.h">
+      <Filter>02. GameObject\01. Scene_Stage\07. Deffend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1157,6 +1163,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Castle.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\07. Castle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Deffend.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\07. Deffend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

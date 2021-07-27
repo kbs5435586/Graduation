@@ -23,6 +23,8 @@ void CCollisionMgr::Update_CollisionManager()
 	Player_to_Player_Collision();
 	Throw_to_NPC_Collision();
 	Player_to_NPC_Attack_Collision();
+	Deffend_to_Player();
+	Deffend_to_Deffend();
 }
 
 void CCollisionMgr::Player_to_NPC_Collision()
@@ -209,6 +211,80 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 
 		}
 	}
+}
+
+void CCollisionMgr::Deffend_to_Player()
+{
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+	{
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
+		{
+
+			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
+			_float fLen = vLenTemp.Length();
+			if (fLen >= 80.f)
+				continue;
+			if (iter1->GetIsHit() || iter0->GetIsHit())
+				continue;
+
+			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_OBB"))
+				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_OBB"))))
+			{
+
+				(iter1)->GetOBBCollision() = true;
+				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+
+				//(iter0)->GetOBBCollision() = true;
+				//iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+			}
+
+		}
+	}
+}
+
+void CCollisionMgr::Deffend_to_NPC()
+{
+}
+
+void CCollisionMgr::Deffend_to_Throw()
+{
+}
+
+void CCollisionMgr::Deffend_to_Deffend()
+{
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
+	{
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
+		{
+			if (iter0 == iter1)
+				continue;
+			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
+			_float fLen = vLenTemp.Length();
+			if (fLen >= 50.f)
+				continue;
+			if (iter1->GetIsHit() || iter0->GetIsHit())
+				continue;
+
+			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_OBB"))
+				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_OBB"))))
+			{
+
+				(iter1)->GetOBBCollision() = true;
+				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+
+				(iter0)->GetOBBCollision() = true;
+				iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+			}
+
+		}
+	}
+
 }
 
 CCollisionMgr* CCollisionMgr::Create()

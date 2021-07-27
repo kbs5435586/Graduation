@@ -57,18 +57,16 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_float fLen = vLen.Length();
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
-		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (fLen <= 250.f)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
+				return -1;	
 		}
 
-
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+			return -1;
 	}
 	else
 	{

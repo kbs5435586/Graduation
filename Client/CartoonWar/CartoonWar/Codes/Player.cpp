@@ -3,6 +3,9 @@
 #include "Player.h"
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
+
+#include "Deffend.h"
+
 CPlayer::CPlayer()
 	: CGameObject()
 {
