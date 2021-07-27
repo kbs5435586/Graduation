@@ -3,6 +3,9 @@
 #include "Player.h"
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
+
+#include "Deffend.h"
+
 CPlayer::CPlayer()
 	: CGameObject()
 {
@@ -1058,6 +1061,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			_matrix matTemp = m_pTransformCom->Get_Matrix();
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return ;
+		}
+		else if (m_eCurClass == CLASS::CLASS_WORKER)
+		{
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				return;
 		}
 		_uint iRand = rand() % 2;
 		if (iRand == 0)

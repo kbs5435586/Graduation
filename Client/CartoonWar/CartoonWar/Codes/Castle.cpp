@@ -69,10 +69,10 @@ _int CCastle::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
+	
 		}
-
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+			return -1;
 
 	}
 	else
