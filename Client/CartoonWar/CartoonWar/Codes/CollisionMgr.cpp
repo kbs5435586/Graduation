@@ -61,16 +61,11 @@ void CCollisionMgr::Player_to_NPC_Collision()
 						iter1->GetIsParticle() = true;
 						iter0->GetIsDead() = true;
 						//iter1->GetIsDead() = true;
-					}
-					
+					}				
 				}
-				
-
 			}
-
 		}
 	}
-
 }
 
 
@@ -200,9 +195,7 @@ void CCollisionMgr::Skill_to_NPC_Collision(const _float& fTimeDelta)
 
 				}
 			}
-		}
-
-		
+		}		
 	}
 }
 
@@ -218,15 +211,21 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
 	{
 		if (dynamic_cast<CFire*>(iter0)->getfirend() == 0)
+		{
 			one = true;
+			oneP = iter0;
+		}
 		if (dynamic_cast<CFire*>(iter0)->getfirend() == 1)
+		{
 			two = true;
+			twoP = iter0;
+		}
 	}
-	if(one)
-		oneP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 0);
-	if(two)
-		twoP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 1);
-	
+	//if(one)
+	//	oneP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 0);
+	//if(two)
+	//	twoP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 1);
+	_bool yeah{};
 	if (one && two)
 	{
 		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
@@ -245,33 +244,34 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 
 				if (fLength <= 10.f)
 				{
-					
-						if (oneP == iter0)
-						{
-							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
-								*dynamic_cast<CTransform*>(twoP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-							twoP = nullptr;
-							one = -1;
-							two = -1;
-							iter0->GetIsDead() = true;
-						}
-						else if (twoP == iter0)
-						{
-							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
-								*dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-							oneP = nullptr;
-							one = -1;
-							two = -1;
-							iter0->GetIsDead() = true;
-						}
-						iter1->GetInfo().fHP -= 0.1f;
-						iter1->GetIsParticle() = true;
+					iter1->GetIsParticle() = true;
+					if (oneP == iter0)
+					{
+						_vec3 tttt = *dynamic_cast<CTransform*>(twoP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+						*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) = tttt + vDistance;
+							
 						
-
-
-					
+						oneP->GetIsDead() = true;
+						twoP->GetIsDead() = true;
+						//iter0->GetIsDead() = true;
+						yeah = true;
+					}
+					if (twoP == iter0)
+					{
+						_vec3 tttt = *dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+						*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) = tttt + vDistance;
+						//*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
+						//	*dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION)+ vDistance;
+						
+						oneP->GetIsDead() = true;
+						twoP->GetIsDead() = true;
+						yeah = true;
+						//iter0->GetIsDead() = true;
+					}								
 				}
 			}
+			if (yeah)
+				break;
 		}
 	}
 	

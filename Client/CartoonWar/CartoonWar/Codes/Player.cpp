@@ -1186,13 +1186,18 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		if (m_IsTeleport)
 		{
-			
 			m_IsTeleport = false;
 			m_IsTeleportCheck = true;
-			if (teleportNum == 0)
-				++teleportNum;
-			else if (teleportNum == 1)
+			
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+			dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
+			dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
+			++teleportNum;
+			if (teleportNum > 1)
 				teleportNum = 0;
+
 		}
 	}
 
@@ -1394,13 +1399,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
-	//if (m_IsFireCheck)
-	//{
-	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-	//	int numver = lst.size();
-	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
-	//}
 
 	//////////////////////////////////
 	if (!m_IsTeleport)
@@ -1428,7 +1426,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		if (numver > 0)
 		{
 			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-			dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
+			
 			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
 			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -1440,13 +1438,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
-	if (m_IsTeleportCheck)
-	{
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-		int numver = lst.size();
-		CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-		dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-	}
+	//if (m_IsTeleportCheck)
+	//{
+	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+	//	int numver = lst.size();
+	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
+	//}
 
 
 

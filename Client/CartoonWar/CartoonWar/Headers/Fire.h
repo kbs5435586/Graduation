@@ -48,7 +48,13 @@ public:
 	void setCheck(_bool _b) { check = _b; }
 	_bool& getCheck() {	return check; }
 	
-	
+
+	_bool moveCheck{};
+	void setMCheck(_bool _b) { moveCheck = _b; }
+	_bool& getMCheck() { return moveCheck; }
+
+
+
 	_int  myfriend{};
 	void setfriend(_int _f) { myfriend = _f; }
 	_int& getfirend() { return myfriend; }
