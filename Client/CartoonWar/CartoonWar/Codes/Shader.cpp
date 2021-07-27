@@ -28,7 +28,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	if (VSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, VSEntry, "vs_5_1", 0, 0, &m_pVSBlob, &m_pErrBlob)))
+			, VSEntry, "vs_5_0", 0, 0, &m_pVSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "VS_Shader Create Failed !!!", MB_OK);
@@ -41,7 +41,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	if (PSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, PSEntry, "ps_5_1", 0, 0, &m_pPSBlob, &m_pErrBlob)))
+			, PSEntry, "ps_5_0", 0, 0, &m_pPSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "PS_Shader Create Failed !!!", MB_OK);
@@ -52,7 +52,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	if (GSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, GSEntry, "gs_5_1", 0, 0, &m_pGSBlob, &m_pErrBlob)))
+			, GSEntry, "gs_5_0", 0, 0, &m_pGSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "GS_Shader Create Failed !!!", MB_OK);
@@ -63,7 +63,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	if (DSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, DSEntry, "ds_5_1", 0, 0, &m_pDSBlob, &m_pErrBlob)))
+			, DSEntry, "ds_5_0", 0, 0, &m_pDSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "DS_Shader Create Failed !!!", MB_OK);
@@ -74,7 +74,7 @@ HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* VSEntry,
 	if (HSEntry)
 	{
 		if (FAILED(D3DCompileFromFile(pFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-			, HSEntry, "hs_5_1", 0, 0, &m_pHSBlob, &m_pErrBlob)))
+			, HSEntry, "hs_5_0", 0, 0, &m_pHSBlob, &m_pErrBlob)))
 		{
 			pErr = (char*)m_pErrBlob->GetBufferPointer();
 			MessageBoxA(nullptr, pErr, "HS_Shader Create Failed !!!", MB_OK);
