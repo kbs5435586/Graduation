@@ -102,8 +102,8 @@ void CTerrain_Height::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(),  TEXTURE_REGISTER::t9);
 
 	CDevice::GetInstance()->UpdateTable();
-	//m_pBufferCom->Render_VIBuffer();
-	m_pBufferCom->Render_VIBuffer(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	m_pBufferCom->Render_VIBuffer();
+	//m_pBufferCom->Render_VIBuffer(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	m_pNaviCom->Render_Navigation();
 
 
@@ -125,10 +125,10 @@ HRESULT CTerrain_Height::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST)))
-		return E_FAIL;
-	//if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT)))
+	//if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST)))
 	//	return E_FAIL;
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -196,14 +196,15 @@ HRESULT CTerrain_Height::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 		
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain_Tess");
-	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
-		return E_FAIL;
-	//m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
+	//m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain_Tess");
 	//NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	//if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
-	//	return E_FAIL; 
+	//	return E_FAIL;
+
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
+	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL; 
 
 	{
 		m_pTextureCom_Grass_Mix = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass_Mix");
