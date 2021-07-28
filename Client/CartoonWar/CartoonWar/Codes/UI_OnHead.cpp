@@ -58,7 +58,7 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 
 _int CUI_OnHead::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (m_pRendererCom != nullptr)
 		{
@@ -82,9 +82,9 @@ void CUI_OnHead::Render_GameObject()
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
 	REP tRep = {};
-	tRep.m_arrFloat[0] = m_tInfo.fHP;
-	tRep.m_arrFloat[1] = m_tInfo.fMaxHP;
-	tRep.m_arrInt[0] = 1;
+	tRep.m_arrInt[0] = m_tInfo.fHP;
+	tRep.m_arrInt[1] =1;
+	
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -96,7 +96,7 @@ void CUI_OnHead::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
@@ -179,6 +179,10 @@ HRESULT CUI_OnHead::Ready_Component()
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_HPBar");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -205,7 +209,7 @@ void CUI_OnHead::SetPosition(_vec3 vPos, CLASS eClass)
 		m_vPos.y += 8.f;
 		break;
 	default:
-		m_vPos.y += 10.f;
+		m_vPos.y += 15.f;
 		//m_vPos.z -= 2.f;
 		break;
 	}
@@ -217,17 +221,5 @@ void CUI_OnHead::SetPosition(_vec3 vPos, CLASS eClass)
 
 void CUI_OnHead::SetInfo(INFO tInfo)
 {
-	m_tInfo = tInfo;
-
-
-
-	_float fRatio = m_tInfo.fHP / m_tInfo.fMaxHP;
-	fRatio *= 5.f;
-
-	if (m_vSize.x > fRatio)
-	{
-		m_vBarPos.x -= 0.18f;
-	}
-	m_vSize.x = fRatio;
-	m_pTransformCom->Scaling(m_vSize);
+	m_tInfo = tInfo; 
 }

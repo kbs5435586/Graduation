@@ -85,11 +85,13 @@ void CUI_Main::Render_GameObject()
 	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(0)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pSpecularTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(1)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pBlurTex = pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pPointTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(2)->pRtt->GetSRV().Get();
 
 	CDevice::GetInstance()->SetTextureToShader(pDiffuseTex.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->SetTextureToShader(pShadeTex.Get(), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->SetTextureToShader(pSpecularTex.Get(), TEXTURE_REGISTER::t2);
 	CDevice::GetInstance()->SetTextureToShader(pBlurTex.Get(), TEXTURE_REGISTER::t3);
+	CDevice::GetInstance()->SetTextureToShader(pPointTex.Get(), TEXTURE_REGISTER::t4);
 
 
 

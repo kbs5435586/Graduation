@@ -27,6 +27,8 @@
 #include "UI_WoL.h"
 #include "UI_WoL_Blue.h"
 #include "UI_OnHead.h"
+#include "UI_MiniMap.h"
+#include "UI_Aim.h"
 #include "UI_ClassTap.h"
 #include "UI_Skill.h"
 
@@ -39,13 +41,16 @@
 #include "TestHatchMesh.h"
 #include "TestMesh.h"
 #include "TestBuffer.h"
+#include "Test_Tess.h"
 
 #include "Hatch.h"
 #include "Building.h"
 #include "LowPoly.h"
 #include "Flag.h"
+#include "Castle.h"
 
 #include "Water.h"
+#include "Deffend.h"
 
 
 CScene_Stage::CScene_Stage()
@@ -71,6 +76,14 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
+	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
+		return E_FAIL;
 
 	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
 	//	return E_FAIL;
@@ -79,18 +92,13 @@ HRESULT CScene_Stage::Ready_Scene()
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 
-
-
-
-
+	g_IsCollisionStart = true;
 	Safe_Release(pManagement);
 	return S_OK;
 }
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
-	
-
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -138,6 +146,10 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead", CUI_OnHead::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_MiniMap", CUI_MiniMap::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Aim", CUI_Aim::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_ClassTap", CUI_ClassTap::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Skill", CUI_Skill::Create())))
@@ -152,6 +164,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle", CCastle::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Flag", CFlag::Create())))
 		return E_FAIL;
 
@@ -164,12 +178,16 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_ThrowArrow", CThrow_Arrow::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Deffend", CDeffend::Create())))
+		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -191,17 +209,17 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
-
-	if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-		return E_FAIL;	
+	
+	//if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+	//	return E_FAIL;	
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -217,20 +235,22 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	//tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 1.f);
-	/*_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	matView = Matrix_::Inverse(matView);
-	_vec4 vTemp = _vec4(matView._31, matView._32, matView._33, 0.f);
-	tLightInfo.vLightDir = vTemp;*/
-	//tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 100000.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
-
-
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
+	tLightInfo.vLightPos = _vec4(100.f, 5.f, 50.f, 1.f);
+	tLightInfo.fRange = 100;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -253,13 +273,13 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
 	tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
-	tCameraDesc.vAxisY = _vec3(0.f, 1.f, -0.f);
+	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 300.f;
+	tProjDesc.fFar = 11600.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -378,6 +398,10 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MiniMap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Aim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;	
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_WoL_Red", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
@@ -412,7 +436,6 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -475,7 +498,9 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -488,14 +513,22 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	//GameObject_ThrowArrow
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow")))
 	//	return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
-		return E_FAIL;
-
+	
 
 
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube_Texture", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 	//	return E_FAIL;
 	
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

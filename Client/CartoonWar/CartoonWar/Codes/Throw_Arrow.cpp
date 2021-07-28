@@ -271,7 +271,7 @@ HRESULT CThrow_Arrow::Ready_Component()
 
 	m_pMeshCom= (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Arrow");
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh_Worker", m_pMeshCom)))
+	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
 
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");

@@ -27,18 +27,19 @@ HRESULT CUI_HP::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	m_fX = 1800.f;
+	m_fX = 1700.f;
 	m_fY = WINCY - 200.f;
 
 	m_fSizeX = 300.f;
-	m_fSizeY = 40.f;
+	m_fSizeY = 30.f;
 	//m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
 	return S_OK;
 }
 
 _int CUI_HP::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tInfo = CManagement::GetInstance()->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player")->Get_BackObject()->GetInfo();
+	if(CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player").size())
+		m_tInfo = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",0)->GetInfo();
 	return _int();
 }
 
@@ -62,7 +63,7 @@ void CUI_HP::Render_GameObject()
 
 
 	MAINPASS	tMainPass = {};
-
+	REP			tRep = {};
 
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
@@ -74,14 +75,14 @@ void CUI_HP::Render_GameObject()
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
-	m_tRep.m_arrInt[0] = m_tInfo.fHP;
+	tRep.m_arrInt[0] = m_tInfo.fHP;
 
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
-	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);

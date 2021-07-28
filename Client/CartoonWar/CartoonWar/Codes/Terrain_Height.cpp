@@ -29,7 +29,7 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	//m_pTransformCom->Scaling(_vec3(10.f, 1.f, 10.f));
+	//m_pTransformCom->Scaling(_vec3(100.f, 100.f, 100.f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
@@ -50,14 +50,11 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
 
+
 	//if (GetKeyState(VK_LBUTTON) < 0)
 	{
 		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
 	}
-
-	_long	MouseMove = 0;
-	//MouseMove = CInputMgr::GetInstance()->Get_DIMouseMove(DIM_X);
-
 
 	return _int();
 }
@@ -82,8 +79,6 @@ void CTerrain_Height::Render_GameObject()
 
 	m_tBrush.fBrushRange = 50.f;
 
-
-
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
@@ -96,14 +91,20 @@ void CTerrain_Height::Render_GameObject()
 		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
 
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(),  TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1),  TEXTURE_REGISTER::t1);
-	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(0),  TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(),  TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(1),  TEXTURE_REGISTER::t1);
 
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t3);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
+	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(),  TEXTURE_REGISTER::t9);
 
 	CDevice::GetInstance()->UpdateTable();
-	m_pBufferCom->Render_VIBuffer();
-	//m_pNaviCom->Render_Navigation();
+	//m_pBufferCom->Render_VIBuffer();
+	m_pBufferCom->Render_VIBuffer(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	m_pNaviCom->Render_Navigation();
 
 
 	Safe_Release(pManagement);
@@ -124,9 +125,10 @@ HRESULT CTerrain_Height::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST)))
 		return E_FAIL;
-
+	//if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -161,12 +163,15 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pBrushTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pPickingCom);
+	Safe_Release(m_pFrustumCom);
 
-	
+	Safe_Release(m_pTextureCom_Grass_Mix);
+	Safe_Release(m_pTextureCom_Ground);
+
+
 	CGameObject::Free();
 }
 
@@ -191,16 +196,30 @@ HRESULT CTerrain_Height::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 		
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain_Tess");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
+	//m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
+	//NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+	//	return E_FAIL; 
 
+	{
+		m_pTextureCom_Grass_Mix = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass_Mix");
+		NULL_CHECK_VAL(m_pTextureCom_Grass_Mix, E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture_Grass_Mix", m_pTextureCom_Grass_Mix)))
+			return E_FAIL;
+		m_pTextureCom_Ground = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Ground");
+		NULL_CHECK_VAL(m_pTextureCom_Ground, E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture_Ground", m_pTextureCom_Ground)))
+			return E_FAIL;
+		m_pTextureCom_Fillter = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Fillter");
+		NULL_CHECK_VAL(m_pTextureCom_Fillter, E_FAIL);
+		if (FAILED(Add_Component(L"Com_Texture_Fillter", m_pTextureCom_Fillter)))
+			return E_FAIL;
+	}
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
-		return E_FAIL;
 
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -214,6 +233,10 @@ HRESULT CTerrain_Height::Ready_Component()
 	m_pPickingCom = (CPicking*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Picking");
 	NULL_CHECK_VAL(m_pPickingCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Picking", m_pPickingCom)))
+		return E_FAIL;
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

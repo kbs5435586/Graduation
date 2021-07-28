@@ -46,7 +46,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	_vec3 vPos = { poss,0.f,300.f };
 	poss += 10.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(100, 1, 1, 0);
@@ -60,8 +60,9 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	}
 	//_vec3 vColliderSize = { 40.f ,160.f,40.f };
 	_vec3 vColliderSize = { 40.f ,160.f,40.f };
-	m_pColiider[0]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-	m_pColiider[1]->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pCollider_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pCollider_Attack->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
@@ -84,11 +85,6 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
 		return E_FAIL;
 
-	m_pUI_OnHeadBack = CUI_OnHeadBack::Create();
-	if (nullptr == m_pUI_OnHeadBack)
-		return E_FAIL;
-	if (FAILED(m_pUI_OnHeadBack->Ready_GameObject((void*)&vPos)))
-		return E_FAIL;
 
 	
 	CManagement::GetInstance()->Subscribe(m_pObserverCom);
@@ -100,25 +96,32 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 _int CNPC::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pCurAnimCom;
-
-	m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
-	m_pColiider[1]->Update_Collider(m_pTransformCom);
+	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
 	m_pUI_OnHead->Update_GameObject(fTimeDelta);
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
 	m_pUI_OnHead->SetInfo(m_tInfo);
-
-	m_pUI_OnHeadBack->Update_GameObject(fTimeDelta);
-	m_pUI_OnHeadBack->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	m_pUI_OnHeadBack->SetInfo(m_tInfo);
-	m_pTransformCom->Set_PositionY(0.f);
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
+
+	m_fSpeed = m_fArrSpeed[(_uint)m_eCurClass];
+	m_fSpeedUp = m_fArrSpeedUP[(_uint)m_eCurClass];
+
+	if (m_IsRun)
+		m_pTransformCom->SetSpeed(m_fSpeed);
+	else m_pTransformCom->SetSpeed(m_fSpeedUp);
+
+	if(GetAsyncKeyState('L'))
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+	
+
+	
 
 
 	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(whoami);
@@ -148,7 +151,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 	}
 	if (m_IsDead)
-		return DEAD_OBJ;
+		Resurrection();
 
 
 	Set_Animation(fTimeDelta);
@@ -162,13 +165,26 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 
 	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
-	m_pUI_OnHeadBack->LastUpdate_GameObject(fTimeDelta);
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Player", L"Com_Transform", 0);
+	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vLen = vPlayerPos - vPos;
+	_float fLen = vLen.Length();
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
+		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
+		if (fLen <= 250.f)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+				return -1;
+		}
+
+
 	}
 	else
 	{
@@ -235,7 +251,8 @@ void CNPC::Render_GameObject()
 	}
 
 
-	//m_pColiider[0]->Render_Collider();
+	m_pCollider_OBB->Render_Collider();
+	m_pCollider_Attack->Render_Collider(1);
 	//m_pColiider[1]->Render_Collider();
 	Safe_Release(pManagement);
 }
@@ -342,15 +359,15 @@ void CNPC::Free()
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pComputeShaderCom);
-	Safe_Release(m_pColiider[0]);
-	Safe_Release(m_pColiider[1]);
+	Safe_Release(m_pCollider_OBB);
+	Safe_Release(m_pCollider_AABB);
+	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
 	Safe_Release(m_pObserverCom);
 
 	Safe_Release(m_pUI_OnHead);
-	Safe_Release(m_pUI_OnHeadBack);
 	CGameObject::Free();
 }
 
@@ -521,16 +538,20 @@ HRESULT CNPC::Ready_Component()
 		return E_FAIL;
 
 
-	m_pColiider[0] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pColiider[0], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColiider[0])))
+	m_pCollider_OBB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pCollider_OBB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pCollider_OBB)))
 		return E_FAIL;
 
-	m_pColiider[1] = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
-	NULL_CHECK_VAL(m_pColiider[1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColiider[1])))
+	m_pCollider_AABB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pCollider_AABB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pCollider_AABB)))
 		return E_FAIL;
 
+	m_pCollider_Attack = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_ATTACK");
+	NULL_CHECK_VAL(m_pCollider_Attack, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_Attack", m_pCollider_Attack)))
+		return E_FAIL;
 	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
 	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
@@ -590,458 +611,283 @@ void CNPC::Change_Class()
 		m_iCurAnimIdx = 0;
 		DeathMontion_Init();
 		AnimVectorClear();
-		if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+		switch (m_eCurClass)
 		{
-			switch (m_eCurClass)
-			{
-			case CLASS::CLASS_WORKER:
-			{
-				//idle		
-				//walk		
-				//run		
-				//attack	
-				//death a	
-				//death b	
-				//take damage
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.000f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 136, 3.366f, 4.533f));
-				m_vecAnimCtrl.push_back(AnimCtrl(137, 167, 4.566f, 5.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(168, 193, 5.599f, 6.433f));
-				m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
-				m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
-				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-				m_iCombatMotion[0] = 0;
-				m_iCombatMotion[1] = 1;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_INFANTRY:
-			{
-				//	idle		
-				//	walk		
-				//	run			
-				//	charge		
-				//	combat idle	
-				//	combat walk	
-				//	attack a	
-				//	attack b	
-				//	take damage	
-				//	death a		
-				//	death b		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
-				m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
-				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_CAVALRY:
-			{
-				//idle 		
-				//walk 		
-				//run 		
-				//charge 	
-				//combat idle 
-				//combat walk
-				//combat hit a
-				//combat hit b 
-				//take damage 
-				//death a 	
-				//death b 	
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
-				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
-				m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
-				m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
-				m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
-				m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
-				m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
-				m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_SPEARMAN:
-			{
-				//		idle		
-				//		walk		
-				//		run			
-				//		charge		
-				//		combat idle	
-				//		combat walk	
-				//		attack		
-				//		take damage	
-				//		death a		
-				//		death b		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
-				m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
-				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_MAGE:
-			{
-				//	idle		
-				//	walk		
-				//	run			
-				//	charge		
-				//	combat idle	
-				//	combat walk	
-				//	attack a	
-				//	attack b	
-				//	take damage	
-				//	death a		
-				//	death b		
-				//	cast a		
-				//	cast b		
-				//	cast c		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
-				m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(375, 426, 12.500f, 14.199f));
-				m_vecAnimCtrl.push_back(AnimCtrl(427, 477, 14.233f, 15.900f));
-				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
-				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
-				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_MMAGE:
-			{
-				//	idle	
-				//	walk	
-				//	run		
-				//	attack	
-				//	take damage
-				//	death a	
-				//	death b	
-				//	cast a	
-				//	cast b	
-				//	cast load
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
-				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
-				m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
-				m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
-				m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
-				m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
-				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-				m_iCombatMotion[0] = 0;
-				m_iCombatMotion[1] = 1;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_ARCHER:
-			{
-
-				//	idle		
-				//	walk		
-				//	run			
-				//	combat_idle	
-				//	combat walk	
-				//	attack a	
-				//	take damage	
-				//	death a		
-				//	death b		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
-				m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
-				m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
-				m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
-				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			/*case CLASS::CLASS_PRIEST:
-			{
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
-				m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(367, 426, 12.500f, 14.199f));
-				m_vecAnimCtrl.push_back(AnimCtrl(327, 477, 14.233f, 15.900f));
-				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
-				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
-				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-			}
-			break;*/
-			}
-		}
-		else
+		case CLASS::CLASS_WORKER:
 		{
-			switch (m_eCurClass)
-			{
-			case CLASS::CLASS_WORKER:
-			{
-				//idle		
-				//walk		
-				//run		
-				//attack	
-				//death a	
-				//death b	
-				//take damage
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.000f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 136, 3.366f, 4.533f));
-				m_vecAnimCtrl.push_back(AnimCtrl(137, 167, 4.566f, 5.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(168, 193, 5.599f, 6.433f));
-				m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
-				m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
-				m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-				m_iCombatMotion[0] = 0;
-				m_iCombatMotion[1] = 1;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_INFANTRY:
-			{
-				//	idle		
-				//	walk		
-				//	run			
-				//	charge		
-				//	combat idle	
-				//	combat walk	
-				//	attack a	
-				//	attack b	
-				//	take damage	
-				//	death a		
-				//	death b		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
-				m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
-				m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_CAVALRY:
-			{
-				//idle 		
-				//walk 		
-				//run 		
-				//charge 	
-				//combat idle 
-				//combat walk
-				//combat hit a
-				//combat hit b 
-				//take damage 
-				//death a 	
-				//death b 	
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
-				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
-				m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
-				m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
-				m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
-				m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
-				m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
-				m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_SPEARMAN:
-			{
-				//		idle		
-				//		walk		
-				//		run			
-				//		charge		
-				//		combat idle	
-				//		combat walk	
-				//		attack		
-				//		take damage	
-				//		death a		
-				//		death b		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
-				m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
-				m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,60.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_MAGE:
-			{
-				//	idle		
-				//	walk		
-				//	run			
-				//	charge		
-				//	combat idle	
-				//	combat walk	
-				//	attack a	
-				//	attack b	
-				//	take damage	
-				//	death a		
-				//	death b		
-				//	cast a		
-				//	cast b		
-				//	cast c		
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-				m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
-				m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
-				m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(375, 426, 12.500f, 14.199f));
-				m_vecAnimCtrl.push_back(AnimCtrl(427, 477, 14.233f, 15.900f));
-				m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
-				m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
-				m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-				m_iCombatMotion[0] = 4;
-				m_iCombatMotion[1] = 5;
-				m_iCombatMotion[2] = 3;
-			}
-			break;
-			case CLASS::CLASS_MMAGE:
-			{
-
-				//	idle	
-				//	walk	
-				//	run		
-				//	attack	
-				//	take damage
-				//	death a	
-				//	death b	
-				//	cast a	
-				//	cast b	
-				//	cast load
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
-				m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
-				m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
-				m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
-				m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
-				m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
-				m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
-				m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-				m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-				m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-				m_iCombatMotion[0] = 0;
-				m_iCombatMotion[1] = 1;
-				m_iCombatMotion[2] = 2;
-				m_pTransformCom->SetSpeed(100.f);
-			}
-			break;
-			case CLASS::CLASS_ARCHER:
-			{
-				//	idle		
-				//	walk		
-				//	run			
-				//	combat_idle	
-				//	combat walk	
-				//	attack a	
-				//	take damage	
-				//	death a		
-				//	death b	
-				m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-				m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-				m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-				m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
-				m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
-				m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
-				m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
-				m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
-				m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
-				m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-				m_vOBB_Range[1] = { 20.f ,80.f,20.f };
-				m_iCombatMotion[0] = 3;
-				m_iCombatMotion[1] = 4;
-				m_iCombatMotion[2] = 2;
-				m_pTransformCom->SetSpeed(70.f);
-			}
-			break;
-			}
-
-			m_ePreClass = m_eCurClass;
+			//idle		
+			//walk		
+			//run		
+			//attack	
+			//death a	
+			//death b	
+			//take damage
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.000f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 136, 3.366f, 4.533f));
+			m_vecAnimCtrl.push_back(AnimCtrl(137, 167, 4.566f, 5.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(168, 193, 5.599f, 6.433f));
+			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
+			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
+			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 0;
+			m_iCombatMotion[1] = 1;
+			m_iCombatMotion[2] = 2;
 		}
+		break;
+		case CLASS::CLASS_INFANTRY:
+		{
+			//	idle		
+			//	walk		
+			//	run			
+			//	charge		
+			//	combat idle	
+			//	combat walk	
+			//	attack a	
+			//	attack b	
+			//	take damage	
+			//	death a		
+			//	death b		
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
+			m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
+			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_CAVALRY:
+		{
+			//idle 		
+			//walk 		
+			//run 		
+			//charge 	
+			//combat idle 
+			//combat walk
+			//combat hit a
+			//combat hit b 
+			//take damage 
+			//death a 	
+			//death b 	
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
+			m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+			m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
+			m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
+			m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
+			m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
+			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
+			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS(2):
+		{
+			//idle 		
+			//walk 		
+			//run 		
+			//charge 	
+			//combat idle 
+			//combat walk
+			//combat hit a
+			//combat hit b 
+			//take damage 
+			//death a 	
+			//death b 	
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.366f));
+			m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+			m_vecAnimCtrl.push_back(AnimCtrl(157, 181, 5.233f, 6.033f));
+			m_vecAnimCtrl.push_back(AnimCtrl(182, 242, 6.066f, 8.066f));
+			m_vecAnimCtrl.push_back(AnimCtrl(243, 273, 8.099f, 9.099f));
+			m_vecAnimCtrl.push_back(AnimCtrl(274, 314, 9.133f, 10.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(315, 355, 10.500f, 11.833f));
+			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
+			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
+			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS(4):
+		{
+			//	idle		
+			//	walk		
+			//	run			
+			//	charge		
+			//	combat idle	
+			//	combat walk	
+			//	attack a	
+			//	attack b	
+			//	take damage	
+			//	death a		
+			//	death b		
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(324, 354, 10.800f, 11.800f));
+			m_vecAnimCtrl.push_back(AnimCtrl(355, 370, 11.833f, 12.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
+			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_SPEARMAN:
+		{
+			//		idle		
+			//		walk		
+			//		run			
+			//		charge		
+			//		combat idle	
+			//		combat walk	
+			//		attack		
+			//		take damage	
+			//		death a		
+			//		death b		
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 292, 8.533f, 9.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(293, 323, 9.766f, 10.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(324, 339, 10.800f, 11.300f));
+			m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
+			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,100.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_MAGE:
+		{
+			//	idle		
+			//	walk		
+			//	run			
+			//	charge		
+			//	combat idle	
+			//	combat walk	
+			//	attack a	
+			//	attack b	
+			//	take damage	
+			//	death a		
+			//	death b		
+			//	cast a		
+			//	cast b		
+			//	cast c		
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
+			m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
+			m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
+			m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(375, 426, 12.500f, 14.199f));
+			m_vecAnimCtrl.push_back(AnimCtrl(427, 477, 14.233f, 15.900f));
+			m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
+			m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
+			m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_iCombatMotion[0] = 4;
+			m_iCombatMotion[1] = 5;
+			m_iCombatMotion[2] = 3;
+		}
+		break;
+		case CLASS::CLASS_MMAGE:
+		{
+
+			//	idle	
+			//	walk	
+			//	run		
+			//	attack	
+			//	take damage
+			//	death a	
+			//	death b	
+			//	cast a	
+			//	cast b	
+			//	cast load
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 131, 3.366f, 4.355f));
+			m_vecAnimCtrl.push_back(AnimCtrl(132, 156, 4.400f, 5.200f));
+			m_vecAnimCtrl.push_back(AnimCtrl(157, 197, 5.233f, 6.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(198, 218, 6.599f, 7.266f));
+			m_vecAnimCtrl.push_back(AnimCtrl(219, 284, 7.299f, 9.466f));
+			m_vecAnimCtrl.push_back(AnimCtrl(285, 150, 9.500f, 11.666f));
+			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
+			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
+			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_iCombatMotion[0] = 0;
+			m_iCombatMotion[1] = 1;
+			m_iCombatMotion[2] = 2;
+			m_pTransformCom->SetSpeed(100.f);
+		}
+		break;
+		case CLASS::CLASS_ARCHER:
+		{
+			//	idle		
+			//	walk		
+			//	run			
+			//	combat_idle	
+			//	combat walk	
+			//	attack a	
+			//	take damage	
+			//	death a		
+			//	death b	
+			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
+			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
+			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
+			m_vecAnimCtrl.push_back(AnimCtrl(169, 229, 5.633f, 7.633f));
+			m_vecAnimCtrl.push_back(AnimCtrl(230, 266, 7.666f, 8.866f));
+			m_vecAnimCtrl.push_back(AnimCtrl(267, 307, 8.900f, 10.233f));
+			m_vecAnimCtrl.push_back(AnimCtrl(308, 323, 10.266f, 10.766f));
+			m_vecAnimCtrl.push_back(AnimCtrl(324, 373, 10.800f, 12.433f));
+			m_vecAnimCtrl.push_back(AnimCtrl(374, 423, 12.466f, 14.100f));
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
+			m_iCombatMotion[0] = 3;
+			m_iCombatMotion[1] = 4;
+			m_iCombatMotion[2] = 2;
+			m_pTransformCom->SetSpeed(70.f);
+		}
+		break;
+		}
+
+		m_ePreClass = m_eCurClass;
 	}
 }
 
@@ -1062,7 +908,7 @@ void CNPC::Obb_Collision()
 			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vTemp = { vPos - vTargetPos };
 			vTemp *= 5.f;
-			vTemp.Normalize();
+			//vTemp.Normalize();
 			m_vStartPoint = vPos;
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -1090,12 +936,14 @@ void CNPC::Obb_Collision()
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 	}
+
 	if (m_fBazierCnt >= 1.f)
 	{
 		m_fBazierCnt = 0.f;
 		m_IsOBB_Collision = false;
 		m_IsBazier = false;
 	}
+
 }
 
 void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
@@ -1105,6 +953,12 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	_float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
 
 	_vec3 vPos = { fX, fY, fZ };
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return ;
+	_float		fY_ = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	if (vPos.y <= fY_)
+		vPos.y = fY_;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	fCnt += 0.02f;
 }
@@ -1115,15 +969,15 @@ void CNPC::Create_Particle(const _vec3& vPos)
 	{
 		PARTICLESET tParticleSet;
 		tParticleSet.vPos = vPos;
-		tParticleSet.iMaxParticle = 30;
+		tParticleSet.iMaxParticle = 90;
 		tParticleSet.fMaxLifeTime = 1.f;
 		tParticleSet.iMinLifeTime = 1.f;
 
 		tParticleSet.fStartScale = 1.f;
-		tParticleSet.fEndScale = 1.f;
+		tParticleSet.fEndScale = 10.f;
 
-		tParticleSet.fMaxSpeed = 10.f;
-		tParticleSet.fMinSpeed = 100.f;
+		tParticleSet.fMaxSpeed = 100.f;
+		tParticleSet.fMinSpeed = 1000.f;
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
@@ -1224,7 +1078,7 @@ void CNPC::Death(const _float& fTimeDelta)
 	DeathMontion_Init();
 	if (m_iCurAnimIdx == m_iDeathMotion[1])
 	{
-		if (!m_IsDeath)
+		if (!m_IsDead)
 		{
 
 			m_fDeathTime += fTimeDelta * 1.2f;
@@ -1233,14 +1087,14 @@ void CNPC::Death(const _float& fTimeDelta)
 			if (m_fDeathTime >= 1.7f)
 			{
 				m_fDeathTime = 0.f;
-				m_IsDeath = true;
+				m_IsDead = true;
 			}
 		}
 
 	}
 	else if (m_iCurAnimIdx == m_iDeathMotion[0])
 	{
-		if (!m_IsDeath)
+		if (!m_IsDead)
 		{
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
@@ -1248,7 +1102,7 @@ void CNPC::Death(const _float& fTimeDelta)
 			if (m_fDeathTime >= 1.7f)
 			{
 				m_fDeathTime = 0.f;
-				m_IsDeath = true;
+				m_IsDead = true;
 			}
 		}
 	}
@@ -1334,16 +1188,6 @@ void CNPC::Attack(const _float& fTimeDelta)
 		break;
 	}
 
-	if (m_iCurAnimIdx == m_iAttackMotion[1] || m_iCurAnimIdx == m_iAttackMotion[0])
-	{
-		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
-		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[1]);
-	}
-	else
-	{
-		m_pColiider[0]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
-		m_pColiider[1]->Change_ColliderBoxSize(m_pTransformCom, m_vOBB_Range[0]);
-	}
 }
 
 void CNPC::Combat(const _float& fTimeDelta)
@@ -1357,5 +1201,48 @@ void CNPC::Combat(const _float& fTimeDelta)
 		m_fCombatTime = 0.f;
 		m_IsCombat = false;
 	}
+}
+
+void CNPC::SetSpeed()
+{
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+
+	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+}
+
+void CNPC::Resurrection()
+{
+	m_eCurClass = CLASS::CLASS_WORKER;
+	m_iCurAnimIdx = 0;
+	_vec3 vPos = { 5.f,0.f,5.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
+	m_tInfo = INFO(100, 1, 1, 0);
+	m_IsDead = false;
 }
 

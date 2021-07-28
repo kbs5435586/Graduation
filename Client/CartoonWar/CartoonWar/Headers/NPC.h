@@ -46,6 +46,8 @@ private:
 	void									DeathMontion_Init();
 	void									Attack(const _float& fTimeDelta);
 	void									Combat(const _float& fTimeDelta);
+	void									SetSpeed();
+	void									Resurrection();
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -55,13 +57,14 @@ private:
 	CShader*								m_pComputeShaderCom = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = { nullptr };
 	CNavigation*							m_pNaviCom = nullptr;
-	CCollider*								m_pColiider[2] = { nullptr };
+	CCollider*								m_pCollider_OBB = nullptr;
+	CCollider*								m_pCollider_AABB = nullptr;
+	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = { nullptr };
 	CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
-	CUI_OnHeadBack*							m_pUI_OnHeadBack = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
@@ -78,11 +81,14 @@ private:
 	_vec3									m_vOBB_Range[2] = {};
 	_float									m_fCombatTime = 0.f;
 	_bool									m_IsCombat = false;
+	_float									m_fArrSpeed[(_uint)CLASS::CLASS_END] = {};
+	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
+	_float									m_fSpeed = 0.f;
+	_float									m_fSpeedUp = 0.f;
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
 	_float									m_fDeathTime = 0.f;
-	_bool									m_IsDeath = false;
 private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;

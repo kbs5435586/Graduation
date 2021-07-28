@@ -24,17 +24,17 @@ HRESULT CWater::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	_vec3 vPos = { 250.f, 7.f, 250.f };
+	_vec3 vPos = { 810.f, 20.f, 405.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(500.f, 500.f, 1.f);
-	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(1000.f, 800.f, 1.f);
+	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(-93.f));
 	return S_OK;
 
 }
 
 _int CWater::Update_GameObject(const _float& fTimeDelta)
 {
-	m_tTexInfo.fFrameTime += fTimeDelta*0.01f;
+	m_tTexInfo.fFrameTime += fTimeDelta*0.1f;
 	if (m_tTexInfo.fFrameTime > 1.f)
 	{
 		m_tTexInfo.fFrameTime = -1.f;
@@ -75,11 +75,16 @@ void CWater::Render_GameObject()
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b4)->SetData((void*)&m_tTexInfo);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b4)->GetCBV().Get(), iOffeset, CONST_REGISTER::b4);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
 	Safe_Release(pManagement);
+}
+
+void CWater::Render_PostEffect()
+{
 }
 
 HRESULT CWater::CreateInputLayout()

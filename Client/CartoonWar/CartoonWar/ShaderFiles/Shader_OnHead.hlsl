@@ -26,12 +26,22 @@ VS_OUT VS_Main(VS_IN vIn)
 
 float4 PS_Main(VS_OUT vIn) : SV_TARGET
 {
-	if (g_int_0)
+	float4	vOut = (float4)0;
+	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float	fPersent = g_int_0 / 100.f;
+
+	if (g_int_1)
 	{
-		return float4(1.f, 0.f, 0.f, 1.f);
+		if (vIn.vTexUV.x >= fPersent)
+		{
+			vOut = float4(0.f, 0.f, 0.f, 1.f);
+		}
+		else
+			vOut = vDiffuse;
 	}
-	else
-	{
-		return float4(0.f, 0.f, 0.f, 1.f);
-	}
+	else vOut = float4(0.f,0.f,0.f,1.f);
+
+
+
+	return vOut;
 }

@@ -74,6 +74,7 @@ public://Load_Manager
 	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
 	HRESULT						Load_File_Low(const _tchar* pFilePath, void* pArg = nullptr);
 	HRESULT						Load_File_Hatch(const _tchar* pFilePath, void* pArg = nullptr);
+	HRESULT						Load_File_Castle(const _tchar* pFilePath, void* pArg = nullptr);
 public://UAV_Manager
 	HRESULT						Ready_UAV_Manager();
 	CUAV*						Get_UAV(const _tchar* pUAVTag);

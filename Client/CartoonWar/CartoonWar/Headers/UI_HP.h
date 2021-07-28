@@ -35,7 +35,6 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 private:
-	REP										m_tRep = {};
 	_bool									m_IsTemp = false;
 };
 

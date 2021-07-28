@@ -394,9 +394,6 @@
     <Filter Include="02. GameObject\97. UI\05. UI_OnHead">
       <UniqueIdentifier>{bfd6324d-6fcb-4213-aa3e-c56789d0d61d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\06. UI_OnHeadBack">
-      <UniqueIdentifier>{518d9245-9c67-4739-b2cd-6cdd321553df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\06. Throw">
       <UniqueIdentifier>{b3a07c0e-e092-4a3d-98ab-bcccf833c22d}</UniqueIdentifier>
     </Filter>
@@ -459,6 +456,21 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\12. Picking">
       <UniqueIdentifier>{1404fc5e-7bb4-4966-b744-af1fd36c8787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\06. UI_MiniMap">
+      <UniqueIdentifier>{c5c77d04-f91a-4a04-8c9b-782cbcec6777}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\07. UI_Aim">
+      <UniqueIdentifier>{7843105d-83e0-4e99-934c-332f0fd3f17d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\07. Castle">
+      <UniqueIdentifier>{4f0bb95b-3cf0-475c-8d37-5e13f9f36899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\07. Deffend">
+      <UniqueIdentifier>{98c3211d-687d-4440-91bf-7d82f0d52de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess">
+      <UniqueIdentifier>{3dcfb73e-d990-448d-bded-2267a26654ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -816,9 +828,6 @@
     <ClInclude Include="..\Headers\UI_OnHead.h">
       <Filter>02. GameObject\97. UI\05. UI_OnHead</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_OnHeadBack.h">
-      <Filter>02. GameObject\97. UI\06. UI_OnHeadBack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Throw_Arrow.h">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
     </ClInclude>
@@ -851,6 +860,21 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Picking.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_MiniMap.h">
+      <Filter>02. GameObject\97. UI\06. UI_MiniMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Aim.h">
+      <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Castle.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\07. Castle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Deffend.h">
+      <Filter>02. GameObject\01. Scene_Stage\07. Deffend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Test_Tess.h">
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1179,9 +1203,6 @@
     <ClCompile Include="..\Codes\UI_OnHead.cpp">
       <Filter>02. GameObject\97. UI\05. UI_OnHead</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_OnHeadBack.cpp">
-      <Filter>02. GameObject\97. UI\06. UI_OnHeadBack</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Throw_Arrow.cpp">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
     </ClCompile>
@@ -1214,6 +1235,21 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Picking.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_MiniMap.cpp">
+      <Filter>02. GameObject\97. UI\06. UI_MiniMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Aim.cpp">
+      <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Castle.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\07. Castle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Deffend.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\07. Deffend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Test_Tess.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1345,6 +1381,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Terrain_Tess.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

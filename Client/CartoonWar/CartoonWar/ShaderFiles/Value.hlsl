@@ -152,10 +152,12 @@ Texture2D					g_texture2			: register(t2);
 Texture2D					g_texture3			: register(t3);
 Texture2D					g_texture4			: register(t4);
 Texture2D					g_texture5			: register(t5);
+Texture2D					g_texture8			: register(t8);
+Texture2D					g_texture9			: register(t9);
+
 TextureCube					g_textureCube		: register(t6);    
 StructuredBuffer<float4x4>	g_arrFinalBoneMat	: register(t7);
-StructuredBuffer<matrix>	g_matTemp			: register(t8);
-StructuredBuffer<tFontInfo>	g_arrFont			: register(t9);
+
 
 SamplerState				Sampler0			: register(s0);
 SamplerState				Sampler1			: register(s1);

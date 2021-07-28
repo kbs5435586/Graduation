@@ -84,10 +84,10 @@ PS_OUT PS_MAIN_PHONG(PS_IN_PHONG In)
 
 	vSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), g_fPower);
 
-	Out.vColor = ((g_vLightDiffuse * vDiffuseColor) + (g_vLightSpecular * g_vMtrlSpecular) * vSpecular) * saturate(vShade + (g_vLightAmbient * g_vMtrlAmbient));
-
-	Out.vColor.a = 1.f;
-
+	//Out.vColor = ((g_vLightDiffuse * vDiffuseColor) + (g_vLightSpecular * g_vMtrlSpecular) * vSpecular) * saturate(vShade + (g_vLightAmbient * g_vMtrlAmbient));
+	//
+	//Out.vColor.a = 1.f;
+	Out.vColor = vDiffuseColor;
 	return Out;
 }
 

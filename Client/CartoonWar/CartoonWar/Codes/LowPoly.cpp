@@ -40,24 +40,31 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
-	pTerrainBuffer;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
 
 
-	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
 	return _int();
 }
 
 _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Player", L"Com_Transform", 0);
+	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vLen = vPlayerPos - vPos;
+	_float fLen = vLen.Length();
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
-		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
+		if (fLen <= 250.f)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;	
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 			return -1;
 	}

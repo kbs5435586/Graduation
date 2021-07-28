@@ -180,8 +180,13 @@ HRESULT CCamera::Once_SetUp_ViewProjMatrices(_bool IsShadow, _vec3 vPos)
 
 void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 {
-	_vec3 vPos = *dynamic_cast<CTransform*>
-		(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vPos = {};
+	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player").size())
+	{
+		vPos = *dynamic_cast<CTransform*>
+			(CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", 0))->Get_StateInfo(CTransform::STATE_POSITION);
+
+	}
 
 	vPos.y += 1000.f;
 	vPos.x += -1000.f;

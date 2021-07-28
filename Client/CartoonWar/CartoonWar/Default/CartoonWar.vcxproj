@@ -175,6 +175,7 @@
     <ClInclude Include="..\Headers\Building.h" />
     <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Camera_Manager.h" />
+    <ClInclude Include="..\Headers\Castle.h" />
     <ClInclude Include="..\Headers\Catapult.h" />
     <ClInclude Include="..\Headers\Cell.h" />
     <ClInclude Include="..\Headers\Circle.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\Headers\Cube.h" />
     <ClInclude Include="..\Headers\Cube_Texture.h" />
     <ClInclude Include="..\Headers\Debug_Camera.h" />
+    <ClInclude Include="..\Headers\Deffend.h" />
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
     <ClInclude Include="..\Headers\DirectXTex.h" />
@@ -257,6 +259,7 @@
     <ClInclude Include="..\Headers\TestCube.h" />
     <ClInclude Include="..\Headers\TestHatchMesh.h" />
     <ClInclude Include="..\Headers\TestMesh.h" />
+    <ClInclude Include="..\Headers\Test_Tess.h" />
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Throw_Arrow.h" />
     <ClInclude Include="..\Headers\Timer.h" />
@@ -266,10 +269,11 @@
     <ClInclude Include="..\Headers\UAV.h" />
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
+    <ClInclude Include="..\Headers\UI_Aim.h" />
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_MiniMap.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
-    <ClInclude Include="..\Headers\UI_OnHeadBack.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
     <ClInclude Include="..\Headers\UI_MP.h" />
@@ -313,6 +317,7 @@
     <ClCompile Include="..\Codes\Building.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Camera_Manager.cpp" />
+    <ClCompile Include="..\Codes\Castle.cpp" />
     <ClCompile Include="..\Codes\Catapult.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />
     <ClCompile Include="..\Codes\Circle.cpp" />
@@ -325,6 +330,7 @@
     <ClCompile Include="..\Codes\Cube.cpp" />
     <ClCompile Include="..\Codes\Cube_Texture.cpp" />
     <ClCompile Include="..\Codes\Debug_Camera.cpp" />
+    <ClCompile Include="..\Codes\Deffend.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
@@ -386,6 +392,7 @@
     <ClCompile Include="..\Codes\TestCube.cpp" />
     <ClCompile Include="..\Codes\TestHatchMesh.cpp" />
     <ClCompile Include="..\Codes\TestMesh.cpp" />
+    <ClCompile Include="..\Codes\Test_Tess.cpp" />
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Throw_Arrow.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
@@ -394,10 +401,11 @@
     <ClCompile Include="..\Codes\UAV.cpp" />
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
+    <ClCompile Include="..\Codes\UI_Aim.cpp" />
     <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />
-    <ClCompile Include="..\Codes\UI_OnHeadBack.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
     <ClCompile Include="..\Codes\UI_MP.cpp" />
@@ -571,6 +579,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Font.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Terrain_Tess.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

@@ -2,6 +2,7 @@
 #include "Management.h"
 #include "Player_Inven.h"
 #include "Inventory_Camera.h"
+#include "Player.h"
 
 CPlayer_Inven::CPlayer_Inven()
 {
@@ -67,15 +68,20 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 
 _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 {
-
-		m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
-		m_pColiider[1]->Update_Collider(m_pTransformCom);
+		//
+		//m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
+		//m_pColiider[1]->Update_Collider(m_pTransformCom, m_eCurClass);
 
 		m_pTransformCom->Set_PositionY(0.f);
 
-		int which = m_pObserverCom->GetWhichInfo();
-		m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(which);
-		m_eCurClass = (CLASS)m_iCurMeshNum;
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player");
+		CGameObject* ppp = lst.front();
+		//dynamic_cast<CPlayer*>(ppp)->GetClass();
+
+		//int which = m_pObserverCom->GetWhichInfo();
+		//m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(which);
+		//m_eCurClass = (CLASS)m_iCurMeshNum;
+		m_eCurClass = dynamic_cast<CPlayer*>(ppp)->GetClass();
 		Change_Class();
 		m_IsActive = m_pObserverCom->GetBoolInfo();
 		if (m_IsActive)

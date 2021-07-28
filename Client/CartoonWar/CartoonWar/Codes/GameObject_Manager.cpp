@@ -2,6 +2,7 @@
 #include "GameObject_Manager.h"
 #include "Layer.h"
 #include "GameObject.h"
+#include "Management.h"
 _IMPLEMENT_SINGLETON(CGameObject_Manager)
 CGameObject_Manager::CGameObject_Manager()
 {
@@ -106,7 +107,8 @@ _int CGameObject_Manager::Update_GameObject_Manager(const _float& fTimeDelta)
 			}
 		}
 	}
-
+	//if (g_IsCollisionStart)
+		CManagement::GetInstance()->Update_CollisionManager(fTimeDelta);
 	return _int();
 }
 

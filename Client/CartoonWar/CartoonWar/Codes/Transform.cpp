@@ -125,11 +125,11 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
-void CTransform::Go_There( const _vec3& vPos)
+void CTransform::Go_There(const _vec3& vPos)
 {
-	m_matWorld._41 -= (vPos.x );
-	m_matWorld._42 -= (vPos.y );
-	m_matWorld._43 -= (vPos.z );
+	m_matWorld._41 -= (vPos.x);
+	m_matWorld._42 -= (vPos.y);
+	m_matWorld._43 -= (vPos.z);
 }
 
 void CTransform::BackWard(const _float& fTimeDelta)
@@ -338,29 +338,46 @@ void CTransform::Rotation_Z(const _float& fTimeDelta)
 	mat.r;
 }
 
-void CTransform::RotationRev_Y(_matrix matWorld, const _float& fTimeDelta)
+void CTransform::Rotation_Rev(const _float& fTimeDelta, CTransform* matWorld)
 {
+	_matrix		matTemp= matWorld->Get_Matrix();
 	_vec3		vDir[3];
-
 	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = *Get_StateInfo(STATE(i));
+	{
+		vDir[i] = *matWorld->Get_StateInfo(CTransform::STATE(i));
+		vDir[i] = Vector3_::Normalize(vDir[i]);
+	}
+	vDir[0] = Vector3_::ScalarProduct(vDir[0], matWorld->Get_Scale().x, false);
+	vDir[1] = Vector3_::ScalarProduct(vDir[1],  matWorld->Get_Scale().y, false);
+	vDir[2] = Vector3_::ScalarProduct(vDir[2],  matWorld->Get_Scale().z, false);
+
+	matTemp._11 = vDir[0].x;
+	matTemp._12 = vDir[0].y;
+	matTemp._13 = vDir[0].z;
+
+	matTemp._21 = vDir[1].x;
+	matTemp._22 = vDir[1].y;
+	matTemp._23 = vDir[1].z;
+
+	matTemp._31 = vDir[2].x;
+	matTemp._32 = vDir[2].y;
+	matTemp._33 = vDir[2].z;
+
+	matTemp._44 = 1.f;
+
+	_matrix matTemp2 = {};
+	matTemp2._41 = m_matWorld._41;
+	matTemp2._42 = 20.f;
+	matTemp2._43 = m_matWorld._43;
 
 	_matrix		matRev;
-	matRev *= matWorld;
-
-	_matrix		matRot;
-	DirectX::XMStoreFloat4x4(&matRot, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(m_fSpeed_Rotation * -fTimeDelta)));
-
-	matRot = matRot * matRev;
-	XMMATRIX mat = ::XMLoadFloat4x4(&matRot);
-	for (size_t i = 0; i < 3; ++i)
-		vDir[i] = Vector3_::TransformNormal(vDir[i], mat);
+	DirectX::XMStoreFloat4x4(&matRev, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(m_fSpeed_Rotation * -fTimeDelta)));
 
 
-	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
-	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
-	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+	m_matWorld = matTemp2* matRev * matTemp;
+	Set_Matrix(m_matWorld);
 }
+
 
 void CTransform::Scaling(const _vec3& vScale)
 {
@@ -393,7 +410,7 @@ void CTransform::Scaling(const _float& fx, const _float& fy, const _float& fz)
 		vDir[i] = Vector3_::Normalize(vDir[i]);
 	}
 
-	_vec3 vScale = _vec3(fx,fy,fz);
+	_vec3 vScale = _vec3(fx, fy, fz);
 	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], vScale.x, false);
 	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], vScale.y, false);
 	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], vScale.z, false);

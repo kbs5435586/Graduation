@@ -49,6 +49,12 @@ _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 		m_IsDead = true;
 	}
 
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	fY += 10.f;
+	m_pTransformCom->Set_PositionY(fY);
 
 	if (m_IsDead)
 		return DEAD_OBJ;
@@ -199,7 +205,7 @@ HRESULT CParticle_Default::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_CartoonSmoke");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Hit");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_TextureCom", m_pTextureCom)))
 		return E_FAIL;

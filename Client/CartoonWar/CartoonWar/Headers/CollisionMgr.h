@@ -12,7 +12,13 @@ public:
     void                    Update_CollisionManager(const _float& fTimeDelta);
 private:
     void                    Player_to_NPC_Collision();
+    void                    Player_to_Player_Collision();
     void                    Throw_to_NPC_Collision();
+    void                    Player_to_NPC_Attack_Collision();
+    void                    Deffend_to_Player();
+    void                    Deffend_to_NPC();
+    void                    Deffend_to_Throw();
+    void                    Deffend_to_Deffend();
     void                    Skill_to_NPC_Collision(const _float& fTimeDelta);
     void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
 public:
