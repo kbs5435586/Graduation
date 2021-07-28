@@ -131,8 +131,12 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 		else
 		{
-			tICameraDesc.vEye = m + _vec3(0.f, 6.5f, -7.f);
-			tICameraDesc.vAt = m + _vec3(0.f, 4.f, 0.f);
+			_vec3 eye(0.f, 6.5f, -7.f);
+			_vec3 at(0.f, 4.f, 0.f);
+			tICameraDesc.vEye = m + eye;
+			tICameraDesc.vAt = m + at;
+			//tICameraDesc.vEye = m + _vec3(0.f, 6.5f, -7.f);
+			//tICameraDesc.vAt = m + _vec3(0.f, 4.f, 0.f);
 		}
 		tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
@@ -143,7 +147,8 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		tIProjDesc.fNear = g_Near;
 		tIProjDesc.fFar = g_Far;
 
-		temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1);
+		_float aaa = 1;
+		temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, aaa);
 
 		
 	

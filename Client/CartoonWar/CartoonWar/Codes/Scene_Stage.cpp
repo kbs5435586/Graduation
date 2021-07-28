@@ -199,6 +199,9 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Inventory(L"Layer_Inventory_Player", pManagement)))
+		return E_FAIL;
+	
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
@@ -279,7 +282,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 11600.f;
+	tProjDesc.fFar = 600.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -335,7 +338,7 @@ HRESULT CScene_Stage::Ready_Layer_Inventory_Camera(const _tchar* pLayerTag, CMan
 	tIProjDesc.fAspect = _float(WINCX) / WINCY;
 	tIProjDesc.fNear = g_Near;
 	tIProjDesc.fFar = g_Far;
-
+	_float aaa = 1;
 	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1)))
 		return E_FAIL;
 

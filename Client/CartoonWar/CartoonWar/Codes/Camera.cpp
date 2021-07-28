@@ -204,7 +204,8 @@ HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDE
 {
 	m_tCameraDesc = CameraDesc;
 	m_tProjDesc = ProjDesc;
-	SetUp_ViewProjMatrices(1);
+
+	SetUp_ViewProjMatrices(n);
 
 	return S_OK;
 }
@@ -236,7 +237,7 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_float n)
 	m_matProj._34 = 1.f;
 	m_matProj._44 = 0.0f;
 
-	Invalidate_ViewProjMatrix(1);
+	Invalidate_ViewProjMatrix(n);
 	return S_OK;
 }
 
