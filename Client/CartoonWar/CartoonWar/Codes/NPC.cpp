@@ -96,8 +96,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->SetSpeed(m_fSpeed);
 	else m_pTransformCom->SetSpeed(m_fSpeedUp);
 
-	if(GetAsyncKeyState('L'))
-		m_pTransformCom->Rotation_Y(fTimeDelta);
 	Change_Class();
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -906,17 +904,19 @@ void CNPC::Create_Particle(const _vec3& vPos)
 {
 	if (m_IsParticle)
 	{
+		_vec3 vTemp = vPos;
+		vTemp.y += 10.f;
 		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vPos;
-		tParticleSet.iMaxParticle = 90;
-		tParticleSet.fMaxLifeTime = 1.f;
-		tParticleSet.iMinLifeTime = 1.f;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 300;
+		tParticleSet.fMaxLifeTime = 0.2f;
+		tParticleSet.iMinLifeTime = 0.01f;
 
-		tParticleSet.fStartScale = 1.f;
-		tParticleSet.fEndScale = 10.f;
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.2f;
 
-		tParticleSet.fMaxSpeed = 100.f;
-		tParticleSet.fMinSpeed = 1000.f;
+		tParticleSet.fMaxSpeed = 30.f;
+		tParticleSet.fMinSpeed = 50.f;
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;

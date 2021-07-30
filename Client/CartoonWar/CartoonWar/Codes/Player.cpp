@@ -124,7 +124,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		Resurrection();
 
 
-
+	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 	return NO_EVENT;
 }
 
@@ -808,7 +808,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -839,7 +839,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -900,7 +900,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,100.f };
+			m_vOBB_Range[1] = { 100.f ,80.f,100.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -1010,8 +1010,6 @@ void CPlayer::AnimVectorClear()
 	m_vecAnimCtrl.clear();
 	m_vecAnimCtrl.shrink_to_fit();
 }
-
-
 
 void CPlayer::Obb_Collision()
 {
@@ -1228,10 +1226,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_NPC", L"Com_Transform", 0);
-		//m_tInfo.fHP =0.f;;
-		m_pTransformCom->Rotation_Rev(fTimeDelta, pTransform);
+		m_IsParticle = true;
 	}
 
 
@@ -1521,5 +1516,28 @@ void CPlayer::Resurrection()
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	m_tInfo = INFO(100, 1, 1, 0);
 	m_IsDead = false;
+}
+
+void CPlayer::Create_Particle(const _vec3& vPoistion)
+{
+	if (m_IsParticle)
+	{
+		_vec3 vTemp = vPoistion;
+		vTemp.y += 10.f;
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 300;
+		tParticleSet.fMaxLifeTime = 0.2f;
+		tParticleSet.iMinLifeTime = 0.01f;
+
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.2f;
+
+		tParticleSet.fMaxSpeed = 30.f;
+		tParticleSet.fMinSpeed = 50.f;
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return;
+		m_IsParticle = false;
+	}
 }
 

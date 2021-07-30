@@ -31,7 +31,7 @@ void CAnimator::LateInit()
 
 void CAnimator::SetBones(const vector<tMTBone>* _vecBones)
 {
-	m_pVecBones = _vecBones; 
+	m_pVecBones = _vecBones;
 	m_vecFinalBoneMat.resize(m_pVecBones->size());
 }
 
@@ -48,22 +48,22 @@ void CAnimator::SetAnimClip(vector<tMTAnimClip> _vecAnimClip)
 
 _bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
 {
-	_bool isRetVal = false;
 	m_fCurTime = 0.f;
 
 	tCtrl.fCurTime += fTimeDelta;
 
 	if (tCtrl.fCurTime >= tCtrl.fEndTime - tCtrl.fStartTime)
-	{                                 
+	{
 		tCtrl.fCurTime = 0.f;
-		isRetVal = true;
+		return  true;
 	}
 
-	
+
 	m_fCurTime = tCtrl.fStartTime + tCtrl.fCurTime;
-	
+
 
 	double dFrameIdx = m_fCurTime * m_iFrameCount;
+	
 	tCtrl.iCurFrm = (int)(dFrameIdx);
 
 	if (tCtrl.iCurFrm >= tCtrl.fEndTime - 1)
@@ -74,7 +74,36 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
 	m_fRatio = (float)(dFrameIdx - (double)tCtrl.iCurFrm);
 	m_iFrameIdx = (_uint)tCtrl.iCurFrm;
 	m_IsFinalMatUpdate = false;
-	return isRetVal;
+	return false;
+}
+
+_bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta, bool IsFrm)
+{
+	m_fCurTime = 0.f;
+	tCtrl.iCurFrm += fTimeDelta;
+
+	if (tCtrl.iCurFrm >= tCtrl.iEndFrm - tCtrl.iStartFrm)
+	{
+		tCtrl.iCurFrm = 0.f;
+		return true;
+	}
+
+	m_fCurTime = tCtrl.iStartFrm + tCtrl.iCurFrm;
+
+	double dFrameIdx = m_fCurTime * (double)m_iFrameCount;
+	//double dFrameIdx = m_fCurTime;
+	tCtrl.iCurFrm = (int)(dFrameIdx);
+
+	if (tCtrl.iCurFrm >= tCtrl.iEndFrm - 1)
+		m_iNextFrameIdx = tCtrl.iCurFrm;
+	else
+		m_iNextFrameIdx = tCtrl.iCurFrm + 1;
+
+	//m_fRatio = (float)(dFrameIdx - (double)tCtrl.iCurFrm);
+	m_fRatio = 1.f;
+	m_iFrameIdx = (_uint)tCtrl.iCurFrm;
+	m_IsFinalMatUpdate = false;
+	return false;
 }
 
 void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
@@ -85,7 +114,7 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 
 		pMesh->GetBoneFrameData()->Update_Data_CS(TEXTURE_REGISTER::t10);
 		pMesh->GetBoneOffset()->Update_Data_CS(TEXTURE_REGISTER::t11);
-		
+
 		CheckMesh(pMesh);
 		m_pBoneFinalMat->Update_RWData(UAV_REGISTER::u0);
 		m_pBoneMat->Update_RWData(UAV_REGISTER::u1);
@@ -99,18 +128,18 @@ void CAnimator::UpdateData(CMesh* pMesh, CShader* pShader)
 		tRep.m_arrInt[2] = m_iNextFrameIdx;
 		tRep.m_arrInt[3] = iRow;
 		tRep.m_arrFloat[0] = m_fRatio;
-	
-		
+
+
 		_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 		CDevice::GetInstance()->SetUpContantBufferToShader_CS(
 			CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
 		UINT iGrounX = (iBoneCount / 256) + 1;
-		
+
 		CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(pShader->GetCSPipeLine().Get());
 		Dispatch(iGrounX, 1, 1);
 		m_IsFinalMatUpdate = true;
-	} 
+	}
 
 	m_pBoneFinalMat->Update_Data(TEXTURE_REGISTER::t7);
 	m_pBoneMat->Update_Data(TEXTURE_REGISTER::t8);
@@ -122,7 +151,7 @@ void CAnimator::Dispatch(int x, int y, int z)
 	CDevice::GetInstance()->UpdateTable_CS();
 	CDevice::GetInstance()->GetCsCmdLst()->Dispatch(x, y, z);
 	CDevice::GetInstance()->ExcuteComputeShader();
-	
+
 }
 
 void CAnimator::CheckMesh(CMesh* pMesh)
@@ -150,7 +179,7 @@ CComponent* CAnimator::Clone_Component(void* pArg)
 
 void CAnimator::Free()
 {
-	if(!m_IsClone)
+	if (!m_IsClone)
 		Safe_Release(m_pBoneFinalMat);
 	CComponent::Free();
 }

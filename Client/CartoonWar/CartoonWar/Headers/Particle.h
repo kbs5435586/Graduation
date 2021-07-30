@@ -24,15 +24,15 @@ public:
     const _uint&                GetMaxParticle(){return m_iMaxParticle;}
 private:
     _float                      m_fAccTime = 0.f;
-    _float                      m_fFrequency = 0.01f;
+    _float                      m_fFrequency = 0.002f;
 private:
-    _uint                       m_iMaxParticle = 30;
+    _uint                       m_iMaxParticle = 1000;
     _float                      m_fMinLifeTime = 0.5f;
     _float                      m_fMaxLifeTime = 1.f;
-    _float                      m_fMinSpeed = 10.f;
-    _float                      m_fMaxSpeed = 1.f;
-    _float                      m_fStartScale = 5.f;
-    _float                      m_fEndScale = 1.f;
+    _float                      m_fMinSpeed = 100.f;
+    _float                      m_fMaxSpeed = 50.f;
+    _float                      m_fStartScale = 1.f;
+    _float                      m_fEndScale = 0.5f;
 private:
     _vec4                       m_vStartColor= _vec4(0.2f, 0.2f, 0.8f, 1.4f);
     _vec4                       m_vEndColor= _vec4(0.6f, 0.6f, 0.8f, 1.0f);

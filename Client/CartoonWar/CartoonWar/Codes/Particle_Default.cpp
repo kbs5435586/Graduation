@@ -54,7 +54,7 @@ _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	fY += 10.f;
-	m_pTransformCom->Set_PositionY(fY);
+	//m_pTransformCom->Set_PositionY(fY);
 
 	if (m_IsDead)
 		return DEAD_OBJ;
@@ -75,9 +75,6 @@ _int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CParticle_Default::Render_GameObject()
 {
-	// Shader0 is Particle Basic Shader
-	// Shader1 is Particle Update Shader
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
@@ -91,14 +88,16 @@ void CParticle_Default::Render_GameObject()
 	m_pShaderCom[0]->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(),
+		iOffeset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 
 
 	REP		tRep_Basic;
 	m_pParticleCom->SetUp_OnShader(tRep_Basic);
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Basic);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(),
+		iOffeset, CONST_REGISTER::b8);
 
 
 
@@ -108,9 +107,11 @@ void CParticle_Default::Render_GameObject()
 	m_pParticleCom->Update_Particle_Shader();
 	if (FAILED(m_pParticleCom->SetUp_OnUpdateShader(tRep_Update)))
 		return;
+
 	tRep_Update.m_arrVec2[0]= m_pTextureCom_Noise->GetTextureResolution();
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
-	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(),
+		iOffeset, CONST_REGISTER::b8);
 	CDevice::GetInstance()->SetTextureToShader_CS(m_pTextureCom_Noise->GetSRV(), TEXTURE_REGISTER::t0);
 
 	CDevice::GetInstance()->GetCsCmdLst()->SetPipelineState(m_pShaderCom[1]->GetCSPipeLine().Get());

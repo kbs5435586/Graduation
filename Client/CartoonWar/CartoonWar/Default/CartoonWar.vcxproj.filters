@@ -445,6 +445,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess">
       <UniqueIdentifier>{3dcfb73e-d990-448d-bded-2267a26654ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\08. Animals">
+      <UniqueIdentifier>{f4dbf8d8-aad5-4e12-9e2a-e8c2326a3e9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -825,6 +828,9 @@
     <ClInclude Include="..\Headers\Test_Tess.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Animals.h">
+      <Filter>02. GameObject\01. Scene_Stage\08. Animals</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1175,6 +1181,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Test_Tess.cpp">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Animals.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\08. Animals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
