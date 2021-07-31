@@ -747,14 +747,16 @@ void Server::do_follow(int npc_id)
                         if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
                             || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle) // 자기가 있어야할 각도 위치가 아닐경우
                         {
-                            if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때
+
+
+                            if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
                             {
                                 n.m_total_angle += 1.5f;
                                 n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
                                 n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
                                 n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos); // 각도 안맞는 상태에서 반지름 밖으로 나가버리면 문제발생
                             }
-                            else
+                            else //차이가 마이너스
                             {
                                 n.m_total_angle -= 1.5f;
                                 n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
