@@ -177,9 +177,6 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 
 
-
-	//
-
 	return S_OK;
 }
 

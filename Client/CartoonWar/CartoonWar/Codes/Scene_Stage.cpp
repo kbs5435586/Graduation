@@ -32,6 +32,7 @@
 #include "Fire.h"
 //Particle
 #include "Particle_Default.h"
+#include "Particle_Run.h"
 
 #include "TestAnimMesh.h"
 #include "TestHatchMesh.h"
@@ -143,6 +144,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Run", CParticle_Run::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Building", CBuilding::Create())))
 		return E_FAIL;
@@ -342,6 +345,8 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -462,6 +467,7 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 		return E_FAIL;
+
 	//GameObject_ThrowArrow
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow")))
 	//	return E_FAIL;

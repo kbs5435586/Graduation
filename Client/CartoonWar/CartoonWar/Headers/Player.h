@@ -93,6 +93,9 @@ private:
 	_float									m_fArrSpeed[(_uint)CLASS::CLASS_END] = {};
 	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
 private:
+	_float									m_fParticleRunTime = 0.f;
+	_bool									m_IsParticleRun = false;
+private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
 private:

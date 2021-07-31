@@ -79,7 +79,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-		/*if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
 			m_pTransform->Go_Straight(fTimeDelta);
 		}
@@ -103,12 +103,12 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 		{
 			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-		}*/
+		}
 	}
 
 	{
 
-		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		/*CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", 0);
 
 		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
@@ -157,7 +157,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);*/
 	}
 
 

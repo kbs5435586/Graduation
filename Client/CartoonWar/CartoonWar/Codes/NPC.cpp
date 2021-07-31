@@ -878,7 +878,6 @@ void CNPC::Obb_Collision()
 		m_IsOBB_Collision = false;
 		m_IsBazier = false;
 	}
-
 }
 
 void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
@@ -921,7 +920,6 @@ void CNPC::Create_Particle(const _vec3& vPos)
 			return;
 		m_IsParticle = false;
 	}
-
 }
 
 void CNPC::Compute_Matrix_X()
