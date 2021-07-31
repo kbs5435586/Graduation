@@ -17,7 +17,9 @@ public:
     HRESULT                         Ready_MRT(_uint iCnt, tRtt* arrRT, CRTT* pDsTex);
     void                            OM_Set(_uint iCnt, _uint iOffset = 0);
     void                            OM_Set();
+    void                            OM_Set(_bool b);
     void                            Clear();
+    void                            Clear(_bool _b);
     void                            Clear(_uint iRtIdx);
 public:
     void                            TargetToResBarrier();

@@ -7,6 +7,8 @@ class CAnimator;
 class CNavigation;
 class CCollider;
 class CUI_OnHead;
+class CUI_OnHeadBack;
+class CTerrain_Height;
 class CPlayer :
 	public CGameObject
 {
@@ -40,6 +42,8 @@ private:
 	void									Compute_Matrix_Z();
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+public:
+	void									Create_Particle(const _vec3& vPoistion);
 private:
 	void									Input_Key(const _float& fTimeDelta);
 private:
@@ -60,6 +64,10 @@ private:
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+
+	CShader*								m_pShaderCom_Skill = nullptr;
+
+
 	CShader*								m_pShaderCom_Reflection = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = {nullptr};
 	CNavigation*							m_pNaviCom = nullptr;
@@ -67,6 +75,7 @@ private:
 	CCollider*								m_pCollider_AABB = nullptr;
 	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
+	CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
@@ -99,10 +108,54 @@ private:
 	_matrix									m_matRight = {};
 private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
+	CLASS getClass() {return m_eCurClass;}
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	PLAYER									m_tPlayer = {};
 private:
 	_uint									m_iCurMeshNum = 0;
 
+	_bool	m_IsActive = {};
+
+	CBuffer_CubeTex* m_pBufferCom = nullptr;
+
+
+
+
+	_bool m_IsStart = {};
+private:
+	void Skill_Fly(const _float& fTimeDelta, _float fY);
+	
+	_bool m_IsFly_START = {};
+	_bool m_IsFly_ING = {};
+	_bool m_IsFly_END = {};
+	_bool m_IsUandD = {};
+	
+
+	_float m_fCoolTime_ONE{};
+private:
+	void Skill_Invisible(const _float& fTimeDelta);
+
+	_bool m_IsInvisible = {};
+	_float m_fCoolTime_TWO{};
+
+private:
+	void Skill_CastFire(const _float& fTimeDelta);
+
+	//CGameObject* fireskill = nullptr;
+	//_int fireCnt = {};
+	_bool m_IsFire = {};
+	_bool m_IsFireCheck = {};
+
+	_float m_DamageTime{};
+public:
+	void setDTime(_float _t) { m_DamageTime = _t; }
+	_float& getDTime() { return m_DamageTime; }
+	_float m_fCoolTime_THR{};
+private:
+	_bool m_IsTeleport = {};
+	_bool m_IsTeleportCheck = {};
+	_int teleportNum = {};
+	
+	_float m_fCoolTime_Four{};
 };
 

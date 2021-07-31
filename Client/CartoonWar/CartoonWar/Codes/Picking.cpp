@@ -57,7 +57,7 @@ void CPicking::Update_Ray()
 	_vec3		vCameraPos(0.f, 0.f, 0.f);
 
 	// 마우스 레이.
-	_vec3 vTemp = _vec3(vMousePos.x, vMousePos.y, vMousePos.z);
+	_vec3		vTemp = _vec3(vMousePos.x, vMousePos.y, vMousePos.z);
 	_vec3		vMouseRay = Vector3_::Subtract(vTemp, vCameraPos);
 
 	// 월드스페이스 영역상의 레이와 시작점.

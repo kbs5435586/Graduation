@@ -44,8 +44,16 @@ void CKeyManager::Key_Update()
 		m_dwKey |= KEY_1;
 	if (GetAsyncKeyState('2') & 0x8000)
 		m_dwKey |= KEY_2;
-
-
+	if (GetAsyncKeyState('I') & 0x8000)
+		m_dwKey |= KEY_I;
+	if (GetAsyncKeyState('Z') & 0x8000)
+		m_dwKey |= KEY_Z;
+	if (GetAsyncKeyState('X') & 0x8000)
+		m_dwKey |= KEY_X;
+	if (GetAsyncKeyState('N') & 0x8000)
+		m_dwKey |= KEY_N;
+	if (GetAsyncKeyState('M') & 0x8000)
+		m_dwKey |= KEY_M;
 }
 _bool CKeyManager::Key_Up(DWORD dwKey)
 {
@@ -64,12 +72,22 @@ _bool CKeyManager::Key_Up(DWORD dwKey)
 }
 _bool CKeyManager::Key_Down(DWORD dwKey)
 {
-	if (!(m_dwKeyDown & dwKey) && (m_dwKey & dwKey))
+	//if (!(m_dwKeyDown & dwKey) && (m_dwKey & dwKey))
+	//{
+	//	m_dwKeyDown |= dwKey;
+	//	return true;
+	//}
+	//else if (!(m_dwKey & dwKey) && (m_dwKeyDown & dwKey))
+	//{
+	//	m_dwKeyDown ^= dwKey;
+	//	return false;
+	//}
+	if(m_dwKey & dwKey)
 	{
 		m_dwKeyDown |= dwKey;
 		return true;
 	}
-	else if (!(m_dwKey & dwKey) && (m_dwKeyDown & dwKey))
+	else if (m_dwKeyDown & dwKey)
 	{
 		m_dwKeyDown ^= dwKey;
 		return false;

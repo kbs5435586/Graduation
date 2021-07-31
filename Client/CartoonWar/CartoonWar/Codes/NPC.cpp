@@ -3,9 +3,13 @@
 #include "NPC.h"
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
+
+_int CNPC::npcnum = 0;
+_float CNPC::poss = 25.f;
+_bool CNPC::first = true;
+
 CNPC::CNPC()
 	: CGameObject()
-
 {
 }
 
@@ -31,10 +35,16 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-
+	
+	++npcnum;
+	whoami = npcnum;
+	
+	
+	poss = 90;
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {70.f,0.f,70.f };
+	_vec3 vPos = { poss,0.f,300.f };
+	poss += 10.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -63,7 +73,13 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-	SetSpeed();
+	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	if (first)
+	{
+		CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC_NUM, &npcnum);
+		first = false;
+	}
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC_NUM, &npcnum);
 
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)
@@ -72,6 +88,11 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
+	
+	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	//m_pObserverCom->Update_Observer(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
+	
 	return S_OK;
 }
 
@@ -105,8 +126,22 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 	if(GetAsyncKeyState('L'))
 		m_pTransformCom->Rotation_Y(fTimeDelta);
+	
+
+	
+
+
+	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(whoami);
+	
+	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
-	//Obb_Collision();
+
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		m_iCurAnimIdx = 0;
+		m_IsOnce = false;
+	}
+	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 	if (m_tInfo.fHP <= 0.f)
@@ -124,6 +159,9 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		Resurrection();
+
+
+	Set_Animation(fTimeDelta);
 
 	Safe_Release(server);
 	return NO_EVENT;
@@ -159,12 +197,12 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 	}
 
-	Set_Animation(fTimeDelta);
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-	}
+	//Set_Animation(fTimeDelta);
+	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//{
+	//	m_iCurAnimIdx = 0;
+	//	m_IsOnce = false;
+	//}
 
 	Safe_Release(server);
 	return _int();
@@ -333,7 +371,7 @@ void CNPC::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
-
+	Safe_Release(m_pObserverCom);
 
 	Safe_Release(m_pUI_OnHead);
 	CGameObject::Free();
@@ -544,6 +582,11 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
+
+	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+		return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -812,11 +855,12 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-			m_vOBB_Range[0] = { 20.f ,80.f,60.f };
-			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
+			m_pTransformCom->SetSpeed(100.f);
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -844,12 +888,15 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 3;
 			m_iCombatMotion[1] = 4;
 			m_iCombatMotion[2] = 2;
+			m_pTransformCom->SetSpeed(70.f);
 		}
 		break;
 		}
+
 		m_ePreClass = m_eCurClass;
 	}
 }
+
 
 void CNPC::AnimVectorClear()
 {
@@ -872,14 +919,30 @@ void CNPC::Obb_Collision()
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			m_vMidPoint.y += 10.f;
+			m_vMidPoint.y += 3.f;
+			//m_vMidPoint.y += 2.f;
+			m_IsBazier = true;
 
-			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
-			Create_Particle(vParticlePos);
-			m_IsBazier = true;	
+			//_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+			//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			//_vec3 vTemp = { vPos - vTargetPos };
+			//vTemp *= 5.f;
+			//vTemp.Normalize();
+			//m_vStartPoint = vPos;
+			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+			////m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			//
+			//m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+			//m_vMidPoint.y += 3.f;
+			////m_vMidPoint.y += 2.f;
+			//
+			//_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
+			//Create_Particle(vParticlePos);
+			//m_IsBazier = true;		
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 	}
+
 	if (m_fBazierCnt >= 1.f)
 	{
 		m_fBazierCnt = 0.f;
@@ -904,8 +967,6 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 		vPos.y = fY_;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	fCnt += 0.02f;
-
-
 }
 
 void CNPC::Create_Particle(const _vec3& vPos)

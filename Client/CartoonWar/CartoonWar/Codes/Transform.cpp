@@ -143,6 +143,54 @@ void CTransform::BackWard(const _float& fTimeDelta)
 	vPosition = Vector3_::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
+void CTransform::UP(const _float& fTimeDelta)
+{
+	float gravity = 9.8f;
+
+	float t = fTimeDelta;
+	float tt = fTimeDelta * fTimeDelta;
+
+	float accY = 0;
+
+	//Jump!
+	accY += gravity;
+	m_fVel = m_fVel + accY * t;
+
+	_vec3		vLook, vPosition;
+	vLook = *Get_StateInfo(STATE_UP);
+	vPosition = *Get_StateInfo(STATE_POSITION);
+
+	vLook = Vector3_::Normalize(vLook);
+	vLook = Vector3_::ScalarProduct(vLook, m_fVel * t + accY * tt, false);
+	vPosition = Vector3_::Add(vPosition, vLook);
+	Set_StateInfo(STATE_POSITION, &vPosition);
+}
+void CTransform::Fallen(const _float& fTimeDelta)
+{
+	float gravity = 9.8f;
+
+	float t = fTimeDelta;
+	float tt = fTimeDelta * fTimeDelta;
+
+	
+	float accY = 0;
+	
+	accY -= gravity;
+	m_fVel = m_fVel + accY * t;
+
+	//m_PositionY = m_PositionY + myVel * t + 0.5f * accY * tt;
+
+
+	_vec3		vLook, vPosition;
+	vLook = *Get_StateInfo(STATE_UP);
+	vPosition = *Get_StateInfo(STATE_POSITION);
+
+	vLook = Vector3_::Normalize(vLook);
+	vLook = Vector3_::ScalarProduct(vLook, m_fVel * t + accY * tt , false);
+	vPosition = Vector3_::Add(vPosition, vLook);
+	Set_StateInfo(STATE_POSITION, &vPosition);
+
+}
 void CTransform::SetUp_RotationX(const _float& fRadian)
 {
 	_vec3		vRight(1.f, 0.f, 0.f), vUp(0.f, 1.f, 0.f), vLook(0.f, 0.f, 1.f);

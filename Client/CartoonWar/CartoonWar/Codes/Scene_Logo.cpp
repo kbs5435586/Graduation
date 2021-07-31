@@ -112,11 +112,12 @@ HRESULT CScene_Logo::Ready_Scene()
 
 	float drawX = (float)((((_float)WINCX / 2) * -1) + 40);
 	float drawY = (float)(((_float)WINCY / 2) - 10);
+	
 	if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strIP.c_str(), 0, 0)))
 		return E_FAIL;
 	drawX = (float)((((_float)WINCX / 2) * -1) + 30);
 	drawY = (float)(((_float)WINCY / 2) - 30);
-	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strIP.c_str(), 100, 100)))
+	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strID.c_str(), 100, 100)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -942,12 +943,21 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 
 
-			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
-				CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
-				return E_FAIL;
-			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
-				CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
-				return E_FAIL;		*/
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
+			CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
+			CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
+			return E_FAIL;		*/
+
+		
+
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
+			CMesh::Create(L"../Bin/Resource/Mesh/Static/Flag/Flag_Blue.fbx", L"../Data/MeshData/blueblow.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
+			CMesh::Create(L"../Bin/Resource/Mesh/Static/Flag/Flag_Red.fbx", L"../Data/MeshData/redblow.dat"))))
+			return E_FAIL;
 	}
 
 
@@ -1308,6 +1318,24 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Hit",
 			CTexture::Create(L"../Bin/Resource/Texture/Particle/Particle%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
+
+		//
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ClassUI",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/panel_blue.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ButtonUI",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/buttonSquare_blue.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ButtonUI_Pressed",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/buttonSquare_blue_pressed.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_RoundButtonUI",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/iconCircle_blue.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_RoundButtonUI_Pressed",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/iconCross_blue.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_HPBar",
 			CTexture::Create(L"../Bin/Resource/Texture/HPBar/HP%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
@@ -1362,6 +1390,11 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Human/WK_Horse%d.tga", 4, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon",
+			CTexture::Create(L"../Bin/Resource/Texture/Icon/icon_class_0%d.tga", 13, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
+
+
 	}
 
 	return S_OK;
@@ -1381,6 +1414,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Texture",
 		CShader::Create(L"../ShaderFiles/Shader_Texture.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Decal",
+		CShader::Create(L"../ShaderFiles/Shader_Decal.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Merge_Deffered",
 		CShader::Create(L"../ShaderFiles/Shader_Merge_Deffered.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
@@ -1391,8 +1427,23 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI",
 		CShader::Create(L"../ShaderFiles/Shader_UI.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Skill",
+		CShader::Create(L"../ShaderFiles/Shader_UI_Skill.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Flag",
+		CShader::Create(L"../ShaderFiles/Shader_UI_Flag.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Light",
 		CShader::Create(L"../ShaderFiles/Shader_UI_Deffered.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUI",
+		CShader::Create(L"../ShaderFiles/Shader_UUI.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU",
+		CShader::Create(L"../ShaderFiles/Shader_UUU.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_InGame_UI",
 		CShader::Create(L"../ShaderFiles/Shader_InGame_UI.hlsl", "VS_Main", "PS_Main"))))
@@ -1511,7 +1562,7 @@ void CScene_Logo::Free()
 	pManagement->AddRef();
 
 	pManagement->Clear_Layers((_uint)SCENEID::SCENE_LOGO);
-	//pManagement->Delete_All_Font();
+	pManagement->Delete_All_Font();
 
 
 	Safe_Release(pManagement);

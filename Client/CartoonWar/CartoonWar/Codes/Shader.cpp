@@ -209,6 +209,121 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 	return S_OK;
 }
 
+HRESULT CShader::Create_SkillShader(RS_TYPE eType, DEPTH_STENCIL_TYPE eDepthType, SHADER_TYPE eShaderType, BLEND_TYPE eBlendType, D3D_PRIMITIVE_TOPOLOGY eTopology)
+{
+	m_tPipeline.pRootSignature = CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get();
+
+	m_tPipeline.RasterizerState = g_arrRSDesc[(UINT)eType];
+	m_tPipeline.BlendState = g_arrBlendDesc[(UINT)eBlendType];
+	m_tPipeline.DepthStencilState = g_arrDepthStencilDesc[(UINT)eDepthType];
+
+
+
+	m_tPipeline.SampleMask = UINT_MAX;
+	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	m_tPipeline.SampleDesc.Count = 1;
+
+
+	switch (eShaderType)
+	{
+	case SHADER_TYPE::SHADER_FORWARD:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = CDevice::GetInstance()->GetSwapChainFormat(CDevice::GetInstance()->GetBitDepth());
+		break;
+	case SHADER_TYPE::SHADER_DEFFERED:
+		m_tPipeline.NumRenderTargets = 3;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		break;
+	case SHADER_TYPE::SHADER_LIGHT:
+		m_tPipeline.NumRenderTargets = 2;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	case SHADER_TYPE::SHADER_COMPUTE:
+		m_tPipeline.NumRenderTargets = 0;
+		break;
+	case SHADER_TYPE::SHADER_PARTICLE:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	case SHADER_TYPE::SHADER_SHADOW:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32_FLOAT;
+		break;
+	case SHADER_TYPE::SHADER_POST_EFFECT:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	case SHADER_TYPE::SHADER_BLUR:
+		m_tPipeline.NumRenderTargets = 1;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		break;
+	}
+
+	switch (eTopology)
+	{
+	case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		break;
+	case D3D_PRIMITIVE_TOPOLOGY_LINELIST:
+	case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP:
+	case D3D_PRIMITIVE_TOPOLOGY_LINELIST_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+		break;
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST:
+	case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		break;
+	case D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_5_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_6_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_7_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_8_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_9_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_10_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_13_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_14_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_15_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_17_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_18_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_19_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_20_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_21_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_22_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_23_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_24_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_25_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_26_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_27_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_28_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_29_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_30_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_31_CONTROL_POINT_PATCHLIST:
+	case D3D_PRIMITIVE_TOPOLOGY_32_CONTROL_POINT_PATCHLIST:
+		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		break;
+	default:
+		assert(nullptr);
+	}
+
+	if (FAILED(CDevice::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&m_tPipeline, IID_PPV_ARGS(&m_pPipeLineState))))
+	{
+		return E_FAIL;
+	}
+	return S_OK;
+}
+
 HRESULT CShader::Ready_Shader(const _tchar* pFilePath, const char* CSEntry)
 {
 	char* pErr = nullptr;
@@ -256,6 +371,29 @@ HRESULT CShader::SetUp_OnShader(_matrix matWorld, _matrix matView, _matrix matPr
 	_vec3 vUp = _vec3(0.f, 1.f, 0.f);
 	output.matLightView = Matrix_::LookAtLH(g_vEyePt, g_vLookatPt, vUp);
 	output.matLightProj = Matrix_::PerspectiveFovLH(XMConvertToRadians(60.f), _float(WINCX)/WINCY, 0.2f, 500.f);
+	return S_OK;
+}
+
+HRESULT CShader::SetUp_OnShaderT(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output)
+{
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+	_matrix	matTemp = matView;
+	matTemp = Matrix_::Inverse(matTemp);
+	_matrix matRev = _matrix();
+
+	output.matInvenWorld = matWorld;
+	output.matInvenView = matView;
+	output.matInvenProj = matProj;
+	output.matInvenWV = matWorld * matView;
+	output.matInvenWVP = output.matInvenWV * matProj;
+	output.vInvenCamPos = (_vec4)&matTemp.m[3][0];
+	output.vInvenLook = (_vec4)&matTemp.m[2][0];
+	output.matInvenRev = Matrix_::Inverse(output.matInvenWV);
+	output.matInvenRev = Matrix_::Transpose(output.matInvenRev);
+
+	output.matInvenViewInv = Matrix_::Inverse(matView);
+	output.matInvenProjInv = Matrix_::Inverse(matProj);
 	return S_OK;
 }
 

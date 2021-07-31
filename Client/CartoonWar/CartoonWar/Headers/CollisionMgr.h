@@ -9,7 +9,7 @@ private:
     virtual ~CCollisionMgr() = default;
 public:
     HRESULT                 Ready_CollsionManager();
-    void                    Update_CollisionManager();
+    void                    Update_CollisionManager(const _float& fTimeDelta);
 private:
     void                    Player_to_NPC_Collision();
     void                    Player_to_Player_Collision();
@@ -19,10 +19,14 @@ private:
     void                    Deffend_to_NPC();
     void                    Deffend_to_Throw();
     void                    Deffend_to_Deffend();
+    void                    Skill_to_NPC_Collision(const _float& fTimeDelta);
+    void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
 public:
     static CCollisionMgr*   Create();
 private:
     virtual void            Free();
     
+    _float time;
+    _bool damage{};
 };
 

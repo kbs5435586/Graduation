@@ -69,6 +69,7 @@ public://Observer_Manager
 	void                        Subscribe(CObserver* pObserver);
 	void                        UnSubscribe(CObserver* pObserver);
 	void                        Notify(DATA_TYPE eType, void* pData = nullptr);
+	void                        ReNotify(DATA_TYPE eType);
 public://Load_Manager
 	HRESULT						Load_File(const _tchar* pFilePath, void* pArg = nullptr);
 	HRESULT						Load_File_Low(const _tchar* pFilePath, void* pArg = nullptr);
@@ -79,7 +80,7 @@ public://UAV_Manager
 	CUAV*						Get_UAV(const _tchar* pUAVTag);
 public://CCollisionMgr
 	HRESULT						Ready_CollsionManager();
-	void						Update_CollisionManager();
+	void						Update_CollisionManager(const _float& fTimeDelta);
 public://FontMgr
 	HRESULT						Ready_FontMgr(const char* pFilePath);
 	HRESULT						Create_Font_Buffer(const _tchar* pFontTag, const char* pSentence, float iDrawX, float iDrawY);

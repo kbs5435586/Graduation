@@ -61,6 +61,7 @@ private:
 	CCollider*								m_pCollider_AABB = nullptr;
 	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = { nullptr };
+	CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
@@ -95,7 +96,16 @@ private:
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	PLAYER									m_tPlayer = {};
 private:
-	_uint									m_iCurMeshNum = 0;
+	_uint									m_iCurMeshNum{};
 
+	static _float poss;
+	static _int npcnum;
+	static _bool first;
+	_int whoami;
+
+	_float m_DamageTime{};
+public:
+	void setDTime(_float _t) { m_DamageTime = _t; }
+	_float& getDTime() { return m_DamageTime; }
 };
 

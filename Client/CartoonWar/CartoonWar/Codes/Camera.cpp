@@ -200,6 +200,56 @@ void CCamera::Invalidate_ViewProjMatrix(_bool IsShadow)
 	CCamera_Manager::GetInstance()->SetShadowMatProj(m_matShadowProj);
 }
 
+HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _float n)
+{
+	m_tCameraDesc = CameraDesc;
+	m_tProjDesc = ProjDesc;
+
+	SetUp_ViewProjMatrices(n);
+
+	return S_OK;
+}
+
+HRESULT CCamera::SetUp_ViewProjMatrices(_float n)
+{
+	_vec3		vLook;
+	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, m_tCameraDesc.vEye);
+	vLook = Vector3_::Normalize(vLook);
+
+	_vec3		vRight;
+	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
+	vRight = Vector3_::Normalize(vRight);
+
+	_vec3		vUp;
+	vUp = Vector3_::CrossProduct(vLook, vRight);
+	vUp = Vector3_::Normalize(vUp);
+
+	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tCameraDesc.vEye);
+
+
+	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
+	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
+	m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
+	m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
+	m_matProj._34 = 1.f;
+	m_matProj._44 = 0.0f;
+
+	Invalidate_ViewProjMatrix(n);
+	return S_OK;
+}
+
+void CCamera::Invalidate_ViewProjMatrix(_float n)
+{
+	m_matView = m_pTransform->Get_Matrix_Inverse();
+	_matrix matOrtho = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 0.f, 1.f);
+	CCamera_Manager::GetInstance()->SetIMatView(m_matView);
+	CCamera_Manager::GetInstance()->SetIMatProj(m_matProj);
+	CCamera_Manager::GetInstance()->SetIMatOrtho(matOrtho);
+}
+
 
 HRESULT CCamera::SetUp_ViewProjMatrices()
 {

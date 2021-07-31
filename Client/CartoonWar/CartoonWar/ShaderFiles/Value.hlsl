@@ -44,6 +44,19 @@ cbuffer	TRANSFORM_MATRIX : register (b0)
 	float4				vCamPos;
 	float4				vLook;
 
+	row_major matrix	matInvenWorld;
+	row_major matrix	matInvenView;
+	row_major matrix	matInvenProj;
+
+	row_major matrix	matInvenWV;
+	row_major matrix	matInvenWVP;
+	row_major matrix	matInvenProjInv;
+	row_major matrix	matInvenViewInv;
+	row_major matrix	matInvenRev;
+
+	float4				vInvenCamPos;
+	float4				vInvenLook;
+
 	row_major matrix	matLightView;
 	row_major matrix	matLightProj;
 };

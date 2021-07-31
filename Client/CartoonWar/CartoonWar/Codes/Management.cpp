@@ -184,6 +184,11 @@ void CManagement::Notify(DATA_TYPE eType, void* pData)
 	return m_pObserver_Manager->Notify(eType, pData);
 }
 
+void CManagement::ReNotify(DATA_TYPE eType)
+{
+	return m_pObserver_Manager->ReNotify(eType);
+}
+
 HRESULT CManagement::Load_File(const _tchar* pFilePath, void* pArg)
 {
 	return m_pLoad_Manager->Load_File(pFilePath, pArg);
@@ -219,9 +224,9 @@ HRESULT CManagement::Ready_CollsionManager()
 	return m_pCollision_Manager->Ready_CollsionManager();
 }
 
-void CManagement::Update_CollisionManager()
+void CManagement::Update_CollisionManager(const _float& fTimeDelta)
 {
-	return m_pCollision_Manager->Update_CollisionManager();
+	return m_pCollision_Manager->Update_CollisionManager(fTimeDelta);
 }
 
 HRESULT CManagement::Ready_FontMgr(const char* pFilePath)
@@ -306,7 +311,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	if (iProcessCodes & 0x80000000)
 		return iProcessCodes;
 
-	
+	CManagement::GetInstance()->Update_CollisionManager(fTimeDelta);
 	return _int(0);
 }
 

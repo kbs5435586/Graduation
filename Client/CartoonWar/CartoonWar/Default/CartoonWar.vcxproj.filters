@@ -403,8 +403,35 @@
     <Filter Include="02. GameObject\01. Scene_Stage\06. Throw\01. Throw_Stone">
       <UniqueIdentifier>{39355462-9e93-4bf6-8768-9b0c94e5dd6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\05. UI_ClassTap">
+      <UniqueIdentifier>{4c8da03f-32de-4fba-beb0-cd0eb03b809d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\98. default">
+      <UniqueIdentifier>{3994499c-3184-4188-ae7b-5a34dae7127c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\98. Camera\02. Inventory_Camera">
+      <UniqueIdentifier>{02077cd7-253c-4bb6-9ecf-e15ce3c1a40d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\00. Player\Inven">
+      <UniqueIdentifier>{d058a8bd-96b0-4373-83e7-8ad321d624de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\98. default\00. Button">
+      <UniqueIdentifier>{2bc758ff-3d75-44b6-a320-78c768e235ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\98. default\01. UI_CharInterface">
+      <UniqueIdentifier>{942d5b7d-bc49-4b94-92a6-c804c6a2b31f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\98. default\02. UI_NPCButton">
+      <UniqueIdentifier>{d591c17b-e856-44f2-add6-c96000124ea7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="96. ShaderFiles\08. Effect">
       <UniqueIdentifier>{7a2448c8-5a2b-4a1b-a5e7-56bc203b5a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\08. UI_Skill">
+      <UniqueIdentifier>{49b1f019-4214-4902-812e-2e9bc58becf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\09. UI_Shop">
+      <UniqueIdentifier>{c828c80b-fd18-4476-a88d-3fe9470ac81b}</UniqueIdentifier>
     </Filter>
     <Filter Include="96. ShaderFiles\09. UI">
       <UniqueIdentifier>{79be4ae1-0b50-4d1d-bf77-b191b204bd53}</UniqueIdentifier>
@@ -783,11 +810,35 @@
     <ClInclude Include="..\Headers\Light_Camera.h">
       <Filter>02. GameObject\98. Camera\01. Light_Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_ClassTap.h">
+      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Inventory_Camera.h">
+      <Filter>02. GameObject\98. Camera\02. Inventory_Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player_Inven.h">
+      <Filter>02. GameObject\01. Scene_Stage\00. Player\Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Button.h">
+      <Filter>02. GameObject\97. UI\98. default\00. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_CharInterface.h">
+      <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\UI_OnHead.h">
       <Filter>02. GameObject\97. UI\05. UI_OnHead</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Throw_Arrow.h">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_ButtonNPC.h">
+      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Skill.h">
+      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Shop.h">
+      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Water.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
@@ -1134,11 +1185,35 @@
     <ClCompile Include="..\Codes\Light_Camera.cpp">
       <Filter>02. GameObject\98. Camera\01. Light_Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_ClassTap.cpp">
+      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory_Camera.cpp">
+      <Filter>02. GameObject\98. Camera\02. Inventory_Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player_Inven.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\00. Player\Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Button.cpp">
+      <Filter>02. GameObject\97. UI\98. default\00. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_CharInterface.cpp">
+      <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\UI_OnHead.cpp">
       <Filter>02. GameObject\97. UI\05. UI_OnHead</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Throw_Arrow.cpp">
       <Filter>02. GameObject\01. Scene_Stage\06. Throw\00. Throw_Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp">
+      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Skill.cpp">
+      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Shop.cpp">
+      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Water.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
@@ -1265,6 +1340,12 @@
     <None Include="..\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_UUI.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UUU.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
     <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
@@ -1285,6 +1366,15 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Reflection.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Flag.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Decal.hlsl">
+      <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_Water.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>

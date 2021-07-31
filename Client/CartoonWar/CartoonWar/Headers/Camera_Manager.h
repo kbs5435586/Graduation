@@ -16,6 +16,10 @@ public:
     const _matrix           GetShadowMatProj() { return m_matShadowProj; }
     const _matrix           GetShadowWorld() { return m_matShadowWorld; }
 public:
+    const _matrix           GetIMatView() { return m_ImatView; }
+    const _matrix           GetIMatProj() { return m_ImatProj; }
+    const _matrix           GetIMatOrtho() { return m_ImatOrtho; }
+public:
     const _matrix           GetReflectionView() { return m_matReflectionView; }
     const _matrix           GetReflectionMatProj() { return m_matReflectionProj; }
 public:
@@ -26,6 +30,10 @@ public:
     void                    SetShadowMatView(_matrix matView) { m_matShadowView = matView; }
     void                    SetShadowMatProj(_matrix matProj) { m_matShadowProj = matProj; }
     void                    SetShadowMatWorld(_matrix matWorld) { m_matShadowWorld = matWorld; }
+public:
+    void                    SetIMatView(_matrix matView) { m_ImatView = matView; }
+    void                    SetIMatProj(_matrix matProj) { m_ImatProj = matProj; }
+    void                    SetIMatOrtho(_matrix matOrtho) { m_ImatOrtho = matOrtho; }
 public:
     void                    SetReflectionView(_matrix matView) { m_matReflectionView = matView; }
     void                    SetReflectionProj(_matrix matProj) { m_matReflectionProj = matProj; }
@@ -40,6 +48,10 @@ private:
     _matrix                 m_matShadowWorld = {};
     _matrix                 m_matShadowView = {};
     _matrix                 m_matShadowProj = {};
+private:
+    _matrix                 m_ImatView = {};
+    _matrix                 m_ImatProj = {};
+    _matrix                 m_ImatOrtho = {};
 private:
     virtual void			Free();
 };
