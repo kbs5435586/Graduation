@@ -41,8 +41,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	
 	
 	poss = 90;
-	//Compute_Matrix();
-	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
+	// Compute_Matrix();
+	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
 	_vec3 vPos = { poss,0.f,300.f };
 	poss += 10.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);

@@ -35,7 +35,10 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 		return -1;
 	pManagement->AddRef();
 
-	
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
 
 	if (pManagement->Key_Down(KEY_LBUTTON))
 	{
@@ -64,6 +67,14 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 
 			npcNum = m_pObserverCom->GetNPCNUMInfo();
 
+			//duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			//	- server->Get_AddNPC_Cooltime());
+			//if (cool_time.count() > 2)
+			//{
+			//	server->send_add_npc_packet();
+			//	server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+			//}
+
 			if (npcNum < 14)
 			{
 				PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
@@ -71,14 +82,14 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", nullptr, (void*)&tPlayerInfo)))
 					return E_FAIL;
 			}
-		
+
 
 			IsDown = false;
 		}
 	}
 
-
 	Safe_Release(pManagement);
+	Safe_Release(server);
 	return _int();
 }
 
