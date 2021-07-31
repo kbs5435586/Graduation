@@ -677,19 +677,19 @@ void Server::do_follow(int npc_id)
     {
         if (g_clients[n.m_owner_id].m_boid[i].id == n.m_id)
         {
-            _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-            _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 p_look = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-            if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
+            _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3* n_look = n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+            _vec3* p_pos = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3* p_look = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+            if (*n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
                 if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
                     || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f)// 자신의 포메이션 반지름 밖일때
                 {
                     n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                    _vec3 finalLookAt = g_clients[n.m_owner_id].m_boid[i].final_pos - n_pos;
+                    _vec3 finalLookAt = g_clients[n.m_owner_id].m_boid[i].final_pos - *n_pos;
                     finalLookAt = Vector3_::Normalize(finalLookAt);
-                    _vec3 npcLookAt = -1.f * Vector3_::Normalize(n_look);
+                    _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look);
 
                     _vec3 set_pos = {};
 
@@ -719,8 +719,8 @@ void Server::do_follow(int npc_id)
                     if (n.m_isOut) // 최초로 반지름 범위에 들어왔을때
                     {
                         n.m_isOut = false;
-                        _vec3 standard = -1.f * Vector3_::Normalize(p_look);
-                        _vec3 npcLookAt = n_pos - p_pos;
+                        _vec3 standard = -1.f * Vector3_::Normalize(*p_look);
+                        _vec3 npcLookAt = *n_pos - *p_pos;
                         npcLookAt = Vector3_::Normalize(npcLookAt);
 
                         _vec3 set_pos = {};
@@ -738,52 +738,97 @@ void Server::do_follow(int npc_id)
                         if (NPCangle > 0)  NPCangle -= 3.f;
                         else if (NPCangle < 0) NPCangle += 3.f;
                         n.m_total_angle = g_clients[n.m_owner_id].m_total_angle + NPCangle;
-                        n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                        n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                        n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                        n_pos->x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos->x;
+                        n_pos->z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos->z;
+                        //n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, n_pos);
                     }
                     else // 반지름 범위에 있는 동안
                     {
                         if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
                             || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle) // 자기가 있어야할 각도 위치가 아닐경우
                         {
+                            _vec3 npcLookAt = Vector3_::Normalize(*n_look);
 
+                            _vec3 toPos = {};
+                            toPos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f));
+                            toPos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f));
 
-                            if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
+                            float PdotProduct = (npcLookAt.x * toPos.x) + (npcLookAt.y * toPos.y) + (npcLookAt.z * toPos.z); // 내각
+                            _vec3 PoutProduct;
+                            PoutProduct.x = (toPos.y * npcLookAt.z) - (toPos.z * npcLookAt.y); // 외각
+                            PoutProduct.y = (toPos.z * npcLookAt.x) - (toPos.x * npcLookAt.z);
+                            PoutProduct.z = (toPos.x * npcLookAt.y) - (toPos.y * npcLookAt.x);
+                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                               //if (PoutProduct.y < 0)
+                               //    radian *= -1.f;
+                            if (PdotProduct != 0.f) // 나아가야할 수직방향을 안바라보고 않을때
                             {
-                                n.m_total_angle += 1.5f;
-                                n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                                n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                                n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos); // 각도 안맞는 상태에서 반지름 밖으로 나가버리면 문제발생
+                                if (PoutProduct.y > 0)
+                                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                                else if (PoutProduct.y < 0)
+                                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
                             }
-                            else //차이가 마이너스
+                            else // 나아가야할 수직 방향을 바라볼때
                             {
-                                n.m_total_angle -= 1.5f;
-                                n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
-                                n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
-                                n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                                _vec3 lastPos = *n_pos; // 한발자국 나아가기 전에 마지막 위치 계산
+                                n.m_transform.BackWard(MOVE_TIME_ELAPSE); // 한 발자국 앞으로 나아감
+                                 // 각도 비교후 바뀐 각도만큼 토탈 앵글 계산
+
+                                _vec3 newLook = *n_pos - *p_pos;
+                                newLook = Vector3_::Normalize(newLook);
+                                _vec3 oldLook = lastPos - *p_pos;
+                                oldLook = Vector3_::Normalize(oldLook);
+
+                                PdotProduct = (newLook.x * oldLook.x) + (newLook.y * oldLook.y) + (newLook.z * oldLook.z); // 내각
+                                PoutProduct.x = (oldLook.y * newLook.z) - (oldLook.z * newLook.y); // 외각
+                                PoutProduct.y = (oldLook.z * newLook.x) - (oldLook.x * newLook.z);
+                                PoutProduct.z = (oldLook.x * newLook.y) - (oldLook.y * newLook.x);
+
+                                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                                if (PoutProduct.y < 0)
+                                    radian *= -1.f;
+                                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+                                n.m_total_angle += NPCangle;
+
+
+                                //if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
+                                //{
+                                //    n.m_total_angle += 1.5f;
+                                //    n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                                //    n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                                //    n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos); // 각도 안맞는 상태에서 반지름 밖으로 나가버리면 문제발생
+                                //}
+                                //else //차이가 마이너스
+                                //{
+                                //    n.m_total_angle -= 1.5f;
+                                //    n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                                //    n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                                //    n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                                //}
                             }
                         }
-
-                        if (n_look != p_look) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+                        else // 자기가 있어야할 각도 위치일때
                         {
-                            _vec3 standard = -1.f * Vector3_::Normalize(p_look);
-                            _vec3 npcLookAt = -1.f * Vector3_::Normalize(n_look);
+                            if (n_look != p_look) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+                            {
+                                _vec3 standard = -1.f * Vector3_::Normalize(*p_look);
+                                _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look);
 
-                            float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 내각
-                            _vec3 PoutProduct;
-                            PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // 외각
-                            PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
-                            PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
+                                float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 내각
+                                _vec3 PoutProduct;
+                                PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y); // 외각
+                                PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
+                                PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
 
-                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                            if (PoutProduct.y < 0)
-                                radian *= -1.f;
-                            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                            if (NPCangle > 0)
-                                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                            else if (NPCangle < 0)
-                                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+                                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                                if (PoutProduct.y < 0)
+                                    radian *= -1.f;
+                                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+                                if (NPCangle > 0)
+                                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                                else if (NPCangle < 0)
+                                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+                            }
                         }
                     }
                 }
