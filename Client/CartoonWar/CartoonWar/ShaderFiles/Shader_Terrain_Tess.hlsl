@@ -75,6 +75,8 @@ PatchTess PatchConstFunc_terrain(InputPatch<VS_OUT, 3> vIn, int iPatchID : SV_Pr
 	float fSide = CalTessLevel(vCamPos.xyz, vSidePos, 10, 40, 4.f);
 	float fUnDown = CalTessLevel(vCamPos.xyz, vUpDownPos, 10, 40, 4.f);
 
+
+
 	output.arrEdgeTess[0] = fUnDown; // ¹Ø, À­
 	output.arrEdgeTess[1] = fSide; // ÁÂ, ¿ì      
 	output.arrEdgeTess[2] = fCenter; // ºøº¯

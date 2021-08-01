@@ -3,6 +3,7 @@
 #include "Debug_Camera.h"
 #include "Server_Manager.h"
 #include "Player.h"
+#include "UI_ClassTap.h"
 
 CDebug_Camera::CDebug_Camera()
 	: CCamera()
@@ -37,7 +38,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	//CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return NOERROR;
 }
@@ -45,7 +46,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -99,8 +100,9 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		}
 
 
-
-		m_Active = m_pObserverCom->GetBoolInfo();
+		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+		m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
+		//m_Active = m_pObserverCom->GetBoolInfo();
 
 		if (!m_Active)
 		{
@@ -308,10 +310,10 @@ HRESULT CDebug_Camera::Ready_Component()
 	NULL_CHECK_VAL(pManagement, E_FAIL);
 	pManagement->AddRef();
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -344,7 +346,7 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, _uint iIdx)
 
 void CDebug_Camera::Free()
 {
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 	Safe_Release(m_pNaviCom);
 	CCamera::Free();
 }

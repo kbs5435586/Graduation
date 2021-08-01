@@ -25,7 +25,7 @@ protected:
 private:
 	POINT						m_ptMouse;
 	CNavigation*				m_pNaviCom = nullptr;
-	CObserver*					m_pObserverCom = nullptr;
+	//CObserver*					m_pObserverCom = nullptr;
 private:
 	_bool						m_IsTrue = false;
 	_bool						m_IsFix = false;

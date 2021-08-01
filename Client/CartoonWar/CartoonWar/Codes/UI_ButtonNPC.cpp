@@ -3,6 +3,11 @@
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
+#include "UI_ClassTap.h"
+
+#include "Player.h"
+#include "NPC.h"
+
 
 
 _int CUI_ButtonNPC::tempNum = 0;
@@ -28,8 +33,6 @@ HRESULT CUI_ButtonNPC::Ready_GameObject(void* pArg)
 	m_fSizeX = 40.f;
 	m_fSizeY = 40.f;
 
-	lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC,)
 	return S_OK;
 }
 
@@ -65,8 +68,8 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta, _bool b[], int i
 			m_fSizeX = 40.f;
 			m_fSizeY = 40.f;
 
-			*which = m_iClass;
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, which);
+			CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+			dynamic_cast<CUI_ClassTap*>(UI)->SetWhich(m_iClass);
 
 			IsDown = false;
 		}
@@ -90,8 +93,22 @@ void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, 
 	pManagement->AddRef();
 
 
-	int* now = (int*)m_pObserverCom->GetNPC(m_iClass); 
-	int w = m_pObserverCom->GetWhichInfo();
+	_uint now{};
+	if (m_iClass == 0)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_iClass);
+		now = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
+	}
+	else
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_iClass - 1);
+		now = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
+	}
+
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	int w = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+	
+
 	REP tRep = {};
 	if(w == m_iClass)
 		tRep.m_arrInt[0] = 1;
@@ -120,7 +137,7 @@ void CUI_ButtonNPC::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, 
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(*now), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(texture->GetSRV(now), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	buffer->Render_VIBuffer();
 

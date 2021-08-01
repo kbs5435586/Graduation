@@ -61,7 +61,7 @@ private:
 	CCollider*								m_pCollider_AABB = nullptr;
 	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = { nullptr };
-	CObserver*								m_pObserverCom = nullptr;
+	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
@@ -95,6 +95,11 @@ private:
 	PLAYER									m_tPlayer = {};
 private:
 	_uint									m_iCurMeshNum{};
+public:
+	_uint									GetCurMesh() { return m_iCurMeshNum; }
+	void									SetCurMesh(_uint _c) { m_iCurMeshNum = _c; }
+private:
+
 
 	static _float poss;
 	static _int npcnum;

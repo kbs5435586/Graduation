@@ -23,6 +23,8 @@ HRESULT CUI_ClassTap::Ready_Prototype()
 
 HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 {
+	m_IsClone = true;
+
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
@@ -34,32 +36,29 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	m_fSizeX = 1000.f;
 	m_fSizeY = 500.f;
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-	CManagement::GetInstance()->ReNotify(DATA_TYPE::DATA_NPC);
-
-	//다른 UI들에게 켜짐을 알리는
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_BOOL, &m_cansee);
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_TAP, &m_tapActive);
+	
+		// 어떤 npc가 선택됐는가?
 	which = 0;
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_WHICH, &which);
+
 	////////////////////
+
+	// 클래스 버튼
 	float xxx[9] = { 350, 220, 220, 350, 350, 285, 480, 480, 415 };
 	float yyy[9] = { 315, 375, 440, 375, 440, 375, 375, 440, 375 };
-	//버튼
+	
 	for (int i = 0; i < 9; ++i)
 	{
 		m_button[i] = new CUI_Button;
 		m_button[i]->Ready_GameObject();
 		m_button[i]->setPos(xxx[i], yyy[i]);
-		m_button[i]->setObs(m_pObserverCom);
+		
 	}
+
 	for (int i = 0; i < 15; ++i)
 	{
 		m_buttonNPC[i] = new CUI_ButtonNPC;
 		m_buttonNPC[i]->Ready_GameObject();
-		m_buttonNPC[i]->setObs(m_pObserverCom);
-		m_buttonNPC[i]->setWhich(&which);
-		m_buttonNPC[i]->setActive(&m_tapActive);
+		
 	}
 
 	//다른 화면
@@ -68,7 +67,8 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	
 	m_shop = new CUI_Shop;
 	m_shop->Ready_GameObject();
-	m_shop->setObs(m_pObserverCom);
+	
+
 	return S_OK;
 }
 
@@ -79,8 +79,12 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-	if(npcnumm < 14)
-		npcnumm = m_pObserverCom->GetNPCNUMInfo();
+	if (npcnumm < 14)
+	{
+		list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");	
+		npcnumm = LstTemp.size();	
+	}
+		
 	
 	if (pManagement->Key_Up(KEY_I))
 	{
@@ -99,22 +103,19 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		}
 
 		m_cansee = !m_cansee;
-		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_BOOL, &m_cansee);
 	}
 	
 	if (pManagement->Key_Up(KEY_Q))
 	{
 		--which;
 		if (which < 0)
-			which = npcnumm;
-		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
+			which = npcnumm;		
 	}
 	if (pManagement->Key_Up(KEY_E))
 	{
 		++which;
 		if (which > npcnumm)
 			which = 0;
-		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_WHICH, &which);
 	}
 
 	
@@ -157,6 +158,7 @@ void CUI_ClassTap::Render_GameObject()
 		pManagement->AddRef();
 
 		m_shop->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
+
 		for(int i=0;i<9;++i)
 			m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
 
@@ -173,6 +175,8 @@ void CUI_ClassTap::Render_GameObject()
 			
 			
 		}
+
+		///////////////////////////////
 
 		MAINPASS	tMainPass = {};
 
@@ -252,15 +256,21 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pButtonTextureCom);
 	Safe_Release(m_pNPCTextureCom);
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 	Safe_Release(m_pIconTextureCom);
 	
 
-	delete a;
-	delete[] m_button;
-	delete[] m_buttonNPC;
-	delete m_charInter;
-	delete m_shop;
+	
+	if (m_IsClone)
+	{
+		for(int i=0;i<9;++i)
+			Safe_Delete(m_button[i]);
+		for (int i = 0; i < 15; ++i)
+			Safe_Delete(m_buttonNPC[i]);
+		Safe_Delete(m_charInter);
+		Safe_Delete(m_shop);
+	}
+	
 	CGameObject::Free();
 }
 
@@ -321,10 +331,10 @@ HRESULT CUI_ClassTap::Ready_Component()
 		return E_FAIL;
 
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);

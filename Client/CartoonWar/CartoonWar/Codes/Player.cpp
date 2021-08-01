@@ -6,6 +6,7 @@
 
 #include "Deffend.h"
 
+#include "UI_ClassTap.h"
 #include "Inventory_Camera.h"
 #include "Terrain_Height.h"
 #include "Fire.h"
@@ -70,10 +71,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
-
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)
 		return E_FAIL;
@@ -114,12 +111,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	}
 	
 
-	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(0);
-	
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 
-	m_IsActive = m_pObserverCom->GetBoolInfo();
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
+
 	if (!m_IsActive)
 		Input_Key(fTimeDelta);
 	else
@@ -531,7 +528,7 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 	//Safe_Release(m_pNaviCom);
 	Safe_Release(m_pBufferCom);
 
@@ -773,10 +770,10 @@ HRESULT CPlayer::Ready_Component()
 			return E_FAIL;
 	}
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -1757,7 +1754,7 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 
 	if (!m_IsStart)
 	{
-		m_IsFly_START = m_pObserverCom->GetSkillInfo();
+		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
 	}
 
 	if (m_IsFly_START)

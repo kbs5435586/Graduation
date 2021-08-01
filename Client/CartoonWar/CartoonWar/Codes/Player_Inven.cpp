@@ -3,6 +3,8 @@
 #include "Player_Inven.h"
 #include "Inventory_Camera.h"
 #include "Player.h"
+#include "NPC.h"
+#include "UI_ClassTap.h";
 
 CPlayer_Inven::CPlayer_Inven()
 {
@@ -37,7 +39,6 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_VECTOR, &m);
 
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
@@ -61,7 +62,6 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return S_OK;
 }
@@ -74,16 +74,24 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 
 		m_pTransformCom->Set_PositionY(0.f);
 
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player");
-		CGameObject* ppp = lst.front();
-		//dynamic_cast<CPlayer*>(ppp)->GetClass();
+		
 
-		//int which = m_pObserverCom->GetWhichInfo();
-		//m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(which);
-		//m_eCurClass = (CLASS)m_iCurMeshNum;
-		m_eCurClass = dynamic_cast<CPlayer*>(ppp)->GetClass();
+		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+		_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+		if(which == 0)
+		{ 
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
+			m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();			 
+		}
+		else
+		{
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
+			m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
+		}
+
+		m_eCurClass = (CLASS)m_iCurMeshNum;
+		
 		Change_Class();
-		m_IsActive = m_pObserverCom->GetBoolInfo();
 		if (m_IsActive)
 		{
 			if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
@@ -106,7 +114,9 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 
 _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	m_IsActive = m_pObserverCom->GetBoolInfo();
+
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
 	if (m_IsActive)
 	{
@@ -121,7 +131,6 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 		
 		//1,2,7
-		CManagement::GetInstance()->Notify(DATA_TYPE::DATA_VECTOR, &m);
 		CAMERADESC		tICameraDesc;
 		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
 		if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
@@ -161,8 +170,6 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CPlayer_Inven::Render_GameObject()
 {
-	m_IsActive = m_pObserverCom->GetBoolInfo();
-
 	if (m_IsActive)
 	{
 		CManagement* pManagement = CManagement::GetInstance();
@@ -286,7 +293,7 @@ void CPlayer_Inven::Free()
 	Safe_Release(m_pColiider[1]);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 
 	CGameObject::Free();
 }
@@ -486,10 +493,10 @@ HRESULT CPlayer_Inven::Ready_Component()
 			return E_FAIL;
 	}
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);
