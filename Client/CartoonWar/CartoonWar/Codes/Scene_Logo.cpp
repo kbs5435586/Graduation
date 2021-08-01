@@ -688,6 +688,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTexNor",
 		CBuffer_RectTexNor::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
+		CBuffer_Sphere::Create())))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -1461,6 +1464,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Font",
 		CShader::Create(L"../ShaderFiles/Shader_Font.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Collider",
+		CShader::Create(L"../ShaderFiles/Shader_Collider.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 
 	//Compute_Shader_Compile
 	{
@@ -1518,6 +1524,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect",
 			CShader::Create(L"../ShaderFiles/Shader_PostEffect.hlsl", "VS_Main", "PS_Main"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect_Buffer",
+			CShader::Create(L"../ShaderFiles/Shader_PostEffect_Buffer.hlsl", "VS_Main", "PS_Main"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur",
 			CShader::Create(L"../ShaderFiles/Shader_Blur.hlsl", "VS_Main", "PS_Main"))))

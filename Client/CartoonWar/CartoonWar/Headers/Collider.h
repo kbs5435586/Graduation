@@ -23,7 +23,7 @@ public:
     HRESULT                     Ready_Collider_OBB_BOX(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
     HRESULT                     Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
-    HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f });
+    HRESULT                     Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize = { 1.f,1.f,1.f }, _bool IsWire = true);
     HRESULT                     Clone_ColliderBox(_matrix matWorld, const _vec3 vSize = { 1.f,1.f,1.f });
 public:
     void                        Change_ColliderBoxSize(CTransform* pTransform, const _vec3 vSize);
@@ -39,7 +39,7 @@ private:
     void				        Compute_AlignAxis(OBB* pOBB);
     void				        Compute_ProjAxis(OBB* pOBB);
     _matrix                     Remove_Rotation(_matrix matWorld);
-    HRESULT                     Create_InputLayOut();
+    HRESULT                     Create_InputLayOut(_bool IsWire = true);
 public:
     void                        Render_Collider(_uint iColorTemp = 0);
 public:

@@ -49,13 +49,13 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_pAnimCom[i]->LateInit();
 	}
 
-
+	m_vColShpereSize = {100.f,100.f,100.f };
 	_vec3 vColliderSize = { 400.f ,160.f,40.f };
 	//_vec3 vColliderSize = { 60.f ,80.f,60.f };
 	m_pCollider_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_Attack->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-
+	m_pCollider_Hit->Clone_ColliderBox(m_pTransformCom, vColliderSize, false);
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
@@ -82,6 +82,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0]);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
+	m_pCollider_Hit->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 
 	m_pUI_OnHead->Update_GameObject(fTimeDelta);
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
@@ -123,18 +124,40 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		Resurrection();
 
-	if (!m_IsParticleRun)
+	if(m_IsParticleRun)
 	{
 		m_fParticleRunTime += fTimeDelta;
+
 	}
 
-
-	if (m_IsParticleRun && m_fParticleRunTime>=2.f)
+	if (m_fParticleRunTime >= 1.f)
 	{
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return NO_EVENT;
 
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		_vec3 vPosition = {};
+		vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vTemp = vPosition;
+		vTemp.y = fY;
+
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 20;
+		tParticleSet.fMaxLifeTime = 1.f;
+		tParticleSet.iMinLifeTime = 0.5f;
+
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.1f;
+
+		tParticleSet.fMaxSpeed = 10.f;
+		tParticleSet.fMinSpeed = 20.f;
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return NO_EVENT;
 		m_fParticleRunTime = 0.f;
+		m_IsParticleRun = false;
 	}
-
 
 
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
@@ -220,6 +243,7 @@ void CPlayer::Render_GameObject()
 
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
 
@@ -480,6 +504,7 @@ void CPlayer::Free()
 	Safe_Release(m_pCollider_OBB);
 	Safe_Release(m_pCollider_AABB);
 	Safe_Release(m_pCollider_Attack);
+	Safe_Release(m_pCollider_Hit);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
@@ -687,6 +712,11 @@ HRESULT CPlayer::Ready_Component()
 	m_pCollider_Attack = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_ATTACK");
 	NULL_CHECK_VAL(m_pCollider_Attack, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_Attack", m_pCollider_Attack)))
+		return E_FAIL;
+	//m_pCollider_Sphere
+	m_pCollider_Hit = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pCollider_Hit, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_Hit", m_pCollider_Hit)))
 		return E_FAIL;
 
 	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
@@ -1157,8 +1187,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_IsSlide = false;
 		}
 
-	
-	
+	 
+
+
+		m_IsParticleRun = true;
 
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
@@ -1242,29 +1274,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-		if (nullptr == pTerrainBuffer)
-			return;
-
-		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-		_vec3 vPosition = {};
-		vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3 vTemp = vPosition;
-		vTemp.y = fY;
-		vTemp.y -= 10;
-		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vTemp;
-		tParticleSet.iMaxParticle = 20;
-		tParticleSet.fMaxLifeTime = 20.f;
-		tParticleSet.iMinLifeTime = 2.f;
-
-		tParticleSet.fStartScale = 2.f;
-		tParticleSet.fEndScale = 1.f;
-
-		tParticleSet.fMaxSpeed = 0.1f;
-		tParticleSet.fMinSpeed = 0.02f;
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
-			return;
+		m_IsHit_PostEffect = true;
 	}
 
 

@@ -1313,6 +1313,9 @@
     <None Include="..\ShaderFiles\Shader_Terrain_Tess.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
