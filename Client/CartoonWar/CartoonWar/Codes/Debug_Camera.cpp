@@ -43,7 +43,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -81,19 +81,19 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	{
 		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
-			m_pTransform->Go_Straight(fTimeDelta);
+			m_pTransform->Go_Straight(fTimeDelta * 4.f);
 		}
 		if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
 		{
-			m_pTransform->BackWard(fTimeDelta);
+			m_pTransform->BackWard(fTimeDelta * 4.f);
 		}
 		if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
 		{
-			m_pTransform->Go_Left(fTimeDelta);
+			m_pTransform->Go_Left(fTimeDelta * 4.f);
 		}
 		if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
 		{
-			m_pTransform->Go_Right(fTimeDelta);
+			m_pTransform->Go_Right(fTimeDelta * 4.f);
 		}
 		_long	MouseMove = 0;
 		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))

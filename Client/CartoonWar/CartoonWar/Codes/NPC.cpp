@@ -32,8 +32,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	//Compute_Matrix();
-	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
+	// Compute_Matrix();
+	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
 	_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
