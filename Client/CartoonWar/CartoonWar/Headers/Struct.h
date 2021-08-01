@@ -554,8 +554,6 @@ struct Session
 	char	con_rotate = CON_IDLE;
 	char	con_move = CON_IDLE;
 	char	formation;
-	vector <FormationInfo> m_boid;
-	float	total_angle;
 };
 
 

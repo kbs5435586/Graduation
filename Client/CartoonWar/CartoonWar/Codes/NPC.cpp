@@ -36,7 +36,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
 	_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
+	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(100, 1, 1, 0);
@@ -57,8 +57,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
-	m_cCondition = CON_IDLE;
-	m_cLastCondition = CON_IDLE;
+	m_cMoveCondition = CON_IDLE;
+	m_cRotateCondition = CON_IDLE;
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
@@ -100,11 +100,34 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_fSpeedUp = m_fArrSpeedUP[(_uint)m_eCurClass];
 
 	if (m_IsRun)
-		m_pTransformCom->SetSpeed(m_fSpeed);
-	else m_pTransformCom->SetSpeed(m_fSpeedUp);
+		m_pTransformCom->SetSpeed(m_fSpeedUp);
+	else m_pTransformCom->SetSpeed(m_fSpeed);
 
-	if(GetAsyncKeyState('L'))
+	m_cMoveCondition = server->Get_NpcMCon(m_iLayerIdx);
+	m_cRotateCondition = server->Get_NpcRCon(m_iLayerIdx);
+
+	switch (m_cMoveCondition)
+	{
+	case CON_STRAIGHT:
+		m_pTransformCom->BackWard(fTimeDelta);
+		break;
+	case CON_RUN:
+		m_pTransformCom->BackWard(fTimeDelta * 2.f);
+		break;
+	case CON_BACK:
+		m_pTransformCom->Go_Straight(fTimeDelta);
+		break;
+	}
+
+	switch (m_cRotateCondition)
+	{
+	case CON_LEFT:
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+		break;
+	case CON_RIGHT:
 		m_pTransformCom->Rotation_Y(fTimeDelta);
+		break;
+	}
 	Change_Class();
 	//Obb_Collision();
 	Combat(fTimeDelta);

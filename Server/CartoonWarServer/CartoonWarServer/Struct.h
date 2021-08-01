@@ -65,6 +65,8 @@ struct SESSION // 클라이언트 정보
 	unsigned short m_boid_num;
 	char m_formation;
 	CLASS m_class;
+	char m_LastMcondition;
+	char m_LastRcondition;
 	char m_Mcondition;
 	char m_Rcondition;
 

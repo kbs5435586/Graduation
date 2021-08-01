@@ -130,19 +130,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	switch (m_cRotateCondition)
 	{
 	case CON_LEFT:
-	{
 		m_pTransformCom->Rotation_Y(-fTimeDelta);
-		float cal = (-fTimeDelta * XMConvertToRadians(90.f)) * 180.f / PIE;
-		server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
-	}
-	break;
+		break;
 	case CON_RIGHT:
-	{
 		m_pTransformCom->Rotation_Y(fTimeDelta);
-		float cal = fTimeDelta * XMConvertToRadians(90.f) * 180.f / PIE;
-		server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
-	}
-	break;
+		break;
 	}
 
 	m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
