@@ -210,11 +210,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsParticle = false;
 	}
 	
-
-	if (m_IsDead)
-		return DEAD_OBJ;
-	
-	Safe_Release(server);
 	if (m_fParticleRunTime >= 1.f)
 	{
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
@@ -243,9 +238,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
-
-
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+	
+	if (m_IsDead)
+		return DEAD_OBJ;
+
+	Safe_Release(server);
 	return NO_EVENT;
 }
 
@@ -1388,6 +1386,33 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_condition_packet(CON_TYPE_MOVE, CON_RUN);
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
+		//_vec3 vLook = {};
+		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		//vLook = Vector3_::Normalize(vLook);
+		
+		// m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
+		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		//_vec3 vSlide = {};
+		//if (!m_IsSlide)
+		//{
+		//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		//	{
+		//		m_pTransformCom->BackWard(fTimeDelta);
+		//		server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+		//	}
+		//	else
+		//	{
+		//		m_pTransformCom->Go_There(vSlide);
+		//		server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+		//	}
+		//}
+		//else
+		//{
+		//	m_pTransformCom->BackWard(fTimeDelta);
+		//	server->send_position_packet(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+		//	m_IsSlide = false;
+		//}
+
 		m_IsParticleRun = true;
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
@@ -1408,7 +1433,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 		//vLook = Vector3_::Normalize(vLook);
 
-
+		// m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		//_vec3 vSlide = {};
 		//if (!m_IsSlide)
@@ -1431,16 +1456,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//	m_IsSlide = false;
 		//}
 	}
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_AddNPC_Cooltime());
-		if (cool_time.count() > 2)
-		{
-			server->send_add_npc_packet();
-			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
-		}
-	}
 	else
 	{
 		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
@@ -1460,6 +1475,16 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_AddNPC_Cooltime());
+		if (cool_time.count() > 2)
+		{
+			server->send_add_npc_packet();
+			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+		}
+
 	//if (m_IsTeleportCheck)
 	//{
 	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
@@ -1467,6 +1492,21 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
 	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
 	//}
+
+	if (CManagement::GetInstance()->Key_Down(KEY_1))
+	{
+		m_iCurMeshNum++;
+		if (m_iCurMeshNum > (_uint)CLASS::CLASS_END - 1)
+			m_iCurMeshNum = 0;
+		m_iCurAnimIdx = 0;
+		m_eCurClass = (CLASS)m_iCurMeshNum;
+
+	}
+
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
+	{
+		m_IsHit_PostEffect = true;
+	}
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
 		m_IsOnce = true;
