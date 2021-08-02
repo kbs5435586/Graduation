@@ -96,8 +96,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
-	Change_Class();
 	Attack(fTimeDelta);
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0]);
@@ -129,6 +127,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(0);
 	
+	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 
@@ -198,17 +197,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime += fTimeDelta;
 	}
 
-	Skill_Fly(fTimeDelta, fY);
-	Skill_Invisible(fTimeDelta);
-	Skill_CastFire(fTimeDelta);
-
-	if (m_IsParticle)
-	{
-		_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		Create_Particle(vParticlePos);
-		//m_IsBazier = true;
-		m_IsParticle = false;
-	}
+	//Skill_Fly(fTimeDelta, fY);
+	//Skill_Invisible(fTimeDelta);
+	//Skill_CastFire(fTimeDelta);
 	
 	if (m_fParticleRunTime >= 1.f)
 	{
@@ -1484,7 +1475,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_add_npc_packet();
 			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
-
+	}
 	//if (m_IsTeleportCheck)
 	//{
 	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");

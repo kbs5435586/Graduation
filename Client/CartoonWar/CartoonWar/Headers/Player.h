@@ -54,8 +54,6 @@ private:
 	void									SetSpeed();
 	void									Resurrection();
 public:
-	void									Create_Particle(const _vec3& vPoistion);
-public:
 	CLASS&									GetClass(){return m_eCurClass;}
 private:
 	CTransform*								m_pTransformCom = nullptr;
