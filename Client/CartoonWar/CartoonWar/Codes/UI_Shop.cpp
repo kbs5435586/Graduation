@@ -17,14 +17,11 @@ HRESULT CUI_Shop::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	
 	m_fX = 900.f;
 	m_fY = 400.f;
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
-	lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
-	
 	return S_OK;
 }
 
@@ -65,7 +62,9 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeX = 50.f;
 			m_fSizeY = 50.f;
 
-			npcNum = m_pObserverCom->GetNPCNUMInfo();
+			list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
+			npcNum = LstTemp.size();
+			
 
 			//duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			//	- server->Get_AddNPC_Cooltime());

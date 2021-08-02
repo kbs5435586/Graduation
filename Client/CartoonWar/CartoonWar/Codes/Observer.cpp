@@ -45,9 +45,7 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 	case DATA_TYPE::DATA_BOOL:
 		m_bool = *reinterpret_cast<_bool*>(*iter_find);
 		break;
-	case DATA_TYPE::DATA_TAP:
-		m_tap = *reinterpret_cast<_bool*>(*iter_find);
-		break;
+	
 	case DATA_TYPE::DATA_NPC:
 		m_lstData = lstTemp;
 		break;
@@ -79,18 +77,16 @@ void CObserver::ReUpdate_Observer(DATA_TYPE eType)
 	}
 }
 
-
 void* CObserver::GetNPC(int num)
 {
 	auto iter = m_lstData->begin();
-	//list<void*>::iterator it;
+	
 	int temp = {};
 	for (; iter != m_lstData->end(); ++iter)
 	{		
 		if (temp == num)
-		{
 			return *iter;
-		}
+		
 		++temp;	
 	}
 

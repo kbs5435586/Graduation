@@ -6,6 +6,7 @@
 
 #include "Deffend.h"
 
+#include "UI_ClassTap.h"
 #include "Inventory_Camera.h"
 #include "Terrain_Height.h"
 #include "Fire.h"
@@ -74,10 +75,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
-
 	m_pUI_OnHead = CUI_OnHead::Create();
 
 	if (nullptr == m_pUI_OnHead)
@@ -125,12 +122,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
 
-	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(0);
-	
-	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
+
+	if (!m_IsActive)
 	m_IsActive = m_pObserverCom->GetBoolInfo();
 	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive)
 		Input_Key(fTimeDelta);
@@ -597,7 +595,7 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 	//Safe_Release(m_pNaviCom);
 	Safe_Release(m_pBufferCom);
 
@@ -844,10 +842,10 @@ HRESULT CPlayer::Ready_Component()
 			return E_FAIL;
 	}
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -1774,5 +1772,108 @@ void CPlayer::Resurrection()
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	m_tInfo = INFO(100, 1, 1, 0);
 	m_IsDead = false;
+}
+
+void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
+{
+	if (m_IsFly_START || m_IsFly_ING)
+	{
+		m_fCoolTime_ONE += fTimeDelta;
+		if (m_fCoolTime_ONE > 20.f)
+		{
+			m_IsFly_END = !m_IsFly_END;
+			m_fCoolTime_ONE = 0.f;
+		}
+	}
+
+
+	if (!m_IsStart)
+	{
+		m_IsFly_START = m_pObserverCom->GetSkillInfo();
+	}
+
+	if (m_IsFly_START)
+	{
+		m_IsStart = !m_IsStart;
+		if (m_pTransformCom->Get_Scale().x > 0.05f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
+				m_pTransformCom->Get_Scale().z - 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
+			m_pTransformCom->UP(fTimeDelta);
+		else
+		{
+			m_IsFly_ING = !m_IsFly_ING;
+		}
+
+	}
+	if (m_IsFly_ING)
+	{
+		if (m_IsUandD)
+		{
+			m_pTransformCom->Fallen(fTimeDelta);
+			if (m_pTransformCom->m_fVel < -5)
+				m_IsUandD = !m_IsUandD;
+		}
+		else
+		{
+			m_pTransformCom->UP(fTimeDelta);
+			if (m_pTransformCom->m_fVel > 5)
+				m_IsUandD = !m_IsUandD;
+		}
+	}
+
+	if (m_IsFly_END)
+	{
+		if (m_pTransformCom->Get_Scale().x < 0.1f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
+				m_pTransformCom->Get_Scale().z + 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
+			m_pTransformCom->Fallen(fTimeDelta);
+		else
+		{
+			m_IsFly_ING = false;
+			m_IsFly_END = !m_IsFly_END;
+			m_IsStart = !m_IsStart;
+
+			m_pTransformCom->m_fVel = 0.f;
+		}
+	}
+
+}
+
+void CPlayer::Skill_Invisible(const _float& fTimeDelta)
+{
+	if (m_IsInvisible)
+	{
+		m_fCoolTime_TWO += fTimeDelta;
+		if (m_fCoolTime_TWO > 20.f)
+		{
+			m_IsInvisible = !m_IsInvisible;
+			m_fCoolTime_TWO = 0.f;
+		}
+	}
+}
+
+void CPlayer::Skill_CastFire(const _float& fTimeDelta)
+{
+	
+	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size() > 0)
+	{
+		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
+		{
+			_float t = dynamic_cast<CFire*>(iter0)->getETime();
+			if (t < 10.f)
+			{
+				dynamic_cast<CFire*>(iter0)->setETime(t + fTimeDelta);
+			}
+			else
+			{
+				dynamic_cast<CFire*>(iter0)->setETime(0.f);
+				dynamic_cast<CGameObject*>(iter0)->GetIsDead() = true;
+				m_IsFireCheck = false;
+			}
+		}
+	}
+	
 }
 

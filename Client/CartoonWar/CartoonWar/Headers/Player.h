@@ -54,7 +54,7 @@ private:
 	void									SetSpeed();
 	void									Resurrection();
 public:
-	CLASS&									GetClass(){return m_eCurClass;}
+	CLASS&									getClass(){return m_eCurClass;}
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -76,7 +76,7 @@ private:
 	CCollider*								m_pCollider_Attack = nullptr;
 	CCollider*								m_pCollider_Hit = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
-	CObserver*								m_pObserverCom = nullptr;
+	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CUI_OnHead*								m_pUI_OnHead = nullptr;
@@ -112,11 +112,17 @@ private:
 	_matrix									m_matRight = {};
 private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
-	CLASS getClass() {return m_eCurClass;}
+	
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	PLAYER									m_tPlayer = {};
 private:
 	_uint									m_iCurMeshNum = 0;
+public:
+	//CLASS									getClass() { return m_eCurClass; }
+	_uint									GetCurMesh() { return m_iCurMeshNum; }
+	void									SetCurMesh(_uint _c) { m_iCurMeshNum = _c; }
+
+private:
 
 	_bool	m_IsActive = {};
 

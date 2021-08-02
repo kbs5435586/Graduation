@@ -24,10 +24,10 @@ public:
 
 	void setSize(_float x, _float y) { m_fSizeX = x; m_fSizeY = y; };
 	void setPos(_float x, _float y) { m_fX = x; m_fY = y; };
-	void setObs(CObserver * _obs) { m_pObserverCom = _obs; }
+	//void setObs(CObserver * _obs) { m_pObserverCom = _obs; }
 	void setWhich(_int* _num) { which = _num; }
 	void setActive(_bool* _a) { m_Active = _a; }
-	CObserver* m_pObserverCom = {};
+	//CObserver* m_pObserverCom = {};
 	list<void*>* lstTemp = {};
 
 

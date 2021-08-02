@@ -3,6 +3,10 @@
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
+#include "UI_ClassTap.h"
+
+#include "Player.h"
+#include "NPC.h"
 
 _int CUI_Button::tempNum = 0;
 
@@ -27,8 +31,8 @@ HRESULT CUI_Button::Ready_GameObject(void* pArg)
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
-	lstTemp = CManagement::GetInstance()->Get_List(DATA_TYPE::DATA_NPC);
-	//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC,)
+	
+	
 	return S_OK;
 }
 
@@ -63,45 +67,123 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeX = 50.f;
 			m_fSizeY = 50.f;
 
-			_int whichnum = m_pObserverCom->GetWhichInfo();
-			auto temp = (int*)m_pObserverCom->GetNPC(whichnum);
 
+			CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+			_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 
-			if (*temp == 0)
+			_uint m_iCurMeshNum{};
+
+			if (whichnum == 0)
+			{
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+				m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
+			}
+			else
+			{
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+				m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
+			}
+			
+
+			if (m_iCurMeshNum == 0)
 			{
 				if (m_iClass == 2 || m_iClass == 4 || m_iClass == 7)
 				{}
 				else
-					*temp = m_iClass;
+				{
+					if (whichnum == 0)
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+					}
+					else
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
+					}
+				}
 			}
-			else if (*temp == 1 || *temp == 2)
+			else if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2)
 			{
 				if (m_iClass == 0 || m_iClass == 1 || m_iClass == 2)
-					*temp = m_iClass;
+				{
+					if (whichnum == 0)
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+					}
+					else
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
+					}
+				}
 			}
-			else if (*temp == 3 || *temp == 4)
+			else if (m_iCurMeshNum == 3 || m_iCurMeshNum == 4)
 			{
 				if (m_iClass == 0 || m_iClass == 3 || m_iClass == 4)
-					*temp = m_iClass;
+				{
+					if (whichnum == 0)
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+					}
+					else
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
+					}
+				}
 			}
-			else if (*temp == 5)
+			else if (m_iCurMeshNum == 5)
 			{
 				if (m_iClass == 0 || m_iClass == 5)
-					*temp = m_iClass;
+				{
+					if (whichnum == 0)
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+					}
+					else
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
+					}
+				}
 			}
-			else if (*temp == 6 || *temp == 7)
+			else if (m_iCurMeshNum == 6 || m_iCurMeshNum == 7)
 			{
 				if (m_iClass == 0 || m_iClass == 6 || m_iClass == 7)
-					*temp = m_iClass;
+				{
+					if (whichnum == 0)
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+					}
+					else
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
+					}
+				}
 			}
-			else if (*temp == 8)
+			else if (m_iCurMeshNum == 8)
 			{
 				if (m_iClass == 0 || m_iClass == 8)
-					*temp = m_iClass;
+				{
+					if (whichnum == 0)
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+					}
+					else
+					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
+					}
+				}
 			}
 	
-			m_pObserverCom->ReUpdate_Observer(DATA_TYPE::DATA_NPC);
-
 			IsDown = false;
 		}	
 	}
@@ -118,55 +200,69 @@ _int CUI_Button::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CUI_Button::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTexture* texture)
 {
-
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
 
 
-
 	REP tRep = {};
-	_int whichnum = m_pObserverCom->GetWhichInfo();
-	auto temp = (int*)m_pObserverCom->GetNPC(whichnum);
 	
-	
-	if (*temp == 0)
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+
+	_uint m_iCurMeshNum{};
+
+	if (whichnum == 0)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+		m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
+	}
+	else
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+		m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
+	}
+
+
+
+
+	if (m_iCurMeshNum == 0)
 	{
 		if (m_iClass == 2 || m_iClass == 4 || m_iClass == 7)
 			tRep.m_arrInt[0] = 2;
 		else
 			tRep.m_arrInt[0] = 0;
 	}
-	else if(*temp == 1 || *temp == 2)
+	else if(m_iCurMeshNum == 1 || m_iCurMeshNum == 2)
 	{
 		if (m_iClass == 0 || m_iClass == 1 || m_iClass == 2)
 			tRep.m_arrInt[0] = 0;
 		else
 			tRep.m_arrInt[0] = 2;
 	}
-	else if (*temp == 3 || *temp == 4)
+	else if (m_iCurMeshNum == 3 || m_iCurMeshNum == 4)
 	{
 		if (m_iClass == 0 || m_iClass == 3 || m_iClass == 4)
 			tRep.m_arrInt[0] = 0;
 		else
 			tRep.m_arrInt[0] = 2;
 	}
-	else if (*temp == 5)
+	else if (m_iCurMeshNum == 5)
 	{
 		if (m_iClass == 0 || m_iClass == 5)
 			tRep.m_arrInt[0] = 0;
 		else
 			tRep.m_arrInt[0] = 2;
 	}
-	else if (*temp == 6 || *temp == 7)
+	else if (m_iCurMeshNum == 6 || m_iCurMeshNum == 7)
 	{
 		if (m_iClass == 0 || m_iClass == 6 || m_iClass == 7)
 			tRep.m_arrInt[0] = 0;
 		else
 			tRep.m_arrInt[0] = 2;
 	}
-	else if (*temp == 8)
+	else if (m_iCurMeshNum == 8)
 	{
 		if (m_iClass == 0 || m_iClass == 8)
 			tRep.m_arrInt[0] = 0;
@@ -174,7 +270,7 @@ void CUI_Button::Render_GameObject(CShader* shader, CBuffer_RectTex* buffer, CTe
 			tRep.m_arrInt[0] = 2;
 	}
 
-	if(*temp == m_iClass)
+	if(m_iCurMeshNum == m_iClass)
 		tRep.m_arrInt[0] = 1;
 
 	MAINPASS	tMainPass = {};
@@ -216,5 +312,11 @@ HRESULT CUI_Button::Ready_Component()
 
 	Safe_Release(pManagement);
 	return S_OK;
+}
+
+void CUI_Button::setObs(CObserver* _obs)
+{
+	//m_pObserverCom = _obs;
+	//m_pObserverCom->AddRef();
 }
 

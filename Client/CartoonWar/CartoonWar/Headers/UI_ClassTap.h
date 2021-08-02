@@ -54,24 +54,33 @@ private:
 private:
 	REP										m_tRep = {};
 	_bool									m_IsTemp = false;
-	_bool									m_cansee = false;
+	
 	_bool									m_tapActive = false;
 	_bool									m_IsTap[5] = {};
 	
-	CUI_CharTap*							a = nullptr;
+	
 	CUI_Button*								m_button[9] = {};
 	CUI_ButtonNPC*							m_buttonNPC[15] = {};
 	CUI_CharInterface*						m_charInter = nullptr;
 	CUI_Shop* m_shop = nullptr;
 
-	CObserver* m_pObserverCom = {};
+	//CObserver* m_pObserverCom = {};
 
 	POINT MousePos = {};
 	
 	_int m_meshnum[5] = {};
-	_int which = {};
+	
 	_int* pwhich = {};
 	_int npcnumm{};
 
 	string m_strGold{};
+
+	_bool									m_cansee = false;
+	_int which = {};
+public:
+	_bool GetBool() { return m_cansee; }
+	void SetBool(_bool _b) { m_cansee = _b; }
+	_int GetWhich() { return which; }
+	void SetWhich(_int _w) { which = _w; }
+
 };

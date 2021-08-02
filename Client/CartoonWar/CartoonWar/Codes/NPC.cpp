@@ -67,13 +67,6 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
-	if (first)
-	{
-		CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_NPC_NUM, &npcnum);
-		first = false;
-	}
-	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC_NUM, &npcnum);
 
 	m_pUI_OnHead = CUI_OnHead::Create();
 	if (nullptr == m_pUI_OnHead)
@@ -81,11 +74,6 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
 		return E_FAIL;
 
-
-	
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
-	CManagement::GetInstance()->Notify(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
-	//m_pObserverCom->Update_Observer(DATA_TYPE::DATA_NPC, &m_iCurMeshNum);
 	
 	return S_OK;
 }
@@ -380,7 +368,7 @@ void CNPC::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
-	Safe_Release(m_pObserverCom);
+	//Safe_Release(m_pObserverCom);
 
 	Safe_Release(m_pUI_OnHead);
 	CGameObject::Free();
@@ -592,10 +580,10 @@ HRESULT CNPC::Ready_Component()
 		return E_FAIL;
 
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);

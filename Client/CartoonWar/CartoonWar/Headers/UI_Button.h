@@ -25,19 +25,20 @@ public:
 
 	HRESULT									Ready_Component();
 
+
 	void setSize(_float x, _float y) { m_fSizeX = x; m_fSizeY = y; };
 	void setPos(_float x, _float y) { m_fX = x; m_fY = y; };
-	void setObs(CObserver* _obs) { m_pObserverCom = _obs; }
+	void setObs(CObserver* _obs);
 
-	CObserver* m_pObserverCom = {};
-	list<void*>* lstTemp = {};
-
+	//CObserver* m_pObserverCom = {};
 
 	_bool m_cansee = {};
 	_bool IsDown = {};
 	POINT MousePos;
 
 	_int m_iClass{};
+	//_int whichnum{};
+
+
 	static _int tempNum;
 };
-
