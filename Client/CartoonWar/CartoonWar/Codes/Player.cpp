@@ -193,16 +193,14 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		Resurrection();
 
-	if(m_IsParticleRun)
+	if (m_IsParticleRun)
 	{
 		m_fParticleRunTime += fTimeDelta;
+	}
 
 	Skill_Fly(fTimeDelta, fY);
 	Skill_Invisible(fTimeDelta);
 	Skill_CastFire(fTimeDelta);
-	
-	
-	
 
 	if (m_IsParticle)
 	{
