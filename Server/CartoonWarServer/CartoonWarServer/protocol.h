@@ -94,7 +94,9 @@ struct sc_packet_login_ok
 
 constexpr unsigned short C_WORKER = 0;
 constexpr unsigned short C_CAVALRY = 1;
+constexpr unsigned short C_TWO = 2;
 constexpr unsigned short C_INFANTRY = 3;
+constexpr unsigned short C_FOUR = 4;
 constexpr unsigned short C_SPEARMAN = 5;
 constexpr unsigned short C_MAGE = 6;
 constexpr unsigned short C_MMAGE = 7;

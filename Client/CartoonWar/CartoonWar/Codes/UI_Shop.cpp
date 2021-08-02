@@ -62,24 +62,16 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeX = 50.f;
 			m_fSizeY = 50.f;
 
-			list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
-			npcNum = LstTemp.size();
-			
 
-			//duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			//	- server->Get_AddNPC_Cooltime());
-			//if (cool_time.count() > 2)
-			//{
-			//	server->send_add_npc_packet();
-			//	server->Set_AddNPC_CoolTime(high_resolution_clock::now());
-			//}
-
-			if (npcNum < 14)
+			if (server->getMyNpc°¹¼ö() < 14)
 			{
-				PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
-
-				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", nullptr, (void*)&tPlayerInfo)))
-					return E_FAIL;
+				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+					- server->Get_AddNPC_Cooltime());
+				if (cool_time.count() > 2)
+				{
+					server->send_add_npc_packet();
+					server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+				}
 			}
 
 

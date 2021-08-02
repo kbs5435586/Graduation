@@ -908,8 +908,12 @@ void CServer_Manager::update_client_class(unsigned short id, unsigned short cs)
 		m_objects[id].m_class = CLASS::CLASS_WORKER;
 	else if (C_CAVALRY == cs)
 		m_objects[id].m_class = CLASS::CLASS_CAVALRY;
+	else if (C_TWO == cs)
+		m_objects[id].m_class = CLASS(2);
 	else if (C_INFANTRY == cs)
 		m_objects[id].m_class = CLASS::CLASS_INFANTRY;
+	else if (C_FOUR == cs)
+		m_objects[id].m_class = CLASS(4);
 	else if (C_SPEARMAN == cs)
 		m_objects[id].m_class = CLASS::CLASS_SPEARMAN;
 	else if (C_MAGE == cs)

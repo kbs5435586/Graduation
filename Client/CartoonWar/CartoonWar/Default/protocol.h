@@ -1,7 +1,10 @@
 #pragma once
 // 서버 클라 같이 맞춰줘야 되는 모든건 프로토콜 헤더에
-#define MY_NPC_START(p) 30 + (14 * p)
-#define MY_NPC_END(p) 43 + (14 * p)
+#define MY_NPC_START_SERVER(p) 30 + (14 * p)
+#define MY_NPC_END_SERVER(p) 43 + (14 * p)
+
+#define MY_NPC_START_CLIENT(p) (14 * p)
+#define MY_NPC_END_CLIENT(p) 14 + (14 * p)
 
 enum PLAYERS {
 	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
@@ -94,7 +97,9 @@ struct sc_packet_login_ok
 
 constexpr unsigned short C_WORKER = 0;
 constexpr unsigned short C_CAVALRY = 1;
+constexpr unsigned short C_TWO = 2;
 constexpr unsigned short C_INFANTRY = 3;
+constexpr unsigned short C_FOUR = 4;
 constexpr unsigned short C_SPEARMAN = 5;
 constexpr unsigned short C_MAGE = 6;
 constexpr unsigned short C_MMAGE = 7;

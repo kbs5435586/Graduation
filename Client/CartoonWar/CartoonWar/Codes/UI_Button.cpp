@@ -75,14 +75,15 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 
 			if (whichnum == 0)
 			{
-				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",  server->my_id);
 				m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
 			}
 			else
 			{
 				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
 				m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
-			}
+				// whichnum=1이 시작점이고, 이 자리에 자기 npc 시작 인덱스가 되게끔 구현 
+ 			}
 			
 
 			if (m_iCurMeshNum == 0)
@@ -95,10 +96,12 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 					{
 						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
 						dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
+						// send class change packet
+						// set player class 세터
 					}
 					else
 					{
-						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->my_id));
 						dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 					}
 				}

@@ -80,12 +80,12 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 		_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 		if(which == 0)
 		{ 
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->my_id);
 			m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();			 
 		}
 		else
 		{
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1 + MY_NPC_START_CLIENT(server->my_id));
 			m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
 		}
 
