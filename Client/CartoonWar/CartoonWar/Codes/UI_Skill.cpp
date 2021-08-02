@@ -31,10 +31,11 @@ HRESULT CUI_Skill::Ready_GameObject(void* pArg)
 	m_fSizeX = 300.f;
 	m_fSizeY = 300.f;
 	
-	m_CoolTime = 10.f;
+	m_CoolTime = 0.f;
+	m_MaxCoolTime = 5.f;
 	m_Active = false;
 
-	CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_SKILL, &m_Active);
+	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_SKILL, &m_Active);
 	return S_OK;
 }
 
@@ -46,16 +47,18 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	pManagement->AddRef();
 
 	
-	
+	//10이 꽉찬 상태
+
 
 	if (m_Active)
 	{
 		m_CoolTime += fTimeDelta;
-		if (m_CoolTime > 20.f)
+		//m_CoolTime = m_CoolTime / 2;
+		if (m_CoolTime > m_MaxCoolTime)
 		{
-			m_Active = !m_Active;
-			m_CoolTime = 20.f;
-			CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
+			m_Active = false;
+			m_CoolTime = 0.f;
+			//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
 		}
 	}
 	else
@@ -78,14 +81,11 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 
 				m_CoolTime = 0.f;
 				m_Active = true;
-				CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
+				//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
 
 				IsDown = false;
 			}
 		}
-
-
-		
 	}
 
 	Safe_Release(pManagement);
@@ -113,7 +113,9 @@ void CUI_Skill::Render_GameObject()
 	MAINPASS	tMainPass = {};
 
 	REP tRep = {};
+	//10 = 현재 쿨타임 / (최대쿨타임/2);
 	tRep.m_arrFloat[0] = m_CoolTime;
+	tRep.m_arrFloat[1] = static_cast<float> (m_MaxCoolTime)/ 10;
 	
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();

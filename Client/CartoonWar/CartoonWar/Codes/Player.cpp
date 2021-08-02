@@ -7,6 +7,7 @@
 #include "Deffend.h"
 
 #include "UI_ClassTap.h"
+#include "UI_Skill.h"
 #include "Inventory_Camera.h"
 #include "Terrain_Height.h"
 #include "Fire.h"
@@ -1351,13 +1352,36 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			//m_tInfo.fHP =0.f;;
 			m_pTransformCom->Rotation_Rev(fTimeDelta, pTransform);
 		}
+		if (CManagement::GetInstance()->Key_Down(KEY_3))
+		{
+		}
+		if (CManagement::GetInstance()->Key_Down(KEY_4))
+		{
+		}
+		if (CManagement::GetInstance()->Key_Down(KEY_5))
+		{
+		}
+
 
 		if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
 		{
 			m_IsInvisible = !m_IsInvisible;
 		}
 
-
+		if (CManagement::GetInstance()->Key_Down(KEY_F1))
+		{ }
+		if (CManagement::GetInstance()->Key_Down(KEY_F2))
+		{
+		}
+		if (CManagement::GetInstance()->Key_Down(KEY_F3))
+		{
+		}
+		if (CManagement::GetInstance()->Key_Down(KEY_F4))
+		{
+		}
+		if (CManagement::GetInstance()->Key_Down(KEY_F5))
+		{
+		}
 
 
 		if (!m_IsFire)
@@ -1744,9 +1768,12 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 	if (m_IsFly_START || m_IsFly_ING)
 	{
 		m_fCoolTime_ONE += fTimeDelta;
-		if (m_fCoolTime_ONE > 20.f)
+		if (m_fCoolTime_ONE > 5.f)
 		{
-			m_IsFly_END = !m_IsFly_END;
+			//m_pTransformCom->m_fVel = 0.f;
+			m_IsStart = false;
+			m_IsFly_ING = false;
+			m_IsFly_END = true;
 			m_fCoolTime_ONE = 0.f;
 		}
 	}
@@ -1754,12 +1781,14 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 
 	if (!m_IsStart)
 	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
+		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
 	}
 
 	if (m_IsFly_START)
 	{
-		m_IsStart = !m_IsStart;
+		m_IsStart = true;
 		if (m_pTransformCom->Get_Scale().x > 0.05f)
 			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
 				m_pTransformCom->Get_Scale().z - 0.001f);
@@ -1767,7 +1796,7 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 			m_pTransformCom->UP(fTimeDelta);
 		else
 		{
-			m_IsFly_ING = !m_IsFly_ING;
+			m_IsFly_ING = true;
 		}
 
 	}
@@ -1796,9 +1825,9 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 			m_pTransformCom->Fallen(fTimeDelta);
 		else
 		{
-			m_IsFly_ING = false;
-			m_IsFly_END = !m_IsFly_END;
-			m_IsStart = !m_IsStart;
+			//m_IsFly_ING = false;
+			m_IsFly_END = false;
+			m_IsStart = false;
 
 			m_pTransformCom->m_fVel = 0.f;
 		}

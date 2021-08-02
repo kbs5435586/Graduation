@@ -41,10 +41,15 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	which = 0;
 
 	////////////////////
-
+	//1200  600  250 
+	// 250 380 380 250 250 315 120 120 185
+	// m_fX 
+	// 
 	// 클래스 버튼
-	float xxx[9] = { 350, 220, 220, 350, 350, 285, 480, 480, 415 };
-	float yyy[9] = { 315, 375, 440, 375, 440, 375, 375, 440, 375 };
+	//float xxx[9] = { 350, 220, 220, 350, 350, 285, 480, 480, 415 };
+	float xxx[9] = { m_fX - 250, m_fX - 380, m_fX - 380, m_fX - 250, m_fX - 250, m_fX - 315, m_fX - 120, m_fX - 120, m_fX - 185 };
+	//float yyy[9] = { 315, 375, 440, 375, 440, 375, 375, 440, 375 };
+	float yyy[9] = { 465, 525, 590, 525, 590, 525, 525, 590, 525 };
 	
 	for (int i = 0; i < 9; ++i)
 	{
@@ -94,11 +99,11 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		}
 		else
 		{
-			float drawX = (float)((((_float)WINCX / 2) * -1) + 40);
+			float drawX = (float)((((_float)WINCX / 2) * -1));
 			float drawY = (float)(((_float)WINCY / 2) - 10);
 
 			m_strGold = "Gold";
-			if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strGold.c_str(), 0, 0)))
+			if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strGold.c_str(), 150, 150)))
 				return E_FAIL;
 		}
 

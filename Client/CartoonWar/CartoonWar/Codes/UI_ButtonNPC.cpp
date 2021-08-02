@@ -27,9 +27,12 @@ HRESULT CUI_ButtonNPC::Ready_GameObject(void* pArg)
 
 	m_iClass = tempNum;
 	++tempNum;
-	m_fX = 610.f + ((m_iClass % 5) * 45.f);
-	m_fY = 475.f + ((m_iClass / 5) * 45.f);
-	
+	//m_fX = 610.f + ((m_iClass % 5) * 45.f);
+	//m_fY = 475.f + ((m_iClass / 5) * 45.f);
+	m_fX = (WINCX / 2) - 40 + ((m_iClass % 5) * 45.f);
+	m_fY = 625.f + ((m_iClass / 5) * 45.f);
+
+
 	m_fSizeX = 40.f;
 	m_fSizeY = 40.f;
 

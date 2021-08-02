@@ -30,7 +30,8 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 {
 	float PI = 3.141592;
 	// PI + 1, ´ë·« -2.14
-	if (1 - atan2(vIn.vTexUV.x - 0.5f, vIn.vTexUV.y - 0.5f) > (g_float_0 * 0.2 * PI) - 2.14)
+	// µé¾î¿Â g_float °ª(ÄðÅ¸ÀÓ)À» 10À¸·Î ¸ÂÃçÁà¾ß µÊ 
+	if (1 - atan2(vIn.vTexUV.x - 0.5f, vIn.vTexUV.y - 0.5f) > (((g_float_0) / (g_float_1))* 0.2 * PI) - 2.14)
 		vIn.vTexUV = float2(0.f, 0.f);
 	
 	return g_texture0.Sample(Sampler0, vIn.vTexUV);

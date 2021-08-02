@@ -31,6 +31,9 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
+
+	_vec3 vPos = { 130.f,100.f,300.f };
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransform->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
@@ -46,7 +49,10 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
+	if (!m_Active)
+		SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -100,8 +106,6 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		}
 
 
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
-		m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 		//m_Active = m_pObserverCom->GetBoolInfo();
 
 		if (!m_Active)

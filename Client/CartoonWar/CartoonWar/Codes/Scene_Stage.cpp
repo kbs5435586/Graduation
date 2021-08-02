@@ -271,11 +271,13 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 		(CGameObject**)&pCameraObject)))
 		return E_FAIL;
-
+	//130.f,100.f,300.f
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
-	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tCameraDesc.vEye = _vec3(130.f, 150.f, 300.f);
+	//tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
+	tCameraDesc.vAt = _vec3(130.f, 150.f, 301.f);
+	//tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));

@@ -17,8 +17,9 @@ HRESULT CUI_CharInterface::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 700;
-	m_fY = 325;
+	//m_fX = 700;
+	m_fX = (WINCX / 2) + 50;
+	m_fY = 475;
 	m_fSizeX = 200.f;
 	m_fSizeY = 250.f;
 
