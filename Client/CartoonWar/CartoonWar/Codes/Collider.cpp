@@ -89,10 +89,12 @@ HRESULT CCollider::Ready_Collider_OBB_BOX(CTransform* pTransform, const _vec3 vS
 
 HRESULT CCollider::Ready_Collider_SPHERE(CTransform* pTransform, const _vec3 vSize)
 {
-	CTransform* pTarget_Transform = pTransform;
-	pTarget_Transform->Scaling(vSize.x, vSize.y, vSize.z);
+	_matrix pTarget_matrix = pTransform->Get_Matrix();
+	_matrix matTemp = Remove_Rotation(pTarget_matrix);
+
+	m_pTransformCom->Set_Matrix(matTemp);
+	m_pTransformCom->Scaling(vSize);
 	m_fRadius = vSize.x;
-	m_pTransformCom->Set_Matrix(pTarget_Transform->Get_Matrix());
 
 	return S_OK;
 }
@@ -126,8 +128,6 @@ HRESULT CCollider::Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize)
 {
 	_matrix pTarget_matrix = matWorld;
 
-
-	m_pTransformCom->Set_Matrix(pTarget_matrix);
 	m_pTransformCom->Scaling(vSize);
 	m_fRadius = vSize.x;
 	m_pTransformCom->Set_Matrix(pTarget_matrix);
@@ -135,7 +135,7 @@ HRESULT CCollider::Ready_Collider_SPHERE(_matrix matWorld, const _vec3 vSize)
 	return S_OK;
 }
 
-HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize)
+HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize, _bool IsWire)
 {
 	m_pTransformCom = CTransform::Create();
 	if (nullptr == m_pTransformCom)
@@ -172,7 +172,7 @@ HRESULT CCollider::Clone_ColliderBox(CTransform* pTransform, const _vec3 vSize)
 
 
 
-	if (FAILED(Create_InputLayOut()))
+	if (FAILED(Create_InputLayOut(IsWire)))
 		return E_FAIL;
 
 	return S_OK;
@@ -518,9 +518,9 @@ void CCollider::Update_Collider(CTransform* pTransform, _vec3 vSize, CLASS eCurC
 	{
 		_matrix matTemp_Rotate = pTarget_matrix;
 		_matrix matTemp;
-		matTemp.m[0][0] *= m_fRadius;
-		matTemp.m[1][1] *= m_fRadius;
-		matTemp.m[2][2] *= m_fRadius;
+		matTemp.m[0][0] *= m_vSize.x;
+		matTemp.m[1][1] *= m_vSize.y;
+		matTemp.m[2][2] *= m_vSize.z;
 
 		matTemp = matTemp * matTemp_Rotate;
 		m_pTransformCom->Set_Matrix(matTemp);
@@ -643,15 +643,25 @@ _matrix CCollider::Remove_Rotation(_matrix matWorld)
 }
 
 
-HRESULT CCollider::Create_InputLayOut()
+HRESULT CCollider::Create_InputLayOut(_bool IsWire)
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
-		return E_FAIL;
+	if (IsWire)
+	{
+		if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+			return E_FAIL;
+
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+			return E_FAIL;
+	}
+
 
 
 	return S_OK;

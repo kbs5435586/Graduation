@@ -29,7 +29,7 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	//m_pTransformCom->Scaling(_vec3(100.f, 100.f, 100.f));
+	//m_pTransformCom->Scaling(_vec3(1.f, 100.f, 1.f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
@@ -127,9 +127,7 @@ HRESULT CTerrain_Height::CreateInputLayout()
 
 	//if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST)))
 	//	return E_FAIL;
-	/*if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::WIREFRAME, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT)))
-		return E_FAIL;*/
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT)))
 		return E_FAIL;
 	return S_OK;
 }

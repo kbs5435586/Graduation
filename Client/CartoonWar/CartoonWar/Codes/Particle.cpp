@@ -68,13 +68,13 @@ HRESULT CParticle::SetUp_OnUpdateShader(REP& tRep)
 
 void CParticle::Set_Particle(PARTICLESET tParticleSet)
 {
-	m_iMaxParticle = tParticleSet.iMaxParticle;
-	m_fMinLifeTime = tParticleSet.iMinLifeTime;
-	m_fMaxLifeTime = tParticleSet.fMaxLifeTime;
-	m_fStartScale = tParticleSet.fStartScale;
-	m_fEndScale = tParticleSet.fEndScale;
-	m_fMinSpeed = tParticleSet.fMinSpeed;
-	m_fMaxSpeed = tParticleSet.fMaxSpeed;
+	m_iMaxParticle	= tParticleSet.iMaxParticle;
+	m_fMinLifeTime	= tParticleSet.iMinLifeTime;
+	m_fMaxLifeTime	= tParticleSet.fMaxLifeTime;
+	m_fStartScale	= tParticleSet.fStartScale;
+	m_fEndScale		= tParticleSet.fEndScale;
+	m_fMinSpeed		= tParticleSet.fMinSpeed;
+	m_fMaxSpeed		= tParticleSet.fMaxSpeed;
 }
 
 HRESULT CParticle::SetUp_OnShader(REP& tRep)

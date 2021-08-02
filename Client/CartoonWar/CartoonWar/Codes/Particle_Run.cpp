@@ -1,24 +1,24 @@
 #include "framework.h"
-#include "Particle_Default.h"
+#include "Particle_Run.h"
 #include "Management.h"
 #include "UAV.h"
 
-CParticle_Default::CParticle_Default()
+CParticle_Run::CParticle_Run()
 	: CGameObject()
 {
 }
 
-CParticle_Default::CParticle_Default(const CParticle_Default& rhs)
+CParticle_Run::CParticle_Run(const CParticle_Run& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CParticle_Default::Ready_Prototype()
+HRESULT CParticle_Run::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CParticle_Default::Ready_GameObject(void* pArg)
+HRESULT CParticle_Run::Ready_GameObject(void* pArg)
 {
 	PARTICLESET tParticleSet = {};
 	if (nullptr != pArg)
@@ -35,11 +35,11 @@ HRESULT CParticle_Default::Ready_GameObject(void* pArg)
 
 	Set_Particle(tParticleSet);
 	m_fMaxLifeTime = tParticleSet.fMaxLifeTime;
-	
+
 	return S_OK;
 }
 
-_int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
+_int CParticle_Run::Update_GameObject(const _float& fTimeDelta)
 {
 	m_fLifeTime += fTimeDelta;
 
@@ -53,15 +53,14 @@ _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	fY += 10.f;
-	//m_pTransformCom->Set_PositionY(fY);
+	m_pTransformCom->Set_PositionY(fY);
 
 	if (m_IsDead)
 		return DEAD_OBJ;
 	return NO_EVENT;
 }
 
-_int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CParticle_Run::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -73,7 +72,7 @@ _int CParticle_Default::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CParticle_Default::Render_GameObject()
+void CParticle_Run::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -108,7 +107,7 @@ void CParticle_Default::Render_GameObject()
 	if (FAILED(m_pParticleCom->SetUp_OnUpdateShader(tRep_Update)))
 		return;
 
-	tRep_Update.m_arrVec2[0]= m_pTextureCom_Noise->GetTextureResolution();
+	tRep_Update.m_arrVec2[0] = m_pTextureCom_Noise->GetTextureResolution();
 	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep_Update);
 	CDevice::GetInstance()->SetUpContantBufferToShader_CS(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(),
 		iOffeset, CONST_REGISTER::b8);
@@ -123,7 +122,7 @@ void CParticle_Default::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CParticle_Default::CreateInputLayout()
+HRESULT CParticle_Run::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -136,33 +135,33 @@ HRESULT CParticle_Default::CreateInputLayout()
 	return S_OK;
 }
 
-CParticle_Default* CParticle_Default::Create()
+CParticle_Run* CParticle_Run::Create()
 {
-	CParticle_Default* pInstance = new CParticle_Default();
+	CParticle_Run* pInstance = new CParticle_Run();
 
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
-		MessageBox(0, L"CParticle_Default Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CParticle_Run Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CParticle_Default::Clone_GameObject(void* pArg , _uint iIdx)
+CGameObject* CParticle_Run::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CParticle_Default* pInstance = new CParticle_Default(*this);
+	CParticle_Run* pInstance = new CParticle_Run(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MessageBox(0, L"CParticle_Default Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CParticle_Run Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
-void CParticle_Default::Free()
+void CParticle_Run::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -175,7 +174,7 @@ void CParticle_Default::Free()
 	CGameObject::Free();
 }
 
-HRESULT CParticle_Default::Ready_Component()
+HRESULT CParticle_Run::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -206,7 +205,7 @@ HRESULT CParticle_Default::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader1", m_pShaderCom[1])))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Hit");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_CartoonSmoke");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_TextureCom", m_pTextureCom)))
 		return E_FAIL;
@@ -226,7 +225,7 @@ HRESULT CParticle_Default::Ready_Component()
 	return S_OK;
 }
 
-void CParticle_Default::Set_Particle(PARTICLESET tParticleSet)
+void CParticle_Run::Set_Particle(PARTICLESET tParticleSet)
 {
 	if (m_pParticleCom)
 	{

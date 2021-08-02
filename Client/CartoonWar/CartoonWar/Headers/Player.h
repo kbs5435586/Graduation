@@ -50,6 +50,8 @@ private:
 	void									SetSpeed();
 	void									Resurrection();
 public:
+	void									Create_Particle(const _vec3& vPoistion);
+public:
 	CLASS&									GetClass(){return m_eCurClass;}
 private:
 	CTransform*								m_pTransformCom = nullptr;
@@ -66,6 +68,7 @@ private:
 	CCollider*								m_pCollider_OBB =  nullptr;
 	CCollider*								m_pCollider_AABB = nullptr;
 	CCollider*								m_pCollider_Attack = nullptr;
+	CCollider*								m_pCollider_Hit = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
@@ -84,7 +87,7 @@ private:
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
 	_float									m_fDeathTime = 0.f;
-	_float									m_fCombatTime = 0.f;
+	_float									m_fCombatTime =   0.f;
 	_uint									m_iCombatMotion[3] = {};
 	_vec3									m_vOBB_Range[2] = {};
 	_float									m_fSpeed = 0.f;
@@ -94,6 +97,9 @@ private:
 	_ubyte									m_cLastMoveCondition;
 	_ubyte									m_cRotateCondition;
 	_ubyte									m_cLastRotateCondition;
+private:
+	_float									m_fParticleRunTime = 0.f;
+	_bool									m_IsParticleRun = false;
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};

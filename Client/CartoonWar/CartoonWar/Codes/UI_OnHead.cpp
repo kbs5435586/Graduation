@@ -219,6 +219,19 @@ void CUI_OnHead::SetPosition(_vec3 vPos, CLASS eClass)
 	
 }
 
+void CUI_OnHead::SetPosition(_vec3 vPos, ANIMALS eAnimals)
+{
+	if (!m_IsCreate)
+	{
+		m_vBarPos = vPos;
+		m_IsCreate = true;
+	}
+	m_vPos = vPos;
+
+	m_vPos.y += 8.f;
+
+}
+
 void CUI_OnHead::SetInfo(INFO tInfo)
 {
 	m_tInfo = tInfo; 
