@@ -122,14 +122,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
 
+	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
-	if (!m_IsActive)
-	m_IsActive = m_pObserverCom->GetBoolInfo();
 	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive)
 		Input_Key(fTimeDelta);
 
@@ -1789,7 +1788,7 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 
 	if (!m_IsStart)
 	{
-		m_IsFly_START = m_pObserverCom->GetSkillInfo();
+		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
 	}
 
 	if (m_IsFly_START)
