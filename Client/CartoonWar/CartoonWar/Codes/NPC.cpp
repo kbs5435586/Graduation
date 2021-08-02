@@ -74,7 +74,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
 		return E_FAIL;
 
-	
+	SetSpeed();
 	return S_OK;
 }
 
