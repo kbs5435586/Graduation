@@ -45,5 +45,15 @@ private:
 	POINT MousePos{};
 
 	_float m_CoolTime{};
+	_float m_MaxCoolTime{};
+public:
+	_bool GetActive() { return m_Active; }
+	void SetActive(_bool _t) { m_Active = _t; }
+
+	_float GetCoolTime() { return m_CoolTime; }
+	void SetCoolTime(_float _t) { m_CoolTime = _t; }
+
+	_float GetMaxCoolTime() { return m_MaxCoolTime; }
+	void SetMaxCoolTime(_float _t) { m_MaxCoolTime = _t; }
 };
 

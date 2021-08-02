@@ -17,7 +17,9 @@ HRESULT CUI_Shop::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 900.f;
+	//m_fX = 900.f;
+	//m_fY = 400.f;
+	m_fX = (WINCX / 2) + 200;
 	m_fY = 400.f;
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
