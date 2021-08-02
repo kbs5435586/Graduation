@@ -693,6 +693,7 @@ void Server::do_follow(int npc_id)
                 if (dist_between(npc_id, n.m_owner_id) > dist_between_finalPos(n.m_owner_id, i) + 0.1f
                     || dist_between(npc_id, n.m_owner_id) < dist_between_finalPos(n.m_owner_id, i) - 0.1f)// 자신의 포메이션 반지름 밖일때
                 {
+                    n.m_anim = A_WALK;
                     n.m_Mcondition = CON_STRAIGHT;
                     n.m_transform.BackWard(MOVE_TIME_ELAPSE);
                     _vec3 finalLookAt = g_clients[n.m_owner_id].m_boid[i].final_pos - *n_pos;
@@ -808,7 +809,6 @@ void Server::do_follow(int npc_id)
                                 if (true == is_near(npc_id, i))
                                 {
                                     send_fix_packet(i, npc_id);
-                                    send_animation_packet(i, npc_id, A_IDLE);
                                 }
                             }
                         }
@@ -835,6 +835,7 @@ void Server::do_follow(int npc_id)
                             float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
                             if (-0.03f > PdotProduct || 0.03f < PdotProduct) // 나아가야할 수직 방향을 안바라볼때
                             {
+                                n.m_anim = A_WALK;
                                 n.m_Mcondition = CON_IDLE;
                                 if (g_clients[n.m_owner_id].m_boid[i].angle < n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
                                 {
@@ -889,6 +890,7 @@ void Server::do_follow(int npc_id)
 
                             if (NPCangle > 2.f || NPCangle < -2.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
                             {
+                                n.m_anim = A_WALK;
                                 if (NPCangle > 2.f)
                                 {
                                     n.m_Rcondition = CON_LEFT;
@@ -903,17 +905,7 @@ void Server::do_follow(int npc_id)
                             else
                             {
                                 n.m_Rcondition = CON_IDLE;
-                                if (n.m_LastRcondition != CON_IDLE)
-                                for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                                {
-                                    if (ST_ACTIVE != g_clients[i].m_status)
-                                        continue;
-                                    if (true == is_near(npc_id, i))
-                                    {
-                                        send_fix_packet(i, npc_id);
-                                        cout << "send fix\n";
-                                    }
-                                }
+                                n.m_anim = A_IDLE;
                             }
                         }
                     }
@@ -946,23 +938,23 @@ void Server::do_follow(int npc_id)
                             {
                                 n.m_LastMcondition = n.m_Mcondition;
                                 send_condition_packet(i, npc_id, CON_TYPE_MOVE);
-                                if (CON_IDLE == n.m_Mcondition)
-                                    cout << npc_id << " send move condition : CON_IDLE\n";
-                                else if (CON_STRAIGHT == n.m_Mcondition)
-                                    cout << npc_id << " send condition : CON_STRAIGHT\n";
-                                else if (CON_BACK == n.m_Mcondition)
-                                    cout << npc_id << " send condition : CON_BACK\n";
+                                //if (CON_IDLE == n.m_Mcondition)
+                                //    cout << npc_id << " send move condition : CON_IDLE\n";
+                                //else if (CON_STRAIGHT == n.m_Mcondition)
+                                //    cout << npc_id << " send condition : CON_STRAIGHT\n";
+                                //else if (CON_BACK == n.m_Mcondition)
+                                //    cout << npc_id << " send condition : CON_BACK\n";
                             }
                             if (n.m_LastRcondition != n.m_Rcondition)
                             {
                                 n.m_LastRcondition = n.m_Rcondition;
                                 send_condition_packet(i, npc_id, CON_TYPE_ROTATE);
-                                if (CON_IDLE == n.m_Rcondition)
-                                    cout << npc_id << " send rote condition : CON_IDLE\n";
-                                else if (CON_LEFT == n.m_Rcondition)
-                                    cout << npc_id << " send condition : CON_LEFT\n";
-                                else if (CON_RIGHT == n.m_Rcondition)
-                                    cout << npc_id << " send condition : CON_RIGHT\n";
+                                //if (CON_IDLE == n.m_Rcondition)
+                                //    cout << npc_id << " send rote condition : CON_IDLE\n";
+                                //else if (CON_LEFT == n.m_Rcondition)
+                                //    cout << npc_id << " send condition : CON_LEFT\n";
+                                //else if (CON_RIGHT == n.m_Rcondition)
+                                //    cout << npc_id << " send condition : CON_RIGHT\n";
                             }
                         }
                         else
@@ -983,14 +975,14 @@ void Server::do_follow(int npc_id)
                             g_clients[i].m_cLock.unlock();
                     }
                 }
-                if (n.m_anim != A_WALK)
-                    do_animation(npc_id, A_WALK);
+                if (n.m_LastAnim != n.m_anim)
+                    do_animation(npc_id, n.m_anim);
                 break;
             }
             else // n_pos == g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos
             {
-                if (n.m_anim != A_IDLE)
-                    do_animation(npc_id, A_IDLE);
+                if (n.m_LastAnim != n.m_anim)
+                    do_animation(npc_id, n.m_anim);
             }
         }
     }
@@ -1739,7 +1731,7 @@ void Server::send_npc_add_ok_packet(int user_id, int other_id)
 
 void Server::do_animation(int user_id, unsigned char anim)
 {
-    g_clients[user_id].m_anim = anim;
+    g_clients[user_id].m_LastAnim = anim;
     //cout << user_id << "is " << g_clients[user_id].m_anim << endl;
     if (user_id < NPC_START) // 애니메이션 신호를 보내온 애가 플레이어면
     {
@@ -2090,6 +2082,8 @@ void Server::worker_thread()
                 g_clients[user_id].m_Rcondition = CON_IDLE;
                 g_clients[user_id].m_LastMcondition = CON_IDLE;
                 g_clients[user_id].m_LastRcondition = CON_IDLE;
+                g_clients[user_id].m_LastAnim = A_IDLE;
+                g_clients[user_id].m_anim = A_IDLE;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
                 if (0 == user_id)
