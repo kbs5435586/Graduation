@@ -1309,6 +1309,29 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsOnce = true;
 		m_IsHit = true;
 		//m_IsCombat = true;
+		if (m_IsFire)
+		{
+			m_IsFire = false;
+			m_IsFireCheck = true;
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
+		}
+		if (m_IsTeleport)
+		{
+			m_IsTeleport = false;
+			m_IsTeleportCheck = true;
+
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+			dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
+			dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
+			++teleportNum;
+			if (teleportNum > 1)
+				teleportNum = 0;
+		}
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1444,6 +1467,72 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//	m_IsSlide = false;
 		//}
 	}
+
+	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
+	{
+		m_IsInvisible = !m_IsInvisible;
+	}
+	if (!m_IsFire)
+	{
+		if (CManagement::GetInstance()->Key_Up(KEY_N))
+		{
+
+			CManagement* pManagement = CManagement::GetInstance();
+			if (nullptr == pManagement)
+				return;
+
+			pManagement->AddRef();
+
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
+				return;
+
+			m_IsFire = !m_IsFire;	//true
+			//list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+			//fireCnt = lst.size()-1;
+			//if (lst.size() == 0)
+			//	fireCnt = lst.size();
+			//else
+			//	fireCnt = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size();
+			Safe_Release(pManagement);
+		}
+	}
+	else
+	{
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+		int numver = lst.size();
+		if (numver > 0)
+		{
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
+			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+			BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+
+
+			*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
+		}
+	}
+
+	//////////////////////////////////
+	if (!m_IsTeleport)
+	{
+		if (CManagement::GetInstance()->Key_Up(KEY_M))
+		{
+			CManagement* pManagement = CManagement::GetInstance();
+			if (nullptr == pManagement)
+				return;
+
+			pManagement->AddRef();
+
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
+				return;
+
+			m_IsTeleport = !m_IsTeleport;	//true
+
+			Safe_Release(pManagement);
+		}
+	}
 	else
 	{
 		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
@@ -1463,6 +1552,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
+	//if (m_IsTeleportCheck)
+	//{
+	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+	//	int numver = lst.size();
+	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
+	//}
+
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
@@ -1473,13 +1570,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
-	//if (m_IsTeleportCheck)
-	//{
-	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-	//	int numver = lst.size();
-	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-	//}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_1))
 	{
