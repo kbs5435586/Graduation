@@ -82,6 +82,7 @@ public:
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
 	_vec3 move_to_spot(int id, _vec3* goto_pos);
 	float dist_between(int user_id, int other_id);
+	float dist_between_finalPos(int user_id, int i);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();

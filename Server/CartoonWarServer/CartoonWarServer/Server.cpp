@@ -690,8 +690,8 @@ void Server::do_follow(int npc_id)
             _vec3* p_look = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             if (*n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
-                if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
-                    || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f)// 자신의 포메이션 반지름 밖일때
+                if (dist_between(npc_id, n.m_owner_id) > dist_between_finalPos(n.m_owner_id, i) + 0.1f
+                    || dist_between(npc_id, n.m_owner_id) < dist_between_finalPos(n.m_owner_id, i) - 0.1f)// 자신의 포메이션 반지름 밖일때
                 {
                     n.m_Mcondition = CON_STRAIGHT;
                     n.m_transform.BackWard(MOVE_TIME_ELAPSE);
@@ -751,8 +751,8 @@ void Server::do_follow(int npc_id)
                         if (PoutProduct.y < 0)
                             radian *= -1.f;
                         float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                        if (NPCangle > 0)  NPCangle -= 3.f;
-                        else if (NPCangle < 0) NPCangle += 3.f;
+                        if (NPCangle > 0)  NPCangle += 3.f;
+                        else if (NPCangle < 0) NPCangle -= 3.f;
                         n.m_total_angle = g_clients[n.m_owner_id].m_total_angle + NPCangle;
                         n_pos->x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos->x;
                         n_pos->z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos->z;
@@ -763,7 +763,7 @@ void Server::do_follow(int npc_id)
                                     continue;
                                 if (true == is_near(npc_id, i))
                                 {
-                                    send_fix_packet(npc_id, i);
+                                    send_fix_packet(i, npc_id);
                                 }
                             }
                         }
@@ -807,7 +807,8 @@ void Server::do_follow(int npc_id)
                                     continue;
                                 if (true == is_near(npc_id, i))
                                 {
-                                    send_fix_packet(npc_id, i);
+                                    send_fix_packet(i, npc_id);
+                                    send_animation_packet(i, npc_id, A_IDLE);
                                 }
                             }
                         }
@@ -909,7 +910,7 @@ void Server::do_follow(int npc_id)
                                         continue;
                                     if (true == is_near(npc_id, i))
                                     {
-                                        send_fix_packet(npc_id, i);
+                                        send_fix_packet(i, npc_id);
                                         cout << "send fix\n";
                                     }
                                 }
@@ -1051,6 +1052,17 @@ float Server::dist_between(int user_id, int other_id)
 
     float dist = sqrt((pos1->x - pos2->x) * (pos1->x - pos2->x) + (pos1->y - pos2->y) * (pos1->y - pos2->y)
         + (pos1->z - pos2->z) * (pos1->z - pos2->z));
+
+    return dist;
+}
+
+float Server::dist_between_finalPos(int user_id, int i)
+{
+    _vec3* pos1 = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 finalPos = g_clients[user_id].m_boid[i].final_pos;
+
+    float dist = sqrt((pos1->x - finalPos.x) * (pos1->x - finalPos.x) + (pos1->y - finalPos.y) * (pos1->y - finalPos.y)
+        + (pos1->z - finalPos.z) * (pos1->z - finalPos.z));
 
     return dist;
 }
