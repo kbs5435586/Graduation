@@ -1,7 +1,10 @@
 #pragma once
 // 서버 클라 같이 맞춰줘야 되는 모든건 프로토콜 헤더에
-#define MY_NPC_START(p) 30 + (14 * p)
-#define MY_NPC_END(p) 43 + (14 * p)
+#define MY_NPC_START_SERVER(p) 30 + (14 * p)
+#define MY_NPC_END_SERVER(p) 43 + (14 * p)
+
+#define MY_NPC_START_CLIENT(p) (15 * p)
+#define MY_NPC_END_CLIENT(p) 13 + (15 * p)
 
 enum PLAYERS {
 	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
@@ -57,13 +60,14 @@ constexpr char CS_PACKET_ATTACK = 6;
 constexpr char CS_PACKET_ANIMATION = 7;
 constexpr char CS_PACKET_POSITION = 8;
 constexpr char CS_PACKET_MOUSE = 9;
+constexpr char CS_PACKET_CLASS_CHANGE = 10;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
 constexpr char SC_PACKET_ENTER = 3;
 constexpr char SC_PACKET_LEAVE = 4;
 constexpr char SC_PACKET_CHAT = 5;
-constexpr char SC_PACKET_ADD_NPC_OK = 6;
+constexpr char SC_PACKET_CLASS_CHANGE = 6;
 constexpr char SC_PACKET_ANIMATION = 7;
 constexpr char SC_PACKET_ATTACKED = 8;
 constexpr char SC_PACKET_DEAD = 9;
@@ -73,6 +77,7 @@ constexpr char SC_PACKET_FLAG_BOOL = 12;
 constexpr char SC_PACKET_TIME = 13;
 constexpr char SC_PACKET_FIX = 14;
 constexpr char SC_PACKET_FORMATION = 15;
+constexpr char SC_PACKET_NPC_SIZE = 16;
 
 #pragma pack(push ,1)
 
@@ -141,9 +146,9 @@ struct sc_packet_time
 	float time;
 };
 
-constexpr unsigned char O_HUMAN = 0;
-constexpr unsigned char O_ELF = 1;
-constexpr unsigned char O_ORK = 2;
+constexpr unsigned char O_PLAYER = 0;
+constexpr unsigned char O_NPC = 1;
+constexpr unsigned char O_ENVIR = 2;
 
 struct sc_packet_enter
 {
@@ -152,13 +157,20 @@ struct sc_packet_enter
 	int id;
 	short hp;
 	char name[MAX_ID_LEN];
-	char o_type;
 	char con_move;
 	char con_rotate;
 	float p_x, p_y, p_z;
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
+	short p_class;
+};
+
+struct sc_packet_change_class
+{
+	char size;
+	char type;
+	int id;
 	short p_class;
 };
 
@@ -222,12 +234,11 @@ struct sc_packet_chat
 	char message[MAX_STR_LEN];
 };
 
-struct sc_packet_npc_add_ok
+struct sc_packet_npc_size
 {
-	char	size;
-	char	type;
-	int		id;
-	char	act;
+	char			size;
+	char			type;
+	unsigned short	npc_size;
 };
 
 struct sc_packet_animation
@@ -236,6 +247,22 @@ struct sc_packet_animation
 	char			type;
 	unsigned char	anim;
 	int				id;
+};
+
+struct sc_packet_class_change
+{
+	char size;
+	char type;
+	int id;
+	short p_class;
+};
+
+struct cs_packet_class_change
+{
+	char size;
+	char type;
+	int id;
+	short p_class;
 };
 
 struct cs_packet_mouse

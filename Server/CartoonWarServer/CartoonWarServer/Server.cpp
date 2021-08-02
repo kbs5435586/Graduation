@@ -189,6 +189,41 @@ void Server::process_packet(int user_id, char* buf)
         cout << packet->mouse << endl;
     }
     break;
+    case CS_PACKET_CLASS_CHANGE:
+    {
+        cs_packet_class_change* packet = reinterpret_cast<cs_packet_class_change*>(buf);
+        int id = packet->id;
+
+        if (0 == packet->p_class)
+            g_clients[id].m_class = CLASS_WORKER;
+        else if (1 == packet->p_class)
+            g_clients[id].m_class = CLASS_CAVALRY;
+        else if (2 == packet->p_class)
+            g_clients[id].m_class = CLASS(2);
+        else if (3 == packet->p_class)
+            g_clients[id].m_class = CLASS_INFANTRY;
+        else if (4 == packet->p_class)
+            g_clients[id].m_class = CLASS(4);
+        else if (5 == packet->p_class)
+            g_clients[id].m_class = CLASS_SPEARMAN;
+        else if (6 == packet->p_class)
+            g_clients[id].m_class = CLASS_MAGE;
+        else if (7 == packet->p_class)
+            g_clients[id].m_class = CLASS_MMAGE;
+        else if (8 == packet->p_class)
+            g_clients[id].m_class = CLASS_ARCHER;
+
+        for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (true == is_near(id, i))
+            {
+                send_class_change_packet(i, id);
+            }
+        }
+    }
+    break;
     default:
         cout << "Unknown Packet Type Error\n";
         DebugBreak();
@@ -1015,7 +1050,7 @@ void Server::do_change_formation(int player_id)
 
 void Server::do_npc_rotate(int user_id, char con)
 {
-    for (int i = MY_NPC_START(user_id); i <= MY_NPC_END(user_id); ++i)
+    for (int i = MY_NPC_START_SERVER(user_id); i <= MY_NPC_END_SERVER(user_id); ++i)
     {
         if (ST_ACTIVE == g_clients[i].m_status)
         {
@@ -1565,7 +1600,7 @@ void Server::initialize_objects()
 
 void Server::initialize_NPC(int player_id)
 {
-    for (int npc_id = MY_NPC_START(player_id); npc_id <= MY_NPC_END(player_id); npc_id++)
+    for (int npc_id = MY_NPC_START_SERVER(player_id); npc_id <= MY_NPC_END_SERVER(player_id); npc_id++)
     {
         if (ST_ACTIVE != g_clients[npc_id].m_status)
         {
@@ -1625,6 +1660,7 @@ void Server::initialize_NPC(int player_id)
                         continue;
                 }
             }
+            send_npc_size_packet(player_id);
             break;
         }
         else
@@ -1659,7 +1695,6 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.con_rotate = g_clients[other_id].m_Rcondition;
 
     strcpy_s(packet.name, g_clients[other_id].m_name);
-    packet.o_type = O_HUMAN; // 다른 플레이어들의 정보 저장
 
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_view_list.insert(other_id);
@@ -1676,6 +1711,25 @@ void Server::send_attacked_packet(int user_id, int other_id)
     packet.id = other_id;
     packet.hp = g_clients[other_id].m_hp;
     //cout << user_id << " saw " << other_id << " attacked\n";
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_npc_size_packet(int user_id)
+{
+    sc_packet_npc_size packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ATTACKED;
+    packet.npc_size = g_clients[user_id].m_boid.size();
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_class_change_packet(int user_id, int other_id)
+{
+    sc_packet_class_change packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_CLASS_CHANGE;
+    packet.id = other_id;
+    packet.p_class = g_clients[other_id].m_class;
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -1712,21 +1766,6 @@ void Server::send_chat_packet(int listen_id, int chatter_id, char mess[])
     strcpy_s(packet.message, mess);
 
     send_packet(listen_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
-}
-
-void Server::send_npc_add_ok_packet(int user_id, int other_id)
-{
-    sc_packet_enter packet;
-    packet.id = other_id; // 추가된 npc 아이디
-    packet.hp = g_clients[other_id].m_hp;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_ADD_NPC_OK;
-
-    g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_view_list.insert(other_id);
-    g_clients[user_id].m_cLock.unlock();
-
-    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
 void Server::do_animation(int user_id, unsigned char anim)
@@ -1809,7 +1848,7 @@ void Server::do_attack(int user_id)
                     send_dead_packet(c.second.m_id, c.second.m_id); // 자기 자신에게 먼저
                     send_animation_packet(c.second.m_id, c.second.m_id, A_DEAD);
                     do_dead(c.second.m_id);
-                    for (int npc_id = MY_NPC_START(c.second.m_id); npc_id <= MY_NPC_END(c.second.m_id); npc_id++)
+                    for (int npc_id = MY_NPC_START_SERVER(c.second.m_id); npc_id <= MY_NPC_END_SERVER(c.second.m_id); npc_id++)
                     {
                         if (ST_ACTIVE == g_clients[npc_id].m_status)
                         {
@@ -1847,7 +1886,7 @@ void Server::disconnect(int user_id)
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
 
-    for (int i = MY_NPC_START(user_id); i <= MY_NPC_END(user_id); i++)
+    for (int i = MY_NPC_START_SERVER(user_id); i <= MY_NPC_END_SERVER(user_id); i++)
     {
         g_clients[i].m_last_order = FUNC_END;
         g_clients[i].m_status = ST_SLEEP;

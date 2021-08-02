@@ -15,6 +15,7 @@ private:
     unordered_map <int, Session> m_objects;
     Flag flags[5];
     short my_id;
+    short my_npc;
     short my_hp;
     bool isSendOnePacket;
     bool isConnected = false;
@@ -50,6 +51,7 @@ public:
     void send_attack_packet();
     void send_mouse_packet(float rotate);
     void send_position_packet(_vec3* pos);
+    void send_class_change_packet(int idx, char type);
 
     void update_key_input();
     void update_client_class(unsigned short id, unsigned short cs);
@@ -75,13 +77,13 @@ public:
     void Set_PlayerMCon(char cond);
     char Get_PlayerRCon(int id);
     char Get_NpcRCon(int id);
-    void Set_PlayerRCon(char cond);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
     short Get_AnimNPC(int id);
     float Get_GameTime();
+    short Get_NpcSize();
 
     bool is_player(int id);
     bool is_npc(int id);
@@ -92,6 +94,8 @@ public:
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
     WPARAM Get_wParam();
 
+    void Set_PlayerRCon(char cond);
+    void Set_Class(int mclass, int id, char type);
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
     void Set_Attack_CoolTime(high_resolution_clock::time_point ct);
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);

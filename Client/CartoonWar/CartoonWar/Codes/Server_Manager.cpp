@@ -79,6 +79,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		short recv_id = my_packet->id;
 		my_id = recv_id;
 		my_hp = my_packet->hp;
+		my_npc = 0; // ¼öÁ¤
 
 		CTransform* pTransform;
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -164,11 +165,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	break;
 	case SC_PACKET_CONDITION:
 	{
-		managment = CManagement::GetInstance();
-		if (nullptr == managment)
-			return;
-		managment->AddRef();
-
 		sc_packet_condition* my_packet = reinterpret_cast<sc_packet_condition*>(ptr);
 		int recv_id = my_packet->id;
 		char con = my_packet->condition;
@@ -177,8 +173,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_objects[recv_id].con_move = con;
 		else if (CON_TYPE_ROTATE == my_packet->con_type)
 			m_objects[recv_id].con_rotate = con;
-
-		Safe_Release(managment);
+	}
+	break;
+	case SC_PACKET_NPC_SIZE:
+	{
+		sc_packet_npc_size* my_packet = reinterpret_cast<sc_packet_npc_size*>(ptr);
+		my_npc = my_packet->npc_size;
 	}
 	break;
 	case SC_PACKET_FIX:
@@ -222,12 +222,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		if (0 != m_objects.count(other_id))
 			m_objects[other_id].showObject = false;
-	}
-	break;
-	case SC_PACKET_ADD_NPC_OK:
-	{
-		sc_packet_npc_add_ok* my_packet = reinterpret_cast<sc_packet_npc_add_ok*>(ptr);
-		int npc_id = my_packet->id;
 	}
 	break;
 	case SC_PACKET_ANIMATION:
@@ -694,6 +688,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		game_time = my_packet->time;
 	}
 	break;
+	case SC_PACKET_CLASS_CHANGE:
+	{
+		sc_packet_class_change* my_packet = reinterpret_cast<sc_packet_class_change*>(ptr);
+		update_client_class(my_packet->id, my_packet->p_class);
+	}
+	break;
 	case SC_PACKET_FORMATION:
 	{
 		sc_packet_formation* my_packet = reinterpret_cast<sc_packet_formation*>(ptr);
@@ -833,6 +833,42 @@ void CServer_Manager::send_add_npc_packet()
 	cs_packet_add_npc l_packet;
 	l_packet.size = sizeof(l_packet);
 	l_packet.type = CS_PACKET_ADD_NPC;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_class_change_packet(int idx, char type)
+{
+	cs_packet_class_change l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_CLASS_CHANGE;
+	if (type == O_PLAYER)
+	{
+		l_packet.id = idx;
+	}
+	else if (type == O_NPC)
+	{
+		l_packet.id = npc_idx_to_id(idx);
+	}
+
+	if (CLASS::CLASS_WORKER == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_WORKER;
+	else if (CLASS::CLASS_CAVALRY == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_CAVALRY;
+	else if (CLASS(2) == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_TWO;
+	else if (CLASS::CLASS_INFANTRY == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_INFANTRY;
+	else if (CLASS(4) == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_FOUR;
+	else if (CLASS::CLASS_SPEARMAN == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_SPEARMAN;
+	else if (CLASS::CLASS_MAGE == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_MAGE;
+	else if (CLASS::CLASS_MMAGE == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_MMAGE;
+	else if (CLASS::CLASS_ARCHER == m_objects[l_packet.id].m_class)
+		l_packet.p_class = C_ARCHER;
+
 	send_packet(&l_packet);
 }
 
@@ -1025,6 +1061,52 @@ CLASS CServer_Manager::Get_PlayerClass(int id)
 	return m_objects[id].m_class;
 }
 
+void CServer_Manager::Set_Class(int mclass, int id, char type)
+{
+	if (type == O_PLAYER)
+	{
+		if (0 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_WORKER;
+		else if (1 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_CAVALRY;
+		else if (2 == mclass)
+			m_objects[id].m_class = CLASS(2);
+		else if (3 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_INFANTRY;
+		else if (4 == mclass)
+			m_objects[id].m_class = CLASS(4);
+		else if (5 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_SPEARMAN;
+		else if (6 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_MAGE;
+		else if (7 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_MMAGE;
+		else if (8 == mclass)
+			m_objects[id].m_class = CLASS::CLASS_ARCHER;
+	}
+	else if (type == O_NPC)
+	{
+		if (0 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_WORKER;
+		else if (1 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_CAVALRY;
+		else if (2 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS(2);
+		else if (3 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_INFANTRY;
+		else if (4 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS(4);
+		else if (5 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_SPEARMAN;
+		else if (6 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_MAGE;
+		else if (7 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_MMAGE;
+		else if (8 == mclass)
+			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_ARCHER;
+	}
+}
+
 CLASS CServer_Manager::Get_NpcClass(int id)
 {
 	short npc_index = npc_idx_to_id(id);
@@ -1073,6 +1155,11 @@ short CServer_Manager::Get_AnimNPC(int id)
 {
 	int npc_id = npc_idx_to_id(id);
 	return m_objects[npc_id].anim;
+}
+
+short CServer_Manager::Get_NpcSize()
+{
+	return my_npc;
 }
 
 float CServer_Manager::Get_GameTime()
