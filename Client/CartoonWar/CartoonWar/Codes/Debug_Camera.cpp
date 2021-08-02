@@ -158,7 +158,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);*/
-	}
+	//}
 
 
 
