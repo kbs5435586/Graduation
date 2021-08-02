@@ -44,40 +44,18 @@ void CCollisionMgr::Player_to_NPC_Collision()
 			_float fLen = vLenTemp.Length();
 			if (fLen >= 10.f)
 				continue;
+
 			if (iter1->GetIsHit() || iter0->GetIsHit())
 				continue;
 
 			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_OBB"))
 				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_OBB"))))
 			{
-
 				(iter1)->GetOBBCollision() = true;
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 
 				(iter0)->GetOBBCollision() = true;
 				iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-
-				//iter0->GetIsParticle() = true;
-				//iter1->GetIsParticle() = true;
-
-				//if (iter0->GetIsHit())
-				//{
-				//	(iter1)->GetOBBCollision() = true;
-				//	iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-				//	iter1->GetIsParticle() = true;
-				//}
-				//else
-				//{
-				//	//(iter1)->GetOBBCollision() = true;
-				//	//iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-				//	//(iter0)->GetOBBCollision() = true;
-				//	//iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-
-				//	(iter0)->GetOBBCollision() = true;
-				//	iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-				//	iter0->GetIsParticle() = true;
-				//}
-				
 
 			}
 
@@ -207,6 +185,9 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 			_float fLen = vLenTemp.Length();
 			if (fLen >= 5.f)
 				continue;
+
+			//if (!iter0->GetIsHit() || !iter1->GetIsHit())
+			//	continue;
 
 			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_Attack"))
 				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_Attack"))))

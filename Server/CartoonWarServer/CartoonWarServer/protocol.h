@@ -85,7 +85,6 @@ struct sc_packet_login_ok
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
-	float total_angle;
 	short hp;
 	short level;
 	int	exp;
@@ -183,11 +182,6 @@ struct sc_packet_condition
 	char con_type;
 	int id;
 	char condition;
-	float total_angle;
-	float r_x, r_y, r_z;
-	float u_x, u_y, u_z;
-	float l_x, l_y, l_z;
-	float p_x, p_z;
 };
 
 struct sc_packet_fix

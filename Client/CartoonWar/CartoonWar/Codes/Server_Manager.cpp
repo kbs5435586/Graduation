@@ -103,7 +103,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].formation = my_packet->form;
-		m_objects[recv_id].total_angle = my_packet->total_angle;
 
 		update_client_class(my_id, my_packet->p_class);
 
@@ -179,28 +178,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		else if (CON_TYPE_ROTATE == my_packet->con_type)
 			m_objects[recv_id].con_rotate = con;
 
-		CTransform* pTransform;
-		if (is_player(recv_id))
-		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
-		}
-		else if (is_npc(recv_id))
-		{
-			short npc_id = npc_id_to_idx(recv_id);
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_NPC", L"Com_Transform", npc_id);
-		}
-		_vec3* vPos = pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3 rPos, uPos, lPos;
-		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-		vPos->x = my_packet->p_x; vPos->z = my_packet->p_z;
-		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
-		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
 		Safe_Release(managment);
 	}
 	break;
@@ -214,10 +191,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_fix* my_packet = reinterpret_cast<sc_packet_fix*>(ptr);
 		int recv_id = my_packet->id;
-		my_packet->p_x;
-		my_packet->p_z;
-
-
 		if (is_player(recv_id))
 		{
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -947,199 +920,6 @@ void CServer_Manager::update_client_class(unsigned short id, unsigned short cs)
 		m_objects[id].m_class = CLASS::CLASS_ARCHER;
 }
 
-void CServer_Manager::update_formation(int id)
-{
-	managment = CManagement::GetInstance();
-	if (nullptr == managment)
-		return;
-	managment->AddRef();
-
-	CTransform* pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", id);
-
-	_vec3 playerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 set_pos = {};
-
-	Session& c = m_objects[id];
-
-	switch (c.formation)
-
-	{
-	case F_SQUARE:
-	{
-		if (1 == c.m_boid.size())
-		{
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle - 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle - 45.f) * (PIE / 180.f));
-			_vec3 new_pos = playerPos + set_pos;
-			c.m_boid[0].final_pos = new_pos;
-			c.m_boid[0].angle = c.total_angle - 45.f;
-			c.m_boid[0].radius = BASIC_FORM_RAD;
-		}
-		else if (2 == c.m_boid.size())
-		{
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle - 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle - 45.f) * (PIE / 180.f));
-			_vec3 new_pos = playerPos + set_pos;
-			c.m_boid[0].final_pos = new_pos;
-			c.m_boid[0].angle = c.total_angle - 45.f;
-			c.m_boid[0].radius = BASIC_FORM_RAD;
-
-			set_pos = {};
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle + 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle + 45.f) * (PIE / 180.f));
-			_vec3 new_pos1 = playerPos + set_pos;
-			c.m_boid[1].final_pos = new_pos1;
-			c.m_boid[1].angle = c.total_angle + 45.f;
-			c.m_boid[1].radius = BASIC_FORM_RAD;
-		}
-		else if (3 == c.m_boid.size())
-		{
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle - 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle - 45.f) * (PIE / 180.f));
-			_vec3 new_pos = playerPos + set_pos;
-			c.m_boid[0].final_pos = new_pos;
-			c.m_boid[0].angle = c.total_angle - 45.f;
-			c.m_boid[0].radius = BASIC_FORM_RAD;
-
-			set_pos = {};
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle + 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle + 45.f) * (PIE / 180.f));
-			_vec3 new_pos1 = playerPos + set_pos;
-			c.m_boid[1].final_pos = new_pos1;
-			c.m_boid[1].angle = c.total_angle + 45.f;
-			c.m_boid[1].radius = BASIC_FORM_RAD;
-
-			set_pos = {};
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle - 135.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle - 135.f) * (PIE / 180.f));
-			_vec3 new_pos2 = playerPos + set_pos;
-			c.m_boid[2].final_pos = new_pos2;
-			c.m_boid[2].angle = c.total_angle - 135.f;
-			c.m_boid[2].radius = BASIC_FORM_RAD;
-		}
-		else if (4 == c.m_boid.size())
-		{
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle - 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle - 45.f) * (PIE / 180.f));
-			_vec3 new_pos = playerPos + set_pos;
-			c.m_boid[0].final_pos = new_pos;
-			c.m_boid[0].angle = c.total_angle - 45.f;
-			c.m_boid[0].radius = BASIC_FORM_RAD;
-
-			set_pos = {};
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle + 45.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle + 45.f) * (PIE / 180.f));
-			_vec3 new_pos1 = playerPos + set_pos;
-			c.m_boid[1].final_pos = new_pos1;
-			c.m_boid[1].angle = c.total_angle + 45.f;
-			c.m_boid[1].radius = BASIC_FORM_RAD;
-
-			set_pos = {};
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle - 135.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle - 135.f) * (PIE / 180.f));
-			_vec3 new_pos2 = playerPos + set_pos;
-			c.m_boid[2].final_pos = new_pos2;
-			c.m_boid[2].angle = c.total_angle - 135.f;
-			c.m_boid[2].radius = BASIC_FORM_RAD;
-
-			set_pos = {};
-			set_pos.x = BASIC_FORM_RAD * sinf((c.total_angle + 135.f) * (PIE / 180.f));
-			set_pos.z = BASIC_FORM_RAD * cosf((c.total_angle + 135.f) * (PIE / 180.f));
-			_vec3 new_pos3 = playerPos + set_pos;
-			c.m_boid[3].final_pos = new_pos3;
-			c.m_boid[3].angle = c.total_angle + 135.f;
-			c.m_boid[3].radius = BASIC_FORM_RAD;
-		}
-	}
-	break;
-	//case FM_SQUARE:
-	//{
-	//    if (1 == c.m_boid.size())
-	//    {
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Left(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[0]->m_target_pos = *new_pos;
-	//    }
-	//    else if (2 == c.m_boid.size())
-	//    {
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Left(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[0]->m_target_pos = *new_pos1;
-
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Right(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[1]->m_target_pos = *new_pos2;
-	//    }
-	//    else if (3 == c.m_boid.size())
-	//    {
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Left(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[0]->m_target_pos = *new_pos1;
-
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Right(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[1]->m_target_pos = *new_pos2;
-
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Left(FORMATION_SPACE);
-	//        set_pos.Go_Straight(FORMATION_SPACE);
-	//        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[2]->m_target_pos = *new_pos3;
-	//    }
-	//    else if (4 == c.m_boid.size())
-	//    {
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Left(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[0]->m_target_pos = *new_pos1;
-
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Right(FORMATION_SPACE);
-	//        set_pos.BackWard(FORMATION_SPACE);
-	//        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[1]->m_target_pos = *new_pos2;
-
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Left(FORMATION_SPACE);
-	//        set_pos.Go_Straight(FORMATION_SPACE);
-	//        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[2]->m_target_pos = *new_pos3;
-
-	//        set_pos.Set_Matrix(&temp);
-	//        set_pos.Go_Right(FORMATION_SPACE);
-	//        set_pos.Go_Straight(FORMATION_SPACE);
-	//        _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-	//        c.m_boid[3]->m_target_pos = *new_pos4;
-	//    }
-	//}
-	//break;
-	case F_PIRAMID:
-	{
-
-	}
-	break;
-	case F_CIRCLE:
-	{
-
-	}
-	break;
-	}
-
-	Safe_Release(managment);
-}
-
 short CServer_Manager::npc_idx_to_id(unsigned short id)
 {
 	return id + NPC_START;
@@ -1262,11 +1042,6 @@ char CServer_Manager::Get_NpcRCon(int id)
 void CServer_Manager::Set_PlayerMCon(char cond)
 {
 	m_objects[my_id].con_move = cond;
-}
-
-void CServer_Manager::Set_PlayerTotalRotate(int id, float cal)
-{
-	m_objects[id].total_angle += cal;
 }
 
 void CServer_Manager::Set_PlayerRCon(char cond)

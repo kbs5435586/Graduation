@@ -47,6 +47,7 @@ public:
 	void send_login_ok_packet(int user_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 	void send_flag_info_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
 	void send_flag_bool_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
+	void send_fix_packet(int user_id, int other_id);
 	void send_time_packet(); // 모든 깃발 위치값 전송
 	void send_condition_packet(int user_id, int other_id, unsigned char type); // 변경된 위치값 설정
 	void send_animation_packet(int user_id, int idler, unsigned char anim); // 변경된 위치값 설정
@@ -81,6 +82,7 @@ public:
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
 	_vec3 move_to_spot(int id, _vec3* goto_pos);
 	float dist_between(int user_id, int other_id);
+	float dist_between_finalPos(int user_id, int i);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();

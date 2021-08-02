@@ -53,7 +53,6 @@ public:
 
     void update_key_input();
     void update_client_class(unsigned short id, unsigned short cs);
-    void update_formation(int id);
 
     //short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);
@@ -77,7 +76,6 @@ public:
     char Get_PlayerRCon(int id);
     char Get_NpcRCon(int id);
     void Set_PlayerRCon(char cond);
-    void Set_PlayerTotalRotate(int id, float cal);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);

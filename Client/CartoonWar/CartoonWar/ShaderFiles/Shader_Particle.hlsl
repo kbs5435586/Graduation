@@ -193,7 +193,8 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
             //vDir.z = (vNoise.z - 0.5f) * 2.f * sin(3.141592 / 8.f);
 
             tRWData[_iThreadIdx.x].vWorldDir = normalize(vDir); //normalize((vNoise.xyz - 0.5f) * 2.f);
-            tRWData[_iThreadIdx.x].vWorldPos = (vNoise.xyz - 0.5f) * 50;
+			//tRWData[_iThreadIdx.x].vWorldPos = (vNoise.xyz - 0.5f) * 50;
+            tRWData[_iThreadIdx.x].vWorldPos = float3(0.f, 0.f,0.f);
             tRWData[_iThreadIdx.x].m_fLifeTime = ((g_float_1 - g_float_0) * vNoise.x) + g_float_0;
             tRWData[_iThreadIdx.x].m_fCurTime = 0.f;
         }
@@ -211,7 +212,7 @@ void CS_Main(int3 _iThreadIdx : SV_DispatchThreadID)
         float fSpeed = (g_float_3 - g_float_2) * fRatio + g_float_2;
 		float3 vNormalizeDir = normalize(tRWData[_iThreadIdx.x].vWorldDir);
         tRWData[_iThreadIdx.x].vWorldPos += vNormalizeDir * fSpeed * g_fDT;
-		//tRWData[_iThreadIdx.x].vWorldPos.y += 2.f;
+		//tRWData[_iThreadIdx.x].vWorldPos.z += 2.f;
         // 생존 파티클 개수 확인
         tRWSharedData[0].iCurCount = 0;
         InterlockedAdd(tRWSharedData[0].iCurCount, 1);

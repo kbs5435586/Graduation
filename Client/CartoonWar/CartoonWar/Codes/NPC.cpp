@@ -35,18 +35,12 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	
-	++npcnum;
-	whoami = npcnum;
-	
-	
-	poss = 90;
+
 	// Compute_Matrix();
 	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = { poss,0.f,300.f };
-	poss += 10.f;
+	_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
+	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(100, 1, 1, 0);
@@ -67,8 +61,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
-	m_cCondition = CON_IDLE;
-	m_cLastCondition = CON_IDLE;
+	m_cMoveCondition = CON_IDLE;
+	m_cRotateCondition = CON_IDLE;
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
@@ -121,19 +115,34 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_fSpeedUp = m_fArrSpeedUP[(_uint)m_eCurClass];
 
 	if (m_IsRun)
-		m_pTransformCom->SetSpeed(m_fSpeed);
-	else m_pTransformCom->SetSpeed(m_fSpeedUp);
+		m_pTransformCom->SetSpeed(m_fSpeedUp);
+	else m_pTransformCom->SetSpeed(m_fSpeed);
 
-	if(GetAsyncKeyState('L'))
+	m_cMoveCondition = server->Get_NpcMCon(m_iLayerIdx);
+	m_cRotateCondition = server->Get_NpcRCon(m_iLayerIdx);
+
+	switch (m_cMoveCondition)
+	{
+	case CON_STRAIGHT:
+		m_pTransformCom->BackWard(fTimeDelta);
+		break;
+	case CON_RUN:
+		m_pTransformCom->BackWard(fTimeDelta * 2.f);
+		break;
+	case CON_BACK:
+		m_pTransformCom->Go_Straight(fTimeDelta);
+		break;
+	}
+
+	switch (m_cRotateCondition)
+	{
+	case CON_LEFT:
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+		break;
+	case CON_RIGHT:
 		m_pTransformCom->Rotation_Y(fTimeDelta);
-	
-
-	
-
-
-	m_iCurMeshNum = *(int*)m_pObserverCom->GetNPC(whoami);
-	
-	m_eCurClass = (CLASS)m_iCurMeshNum;
+		break;
+	}
 	Change_Class();
 
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
@@ -949,7 +958,6 @@ void CNPC::Obb_Collision()
 		m_IsOBB_Collision = false;
 		m_IsBazier = false;
 	}
-
 }
 
 void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
@@ -973,22 +981,23 @@ void CNPC::Create_Particle(const _vec3& vPos)
 {
 	if (m_IsParticle)
 	{
+		_vec3 vTemp = vPos;
+		vTemp.y += 10.f;
 		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vPos;
-		tParticleSet.iMaxParticle = 90;
-		tParticleSet.fMaxLifeTime = 1.f;
-		tParticleSet.iMinLifeTime = 1.f;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 300;
+		tParticleSet.fMaxLifeTime = 0.2f;
+		tParticleSet.iMinLifeTime = 0.01f;
 
-		tParticleSet.fStartScale = 1.f;
-		tParticleSet.fEndScale = 10.f;
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.2f;
 
-		tParticleSet.fMaxSpeed = 100.f;
-		tParticleSet.fMinSpeed = 1000.f;
+		tParticleSet.fMaxSpeed = 30.f;
+		tParticleSet.fMinSpeed = 50.f;
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
 	}
-
 }
 
 void CNPC::Compute_Matrix_X()

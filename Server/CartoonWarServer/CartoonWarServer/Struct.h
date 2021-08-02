@@ -42,6 +42,7 @@ struct SESSION // 클라이언트 정보
 	short m_owner_id;
 	short m_hp;
 	short m_team;
+	unsigned char m_LastAnim;
 	unsigned char m_anim;
 	ENUM_FUNCTION m_last_order;
 	ENUM_FUNCTION m_curr_move;
@@ -58,12 +59,15 @@ struct SESSION // 클라이언트 정보
 	float m_rotate_speed;
 	float m_total_angle;
 	bool m_isOut;
+	bool m_isFormSet;
 	
 	Collision m_col;
 	vector <FormationInfo> m_boid;
 	unsigned short m_boid_num;
 	char m_formation;
 	CLASS m_class;
+	char m_LastMcondition;
+	char m_LastRcondition;
 	char m_Mcondition;
 	char m_Rcondition;
 

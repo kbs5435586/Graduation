@@ -35,7 +35,7 @@ HRESULT CDeffend::Ready_GameObject(void* pArg)
 	_matrix pTemp = *(_matrix*)pArg;
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	m_pTransformCom->Set_Matrix(pTemp);
-	m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
+	m_pTransformCom->Scaling(0.06f, 0.06f, 0.06f);
 
 	_vec3 vColliderSize = { 50.f,50.f,50.f };
 	m_pColliderCom->Clone_ColliderBox(m_pTransformCom, vColliderSize);

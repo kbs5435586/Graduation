@@ -56,14 +56,14 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_pAnimCom[i]->LateInit();
 	}
 
-
+	m_vColShpereSize = {100.f,100.f,100.f };
 	_vec3 vColliderSize = { 400.f ,160.f,40.f };
 	//_vec3 vColliderSize = { 60.f ,80.f,60.f };
 	m_pCollider_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_Attack->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-
-	m_eCurClass = CLASS::CLASS_INFANTRY;
+	m_pCollider_Hit->Clone_ColliderBox(m_pTransformCom, vColliderSize, false);
+	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 	m_cMoveCondition = CON_IDLE;
@@ -102,6 +102,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0]);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
+	m_pCollider_Hit->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 
 	m_pUI_OnHead->Update_GameObject(fTimeDelta);
 	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
@@ -151,19 +152,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	switch (m_cRotateCondition)
 	{
 	case CON_LEFT:
-	{
 		m_pTransformCom->Rotation_Y(-fTimeDelta);
-		float cal = (-fTimeDelta * XMConvertToRadians(90.f)) * 180.f / PIE;
-		server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
-	}
-	break;
+		break;
 	case CON_RIGHT:
-	{
 		m_pTransformCom->Rotation_Y(fTimeDelta);
-		float cal = fTimeDelta * XMConvertToRadians(90.f) * 180.f / PIE;
-		server->Set_PlayerTotalRotate(m_iLayerIdx, cal);
-	}
-	break;
+		break;
 	}
 
 	m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
@@ -200,6 +193,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		Resurrection();
 
+	if(m_IsParticleRun)
+	{
+		m_fParticleRunTime += fTimeDelta;
 
 	Skill_Fly(fTimeDelta, fY);
 	Skill_Invisible(fTimeDelta);
@@ -221,6 +217,37 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		return DEAD_OBJ;
 	
 	Safe_Release(server);
+	if (m_fParticleRunTime >= 1.f)
+	{
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return NO_EVENT;
+
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		_vec3 vPosition = {};
+		vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vTemp = vPosition;
+		vTemp.y = fY;
+
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 20;
+		tParticleSet.fMaxLifeTime = 1.f;
+		tParticleSet.iMinLifeTime = 0.5f;
+
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.1f;
+
+		tParticleSet.fMaxSpeed = 10.f;
+		tParticleSet.fMinSpeed = 20.f;
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return NO_EVENT;
+		m_fParticleRunTime = 0.f;
+		m_IsParticleRun = false;
+	}
+
+
+	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 	return NO_EVENT;
 }
 
@@ -263,7 +290,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	Safe_Release(server);
 	return _int();
 }
-
+ 
 void CPlayer::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
@@ -314,6 +341,7 @@ void CPlayer::Render_GameObject()
 
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
 
@@ -578,6 +606,7 @@ void CPlayer::Free()
 	Safe_Release(m_pCollider_OBB);
 	Safe_Release(m_pCollider_AABB);
 	Safe_Release(m_pCollider_Attack);
+	Safe_Release(m_pCollider_Hit);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
@@ -802,6 +831,11 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pCollider_Attack, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_Attack", m_pCollider_Attack)))
 		return E_FAIL;
+	//m_pCollider_Sphere
+	m_pCollider_Hit = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pCollider_Hit, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_Hit", m_pCollider_Hit)))
+		return E_FAIL;
 
 	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
 	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
@@ -937,7 +971,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -968,7 +1002,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -1029,7 +1063,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,100.f };
+			m_vOBB_Range[1] = { 100.f ,80.f,100.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -1210,7 +1244,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	if (0 >= m_tInfo.fHP)
 		return;
 
-	if (CKeyManager::GetInstance()->Key_Up(KEY_DOWN))
+	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
 	{
 		if (!m_IsCombat)
 		{
@@ -1240,7 +1274,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 	}
-	if (CKeyManager::GetInstance()->Key_Up(KEY_RIGHT))
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
 	{
 		if (!m_IsCombat)
 		{
@@ -1255,7 +1289,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 	}
-	if (CKeyManager::GetInstance()->Key_Up(KEY_UP))
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
 		if (!m_IsCombat)
 		{
@@ -1287,37 +1321,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return;
 		}
-		else if (m_eCurClass == CLASS::CLASS_WORKER)
-		{
-			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-				return;
-		}
-
-		if (m_IsFire)
-		{
-			m_IsFire = false;
-			m_IsFireCheck = true;
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-			int numver = lst.size();
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-			dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
-		}
-		if (m_IsTeleport)
-		{
-			m_IsTeleport = false;
-			m_IsTeleportCheck = true;
-
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-			int numver = lst.size();
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-			dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-			dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
-			++teleportNum;
-			if (teleportNum > 1)
-				teleportNum = 0;
-		}
-
 		server->send_animation_packet(A_ATTACK);
 		m_IsOnce = true;
 		m_IsHit = true;
@@ -1387,6 +1390,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_condition_packet(CON_TYPE_MOVE, CON_RUN);
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
+		m_IsParticleRun = true;
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
@@ -1429,70 +1433,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//	m_IsSlide = false;
 		//}
 	}
-
-	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
+	if (GetAsyncKeyState('M') & 0x8000)
 	{
-		m_IsInvisible = !m_IsInvisible;
-	}
-
-	if (!m_IsFire)
-	{
-		if (CManagement::GetInstance()->Key_Up(KEY_N))
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_AddNPC_Cooltime());
+		if (cool_time.count() > 2)
 		{
-
-			CManagement* pManagement = CManagement::GetInstance();
-			if (nullptr == pManagement)
-				return;
-
-			pManagement->AddRef();
-
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
-				return;
-
-			m_IsFire = !m_IsFire;	//true
-			//list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-			//fireCnt = lst.size()-1;
-			//if (lst.size() == 0)
-			//	fireCnt = lst.size();
-			//else
-			//	fireCnt = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size();
-			Safe_Release(pManagement);
-		}
-	}
-	else
-	{
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-		int numver = lst.size();
-		if (numver > 0)
-		{
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
-			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-
-			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-			BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-
-
-			*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
-		}
-	}
-
-	if (!m_IsTeleport)
-	{
-		if (CManagement::GetInstance()->Key_Up(KEY_M))
-		{
-			CManagement* pManagement = CManagement::GetInstance();
-			if (nullptr == pManagement)
-				return;
-
-			pManagement->AddRef();
-
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
-				return;
-
-			m_IsTeleport = !m_IsTeleport;	//true
-
-			Safe_Release(pManagement);
+			server->send_add_npc_packet();
+			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
 		}
 	}
 	else
@@ -1524,7 +1472,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
 		m_IsOnce = true;
-	
+
 	Safe_Release(server);
 }
 
@@ -1797,108 +1745,5 @@ void CPlayer::Resurrection()
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	m_tInfo = INFO(100, 1, 1, 0);
 	m_IsDead = false;
-}
-
-void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
-{
-	if (m_IsFly_START || m_IsFly_ING)
-	{
-		m_fCoolTime_ONE += fTimeDelta;
-		if (m_fCoolTime_ONE > 20.f)
-		{
-			m_IsFly_END = !m_IsFly_END;
-			m_fCoolTime_ONE = 0.f;
-		}
-	}
-
-
-	if (!m_IsStart)
-	{
-		m_IsFly_START = m_pObserverCom->GetSkillInfo();
-	}
-
-	if (m_IsFly_START)
-	{
-		m_IsStart = !m_IsStart;
-		if (m_pTransformCom->Get_Scale().x > 0.05f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
-				m_pTransformCom->Get_Scale().z - 0.001f);
-		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
-			m_pTransformCom->UP(fTimeDelta);
-		else
-		{
-			m_IsFly_ING = !m_IsFly_ING;
-		}
-
-	}
-	if (m_IsFly_ING)
-	{
-		if (m_IsUandD)
-		{
-			m_pTransformCom->Fallen(fTimeDelta);
-			if (m_pTransformCom->m_fVel < -5)
-				m_IsUandD = !m_IsUandD;
-		}
-		else
-		{
-			m_pTransformCom->UP(fTimeDelta);
-			if (m_pTransformCom->m_fVel > 5)
-				m_IsUandD = !m_IsUandD;
-		}
-	}
-
-	if (m_IsFly_END)
-	{
-		if (m_pTransformCom->Get_Scale().x < 0.1f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
-				m_pTransformCom->Get_Scale().z + 0.001f);
-		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
-			m_pTransformCom->Fallen(fTimeDelta);
-		else
-		{
-			m_IsFly_ING = false;
-			m_IsFly_END = !m_IsFly_END;
-			m_IsStart = !m_IsStart;
-
-			m_pTransformCom->m_fVel = 0.f;
-		}
-	}
-
-}
-
-void CPlayer::Skill_Invisible(const _float& fTimeDelta)
-{
-	if (m_IsInvisible)
-	{
-		m_fCoolTime_TWO += fTimeDelta;
-		if (m_fCoolTime_TWO > 20.f)
-		{
-			m_IsInvisible = !m_IsInvisible;
-			m_fCoolTime_TWO = 0.f;
-		}
-	}
-}
-
-void CPlayer::Skill_CastFire(const _float& fTimeDelta)
-{
-	
-	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size() > 0)
-	{
-		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
-		{
-			_float t = dynamic_cast<CFire*>(iter0)->getETime();
-			if (t < 10.f)
-			{
-				dynamic_cast<CFire*>(iter0)->setETime(t + fTimeDelta);
-			}
-			else
-			{
-				dynamic_cast<CFire*>(iter0)->setETime(0.f);
-				dynamic_cast<CGameObject*>(iter0)->GetIsDead() = true;
-				m_IsFireCheck = false;
-			}
-		}
-	}
-	
 }
 
