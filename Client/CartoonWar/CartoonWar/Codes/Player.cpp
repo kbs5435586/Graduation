@@ -1561,6 +1561,22 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
 	//}
 
+	if (CManagement::GetInstance()->Key_Down(KEY_F1))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F2))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F3))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F4))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F5))
+	{
+	}
+
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()

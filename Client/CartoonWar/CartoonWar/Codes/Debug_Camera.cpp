@@ -34,8 +34,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 
 	_vec3 vPos = { 130.f,100.f,300.f };
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransform->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-	m_pTransform->SetUp_Speed(100.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
