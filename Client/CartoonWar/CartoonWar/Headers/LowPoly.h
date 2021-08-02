@@ -34,7 +34,11 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+	CShader*								m_pShader_Hatch = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CTexture*								m_pTexuterCom_Hatch = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
+private:
+	_bool									m_IsHatch = false;
 };

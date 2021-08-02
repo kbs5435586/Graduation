@@ -1564,7 +1564,7 @@ void CScene_Logo::Free()
 	pManagement->AddRef();
 
 	pManagement->Clear_Layers((_uint)SCENEID::SCENE_LOGO);
-	//pManagement->Delete_All_Font();
+	pManagement->Delete_All_Font();
 
 
 	Safe_Release(pManagement);

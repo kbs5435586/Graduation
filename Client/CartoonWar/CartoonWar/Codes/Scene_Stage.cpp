@@ -74,10 +74,10 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
-	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
 		return E_FAIL;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
@@ -265,7 +265,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 400.f;
+	tProjDesc.fFar = 1000.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -317,7 +317,7 @@ HRESULT CScene_Stage::Ready_Layer_Reflection_Camera(const _tchar* pLayerTag, CMa
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 300.f;
+	tProjDesc.fFar = 11300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, 1)))
 		return E_FAIL;
