@@ -1200,18 +1200,18 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 	{
 
-		//if (m_eCurClass == CLASS::CLASS_ARCHER)
-		//{
-		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
-		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-		//		return;
-		//}
-		//else if (m_eCurClass == CLASS::CLASS_WORKER)
-		//{
-		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
-		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-		//		return;
-		//}
+		if (m_eCurClass == CLASS::CLASS_ARCHER)
+		{
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+				return;
+		}
+		else if (m_eCurClass == CLASS::CLASS_WORKER)
+		{
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				return;
+		}
 		_uint iRand = rand() % 2;
 		if (iRand == 0)
 			m_iCurAnimIdx = m_iAttackMotion[0];

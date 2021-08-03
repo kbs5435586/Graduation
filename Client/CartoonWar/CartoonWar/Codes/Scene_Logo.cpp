@@ -979,21 +979,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 
 
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
-			CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
-			return E_FAIL;
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
-			CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
-			return E_FAIL;		*/
-
-		
-
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Flag/Flag_Blue.fbx", L"../Data/MeshData/blueblow.dat"))))
-			return E_FAIL;
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Flag/Flag_Red.fbx", L"../Data/MeshData/redblow.dat"))))
-			return E_FAIL;
+			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
+				CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
+				return E_FAIL;
+			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
+				CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
+				return E_FAIL;		*/
 	}
 
 
@@ -1313,7 +1304,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Mantlet0.fbx", L"../Data/MeshData/Deffend.dat"))))
 		//	return E_FAIL;
-		
+
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Brazier/Brazier01.fbx", L"../Data/MeshData/Brazier01.dat"))))
 		//	return E_FAIL;
