@@ -960,7 +960,6 @@ void Server::do_follow(int npc_id)
                             g_clients[i].m_cLock.unlock();
                             if (n.m_LastMcondition != n.m_Mcondition)
                             {
-                                n.m_LastMcondition = n.m_Mcondition;
                                 send_condition_packet(i, npc_id, CON_TYPE_MOVE);
                                 //if (CON_IDLE == n.m_Mcondition)
                                 //    cout << npc_id << " send move condition : CON_IDLE\n";
@@ -971,7 +970,6 @@ void Server::do_follow(int npc_id)
                             }
                             if (n.m_LastRcondition != n.m_Rcondition)
                             {
-                                n.m_LastRcondition = n.m_Rcondition;
                                 send_condition_packet(i, npc_id, CON_TYPE_ROTATE);
                                 //if (CON_IDLE == n.m_Rcondition)
                                 //    cout << npc_id << " send rote condition : CON_IDLE\n";
@@ -999,12 +997,10 @@ void Server::do_follow(int npc_id)
                             g_clients[i].m_cLock.unlock();
                     }
                 }
-                if (n.m_LastAnim != n.m_anim)
-                    do_animation(npc_id, n.m_anim);
-                break;
-            }
-            else // n_pos == g_clients[g_clients[npc_id].m_owner_id].m_boid[i].final_pos
-            {
+                if (n.m_LastMcondition != n.m_Mcondition)
+                    n.m_LastMcondition = n.m_Mcondition;
+                if (n.m_LastRcondition != n.m_Rcondition)
+                    n.m_LastRcondition = n.m_Rcondition;
                 if (n.m_LastAnim != n.m_anim)
                     do_animation(npc_id, n.m_anim);
             }
