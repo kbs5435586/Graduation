@@ -52,7 +52,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 	if (!m_Active)
-		SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+		//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
