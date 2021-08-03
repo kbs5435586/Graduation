@@ -120,12 +120,14 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 
 	Safe_Release(pManagement);
+	CManagement::GetInstance()->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 200.f);
 	return S_OK;
 
 }
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
+
 	Input_ID_IP();
 	return CScene::Update_Scene(fTimeDelta);
 }

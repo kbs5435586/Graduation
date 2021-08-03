@@ -396,12 +396,13 @@ void CManagement::Release_Engine()
 {
 	_ulong			dwRefCnt = 0;
 
-
-	
-	if (dwRefCnt = CSoundMgr::GetInstance()->DestroyInstance())
-		_MSG_BOX("CSoundMgr Release Failed");
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
+
+
+	if (dwRefCnt = CSoundMgr::GetInstance()->DestroyInstance())
+		_MSG_BOX("CSoundMgr Release Failed");
+
 
 	if (dwRefCnt = CFontMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CFontMgr Release Failed");
