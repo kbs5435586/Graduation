@@ -148,59 +148,62 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		Resurrection();
 
-	if(m_IsParticleRun)
-	{
-		m_fParticleRunTime += fTimeDelta;
-
 	Skill_Fly(fTimeDelta, fY);
 	Skill_Invisible(fTimeDelta);
 	Skill_CastFire(fTimeDelta);
-	
-	
-	
 
-	//if (m_IsParticle)
-	//{
-	//	_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	//	Create_Particle(vParticlePos);
-	//	//m_IsBazier = true;
-	//	m_IsParticle = false;
-	//}
-	
 
-	//if (m_IsDead)
-		//return DEAD_OBJ;
-	
-	if (m_fParticleRunTime >= 1.f)
+	if (m_IsParticleRun)
 	{
-		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-		if (nullptr == pTerrainBuffer)
-			return NO_EVENT;
+		m_fParticleRunTime += fTimeDelta;
 
-		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-		_vec3 vPosition = {};
-		vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3 vTemp = vPosition;
-		vTemp.y = fY;
+	
 
-		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vTemp;
-		tParticleSet.iMaxParticle = 20;
-		tParticleSet.fMaxLifeTime = 1.f;
-		tParticleSet.iMinLifeTime = 0.5f;
 
-		tParticleSet.fStartScale = 0.5f;
-		tParticleSet.fEndScale = 0.1f;
 
-		tParticleSet.fMaxSpeed = 10.f;
-		tParticleSet.fMinSpeed = 20.f;
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
-			return NO_EVENT;
-		m_fParticleRunTime = 0.f;
-		m_IsParticleRun = false;
+
+		//if (m_IsParticle)
+		//{
+		//	_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		//	Create_Particle(vParticlePos);
+		//	//m_IsBazier = true;
+		//	m_IsParticle = false;
+		//}
+
+
+		//if (m_IsDead)
+			//return DEAD_OBJ;
+
+		if (m_fParticleRunTime >= 1.f)
+		{
+			CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+			if (nullptr == pTerrainBuffer)
+				return NO_EVENT;
+
+			_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+			_vec3 vPosition = {};
+			vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vTemp = vPosition;
+			vTemp.y = fY;
+
+			PARTICLESET tParticleSet;
+			tParticleSet.vPos = vTemp;
+			tParticleSet.iMaxParticle = 20;
+			tParticleSet.fMaxLifeTime = 1.f;
+			tParticleSet.iMinLifeTime = 0.5f;
+
+			tParticleSet.fStartScale = 0.5f;
+			tParticleSet.fEndScale = 0.1f;
+
+			tParticleSet.fMaxSpeed = 10.f;
+			tParticleSet.fMinSpeed = 20.f;
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+				return NO_EVENT;
+			m_fParticleRunTime = 0.f;
+			m_IsParticleRun = false;
+		}
+
 	}
-
-
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 	return NO_EVENT;
 }
@@ -1817,28 +1820,28 @@ void CPlayer::Resurrection()
 	m_IsDead = false;
 }
 
-void CPlayer::Create_Particle(const _vec3& vPoistion)
-{
-	if (m_IsParticle)
-	{
-		_vec3 vTemp = vPoistion;
-		vTemp.y += 10.f;
-		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vTemp;
-		tParticleSet.iMaxParticle = 300;
-		tParticleSet.fMaxLifeTime = 0.2f;
-		tParticleSet.iMinLifeTime = 0.01f;
-
-		tParticleSet.fStartScale = 0.5f;
-		tParticleSet.fEndScale = 0.2f;
-
-		tParticleSet.fMaxSpeed = 30.f;
-		tParticleSet.fMinSpeed = 50.f;
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
-			return;
-		m_IsParticle = false;
-	}
-}
+//void CPlayer::Create_Particle(const _vec3& vPoistion)
+//{
+//	if (m_IsParticle)
+//	{
+//		_vec3 vTemp = vPoistion;
+//		vTemp.y += 10.f;
+//		PARTICLESET tParticleSet;
+//		tParticleSet.vPos = vTemp;
+//		tParticleSet.iMaxParticle = 300;
+//		tParticleSet.fMaxLifeTime = 0.2f;
+//		tParticleSet.iMinLifeTime = 0.01f;
+//
+//		tParticleSet.fStartScale = 0.5f;
+//		tParticleSet.fEndScale = 0.2f;
+//
+//		tParticleSet.fMaxSpeed = 30.f;
+//		tParticleSet.fMinSpeed = 50.f;
+//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+//			return;
+//		m_IsParticle = false;
+//	}
+//}
 
 void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 {

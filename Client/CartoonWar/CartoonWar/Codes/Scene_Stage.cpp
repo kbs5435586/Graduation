@@ -78,14 +78,14 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
-		return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
+	//	return E_FAIL;
 
 	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
 	//	return E_FAIL;
@@ -162,14 +162,14 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Run", CParticle_Run::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Building", CBuilding::Create())))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Building", CBuilding::Create())))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_LowPoly", CLowPoly::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle", CCastle::Create())))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle", CCastle::Create())))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Flag", CFlag::Create())))
 		return E_FAIL;
 
