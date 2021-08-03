@@ -424,7 +424,7 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 				fLength = vDistance.Length();
 
 
-				if (fLength <= 10.f)
+				if (fLength <= 30.f)
 				{
 					iter1->GetIsParticle() = true;
 					if (oneP == iter0)
