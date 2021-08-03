@@ -121,12 +121,14 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 
 	Safe_Release(pManagement);
+	CManagement::GetInstance()->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 200.f);
 	return S_OK;
 
 }
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
+
 	Input_ID_IP();
 	return CScene::Update_Scene(fTimeDelta);
 }
@@ -177,9 +179,6 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_PointLight", CUI_PointLight::Create())))
 		return E_FAIL;
 
-
-
-	//
 
 	return S_OK;
 }
@@ -678,10 +677,10 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		CBuffer_CubeTex::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain",
-		CBuffer_Terrain::Create(500, 500))))
+		CBuffer_Terrain::Create(100.f, 100.f))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
-		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/tttt.bmp", 1.f))))
+		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/tttt.bmp", 2.5f))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_5Sphere",
 		CBuffer_Sphere::Create())))
@@ -691,6 +690,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTexNor",
 		CBuffer_RectTexNor::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
+		CBuffer_Sphere::Create())))
 		return E_FAIL;
 
 	return S_OK;
@@ -732,6 +734,40 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 
 HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 {
+	{
+		//m_pMeshCom[(_uint)ANIMALS::ANIMALS_BEAR] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Bear");
+		//NULL_CHECK_VAL(m_pMeshCom[(_uint)ANIMALS::ANIMALS_BEAR], E_FAIL);
+		//if (FAILED(Add_Component(L"Com_Mesh_ANIMALS_BEAR", m_pMeshCom[(_uint)ANIMALS::ANIMALS_BEAR])))
+		//	return E_FAIL;
+		//
+		//m_pMeshCom[(_uint)ANIMALS::ANIMALS_BOAR] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Boar");
+		//NULL_CHECK_VAL(m_pMeshCom[(_uint)ANIMALS::ANIMALS_BOAR], E_FAIL);
+		//if (FAILED(Add_Component(L"Com_Mesh_ANIMALS_BOAR", m_pMeshCom[(_uint)ANIMALS::ANIMALS_BOAR])))
+		//	return E_FAIL;
+		//
+		//m_pMeshCom[(_uint)ANIMALS::ANIMALS_DEER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Deer");
+		//NULL_CHECK_VAL(m_pMeshCom[(_uint)ANIMALS::ANIMALS_DEER], E_FAIL);
+		//if (FAILED(Add_Component(L"Com_Mesh_ANIMALS_DEER", m_pMeshCom[(_uint)ANIMALS::ANIMALS_DEER])))
+		//	return E_FAIL;
+		//
+		//m_pMeshCom[(_uint)ANIMALS::ANIMALS_WOLF] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Wolf");
+		//NULL_CHECK_VAL(m_pMeshCom[(_uint)ANIMALS::ANIMALS_WOLF], E_FAIL);
+		//if (FAILED(Add_Component(L"Com_Mesh_ANIMALS_WOLF", m_pMeshCom[(_uint)ANIMALS::ANIMALS_WOLF])))
+		//	return E_FAIL;
+
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Bear",
+			CMesh::Create_Load(L"../Data/MeshData/Bear.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Boar",
+			CMesh::Create_Load(L"../Data/MeshData/Boar.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Deer",
+			CMesh::Create_Load(L"../Data/MeshData/Deer.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animals_Wolf",
+			CMesh::Create_Load(L"../Data/MeshData/Wolf.dat"))))
+			return E_FAIL;
+	}
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Human_Archer",
 			CMesh::Create_Load(L"../Data/Human/Archer.dat"))))
@@ -962,12 +998,18 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 
 	{
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
+			CMesh::Create_Load(L"../Data/MeshData/Brazier01.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier02",
+			CMesh::Create_Load(L"../Data/MeshData/Brazier02.dat"))))
+			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Castle",
 			CMesh::Create_Load(L"../Data/MeshData/Castle.dat"))))
 			return E_FAIL;
-		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
-		//	CMesh::Create_Load(L"../Data/MeshData/Deffend.dat"))))
-		//	return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
+			CMesh::Create_Load(L"../Data/MeshData/Deffend.dat"))))
+			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_build_barracks_01_low",
 			CMesh::Create_Load(L"../Data/MeshData/build_barracks_01_low.dat"))))
 			return E_FAIL;
@@ -1268,9 +1310,16 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	}
 
 	{
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
-			CMesh::Create(L"../Bin/Resource/Mesh/Static/Mantlet0.fbx", L"../Data/MeshData/Deffend.dat"))))
-			return E_FAIL;
+		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
+		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Mantlet0.fbx", L"../Data/MeshData/Deffend.dat"))))
+		//	return E_FAIL;
+		
+		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
+		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Brazier/Brazier01.fbx", L"../Data/MeshData/Brazier01.dat"))))
+		//	return E_FAIL;
+		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier02",
+		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Brazier/Brazier02.fbx", L"../Data/MeshData/Brazier02.dat"))))
+		//	return E_FAIL;
 	}
 
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
@@ -1353,7 +1402,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/Zoom/Aim%d.png", 2, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Water",
-			CTexture::Create(L"../Bin/Resource/Texture/Water/Water%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			CTexture::Create(L"../Bin/Resource/Texture/Water/Water%d.jpg", 2, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Fillter",
@@ -1468,6 +1517,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Font",
 		CShader::Create(L"../ShaderFiles/Shader_Font.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Collider",
+		CShader::Create(L"../ShaderFiles/Shader_Collider.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 
 	//Compute_Shader_Compile
 	{
@@ -1525,6 +1577,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect",
 			CShader::Create(L"../ShaderFiles/Shader_PostEffect.hlsl", "VS_Main", "PS_Main"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect_Buffer",
+			CShader::Create(L"../ShaderFiles/Shader_PostEffect_Buffer.hlsl", "VS_Main", "PS_Main"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur",
 			CShader::Create(L"../ShaderFiles/Shader_Blur.hlsl", "VS_Main", "PS_Main"))))

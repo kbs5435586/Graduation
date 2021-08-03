@@ -45,6 +45,8 @@ protected:
 	INFO									m_tInfo = {};
 public:
 	_uint									m_iLayerIdx = 0;
+public:
+	_bool&									GetIsHit_PostEffect(){return m_IsHit_PostEffect; }
 protected:
 	_float									m_fBazierCnt = 0.f;
 	_bool									m_IsClone = false;
@@ -59,6 +61,8 @@ protected:
 	_bool									m_IsPick = false;
 	_bool									m_IsRun = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
+	_bool									m_IsHit_PostEffect = false;
+	_vec3									m_vColShpereSize = {};
 protected:
 	_matrix									m_matOldWorld;
 	_matrix									m_matOldView;

@@ -17,6 +17,7 @@ public:
 private:
     HRESULT                     Ready_Device();
     HRESULT                     Ready_Start_Scene(SCENEID eID);
+    HRESULT                     Ready_Sound();
 private:
     HRESULT                     SetUp_OnShader(const _float& fTimeDelta);
 private:

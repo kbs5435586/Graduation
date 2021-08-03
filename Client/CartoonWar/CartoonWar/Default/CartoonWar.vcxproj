@@ -79,13 +79,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
-    <IncludePath>../Library/include/;$(IncludePath)</IncludePath>
+    <IncludePath>../Library/include/</IncludePath>
     <LibraryPath>../Library/lib/;../Library/lib/x64/debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../Library/include/;$(IncludePath)</IncludePath>
-    <LibraryPath>../Library/lib/;../Library/lib/x64/release/;$(LibraryPath)</LibraryPath>
+    <IncludePath>../fmod/studio/inc/;../fmod/core/inc/;../Library/include/;$(IncludePath)</IncludePath>
+    <LibraryPath>../Library/lib/x64/release/;../fmod/studio/lib/x64/;../fmod/core/lib/x64/;../Library/lib/;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin/</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -132,6 +132,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
@@ -155,11 +156,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;fmod_vc.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Animals.h" />
     <ClInclude Include="..\Headers\Animator.h" />
     <ClInclude Include="..\Headers\Base.h" />
     <ClInclude Include="..\Headers\Buffer_Circle.h" />
@@ -227,6 +229,7 @@
     <ClInclude Include="..\Headers\Observer.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
+    <ClInclude Include="..\Headers\Particle_Run.h" />
     <ClInclude Include="..\Headers\Picking.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\Player_Inven.h" />
@@ -247,6 +250,7 @@
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
     <ClInclude Include="..\Headers\SkyBox.h" />
+    <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Sphere.h" />
     <ClInclude Include="..\Headers\Struct.h" />
     <ClInclude Include="..\Headers\ObserverManager.h" />
@@ -302,6 +306,7 @@
     <ClInclude Include="..\Headers\UI_Skill.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\Animals.cpp" />
     <ClCompile Include="..\Codes\Animator.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Buffer_Circle.cpp" />
@@ -362,6 +367,7 @@
     <ClCompile Include="..\Codes\Observer.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
+    <ClCompile Include="..\Codes\Particle_Run.cpp" />
     <ClCompile Include="..\Codes\Picking.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\Player_Inven.cpp" />
@@ -382,6 +388,7 @@
     <ClCompile Include="..\Codes\Shader.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\ObserverManager.cpp" />
+    <ClCompile Include="..\Codes\SoundMgr.cpp" />
     <ClCompile Include="..\Codes\Sphere.cpp" />
     <ClCompile Include="..\Codes\StructedBuffer.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
@@ -582,6 +589,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain_Tess.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

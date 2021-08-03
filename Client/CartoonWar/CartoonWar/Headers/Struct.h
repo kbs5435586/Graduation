@@ -662,3 +662,9 @@ typedef struct tagBrushInfo
 	Vector4		vBrushPos;
 	float		fBrushRange;
 }BRUSHINFO;
+
+typedef struct tagSound_Dev
+{
+	FMOD::Sound* pSound = nullptr;
+	float fVolume = 0.f;
+}SOUNDDEV;

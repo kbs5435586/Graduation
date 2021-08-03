@@ -29,7 +29,7 @@ HRESULT CTerrain_Height::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-	//m_pTransformCom->Scaling(_vec3(100.f, 100.f, 100.f));
+	//m_pTransformCom->Scaling(_vec3(1.f, 100.f, 1.f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(30.f));
 	return S_OK;
 }
@@ -200,6 +200,7 @@ HRESULT CTerrain_Height::Ready_Component()
 	//NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	//if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 	//	return E_FAIL;
+
 	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))

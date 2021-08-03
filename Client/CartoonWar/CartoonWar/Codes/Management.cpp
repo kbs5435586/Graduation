@@ -5,6 +5,7 @@
 #include "TimerManager.h"
 #include "FrameManager.h"
 #include "Constant_Buffer_Manager.h"
+#include "SoundMgr.h"
 
 
 _IMPLEMENT_SINGLETON(CManagement)
@@ -20,6 +21,7 @@ CManagement::CManagement()
 	, m_pUAV_Manager(CUAVManager::GetInstance())
 	, m_pCollision_Manager(CCollisionMgr::GetInstance())
 	, m_pFont_Manager(CFontMgr::GetInstance())
+	, m_pSound_Manager(CSoundMgr::GetInstance())
 	//, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
@@ -33,6 +35,7 @@ CManagement::CManagement()
 	m_pUAV_Manager->AddRef();
 	m_pCollision_Manager->AddRef();
 	m_pFont_Manager->AddRef();
+	m_pSound_Manager->AddRef();
 	//m_pServer_Manager->AddRef();
 }
 
@@ -254,6 +257,69 @@ void CManagement::Delete_All_Font()
 	return m_pFont_Manager->Delete_All_Fo1nt();
 }
 
+HRESULT CManagement::Ready_Channel()
+{
+	return m_pSound_Manager->Ready_Channel();
+}
+
+HRESULT CManagement::Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume)
+{
+	return m_pSound_Manager->Add_Sound(eCharacter, State, pFilePath, fVolume);
+}
+
+HRESULT CManagement::Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume)
+{
+	return m_pSound_Manager->Add_BGSound(eCharacter, State, pFilePath, fVolume);
+}
+
+void CManagement::Play_Sound(Sound_Character eCharacter, SoundState State)
+{
+	return m_pSound_Manager->Play_Sound(eCharacter, State);
+}
+
+void CManagement::Play_BGSound(Sound_Character eCharacter, SoundState State)
+{
+	return m_pSound_Manager->Play_BGSound(eCharacter, State);
+}
+
+void CManagement::Pause_Sound()
+{
+	return m_pSound_Manager->Pause_Sound();
+}
+
+void CManagement::Pause_BGSound()
+{
+	return m_pSound_Manager->Pause_BGSound();
+}
+
+void CManagement::Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume)
+{
+	return m_pSound_Manager->Play_Sound(eChannel, eCharacter, State, fVolume);
+}
+
+void CManagement::SetVolume(SoundChannel eChannel, const _float& fVolume)
+{
+	return m_pSound_Manager->SetVolume(eChannel, fVolume);
+}
+
+void CManagement::Pause_Sound(SoundChannel eChannel)
+{
+	return m_pSound_Manager->Pause_Sound(eChannel);
+}
+
+void CManagement::Stop_Sound(SoundChannel eChannel)
+{
+	return m_pSound_Manager->Stop_Sound(eChannel);
+}
+
+void CManagement::Update_Sound()
+{
+	return m_pSound_Manager->Update_Sound();
+}
+
+
+
+
 HRESULT CManagement::Add_Prototype_Component(const _uint& iSceneID, const _tchar* pComponentTag, CComponent* pComponent)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -335,10 +401,13 @@ void CManagement::Release_Engine()
 {
 	_ulong			dwRefCnt = 0;
 
-
-
 	if (dwRefCnt = CManagement::GetInstance()->DestroyInstance())
 		_MSG_BOX("CManagement Release Failed");
+
+
+	if (dwRefCnt = CSoundMgr::GetInstance()->DestroyInstance())
+		_MSG_BOX("CSoundMgr Release Failed");
+
 
 	if (dwRefCnt = CFontMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CFontMgr Release Failed");
@@ -411,6 +480,7 @@ list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _
 void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
+	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pUAV_Manager);
 	Safe_Release(m_pLight_Manager);

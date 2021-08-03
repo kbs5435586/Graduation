@@ -19,7 +19,7 @@ HRESULT CBuffer_Sphere::Ready_VIBuffer()
 	const float PI = acos(-1);
 	UINT iStackCount = 40; // 가로 분할 개수
 	UINT iSliceCount = 40; // 세로 분할 개수
-	float fRadius = 1.f;
+	float fRadius = 2.f;
 
 	float fStackAngle = XM_PI / iStackCount;
 	float fSliceAngle = XM_2PI / iSliceCount;

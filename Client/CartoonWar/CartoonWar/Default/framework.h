@@ -46,7 +46,7 @@ using namespace chrono;
 #include <fstream>
 #include <string>
 #include <wrl/client.h>
-
+#include <fmod.hpp>
 
 
 
@@ -66,6 +66,7 @@ using namespace chrono;
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
+#pragma comment(lib, "user32.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex_debug.lib")
@@ -90,7 +91,7 @@ using namespace DirectX::SimpleMath;
 #include "Extern.h"
 #include "Function.h"
 #include "Struct.h"
-#include "Funtor.h"
+#include "Funtor.h"	
 #include "Hash.h"
 #include "Constant.h"
 

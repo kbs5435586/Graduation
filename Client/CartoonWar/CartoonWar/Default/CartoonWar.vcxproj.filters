@@ -472,6 +472,15 @@
     <Filter Include="02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess">
       <UniqueIdentifier>{3dcfb73e-d990-448d-bded-2267a26654ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\08. Animals">
+      <UniqueIdentifier>{f4dbf8d8-aad5-4e12-9e2a-e8c2326a3e9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\96. Particle\00. Particle_Run">
+      <UniqueIdentifier>{e13f0f15-0597-427d-ab92-95692c6ce572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\13. SoundMgr">
+      <UniqueIdentifier>{55ccad89-aa5d-4062-9135-5b9717ec2b37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -876,6 +885,15 @@
     <ClInclude Include="..\Headers\Test_Tess.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Animals.h">
+      <Filter>02. GameObject\01. Scene_Stage\08. Animals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Particle_Run.h">
+      <Filter>02. GameObject\96. Particle\00. Particle_Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SoundMgr.h">
+      <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1251,6 +1269,15 @@
     <ClCompile Include="..\Codes\Test_Tess.cpp">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\05. Test_Tess</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Animals.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\08. Animals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Particle_Run.cpp">
+      <Filter>02. GameObject\96. Particle\00. Particle_Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SoundMgr.cpp">
+      <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1384,6 +1411,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Terrain_Tess.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

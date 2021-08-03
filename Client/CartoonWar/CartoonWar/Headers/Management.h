@@ -10,6 +10,7 @@
 #include "FBXLoader.h"
 #include "UAVManager.h"
 #include "CollisionMgr.h"
+#include "SoundMgr.h"
 #include "FontMgr.h"
 #include "MRT.h"
 #include "Base.h"
@@ -87,6 +88,19 @@ public://FontMgr
 	void						Render_Font();
 	void						Delete_Font(const _tchar* pFontTag);
 	void						Delete_All_Font();
+public://SoundMgr
+	HRESULT						Ready_Channel();
+	HRESULT						Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume);
+	HRESULT						Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume);
+	void						Play_Sound(Sound_Character eCharacter, SoundState State);
+	void						Play_BGSound(Sound_Character eCharacter, SoundState State);
+	void						Pause_Sound();
+	void						Pause_BGSound();
+	void						Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume = 0.5f);
+	void						SetVolume(SoundChannel eChannel, const _float& fVolume);
+	void						Pause_Sound(SoundChannel eChannel);
+	void						Stop_Sound(SoundChannel eChannel);
+	void						Update_Sound();
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -110,6 +124,8 @@ private:
 	CUAVManager*				m_pUAV_Manager = nullptr;
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
 	CFontMgr*					m_pFont_Manager = nullptr;
+	CSoundMgr*					m_pSound_Manager = nullptr;
+	
 	//CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

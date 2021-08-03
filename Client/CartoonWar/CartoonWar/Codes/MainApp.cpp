@@ -18,11 +18,13 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_Management((_uint)SCENEID::SCENE_END)))
 		return E_FAIL;
-	if (FAILED(Create_FbxManager()))
-		return E_FAIL;
+	//if (FAILED(Create_FbxManager()))
+	//	return E_FAIL;
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
+		return E_FAIL;
+	if (FAILED(Ready_Sound()))
 		return E_FAIL;
 
 
@@ -151,6 +153,15 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eID)
 
 	Safe_Release(pScene);
 
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_Sound()
+{
+	if (FAILED(m_pManagement->Ready_Channel()))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_BGSound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Hit.wav", 200.f)))
+		return E_FAIL;
 	return S_OK;
 }
 

@@ -19,8 +19,8 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _uint& iNumVerticesX, const _uint&
 
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
 
-	m_iStride = sizeof(VTXTEXNOR);
-	vector<VTXTEXNOR>		vecVertices;
+	m_iStride = sizeof(VTXTEXBUMP);
+	vector<VTXTEXBUMP>		vecVertices;
 	vecVertices.resize(m_iNumVertices);
 
 
@@ -33,6 +33,8 @@ HRESULT CBuffer_Terrain::Ready_VIBuffer(const _uint& iNumVerticesX, const _uint&
 			vecVertices[iIdx].vPos =_vec3(j * m_fInterval, 0.0f, i * m_fInterval);
 			vecVertices[iIdx].vTexUV = _vec2(j / (m_iNumVerticesX - 1.f), i / (m_iNumVerticesZ - 1.f));
 			vecVertices[iIdx].vNormal=_vec3(0.f,1.f,0.f);
+			vecVertices[iIdx].vTangent = _vec3(1.f, 0.f, 0.f);
+			vecVertices[iIdx].vBiNormal = _vec3(0.f, 0.f, 1.f);
 		}
 	}
 

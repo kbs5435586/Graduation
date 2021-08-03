@@ -30,6 +30,7 @@ private:
 	HRESULT									Ready_Component();
 public:
 	void									SetPosition(_vec3 vPos, CLASS eClass);
+	void									SetPosition(_vec3 vPos, ANIMALS eAnimals);
 	void									SetInfo(INFO tInfo);
 private:
 	CTransform*								m_pTransformCom = nullptr;

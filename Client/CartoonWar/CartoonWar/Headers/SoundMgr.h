@@ -1,0 +1,40 @@
+#pragma once
+
+#include "Base.h"
+//using namespace FMOD;
+
+class CSoundMgr :
+    public CBase
+{
+	_DECLARE_SINGLETON(CSoundMgr)
+
+private:
+	explicit CSoundMgr();
+	virtual ~CSoundMgr() = default;
+public:
+	HRESULT						Ready_Channel();
+public:
+	HRESULT						Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume);
+	HRESULT						Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume);
+public:
+	void						Play_Sound(Sound_Character eCharacter, SoundState State);
+	void						Play_BGSound(Sound_Character eCharacter, SoundState State);
+	void						Pause_Sound();
+	void						Pause_BGSound();
+public:
+	void						Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float & fVolume = 0.5f);
+	void						SetVolume(SoundChannel eChannel, const _float & fVolume);
+	void						Pause_Sound(SoundChannel eChannel);
+	void						Stop_Sound(SoundChannel eChannel);
+	void						Update_Sound();
+protected:
+	FMOD::System*				m_pFmod = nullptr;
+	FMOD::Channel*				m_pCh[CHANNEL_END];
+	SOUNDDEV					m_SoundDev[SOUND_END][END];
+	_float						m_fVolume = 0.5f;
+public:
+	static CSoundMgr*			Create();
+public:
+	virtual void				Free();
+};
+
