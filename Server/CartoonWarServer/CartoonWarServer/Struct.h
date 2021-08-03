@@ -40,6 +40,7 @@ struct SESSION // 클라이언트 정보
 	short m_owner_id;
 	short m_hp;
 	short m_team;
+	short m_select_cls;
 	unsigned char m_LastAnim;
 	unsigned char m_anim;
 	ENUM_FUNCTION m_last_order;

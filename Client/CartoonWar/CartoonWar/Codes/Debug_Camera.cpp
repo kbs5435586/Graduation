@@ -115,7 +115,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		//}
 	}
 
-	//{
+	{
 
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", 0);
@@ -131,12 +131,12 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 		if (m_IsFix)
 		{
-			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+			if (dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_WORKER ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_ARCHER ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_INFANTRY ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS(4) ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_SPEARMAN ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_MAGE)
 			{
 				vPos.y += 5.f;
 				vUp *= 20.f;
@@ -226,12 +226,12 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 			if (m_IsFix)
 		{
-			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+			if (dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_WORKER ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_ARCHER ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_INFANTRY ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS(4) ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_SPEARMAN ||
+				dynamic_cast<CPlayer*>(pGameObject)->getClass() == CLASS::CLASS_MAGE)
 			{
 				vPos.y += 5.f;
 				vUp *= 20.f;

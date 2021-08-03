@@ -22,7 +22,6 @@ CManagement::CManagement()
 	, m_pCollision_Manager(CCollisionMgr::GetInstance())
 	, m_pFont_Manager(CFontMgr::GetInstance())
 	, m_pSound_Manager(CSoundMgr::GetInstance())
-	//, m_pServer_Manager(CServer_Manager::GetInstance())
 	, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
@@ -37,7 +36,6 @@ CManagement::CManagement()
 	m_pCollision_Manager->AddRef();
 	m_pFont_Manager->AddRef();
 	m_pSound_Manager->AddRef();
-	//m_pServer_Manager->AddRef();
 	m_pServer_Manager->AddRef();
 }
 

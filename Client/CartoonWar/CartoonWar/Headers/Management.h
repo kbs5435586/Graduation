@@ -125,8 +125,6 @@ private:
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
 	CFontMgr*					m_pFont_Manager = nullptr;
 	CSoundMgr*					m_pSound_Manager = nullptr;
-	
-	//CServer_Manager*			m_pServer_Manager = nullptr;
 	CServer_Manager*			m_pServer_Manager = nullptr;
 };
 
