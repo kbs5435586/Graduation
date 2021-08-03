@@ -123,7 +123,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
 
-	m_eCurClass = server->Get_PlayerClass(m_iLayerIdx);
+	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 

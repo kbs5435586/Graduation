@@ -54,7 +54,6 @@ public:
     void send_class_change_packet(int idx, char type);
 
     void update_key_input();
-    void update_client_class(unsigned short id, unsigned short cs);
 
     //short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);
@@ -69,8 +68,8 @@ public:
     bool Get_Connected();
     short Get_PlayerID();
     short Get_PlayerHP(int id);
-    CLASS Get_PlayerClass(int id);
-    CLASS Get_NpcClass(int id);
+    int Get_PlayerClass(int id);
+    int Get_NpcClass(int id);
 
     char Get_PlayerMCon(int id);
     char Get_NpcMCon(int id);

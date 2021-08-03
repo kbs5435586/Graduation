@@ -99,7 +99,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
 
-	m_eCurClass = server->Get_NpcClass(m_iLayerIdx);
+	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 

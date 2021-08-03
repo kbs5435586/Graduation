@@ -192,34 +192,17 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_CLASS_CHANGE:
     {
         cs_packet_class_change* packet = reinterpret_cast<cs_packet_class_change*>(buf);
-        int id = packet->id;
-
-        if (0 == packet->p_class)
-            g_clients[id].m_class = CLASS_WORKER;
-        else if (1 == packet->p_class)
-            g_clients[id].m_class = CLASS_CAVALRY;
-        else if (2 == packet->p_class)
-            g_clients[id].m_class = CLASS(2);
-        else if (3 == packet->p_class)
-            g_clients[id].m_class = CLASS_INFANTRY;
-        else if (4 == packet->p_class)
-            g_clients[id].m_class = CLASS(4);
-        else if (5 == packet->p_class)
-            g_clients[id].m_class = CLASS_SPEARMAN;
-        else if (6 == packet->p_class)
-            g_clients[id].m_class = CLASS_MAGE;
-        else if (7 == packet->p_class)
-            g_clients[id].m_class = CLASS_MMAGE;
-        else if (8 == packet->p_class)
-            g_clients[id].m_class = CLASS_ARCHER;
+        int recv_id = packet->id;
+        g_clients[recv_id].m_class = packet->p_class;
+        update_speed(recv_id);
 
         for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
         {
             if (ST_ACTIVE != g_clients[i].m_status)
                 continue;
-            if (true == is_near(id, i))
+            if (true == is_near(recv_id, i))
             {
-                send_class_change_packet(i, id);
+                send_class_change_packet(i, recv_id);
             }
         }
     }
@@ -362,29 +345,35 @@ void Server::do_rotate(int user_id, char con)
     }
 }
 
+void Server::update_speed(int user_id)
+{
+    SESSION& c = g_clients[user_id];
+
+    if (C_WORKER == c.m_class)
+        c.m_move_speed = 5.f;
+    if (C_CAVALRY == c.m_class)
+       c.m_move_speed = 15.f;
+    if (C_TWO == c.m_class)
+       c.m_move_speed = 15.f;
+    if (C_INFANTRY == c.m_class)
+       c.m_move_speed = 5.f;
+    if (C_FOUR == c.m_class)
+       c.m_move_speed = 5.f;
+    if (C_SPEARMAN == c.m_class)
+       c.m_move_speed = 5.f;
+    if (C_MAGE == c.m_class)
+       c.m_move_speed = 5.f;
+    if (C_MMAGE == c.m_class)
+       c.m_move_speed = 15.f;
+    if (C_ARCHER == c.m_class)
+       c.m_move_speed = 7.f;
+}
+
 void Server::do_move(int user_id, char con)
 {
     SESSION& c = g_clients[user_id];
 
-    if (CLASS::CLASS_WORKER == c.m_class)
-        c.m_move_speed = 5.f;
-    if (CLASS::CLASS_CAVALRY == c.m_class)
-        c.m_move_speed = 15.f;
-    if (CLASS(2) == c.m_class)
-        c.m_move_speed = 15.f;
-    if (CLASS::CLASS_INFANTRY == c.m_class)
-        c.m_move_speed = 5.f;
-    if (CLASS(4) == c.m_class)
-        c.m_move_speed = 5.f;
-    if (CLASS::CLASS_SPEARMAN == c.m_class)
-        c.m_move_speed = 5.f;
-    if (CLASS::CLASS_MAGE == c.m_class)
-        c.m_move_speed = 5.f;
-    if (CLASS::CLASS_MMAGE == c.m_class)
-        c.m_move_speed = 15.f;
-    if (CLASS::CLASS_ARCHER == c.m_class)
-        c.m_move_speed = 7.f;
-
+    update_speed(user_id);
     c.m_transform.SetUp_Speed(c.m_move_speed, c.m_rotate_speed);
 
     switch (con)
@@ -1623,7 +1612,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_move_speed = 5.f;
             g_clients[npc_id].m_rotate_speed = XMConvertToRadians(90.f);
             g_clients[npc_id].m_transform.SetUp_Speed(g_clients[npc_id].m_move_speed, g_clients[npc_id].m_rotate_speed);
-            g_clients[npc_id].m_class = CLASS::CLASS_WORKER;
+            g_clients[npc_id].m_class = C_WORKER;
             g_clients[npc_id].m_Mcondition = CON_IDLE;
             g_clients[npc_id].m_Rcondition = CON_IDLE;
             g_clients[npc_id].m_LastMcondition = CON_IDLE;
@@ -2107,7 +2096,7 @@ void Server::worker_thread()
 
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
                 g_clients[user_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
-                g_clients[user_id].m_class = CLASS::CLASS_WORKER;
+                g_clients[user_id].m_class = C_WORKER;
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = F_SQUARE;
                 g_clients[user_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };

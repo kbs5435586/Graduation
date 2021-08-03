@@ -11,8 +11,6 @@ enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_DEAD, ST_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
 enum ENUM_TEAM { TEAM_RED, TEAM_BLUE, TEAM_END };
 
-enum CLASS { CLASS_WORKER, CLASS_CAVALRY, CLASS_INFANTRY = 3, CLASS_SPEARMAN = 5, CLASS_MAGE = 6, CLASS_MMAGE = 7, CLASS_ARCHER = 8, CLASS_END = 9 };
-
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
 
 struct OverEx // 확장 오버랩 구조체
@@ -65,7 +63,7 @@ struct SESSION // 클라이언트 정보
 	vector <FormationInfo> m_boid;
 	unsigned short m_boid_num;
 	char m_formation;
-	CLASS m_class;
+	unsigned int m_class;
 	char m_LastMcondition;
 	char m_LastRcondition;
 	char m_Mcondition;

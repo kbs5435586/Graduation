@@ -104,8 +104,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].formation = my_packet->form;
-
-		update_client_class(my_id, my_packet->p_class);
+		m_objects[recv_id].m_class = my_packet->p_class;
 
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
@@ -158,7 +157,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].con_move = my_packet->con_move;
 		m_objects[recv_id].con_rotate = my_packet->con_rotate;
-		update_client_class(recv_id, my_packet->p_class);
+		m_objects[recv_id].m_class = my_packet->p_class;
 
 		Safe_Release(managment);
 	}
@@ -691,7 +690,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	case SC_PACKET_CLASS_CHANGE:
 	{
 		sc_packet_class_change* my_packet = reinterpret_cast<sc_packet_class_change*>(ptr);
-		update_client_class(my_packet->id, my_packet->p_class);
+		m_objects[my_packet->id].m_class = my_packet->p_class;
 	}
 	break;
 	case SC_PACKET_FORMATION:
@@ -849,26 +848,7 @@ void CServer_Manager::send_class_change_packet(int idx, char type)
 	{
 		l_packet.id = npc_idx_to_id(idx);
 	}
-
-	if (CLASS::CLASS_WORKER == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_WORKER;
-	else if (CLASS::CLASS_CAVALRY == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_CAVALRY;
-	else if (CLASS(2) == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_TWO;
-	else if (CLASS::CLASS_INFANTRY == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_INFANTRY;
-	else if (CLASS(4) == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_FOUR;
-	else if (CLASS::CLASS_SPEARMAN == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_SPEARMAN;
-	else if (CLASS::CLASS_MAGE == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_MAGE;
-	else if (CLASS::CLASS_MMAGE == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_MMAGE;
-	else if (CLASS::CLASS_ARCHER == m_objects[l_packet.id].m_class)
-		l_packet.p_class = C_ARCHER;
-
+	l_packet.p_class = m_objects[l_packet.id].m_class;
 	send_packet(&l_packet);
 }
 
@@ -936,28 +916,6 @@ void CServer_Manager::update_key_input()
 		disconnect();
 		PostQuitMessage(0);
 	}
-}
-
-void CServer_Manager::update_client_class(unsigned short id, unsigned short cs)
-{
-	if (C_WORKER == cs)
-		m_objects[id].m_class = CLASS::CLASS_WORKER;
-	else if (C_CAVALRY == cs)
-		m_objects[id].m_class = CLASS::CLASS_CAVALRY;
-	else if (C_TWO == cs)
-		m_objects[id].m_class = CLASS(2);
-	else if (C_INFANTRY == cs)
-		m_objects[id].m_class = CLASS::CLASS_INFANTRY;
-	else if (C_FOUR == cs)
-		m_objects[id].m_class = CLASS(4);
-	else if (C_SPEARMAN == cs)
-		m_objects[id].m_class = CLASS::CLASS_SPEARMAN;
-	else if (C_MAGE == cs)
-		m_objects[id].m_class = CLASS::CLASS_MAGE;
-	else if (C_MMAGE == cs)
-		m_objects[id].m_class = CLASS::CLASS_MMAGE;
-	else if (C_ARCHER == cs)
-		m_objects[id].m_class = CLASS::CLASS_ARCHER;
 }
 
 short CServer_Manager::npc_idx_to_id(unsigned short id)
@@ -1056,7 +1014,7 @@ char CServer_Manager::Get_PlayerRCon(int id)
 	return m_objects[id].con_rotate;
 }
 
-CLASS CServer_Manager::Get_PlayerClass(int id)
+int CServer_Manager::Get_PlayerClass(int id)
 {
 	return m_objects[id].m_class;
 }
@@ -1064,50 +1022,12 @@ CLASS CServer_Manager::Get_PlayerClass(int id)
 void CServer_Manager::Set_Class(int mclass, int id, char type)
 {
 	if (type == O_PLAYER)
-	{
-		if (0 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_WORKER;
-		else if (1 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_CAVALRY;
-		else if (2 == mclass)
-			m_objects[id].m_class = CLASS(2);
-		else if (3 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_INFANTRY;
-		else if (4 == mclass)
-			m_objects[id].m_class = CLASS(4);
-		else if (5 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_SPEARMAN;
-		else if (6 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_MAGE;
-		else if (7 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_MMAGE;
-		else if (8 == mclass)
-			m_objects[id].m_class = CLASS::CLASS_ARCHER;
-	}
+		m_objects[id].m_class = mclass;
 	else if (type == O_NPC)
-	{
-		if (0 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_WORKER;
-		else if (1 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_CAVALRY;
-		else if (2 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS(2);
-		else if (3 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_INFANTRY;
-		else if (4 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS(4);
-		else if (5 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_SPEARMAN;
-		else if (6 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_MAGE;
-		else if (7 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_MMAGE;
-		else if (8 == mclass)
-			m_objects[npc_idx_to_id(id)].m_class = CLASS::CLASS_ARCHER;
-	}
+		m_objects[npc_idx_to_id(id)].m_class = mclass;
 }
 
-CLASS CServer_Manager::Get_NpcClass(int id)
+int CServer_Manager::Get_NpcClass(int id)
 {
 	short npc_index = npc_idx_to_id(id);
 	return m_objects[npc_index].m_class;
