@@ -653,3 +653,11 @@ typedef struct tagSound_Dev
 	FMOD::Sound* pSound = nullptr;
 	float fVolume = 0.f;
 }SOUNDDEV;
+
+
+
+typedef struct tagPos_Size
+{
+	Vector3		vPosition;
+	Vector3		vSize;
+}POSSIZE;

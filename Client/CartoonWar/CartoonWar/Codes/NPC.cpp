@@ -69,7 +69,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
 		return E_FAIL;
 
-
+	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	return S_OK;
 }
 
@@ -142,6 +143,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
+
 		}
 
 
@@ -157,6 +159,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		m_iCurAnimIdx = 0;
 		m_IsOnce = false;
+		m_IsActioning = false;
 	}
 
 	return _int();
@@ -214,6 +217,15 @@ void CNPC::Render_GameObject()
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
 	//m_pColiider[1]->Render_Collider();
+
+	m_iBlurCnt++;
+	if (m_iBlurCnt >= MAX_BLURCNT)
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_iBlurCnt = 0;
+	}
+
 	Safe_Release(pManagement);
 }
 
@@ -257,6 +269,95 @@ void CNPC::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
+void CNPC::Render_PostEffect()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+
+		m_pShaderCom_PostEffect->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		ComPtr<ID3D12DescriptorHeap>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetSRV().Get();
+		CDevice::GetInstance()->SetTextureToShader(pPostEffectTex.Get(), TEXTURE_REGISTER::t0);
+
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+	Safe_Release(pManagement);
+}
+
+void CNPC::Render_Blur()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+
+		tRep.m_arrMat[0] = m_matOldWorld;//OldWorld
+		tRep.m_arrMat[1] = m_matOldView;//OldView
+
+		m_pShaderCom_Blur->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+
+	//m_matOldWorld = m_pTransformCom->Get_Matrix();
+	//m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+
+	Safe_Release(pManagement);
+}
+
 HRESULT CNPC::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -275,6 +376,10 @@ HRESULT CNPC::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -318,6 +423,8 @@ void CNPC::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
+	Safe_Release(m_pShaderCom_PostEffect);
+	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pCollider_OBB);
 	Safe_Release(m_pCollider_AABB);
@@ -457,6 +564,16 @@ HRESULT CNPC::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
+	m_pShaderCom_PostEffect = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect");
+	NULL_CHECK_VAL(m_pShaderCom_PostEffect, E_FAIL);
+	if (FAILED(Add_Component(L"Com_PostEffectShader", m_pShaderCom_PostEffect)))
+		return E_FAIL;
+
+	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
+	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
+	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
+		return E_FAIL;
+
 
 
 
@@ -851,33 +968,59 @@ void CNPC::AnimVectorClear()
 
 void CNPC::Obb_Collision()
 {
-	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	if (m_IsBack)
 	{
-		if (!m_IsBazier)
+		if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
 		{
-			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_vec3 vTemp = { vPos - vTargetPos };
-			vTemp *= 5.f;
-			//vTemp.Normalize();
-			m_vStartPoint = vPos;
-			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			m_vMidPoint.y += 10.f;
-
-			_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
-			Create_Particle(vParticlePos);
-			m_IsBazier = true;	
+			if (!m_IsBazier)
+			{
+				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				vTemp *= 5.f;
+				m_vStartPoint = vPos;
+				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+				m_vMidPoint.y += 10.f;
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_IsBazier = true;
+			}
+			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 		}
-		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+		if (m_fBazierCnt >= 1.f)
+		{
+			m_fBazierCnt = 0.f;
+			m_IsOBB_Collision = false;
+			m_IsBazier = false;
+		}
 	}
-	if (m_fBazierCnt >= 1.f)
+	else
 	{
-		m_fBazierCnt = 0.f;
-		m_IsOBB_Collision = false;
-		m_IsBazier = false;
+		if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+		{
+			if (!m_IsBazier)
+			{
+				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				vTemp *= 1.f;
+				m_vStartPoint = vPos;
+				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+				//m_vMidPoint.y += 10.f;
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_IsBazier = true;
+			}
+			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+		}
+		if (m_fBazierCnt >= 1.f)
+		{
+			m_fBazierCnt = 0.f;
+			m_IsOBB_Collision = false;
+			m_IsBazier = false;
+		}
 	}
+
 }
 
 void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)

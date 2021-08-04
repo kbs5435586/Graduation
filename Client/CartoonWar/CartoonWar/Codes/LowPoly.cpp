@@ -34,22 +34,27 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 
 
 
-	_uint iRandNum = rand() % 10 + 1;
-	if (iRandNum >= 3)
-		m_IsHatch = false;
-	else
-		m_IsHatch = true;
-
+	//_uint iRandNum = rand() % 10 + 1;
+	//if (iRandNum >= 3)
+	//	m_IsHatch = false;
+	//else
+	//	m_IsHatch = true;
+	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	return S_OK;
 }
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
+	float fSize = m_pTransformCom->Get_Scale().x;
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY);
+	if(m_IsTree)
+		m_pTransformCom->Set_PositionY(fY);
+	else
+		m_pTransformCom->Set_PositionY(fY + fSize / 2.f);
 
 
 	return _int();
@@ -65,23 +70,28 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_float fLen = vLen.Length();
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
+		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (fLen <= 250.f)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-				return -1;	
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+				return -1;
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
 
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
 	}
 	else
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();;
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
-
 
 
 	return _int();
@@ -153,7 +163,6 @@ void CLowPoly::Render_GameObject()
 	}
 
 
-
 	Safe_Release(pManagement);
 }
 
@@ -220,7 +229,6 @@ void CLowPoly::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
 	m_matOldWorld = m_pTransformCom->Get_Matrix();
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 
@@ -331,6 +339,7 @@ CGameObject* CLowPoly::Clone_GameObject(void* pArg , _uint iIdx)
 		Safe_Release(pInstance);
 	}
 	m_iLayerIdx = iIdx;
+	m_IsTree = iIdx;
 	return pInstance;
 }
 

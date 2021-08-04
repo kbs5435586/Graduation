@@ -192,6 +192,7 @@
     <ClInclude Include="..\Headers\Define.h" />
     <ClInclude Include="..\Headers\Device.h" />
     <ClInclude Include="..\Headers\DirectXTex.h" />
+    <ClInclude Include="..\Headers\EffectBox.h" />
     <ClInclude Include="..\Headers\Enum.h" />
     <ClInclude Include="..\Headers\Extern.h" />
     <ClInclude Include="..\Headers\FbxLoader.h" />
@@ -327,6 +328,7 @@
     <ClCompile Include="..\Codes\Deffend.cpp" />
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
+    <ClCompile Include="..\Codes\EffectBox.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />

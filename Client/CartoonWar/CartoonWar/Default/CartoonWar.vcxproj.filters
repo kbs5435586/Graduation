@@ -454,6 +454,15 @@
     <Filter Include="97. Engine\01. Utility\13. SoundMgr">
       <UniqueIdentifier>{55ccad89-aa5d-4062-9135-5b9717ec2b37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect">
+      <UniqueIdentifier>{49423acf-8bde-4638-aa87-81dbd19711c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox">
+      <UniqueIdentifier>{9ab54483-9ed3-4ee6-a120-bf0d4f475803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect\01. EffectSphere">
+      <UniqueIdentifier>{4d94da06-8581-452e-93f4-1626ce29518e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -843,6 +852,9 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\EffectBox.h">
+      <Filter>02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1202,6 +1214,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\EffectBox.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

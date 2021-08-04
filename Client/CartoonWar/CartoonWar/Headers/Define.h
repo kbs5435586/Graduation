@@ -8,6 +8,8 @@
 #define DEAD_OBJ 1
 #define NO_EVENT 0
 
+#define MAX_BLURCNT 10
+
 const float	g_Near = 0.1f;
 const float g_Far = 300.f;
 
