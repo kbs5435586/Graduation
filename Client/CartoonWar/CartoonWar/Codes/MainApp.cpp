@@ -98,7 +98,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
-	
+	m_pManagement->Update_Sound();
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
@@ -160,7 +160,9 @@ HRESULT CMainApp::Ready_Sound()
 {
 	if (FAILED(m_pManagement->Ready_Channel()))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_BGSound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Hit.wav", 200.f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/BGM/Lobby.mp3", 0.2f)))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, BG, "../Bin/Resource/Sounds/BGM/Stage.mp3", 0.2f)))
 		return E_FAIL;
 	return S_OK;
 }

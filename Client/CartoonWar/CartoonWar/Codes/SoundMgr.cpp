@@ -21,7 +21,7 @@ HRESULT CSoundMgr::Ready_Channel()
 
 	return S_OK;
 }
-HRESULT CSoundMgr::Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume)
+HRESULT CSoundMgr::Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float& fVolume)
 {
 	FMOD_RESULT i = FMOD_OK;
 	if (FMOD_OK != (i = m_pFmod->createSound(pFilePath, FMOD_DEFAULT, 0, &m_SoundDev[eCharacter][State].pSound)))
@@ -32,7 +32,7 @@ HRESULT CSoundMgr::Add_Sound(Sound_Character eCharacter, SoundState State, const
 	m_SoundDev[eCharacter][State].fVolume = fVolume;
 	return S_OK;
 }
-HRESULT CSoundMgr::Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume)
+HRESULT CSoundMgr::Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float& fVolume)
 {
 	FMOD_RESULT i = FMOD_OK;
 	if (FMOD_OK != (i = m_pFmod->createSound(pFilePath, FMOD_DEFAULT, 0, &m_SoundDev[eCharacter][State].pSound)))
@@ -43,7 +43,7 @@ HRESULT CSoundMgr::Add_BGSound(Sound_Character eCharacter, SoundState State, con
 	m_SoundDev[eCharacter][State].fVolume = fVolume;
 	return S_OK;
 }
-void CSoundMgr::Play_Sound(Sound_Character eCharacter, SoundState State)
+void CSoundMgr::Play_Sound(Sound_Character eCharacter, SoundState State, FMOD_MODE eMode)
 {
 	if (FMOD_OK != m_pFmod->playSound(m_SoundDev[eCharacter][State].pSound, nullptr, false, &m_pCh[CHANNEL_EFEECT]))
 	{
@@ -51,21 +51,21 @@ void CSoundMgr::Play_Sound(Sound_Character eCharacter, SoundState State)
 		return;
 	}
 	m_pCh[CHANNEL_EFEECT]->setVolume(m_SoundDev[eCharacter][State].fVolume);
+	m_pCh[CHANNEL_EFEECT]->setMode(eMode);
+
 }
-void CSoundMgr::Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume)
+void CSoundMgr::Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
 {
-	m_pFmod->update();
 	if (FMOD_OK != m_pFmod->playSound(m_SoundDev[eCharacter][State].pSound, nullptr, false, &m_pCh[eChannel]))
 	{
 		_MSG_BOX("Sound Play Failed!");
 		return;
 	}
-	m_pCh[State]->setVolume(fVolume);
+	m_pCh[eChannel]->setVolume(m_SoundDev[eCharacter][State].fVolume);
+	m_pCh[eChannel]->setMode(eMode);
 }
-
 void CSoundMgr::Play_BGSound(Sound_Character eCharacter, SoundState State)
 {
-	m_pFmod->update();
 	if (FMOD_OK != m_pFmod->playSound(m_SoundDev[eCharacter][State].pSound, nullptr, false, &m_pCh[CHANNEL_BG]))
 	{
 		_MSG_BOX("Sound Play Failed!");
@@ -90,9 +90,7 @@ void CSoundMgr::Pause_BGSound()
 		_MSG_BOX("Sound Pause Failed!");
 		return;
 	}
-	m_pFmod->update();
 }
-
 void CSoundMgr::SetVolume(SoundChannel eChannel, const _float& fVolume)
 {
 	m_fVolume = fVolume;
@@ -123,7 +121,6 @@ CSoundMgr* CSoundMgr::Create()
 {
 	return nullptr;
 }
-
 void CSoundMgr::Free()
 {
 	for (size_t i = 0; i < SOUND_END; i++)

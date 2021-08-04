@@ -14,16 +14,16 @@ private:
 public:
 	HRESULT						Ready_Channel();
 public:
-	HRESULT						Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume);
-	HRESULT						Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float fVolume);
+	HRESULT						Add_Sound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float& fVolume);
+	HRESULT						Add_BGSound(Sound_Character eCharacter, SoundState State, const char* pFilePath, const _float& fVolume);
 public:
-	void						Play_Sound(Sound_Character eCharacter, SoundState State);
+	void						Play_Sound(Sound_Character eCharacter, SoundState State, FMOD_MODE eMode = FMOD_LOOP_OFF);
 	void						Play_BGSound(Sound_Character eCharacter, SoundState State);
 	void						Pause_Sound();
 	void						Pause_BGSound();
 public:
-	void						Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float & fVolume = 0.5f);
-	void						SetVolume(SoundChannel eChannel, const _float & fVolume);
+	void						Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume = 0.5f, FMOD_MODE eMode = FMOD_LOOP_OFF);
+	void						SetVolume(SoundChannel eChannel, const _float& fVolume);
 	void						Pause_Sound(SoundChannel eChannel);
 	void						Stop_Sound(SoundChannel eChannel);
 	void						Update_Sound();

@@ -47,6 +47,7 @@ using namespace chrono;
 #include <string>
 #include <wrl/client.h>
 #include <fmod.hpp>
+#include <io.h>
 
 
 
