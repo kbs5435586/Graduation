@@ -43,13 +43,13 @@ HRESULT CHatch::Ready_GameObject(void* pArg)
 
 _int CHatch::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Scaling(0.05f, 0.05f, 0.05f);
+	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
 	return _int();
 }
 
 _int CHatch::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
