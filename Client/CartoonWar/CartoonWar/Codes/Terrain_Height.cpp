@@ -90,12 +90,9 @@ void CTerrain_Height::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
 
-
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(),  TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(1),  TEXTURE_REGISTER::t1);
-
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t2);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t3);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t1);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(2), TEXTURE_REGISTER::t2);
 
 
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
@@ -211,7 +208,7 @@ HRESULT CTerrain_Height::Ready_Component()
 		NULL_CHECK_VAL(m_pTextureCom_Grass_Mix, E_FAIL);
 		if (FAILED(Add_Component(L"Com_Texture_Grass_Mix", m_pTextureCom_Grass_Mix)))
 			return E_FAIL;
-		m_pTextureCom_Ground = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Ground");
+		m_pTextureCom_Ground = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_NGround");
 		NULL_CHECK_VAL(m_pTextureCom_Ground, E_FAIL);
 		if (FAILED(Add_Component(L"Com_Texture_Ground", m_pTextureCom_Ground)))
 			return E_FAIL;

@@ -34,11 +34,11 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 
 
 
-	//_uint iRandNum = rand() % 10 + 1;
-	//if (iRandNum >= 3)
-	//	m_IsHatch = false;
-	//else
-	//	m_IsHatch = true;
+	_uint iRandNum = rand() % 10 + 1;
+	if (iRandNum >= 3)
+		m_IsHatch = false;
+	else
+		m_IsHatch = true;
 
 	return S_OK;
 }

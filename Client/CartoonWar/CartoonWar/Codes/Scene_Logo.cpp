@@ -119,7 +119,7 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strIP.c_str(), 100, 100)))
 		return E_FAIL;
 
-	//pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 0.f, FMOD_LOOP_NORMAL);
+	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 0.f, FMOD_LOOP_NORMAL);
 	Safe_Release(pManagement);
 	return S_OK;
 
@@ -1412,7 +1412,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse",
 			CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Human/WK_Horse%d.tga", 4, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
-
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_NGround",
+			CTexture::Create(L"../Bin/Resource/Texture/Terrain/NGround%d.tga", 3, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
 	}
 
 	return S_OK;

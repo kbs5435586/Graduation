@@ -94,15 +94,16 @@ VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut = (VS_OUT)0;
 
-	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.vTexUV = vIn.vTexUV;
-	vOut.vNormal = mul(float4(vIn.vNormal, 1.f), matWV);
-	vOut.vWorldPos = mul(float4(vIn.vNormal, 1.f), matWV);
+	vOut.vPosition	= mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vNormal	= mul(float4(vIn.vNormal, 0.f), matWV);
+	vOut.vWorldPos	= mul(float4(vIn.vPosition, 1.f), matWV);
+	vOut.vTexUV		= vIn.vTexUV;
 
-	float3 normalW = normalize(mul(vIn.vNormal, (float3x3)matRev));
+	//float3 normalW = normalize(mul(vIn.vNormal, (float3x3)matRev));
+	float4	vNormal = normalize(float4(vIn.vNormal,0.f));
 
 	//float  diffuse = min(1.0, max(0, dot(normalize(-tLight[0].vLightDir.xyz), normalW)));
-	float  diffuse = min(1.0, max(0, dot(normalize(-vCamPos.xyz), normalW)));
+	float  diffuse = min(1.0, max(0, dot(normalize(-vCamPos), vOut.vNormal)));
 
 
 	float  hatchFactor = diffuse * 6.f;
@@ -160,7 +161,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	//vOut.vTarget1 = hatchColor;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
-	vOut.vDiffuseTex = hatchColor;
+	vOut.vDepthTex = float4(1.f,1.f,1.f,1.f);
 
 	return vOut;
 }
