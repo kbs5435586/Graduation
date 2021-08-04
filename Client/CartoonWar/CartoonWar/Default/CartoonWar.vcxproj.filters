@@ -870,6 +870,30 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_ClassTap.h">
+      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Shop.h">
+      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Button.h">
+      <Filter>02. GameObject\97. UI\98. default\00. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_CharInterface.h">
+      <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_ButtonNPC.h">
+      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Skill.h">
+      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Inventory_Camera.h">
+      <Filter>02. GameObject\98. Camera\02. Inventory_Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player_Inven.h">
+      <Filter>02. GameObject\01. Scene_Stage\00. Player\Inven</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1229,6 +1253,30 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_ClassTap.cpp">
+      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Shop.cpp">
+      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Button.cpp">
+      <Filter>02. GameObject\97. UI\98. default\00. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_CharInterface.cpp">
+      <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp">
+      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Skill.cpp">
+      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory_Camera.cpp">
+      <Filter>02. GameObject\98. Camera\02. Inventory_Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player_Inven.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\00. Player\Inven</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

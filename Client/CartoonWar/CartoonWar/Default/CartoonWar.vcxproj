@@ -209,6 +209,7 @@
     <ClInclude Include="..\Headers\Hash.h" />
     <ClInclude Include="..\Headers\Hatch.h" />
     <ClInclude Include="..\Headers\Input.h" />
+    <ClInclude Include="..\Headers\Inventory_Camera.h" />
     <ClInclude Include="..\Headers\KeyManager.h" />
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
@@ -229,6 +230,7 @@
     <ClInclude Include="..\Headers\Particle_Run.h" />
     <ClInclude Include="..\Headers\Picking.h" />
     <ClInclude Include="..\Headers\Player.h" />
+    <ClInclude Include="..\Headers\Player_Inven.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\Reflection_Camera.h" />
     <ClInclude Include="..\Headers\RTT.h" />
@@ -270,6 +272,10 @@
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Aim.h" />
+    <ClInclude Include="..\Headers\UI_Button.h" />
+    <ClInclude Include="..\Headers\UI_ButtonNPC.h" />
+    <ClInclude Include="..\Headers\UI_CharInterface.h" />
+    <ClInclude Include="..\Headers\UI_ClassTap.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_MiniMap.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
@@ -281,6 +287,8 @@
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
+    <ClInclude Include="..\Headers\UI_Shop.h" />
+    <ClInclude Include="..\Headers\UI_Skill.h" />
     <ClInclude Include="..\Headers\UI_WoL.h" />
     <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
@@ -339,6 +347,7 @@
     <ClCompile Include="..\Codes\GameObject_Manager.cpp" />
     <ClCompile Include="..\Codes\Hatch.cpp" />
     <ClCompile Include="..\Codes\Input.cpp" />
+    <ClCompile Include="..\Codes\Inventory_Camera.cpp" />
     <ClCompile Include="..\Codes\KeyManager.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Light.cpp" />
@@ -359,6 +368,7 @@
     <ClCompile Include="..\Codes\Particle_Run.cpp" />
     <ClCompile Include="..\Codes\Picking.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
+    <ClCompile Include="..\Codes\Player_Inven.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
     <ClCompile Include="..\Codes\Reflection_Camera.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
@@ -397,6 +407,10 @@
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Aim.cpp" />
+    <ClCompile Include="..\Codes\UI_Button.cpp" />
+    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp" />
+    <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
+    <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />
@@ -408,6 +422,8 @@
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
+    <ClCompile Include="..\Codes\UI_Shop.cpp" />
+    <ClCompile Include="..\Codes\UI_Skill.cpp" />
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
