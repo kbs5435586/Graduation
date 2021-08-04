@@ -60,7 +60,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = {100.f,100.f,100.f };
 	_vec3 vColliderSize = { 400.f ,160.f,40.f };
-	//_vec3 vColliderSize = { 60.f ,80.f,60.f };
 	m_pCollider_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_Attack->Clone_ColliderBox(m_pTransformCom, vColliderSize);

@@ -272,9 +272,9 @@ HRESULT CManagement::Add_BGSound(Sound_Character eCharacter, SoundState State, c
 	return m_pSound_Manager->Add_BGSound(eCharacter, State, pFilePath, fVolume);
 }
 
-void CManagement::Play_Sound(Sound_Character eCharacter, SoundState State)
+void CManagement::Play_Sound(Sound_Character eCharacter, SoundState State, FMOD_MODE eMode )
 {
-	return m_pSound_Manager->Play_Sound(eCharacter, State);
+	return m_pSound_Manager->Play_Sound(eCharacter, State, eMode);
 }
 
 void CManagement::Play_BGSound(Sound_Character eCharacter, SoundState State)
@@ -292,9 +292,9 @@ void CManagement::Pause_BGSound()
 	return m_pSound_Manager->Pause_BGSound();
 }
 
-void CManagement::Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume)
+void CManagement::Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
 {
-	return m_pSound_Manager->Play_Sound(eChannel, eCharacter, State, fVolume);
+	return m_pSound_Manager->Play_Sound(eChannel, eCharacter, State, fVolume, eMode);
 }
 
 void CManagement::SetVolume(SoundChannel eChannel, const _float& fVolume)

@@ -120,8 +120,8 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strID.c_str(), 100, 100)))
 		return E_FAIL;
 
+	//pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 0.f, FMOD_LOOP_NORMAL);
 	Safe_Release(pManagement);
-	CManagement::GetInstance()->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 200.f);
 	return S_OK;
 
 }
@@ -129,6 +129,8 @@ HRESULT CScene_Logo::Ready_Scene()
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
 
+	if(GetAsyncKeyState('M'))
+		CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
 	Input_ID_IP();
 	return CScene::Update_Scene(fTimeDelta);
 }

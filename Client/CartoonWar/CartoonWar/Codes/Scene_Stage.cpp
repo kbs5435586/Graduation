@@ -78,18 +78,13 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
-		return E_FAIL;
-
+	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
@@ -103,6 +98,9 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	Safe_Release(server);
 	g_IsCollisionStart = true;
+	CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
+	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 0.f, FMOD_LOOP_NORMAL);
+
 	Safe_Release(pManagement);
 	return S_OK;
 }

@@ -241,7 +241,7 @@
     <ClInclude Include="..\Headers\Scene_Stage.h" />
     <ClInclude Include="..\Headers\Server_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
@@ -289,7 +289,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="protocol.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -371,7 +371,7 @@
     <ClCompile Include="..\Codes\Scene_Stage.cpp" />
     <ClCompile Include="..\Codes\Server_Manager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Codes\Shader.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
