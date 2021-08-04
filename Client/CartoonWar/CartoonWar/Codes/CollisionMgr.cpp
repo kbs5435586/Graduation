@@ -98,9 +98,9 @@ void CCollisionMgr::Player_to_Player_Collision()
 				/////////
 				if (iter0->GetIsDash())
 				{
-					if (dynamic_cast<CPlayer*>(iter0)->getClass() == (CLASS)2 ||
-						dynamic_cast<CPlayer*>(iter0)->getClass() == (CLASS)4 ||
-						dynamic_cast<CPlayer*>(iter0)->getClass() == (CLASS)7)
+					if (dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)2 ||
+						dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)4 ||
+						dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)7)
 					{
 						(iter1)->GetOBBCollision() = true;
 						(iter0)->GetOBBCollision() = true;
@@ -220,7 +220,6 @@ void CCollisionMgr::Deffend_to_Player()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
-
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -230,6 +229,7 @@ void CCollisionMgr::Deffend_to_Player()
 				continue;
 			if (iter1->GetIsHit() || iter0->GetIsHit())
 				continue;
+		
 
 			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_OBB"))
 				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_OBB"))))

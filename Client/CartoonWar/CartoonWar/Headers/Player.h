@@ -58,7 +58,7 @@ public:
 	//void									Create_Particle(const _vec3& vPoistion);
 public:
 	CLASS&									GetClass(){return m_eCurClass;}
-	CLASS&									getClass() { return m_eCurClass; }
+
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -118,7 +118,6 @@ private:
 private:
 	_uint									m_iCurMeshNum = 0;
 public:
-	//CLASS									getClass() { return m_eCurClass; }
 	_uint									GetCurMesh() { return m_iCurMeshNum; }
 	void									SetCurMesh(_uint _c) { m_iCurMeshNum = _c; }
 

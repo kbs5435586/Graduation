@@ -78,19 +78,15 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
-	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
+		return E_FAIL;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
+		return E_FAIL;
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Demo/Low.dat")))
-	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 

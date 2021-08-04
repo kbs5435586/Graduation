@@ -34,7 +34,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_tPlayer = *(PLAYER*)pArg;
 	}
 	
-	
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -84,6 +83,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
+	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 	Attack(fTimeDelta);
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
@@ -112,27 +112,28 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_PositionY(fY);
 	}
 	
-
-	m_eCurClass = (CLASS)m_iCurMeshNum;
-	Change_Class();
-
+	
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
 	if (!m_IsActive)
 		Input_Key(fTimeDelta);
-	else
-	{
-		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-		{
-			m_iCurAnimIdx = 0;
-			m_IsOnce = false;
-		}
-	}
+	//else
+	//{
+	//	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//	{
+	//		m_iCurAnimIdx = 0;
+	//		m_IsOnce = false;
+	//	}
+	//}
 
 	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
+	Skill_Fly(fTimeDelta, fY);
+	Skill_Invisible(fTimeDelta);
+	Skill_CastFire(fTimeDelta);
+
 	if (m_tInfo.fHP <= 0.f)
 	{
 		if (!m_IsDeadMotion)
@@ -148,62 +149,41 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		Resurrection();
 
-	Skill_Fly(fTimeDelta, fY);
-	Skill_Invisible(fTimeDelta);
-	Skill_CastFire(fTimeDelta);
-
-
+	
 	if (m_IsParticleRun)
 	{
 		m_fParticleRunTime += fTimeDelta;
-
-	
-
-
-
-
-		//if (m_IsParticle)
-		//{
-		//	_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		//	Create_Particle(vParticlePos);
-		//	//m_IsBazier = true;
-		//	m_IsParticle = false;
-		//}
-
-
-		//if (m_IsDead)
-			//return DEAD_OBJ;
-
-		if (m_fParticleRunTime >= 1.f)
-		{
-			CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-			if (nullptr == pTerrainBuffer)
-				return NO_EVENT;
-
-			_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-			_vec3 vPosition = {};
-			vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_vec3 vTemp = vPosition;
-			vTemp.y = fY;
-
-			PARTICLESET tParticleSet;
-			tParticleSet.vPos = vTemp;
-			tParticleSet.iMaxParticle = 20;
-			tParticleSet.fMaxLifeTime = 1.f;
-			tParticleSet.iMinLifeTime = 0.5f;
-
-			tParticleSet.fStartScale = 0.5f;
-			tParticleSet.fEndScale = 0.1f;
-
-			tParticleSet.fMaxSpeed = 10.f;
-			tParticleSet.fMinSpeed = 20.f;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
-				return NO_EVENT;
-			m_fParticleRunTime = 0.f;
-			m_IsParticleRun = false;
-		}
-
 	}
+
+	if (m_fParticleRunTime >= 1.f)
+	{
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return NO_EVENT;
+
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		_vec3 vPosition = {};
+		vPosition = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vTemp = vPosition;
+		vTemp.y = fY;
+
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 20;
+		tParticleSet.fMaxLifeTime = 1.f;
+		tParticleSet.iMinLifeTime = 0.5f;
+
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.1f;
+
+		tParticleSet.fMaxSpeed = 10.f;
+		tParticleSet.fMinSpeed = 20.f;
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Run", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return NO_EVENT;
+		m_fParticleRunTime = 0.f;
+		m_IsParticleRun = false;
+	}
+
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 	return NO_EVENT;
 }
@@ -1176,17 +1156,19 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 {
 	if (m_IsParticle)
 	{
+		_vec3 vTemp = vPoistion;
+		vTemp.y += 10.f;
 		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vPoistion;
-		tParticleSet.iMaxParticle = 30;
-		tParticleSet.fMaxLifeTime = 1.f;
-		tParticleSet.iMinLifeTime = 1.f;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 300;
+		tParticleSet.fMaxLifeTime = 0.2f;
+		tParticleSet.iMinLifeTime = 0.01f;
 
-		tParticleSet.fStartScale = 1.f;
-		tParticleSet.fEndScale = 1.f;
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.2f;
 
-		tParticleSet.fMaxSpeed = 10.f;
-		tParticleSet.fMinSpeed = 100.f;
+		tParticleSet.fMaxSpeed = 30.f;
+		tParticleSet.fMinSpeed = 50.f;
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
@@ -1220,6 +1202,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsOnce = true;
 		m_IsHit = true;
 		m_IsCombat = true;
+
 		if (m_IsFire)
 		{
 			m_IsFire = false;
@@ -1243,8 +1226,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (teleportNum > 1)
 				teleportNum = 0;
 		}
-
-
 	}
 
 		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
@@ -1279,8 +1260,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				m_iCurAnimIdx = m_iCombatMotion[0];
 		}
 
-		if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
-		{
+	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
+	{
 			m_IsDash = true;
 			if (!m_IsCombat)
 				m_iCurAnimIdx = 2;
@@ -1315,9 +1296,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_pTransformCom->BackWard(fTimeDelta);
 			m_IsSlide = false;
 		}
-
-	 
-
 
 		m_IsParticleRun = true;
 
@@ -1402,13 +1380,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		{
 			m_IsHit_PostEffect = true;
 		}
-		//if (CManagement::GetInstance()->Key_Down(KEY_2))
-		//{
-			//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				//L"Layer_NPC", L"Com_Transform", 0);
-			//m_tInfo.fHP =0.f;;
-			//m_pTransformCom->Rotation_Rev(fTimeDelta, pTransform);
-		//}
+	
 		if (CManagement::GetInstance()->Key_Down(KEY_3))
 		{
 		}
@@ -1456,12 +1428,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 					return;
 
 				m_IsFire = !m_IsFire;	//true
-				//list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-				//fireCnt = lst.size()-1;
-				//if (lst.size() == 0)
-				//	fireCnt = lst.size();
-				//else
-				//	fireCnt = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size();
+			
 				Safe_Release(pManagement);
 			}
 		}
@@ -1472,13 +1439,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (numver > 0)
 			{
 				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-				//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
 				_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
 				CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
 				BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-
-
 				*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
 			}
 		}
@@ -1522,16 +1486,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 		}
 
-		//if (m_IsTeleportCheck)
-		//{
-		//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-		//	int numver = lst.size();
-		//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-		//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-		//}
-
-
-
+	
 
 		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 		{
