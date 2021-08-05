@@ -1234,28 +1234,6 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	fCnt += 0.02f;
 }
 
-void CPlayer::Create_Particle(const _vec3& vPoistion)
-{
-	if (m_IsParticle)
-	{
-		PARTICLESET tParticleSet;
-		tParticleSet.vPos = vPoistion;
-		tParticleSet.iMaxParticle = 30;
-		tParticleSet.fMaxLifeTime = 1.f;
-		tParticleSet.iMinLifeTime = 1.f;
-
-		tParticleSet.fStartScale = 1.f;
-		tParticleSet.fEndScale = 1.f;
-
-		tParticleSet.fMaxSpeed = 10.f;
-		tParticleSet.fMinSpeed = 100.f;
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
-			return;
-		m_IsParticle = false;
-	}
-
-}
-
 void CPlayer::Input_Key(const _float& fTimeDelta)
 {
 	CServer_Manager* server = CServer_Manager::GetInstance();
