@@ -1343,6 +1343,22 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 				return;
 		}
+		else if (m_eCurClass == CLASS::CLASS_WORKER)
+		{
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				return;
+		}
+		else
+		{
+			//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+			//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+			//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+			//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+			CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+				return;
+		}
 		server->send_animation_packet(A_ATTACK);
 		m_IsOnce = true;
 		m_IsHit = true;
@@ -1922,12 +1938,22 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 	if (m_IsParticle)
 	{
 		_vec3 vTemp = vPoistion;
-		vTemp.y += 10.f;
+		vTemp.y += 5.f;
 		PARTICLESET tParticleSet;
 		tParticleSet.vPos = vTemp;
 		tParticleSet.iMaxParticle = 300;
 		tParticleSet.fMaxLifeTime = 0.2f;
 		tParticleSet.iMinLifeTime = 0.01f;
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.2f;
+		tParticleSet.fMaxSpeed = 30.f;
+		tParticleSet.fMinSpeed = 50.f;
+
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return;
+		m_IsParticle = false;
+	}
+}
 
 void CPlayer::Skill_CastFire(const _float& fTimeDelta)
 {
