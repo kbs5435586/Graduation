@@ -37,7 +37,7 @@ float4	PS_Main(VS_OUT vIn) : SV_TARGET0
 	float2 vScreenUV = float2(vIn.vPosition.x / 1920, vIn.vPosition.y / 1080);
 	
 		
-	float2 vDir = normalize(float2(0.5f, 0.5f) - vScreenUV);
+	float2 vDir = normalize(float2(1.f, 0.f) - vScreenUV);
 	float fDist = distance(float2(0.5f, 0.5f), vScreenUV);
 
 	// 왜곡 강도에 영향을 주는 중심으로부터 떨어진 비율( 중심에 가까울 수록 0에 가깝다.)

@@ -83,6 +83,9 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	SetSpeed();
+
+	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	return S_OK;
 }
 
@@ -328,8 +331,13 @@ void CPlayer::Render_GameObject()
 	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
-
-
+	m_iBlurCnt++;
+	if (m_iBlurCnt >= 2)
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_iBlurCnt = 0;
+	}
 	Safe_Release(pManagement);
 }
 
@@ -454,8 +462,8 @@ void CPlayer::Render_Blur()
 		m_pCurMeshCom->Render_Mesh(i);
 	}
 
-	m_matOldWorld = m_pTransformCom->Get_Matrix();
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	//m_matOldWorld = m_pTransformCom->Get_Matrix();
+	//m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 
 	Safe_Release(pManagement);
 }
@@ -1160,29 +1168,59 @@ void CPlayer::AnimVectorClear()
 
 void CPlayer::Obb_Collision()
 {
-	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	if (m_IsBack)
 	{
-		if (!m_IsBazier)
+		if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
 		{
-			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_vec3 vTemp = { vPos - vTargetPos };
-			vTemp *= 5.f;
-			m_vStartPoint = vPos;
-			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			m_vMidPoint.y += 3.f;
-			//m_vMidPoint.y += 2.f;
-			m_IsBazier = true;
+			if (!m_IsBazier)
+			{
+				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				vTemp *= 5.f;
+				m_vStartPoint = vPos;
+				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+				m_vMidPoint.y += 10.f;
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_IsBazier = true;
+			}
+			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 		}
-		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+		if (m_fBazierCnt >= 1.f)
+		{
+			m_fBazierCnt = 0.f;
+			m_IsOBB_Collision = false;
+			m_IsBazier = false;
+		}
 	}
-	if (m_fBazierCnt >= 1.f)
+	else
 	{
-		m_fBazierCnt = 0.f;
-		m_IsOBB_Collision = false;
-		m_IsBazier = false;
+		if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+		{
+			if (!m_IsBazier)
+			{
+				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				vTemp *= 1.f;
+				m_vStartPoint = vPos;
+				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+				//m_vMidPoint.y += 10.f;
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_IsBazier = true;
+			}
+			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+		}
+		if (m_fBazierCnt >= 1.f)
+		{
+			m_fBazierCnt = 0.f;
+			m_IsOBB_Collision = false;
+			m_IsBazier = false;
+		}
 	}
+
 }
 
 void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
@@ -1879,90 +1917,17 @@ void CPlayer::Resurrection()
 	m_IsDead = false;
 }
 
-void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
+void CPlayer::Create_Particle(const _vec3& vPoistion)
 {
-	if (m_IsFly_START || m_IsFly_ING)
+	if (m_IsParticle)
 	{
-		m_fCoolTime_ONE += fTimeDelta;
-		if (m_fCoolTime_ONE > 5.f)
-		{
-			//m_pTransformCom->m_fVel = 0.f;
-			m_IsStart = false;
-			m_IsFly_ING = false;
-			m_IsFly_END = true;
-			m_fCoolTime_ONE = 0.f;
-		}
-	}
-
-
-	if (!m_IsStart)
-	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
-		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
-		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
-	}
-
-	if (m_IsFly_START)
-	{
-		m_IsStart = true;
-		if (m_pTransformCom->Get_Scale().x > 0.05f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
-				m_pTransformCom->Get_Scale().z - 0.001f);
-		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
-			m_pTransformCom->UP(fTimeDelta);
-		else
-		{
-			m_IsFly_ING = true;
-		}
-
-	}
-	if (m_IsFly_ING)
-	{
-		if (m_IsUandD)
-		{
-			m_pTransformCom->Fallen(fTimeDelta);
-			if (m_pTransformCom->m_fVel < -5)
-				m_IsUandD = !m_IsUandD;
-		}
-		else
-		{
-			m_pTransformCom->UP(fTimeDelta);
-			if (m_pTransformCom->m_fVel > 5)
-				m_IsUandD = !m_IsUandD;
-		}
-	}
-
-	if (m_IsFly_END)
-	{
-		if (m_pTransformCom->Get_Scale().x < 0.1f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
-				m_pTransformCom->Get_Scale().z + 0.001f);
-		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
-			m_pTransformCom->Fallen(fTimeDelta);
-		else
-		{
-			//m_IsFly_ING = false;
-			m_IsFly_END = false;
-			m_IsStart = false;
-
-			m_pTransformCom->m_fVel = 0.f;
-		}
-	}
-
-}
-
-void CPlayer::Skill_Invisible(const _float& fTimeDelta)
-{
-	if (m_IsInvisible)
-	{
-		m_fCoolTime_TWO += fTimeDelta;
-		if (m_fCoolTime_TWO > 20.f)
-		{
-			m_IsInvisible = !m_IsInvisible;
-			m_fCoolTime_TWO = 0.f;
-		}
-	}
-}
+		_vec3 vTemp = vPoistion;
+		vTemp.y += 10.f;
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 300;
+		tParticleSet.fMaxLifeTime = 0.2f;
+		tParticleSet.iMinLifeTime = 0.01f;
 
 void CPlayer::Skill_CastFire(const _float& fTimeDelta)
 {

@@ -53,6 +53,7 @@
 #include "Water.h"
 #include "Deffend.h"
 #include "Animals.h"
+#include "EffectBox.h"
 
 
 CScene_Stage::CScene_Stage()
@@ -82,9 +83,11 @@ HRESULT CScene_Stage::Ready_Scene()
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
 	//	return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
+	_bool	IsTree = true;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat", (void*)&IsTree)))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
+	IsTree = false;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat", (void*)&IsTree)))
 		return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
@@ -193,6 +196,7 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Deffend", CDeffend::Create())))
 		return E_FAIL;
 
+
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
@@ -200,6 +204,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
 		return E_FAIL;
 	return S_OK;
 }

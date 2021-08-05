@@ -27,6 +27,8 @@ public:
 	_bool&									GetIsDash() { return m_IsDash; }
 	_bool&									GetIsDead(){return m_IsDead;}
 	_bool&									GetIsParticle(){return m_IsParticle;}
+	_bool&									GetIsBack() {return m_IsBack;}
+	_bool&									GetIsTree() {return m_IsTree;}
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
@@ -59,10 +61,15 @@ protected:
 	_bool									m_IsOldMatrix = false;
 	_bool									m_IsOldMatrix_Temp = false;
 	_bool									m_IsPick = false;
+	_bool									m_IsActioning = false;
 	_bool									m_IsRun = false;
+	_bool									m_IsBack = false;
+	_bool									m_IsTree = false;
 	TEAM									m_eTeam = TEAM::TEAM_END;
 	_bool									m_IsHit_PostEffect = false;
 	_vec3									m_vColShpereSize = {};
+protected:
+	_uint									m_iBlurCnt = 0;
 protected:
 	_matrix									m_matOldWorld;
 	_matrix									m_matOldView;
