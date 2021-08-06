@@ -17,6 +17,8 @@ private:
     short my_id;
     short my_npc;
     short my_hp;
+    short my_troop;
+    short my_last_troop;
     bool isSendOnePacket;
     bool isConnected = false;
     bool isRed;
@@ -52,6 +54,7 @@ public:
     void send_mouse_packet(float rotate);
     void send_position_packet(_vec3* pos);
     void send_class_change_packet(int idx, char type);
+    void send_change_troop();
 
     void update_key_input();
 
@@ -83,6 +86,8 @@ public:
     short Get_AnimNPC(int id);
     float Get_GameTime();
     short Get_NpcSize();
+    short Get_TroopClass();
+    void Set_TroopClass(short mclass);
 
     bool is_player(int id);
     bool is_npc(int id);

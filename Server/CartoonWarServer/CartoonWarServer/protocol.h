@@ -3,8 +3,8 @@
 #define MY_NPC_START_SERVER(p) 30 + (14 * p)
 #define MY_NPC_END_SERVER(p) 43 + (14 * p)
 
-#define MY_NPC_START_CLIENT(p) (15 * p)
-#define MY_NPC_END_CLIENT(p) 13 + (15 * p)
+#define MY_NPC_START_CLIENT(p) (14 * p)
+#define MY_NPC_END_CLIENT(p) 13 + (14 * p)
 
 enum PLAYERS {
 	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
@@ -59,8 +59,8 @@ constexpr char CS_PACKET_CHANGE_FORMATION = 5;
 constexpr char CS_PACKET_ATTACK = 6;
 constexpr char CS_PACKET_ANIMATION = 7;
 constexpr char CS_PACKET_POSITION = 8;
-constexpr char CS_PACKET_MOUSE = 9;
-constexpr char CS_PACKET_CLASS_CHANGE = 10;
+constexpr char CS_PACKET_CLASS_CHANGE = 9;
+constexpr char CS_PACKET_TROOP_CHANGE = 10;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
@@ -106,6 +106,12 @@ constexpr unsigned short C_SPEARMAN = 5;
 constexpr unsigned short C_MAGE = 6;
 constexpr unsigned short C_MMAGE = 7;
 constexpr unsigned short C_ARCHER = 8;
+
+constexpr unsigned char T_INFT = 0;
+constexpr unsigned char T_HORSE = 1;
+constexpr unsigned char T_MAGE = 2;
+constexpr unsigned char T_BOW = 3;
+constexpr unsigned char T_ALL = 4;
 
 constexpr unsigned char F_SQUARE = 0;
 constexpr unsigned char F_PIRAMID = 1;
@@ -265,13 +271,6 @@ struct cs_packet_class_change
 	short p_class;
 };
 
-struct cs_packet_mouse
-{
-	char			size;
-	char			type;
-	float			mouse;
-};
-
 struct cs_packet_animation
 {
 	char			size;
@@ -335,11 +334,17 @@ struct cs_packet_add_npc
 	char	type;
 };
 
+struct cs_packet_change_troop
+{
+	char	size;
+	char	type;
+	char	troop;
+};
+
 struct cs_packet_npc_act
 {
 	char	size;
 	char	type;
-	int		id;
 	char	act;
 };
 
@@ -349,10 +354,8 @@ struct cs_packet_change_formation
 	char	type;
 };
 
+constexpr unsigned char DO_FOLLOW = 0;
 constexpr unsigned char DO_ATTACK = 1;
-constexpr unsigned char DO_DEFENCE = 2;
-constexpr unsigned char DO_HOLD = 3;
-constexpr unsigned char DO_FOLLOW = 4;
-constexpr unsigned char DO_RANDMOVE = 5;
+constexpr unsigned char DO_HOLD = 2;
 
 #pragma pack (pop)

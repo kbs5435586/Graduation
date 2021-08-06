@@ -65,7 +65,7 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeY = 50.f;
 
 
-			if (server->Get_NpcSize() < 14)
+			if (server->Get_NpcSize() < 3)
 			{
 				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 					- server->Get_AddNPC_Cooltime());
@@ -75,8 +75,6 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 					server->Set_AddNPC_CoolTime(high_resolution_clock::now());
 				}
 			}
-
-
 			IsDown = false;
 		}
 	}

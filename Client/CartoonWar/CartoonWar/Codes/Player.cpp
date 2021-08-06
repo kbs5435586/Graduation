@@ -1594,45 +1594,70 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))
 	{
+		server->Set_TroopClass(T_INFT);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F2))
 	{
+		server->Set_TroopClass(T_HORSE);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F3))
 	{
+		server->Set_TroopClass(T_MAGE);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F4))
 	{
+		server->Set_TroopClass(T_BOW);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F5))
 	{
-	}
-
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_AddNPC_Cooltime());
-		if (cool_time.count() > 2)
-		{
-			server->send_add_npc_packet();
-			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
-		}
+		server->Set_TroopClass(T_ALL);
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_1))
 	{
-		m_iCurMeshNum++;
-		if (m_iCurMeshNum > (_uint)CLASS::CLASS_END - 1)
-			m_iCurMeshNum = 0;
-		m_iCurAnimIdx = 0;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
+		//m_iCurMeshNum++;
+		//if (m_iCurMeshNum > (_uint)CLASS::CLASS_END - 1)
+		//	m_iCurMeshNum = 0;
+		//m_iCurAnimIdx = 0;
+		//m_eCurClass = (CLASS)m_iCurMeshNum;
+		server->send_npc_act_packet(DO_FOLLOW);
 
 	}
-
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		m_IsHit_PostEffect = true;
+		//m_IsHit_PostEffect = true;
+		server->send_npc_act_packet(DO_ATTACK);
 	}
+	if (CManagement::GetInstance()->Key_Down(KEY_3))
+	{
+		server->send_npc_act_packet(DO_HOLD);
+	}
+
+	/*if ((GetAsyncKeyState('1') & 0x8000))
+	{
+		send_npc_act_packet(DO_ATTACK);
+		isSendOnePacket = false;
+	}
+	if ((GetAsyncKeyState('2') & 0x8000))
+	{
+		send_npc_act_packet(DO_DEFENCE);
+		isSendOnePacket = false;
+	}
+	if ((GetAsyncKeyState('3') & 0x8000))
+	{
+		send_npc_act_packet(DO_HOLD);
+		isSendOnePacket = false;
+	}
+	if ((GetAsyncKeyState('4') & 0x8000))
+	{
+		send_npc_act_packet(DO_FOLLOW);
+		isSendOnePacket = false;
+	}
+	if ((GetAsyncKeyState('5') & 0x8000))
+	{
+		send_npc_act_packet(DO_RANDMOVE);
+		isSendOnePacket = false;
+	}*/
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
 		m_IsOnce = true;

@@ -80,6 +80,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		my_id = recv_id;
 		my_hp = my_packet->hp;
 		my_npc = 0; // ¼öÁ¤
+		my_troop = T_ALL;
+		my_last_troop = T_ALL;
 
 		CTransform* pTransform;
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -796,15 +798,6 @@ void CServer_Manager::send_attack_packet()
 	send_packet(&m_packet);
 }
 
-void CServer_Manager::send_mouse_packet(float rotate)
-{
-	cs_packet_mouse m_packet;
-	m_packet.type = CS_PACKET_MOUSE;
-	m_packet.size = sizeof(m_packet);
-	m_packet.mouse = rotate;
-	send_packet(&m_packet);
-}
-
 void CServer_Manager::send_position_packet(_vec3* pos)
 {
 	cs_packet_position m_packet;
@@ -832,6 +825,15 @@ void CServer_Manager::send_add_npc_packet()
 	cs_packet_add_npc l_packet;
 	l_packet.size = sizeof(l_packet);
 	l_packet.type = CS_PACKET_ADD_NPC;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_change_troop()
+{
+	cs_packet_change_troop l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_TROOP_CHANGE;
+	l_packet.troop = my_troop;
 	send_packet(&l_packet);
 }
 
@@ -946,7 +948,6 @@ void CServer_Manager::send_npc_act_packet(unsigned char act)
 		cs_packet_npc_act l_packet;
 		l_packet.size = sizeof(l_packet);
 		l_packet.type = CS_PACKET_NPC_ACT;
-		l_packet.id = my_id;
 		l_packet.act = act;
 		send_packet(&l_packet);
 	}
@@ -1080,6 +1081,21 @@ short CServer_Manager::Get_AnimNPC(int id)
 short CServer_Manager::Get_NpcSize()
 {
 	return my_npc;
+}
+
+short CServer_Manager::Get_TroopClass()
+{
+	return my_troop;
+}
+
+void CServer_Manager::Set_TroopClass(short mclass)
+{
+	my_troop = mclass;
+	if (my_last_troop != my_troop)
+	{
+		my_last_troop = my_troop;
+		send_change_troop();
+	}
 }
 
 float CServer_Manager::Get_GameTime()

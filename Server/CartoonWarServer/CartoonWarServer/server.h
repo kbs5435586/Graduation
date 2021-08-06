@@ -77,6 +77,7 @@ public:
 	void do_dead(int id);
 	void do_push(int pusher, int target);
 	void do_change_formation(int player_id);
+	void do_change_npc_act(int player_id, unsigned char act);
 	void do_npc_rotate(int user_id, char con);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);

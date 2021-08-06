@@ -113,44 +113,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_NPC_ACT:
     {
         cs_packet_npc_act* packet = reinterpret_cast<cs_packet_npc_act*>(buf);
-        int p_id = packet->id;
-        char p_act = packet->act;
-
-        if (0 != g_clients[p_id].m_boid.size())
-        {
-            for (int i = 0; i < g_clients[p_id].m_boid.size(); i++)
-            {
-                FormationInfo& c = g_clients[p_id].m_boid[i];
-                if (ST_SLEEP == g_clients[c.id].m_status || ST_FREE == g_clients[c.id].m_status)
-                {
-                    continue;
-                }
-                else
-                {
-                    if (DO_ATTACK == p_act)
-                    {
-                        g_clients[c.id].m_last_order = FUNC_NPC_ATTACK;
-                    }
-                    if (DO_DEFENCE == p_act)
-                    {
-                        g_clients[c.id].m_last_order = FUNC_NPC_DEFENCE;
-                    }
-                    if (DO_HOLD == p_act)
-                    {
-                        g_clients[c.id].m_last_order = FUNC_NPC_HOLD;
-                    }
-                    if (DO_FOLLOW == p_act)
-                    {
-                        g_clients[c.id].m_last_order = FUNC_NPC_FOLLOW;
-                    }
-                    if (DO_RANDMOVE == p_act)
-                    {
-                        g_clients[c.id].m_last_order = FUNC_NPC_RANDMOVE;
-                    }
-                    activate_npc(i, g_clients[c.id].m_last_order);
-                }
-            }
-        }
+        do_change_npc_act(user_id, packet->act);
     }
     break;
     case CS_PACKET_CHANGE_FORMATION:
@@ -183,10 +146,10 @@ void Server::process_packet(int user_id, char* buf)
         do_move(user_id, GO_COLLIDE);
     }
     break;
-    case CS_PACKET_MOUSE:
+    case CS_PACKET_TROOP_CHANGE:
     {
-        cs_packet_mouse* packet = reinterpret_cast<cs_packet_mouse*>(buf);
-        cout << packet->mouse << endl;
+        cs_packet_change_troop* packet = reinterpret_cast<cs_packet_change_troop*>(buf);
+        g_clients[user_id].m_troop = packet->troop;
     }
     break;
     case CS_PACKET_CLASS_CHANGE:
@@ -1157,15 +1120,11 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     {
         if (FUNC_DEAD == g_clients[npc_id].m_last_order)
             return;
+        if()
 
         switch (func_id)
         {
         case FUNC_NPC_ATTACK:
-        {
-
-        }
-        break;
-        case FUNC_NPC_DEFENCE:
         {
 
         }
@@ -1180,18 +1139,18 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
             do_follow(npc_id);
         }
         break;
-        case FUNC_NPC_RANDMOVE:
-        {
-            do_random_move(npc_id);
-        }
+        //case FUNC_NPC_RANDMOVE:
+        //{
+        //    do_random_move(npc_id);
+        //}
         break;
         }
     }
 
-    if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
-        add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
-    else
-        add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
+    //if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
+    //    add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
+    //else
+    add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
 void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
@@ -1418,12 +1377,10 @@ void Server::do_timer()
 
             switch (event.event_id)
             {
-            case FUNC_NPC_RANDMOVE:
+            case FUNC_NPC_FOLLOW:
             case FUNC_NPC_ATTACK:
-            case FUNC_NPC_DEFENCE:
             case FUNC_NPC_HOLD:
             case FUNC_DEAD:
-            case FUNC_NPC_FOLLOW:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
             case FUNC_PLAYER_IDLE:
@@ -1609,6 +1566,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_rotate_speed = XMConvertToRadians(90.f);
             g_clients[npc_id].m_transform.SetUp_Speed(g_clients[npc_id].m_move_speed, g_clients[npc_id].m_rotate_speed);
             g_clients[npc_id].m_class = C_WORKER;
+            g_clients[npc_id].m_troop = T_INFT;
             g_clients[npc_id].m_Mcondition = CON_IDLE;
             g_clients[npc_id].m_Rcondition = CON_IDLE;
             g_clients[npc_id].m_LastMcondition = CON_IDLE;
@@ -1652,6 +1610,80 @@ void Server::initialize_NPC(int player_id)
         {
             continue; // 여기 수정할것 (임시방편), 플레이어의 모든 npc active일때 더이상 추가 안되게 처리
         }
+    }
+}
+
+void Server::do_change_npc_act(int player_id, unsigned char act)
+{
+    for (int npc_id = MY_NPC_START_SERVER(player_id); npc_id <= MY_NPC_END_SERVER(player_id); npc_id++)
+    {
+        if (ST_ACTIVE == g_clients[npc_id].m_status &&
+            ((g_clients[player_id].m_troop == g_clients[npc_id].m_troop) || (g_clients[player_id].m_troop == T_ALL)))
+        {
+            if (ST_SLEEP == g_clients[c.id].m_status || ST_FREE == g_clients[c.id].m_status)
+            {
+                continue;
+            }
+            else
+            {
+                if (DO_FOLLOW == act)
+                {
+                    g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
+                }
+                if (DO_ATTACK == act)
+                {
+                    g_clients[npc_id].m_last_order = FUNC_NPC_ATTACK;
+                }
+                if (DO_HOLD == act)
+                {
+                    g_clients[npc_id].m_last_order = FUNC_NPC_HOLD;
+                }
+                activate_npc(i, g_clients[c.id].m_last_order);
+            }
+        }
+        g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
+        g_clients[npc_id].m_team = g_clients[player_id].m_team;
+
+        g_clients[npc_id].m_class = C_WORKER;
+        g_clients[npc_id].m_troop = T_INFT;
+        g_clients[npc_id].m_Mcondition = CON_IDLE;
+        g_clients[npc_id].m_Rcondition = CON_IDLE;
+        g_clients[npc_id].m_LastMcondition = CON_IDLE;
+        g_clients[npc_id].m_LastRcondition = CON_IDLE;
+        g_clients[npc_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
+        g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
+        g_clients[npc_id].m_isOut = false;
+        g_clients[npc_id].m_isFormSet = true;
+        FormationInfo formTemp;
+        formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
+        g_clients[player_id].m_boid.push_back(formTemp);
+        set_formation(player_id);
+        for (int j = 0; j < g_clients[player_id].m_boid.size(); ++j)
+        {
+            if (g_clients[player_id].m_boid[j].id == g_clients[npc_id].m_id)
+            {
+                g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION,
+                    &g_clients[player_id].m_boid[j].final_pos);
+                g_clients[npc_id].m_boid_num = j;
+                g_clients[npc_id].m_total_angle = g_clients[player_id].m_boid[j].angle;
+            }
+        }
+        activate_npc(npc_id, g_clients[npc_id].m_last_order);
+        for (int i = 0; i < NPC_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
+        {
+            if (true == is_near(npc_id, i))
+            {
+                if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
+                {
+                    if (true == is_player(i))
+                        send_enter_packet(i, npc_id); // 이미 접속한 플레이어들에게 새로 접속한 클라정보 보냄
+                }
+                else
+                    continue;
+            }
+        }
+        send_npc_size_packet(player_id);
+        break;
     }
 }
 
@@ -2108,6 +2140,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_LastRcondition = CON_IDLE;
                 g_clients[user_id].m_LastAnim = A_IDLE;
                 g_clients[user_id].m_anim = A_IDLE;
+                g_clients[user_id].m_troop = T_ALL;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
                 if (0 == user_id)
@@ -2148,24 +2181,16 @@ void Server::worker_thread()
             delete overEx;
         }
         break;
-        case FUNC_NPC_ATTACK: // API_Send_message 호출용
+        case FUNC_NPC_ATTACK:
             finite_state_machine(id, FUNC_NPC_ATTACK);
             delete overEx;
             break;
-        case FUNC_NPC_DEFENCE: // API_Send_message 호출용
-            finite_state_machine(id, FUNC_NPC_DEFENCE);
-            delete overEx;
-            break;
-        case FUNC_NPC_HOLD: // API_Send_message 호출용
+        case FUNC_NPC_HOLD:
             finite_state_machine(id, FUNC_NPC_HOLD);
             delete overEx;
             break;
-        case FUNC_NPC_FOLLOW: // API_Send_message 호출용
+        case FUNC_NPC_FOLLOW:
             finite_state_machine(id, FUNC_NPC_FOLLOW);
-            delete overEx;
-            break;
-        case FUNC_NPC_RANDMOVE:
-            finite_state_machine(id, FUNC_NPC_RANDMOVE);
             delete overEx;
             break;
         case FUNC_DEAD:
