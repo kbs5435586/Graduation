@@ -179,8 +179,12 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
+		if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsRun())
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+				return -1;
+		}
+
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
@@ -248,11 +252,11 @@ void CPlayer::Render_GameObject()
 	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	m_iBlurCnt++;
-	if (m_iBlurCnt >= 2)
+	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
 	}
 	Safe_Release(pManagement);
@@ -1246,14 +1250,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 
 
-
+			m_IsRun = true;
 			m_IsActioning = true;
 			m_IsParticleRun = true;
 
 		}
 		else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 		{
-
 			if (!m_IsCombat)
 				m_iCurAnimIdx = 1;
 			else
@@ -1285,6 +1288,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				m_IsSlide = false;
 			}
 			m_IsActioning = true;
+			m_IsRun = false;
 		}
 		if (CManagement::GetInstance()->Key_Up(KEY_UP))
 		{
@@ -1295,6 +1299,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			else
 				m_iCurAnimIdx = m_iCombatMotion[0];
 			m_IsActioning = false;
+			m_IsRun = false;
 		}
 
 		if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1584,32 +1589,32 @@ void CPlayer::Combat(const _float& fTimeDelta)
 
 void CPlayer::SetSpeed()
 {
-	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeed[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] =30.f;
 
 }
 

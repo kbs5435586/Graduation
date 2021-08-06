@@ -43,7 +43,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -73,7 +73,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pInput_Device)
 		return -1;
 
-	if (GetAsyncKeyState('V') & 0x8000)
+	if (CManagement::GetInstance()->Key_Down(KEY_V))
 	{
 		m_IsFix ^= true;
 	}

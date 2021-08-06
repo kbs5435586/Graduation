@@ -68,17 +68,27 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-		if (fLen <= 250.f)
+		if (fLen <= 50.f)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
+			if (pPlayer->GetIsRun())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			}
 		}
 		else
 		{
@@ -229,9 +239,13 @@ void CLowPoly::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_matOldWorld = m_pTransformCom->Get_Matrix();
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-
+	m_iBlurCnt++;
+	if (m_iBlurCnt >= 3)
+	{
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_iBlurCnt = 0;
+	}
 	Safe_Release(pManagement);
 }
 
@@ -312,7 +326,7 @@ HRESULT CLowPoly::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;	
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	if (FAILED(m_pShader_Hatch->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;

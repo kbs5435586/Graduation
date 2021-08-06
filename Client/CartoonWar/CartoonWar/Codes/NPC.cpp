@@ -94,8 +94,9 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_fSpeedUp = m_fArrSpeedUP[(_uint)m_eCurClass];
 
 	if (m_IsRun)
+		m_pTransformCom->SetSpeed(m_fSpeedUp);
+	else 
 		m_pTransformCom->SetSpeed(m_fSpeed);
-	else m_pTransformCom->SetSpeed(m_fSpeedUp);
 
 	Change_Class();
 	Obb_Collision();
@@ -127,7 +128,10 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", 0);
+		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
+
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
@@ -141,12 +145,17 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
-
+			if (pPlayer->GetIsRun())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
 		}
-
-
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
 	}
 	else
 	{
@@ -217,10 +226,10 @@ void CNPC::Render_GameObject()
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
 	//m_pColiider[1]->Render_Collider();
-
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
+	
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;

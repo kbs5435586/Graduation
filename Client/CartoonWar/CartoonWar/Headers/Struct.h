@@ -99,10 +99,14 @@ typedef struct tagVertexTexNor
 typedef struct tagVertexBump
 {
 	XMFLOAT3	vPos = {};
-	XMFLOAT3	vNormal = {};
+	XMFLOAT4	vColor = {};
 	XMFLOAT2	vTexUV = {};
-	XMFLOAT3	vBiNormal= {};
+	XMFLOAT3	vNormal = {};
 	XMFLOAT3	vTangent = {};
+	XMFLOAT3	vBiNormal= {};
+
+	XMFLOAT4	vWeight = {};
+	XMFLOAT4	vIndices = {};
 	tagVertexBump() {}
 	tagVertexBump(XMFLOAT3 _vPos, XMFLOAT3 _vNormal, XMFLOAT2 _vTexUV, XMFLOAT3 _vBiNormal, XMFLOAT3 _vTangent)
 	{

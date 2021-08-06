@@ -28,6 +28,7 @@ public:
 	_bool&									GetIsParticle(){return m_IsParticle;}
 	_bool&									GetIsBack() {return m_IsBack;}
 	_bool&									GetIsTree() {return m_IsTree;}
+	_bool&									GetIsRun(){return m_IsRun;}
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:

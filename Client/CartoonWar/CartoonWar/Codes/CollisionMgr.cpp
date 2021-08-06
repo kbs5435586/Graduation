@@ -124,7 +124,7 @@ void CCollisionMgr::Throw_to_NPC_Collision()
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
-				//iter1->GetInfo().fHP -= 1.f;
+				iter1->GetInfo().fHP -= 1.f;
 			}
 		}
 	}
@@ -155,6 +155,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
+					iter1->GetInfo().fHP -= 1;
 				}
 				else if(iter1->GetIsHit())
 				{
@@ -163,6 +164,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
+					iter0->GetInfo().fHP -= 1;
 				}
 
 

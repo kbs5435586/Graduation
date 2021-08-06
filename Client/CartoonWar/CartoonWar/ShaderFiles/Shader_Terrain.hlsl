@@ -2,11 +2,14 @@
 #include "Function.hlsl"
 struct VS_IN
 {
-	float3 vPosition		: POSITION;
-	float3 vNormal			: NORMAL;
-	float2 vTexUV			: TEXCOORD;
-	float3 vBinormal		: BINORMAL;
-	float3 vTanget			: TANGENT;
+	float3	vPosition	: POSITION;
+	float4	vColor		: COLOR;
+	float2	vTexUV		: TEXCOORD;
+	float3	vNormal		: NORMAL;
+	float3	vTangent	: TANGENT;
+	float3	vBinormal	: BINORMAL;
+	float4	vWeight		: BLENDWEIGHT;
+	float4	vIndices	: BLENDINDICES;
 };
 
 struct VS_OUT
@@ -16,7 +19,7 @@ struct VS_OUT
 	float2	vTexUV				: TEXCOORD0;
 	float4	vWorldPos			: TEXCOORD1;
 	float4	vBinormal			: BINORMAL;
-	float4	vTanget				: TANGENT;
+	float4	vTangent				: TANGENT;
 	float4	vProjPos			: TEXCOORD2;
 };
 
@@ -38,7 +41,7 @@ VS_OUT VS_Main(VS_IN vIn)
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWV));
 
 	vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matWV));
-	vOut.vTanget = normalize(mul(float4(vIn.vTanget, 0.f), matWV));
+	vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matWV));
 	vOut.vTexUV = vIn.vTexUV;
 
 	return vOut;
