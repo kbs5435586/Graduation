@@ -44,6 +44,7 @@ private:
 	_vec3									m_vBarPos = {};
 	_vec3									m_vSize = {};
 	INFO									m_tUnitInfo = {};
+	ORDER									m_tOrder = {};
 private:
 	_bool									m_IsCreate = false;
 };

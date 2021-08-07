@@ -51,8 +51,7 @@ private:
 	void									Resurrection();
 public:
 	void									Create_Particle(const _vec3& vPoistion);
-public:
-	CLASS&									GetClass(){return m_eCurClass;}
+
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -71,8 +70,6 @@ private:
 	CCollider*								m_pCollider_Hit = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CFrustum*								m_pFrustumCom = nullptr;
-private:
-	CUI_OnHead*								m_pUI_OnHead = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
@@ -99,10 +96,6 @@ private:
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
-private:
-	CLASS									m_eCurClass = CLASS::CLASS_END;
-	CLASS									m_ePreClass = CLASS::CLASS_END;
-	PLAYER									m_tPlayer = {};
 private:
 	_uint									m_iCurMeshNum = 0;
 

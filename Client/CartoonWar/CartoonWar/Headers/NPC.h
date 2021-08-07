@@ -43,6 +43,7 @@ private:
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 public:
 	void									Create_Particle(const _vec3& vPoistion);
+
 private:
 	void									Death(const _float& fTimeDelta);
 	void									DeathMontion_Init();
@@ -66,8 +67,6 @@ private:
 	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = { nullptr };
 	CFrustum*								m_pFrustumCom = nullptr;
-private:
-	CUI_OnHead*								m_pUI_OnHead = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
@@ -93,9 +92,7 @@ private:
 	_matrix									m_matRight = {};
 	_float									m_fDeathTime = 0.f;
 private:
-	CLASS									m_eCurClass = CLASS::CLASS_END;
-	CLASS									m_ePreClass = CLASS::CLASS_END;
-	PLAYER									m_tPlayer = {};
+
 private:
 	_uint									m_iCurMeshNum = 0;
 

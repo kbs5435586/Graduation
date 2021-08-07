@@ -856,7 +856,7 @@
       <Filter>02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Lobby.h">
-      <Filter>01. Scene\02. Stage</Filter>
+      <Filter>01. Scene\01. Lobby</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1222,7 +1222,7 @@
       <Filter>02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Lobby.cpp">
-      <Filter>01. Scene\02. Stage</Filter>
+      <Filter>01. Scene\01. Lobby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

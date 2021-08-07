@@ -55,8 +55,8 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 	if (pPlayer->GetIsRun())
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
+		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+		//	return -1;
 	}
 	else
 	{

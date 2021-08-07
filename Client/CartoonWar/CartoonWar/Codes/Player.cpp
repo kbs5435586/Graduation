@@ -25,7 +25,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 {
 	if (pArg)
 	{
-		m_tPlayer = *(PLAYER*)pArg;
+		m_tUnit = *(UNIT*)pArg;
 	}
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
@@ -63,12 +63,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 	
 
-	
-	m_pUI_OnHead = CUI_OnHead::Create();
-	if (nullptr == m_pUI_OnHead)
-		return E_FAIL;
-	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
-		return E_FAIL;
 
 	SetSpeed();
 
@@ -86,9 +80,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 	m_pCollider_Hit->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 
-	m_pUI_OnHead->Update_GameObject(fTimeDelta);
-	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	m_pUI_OnHead->SetInfo(m_tInfo);	
+
 
 
 	_vec3 vPickPos = {};
@@ -105,8 +97,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_PositionY(fY);
 
 
-
-	Input_Key(fTimeDelta);
+	if(!m_IsDeadMotion)
+		Input_Key(fTimeDelta);
 
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -163,6 +155,23 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 
 
+
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
+		{
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		}
+		else
+		{
+			m_iCurAnimIdx = 0;
+		}
+		m_IsOnce = false;
+		m_IsHit = false;
+		m_IsActioning = false;
+	}
+
+
 	return NO_EVENT;
 }
 
@@ -170,7 +179,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 
 
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
@@ -234,11 +242,11 @@ void CPlayer::Render_GameObject()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -425,11 +433,11 @@ void CPlayer::Render_Ref()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -520,7 +528,6 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
 
-	Safe_Release(m_pUI_OnHead);
 	CGameObject::Free();
 }
 
@@ -540,7 +547,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	if(m_tPlayer.eSpecies == SPECIES::SPECIES_UNDEAD)
+	if(m_tUnit.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -587,7 +594,7 @@ HRESULT CPlayer::Ready_Component()
 		if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
 			return E_FAIL;
 	}
-	else if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	else if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Human_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -735,7 +742,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
 		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
@@ -1337,26 +1344,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		if (CManagement::GetInstance()->Key_Down(KEY_2))
 		{
-			m_IsHit_PostEffect = true;
+			m_tInfo.fHP -= 1;
 		}
 
 
-
-
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		if (m_IsCombat)
-		{
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-		else
-		{
-			m_iCurAnimIdx = 0;
-		}
-		m_IsOnce = false;
-		m_IsHit = false;
-		m_IsActioning = false;
-	}
 
 }
 
@@ -1627,8 +1618,9 @@ void CPlayer::Resurrection()
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_tInfo = INFO(1, 1, 1, 0);
 	m_IsDead = false;
+	m_IsDeadMotion = false;
 }
 
 void CPlayer::Create_Particle(const _vec3& vPoistion)
@@ -1648,9 +1640,11 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 		tParticleSet.fMaxSpeed = 30.f;
 		tParticleSet.fMinSpeed = 50.f;
+		
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
+
 	}
 }
 

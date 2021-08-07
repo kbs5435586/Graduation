@@ -23,7 +23,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 {
 	if (pArg)
 	{
-		m_tPlayer = *(PLAYER*)pArg;
+		m_tUnit = *(UNIT*)pArg;
 	}
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
@@ -33,8 +33,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {70.f,0.f,70.f };
+	_vec3 vPos = { _float(rand() % 300),0.f,_float(rand() % 300) };
+	//_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -63,11 +63,6 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	SetSpeed();
 
-	m_pUI_OnHead = CUI_OnHead::Create();
-	if (nullptr == m_pUI_OnHead)
-		return E_FAIL;
-	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
-		return E_FAIL;
 
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
@@ -80,9 +75,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
-	m_pUI_OnHead->Update_GameObject(fTimeDelta);
-	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	m_pUI_OnHead->SetInfo(m_tInfo);
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
@@ -117,6 +109,8 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		Resurrection();
+	//if (m_IsDead)
+	//	return DEAD_OBJ;
 
 	return NO_EVENT;
 }
@@ -126,7 +120,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 
@@ -210,11 +203,11 @@ void CNPC::Render_GameObject()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -388,7 +381,7 @@ HRESULT CNPC::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -423,7 +416,6 @@ void CNPC::Free()
 {
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
-
 		Safe_Release(m_pMeshCom[i]);
 		Safe_Release(m_pAnimCom[i]);
 	}
@@ -442,8 +434,6 @@ void CNPC::Free()
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
 
-
-	Safe_Release(m_pUI_OnHead);
 	CGameObject::Free();
 }
 
@@ -463,7 +453,7 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_UNDEAD)
+	if (m_tUnit.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -510,7 +500,7 @@ HRESULT CNPC::Ready_Component()
 		if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
 			return E_FAIL;
 	}
-	else if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	else if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Human_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -643,7 +633,7 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
 		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
@@ -1326,12 +1316,13 @@ void CNPC::Resurrection()
 {
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
-	_vec3 vPos = { 5.f,0.f,5.f };
+	_vec3 vPos = { 50.f,0.f,50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_tInfo = INFO(1, 1, 1, 0);
 	m_IsDead = false;
+	m_IsDeadMotion = false;
 }
 

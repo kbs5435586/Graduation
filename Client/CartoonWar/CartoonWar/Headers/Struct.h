@@ -604,11 +604,17 @@ typedef struct tagFlag
 
 
 
-typedef struct tagPlayer
+typedef struct tagUint
 {
 	SPECIES		eSpecies;
 	COLOR		eColor;
-}PLAYER;
+}UNIT;
+
+typedef struct tagOrder
+{
+	bool		IsPlayer;
+	int			iIdx;
+}ORDER;
 
 
 typedef struct tagParticleSet
