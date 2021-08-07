@@ -33,8 +33,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	_vec3 vPos = { _float(rand() % 3250),0.f,_float(rand() % 3250) };
-	//_vec3 vPos = {70.f,0.f,70.f };
+	//_vec3 vPos = { _float(rand() % 3250),0.f,_float(rand() % 3250) };
+	_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -129,7 +129,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -1284,32 +1284,32 @@ void CNPC::Combat(const _float& fTimeDelta)
 
 void CNPC::SetSpeed()
 {
-	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeed[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 30.f;
 }
 
 void CNPC::Resurrection()
