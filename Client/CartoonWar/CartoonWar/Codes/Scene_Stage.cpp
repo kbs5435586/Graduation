@@ -236,17 +236,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(100.f, 5.f, 50.f, 1.f);
-	tLightInfo.fRange = 100;
-	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -274,7 +263,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 1500.f;
+	tProjDesc.fFar = 300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -495,19 +484,19 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	
-	for (int i = 0; i < 30; ++i)
-	{
-		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
-			return E_FAIL;
-		ORDER tOrder = ORDER();
-		tOrder.IsPlayer = false;
-		tOrder.iIdx = i;
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-			return E_FAIL;
+	//for (int i = 0; i < 40; ++i)
+	//{
+	//	UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+	//		return E_FAIL;
+	//	ORDER tOrder = ORDER();
+	//	tOrder.IsPlayer = false;
+	//	tOrder.iIdx = i;
+	//	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+	//		return E_FAIL;
 
 
-	}
+	//}
 
 	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))

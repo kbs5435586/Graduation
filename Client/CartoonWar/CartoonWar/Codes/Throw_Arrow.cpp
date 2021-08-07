@@ -90,13 +90,10 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-		
-		}
-		if (pPlayer->GetIsRun())
-		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
 		}
+
 		else
 		{
 			m_matOldWorld = m_pTransformCom->Get_Matrix();;
@@ -146,13 +143,7 @@ void CThrow_Arrow::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= 100)
-	{	
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_iBlurCnt = 0;
-	}
+
 
 	//m_pColliderCom->Render_Collider();
 	Safe_Release(pManagement);
@@ -222,7 +213,13 @@ void CThrow_Arrow::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
+	m_iBlurCnt++;
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	if (m_iBlurCnt >= 100)
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_iBlurCnt = 0;
+	}
 	Safe_Release(pManagement);
 }
 

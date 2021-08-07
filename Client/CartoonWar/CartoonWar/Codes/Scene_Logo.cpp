@@ -127,9 +127,6 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
-
-	if(GetAsyncKeyState('M'))
-		CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
 	Input_ID_IP();
 	return CScene::Update_Scene(fTimeDelta);
 }
