@@ -51,7 +51,6 @@ public:
     void send_change_formation_packet();
     void send_animation_packet(unsigned char anim);
     void send_attack_packet();
-    void send_mouse_packet(float rotate);
     void send_position_packet(_vec3* pos);
     void send_class_change_packet(int idx, char type);
     void send_change_troop();

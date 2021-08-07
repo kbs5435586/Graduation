@@ -20,7 +20,7 @@ private:
 
 	float NEAR_APPROACH = 0.7f;
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
-	int ATTACK_RADIUS = 7; // 데이터 보내줄 시야 범위
+	float ATTACK_RADIUS = 10.f; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
 
@@ -66,6 +66,7 @@ public:
 	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void do_rotate(int user_id, char con);
 	void set_formation(int user_id);
+	void set_starting_pos(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
 	void initialize_clients(); // 플레이어 기본 초기화
 	void initialize_objects(); // 객체 초기화
@@ -74,6 +75,7 @@ public:
 	void initialize_NPC(int player_id);
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
+	void do_attack(int npc_id);
 	void do_dead(int id);
 	void do_push(int pusher, int target);
 	void do_change_formation(int player_id);
@@ -86,6 +88,7 @@ public:
 	float dist_between(int user_id, int other_id);
 	float dist_between_finalPos(int user_id, int i);
 	void update_speed(int user_id);
+	void update_npc_troop(int npc_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_timer();
