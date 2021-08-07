@@ -72,6 +72,9 @@ void CKeyManager::Key_Update()
 	if (GetAsyncKeyState(VK_F5) & 0x8000)
 		m_dwKey |= KEY_F5;
 	
+	if (GetAsyncKeyState('V') & 0x8000)
+		m_dwKey |= KEY_V;
+
 }
 _bool CKeyManager::Key_Up(DWORD dwKey)
 {

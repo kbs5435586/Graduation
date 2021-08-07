@@ -175,6 +175,7 @@ HRESULT CUI_HP::Ready_Component()
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+
 	Safe_Release(pManagement);
 	return S_OK;
 }

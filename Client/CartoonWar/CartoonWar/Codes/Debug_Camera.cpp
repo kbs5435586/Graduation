@@ -82,7 +82,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pInput_Device)
 		return -1;
 
-	if (GetAsyncKeyState('V') & 0x8000)
+	if (CManagement::GetInstance()->Key_Down(KEY_V))
 	{
 		m_IsFix ^= true;
 	}
@@ -118,9 +118,9 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	{
 
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Player", L"Com_Transform", 0);
+			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",g_iPlayerIdx);
 
 
 		_vec3 vPos, vRight, vUp, vLook;
@@ -215,7 +215,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	//{
 	//	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 	//		L"Layer_Player", L"Com_Transform", 0);
-	//	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+	//	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
 
 	//	_vec3 vPos, vRight, vUp, vLook;

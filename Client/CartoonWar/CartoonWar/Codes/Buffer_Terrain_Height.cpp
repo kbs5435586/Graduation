@@ -127,6 +127,12 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 			vecVertices[iIndex].vTangent = {};
 			m_pPosition[iIndex] = vecVertices[iIndex].vPos;
 			vecVertices[iIndex].vTexUV = _vec2(j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
+
+
+
+			vecVertices[iIndex].vColor = {};
+			vecVertices[iIndex].vIndices = {};
+			vecVertices[iIndex].vWeight = {};
 		}
 	}
 	m_iNumIndices = (3 * ((m_iNumVerticesX * 2) * (m_iNumVerticesZ - 1)) + ((m_iNumVerticesZ - 1) - 1));

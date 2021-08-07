@@ -79,6 +79,8 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
 		m_IsOldMatrix = true;
@@ -90,8 +92,17 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 		
 		}
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
+		if (pPlayer->GetIsRun())
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+				return -1;
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
+
 	}
 	else
 	{
@@ -137,9 +148,9 @@ void CThrow_Arrow::Render_GameObject()
 	}
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= 100)
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
+	{	
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_iBlurCnt = 0;
 	}
 

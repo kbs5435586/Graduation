@@ -31,7 +31,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 {
 	if (pArg)
 	{
-		m_tPlayer = *(PLAYER*)pArg;
+		m_tUnit = *(UNIT*)pArg;
 	}
 	
 	
@@ -74,13 +74,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
+	
 
-	m_pUI_OnHead = CUI_OnHead::Create();
-
-	if (nullptr == m_pUI_OnHead)
-		return E_FAIL;
-	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
-		return E_FAIL;
 
 	SetSpeed();
 
@@ -102,9 +97,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 	m_pCollider_Hit->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 
-	m_pUI_OnHead->Update_GameObject(fTimeDelta);
-	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	m_pUI_OnHead->SetInfo(m_tInfo);	
+
+
 
 	_vec3 vPickPos = {};
 
@@ -313,11 +307,11 @@ void CPlayer::Render_GameObject()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -331,11 +325,11 @@ void CPlayer::Render_GameObject()
 	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	m_iBlurCnt++;
-	if (m_iBlurCnt >= 2)
+	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
 	}
 	Safe_Release(pManagement);
@@ -504,11 +498,11 @@ void CPlayer::Render_Ref()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -606,7 +600,6 @@ void CPlayer::Free()
 	//Safe_Release(m_pNaviCom);
 	Safe_Release(m_pBufferCom);
 
-	Safe_Release(m_pUI_OnHead);
 	CGameObject::Free();
 }
 
@@ -626,13 +619,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_CubeTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex");
-	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
-		return E_FAIL;
-
-
-	if(m_tPlayer.eSpecies == SPECIES::SPECIES_UNDEAD)
+	if(m_tUnit.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -679,7 +666,7 @@ HRESULT CPlayer::Ready_Component()
 		if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
 			return E_FAIL;
 	}
-	else if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	else if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Human_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -834,7 +821,7 @@ HRESULT CPlayer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
 		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
@@ -905,7 +892,7 @@ void CPlayer::Change_Class()
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
-			m_iCombatMotion[2] = 3;
+			m_iCombatMotion[2] = 2;
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -1894,32 +1881,32 @@ void CPlayer::Combat(const _float& fTimeDelta)
 
 void CPlayer::SetSpeed()
 {
-	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeed[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] =30.f;
 
 }
 
@@ -1932,8 +1919,9 @@ void CPlayer::Resurrection()
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_tInfo = INFO(1, 1, 1, 0);
 	m_IsDead = false;
+	m_IsDeadMotion = false;
 }
 
 void CPlayer::Create_Particle(const _vec3& vPoistion)
@@ -1951,10 +1939,11 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 		tParticleSet.fEndScale = 0.2f;
 		tParticleSet.fMaxSpeed = 30.f;
 		tParticleSet.fMinSpeed = 50.f;
-
+		
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
+
 	}
 }
 

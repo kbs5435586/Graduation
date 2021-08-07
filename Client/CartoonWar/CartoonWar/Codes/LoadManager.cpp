@@ -161,6 +161,7 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 
 			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
 
+
 			_uint iSize = rand() % 20 + 5;
 			_uint iRot = rand() % 90 + 1;
 			pTransform->Scaling(iSize, iSize, iSize);

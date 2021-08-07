@@ -7,8 +7,6 @@ class CAnimator;
 class CNavigation;
 class CCollider;
 class CUI_OnHead;
-class CUI_OnHeadBack;
-class CTerrain_Height;
 class CPlayer :
 	public CGameObject
 {
@@ -42,8 +40,6 @@ private:
 	void									Compute_Matrix_Z();
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
-public:
-	void									Create_Particle(const _vec3& vPoistion);
 private:
 	void									Input_Key(const _float& fTimeDelta);
 private:
@@ -54,7 +50,8 @@ private:
 	void									SetSpeed();
 	void									Resurrection();
 public:
-	CLASS&									getClass(){return m_eCurClass;}
+	void									Create_Particle(const _vec3& vPoistion);
+
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -78,8 +75,6 @@ private:
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
-private:
-	CUI_OnHead*								m_pUI_OnHead = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;

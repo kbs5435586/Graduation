@@ -33,7 +33,7 @@ HRESULT CTestBuffer::Ready_GameObject(void* pArg)
 
 _int CTestBuffer::Update_GameObject(const _float& fTimeDelta)
 {
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", 0);
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
@@ -50,7 +50,7 @@ _int CTestBuffer::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_tTexInfo.fFrameTime = -1.f;
 	}
-	_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect();
+	_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsHit_PostEffect();
 	if(IsTemp)
 	{
 		m_fPostEffectTime += fTimeDelta;
@@ -58,7 +58,7 @@ _int CTestBuffer::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_fPostEffectTime >= 0.2f)
 	{
-		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect() = false;
+		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsHit_PostEffect() = false;
 		m_fPostEffectTime = 0.f;
 	}
 	
@@ -72,7 +72,7 @@ _int CTestBuffer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
 	//	return -1;
-	_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect();
+	_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsHit_PostEffect();
 	if (IsTemp)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))

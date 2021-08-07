@@ -43,6 +43,7 @@ HRESULT CBuilding::Ready_GameObject(void* pArg)
 
 _int CBuilding::Update_GameObject(const _float& fTimeDelta)
 {
+	m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
@@ -55,21 +56,51 @@ _int CBuilding::Update_GameObject(const _float& fTimeDelta)
 
 _int CBuilding::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
-	{
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Player", L"Com_Transform", 0);
+	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vLen = vPlayerPos - vPos;
+	_float fLen = vLen.Length();
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 30.f)
+	{
+		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
+		if (fLen <= 250.f)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
+
+		}
+		if (fLen <= 50.f)
+		{
+			if (pPlayer->GetIsRun())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			}
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
+
 	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	}
+	//else
+	//{
+	//	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	//	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	//}
+
 
 
 	return _int();
@@ -112,6 +143,13 @@ void CBuilding::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
+	m_iBlurCnt++;
+	if (m_iBlurCnt >= 10)
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_iBlurCnt = 0;
+	}
 	Safe_Release(pManagement);
 }
 
@@ -179,8 +217,8 @@ void CBuilding::Render_Blur()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-	m_matOldWorld = m_pTransformCom->Get_Matrix();
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	//m_matOldWorld = m_pTransformCom->Get_Matrix();
+	//m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 
 	Safe_Release(pManagement);
 }
@@ -249,7 +287,7 @@ HRESULT CBuilding::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }

@@ -218,6 +218,7 @@
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Line.h" />
     <ClInclude Include="..\Headers\LoadManager.h" />
+    <ClInclude Include="..\Headers\Lobby.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\LowPoly.h" />
     <ClInclude Include="..\Headers\Mesh.h" />
@@ -357,6 +358,7 @@
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Line.cpp" />
     <ClCompile Include="..\Codes\LoadManager.cpp" />
+    <ClCompile Include="..\Codes\Lobby.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\LowPoly.cpp" />
     <ClCompile Include="..\Codes\Mesh.cpp" />

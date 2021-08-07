@@ -79,9 +79,6 @@
     <Filter Include="01. Scene\00. Logo">
       <UniqueIdentifier>{268f6126-e66f-4917-8f1e-6c253169c6ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Scene\01. Stage">
-      <UniqueIdentifier>{6552fa3a-e608-42d9-b5f7-192d4ce50cda}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject">
       <UniqueIdentifier>{a9a7af4d-c4af-40ef-b8d3-b002cf2b6854}</UniqueIdentifier>
     </Filter>
@@ -114,9 +111,6 @@
     </Filter>
     <Filter Include="02. GameObject\00. Scene_Logo\00. Logo">
       <UniqueIdentifier>{26495649-bea4-4e96-94c5-5d98148c5983}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Scene\02. Ending">
-      <UniqueIdentifier>{2529fef5-9e8b-4f59-88f3-e600b12da46e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage">
       <UniqueIdentifier>{e5920e3e-7b2b-4d62-a4aa-343c9358345f}</UniqueIdentifier>
@@ -403,35 +397,8 @@
     <Filter Include="02. GameObject\01. Scene_Stage\06. Throw\01. Throw_Stone">
       <UniqueIdentifier>{39355462-9e93-4bf6-8768-9b0c94e5dd6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\05. UI_ClassTap">
-      <UniqueIdentifier>{4c8da03f-32de-4fba-beb0-cd0eb03b809d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\98. default">
-      <UniqueIdentifier>{3994499c-3184-4188-ae7b-5a34dae7127c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\98. Camera\02. Inventory_Camera">
-      <UniqueIdentifier>{02077cd7-253c-4bb6-9ecf-e15ce3c1a40d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\00. Player\Inven">
-      <UniqueIdentifier>{d058a8bd-96b0-4373-83e7-8ad321d624de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\98. default\00. Button">
-      <UniqueIdentifier>{2bc758ff-3d75-44b6-a320-78c768e235ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\98. default\01. UI_CharInterface">
-      <UniqueIdentifier>{942d5b7d-bc49-4b94-92a6-c804c6a2b31f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\98. default\02. UI_NPCButton">
-      <UniqueIdentifier>{d591c17b-e856-44f2-add6-c96000124ea7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. ShaderFiles\08. Effect">
       <UniqueIdentifier>{7a2448c8-5a2b-4a1b-a5e7-56bc203b5a69}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\08. UI_Skill">
-      <UniqueIdentifier>{49b1f019-4214-4902-812e-2e9bc58becf7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\97. UI\09. UI_Shop">
-      <UniqueIdentifier>{c828c80b-fd18-4476-a88d-3fe9470ac81b}</UniqueIdentifier>
     </Filter>
     <Filter Include="96. ShaderFiles\09. UI">
       <UniqueIdentifier>{79be4ae1-0b50-4d1d-bf77-b191b204bd53}</UniqueIdentifier>
@@ -480,6 +447,21 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\13. SoundMgr">
       <UniqueIdentifier>{55ccad89-aa5d-4062-9135-5b9717ec2b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect">
+      <UniqueIdentifier>{49423acf-8bde-4638-aa87-81dbd19711c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox">
+      <UniqueIdentifier>{9ab54483-9ed3-4ee6-a120-bf0d4f475803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect\01. EffectSphere">
+      <UniqueIdentifier>{4d94da06-8581-452e-93f4-1626ce29518e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Scene\01. Lobby">
+      <UniqueIdentifier>{a8ce85d9-555d-47d4-a7d2-7948c4926b1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Scene\02. Stage">
+      <UniqueIdentifier>{6552fa3a-e608-42d9-b5f7-192d4ce50cda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -616,7 +598,7 @@
       <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Scene_Stage.h">
-      <Filter>01. Scene\01. Stage</Filter>
+      <Filter>01. Scene\02. Stage</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\SkyBox.h">
       <Filter>02. GameObject\01. Scene_Stage\03. SkyBox</Filter>
@@ -870,29 +852,11 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_ClassTap.h">
-      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    <ClInclude Include="..\Headers\EffectBox.h">
+      <Filter>02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Shop.h">
-      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\UI_Button.h">
-      <Filter>02. GameObject\97. UI\98. default\00. Button</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\UI_CharInterface.h">
-      <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\UI_ButtonNPC.h">
-      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\UI_Skill.h">
-      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Inventory_Camera.h">
-      <Filter>02. GameObject\98. Camera\02. Inventory_Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Player_Inven.h">
-      <Filter>02. GameObject\01. Scene_Stage\00. Player\Inven</Filter>
+    <ClInclude Include="..\Headers\Lobby.h">
+      <Filter>01. Scene\01. Lobby</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1012,7 +976,7 @@
       <Filter>02. GameObject\00. Scene_Logo\00. Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Scene_Stage.cpp">
-      <Filter>01. Scene\01. Stage</Filter>
+      <Filter>01. Scene\02. Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\SkyBox.cpp">
       <Filter>02. GameObject\01. Scene_Stage\03. SkyBox</Filter>
@@ -1254,29 +1218,11 @@
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_ClassTap.cpp">
-      <Filter>02. GameObject\97. UI\05. UI_ClassTap</Filter>
+    <ClCompile Include="..\Codes\EffectBox.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\97. Effect\00. EffectBox</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_Shop.cpp">
-      <Filter>02. GameObject\97. UI\09. UI_Shop</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\UI_Button.cpp">
-      <Filter>02. GameObject\97. UI\98. default\00. Button</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\UI_CharInterface.cpp">
-      <Filter>02. GameObject\97. UI\98. default\01. UI_CharInterface</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp">
-      <Filter>02. GameObject\97. UI\98. default\02. UI_NPCButton</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\UI_Skill.cpp">
-      <Filter>02. GameObject\97. UI\08. UI_Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Inventory_Camera.cpp">
-      <Filter>02. GameObject\98. Camera\02. Inventory_Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Player_Inven.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\00. Player\Inven</Filter>
+    <ClCompile Include="..\Codes\Lobby.cpp">
+      <Filter>01. Scene\01. Lobby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
