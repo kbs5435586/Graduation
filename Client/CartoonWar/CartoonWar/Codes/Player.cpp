@@ -246,15 +246,17 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
 		{
-			m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
+			if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsRun())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
 			//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 			//	return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
 			m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
 		}

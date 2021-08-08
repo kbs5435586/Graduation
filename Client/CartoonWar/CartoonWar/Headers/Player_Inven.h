@@ -78,7 +78,7 @@ private:
 private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
-	PLAYER									m_tPlayer = {};
+	//PLAYER									m_tPlayer = {};
 private:
 	_uint									m_iCurMeshNum = 0;
 

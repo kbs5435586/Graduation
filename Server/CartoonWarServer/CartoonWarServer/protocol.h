@@ -32,6 +32,7 @@ constexpr int MAX_CHAT_LEN = 50;
 constexpr int MAX_USER = 29;
 constexpr int NPC_START = 30;
 constexpr int MAX_NPC = 449;
+constexpr int MAX_OWN_NPC = 10;
 
 constexpr int FLAG_START = 450;
 constexpr int MAX_FLAG = 454;
@@ -76,8 +77,7 @@ constexpr char SC_PACKET_FLAG_INFO = 11;
 constexpr char SC_PACKET_FLAG_BOOL = 12;
 constexpr char SC_PACKET_TIME = 13;
 constexpr char SC_PACKET_FIX = 14;
-constexpr char SC_PACKET_FORMATION = 15;
-constexpr char SC_PACKET_NPC_SIZE = 16;
+constexpr char SC_PACKET_NPC_SIZE = 15;
 
 #pragma pack(push ,1)
 
@@ -94,7 +94,6 @@ struct sc_packet_login_ok
 	short level;
 	int	exp;
 	short p_class;
-	char form;
 };
 
 constexpr unsigned short C_WORKER = 0;
@@ -135,14 +134,6 @@ struct sc_packet_flag_bool
 	int id;
 	bool isRed;
 	bool isBlue;
-};
-
-struct sc_packet_formation
-{
-	char size;
-	char type;
-	int id;
-	char form;
 };
 
 struct sc_packet_time

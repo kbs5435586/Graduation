@@ -23,7 +23,7 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 {
 	if (pArg)
 	{
-		m_tPlayer = *(PLAYER*)pArg;
+		//m_tPlayer = *(PLAYER*)pArg;
 	}
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
@@ -210,12 +210,12 @@ void CPlayer_Inven::Render_GameObject()
 			{
 				if (i == 0)
 					CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
-				else
-					CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				//else
+					//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
 			}
 			else
 			{
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
 			}
 
 			m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -319,7 +319,7 @@ HRESULT CPlayer_Inven::Ready_Component()
 
 	//enum class CLASS { CLASS_WORKER, CLASS_CAVALRY, CLASS_INFANTRY, CLASS_SPEARMAN, CLASS_MAGE, CLASS_MMAGE,
 	//CLASS_ARCHER, CLASS_PRIEST, CLASS_END };
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_UNDEAD)
+	/*if (m_tPlayer.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -412,7 +412,7 @@ HRESULT CPlayer_Inven::Ready_Component()
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
 		if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
 			return E_FAIL;
-	}
+	}*/
 
 
 
@@ -481,7 +481,7 @@ HRESULT CPlayer_Inven::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	/*if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
 		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
@@ -494,7 +494,7 @@ HRESULT CPlayer_Inven::Ready_Component()
 		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
 		if (FAILED(Add_Component(L"Com_Texture1", m_pTextureCom[1])))
 			return E_FAIL;
-	}
+	}*/
 
 	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
 	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);

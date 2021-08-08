@@ -34,52 +34,56 @@ struct Collision
 
 struct SESSION // 클라이언트 정보
 {
-	mutex m_cLock;
+	// 서버
 	SOCKET m_socket;
-	int m_id;
-	short m_owner_id;
-	short m_hp;
-	short m_team;
-	short m_select_cls;
-	unsigned char m_troop;
-	unsigned char m_LastAnim;
-	unsigned char m_anim;
-	ENUM_FUNCTION m_last_order;
-	ENUM_FUNCTION m_curr_move;
-	ENUM_FUNCTION m_curr_rotate;
-	ENUM_FUNCTION m_last_move;
-	ENUM_FUNCTION m_last_rotate;
 	OverEx m_recv_over;
 	int m_prev_size; // 잘린 파일의 경우 이전에 저장해둔 버퍼 크기
 	char m_packet_buf[MAX_PACKET_SIZE]; // send, recv 성공시 저장해둘 버퍼
 	atomic <ENUM_STATUS> m_status;
 	unsigned m_move_time; // 스트레스 테스트
 
+	// 공통
+	mutex m_cLock;
+	int m_id;
+	short m_hp;
+	short m_team;
+	unsigned char m_troop;
+	unsigned char m_LastAnim;
+	unsigned char m_anim;
+	unsigned int m_class;
+
+	ENUM_FUNCTION m_last_order;
+	ENUM_FUNCTION m_curr_move;
+	ENUM_FUNCTION m_curr_rotate;
+	ENUM_FUNCTION m_last_move;
+	ENUM_FUNCTION m_last_rotate;
+
 	float m_move_speed;
 	float m_rotate_speed;
 	float m_total_angle;
-	bool m_isOut;
-	bool m_isFormSet;
-	
+
 	Collision m_col;
-	vector <FormationInfo> m_boid;
-	unsigned short m_boid_num;
-	char m_formation;
-	unsigned int m_class;
+	unordered_set <int> m_view_list;
+
 	char m_LastMcondition;
 	char m_LastRcondition;
 	char m_Mcondition;
 	char m_Rcondition;
-
-	_vec3 m_target_pos;
 	CTransform m_transform;
-	//float m_x, m_y, m_z; // 나중에 맵이 256 범위 벗어날 수 있기 때문에 char로는 제한이 있음
-	char m_name[MAX_ID_LEN + 1]; // +1은 아이디가 50 꽉차서 오면 안되긴 하지만 혹시라도 꽉 차서 왔을때 대비
-	// m_isConnected가 true일때 m_name가 의미있음, true인데 m_name에 값이 없는 경우가 없어야함
+	
+	// 플레이어
+	vector <FormationInfo> m_boid;
+	char m_formation;
+	char m_name[MAX_ID_LEN + 1];
 	char m_message[MAX_CHAT_LEN];
 
-	unordered_set <int> m_view_list;
-	// 그냥 set은 iter 돌렸을때 순서대로 나오지만 unordered_set은 순서대로 안나옴, 근데 뷰리스트 자체가 순서상관X
+	// NPC
+	short m_owner_id;
+	bool m_isOut;
+	bool m_isFormSet;
+	unsigned short m_boid_num;
+	_vec3 m_target_look;
+	int m_attack_target;
 };
 
 struct event_type

@@ -20,7 +20,8 @@ private:
 
 	float NEAR_APPROACH = 0.7f;
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
-	float ATTACK_RADIUS = 10.f; // 데이터 보내줄 시야 범위
+	float ATTACK_RADIUS = 7.f; // 데이터 보내줄 시야 범위
+	float DETECT_RADIUS = 15.f; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 30.f;  // 플레이어 기준 군집 범위
 
@@ -56,13 +57,11 @@ public:
 	void send_dead_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
-	void send_formation_packet(int user_id, int other_id);
 	void send_npc_size_packet(int user_id);
 	void send_class_change_packet(int user_id, int other_id);
 
 	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);
-	void do_attack(int user_id);
 	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void do_rotate(int user_id, char con);
 	void set_formation(int user_id);
@@ -98,6 +97,7 @@ public:
 	bool is_player(int id);
 	bool is_object(int id);
 	void is_flag_near(int flag);
+	bool is_attack_detect(int a, int b);
 	bool check_basic_collision(int a, int b);
 	bool check_obb_collision(int a, int b);
 

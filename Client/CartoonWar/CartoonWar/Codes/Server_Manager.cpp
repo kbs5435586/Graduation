@@ -78,10 +78,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_login_ok* my_packet = reinterpret_cast<sc_packet_login_ok*>(ptr);
 		short recv_id = my_packet->id;
 		my_id = recv_id;
+		g_iPlayerIdx = my_id;
 		my_hp = my_packet->hp;
 		my_npc = 0; // 수정
 		my_troop = T_ALL;
 		my_last_troop = T_ALL;
+
 
 		CTransform* pTransform;
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -105,7 +107,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
-		m_objects[recv_id].formation = my_packet->form;
 		m_objects[recv_id].m_class = my_packet->p_class;
 
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
@@ -693,13 +694,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_class_change* my_packet = reinterpret_cast<sc_packet_class_change*>(ptr);
 		m_objects[my_packet->id].m_class = my_packet->p_class;
-	}
-	break;
-	case SC_PACKET_FORMATION:
-	{
-		sc_packet_formation* my_packet = reinterpret_cast<sc_packet_formation*>(ptr);
-		int recv_id = my_packet->id;
-		m_objects[recv_id].formation = my_packet->form;
 	}
 	break;
 	default:

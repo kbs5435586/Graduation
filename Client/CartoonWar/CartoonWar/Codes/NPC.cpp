@@ -173,6 +173,16 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
+
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
+	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vLen = vPlayerPos - vPos;
+	_float fLen = vLen.Length();
+
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
@@ -185,15 +195,22 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
 		{
 			m_IsOldMatrix = true;
-			m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 			if (fLen <= 250.f)
 			{
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 					return -1;
-				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-					return -1;
+				if (pPlayer->GetIsRun())
+				{
+					if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+						return -1;
+				}
+			}
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 			}
 			m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);

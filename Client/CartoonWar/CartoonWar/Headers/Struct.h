@@ -572,7 +572,6 @@ struct Session
 	unsigned int	m_class;
 	char			con_rotate = CON_IDLE;
 	char			con_move = CON_IDLE;
-	char			formation;
 };
 
 

@@ -924,382 +924,6 @@ void Server::do_follow(int npc_id)
                         }
                     }
                 }
-
-                for (int i = 0; i < OBJECT_START; ++i) // npc가 움직일때마다 충돌체크
-                {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (!is_near(i, npc_id))
-                        continue;
-                    if (FUNC_DEAD == g_clients[i].m_last_order)
-                        continue;
-                    check_basic_collision(npc_id, i);// 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
-                       // do_move(i, GO_COLLIDE);
-                    //if (check_obb_collision(user_id, c.second.m_id))
-                }
-
-                for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (true == is_near(i, npc_id))
-                    {
-                        g_clients[i].m_cLock.lock();
-                        if (0 != g_clients[i].m_view_list.count(npc_id))
-                        {
-                            g_clients[i].m_cLock.unlock();
-                            if (n.m_LastMcondition != n.m_Mcondition)
-                            {
-                                send_condition_packet(i, npc_id, CON_TYPE_MOVE);
-                                //if (CON_IDLE == n.m_Mcondition)
-                                //    cout << npc_id << " send move condition : CON_IDLE\n";
-                                //else if (CON_STRAIGHT == n.m_Mcondition)
-                                //    cout << npc_id << " send condition : CON_STRAIGHT\n";
-                                //else if (CON_BACK == n.m_Mcondition)
-                                //    cout << npc_id << " send condition : CON_BACK\n";
-                            }
-                            if (n.m_LastRcondition != n.m_Rcondition)
-                            {
-                                send_condition_packet(i, npc_id, CON_TYPE_ROTATE);
-                                //if (CON_IDLE == n.m_Rcondition)
-                                //    cout << npc_id << " send rote condition : CON_IDLE\n";
-                                //else if (CON_LEFT == n.m_Rcondition)
-                                //    cout << npc_id << " send condition : CON_LEFT\n";
-                                //else if (CON_RIGHT == n.m_Rcondition)
-                                //    cout << npc_id << " send condition : CON_RIGHT\n";
-                            }
-                        }
-                        else
-                        {
-                            g_clients[i].m_cLock.unlock();
-                            send_enter_packet(i, npc_id);
-                        }
-                    }
-                    else
-                    {
-                        g_clients[i].m_cLock.lock();
-                        if (0 != g_clients[i].m_view_list.count(npc_id))
-                        {
-                            g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                            send_leave_packet(i, npc_id);
-                        }
-                        else
-                            g_clients[i].m_cLock.unlock();
-                    }
-                }
-                if (n.m_LastMcondition != n.m_Mcondition)
-                    n.m_LastMcondition = n.m_Mcondition;
-                if (n.m_LastRcondition != n.m_Rcondition)
-                    n.m_LastRcondition = n.m_Rcondition;
-                if (n.m_LastAnim != n.m_anim)
-                    do_animation(npc_id, n.m_anim);
-            }
-        }
-    }
-}
-
-void Server::do_attack(int npc_id)
-{
-    SESSION& n = g_clients[npc_id];
-    for (int i = 0; i < g_clients[n.m_owner_id].m_boid.size(); ++i)
-    {
-        if (g_clients[n.m_owner_id].m_boid[i].id == n.m_id)
-        {
-            _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3* n_look = n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-            _vec3* p_pos = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3* p_look = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-            if (*n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
-            {
-                if (dist_between(npc_id, n.m_owner_id) > dist_between_finalPos(n.m_owner_id, i) + 0.1f
-                    || dist_between(npc_id, n.m_owner_id) < dist_between_finalPos(n.m_owner_id, i) - 0.1f)// 자신의 포메이션 반지름 밖일때
-                {
-                    n.m_anim = A_WALK;
-                    n.m_Mcondition = CON_STRAIGHT;
-                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                    _vec3 finalLookAt = g_clients[n.m_owner_id].m_boid[i].final_pos - *n_pos;
-                    finalLookAt = Vector3_::Normalize(finalLookAt);
-                    _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look);
-
-                    _vec3 set_pos = {};
-
-                    float PdotProduct = (npcLookAt.x * finalLookAt.x) + (npcLookAt.y * finalLookAt.y) + (npcLookAt.z * finalLookAt.z); // 내각
-                    _vec3 PoutProduct;
-                    PoutProduct.x = (finalLookAt.y * npcLookAt.z) - (finalLookAt.z * npcLookAt.y); // 외각
-                    PoutProduct.y = (finalLookAt.z * npcLookAt.x) - (finalLookAt.x * npcLookAt.z);
-                    PoutProduct.z = (finalLookAt.x * npcLookAt.y) - (finalLookAt.y * npcLookAt.x);
-
-                    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                    if (PoutProduct.y < 0)
-                        radian *= -1.f;
-                    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                    if (NPCangle > 0)
-                    {
-                        n.m_Rcondition = CON_LEFT;
-                        n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                    }
-                    else if (NPCangle < 0)
-                    {
-                        n.m_Rcondition = CON_RIGHT;
-                        n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-                    }
-                    else
-                    {
-                        n.m_Rcondition = CON_IDLE;
-                    }
-                    n.m_isOut = true;
-                    n.m_isFormSet = false;
-                }
-                else // 자신의 포메이션 반지름과 같거나 이내일때
-                {
-                    if (n.m_isOut) // 최초로 반지름 범위에 들어왔을때
-                    {
-                        n.m_isOut = false;
-                        n.m_Mcondition = CON_IDLE;
-                        n.m_Rcondition = CON_IDLE;
-                        _vec3 standard = -1.f * Vector3_::Normalize(*p_look);
-                        _vec3 toNpc = *n_pos - *p_pos;
-                        toNpc = Vector3_::Normalize(toNpc);
-
-                        _vec3 set_pos = {};
-
-                        float PdotProduct = (toNpc.x * standard.x) + (toNpc.y * standard.y) + (toNpc.z * standard.z); // 내각
-                        _vec3 PoutProduct;
-                        PoutProduct.x = (standard.y * toNpc.z) - (standard.z * toNpc.y); // 외각
-                        PoutProduct.y = (standard.z * toNpc.x) - (standard.x * toNpc.z);
-                        PoutProduct.z = (standard.x * toNpc.y) - (standard.y * toNpc.x);
-
-                        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                        if (PoutProduct.y < 0)
-                            radian *= -1.f;
-                        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                        if (NPCangle > 0)  NPCangle += 3.f;
-                        else if (NPCangle < 0) NPCangle -= 3.f;
-                        n.m_total_angle = g_clients[n.m_owner_id].m_total_angle + NPCangle;
-                        n_pos->x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos->x;
-                        n_pos->z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos->z;
-                        {
-                            for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                            {
-                                if (ST_ACTIVE != g_clients[i].m_status)
-                                    continue;
-                                if (true == is_near(npc_id, i))
-                                {
-                                    send_fix_packet(i, npc_id);
-                                }
-                            }
-                        }
-                    }
-                    else if (!n.m_isOut && !n.m_isFormSet) // 최초로 반지름 들어온건 아닌데 방향셋팅 안되어있을때
-                    {
-                        n.m_Mcondition = CON_IDLE;
-                        _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look); // npc가 바라보는 방향
-
-                        _vec3 toNpc = *n_pos - *p_pos; // 플레이어에서 npc 바라보는 방향
-                        toNpc = Vector3_::Normalize(toNpc);
-
-                        float PdotProduct = (npcLookAt.x * toNpc.x) + (npcLookAt.y * toNpc.y) + (npcLookAt.z * toNpc.z); // 내각
-                        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                        float PoutProduct = (toNpc.x * npcLookAt.z) - (toNpc.z * npcLookAt.x); // 앞에 x 벡터 기준 각도 차이
-                        if (PoutProduct > 0) // 양수이면 npcLookAt는 toNpc로 부터 반시계
-                            radian *= -1.f;
-
-                        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                        if (-0.03f > PdotProduct || 0.03f < PdotProduct) // 나아가야할 수직 방향을 안바라볼때
-                        {
-                            if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
-                            {
-                                n.m_Rcondition = CON_LEFT;
-                                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE); // 왼쪽회전
-                            }
-                            else //차이가 마이너스
-                            {
-                                n.m_Rcondition = CON_RIGHT;
-                                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE); // 오른쪽
-                            }
-                        }
-                        else // 나아가야할 수직 방향을 바라볼때
-                        {
-                            n.m_Rcondition = CON_IDLE;
-                            n.m_isFormSet = true;
-                            for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                            {
-                                if (ST_ACTIVE != g_clients[i].m_status)
-                                    continue;
-                                if (true == is_near(npc_id, i))
-                                {
-                                    send_fix_packet(i, npc_id);
-                                }
-                            }
-                        }
-                    }
-                    else // 방향 셋팅까지 다 완료 되었을때
-                    {
-                        if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
-                            || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle) // 자기가 있어야할 각도 위치가 아닐경우
-                        {
-                            _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look); // npc가 바라보는 방향
-
-                            _vec3 toNpc = *n_pos - *p_pos; // 플레이어에서 npc 바라보는 방향
-                            toNpc = Vector3_::Normalize(toNpc);
-
-
-
-                            float PdotProduct = (npcLookAt.x * toNpc.x) + (npcLookAt.y * toNpc.y) + (npcLookAt.z * toNpc.z); // 내각
-                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                            float PoutProduct = (toNpc.x * npcLookAt.z) - (toNpc.z * npcLookAt.x); // 앞에 x 벡터 기준 각도 차이
-                            if (PoutProduct > 0) // 양수이면 npcLookAt는 toNpc로 부터 반시계
-                                radian *= -1.f;
-
-                            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                            if (-0.03f > PdotProduct || 0.03f < PdotProduct) // 나아가야할 수직 방향을 안바라볼때
-                            {
-                                n.m_anim = A_WALK;
-                                n.m_Mcondition = CON_IDLE;
-                                if (g_clients[n.m_owner_id].m_boid[i].angle < n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
-                                {
-                                    n.m_Rcondition = CON_LEFT;
-                                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE); // 왼쪽회전
-                                }
-                                else //차이가 마이너스
-                                {
-                                    n.m_Rcondition = CON_RIGHT;
-                                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE); // 오른쪽
-                                }
-                            }
-                            else
-                            {
-                                _vec3 lastPos = *n_pos; // 한발자국 나아가기 전에 마지막 위치 계산
-                                n.m_Mcondition = CON_STRAIGHT;
-                                n.m_Rcondition = CON_IDLE;
-                                n.m_transform.BackWard(MOVE_TIME_ELAPSE); // 한 발자국 앞으로 나아감
-                                 // 각도 비교후 바뀐 각도만큼 토탈 앵글 계산
-
-                                _vec3 newLook = *n_pos - *p_pos;
-                                newLook = Vector3_::Normalize(newLook);
-                                _vec3 oldLook = lastPos - *p_pos;
-                                oldLook = Vector3_::Normalize(oldLook);
-
-                                PdotProduct = (newLook.x * oldLook.x) + (newLook.y * oldLook.y) + (newLook.z * oldLook.z); // 내각
-                                _vec3 PoutProduct;
-                                PoutProduct.x = (oldLook.y * newLook.z) - (oldLook.z * newLook.y); // 외각
-                                PoutProduct.y = (oldLook.z * newLook.x) - (oldLook.x * newLook.z);
-                                PoutProduct.z = (oldLook.x * newLook.y) - (oldLook.y * newLook.x);
-                                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                                if (PoutProduct.y < 0)
-                                    radian *= -1.f;
-                                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                                n.m_total_angle += NPCangle;
-                            }
-                        }
-                        else // 자기가 있어야할 최종 위치일때
-                        {
-                            n.m_Mcondition = CON_IDLE;
-                            _vec3 standard = -1.f * Vector3_::Normalize(*p_look);
-                            _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look);
-
-                            float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 내각
-                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                            float PoutProduct = (standard.x * npcLookAt.z) - (standard.z * npcLookAt.x); // 앞에 x 벡터 기준 각도 차이
-                            if (PoutProduct > 0) // 양수이면 npcLookAt는 standard로 부터 반시계
-                                radian *= -1.f;
-
-                            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-                            if (NPCangle > 2.f || NPCangle < -2.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
-                            {
-                                n.m_anim = A_WALK;
-                                if (NPCangle > 2.f)
-                                {
-                                    n.m_Rcondition = CON_LEFT;
-                                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                                }
-                                else if (NPCangle < -2.f)
-                                {
-                                    n.m_Rcondition = CON_RIGHT;
-                                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-                                }
-                            }
-                            else
-                            {
-                                n.m_Rcondition = CON_IDLE;
-                                n.m_anim = A_IDLE;
-                            }
-                        }
-                    }
-                }
-
-                for (int i = 0; i < OBJECT_START; ++i) // npc가 움직일때마다 충돌체크
-                {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (!is_near(i, npc_id))
-                        continue;
-                    if (FUNC_DEAD == g_clients[i].m_last_order)
-                        continue;
-                    check_basic_collision(npc_id, i);// 활성화 되어있고 시야범위 안인 플레이어+npc에 대해서
-                       // do_move(i, GO_COLLIDE);
-                    //if (check_obb_collision(user_id, c.second.m_id))
-                }
-
-                for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (true == is_near(i, npc_id))
-                    {
-                        g_clients[i].m_cLock.lock();
-                        if (0 != g_clients[i].m_view_list.count(npc_id))
-                        {
-                            g_clients[i].m_cLock.unlock();
-                            if (n.m_LastMcondition != n.m_Mcondition)
-                            {
-                                send_condition_packet(i, npc_id, CON_TYPE_MOVE);
-                                //if (CON_IDLE == n.m_Mcondition)
-                                //    cout << npc_id << " send move condition : CON_IDLE\n";
-                                //else if (CON_STRAIGHT == n.m_Mcondition)
-                                //    cout << npc_id << " send condition : CON_STRAIGHT\n";
-                                //else if (CON_BACK == n.m_Mcondition)
-                                //    cout << npc_id << " send condition : CON_BACK\n";
-                            }
-                            if (n.m_LastRcondition != n.m_Rcondition)
-                            {
-                                send_condition_packet(i, npc_id, CON_TYPE_ROTATE);
-                                //if (CON_IDLE == n.m_Rcondition)
-                                //    cout << npc_id << " send rote condition : CON_IDLE\n";
-                                //else if (CON_LEFT == n.m_Rcondition)
-                                //    cout << npc_id << " send condition : CON_LEFT\n";
-                                //else if (CON_RIGHT == n.m_Rcondition)
-                                //    cout << npc_id << " send condition : CON_RIGHT\n";
-                            }
-                        }
-                        else
-                        {
-                            g_clients[i].m_cLock.unlock();
-                            send_enter_packet(i, npc_id);
-                        }
-                    }
-                    else
-                    {
-                        g_clients[i].m_cLock.lock();
-                        if (0 != g_clients[i].m_view_list.count(npc_id))
-                        {
-                            g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                            send_leave_packet(i, npc_id);
-                        }
-                        else
-                            g_clients[i].m_cLock.unlock();
-                    }
-                }
-                if (n.m_LastMcondition != n.m_Mcondition)
-                    n.m_LastMcondition = n.m_Mcondition;
-                if (n.m_LastRcondition != n.m_Rcondition)
-                    n.m_LastRcondition = n.m_Rcondition;
-                if (n.m_LastAnim != n.m_anim)
-                    do_animation(npc_id, n.m_anim);
             }
         }
     }
@@ -1316,17 +940,6 @@ void Server::do_change_formation(int player_id)
     else  if (F_FLOCK == g_clients[player_id].m_formation)
         g_clients[player_id].m_formation = F_SQUARE;
 
-    g_clients[player_id].m_cLock.lock();
-    unordered_set<int> copy_viewlist = g_clients[player_id].m_view_list;
-    // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
-    g_clients[player_id].m_cLock.unlock();
-
-    send_formation_packet(player_id, player_id); // 앞이 돌아갔다는 정보 받을애, 뒤에가 실제로 돌아간애, 일단 내가 나 돌아간거 알림
-    for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
-    {
-        if (is_player(cpy_vl))
-            send_formation_packet(cpy_vl, player_id); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-    }
     set_formation(player_id);
 }
 
@@ -1449,10 +1062,11 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     //        }
     //    }
     //}
+    SESSION& n = g_clients[npc_id];
 
-    if (ST_ACTIVE == g_clients[g_clients[npc_id].m_owner_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
+    if (ST_ACTIVE == g_clients[n.m_owner_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
     {
-        if (FUNC_DEAD == g_clients[npc_id].m_last_order)
+        if (FUNC_DEAD == n.m_last_order)
             return;
  
         switch (func_id)
@@ -1480,9 +1094,62 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         }
     }
 
-    //if (FUNC_NPC_RANDMOVE == g_clients[npc_id].m_last_order)
-    //    add_timer(npc_id, g_clients[npc_id].m_last_order, 1000); // 생성 이후 반복 간격
-    //else
+    for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
+    {
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+        if (true == is_near(i, npc_id))
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock();
+                if (n.m_LastMcondition != n.m_Mcondition)
+                {
+                    send_condition_packet(i, npc_id, CON_TYPE_MOVE);
+                    //if (CON_IDLE == n.m_Mcondition)
+                    //    cout << npc_id << " send move condition : CON_IDLE\n";
+                    //else if (CON_STRAIGHT == n.m_Mcondition)
+                    //    cout << npc_id << " send condition : CON_STRAIGHT\n";
+                    //else if (CON_BACK == n.m_Mcondition)
+                    //    cout << npc_id << " send condition : CON_BACK\n";
+                }
+                if (n.m_LastRcondition != n.m_Rcondition)
+                {
+                    send_condition_packet(i, npc_id, CON_TYPE_ROTATE);
+                    //if (CON_IDLE == n.m_Rcondition)
+                    //    cout << npc_id << " send rote condition : CON_IDLE\n";
+                    //else if (CON_LEFT == n.m_Rcondition)
+                    //    cout << npc_id << " send condition : CON_LEFT\n";
+                    //else if (CON_RIGHT == n.m_Rcondition)
+                    //    cout << npc_id << " send condition : CON_RIGHT\n";
+                }
+            }
+            else
+            {
+                g_clients[i].m_cLock.unlock();
+                send_enter_packet(i, npc_id);
+            }
+        }
+        else
+        {
+            g_clients[i].m_cLock.lock();
+            if (0 != g_clients[i].m_view_list.count(npc_id))
+            {
+                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                send_leave_packet(i, npc_id);
+            }
+            else
+                g_clients[i].m_cLock.unlock();
+        }
+    }
+    if (n.m_LastMcondition != n.m_Mcondition)
+        n.m_LastMcondition = n.m_Mcondition;
+    if (n.m_LastRcondition != n.m_Rcondition)
+        n.m_LastRcondition = n.m_Rcondition;
+    if (n.m_LastAnim != n.m_anim)
+        do_animation(npc_id, n.m_anim);
+
     add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
@@ -1738,17 +1405,6 @@ void Server::do_timer()
     }
 }
 
-void Server::send_formation_packet(int user_id, int other_id)
-{
-    sc_packet_formation packet;
-    packet.id = other_id;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_FORMATION;
-    packet.form = g_clients[other_id].m_formation;
-
-    send_packet(user_id, &packet);
-}
-
 void Server::send_condition_packet(int user_id, int other_id, unsigned char type)
 {
     sc_packet_condition packet;
@@ -1908,6 +1564,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
             g_clients[npc_id].m_isOut = false;
             g_clients[npc_id].m_isFormSet = true;
+            g_clients[npc_id].m_attack_target = -1;
             FormationInfo formTemp;
             formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
             g_clients[player_id].m_boid.push_back(formTemp);
@@ -1960,6 +1617,8 @@ void Server::do_change_npc_act(int player_id, unsigned char act)
                 if (DO_ATTACK == act)
                 {
                     g_clients[npc_id].m_last_order = FUNC_NPC_ATTACK;
+                    g_clients[npc_id].m_target_look = *g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+
                 }
                 if (DO_HOLD == act)
                 {
@@ -2109,60 +1768,169 @@ void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
-void Server::do_attack(int user_id)
+void Server::do_attack(int npc_id)
 {
-    //cout << user_id << "is do attack\n";
-    for (auto& c : g_clients)
+    /*
+    1. do_attack 되는 동시에 주인 플레이어 look 값 가져오기
+    2. 내 troop 선택된(troop 선택은 명령 하달 바꿀때 다 판정해줌) npc들 backward+일단left 실행시켜서
+        플레이어 look 값으로 바라보게 하기
+    3. look 통일되면 쭉 직진시키기
+    4. 직진하면서 fight 함수 만들어서 해당 범위 안에 적이 있으면 걔를 쳐다보게 하기
+
+    ----
+
+    5. 전투시키기
+
+    */
+    SESSION& n = g_clients[npc_id];
+    _vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    n_look = -1.f * Vector3_::Normalize(n_look);
+    //1
+    if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
     {
-        if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
-            continue;
-        if (is_object(c.second.m_id))
-            continue;
-        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
-            continue;
-        if (c.second.m_id == user_id) // 나 자신 무시
-            continue;
-        if (c.second.m_owner_id == user_id) // 내 npc들 무시
-            continue;
-        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대 + 적npc 가 있으면
+        _vec3 t_look = g_clients[npc_id].m_target_look;
+        t_look = -1.f * Vector3_::Normalize(t_look);
+       
+        float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+        float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+        if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+            radian *= -1.f;
+
+        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+        if (NPCangle > 1.f || NPCangle < -1.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
         {
-            c.second.m_hp -= ATTACK_DAMAGE;
-            if (0 < c.second.m_hp) // 맞고 피가 남아있으면
+            n.m_Mcondition = CON_STRAIGHT;
+            n.m_anim = A_WALK;
+            if (NPCangle > 1.f)
             {
-                do_push(user_id, c.second.m_id);
-                for (int i = 0; i < NPC_START; ++i)
-                {
-                    if (is_near(c.second.m_id, i)) // 맞은애 주변에 있는 플레이어에게
-                    {
-                        send_attacked_packet(i, c.second.m_id);
-                        send_animation_packet(i, c.second.m_id, A_HIT);
-                    }
-                }
+                n.m_Rcondition = CON_LEFT;
+                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
             }
-            else // 죽으면
+            else if (NPCangle < -1.f)
             {
-                c.second.m_hp = 0;
-                g_clients[c.second.m_id].m_last_order = FUNC_DEAD;
-                if (is_player(c.second.m_id)) // 죽은 애가 유저면
-                {
-                    send_dead_packet(c.second.m_id, c.second.m_id); // 자기 자신에게 먼저
-                    send_animation_packet(c.second.m_id, c.second.m_id, A_DEAD);
-                    do_dead(c.second.m_id);
-                    for (int npc_id = MY_NPC_START_SERVER(c.second.m_id); npc_id <= MY_NPC_END_SERVER(c.second.m_id); npc_id++)
-                    {
-                        if (ST_ACTIVE == g_clients[npc_id].m_status)
-                        {
-                            do_dead(npc_id);
-                        }
-                    }
-                }
-                else // 죽은 애가 npc 면
-                {
-                    do_dead(c.second.m_id);
-                }
+                n.m_Rcondition = CON_RIGHT;
+                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+            }
+        }
+        else // npc가 바라보는 방향이 플레이어랑 일치할때
+        {
+            n.m_Mcondition = CON_STRAIGHT;
+            n.m_Rcondition = CON_IDLE;
+            n.m_anim = A_WALK;
+
+            for (int i = 0; i < OBJECT_START; ++i) // 모든 플레이어와 적에 대해서
+            {
+                if (ST_ACTIVE != g_clients[i].m_status)
+                    continue;
+                if (g_clients[i].m_team == n.m_team)
+                    continue;
+                if (!is_attack_detect(i, n.m_id))
+                    continue;
+                // 활성화 상태이고 내 팀이 아니고 공격범위 안에 있는 상대일때
+                n.m_attack_target = i;
+                break;
             }
         }
     }
+    else // 공격할 대상이 지정이 되었을때
+    {
+        _vec3 t_pos = *g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+        _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+        _vec3 t_look = t_pos - n_pos;
+        t_look = Vector3_::Normalize(t_look);
+
+        float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+        float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+        if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+            radian *= -1.f;
+
+        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+        if (NPCangle > 1.f || NPCangle < -1.f) // npc가 공격할 대상을 안바라볼때
+        {
+            n.m_Mcondition = CON_IDLE;
+            n.m_anim = A_WALK;
+            if (NPCangle > 1.f)
+            {
+                n.m_Rcondition = CON_LEFT;
+                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+            }
+            else if (NPCangle < -1.f)
+            {
+                n.m_Rcondition = CON_RIGHT;
+                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+            }
+        }
+        else // npc가 공격할 대상을 바라볼때
+        {
+            n.m_Mcondition = CON_STRAIGHT;
+            n.m_Rcondition = CON_IDLE;
+            if (is_attackable(n.m_id, n.m_attack_target)) // 전투 범위 안에 들어왔을때
+            {
+                n.m_Mcondition = CON_IDLE;
+                n.m_Rcondition = CON_IDLE;
+                n.m_anim = A_ATTACK;
+            }
+        }
+    }
+
+    //cout << user_id << "is do attack\n";
+//    for (auto& c : g_clients)
+//    {
+//        if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
+//            continue;
+//        if (is_object(c.second.m_id))
+//            continue;
+//        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
+//            continue;
+//        if (c.second.m_id == user_id) // 나 자신 무시
+//            continue;
+//        if (c.second.m_owner_id == user_id) // 내 npc들 무시
+//            continue;
+//        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대 + 적npc 가 있으면
+//        {
+//            c.second.m_hp -= ATTACK_DAMAGE;
+//            if (0 < c.second.m_hp) // 맞고 피가 남아있으면
+//            {
+//                do_push(user_id, c.second.m_id);
+//                for (int i = 0; i < NPC_START; ++i)
+//                {
+//                    if (is_near(c.second.m_id, i)) // 맞은애 주변에 있는 플레이어에게
+//                    {
+//                        send_attacked_packet(i, c.second.m_id);
+//                        send_animation_packet(i, c.second.m_id, A_HIT);
+//                    }
+//                }
+//            }
+//            else // 죽으면
+//            {
+//                c.second.m_hp = 0;
+//                g_clients[c.second.m_id].m_last_order = FUNC_DEAD;
+//                if (is_player(c.second.m_id)) // 죽은 애가 유저면
+//                {
+//                    send_dead_packet(c.second.m_id, c.second.m_id); // 자기 자신에게 먼저
+//                    send_animation_packet(c.second.m_id, c.second.m_id, A_DEAD);
+//                    do_dead(c.second.m_id);
+//                    for (int npc_id = MY_NPC_START_SERVER(c.second.m_id); npc_id <= MY_NPC_END_SERVER(c.second.m_id); npc_id++)
+//                    {
+//                        if (ST_ACTIVE == g_clients[npc_id].m_status)
+//                        {
+//                            do_dead(npc_id);
+//                        }
+//                    }
+//                }
+//                else // 죽은 애가 npc 면
+//                {
+//                    do_dead(c.second.m_id);
+//                }
+//            }
+//        }
+//    }
 }
 
 void Server::do_dead(int id)
@@ -2236,9 +2004,26 @@ bool Server::is_attackable(int a, int b)
         (a_pos->y - b_pos->y) *
         (a_pos->y - b_pos->y) +
         (a_pos->z - b_pos->z) *
-        (a_pos->z - b_pos->z)) > ATTACK_RADIUS)
+        (a_pos->z - b_pos->z)) < ATTACK_RADIUS)
+        return true;
+    else
         return false;
-    return true;
+}
+
+bool Server::is_attack_detect(int a, int b)
+{
+    _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    if (sqrt((a_pos->x - b_pos->x) *
+        (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) *
+        (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) *
+        (a_pos->z - b_pos->z)) < DETECT_RADIUS)
+        return true;
+    else
+        return false;
 }
 
 bool Server::is_player(int id)
