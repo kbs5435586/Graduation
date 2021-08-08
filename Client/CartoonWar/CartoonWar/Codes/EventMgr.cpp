@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "NPC.h"
 #include "Flag.h"
+#include "UI_OnHead_Gage.h"
 
 _IMPLEMENT_SINGLETON(CEventMgr)
 CEventMgr::CEventMgr()
@@ -35,7 +36,11 @@ void CEventMgr::Access_Flag_Player()
 			{
 				dynamic_cast<CFlag*>(iter1)->SetTeam(iter0->GetCurTeam());
 			}
-			
+			else
+			{
+				dynamic_cast<CUI_OnHead_Gage*>(CManagement::GetInstance()->
+					Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", iter1->GetLayerIdx()))->GetIsReset() = true;
+			}			
 		}
 	}
 }
