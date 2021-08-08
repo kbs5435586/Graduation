@@ -235,10 +235,22 @@ void CUI_OnHead_Gage::ResetGage()
 
 void CUI_OnHead_Gage::FixGage()
 {
-	if (m_tRep.m_arrInt[0] >= 10.f)
+	if (!m_IsFix_Gage)
 	{
-		m_IsFix_Gage = true;
-		m_fTimeDelta = 0.f;
+		if (m_tRep.m_arrInt[0] >= 10.f)
+		{
+			m_IsFix_Gage = true;
+			m_fTimeDelta = 0.f;
+
+			if (m_tRep.m_arrInt[1] == 1)// BLUE
+			{
+				g_iBlueNum++;
+			}
+			else if (m_eCurTeam == TEAM::TEAM_RED)// RED
+			{
+				g_iRedNum++;
+			}
+		}
 	}
 
 }

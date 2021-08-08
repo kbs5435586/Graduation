@@ -10,12 +10,15 @@ private:
 public:
     HRESULT                 Ready_CollsionManager();
     void                    Update_CollisionManager();
-private:
+private://Player, NPC
     void                    Player_to_NPC_Collision();
-    void                    NPC_to_NPC_Collision();
-    void                    Player_to_Player_Collision();
-    void                    Throw_to_NPC_Collision();
     void                    Player_to_NPC_Attack_Collision();
+    void                    Player_to_Player_Collision();
+    void                    NPC_to_NPC_Collision();
+private://Throw
+    void                    Throw_to_NPC_Collision();
+    void                    Throw_to_Player_Collision();
+private://Deffend
     void                    Deffend_to_Player();
     void                    Deffend_to_NPC();
     void                    Deffend_to_Throw();
