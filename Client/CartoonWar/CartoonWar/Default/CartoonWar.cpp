@@ -31,6 +31,7 @@ bool        g_DefferedUIRender = false;
 int         g_DefferedRender = 0;
 bool        g_InputMode = false;
 bool        g_IsCollisionStart = false;
+int         g_iPlayerIdx = 0;
 
 _vec3 g_vEyePt = _vec3(30.f, 100.0f, -20.0f);
 _vec3 g_vLookatPt = _vec3(0.0f, 0.f, 0.f);
@@ -76,7 +77,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
 
     // For.Frame_60
-    if (FAILED(pSystem->Add_Frame(L"Frame_60", 60.f)))
+    if (FAILED(pSystem->Add_Frame(L"Frame_60", 100000.f)))
         return FALSE;
 
 

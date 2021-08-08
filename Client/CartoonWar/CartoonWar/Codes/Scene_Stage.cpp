@@ -57,6 +57,7 @@
 #include "Water.h"
 #include "Deffend.h"
 #include "Animals.h"
+#include "EffectBox.h"
 
 
 CScene_Stage::CScene_Stage()
@@ -82,19 +83,23 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Demo/FenceTest.dat")))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/Fence00.dat")))
+	_bool	IsTree = true;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat", (void*)&IsTree)))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat")))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat")))
-		return E_FAIL;
-
+	//IsTree = false;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat", (void*)&IsTree)))
+	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 
 	g_IsCollisionStart = true;
+	CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
+	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 0.f, FMOD_LOOP_NORMAL);
+
 	Safe_Release(pManagement);
 	return S_OK;
 }
@@ -196,6 +201,7 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Deffend", CDeffend::Create())))
 		return E_FAIL;
 
+
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
@@ -205,6 +211,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	//if (FAILED(pManagement->Add_Prototype_GameObject(L"Component_Buffer_Circle", CBuffer_Circle::Create())))
 	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -263,17 +271,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(100.f, 5.f, 50.f, 1.f);
-	tLightInfo.fRange = 100;
-	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -303,7 +300,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 600.f;
+	tProjDesc.fFar = 300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -558,11 +555,14 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	PLAYER tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+	UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
 		return E_FAIL;
-
-
+	ORDER tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx = 0;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
 
 
 	//GameObject_ThrowArrow
@@ -593,9 +593,20 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	
-	PLAYER tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
-		return E_FAIL;
+	for (int i = 0; i < 40; ++i)
+	{
+		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+			return E_FAIL;
+		ORDER tOrder = ORDER();
+		tOrder.IsPlayer = false;
+		tOrder.iIdx = i;
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+			return E_FAIL;
+
+
+	}
+
 	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
 	//	return E_FAIL;

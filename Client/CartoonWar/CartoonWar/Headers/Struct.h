@@ -99,10 +99,14 @@ typedef struct tagVertexTexNor
 typedef struct tagVertexBump
 {
 	XMFLOAT3	vPos = {};
-	XMFLOAT3	vNormal = {};
+	XMFLOAT4	vColor = {};
 	XMFLOAT2	vTexUV = {};
-	XMFLOAT3	vBiNormal= {};
+	XMFLOAT3	vNormal = {};
 	XMFLOAT3	vTangent = {};
+	XMFLOAT3	vBiNormal= {};
+
+	XMFLOAT4	vWeight = {};
+	XMFLOAT4	vIndices = {};
 	tagVertexBump() {}
 	tagVertexBump(XMFLOAT3 _vPos, XMFLOAT3 _vNormal, XMFLOAT2 _vTexUV, XMFLOAT3 _vBiNormal, XMFLOAT3 _vTangent)
 	{
@@ -628,11 +632,17 @@ typedef struct tagFlag
 
 
 
-typedef struct tagPlayer
+typedef struct tagUint
 {
 	SPECIES		eSpecies;
 	COLOR		eColor;
-}PLAYER;
+}UNIT;
+
+typedef struct tagOrder
+{
+	bool		IsPlayer;
+	int			iIdx;
+}ORDER;
 
 
 typedef struct tagParticleSet
@@ -681,3 +691,11 @@ typedef struct tagSound_Dev
 	FMOD::Sound* pSound = nullptr;
 	float fVolume = 0.f;
 }SOUNDDEV;
+
+
+
+typedef struct tagPos_Size
+{
+	Vector3		vPosition;
+	Vector3		vSize;
+}POSSIZE;

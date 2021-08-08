@@ -36,9 +36,9 @@ private:
 
 	ComPtr<ID3D12Fence>							m_pFence = nullptr;
 	ComPtr<ID3D12Fence>							m_pFenceCS = nullptr;
-	ComPtr<IDXGIFactory4>						m_pFactory = nullptr;
-	ComPtr<ID3D12Debug>							m_pDbgCtrl = nullptr;
-	ComPtr<IDXGISwapChain4>						m_pSwapChain = nullptr;
+	ComPtr<IDXGIFactory>						m_pFactory;
+	ComPtr<ID3D12Debug>							m_pDbgCtrl;
+	ComPtr<IDXGISwapChain>						m_pSwapChain = nullptr;
 	ComPtr<ID3D12Resource>						m_RenderTargets[2] = { nullptr };
 private:
 	ComPtr<ID3D12Resource>						m_pConstantBuffer = nullptr;
@@ -59,7 +59,7 @@ public:
 	vector<ComPtr<ID3D12DescriptorHeap>>		GetDummyDesc() { return m_vecDummyDescriptor; }
 	ComPtr<ID3D12Resource>						GetRenderTarget() { return m_RenderTargets[m_iCurTargetIdx]; }
 	ComPtr< ID3D12DescriptorHeap>				GetDSV() { return m_pDSV; }
-	ComPtr<IDXGISwapChain4>						GetSwapChain() { return m_pSwapChain; }
+	ComPtr<IDXGISwapChain>						GetSwapChain() { return m_pSwapChain; }
 	D3D12_VIEWPORT								GetViewPort() { return m_tViewPort; }
 public:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();

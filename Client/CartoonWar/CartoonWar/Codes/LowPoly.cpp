@@ -33,23 +33,22 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 
-
-	//_uint iRandNum = rand() % 10 + 1;
-	//if (iRandNum >= 3)
-	//	m_IsHatch = false;
-	//else
-	//	m_IsHatch = true;
-
+	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	return S_OK;
 }
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
+	float fSize = m_pTransformCom->Get_Scale().x;
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY);
+	if (m_IsTree)
+		m_pTransformCom->Set_PositionY(fY);
+	else
+		m_pTransformCom->Set_PositionY(fY + fSize / 2.f);
 
 
 	return _int();
@@ -63,25 +62,43 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (fLen <= 250.f)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-				return -1;	
+				return -1;
+
+		}
+		if (fLen <= 50.f)
+		{
+			if (pPlayer->GetIsRun())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			}
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
 
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-			return -1;
 	}
 	else
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();;
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
-
 
 
 	return _int();
@@ -94,64 +111,33 @@ void CLowPoly::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
-	if (m_IsHatch)
+
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
-		_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
-		for (_uint i = 0; i < iSubsetNum; ++i)
-		{
-			MAINPASS tMainPass = {};
-			_matrix matWorld = m_pTransformCom->Get_Matrix();
-			_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-			_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-			m_pShader_Hatch->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+		REP tRep = {};
+		tRep.m_arrInt[2] = g_DefferedRender;
 
-			_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-			CDevice::GetInstance()->SetTextureToShader(m_pTexuterCom_Hatch->GetSRV(0), TEXTURE_REGISTER::t0);
-			CDevice::GetInstance()->SetTextureToShader(m_pTexuterCom_Hatch->GetSRV(1), TEXTURE_REGISTER::t1);
-			CDevice::GetInstance()->SetTextureToShader(m_pTexuterCom_Hatch->GetSRV(2), TEXTURE_REGISTER::t2);
-			CDevice::GetInstance()->SetTextureToShader(m_pTexuterCom_Hatch->GetSRV(3), TEXTURE_REGISTER::t3);
-			CDevice::GetInstance()->SetTextureToShader(m_pTexuterCom_Hatch->GetSRV(4), TEXTURE_REGISTER::t4);
-			CDevice::GetInstance()->SetTextureToShader(m_pTexuterCom_Hatch->GetSRV(5), TEXTURE_REGISTER::t5);
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-			CDevice::GetInstance()->UpdateTable();
-			m_pMeshCom->Render_Mesh(i);
-		}
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
+
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+
+		CDevice::GetInstance()->UpdateTable();
+		m_pMeshCom->Render_Mesh(i);
 	}
-	else
-	{
-		_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
-		for (_uint i = 0; i < iSubsetNum; ++i)
-		{
-			MAINPASS tMainPass = {};
-			_matrix matWorld = m_pTransformCom->Get_Matrix();
-			_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-			_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
-			REP tRep = {};
-			tRep.m_arrInt[2] = g_DefferedRender;
-
-			m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-			_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-
-			iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-				(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
-
-			CDevice::GetInstance()->UpdateTable();
-			m_pMeshCom->Render_Mesh(i);
-		}
-
-	}
-
 
 
 	Safe_Release(pManagement);
@@ -220,10 +206,13 @@ void CLowPoly::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
-	m_matOldWorld = m_pTransformCom->Get_Matrix();
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-
+	m_iBlurCnt++;
+	if (m_iBlurCnt >= 20)
+	{
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_iBlurCnt = 0;
+	}
 	Safe_Release(pManagement);
 }
 
@@ -271,15 +260,6 @@ HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
-	m_pShader_Hatch = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching");
-	NULL_CHECK_VAL(m_pShader_Hatch, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Shader_Hatch", m_pShader_Hatch)))
-		return E_FAIL;
-
-	m_pTexuterCom_Hatch = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hatch");
-	NULL_CHECK_VAL(m_pTexuterCom_Hatch, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture_Hatch", m_pTexuterCom_Hatch)))
-		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -303,11 +283,10 @@ HRESULT CLowPoly::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
-		return E_FAIL;	
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
-	if (FAILED(m_pShader_Hatch->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -322,7 +301,7 @@ CLowPoly* CLowPoly::Create()
 	return pInstance;
 }
 
-CGameObject* CLowPoly::Clone_GameObject(void* pArg , _uint iIdx)
+CGameObject* CLowPoly::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CLowPoly* pInstance = new CLowPoly(*this);
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
@@ -331,6 +310,7 @@ CGameObject* CLowPoly::Clone_GameObject(void* pArg , _uint iIdx)
 		Safe_Release(pInstance);
 	}
 	m_iLayerIdx = iIdx;
+	m_IsTree = iIdx;
 	return pInstance;
 }
 
@@ -344,8 +324,6 @@ void CLowPoly::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
-	Safe_Release(m_pShader_Hatch);
-	Safe_Release(m_pTexuterCom_Hatch);
 
 	CGameObject::Free();
 }

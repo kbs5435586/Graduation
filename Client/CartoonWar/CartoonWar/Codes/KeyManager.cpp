@@ -44,6 +44,9 @@ void CKeyManager::Key_Update()
 		m_dwKey |= KEY_1;
 	if (GetAsyncKeyState('2') & 0x8000)
 		m_dwKey |= KEY_2;
+	if (GetAsyncKeyState('V') & 0x8000)
+		m_dwKey |= KEY_V;
+
 	if (GetAsyncKeyState('3') & 0x8000)
 		m_dwKey |= KEY_3;
 	if (GetAsyncKeyState('4') & 0x8000)
@@ -55,8 +58,6 @@ void CKeyManager::Key_Update()
 		m_dwKey |= KEY_I;
 	if (GetAsyncKeyState('Z') & 0x8000)
 		m_dwKey |= KEY_Z;
-	if (GetAsyncKeyState('X') & 0x8000)
-		m_dwKey |= KEY_X;
 	if (GetAsyncKeyState('N') & 0x8000)
 		m_dwKey |= KEY_N;
 	if (GetAsyncKeyState('M') & 0x8000)

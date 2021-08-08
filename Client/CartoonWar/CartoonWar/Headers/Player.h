@@ -84,8 +84,6 @@ private:
 	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
-	CUI_OnHead*								m_pUI_OnHead = nullptr;
-private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
 private:

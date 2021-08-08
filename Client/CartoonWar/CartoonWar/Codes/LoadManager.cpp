@@ -142,19 +142,25 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			lstrcpy(pName, szName);
 			lstrcpy(pLayerTag, szLayerTag);
 			lstrcpy(pComrTag, szComTag);
+			
+			_uint	iTemp = 0;
+			_bool	IsTemp = *(_bool*)pArg;
 
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pComrTag)))
+
+			CGameObject* pGameObject = nullptr;
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, pLayerTag, &pGameObject, pComrTag)))
 			{
 				return E_FAIL;
 
 			}
-
+			pGameObject->GetIsTree() = IsTemp;
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, pLayerTag)->Get_ComponentPointer(L"Com_Transform");
 			pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
 
 			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
+
 
 			_uint iSize = rand() % 20 + 5;
 			_uint iRot = rand() % 90 + 1;

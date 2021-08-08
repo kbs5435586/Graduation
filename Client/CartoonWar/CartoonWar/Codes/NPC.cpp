@@ -27,7 +27,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 {
 	if (pArg)
 	{
-		m_tPlayer = *(PLAYER*)pArg;
+		m_tUnit = *(UNIT*)pArg;
 	}
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
@@ -72,13 +72,9 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
 
-	m_pUI_OnHead = CUI_OnHead::Create();
-	if (nullptr == m_pUI_OnHead)
-		return E_FAIL;
-	if (FAILED(m_pUI_OnHead->Ready_GameObject((void*)&vPos)))
-		return E_FAIL;
 
-	
+	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	return S_OK;
 }
 
@@ -88,9 +84,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
-	m_pUI_OnHead->Update_GameObject(fTimeDelta);
-	m_pUI_OnHead->SetPosition(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), m_eCurClass);
-	m_pUI_OnHead->SetInfo(m_tInfo);
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
@@ -102,8 +95,9 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_fSpeedUp = m_fArrSpeedUP[(_uint)m_eCurClass];
 
 	if (m_IsRun)
+		m_pTransformCom->SetSpeed(m_fSpeedUp);
+	else 
 		m_pTransformCom->SetSpeed(m_fSpeed);
-	else m_pTransformCom->SetSpeed(m_fSpeedUp);
 
 	if(GetAsyncKeyState('L'))
 		m_pTransformCom->Rotation_Y(fTimeDelta);
@@ -134,9 +128,8 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 	if (m_IsDead)
 		Resurrection();
-
-
-	Set_Animation(fTimeDelta);
+	//if (m_IsDead)
+	//	return DEAD_OBJ;
 
 	return NO_EVENT;
 }
@@ -146,14 +139,16 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	m_pUI_OnHead->LastUpdate_GameObject(fTimeDelta);
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", 0);
+		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
+
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -162,11 +157,17 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
+			if (pPlayer->GetIsRun())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
 		}
-
-
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
 	}
 	else
 	{
@@ -174,12 +175,13 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
 
-	//Set_Animation(fTimeDelta);
-	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	//{
-	//	m_iCurAnimIdx = 0;
-	//	m_IsOnce = false;
-	//}
+	Set_Animation(fTimeDelta);
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		m_iCurAnimIdx = 0;
+		m_IsOnce = false;
+		m_IsActioning = false;
+	}
 
 	return _int();
 }
@@ -220,11 +222,11 @@ void CNPC::Render_GameObject()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -236,6 +238,15 @@ void CNPC::Render_GameObject()
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
 	//m_pColiider[1]->Render_Collider();
+	m_iBlurCnt++;
+	if (m_iBlurCnt >= MAX_BLURCNT)
+	{
+	
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_iBlurCnt = 0;
+	}
+
 	Safe_Release(pManagement);
 }
 
@@ -279,6 +290,95 @@ void CNPC::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
+void CNPC::Render_PostEffect()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+
+		m_pShaderCom_PostEffect->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		ComPtr<ID3D12DescriptorHeap>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetSRV().Get();
+		CDevice::GetInstance()->SetTextureToShader(pPostEffectTex.Get(), TEXTURE_REGISTER::t0);
+
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+	Safe_Release(pManagement);
+}
+
+void CNPC::Render_Blur()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+
+		tRep.m_arrMat[0] = m_matOldWorld;//OldWorld
+		tRep.m_arrMat[1] = m_matOldView;//OldView
+
+		m_pShaderCom_Blur->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+
+	//m_matOldWorld = m_pTransformCom->Get_Matrix();
+	//m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+
+	Safe_Release(pManagement);
+}
+
 HRESULT CNPC::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -297,6 +397,10 @@ HRESULT CNPC::CreateInputLayout()
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -331,7 +435,6 @@ void CNPC::Free()
 {
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
-
 		Safe_Release(m_pMeshCom[i]);
 		Safe_Release(m_pAnimCom[i]);
 	}
@@ -340,6 +443,8 @@ void CNPC::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
+	Safe_Release(m_pShaderCom_PostEffect);
+	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pCollider_OBB);
 	Safe_Release(m_pCollider_AABB);
@@ -347,9 +452,7 @@ void CNPC::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	//Safe_Release(m_pNaviCom);
-	//Safe_Release(m_pObserverCom);
 
-	Safe_Release(m_pUI_OnHead);
 	CGameObject::Free();
 }
 
@@ -369,7 +472,7 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_UNDEAD)
+	if (m_tUnit.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Undead_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -416,7 +519,7 @@ HRESULT CNPC::Ready_Component()
 		if (FAILED(Add_Component(L"Com_Mesh_Archer", m_pMeshCom[(_uint)CLASS::CLASS_ARCHER])))
 			return E_FAIL;
 	}
-	else if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	else if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pMeshCom[(_uint)CLASS::CLASS_WORKER] = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Human_Worker");
 		NULL_CHECK_VAL(m_pMeshCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
@@ -479,6 +582,16 @@ HRESULT CNPC::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
 		return E_FAIL;
+	m_pShaderCom_PostEffect = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect");
+	NULL_CHECK_VAL(m_pShaderCom_PostEffect, E_FAIL);
+	if (FAILED(Add_Component(L"Com_PostEffectShader", m_pShaderCom_PostEffect)))
+		return E_FAIL;
+
+	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
+	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
+	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
+		return E_FAIL;
+
 
 
 
@@ -539,7 +652,7 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
 		return E_FAIL;
 
-	if (m_tPlayer.eSpecies == SPECIES::SPECIES_HUMAN)
+	if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
 		NULL_CHECK_VAL(m_pTextureCom[1], E_FAIL);
@@ -882,49 +995,59 @@ void CNPC::AnimVectorClear()
 
 void CNPC::Obb_Collision()
 {
-	if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+	if (m_IsBack)
 	{
-		if (!m_IsBazier)
+		if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
 		{
-			_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
-			_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			_vec3 vTemp = { vPos - vTargetPos };
-			vTemp *= 5.f;
-			//vTemp.Normalize();
-			m_vStartPoint = vPos;
-			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			m_vMidPoint.y += 3.f;
-			//m_vMidPoint.y += 2.f;
-			m_IsBazier = true;
-
-			//_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
-			//_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			//_vec3 vTemp = { vPos - vTargetPos };
-			//vTemp *= 5.f;
-			//vTemp.Normalize();
-			//m_vStartPoint = vPos;
-			//m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-			////m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-			//
-			//m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-			//m_vMidPoint.y += 3.f;
-			////m_vMidPoint.y += 2.f;
-			//
-			//_vec3 vParticlePos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - (vTemp);
-			//Create_Particle(vParticlePos);
-			//m_IsBazier = true;		
+			if (!m_IsBazier)
+			{
+				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				vTemp *= 5.f;
+				m_vStartPoint = vPos;
+				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+				m_vMidPoint.y += 10.f;
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_IsBazier = true;
+			}
+			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 		}
-		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+		if (m_fBazierCnt >= 1.f)
+		{
+			m_fBazierCnt = 0.f;
+			m_IsOBB_Collision = false;
+			m_IsBazier = false;
+		}
+	}
+	else
+	{
+		if (m_IsOBB_Collision && m_fBazierCnt <= 1.f)
+		{
+			if (!m_IsBazier)
+			{
+				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+				_vec3 vTemp = { vPos - vTargetPos };
+				vTemp *= 1.f;
+				m_vStartPoint = vPos;
+				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+				//m_vMidPoint.y += 10.f;
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_IsBazier = true;
+			}
+			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+		}
+		if (m_fBazierCnt >= 1.f)
+		{
+			m_fBazierCnt = 0.f;
+			m_IsOBB_Collision = false;
+			m_IsBazier = false;
+		}
 	}
 
-	if (m_fBazierCnt >= 1.f)
-	{
-		m_fBazierCnt = 0.f;
-		m_IsOBB_Collision = false;
-		m_IsBazier = false;
-	}
 }
 
 void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
@@ -1187,44 +1310,45 @@ void CNPC::Combat(const _float& fTimeDelta)
 
 void CNPC::SetSpeed()
 {
-	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeed[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 30.f;
 }
 
 void CNPC::Resurrection()
 {
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
-	_vec3 vPos = { 5.f,0.f,5.f };
+	_vec3 vPos = { 50.f,0.f,50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_tInfo = INFO(1, 1, 1, 0);
 	m_IsDead = false;
+	m_IsDeadMotion = false;
 }
 

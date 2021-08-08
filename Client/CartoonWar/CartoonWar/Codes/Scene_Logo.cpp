@@ -120,15 +120,14 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strID.c_str(), 100, 100)))
 		return E_FAIL;
 
+	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 0.f, FMOD_LOOP_NORMAL);
 	Safe_Release(pManagement);
-	CManagement::GetInstance()->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 200.f);
 	return S_OK;
 
 }
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
-
 	Input_ID_IP();
 	return CScene::Update_Scene(fTimeDelta);
 }
@@ -676,13 +675,13 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex",
 		CBuffer_CubeTex::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain",
-		CBuffer_Terrain::Create(100.f, 100.f))))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
 		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/tttt.bmp", 2.5f))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_5Sphere",
+	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
+	//	CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Filter.bmp", 1.f))))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
 		CBuffer_Sphere::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Point",
@@ -691,9 +690,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTexNor",
 		CBuffer_RectTexNor::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
-		CBuffer_Sphere::Create())))
-		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -1428,6 +1425,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse",
 			CTexture::Create(L"../Bin/Resource/Mesh/Dynamic/Human/WK_Horse%d.tga", 4, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_NGround",
+			CTexture::Create(L"../Bin/Resource/Texture/Terrain/NGround%d.tga", 3, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon",

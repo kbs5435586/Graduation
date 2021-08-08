@@ -24,7 +24,8 @@ HRESULT CUI_OnHead::Ready_GameObject(void* pArg)
 
 	if (nullptr == pArg)
 		return E_FAIL;
-	m_vPos = *(_vec3*)pArg;
+	m_tOrder = *(ORDER*)pArg;
+
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
 	m_vSize = {5.f, 0.25f, 1.f};
 	m_pTransformCom->Scaling(m_vSize);
@@ -34,25 +35,36 @@ HRESULT CUI_OnHead::Ready_GameObject(void* pArg)
 
 _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
-
-
+	CTransform* pTransform = nullptr;
+	CGameObject* pGameObject = nullptr;
+	if(m_tOrder.IsPlayer)
 	{
-		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-
-		matView = Matrix_::Inverse(matView);
-
-		_vec3		vRight, vUp, vLook;
-
-		vRight = *(_vec3*)&matView.m[0][0] * m_pTransformCom->Get_Scale().x;
-		vUp = *(_vec3*)&matView.m[1][0] * m_pTransformCom->Get_Scale().y;
-		vLook = *(_vec3*)&matView.m[2][0] * m_pTransformCom->Get_Scale().z;
-
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", g_iPlayerIdx);;
+		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 	}
+	else
+	{
+		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", L"Com_Transform", m_tOrder.iIdx);;
+		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx);
+	}
+	CLASS eClass = pGameObject->GetClass();
+	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	SetPosition(vPos, eClass);
+	SetInfo(pGameObject->GetInfo());
 
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	matView = Matrix_::Inverse(matView);
 
+	_vec3		vRight, vUp, vLook;
+	vRight = *(_vec3*)&matView.m[0][0] * m_pTransformCom->Get_Scale().x;
+	vUp = *(_vec3*)&matView.m[1][0] * m_pTransformCom->Get_Scale().y;
+	vLook = *(_vec3*)&matView.m[2][0] * m_pTransformCom->Get_Scale().z;
+
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
+	
 	return _int();
 }
 
@@ -147,7 +159,7 @@ void CUI_OnHead::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pFrustumCom);
-	CUI::Free();
+	CGameObject::Free();
 }
 
 HRESULT CUI_OnHead::Ready_Component()

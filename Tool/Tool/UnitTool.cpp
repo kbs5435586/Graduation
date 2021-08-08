@@ -279,7 +279,7 @@ BOOL CUnitTool::OnInitDialog()
 		}
 		else if (i == 39)
 		{
-			strName = L"Rampart_Wall_10M0";
+			strName = L"build_wall_panel_01_low";
 		}
 		else if (i == 40)
 		{
@@ -529,12 +529,12 @@ void CUnitTool::OnLbnSelchangeStatic_Mesh()
 	}
 	else if (iSelect == 39)
 	{
-		m_pComponentTag = L"Component_StaticMesh_Rampart_Wall_10M0";
-		m_pLayerTag = L"Layer_Rampart_Wall_10M0";
+		m_pComponentTag = L"Component_StaticMesh_build_wall_panel_01_low";
+		m_pLayerTag = L"Layer_build_wall_panel_01_low";
 	}
 	else if (iSelect == 40)
 	{
-		m_pComponentTag = L"Component_StaticMesh_Rampart_Gate_Small_A0";
+		m_pComponentTag = L"Component_StaticMesh_build_wall_panel_01_low";
 		m_pLayerTag = L"Layer_Rampart_Gate_Small_A0";
 	}
 	else if (iSelect == 41)

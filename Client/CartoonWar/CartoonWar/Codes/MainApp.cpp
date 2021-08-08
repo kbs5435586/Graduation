@@ -98,7 +98,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
-	
+	m_pManagement->Update_Sound();
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
@@ -160,8 +160,22 @@ HRESULT CMainApp::Ready_Sound()
 {
 	if (FAILED(m_pManagement->Ready_Channel()))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_BGSound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Hit.wav", 200.f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/BGM/Lobby.mp3", 0.2f)))
 		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, BG, "../Bin/Resource/Sounds/BGM/Stage.mp3", 0.02f)))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HIT, "../Bin/Resource/Sounds/Hit.wav", 0.2f)))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, DIE, "../Bin/Resource/Sounds/Orc_Death.wav", 0.2f)))
+		return E_FAIL;	
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HITTED, "../Bin/Resource/Sounds/Orc_Hitted.wav", 0.2f)))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, ATTACK, "../Bin/Resource/Sounds/Sword_Whoosh_Attack_1.wav", 0.2f)))
+		return E_FAIL;
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/Walk_Run.wav", 0.2f)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

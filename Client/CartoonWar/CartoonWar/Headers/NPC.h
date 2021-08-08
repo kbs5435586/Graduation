@@ -23,6 +23,8 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_PostEffect();
+	virtual void							Render_Blur();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -41,6 +43,7 @@ private:
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 public:
 	void									Create_Particle(const _vec3& vPoistion);
+
 private:
 	void									Death(const _float& fTimeDelta);
 	void									DeathMontion_Init();
@@ -55,6 +58,8 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
+	CShader*								m_pShaderCom_PostEffect = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = { nullptr };
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pCollider_OBB = nullptr;
@@ -63,8 +68,6 @@ private:
 	CTexture*								m_pTextureCom[2] = { nullptr };
 	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
-private:
-	CUI_OnHead*								m_pUI_OnHead = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;
@@ -90,9 +93,7 @@ private:
 	_matrix									m_matRight = {};
 	_float									m_fDeathTime = 0.f;
 private:
-	CLASS									m_eCurClass = CLASS::CLASS_END;
-	CLASS									m_ePreClass = CLASS::CLASS_END;
-	PLAYER									m_tPlayer = {};
+
 private:
 	_uint									m_iCurMeshNum{};
 public:

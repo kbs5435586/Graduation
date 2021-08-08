@@ -237,7 +237,7 @@ HRESULT CTool_Scene::Ready_Component_Shader(CManagement* pManagement)
 HRESULT CTool_Scene::Ready_Component_Buffer(CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Terrain",
-		CBuffer_Terrain::Create(m_pGraphic_Device, 1500, 1500, 1.f))))
+		CBuffer_Terrain::Create(m_pGraphic_Device, 1500.f, 1500, 2.5f))))
 		return E_FAIL;
 
 	//if (FAILED(pManagement->Add_Prototype_Component(SCENE_LOGO, L"Component_Buffer_Terrain",
