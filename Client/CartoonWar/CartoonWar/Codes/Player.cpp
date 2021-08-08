@@ -116,7 +116,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
-	if (m_iLayerIdx == server->Get_PlayerID()) //&& !m_IsActive)
+	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive)
 		Input_Key(fTimeDelta);
 
 	switch (m_cMoveCondition)

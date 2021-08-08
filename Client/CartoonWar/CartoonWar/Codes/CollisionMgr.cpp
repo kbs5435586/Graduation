@@ -18,7 +18,7 @@ HRESULT CCollisionMgr::Ready_CollsionManager()
 	return S_OK;
 }
 
-void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
+void CCollisionMgr::Update_CollisionManager()
 {
 	Player_to_NPC_Collision();
 	Player_to_Player_Collision();
@@ -27,8 +27,8 @@ void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
 	Player_to_NPC_Attack_Collision();
 	Deffend_to_Player();
 	Deffend_to_Deffend();
-	Skill_to_NPC_Collision(fTimeDelta);
-	Teleport_to_NPC_Collision(fTimeDelta);
+	//Skill_to_NPC_Collision(fTimeDelta);
+	//Teleport_to_NPC_Collision(fTimeDelta);
 }
 
 void CCollisionMgr::Player_to_NPC_Collision()

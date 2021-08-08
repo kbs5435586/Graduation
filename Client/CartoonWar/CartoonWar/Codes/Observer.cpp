@@ -29,7 +29,7 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 	if (lstTemp->end() == iter_find)
 		return;
 	
-	switch (eType)
+	/*switch (eType)
 	{
 	case DATA_TYPE::DATA_INFO:
 		m_tInfo = *reinterpret_cast<INFO*>(*iter_find);
@@ -45,7 +45,7 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 	case DATA_TYPE::DATA_BOOL:
 		m_bool = *reinterpret_cast<_bool*>(*iter_find);
 		break;
-	
+
 	case DATA_TYPE::DATA_NPC:
 		m_lstData = lstTemp;
 		break;
@@ -58,7 +58,7 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 	case DATA_TYPE::DATA_NPC_NUM:
 		m_npcNum = *reinterpret_cast<_int*>(*iter_find);
 		break;
-		}
+	}*/
 
 }
 
@@ -69,12 +69,12 @@ void CObserver::ReUpdate_Observer(DATA_TYPE eType)
 	if (nullptr == lstTemp)
 		return;
 
-	switch (eType)
+	/*switch (eType)
 	{
 	case DATA_TYPE::DATA_NPC:
 		m_lstData = lstTemp;
 		break;
-	}
+	}*/
 }
 
 void* CObserver::GetNPC(int num)

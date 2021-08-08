@@ -1628,21 +1628,21 @@ void Server::do_change_npc_act(int player_id, unsigned char act)
         if (ST_ACTIVE == g_clients[npc_id].m_status &&
             ((g_clients[player_id].m_troop == g_clients[npc_id].m_troop) || (g_clients[player_id].m_troop == T_ALL)))
         {
-                if (DO_FOLLOW == act)
-                {
-                    g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
-                }
-                if (DO_ATTACK == act)
-                {
-                    g_clients[npc_id].m_last_order = FUNC_NPC_ATTACK;
-                    g_clients[npc_id].m_target_look = *g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+            if (DO_FOLLOW == act)
+            {
+                g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
+            }
+            if (DO_ATTACK == act)
+            {
+                g_clients[npc_id].m_last_order = FUNC_NPC_ATTACK;
+                g_clients[npc_id].m_target_look = *g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
 
-                }
-                if (DO_HOLD == act)
-                {
-                    g_clients[npc_id].m_last_order = FUNC_NPC_HOLD;
-                }
-                activate_npc(npc_id, g_clients[npc_id].m_last_order);
+            }
+            if (DO_HOLD == act)
+            {
+                g_clients[npc_id].m_last_order = FUNC_NPC_HOLD;
+            }
+            activate_npc(npc_id, g_clients[npc_id].m_last_order);
         }
     }
 }
@@ -2144,13 +2144,13 @@ void Server::set_starting_pos(int user_id)
     if (0 == user_id)
     {
         g_clients[user_id].m_team = TEAM_RED;
-        _vec3 pos = { 50.f, 0.f, 70.f };
+        _vec3 pos = { 350.f, 0.f, 400.f };
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     }
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
-        _vec3 pos = { 80.f, 0.f, 80.f };
+        _vec3 pos = { 340.f, 0.f, 420.f };
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     }
     //{ // 스트레스 테스트

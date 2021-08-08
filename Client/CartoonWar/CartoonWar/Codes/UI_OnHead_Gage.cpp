@@ -86,7 +86,7 @@ void CUI_OnHead_Gage::Render_GameObject()
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-
+	TEAM test = m_eCurTeam;
 	m_tRep.m_arrFloat[0] = 0.f;
 	if (m_eCurTeam != TEAM::TEAM_END)
 	{
