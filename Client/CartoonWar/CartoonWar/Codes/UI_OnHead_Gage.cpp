@@ -217,7 +217,6 @@ void CUI_OnHead_Gage::ResetGage()
 	{
 		if (m_IsReset)
 		{
-
 			m_fTimeDelta = 0.f;
 			m_tRep.m_arrInt[0] = 0;
 
