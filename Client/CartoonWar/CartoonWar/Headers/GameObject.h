@@ -32,6 +32,7 @@ public:
 	CLASS&									GetClass() { return m_eCurClass; }
 	TEAM&									GetCurTeam() { return m_eCurTeam; }
 	TEAM&									GetPreTeam() { return m_ePreTeam; }
+	_uint									GetLayerIdx() { return m_iLayerIdx; }
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:

@@ -220,7 +220,6 @@ void CUI_OnHead_Gage::ResetGage()
 			m_fTimeDelta = 0.f;
 			m_tRep.m_arrInt[0] = 0;
 
-
 			if (m_eCurTeam == TEAM::TEAM_BLUE)
 				m_tRep.m_arrInt[1] = 1;
 			else if (m_eCurTeam == TEAM::TEAM_RED)
