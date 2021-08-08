@@ -54,9 +54,7 @@ private:
 	void									Combat(const _float& fTimeDelta);
 	void									SetSpeed();
 	void									Resurrection();
-public:
-	//void									Create_Particle(const _vec3& vPoistion);
-	//void									Create_Particle(const _vec3& vPoistion);
+
 public:
 	CLASS&									GetClass(){return m_eCurClass;}
 
@@ -113,7 +111,7 @@ private:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	
 	CLASS									m_ePreClass = CLASS::CLASS_END;
-	PLAYER									m_tPlayer = {};
+	UNIT									m_tPlayer = {};
 private:
 	_uint									m_iCurMeshNum = 0;
 public:

@@ -1356,42 +1356,42 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	
 
-		if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
-		{
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			m_pTransformCom->Rotation_Y(-fTimeDelta);
-			m_IsActioning = true;
-		}
-		if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
-		{
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			m_IsActioning = false;
-		}
-		
+	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Rotation_Y(-fTimeDelta);
+		m_IsActioning = true;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+	}
+	
 
-		if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
-		{
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			m_pTransformCom->Rotation_Y(fTimeDelta);
-			m_IsActioning = true;
-		}
-		if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
-		{
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			m_IsActioning = false;
-		}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Rotation_Y(fTimeDelta);
+		m_IsActioning = true;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+	}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{
@@ -1438,211 +1438,211 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-			m_IsDash = false;
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			_vec3 vLook = {};
-			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-			vLook = Vector3_::Normalize(vLook);
+		m_IsDash = false;
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
 
-			m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-			_vec3 vSlide = {};
-			//if (!m_IsSlide)
-			//{
-			//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			//	{
-			//
-			//		m_pTransformCom->BackWard(fTimeDelta);
-			//
-			//	}
-			//	else
-			//{
-			//	m_pTransformCom->Go_There(vSlide);
-			//
-			//}
-			//}
-			//else
-			{
-				m_pTransformCom->BackWard(fTimeDelta);
-				m_IsSlide = false;
-			}
-			m_IsActioning = true;
-			m_IsRun = false;
-		}
-		if (CManagement::GetInstance()->Key_Up(KEY_UP))
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		_vec3 vSlide = {};
+		//if (!m_IsSlide)
+		//{
+		//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		//	{
+		//
+		//		m_pTransformCom->BackWard(fTimeDelta);
+		//
+		//	}
+		//	else
+		//{
+		//	m_pTransformCom->Go_There(vSlide);
+		//
+		//}
+		//}
+		//else
 		{
-			m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-			m_IsSlide = true;
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			m_IsActioning = false;
-			m_IsRun = false;
+			m_pTransformCom->BackWard(fTimeDelta);
+			m_IsSlide = false;
 		}
-
-		if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
-		{
-			m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 1;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[1];
-			m_pTransformCom->Go_Straight(fTimeDelta);
-			m_IsActioning = true;
-		}
-		if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
-		{
-			m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-			if (!m_IsCombat)
-				m_iCurAnimIdx = 0;
-			else
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			m_IsActioning = false;
-		}
-
-
-
-		if (CManagement::GetInstance()->Key_Down(KEY_1))
-		{
-			m_iCurMeshNum++;
-			if (m_iCurMeshNum > (_uint)CLASS::CLASS_END - 1)
-				m_iCurMeshNum = 0;
+		m_IsActioning = true;
+		m_IsRun = false;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
+	{
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		m_IsSlide = true;
+		if (!m_IsCombat)
 			m_iCurAnimIdx = 0;
-			m_eCurClass = (CLASS)m_iCurMeshNum;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+		m_IsRun = false;
+	}
 
-		}
+	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
+	{
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+		m_pTransformCom->Go_Straight(fTimeDelta);
+		m_IsActioning = true;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
+	{
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+	}
 
 
-		if (CManagement::GetInstance()->Key_Down(KEY_2))
-		{
-			m_tInfo.fHP -= 1;
-			m_IsHit_PostEffect = true;
-		}
+
+	if (CManagement::GetInstance()->Key_Down(KEY_1))
+	{
+		m_iCurMeshNum++;
+		if (m_iCurMeshNum > (_uint)CLASS::CLASS_END - 1)
+			m_iCurMeshNum = 0;
+		m_iCurAnimIdx = 0;
+		m_eCurClass = (CLASS)m_iCurMeshNum;
+
+	}
+
+
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
+	{
+		m_tInfo.fHP -= 1;
+		m_IsHit_PostEffect = true;
+	}
 	
-		if (CManagement::GetInstance()->Key_Down(KEY_3))
+	if (CManagement::GetInstance()->Key_Down(KEY_3))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_4))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_5))
+	{
+	}
+
+
+	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
+	{
+		m_IsInvisible = !m_IsInvisible;
+	}
+
+	if (CManagement::GetInstance()->Key_Down(KEY_F1))
+	{ }
+	if (CManagement::GetInstance()->Key_Down(KEY_F2))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F3))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F4))
+	{
+	}
+	if (CManagement::GetInstance()->Key_Down(KEY_F5))
+	{
+	}
+
+
+	if (!m_IsFire)
+	{
+		if (CManagement::GetInstance()->Key_Up(KEY_N))
 		{
+
+			CManagement* pManagement = CManagement::GetInstance();
+			if (nullptr == pManagement)
+				return;
+
+			pManagement->AddRef();
+
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
+				return;
+
+			m_IsFire = !m_IsFire;	//true
+		
+			Safe_Release(pManagement);
 		}
-		if (CManagement::GetInstance()->Key_Down(KEY_4))
+	}
+	else
+	{
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+		int numver = lst.size();
+		if (numver > 0)
 		{
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+			BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+			*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
 		}
-		if (CManagement::GetInstance()->Key_Down(KEY_5))
+	}
+
+
+	//////////////////////////////////
+	if (!m_IsTeleport)
+	{
+		if (CManagement::GetInstance()->Key_Up(KEY_M))
 		{
+			CManagement* pManagement = CManagement::GetInstance();
+			if (nullptr == pManagement)
+				return;
+
+			pManagement->AddRef();
+
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
+				return;
+
+			m_IsTeleport = !m_IsTeleport;	//true
+
+			Safe_Release(pManagement);
 		}
-
-
-		if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
+	}
+	else
+	{
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+		int numver = lst.size();
+		if (numver > 0)
 		{
-			m_IsInvisible = !m_IsInvisible;
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+
+			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
+			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+			BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+
+
+			*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
 		}
+	}
 
-		if (CManagement::GetInstance()->Key_Down(KEY_F1))
-		{ }
-		if (CManagement::GetInstance()->Key_Down(KEY_F2))
+	
+
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
 		{
-		}
-		if (CManagement::GetInstance()->Key_Down(KEY_F3))
-		{
-		}
-		if (CManagement::GetInstance()->Key_Down(KEY_F4))
-		{
-		}
-		if (CManagement::GetInstance()->Key_Down(KEY_F5))
-		{
-		}
-
-
-		if (!m_IsFire)
-		{
-			if (CManagement::GetInstance()->Key_Up(KEY_N))
-			{
-
-				CManagement* pManagement = CManagement::GetInstance();
-				if (nullptr == pManagement)
-					return;
-
-				pManagement->AddRef();
-
-				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
-					return;
-
-				m_IsFire = !m_IsFire;	//true
-			
-				Safe_Release(pManagement);
-			}
+			m_iCurAnimIdx = m_iCombatMotion[0];
 		}
 		else
 		{
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-			int numver = lst.size();
-			if (numver > 0)
-			{
-				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-				_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-
-				CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-				BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-				*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
-			}
+			m_iCurAnimIdx = 0;
 		}
-
-
-		//////////////////////////////////
-		if (!m_IsTeleport)
-		{
-			if (CManagement::GetInstance()->Key_Up(KEY_M))
-			{
-				CManagement* pManagement = CManagement::GetInstance();
-				if (nullptr == pManagement)
-					return;
-
-				pManagement->AddRef();
-
-				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
-					return;
-
-				m_IsTeleport = !m_IsTeleport;	//true
-
-				Safe_Release(pManagement);
-			}
-		}
-		else
-		{
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-			int numver = lst.size();
-			if (numver > 0)
-			{
-				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-
-				//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
-				_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-
-				CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-				BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-
-
-				*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
-			}
-		}
-
-	
-
-		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-		{
-			if (m_IsCombat)
-			{
-				m_iCurAnimIdx = m_iCombatMotion[0];
-			}
-			else
-			{
-				m_iCurAnimIdx = 0;
-			}
-			m_IsOnce = false;
-			m_IsHit = false;
-		}
+		m_IsOnce = false;
+		m_IsHit = false;
+	}
 	
 }
 
@@ -1918,7 +1918,77 @@ void CPlayer::Resurrection()
 	m_IsDeadMotion = false;
 }
 
+void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
+{
+	if (m_IsFly_START || m_IsFly_ING)
+	{
+		m_fCoolTime_ONE += fTimeDelta;
+		if (m_fCoolTime_ONE > 5.f)
+		{
+			//m_pTransformCom->m_fVel = 0.f;
+			m_IsStart = false;
+			m_IsFly_ING = false;
+			m_IsFly_END = true;
+			m_fCoolTime_ONE = 0.f;
+		}
+	}
 
+
+	if (!m_IsStart)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
+		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
+		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
+	}
+
+	if (m_IsFly_START)
+	{
+		m_IsStart = true;
+		if (m_pTransformCom->Get_Scale().x > 0.05f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
+				m_pTransformCom->Get_Scale().z - 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
+			m_pTransformCom->UP(fTimeDelta);
+		else
+		{
+			m_IsFly_ING = true;
+		}
+
+	}
+	if (m_IsFly_ING)
+	{
+		if (m_IsUandD)
+		{
+			m_pTransformCom->Fallen(fTimeDelta);
+			if (m_pTransformCom->m_fVel < -5)
+				m_IsUandD = !m_IsUandD;
+		}
+		else
+		{
+			m_pTransformCom->UP(fTimeDelta);
+			if (m_pTransformCom->m_fVel > 5)
+				m_IsUandD = !m_IsUandD;
+		}
+	}
+
+	if (m_IsFly_END)
+	{
+		if (m_pTransformCom->Get_Scale().x < 0.1f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
+				m_pTransformCom->Get_Scale().z + 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
+			m_pTransformCom->Fallen(fTimeDelta);
+		else
+		{
+			//m_IsFly_ING = false;
+			m_IsFly_END = false;
+			m_IsStart = false;
+
+			m_pTransformCom->m_fVel = 0.f;
+		}
+	}
+
+}
 
 void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {

@@ -23,7 +23,7 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 {
 	if (pArg)
 	{
-		m_tPlayer = *(PLAYER*)pArg;
+		m_tPlayer = *(UNIT*)pArg;
 	}
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
