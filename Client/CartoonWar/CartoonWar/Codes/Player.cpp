@@ -45,7 +45,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	_vec3 vPos = { 130.f,0.f,300.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
 	m_tInfo = INFO(100, 1,1,0);
@@ -110,7 +110,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
-
+	m_IsShow = server->Get_ShowOtherPlayer(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
@@ -118,7 +118,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
-	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive)
+	if (m_iLayerIdx == server->Get_PlayerID()) //&& !m_IsActive)
 		Input_Key(fTimeDelta);
 
 	switch (m_cMoveCondition)
@@ -234,7 +234,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
+	if (m_IsShow)
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{

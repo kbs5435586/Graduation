@@ -40,7 +40,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
 	_vec3 vPos = {0.f,0.f,0.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(100, 1, 1, 0);
@@ -175,7 +175,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Player", L"Com_Transform", 0);
+			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 		CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 		_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);

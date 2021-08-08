@@ -51,6 +51,7 @@ public:
 	_uint									m_iLayerIdx = 0;
 public:
 	_bool&									GetIsHit_PostEffect(){return m_IsHit_PostEffect; }
+	_bool&									GetIsShow() { return m_IsShow; }
 protected:
 	_float									m_fBazierCnt = 0.f;
 	_bool									m_IsClone = false;
@@ -73,6 +74,7 @@ protected:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tUnit = {};
+	_bool									m_IsShow = false;
 protected:
 	_uint									m_iBlurCnt = 0;
 protected:

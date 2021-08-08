@@ -340,23 +340,41 @@ void Server::update_speed(int user_id)
     SESSION& c = g_clients[user_id];
 
     if (C_WORKER == c.m_class)
-        c.m_move_speed = 5.f;
+    {
+        c.m_move_speed = 10.f;
+    }
     if (C_CAVALRY == c.m_class)
-       c.m_move_speed = 15.f;
+    {
+        c.m_move_speed = 20.f;
+    }
     if (C_TWO == c.m_class)
-       c.m_move_speed = 15.f;
+    {
+        c.m_move_speed = 20.f;
+    }
     if (C_INFANTRY == c.m_class)
-       c.m_move_speed = 5.f;
+    {
+        c.m_move_speed = 10.f;
+    }
     if (C_FOUR == c.m_class)
-       c.m_move_speed = 5.f;
+    {
+        c.m_move_speed = 10.f;
+    }
     if (C_SPEARMAN == c.m_class)
-       c.m_move_speed = 5.f;
+    {
+        c.m_move_speed = 10.f;
+    }
     if (C_MAGE == c.m_class)
-       c.m_move_speed = 5.f;
+    {
+        c.m_move_speed = 10.f;
+    }
     if (C_MMAGE == c.m_class)
-       c.m_move_speed = 15.f;
+    {
+        c.m_move_speed = 20.f;
+    }
     if (C_ARCHER == c.m_class)
-       c.m_move_speed = 7.f;
+    {
+        c.m_move_speed = 15.f;
+    }
 }
 
 void Server::do_move(int user_id, char con)
@@ -1090,7 +1108,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         //{
         //    do_random_move(npc_id);
         //}
-        break;
+        //break;
         }
     }
 
@@ -1551,10 +1569,10 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_RIGHT));
             g_clients[player_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
-            g_clients[npc_id].m_move_speed = 5.f;
+            g_clients[npc_id].m_class = C_WORKER;
+            update_speed(npc_id);
             g_clients[npc_id].m_rotate_speed = XMConvertToRadians(90.f);
             g_clients[npc_id].m_transform.SetUp_Speed(g_clients[npc_id].m_move_speed, g_clients[npc_id].m_rotate_speed);
-            g_clients[npc_id].m_class = C_WORKER;
             g_clients[npc_id].m_troop = T_INFT;
             g_clients[npc_id].m_Mcondition = CON_IDLE;
             g_clients[npc_id].m_Rcondition = CON_IDLE;
@@ -2220,12 +2238,12 @@ void Server::worker_thread()
                 g_clients[user_id].m_transform.Rotation_Y(180 * (XM_PI / 180.0f));
                 g_clients[user_id].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
                 g_clients[user_id].m_class = C_WORKER;
+                update_speed(user_id);
+                g_clients[user_id].m_rotate_speed = XMConvertToRadians(90.f);
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = F_SQUARE;
                 g_clients[user_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
                 g_clients[user_id].m_col.radius = 20.f * SCALE.x;
-                g_clients[user_id].m_move_speed = 5.f;
-                g_clients[user_id].m_rotate_speed = XMConvertToRadians(90.f);
                 g_clients[user_id].m_owner_id = user_id;
                 g_clients[user_id].m_hp = 100;
                 g_clients[user_id].m_total_angle = -90.f;

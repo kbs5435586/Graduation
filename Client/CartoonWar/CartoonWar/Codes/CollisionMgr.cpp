@@ -36,7 +36,8 @@ void CCollisionMgr::Player_to_NPC_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
-
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -72,6 +73,8 @@ void CCollisionMgr::Player_to_Player_Collision()
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 		{
 			if (iter0 == iter1)
+				continue;
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
 				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
@@ -121,6 +124,8 @@ void CCollisionMgr::Throw_to_NPC_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_float fLength = 0.f;
 
 			_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Arrow
@@ -156,7 +161,8 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
-
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -169,7 +175,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_Attack"))))
 			{
 				if (iter0->GetIsHit())
-				{
+				{ // ¼öÁ¤
 					(iter1)->GetIsBack() = true;
 					(iter1)->GetOBBCollision() = true;
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
@@ -200,7 +206,8 @@ void CCollisionMgr::Deffend_to_Player()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
-
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -240,6 +247,9 @@ void CCollisionMgr::Deffend_to_Deffend()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
+
 			if (iter0 == iter1)
 				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
@@ -277,7 +287,9 @@ void CCollisionMgr::Skill_to_NPC_Collision(const _float& fTimeDelta)
 		{
 			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 			{
-				
+				if (!iter0->GetIsShow() || !iter1->GetIsShow())
+					continue;
+
 				_float fLength = 0.f;
 
 				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
@@ -375,6 +387,9 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 		{
 			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 			{
+				if (!iter0->GetIsShow() || !iter1->GetIsShow())
+					continue;
+
 				_float fLength = 0.f;
 
 				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
