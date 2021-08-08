@@ -29,7 +29,7 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 	float4	vOut = (float4)0;
 	float4	vRed = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4	vBlue = g_texture1.Sample(Sampler0, vIn.vTexUV);
-	float	fPersent = g_int_0 / 20.f;
+	float	fPersent = g_int_0 / 10.f;
 
 	if (g_int_1 == 0 )		//	RED
 	{	

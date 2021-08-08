@@ -37,6 +37,7 @@ _int CUI_OnHead_Gage::Update_GameObject(const _float& fTimeDelta)
 {
 	if (m_eCurTeam != TEAM::TEAM_END)
 		m_fTimeDelta += fTimeDelta;
+
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag", L"Com_Transform", m_iLayerIdx);;
 	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag", m_iLayerIdx);
 	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
@@ -94,7 +95,6 @@ void CUI_OnHead_Gage::Render_GameObject()
 			m_tRep.m_arrInt[0] += 1;
 			m_fTimeDelta = 0.f;
 		}
-
 	}
 	else
 	{
@@ -215,12 +215,13 @@ void CUI_OnHead_Gage::ResetGage()
 {
 	if (!m_IsFix_Gage)
 	{
-		if (m_eCurTeam == TEAM::TEAM_END)
-			return;
 		if (m_IsReset)
 		{
+
 			m_fTimeDelta = 0.f;
 			m_tRep.m_arrInt[0] = 0;
+
+
 			if (m_eCurTeam == TEAM::TEAM_BLUE)
 				m_tRep.m_arrInt[1] = 1;
 			else if (m_eCurTeam == TEAM::TEAM_RED)

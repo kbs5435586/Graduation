@@ -195,15 +195,12 @@ void CFlag::Render_Blur()
 void CFlag::SetTeam(TEAM eCurTeam)
 {
 	m_eCurTeam = eCurTeam;
-	if (m_eCurTeam == TEAM::TEAM_BLUE)
-	{
-		int i = 0;
-	}
 	if (m_eCurTeam != m_ePreTeam)
 	{
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"GameObject_Flag_OnHead_UI", m_iLayerIdx);
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", m_iLayerIdx);
 		pGameObject->GetCurTeam() = m_eCurTeam;
-		dynamic_cast<CUI_OnHead_Gage*>(pGameObject)->GetIsReset() = true;;
+		pGameObject->GetPreTeam() = m_ePreTeam;
+		dynamic_cast<CUI_OnHead_Gage*>(pGameObject)->GetIsReset() = true;
 		m_ePreTeam = m_eCurTeam;
 	}
 }
