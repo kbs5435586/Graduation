@@ -30,6 +30,8 @@ public:
 	_bool&									GetIsTree() {return m_IsTree;}
 	_bool&									GetIsRun(){return m_IsRun;}
 	CLASS&									GetClass() { return m_eCurClass; }
+	TEAM&									GetCurTeam() { return m_eCurTeam; }
+	TEAM&									GetPreTeam() { return m_ePreTeam; }
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
@@ -65,7 +67,8 @@ protected:
 	_bool									m_IsRun = false;
 	_bool									m_IsBack = false;
 	_bool									m_IsTree = false;
-	TEAM									m_eTeam = TEAM::TEAM_END;
+	TEAM									m_eCurTeam = TEAM::TEAM_END;
+	TEAM									m_ePreTeam = TEAM::TEAM_END;
 	_bool									m_IsHit_PostEffect = false;
 	_vec3									m_vColShpereSize = {};
 	CLASS									m_eCurClass = CLASS::CLASS_END;

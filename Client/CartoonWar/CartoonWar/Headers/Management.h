@@ -12,6 +12,7 @@
 #include "CollisionMgr.h"
 #include "SoundMgr.h"
 #include "FontMgr.h"
+#include "EventMgr.h"
 #include "MRT.h"
 #include "Base.h"
 class CComponent;
@@ -100,6 +101,8 @@ public://SoundMgr
 	void						Pause_Sound(SoundChannel eChannel);
 	void						Stop_Sound(SoundChannel eChannel);
 	void						Update_Sound();
+public://m_pEvent_Manager
+	void						Update_Event_Manager();
 public:
 	CScene*						Get_Scene(){return m_pScene;}
 public:	
@@ -124,6 +127,7 @@ private:
 	CCollisionMgr*				m_pCollision_Manager = nullptr;
 	CFontMgr*					m_pFont_Manager = nullptr;
 	CSoundMgr*					m_pSound_Manager = nullptr;
+	CEventMgr*					m_pEvent_Manager = nullptr;
 	
 	//CServer_Manager*			m_pServer_Manager = nullptr;
 };

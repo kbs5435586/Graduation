@@ -463,6 +463,12 @@
     <Filter Include="01. Scene\02. Stage">
       <UniqueIdentifier>{6552fa3a-e608-42d9-b5f7-192d4ce50cda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\14. EventMgr">
+      <UniqueIdentifier>{f99c711b-7e2b-437c-a66b-56efe48ae57c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\08. UI_OnHead_Gage">
+      <UniqueIdentifier>{c4064192-0f20-499c-ac55-bcabfe2b5e0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -858,6 +864,12 @@
     <ClInclude Include="..\Headers\Lobby.h">
       <Filter>01. Scene\01. Lobby</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\EventMgr.h">
+      <Filter>97. Engine\01. Utility\14. EventMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_OnHead_Gage.h">
+      <Filter>02. GameObject\97. UI\08. UI_OnHead_Gage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1224,6 +1236,12 @@
     <ClCompile Include="..\Codes\Lobby.cpp">
       <Filter>01. Scene\01. Lobby</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\EventMgr.cpp">
+      <Filter>97. Engine\01. Utility\14. EventMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_OnHead_Gage.cpp">
+      <Filter>02. GameObject\97. UI\08. UI_OnHead_Gage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1345,6 +1363,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
+      <Filter>96. ShaderFiles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	//_vec3 vPos = { _float(rand() % 3250),0.f,_float(rand() % 3250) };
 	_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(2, 1, 1, 0);
@@ -122,7 +122,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
-
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
@@ -1037,8 +1036,6 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 		vPos.y = fY_;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	fCnt += 0.02f;
-
-
 }
 
 void CNPC::Create_Particle(const _vec3& vPos)

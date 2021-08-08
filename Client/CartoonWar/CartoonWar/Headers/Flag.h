@@ -5,6 +5,8 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CMesh;
+class CFrustum;
+class CTexture;
 class CFlag :
 	public CGameObject
 {
@@ -18,20 +20,27 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_Blur();			
+public:
+	void									SetTeam(TEAM eCurTeam);
 private:
 	HRESULT									Ready_Component();
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CFlag* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
+	static CFlag*							Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0);
 private:
 	virtual void							Free();
 private:
-	CTransform* m_pTransformCom = nullptr;
-	CRenderer* m_pRendererCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
-	CMesh* m_pMeshCom = nullptr;
-private:
-		vector<CTexture*>						m_vecTexture;
+	CTransform*								m_pTransformCom = nullptr;
+	CRenderer*								m_pRendererCom = nullptr;
+	CShader*								m_pShaderCom = nullptr;
+	CMesh*									m_pMeshCom = nullptr;
+	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
+
 };
 

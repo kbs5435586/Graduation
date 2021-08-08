@@ -12,6 +12,7 @@ public:
     void                    Update_CollisionManager();
 private:
     void                    Player_to_NPC_Collision();
+    void                    NPC_to_NPC_Collision();
     void                    Player_to_Player_Collision();
     void                    Throw_to_NPC_Collision();
     void                    Player_to_NPC_Attack_Collision();

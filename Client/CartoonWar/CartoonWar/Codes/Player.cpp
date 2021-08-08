@@ -62,12 +62,10 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 	
-
-
 	SetSpeed();
-
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	m_eCurTeam = TEAM::TEAM_RED;
 	return S_OK;
 }
 
@@ -172,8 +170,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
@@ -1129,43 +1126,43 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 {
 	if (!m_IsActioning)
 	{
-		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
-		{
-
-			if (m_eCurClass == CLASS::CLASS_ARCHER)
-			{
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-					return;
-			}
-			else if (m_eCurClass == CLASS::CLASS_WORKER)
-			{
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-					return;
-			}
-			else
-			{
-				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-					return;
-			}
-			_uint iRand = rand() % 2;
-			if (iRand == 0)
-				m_iCurAnimIdx = m_iAttackMotion[0];
-			else
-				m_iCurAnimIdx = m_iAttackMotion[1];
-
-
-			m_IsActioning = true;
-			m_IsOnce = true;
-			m_IsHit = true;
-			m_IsCombat = true;
-		}
+		//if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+		//{
+		//
+		//	if (m_eCurClass == CLASS::CLASS_ARCHER)
+		//	{
+		//		_matrix matTemp = m_pTransformCom->Get_Matrix();
+		//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+		//			return;
+		//	}
+		//	else if (m_eCurClass == CLASS::CLASS_WORKER)
+		//	{
+		//		_matrix matTemp = m_pTransformCom->Get_Matrix();
+		//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+		//			return;
+		//	}
+		//	else
+		//	{
+		//		//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+		//		//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+		//		//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+		//		//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+		//		CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+		//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+		//			return;
+		//	}
+		//	_uint iRand = rand() % 2;
+		//	if (iRand == 0)
+		//		m_iCurAnimIdx = m_iAttackMotion[0];
+		//	else
+		//		m_iCurAnimIdx = m_iAttackMotion[1];
+		//
+		//
+		//	m_IsActioning = true;
+		//	m_IsOnce = true;
+		//	m_IsHit = true;
+		//	m_IsCombat = true;
+		//}
 	}
 	
 
@@ -1329,7 +1326,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		if (CManagement::GetInstance()->Key_Down(KEY_2))
 		{
-			m_tInfo.fHP -= 1;
+			m_eCurTeam = TEAM::TEAM_BLUE;
 		}
 
 
