@@ -382,18 +382,18 @@ HRESULT CShader::SetUp_OnShaderT(_matrix matWorld, _matrix matView, _matrix matP
 	matTemp = Matrix_::Inverse(matTemp);
 	_matrix matRev = _matrix();
 
-	output.matInvenWorld = matWorld;
-	output.matInvenView = matView;
-	output.matInvenProj = matProj;
-	output.matInvenWV = matWorld * matView;
-	output.matInvenWVP = output.matInvenWV * matProj;
-	output.vInvenCamPos = (_vec4)&matTemp.m[3][0];
-	output.vInvenLook = (_vec4)&matTemp.m[2][0];
-	output.matInvenRev = Matrix_::Inverse(output.matInvenWV);
-	output.matInvenRev = Matrix_::Transpose(output.matInvenRev);
-
-	output.matInvenViewInv = Matrix_::Inverse(matView);
-	output.matInvenProjInv = Matrix_::Inverse(matProj);
+	//output.matInvenWorld = matWorld;
+	//output.matInvenView = matView;
+	//output.matInvenProj = matProj;
+	//output.matInvenWV = matWorld * matView;
+	//output.matInvenWVP = output.matInvenWV * matProj;
+	//output.vInvenCamPos = (_vec4)&matTemp.m[3][0];
+	//output.vInvenLook = (_vec4)&matTemp.m[2][0];
+	//output.matInvenRev = Matrix_::Inverse(output.matInvenWV);
+	//output.matInvenRev = Matrix_::Transpose(output.matInvenRev);
+	//
+	//output.matInvenViewInv = Matrix_::Inverse(matView);
+	//output.matInvenProjInv = Matrix_::Inverse(matProj);
 	return S_OK;
 }
 
@@ -405,18 +405,18 @@ HRESULT CShader::SetUp_OnShaderM(_matrix matWorld, _matrix matView, _matrix matP
 	matTemp = Matrix_::Inverse(matTemp);
 	_matrix matRev = _matrix();
 
-	output.matMapWorld = matWorld;
-	output.matMapView = matView;
-	output.matMapProj = matProj;
-	output.matMapWV = matWorld * matView;
-	output.matMapWVP = output.matMapWV * matProj;
-	output.vMapCamPos = (_vec4)&matTemp.m[3][0];
-	output.vMapLook = (_vec4)&matTemp.m[2][0];
-	output.matMapRev = Matrix_::Inverse(output.matMapWV);
-	output.matMapRev = Matrix_::Transpose(output.matMapRev);
-
-	output.matMapViewInv = Matrix_::Inverse(matView);
-	output.matMapProjInv = Matrix_::Inverse(matProj);
+	//output.matMapWorld = matWorld;
+	//output.matMapView = matView;
+	//output.matMapProj = matProj;
+	//output.matMapWV = matWorld * matView;
+	//output.matMapWVP = output.matMapWV * matProj;
+	//output.vMapCamPos = (_vec4)&matTemp.m[3][0];
+	//output.vMapLook = (_vec4)&matTemp.m[2][0];
+	//output.matMapRev = Matrix_::Inverse(output.matMapWV);
+	//output.matMapRev = Matrix_::Transpose(output.matMapRev);
+	//
+	//output.matMapViewInv = Matrix_::Inverse(matView);
+	//output.matMapProjInv = Matrix_::Inverse(matProj);
 	return S_OK;
 }
 

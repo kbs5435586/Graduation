@@ -48,6 +48,11 @@ _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 
 
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+	_vec3 sTemp = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	//dynamic_cast<CPlayer*>(pTemp).get
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &sTemp);
+
 	if (!m_IsFix)
 	{
 		if (m_tRep.m_arrInt[0])
@@ -79,7 +84,7 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
 		return -1;
 
 	m_fDeltaTime += fTimeDelta;
@@ -160,6 +165,81 @@ void CMyRect::Render_GameObject()
 
 
 	
+	m_pBufferCom->Render_VIBuffer();
+	Safe_Release(pManagement);
+}
+
+void CMyRect::Render_GameObject_Map()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	REP tRep = {};
+	tRep.m_arrFloat[0] = m_fDeltaTime;
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMapMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMapMatProj();
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+
+
+	CTransform* pTransform_Red = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Player", L"Com_Transform", 0);
+
+	CTransform* pTransform_Blue = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_NPC", L"Com_Transform", 0);
+
+	_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vRedPos = *pTransform_Red->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vBluePos = *pTransform_Blue->Get_StateInfo(CTransform::STATE_POSITION);
+
+	_vec3 vLen_Red = vThisPos - vRedPos;
+	_vec3 vLen_Blue = vThisPos - vBluePos;
+
+	_uint iLen_Red = Vector3_::Length(vLen_Red);
+	_uint iLen_Blue = Vector3_::Length(vLen_Blue);
+
+	if (iLen_Red < 30.f)
+	{
+		m_tRep.m_arrInt[0] = 1;
+		m_eCurTeam = TEAM::TEAM_RED;
+	}
+	if (iLen_Blue < 30.f)
+	{
+		m_tRep.m_arrInt[1] = 1;
+		m_eCurTeam = TEAM::TEAM_BLUE;
+	}
+	if (iLen_Blue > 30.f)
+	{
+		m_tRep.m_arrInt[1] = 0;
+		m_eCurTeam = TEAM::TEAM_END;
+	}
+	if (iLen_Red > 30.f)
+	{
+		m_tRep.m_arrInt[0] = 0;
+		m_eCurTeam = TEAM::TEAM_END;
+	}
+
+
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+
+
+
+
+
+
 	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }

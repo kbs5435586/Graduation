@@ -130,6 +130,13 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		Resurrection();
 	//if (m_IsDead)
 	//	return DEAD_OBJ;
+	Set_Animation(fTimeDelta);
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		m_iCurAnimIdx = 0;
+		m_IsOnce = false;
+		m_IsActioning = false;
+	}
 
 	return NO_EVENT;
 }
@@ -175,13 +182,13 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
 
-	Set_Animation(fTimeDelta);
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-		m_IsActioning = false;
-	}
+	//Set_Animation(fTimeDelta);
+	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//{
+	//	m_iCurAnimIdx = 0;
+	//	m_IsOnce = false;
+	//	m_IsActioning = false;
+	//}
 
 	return _int();
 }

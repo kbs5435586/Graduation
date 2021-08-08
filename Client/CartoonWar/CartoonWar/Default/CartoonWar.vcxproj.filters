@@ -1409,10 +1409,10 @@
     <None Include="..\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>96. ShaderFiles\01. Deffered</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_UUI.hlsl">
+    <None Include="..\ShaderFiles\Shader_UI_Toon.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_UUU.hlsl">
+    <None Include="..\ShaderFiles\Shader_UI_Tap.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_PostEffect.hlsl">
@@ -1456,6 +1456,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_MiniMap.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

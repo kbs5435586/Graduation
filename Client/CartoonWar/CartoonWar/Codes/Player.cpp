@@ -1301,12 +1301,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
 					return;
 			}
-			else if (m_eCurClass == CLASS::CLASS_WORKER)
-			{
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-					return;
-			}
+			//else if (m_eCurClass == CLASS::CLASS_WORKER)
+			//{
+			//	_matrix matTemp = m_pTransformCom->Get_Matrix();
+			//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+			//		return;
+			//}
 			else
 			{
 				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };

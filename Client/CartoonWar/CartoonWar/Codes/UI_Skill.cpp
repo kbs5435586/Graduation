@@ -19,23 +19,29 @@ HRESULT CUI_Skill::Ready_Prototype()
 
 HRESULT CUI_Skill::Ready_GameObject(void* pArg)
 {
+	if (pArg)
+	{
+		pArgTemp = *(XMFLOAT3*)pArg;
+	}
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	m_fX = WINCX - pArgTemp.x;
+	m_fY = WINCY - pArgTemp.y;
+	//m_fX = 150.f;
+	//m_fY = 150.f;
 
-	m_fX = 150.f;
-	m_fY = 150.f;
-
-	m_fSizeX = 300.f;
-	m_fSizeY = 300.f;
+	m_fSizeX = 150.f;
+	m_fSizeY = 150.f;
 	
-	m_CoolTime = 0.f;
+	
 	m_MaxCoolTime = 5.f;
+	m_CoolTime = m_MaxCoolTime;
 	m_Active = false;
 
-	//CManagement::GetInstance()->Add_Data(DATA_TYPE::DATA_SKILL, &m_Active);
+
 	return S_OK;
 }
 
@@ -46,44 +52,71 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-	
+	//m_strCoolTime = to_string(m_CoolTime);
+	//if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strCoolTime.c_str(), m_fSizeX, m_fSizeY)))
+	//	return E_FAIL;
 	//10ÀÌ ²ËÂù »óÅÂ
-
 
 	if (m_Active)
 	{
 		m_CoolTime += fTimeDelta;
-		//m_CoolTime = m_CoolTime / 2;
+		
 		if (m_CoolTime > m_MaxCoolTime)
 		{
 			m_Active = false;
-			m_CoolTime = 0.f;
-			//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
+			m_CoolTime = m_MaxCoolTime;
 		}
 	}
 	else
 	{
-		if (pManagement->Key_Down(KEY_Z))
+		if (pArgTemp.z == 0)
 		{
-
-			m_fSizeX = 250.f;
-			m_fSizeY = 250.f;
-			IsDown = true;
-
-		}
-
-		if (IsDown)
-		{
-			if (pManagement->Key_Up(KEY_Z))
+			if (pManagement->Key_Down(KEY_Z))
 			{
-				m_fSizeX = 300.f;
-				m_fSizeY = 300.f;
 
-				m_CoolTime = 0.f;
-				m_Active = true;
-				//CManagement::GetInstance()->Notify(DATA_TYPE::DATA_SKILL, &m_Active);
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
 
-				IsDown = false;
+			}
+
+			if (IsDown)
+			{
+				if (pManagement->Key_Up(KEY_Z))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+
+					m_CoolTime = 0.f;
+					m_Active = true;
+
+					IsDown = false;
+				}
+			}
+		}
+		else if (pArgTemp.z == 1)
+		{
+			if (pManagement->Key_Down(KEY_X))
+			{
+			
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
+			
+			}
+			
+			if (IsDown)
+			{
+				if (pManagement->Key_Up(KEY_X))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+			
+					m_CoolTime = 0.f;
+					m_Active = true;
+			
+					IsDown = false;
+				}
 			}
 		}
 	}
@@ -139,6 +172,8 @@ void CUI_Skill::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
+
+
 
 	Safe_Release(pManagement);
 }

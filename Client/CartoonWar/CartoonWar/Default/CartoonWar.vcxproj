@@ -572,10 +572,10 @@
     <None Include="..\ShaderFiles\Shader_Blur.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_UUI.hlsl">
+    <None Include="..\ShaderFiles\Shader_UI_Toon.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_UUU.hlsl">
+    <None Include="..\ShaderFiles\Shader_UI_Tap.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
@@ -600,6 +600,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_MiniMap.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

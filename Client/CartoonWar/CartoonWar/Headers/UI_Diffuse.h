@@ -33,5 +33,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	//CShader*								m_pShaderCom_Mini = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
 };
 
