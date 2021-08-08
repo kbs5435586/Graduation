@@ -469,32 +469,32 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
-	//tFlag.vPos = _vec3(385, 0.2f, 3036.53f);
-	//tFlag.iNum = 1;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"GameObject_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
-	//	return E_FAIL;
+	tFlag.vPos = _vec3(385, 0.2f, 3036.53f);
+	tFlag.iNum = 1;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+		return E_FAIL;
 
 	//tFlag.vPos = _vec3(1626.96f, 0.2f, 2352.42f);
 	//tFlag.iNum = 2;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"GameObject_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 	//	return E_FAIL;
 
 	//tFlag.vPos = _vec3(3249.09f, 0.2f, 3419.41f);
 	//tFlag.iNum = 3;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"GameObject_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 	//	return E_FAIL;
 
 	//tFlag.vPos = _vec3(3079.56f, 0.2f, 1106.38f);
 	//tFlag.iNum = 4;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"GameObject_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 	//	return E_FAIL;
 
 
