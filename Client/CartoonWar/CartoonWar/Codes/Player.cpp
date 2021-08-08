@@ -75,12 +75,10 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 	
-
-
 	SetSpeed();
-
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	m_eCurTeam = TEAM::TEAM_RED;
 	return S_OK;
 }
 
@@ -236,7 +234,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow)
 	{
-		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;

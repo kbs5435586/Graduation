@@ -22,6 +22,7 @@ CManagement::CManagement()
 	, m_pCollision_Manager(CCollisionMgr::GetInstance())
 	, m_pFont_Manager(CFontMgr::GetInstance())
 	, m_pSound_Manager(CSoundMgr::GetInstance())
+	, m_pEvent_Manager(CEventMgr::GetInstance())
 	, m_pServer_Manager(CServer_Manager::GetInstance())
 {
 	m_pObject_Manager->AddRef();
@@ -36,6 +37,7 @@ CManagement::CManagement()
 	m_pCollision_Manager->AddRef();
 	m_pFont_Manager->AddRef();
 	m_pSound_Manager->AddRef();
+	m_pEvent_Manager->AddRef();
 	m_pServer_Manager->AddRef();
 }
 
@@ -317,6 +319,11 @@ void CManagement::Update_Sound()
 	return m_pSound_Manager->Update_Sound();
 }
 
+void CManagement::Update_Event_Manager()
+{
+	return m_pEvent_Manager->Update_EventMgr();
+}
+
 
 
 
@@ -407,7 +414,8 @@ void CManagement::Release_Engine()
 
 	if (dwRefCnt = CSoundMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CSoundMgr Release Failed");
-
+	if (dwRefCnt = CEventMgr::GetInstance()->DestroyInstance())
+		_MSG_BOX("CEventMgr Release Failed");
 
 	if (dwRefCnt = CFontMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CFontMgr Release Failed");
@@ -481,6 +489,7 @@ void CManagement::Free()
 {
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pSound_Manager);
+	Safe_Release(m_pEvent_Manager);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pUAV_Manager);
 	Safe_Release(m_pLight_Manager);
