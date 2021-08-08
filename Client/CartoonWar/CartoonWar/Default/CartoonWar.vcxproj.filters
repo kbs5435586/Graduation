@@ -481,6 +481,15 @@
     <Filter Include="97. Engine\01. Utility\13. SoundMgr">
       <UniqueIdentifier>{55ccad89-aa5d-4062-9135-5b9717ec2b37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\98. Camera\04. Map_Camera">
+      <UniqueIdentifier>{617f489f-8875-4eaa-bc0e-6a21d2ead2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\99. UI_Deffered\98. UI_MiniMap">
+      <UniqueIdentifier>{ffd208cb-90ae-4e53-b982-18c23d1aa42c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\09. MapUser">
+      <UniqueIdentifier>{49774511-c95f-41cc-80ad-3992b2ac068e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -894,6 +903,12 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Map_Camera.h">
+      <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapUser.h">
+      <Filter>02. GameObject\01. Scene_Stage\09. MapUser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1277,6 +1292,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>97. Engine\01. Utility\13. SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map_Camera.cpp">
+      <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapUser.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\09. MapUser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

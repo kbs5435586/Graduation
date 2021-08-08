@@ -20,6 +20,10 @@ public:
     const _matrix           GetIMatProj() { return m_ImatProj; }
     const _matrix           GetIMatOrtho() { return m_ImatOrtho; }
 public:
+    const _matrix           GetMapMatView() { return m_MapmatView; }
+    const _matrix           GetMapMatProj() { return m_MapmatProj; }
+    const _matrix           GetMapMatOrtho() { return m_MapmatOrtho; }
+public:
     const _matrix           GetReflectionView() { return m_matReflectionView; }
     const _matrix           GetReflectionMatProj() { return m_matReflectionProj; }
 public:
@@ -34,6 +38,10 @@ public:
     void                    SetIMatView(_matrix matView) { m_ImatView = matView; }
     void                    SetIMatProj(_matrix matProj) { m_ImatProj = matProj; }
     void                    SetIMatOrtho(_matrix matOrtho) { m_ImatOrtho = matOrtho; }
+public:
+    void                    SetMapMatView(_matrix matView) { m_MapmatView = matView; }
+    void                    SetMapMatProj(_matrix matProj) { m_MapmatProj = matProj; }
+    void                    SetMapMatOrtho(_matrix matOrtho) { m_MapmatOrtho = matOrtho; }
 public:
     void                    SetReflectionView(_matrix matView) { m_matReflectionView = matView; }
     void                    SetReflectionProj(_matrix matProj) { m_matReflectionProj = matProj; }
@@ -52,6 +60,10 @@ private:
     _matrix                 m_ImatView = {};
     _matrix                 m_ImatProj = {};
     _matrix                 m_ImatOrtho = {};
+private:
+    _matrix                 m_MapmatView = {};
+    _matrix                 m_MapmatProj = {};
+    _matrix                 m_MapmatOrtho = {};
 private:
     virtual void			Free();
 };

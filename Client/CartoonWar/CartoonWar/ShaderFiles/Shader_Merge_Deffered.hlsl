@@ -50,7 +50,7 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	vDiffuseTex /= (float)iCnt;
 
 	float4	vTexMerge = (float4)0;
-	vTexMerge = vDiffuseTex * vLightTex+ vPointTex + vSpecularTex;
+	vTexMerge = vDiffuseTex; // * vLightTex+ vPointTex + vSpecularTex;
 	return  vTexMerge;
 }
 

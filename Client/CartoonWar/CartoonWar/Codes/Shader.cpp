@@ -397,6 +397,29 @@ HRESULT CShader::SetUp_OnShaderT(_matrix matWorld, _matrix matView, _matrix matP
 	return S_OK;
 }
 
+HRESULT CShader::SetUp_OnShaderM(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& output)
+{
+	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
+	CDevice::GetInstance()->GetCmdLst()->SetPipelineState(m_pPipeLineState.Get());
+	_matrix	matTemp = matView;
+	matTemp = Matrix_::Inverse(matTemp);
+	_matrix matRev = _matrix();
+
+	output.matMapWorld = matWorld;
+	output.matMapView = matView;
+	output.matMapProj = matProj;
+	output.matMapWV = matWorld * matView;
+	output.matMapWVP = output.matMapWV * matProj;
+	output.vMapCamPos = (_vec4)&matTemp.m[3][0];
+	output.vMapLook = (_vec4)&matTemp.m[2][0];
+	output.matMapRev = Matrix_::Inverse(output.matMapWV);
+	output.matMapRev = Matrix_::Transpose(output.matMapRev);
+
+	output.matMapViewInv = Matrix_::Inverse(matView);
+	output.matMapProjInv = Matrix_::Inverse(matProj);
+	return S_OK;
+}
+
 HRESULT CShader::SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass)
 {
 	CDevice::GetInstance()->GetCmdLst()->SetGraphicsRootSignature(CDevice::GetInstance()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());

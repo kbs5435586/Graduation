@@ -27,7 +27,9 @@ public:
 	HRESULT								SetUp_OnShader(_matrix matWorld, _matrix matView, 
 											_matrix matProj, MAINPASS& output);
 	HRESULT								SetUp_OnShaderT(_matrix matWorld, _matrix matView,
-		_matrix matProj, MAINPASS& output);
+											_matrix matProj, MAINPASS& output);
+	HRESULT								SetUp_OnShaderM(_matrix matWorld, _matrix matView,
+											_matrix matProj, MAINPASS& output);
 	HRESULT								SetUp_OnShader_FbxMesh(_matrix matWorld, _matrix matView, _matrix matProj, MAINPASS& tPass);
 public:
 	void								UpdateData_CS();

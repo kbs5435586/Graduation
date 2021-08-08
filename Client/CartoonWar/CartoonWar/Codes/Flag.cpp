@@ -40,13 +40,14 @@ _int CFlag::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pManagement)
 		return -1;
 
-	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	//if (nullptr == pTerrainBuffer)
-	//	return -1;
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
 
-	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	//m_pTransformCom->Set_PositionY(fY + 0.5f);
+	m_pTransformCom->Set_PositionY(fY + 0.5f);
+
 
 
 	return _int();

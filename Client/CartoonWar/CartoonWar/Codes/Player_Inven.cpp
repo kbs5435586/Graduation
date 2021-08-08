@@ -193,7 +193,8 @@ void CPlayer_Inven::Render_GameObject()
 			tRep.m_arrInt[0] = 1;
 			tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
 
-			m_pShaderCom->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPass);
+			m_pShaderCom->SetUp_OnShader(matWorld, I_matView, I_matProj, tMainPass);
+			//m_pShaderCom->SetUp_OnShaderT(matWorld, I_matView, I_matProj, tMainPass);
 
 			_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 			CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(

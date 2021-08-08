@@ -33,34 +33,41 @@ HRESULT CTestBuffer::Ready_GameObject(void* pArg)
 
 _int CTestBuffer::Update_GameObject(const _float& fTimeDelta)
 {
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", 0);
-	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", 0);
+	//_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//
+	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	//if (nullptr == pTerrainBuffer)
+	//	return NO_EVENT;
+	//
+	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	//fY += 2.f;
+	//m_pTransformCom->Set_PositionY(fY);
+	//
+	//m_tTexInfo.fFrameTime += fTimeDelta * 0.01f;
+	//if (m_tTexInfo.fFrameTime > 1.f)
+	//{
+	//	m_tTexInfo.fFrameTime = -1.f;
+	//}
+	//_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect();
+	//if(IsTemp)
+	//{
+	//	m_fPostEffectTime += fTimeDelta;
+	//}
+	//
+	//if (m_fPostEffectTime >= 0.2f)
+	//{
+	//	CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect() = false;
+	//	m_fPostEffectTime = 0.f;
+	//}
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return NO_EVENT;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	fY += 2.f;
-	m_pTransformCom->Set_PositionY(fY);
 
-	m_tTexInfo.fFrameTime += fTimeDelta * 0.01f;
-	if (m_tTexInfo.fFrameTime > 1.f)
-	{
-		m_tTexInfo.fFrameTime = -1.f;
-	}
-	_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect();
-	if(IsTemp)
-	{
-		m_fPostEffectTime += fTimeDelta;
-	}
-
-	if (m_fPostEffectTime >= 0.2f)
-	{
-		CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect() = false;
-		m_fPostEffectTime = 0.f;
-	}
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", 0);
+	_vec3 sTemp = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	//dynamic_cast<CPlayer*>(pTemp).get
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &sTemp);
 	
 	return _int();
 }
@@ -72,12 +79,16 @@ _int CTestBuffer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
 	//	return -1;
-	_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect();
-	if (IsTemp)
-	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
-			return -1;
-	}
+
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
+		return -1;
+
+	//_bool IsTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0)->GetIsHit_PostEffect();
+	//if (IsTemp)
+	//{
+	//	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
+	//		return -1;
+	//}
 
 	return _int();
 }
@@ -134,6 +145,35 @@ void CTestBuffer::Render_PostEffect()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 	ComPtr<ID3D12DescriptorHeap>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(pPostEffectTex.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
+	Safe_Release(pManagement);
+}
+
+void CTestBuffer::Render_GameObject_Map()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMapMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMapMatProj();
+
+	REP tRep = {};
+	tRep.m_arrInt[0];// Char Nu
+
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 

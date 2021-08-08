@@ -34,6 +34,11 @@ HRESULT CCircle::Ready_GameObject(void* pArg)
 
 _int CCircle::Update_GameObject(const _float& fTimeDelta)
 {
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+	_vec3 sTemp = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	//dynamic_cast<CPlayer*>(pTemp).get
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &sTemp);
+
 	return _int();
 }
 
@@ -43,6 +48,9 @@ _int CCircle::LastUpdate_GameObject(const _float& fTimeDelta)
 		return -1;
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+		return -1;
+
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
 		return -1;
 
 	return _int();

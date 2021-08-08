@@ -153,6 +153,15 @@ HRESULT CCamera::SetUp_ViewProjMatrices(_bool IsShadow)
 	return S_OK;
 }
 
+void CCamera::Invalidate_ViewProjMatrix(_short n)
+{
+	m_matMapView = m_pTransform->Get_Matrix_Inverse();
+	_matrix matOrtho = XMMatrixOrthographicLH((_float)WINCX, (_float)WINCY, 0.f, 1.f);
+	CCamera_Manager::GetInstance()->SetMapMatView(m_matMapView);
+	CCamera_Manager::GetInstance()->SetMapMatProj(m_matMapProj);
+	CCamera_Manager::GetInstance()->SetMapMatOrtho(matOrtho);
+}
+
 HRESULT CCamera::Once_SetUp_ViewProjMatrices(_bool IsShadow, _vec3 vPos)
 {
 
@@ -248,6 +257,46 @@ void CCamera::Invalidate_ViewProjMatrix(_float n)
 	CCamera_Manager::GetInstance()->SetIMatView(m_matView);
 	CCamera_Manager::GetInstance()->SetIMatProj(m_matProj);
 	CCamera_Manager::GetInstance()->SetIMatOrtho(matOrtho);
+}
+
+HRESULT CCamera::SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _short n)
+{
+	m_tMapCameraDesc = CameraDesc;
+	m_tMapProjDesc = ProjDesc;
+	SetUp_ViewProjMatrices((_short)1);
+
+	return S_OK;
+}
+
+HRESULT CCamera::SetUp_ViewProjMatrices(_short n)
+{
+	_vec3		vLook;
+	vLook = Vector3_::Subtract(m_tMapCameraDesc.vAt, m_tMapCameraDesc.vEye);
+	vLook = Vector3_::Normalize(vLook);
+
+	_vec3		vRight;
+	vRight = Vector3_::CrossProduct(m_tMapCameraDesc.vAxisY, vLook, false);
+	vRight = Vector3_::Normalize(vRight);
+
+	_vec3		vUp;
+	vUp = Vector3_::CrossProduct(vLook, vRight);
+	vUp = Vector3_::Normalize(vUp);
+
+	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, (const _vec3*)&m_tMapCameraDesc.vEye);
+
+
+	m_matMapProj._11 = (float)(1.f / tan((double)(m_tMapProjDesc.fFovY * 0.5f))) / m_tMapProjDesc.fAspect;
+	m_matMapProj._22 = (float)(1.f / tan((double)(m_tMapProjDesc.fFovY * 0.5f)));
+	m_matMapProj._33 = m_tMapProjDesc.fFar / (m_tMapProjDesc.fFar - m_tMapProjDesc.fNear);
+	m_matMapProj._43 = (m_tMapProjDesc.fFar * m_tMapProjDesc.fNear) / (m_tMapProjDesc.fFar - m_tMapProjDesc.fNear) * -1.f;
+	m_matMapProj._34 = 1.f;
+	m_matMapProj._44 = 0.0f;
+
+	Invalidate_ViewProjMatrix((_short) 1);
+	return S_OK;
 }
 
 

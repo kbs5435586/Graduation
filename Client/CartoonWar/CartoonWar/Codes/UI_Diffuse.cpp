@@ -43,6 +43,8 @@ _int CUI_Diffuse::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 			return E_FAIL;
+		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI_MAP, this)))
+		//	return E_FAIL;
 	}
 	return _int();
 }
@@ -72,7 +74,7 @@ void CUI_Diffuse::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_MAP)->Get_RTT(0)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();

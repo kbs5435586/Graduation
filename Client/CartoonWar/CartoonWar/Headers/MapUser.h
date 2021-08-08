@@ -1,29 +1,28 @@
 #pragma once
 #include "GameObject.h"
+
 class CTransform;
 class CRenderer;
-class CShader;
-class CTexture;
 class CBuffer_RectTex;
-class CTestBuffer :
-	public CGameObject
+class CTexture;
+class CShader;
+class CMapUser :
+    public CGameObject
 {
 private:
-	CTestBuffer();
-	CTestBuffer(const CTestBuffer& rhs);
-	virtual ~CTestBuffer() = default;
+	CMapUser();
+	CMapUser(const CMapUser& rhs);
+    virtual ~CMapUser() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
-	virtual void							Render_PostEffect();
-	virtual void							Render_GameObject_Map();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CTestBuffer*						Create();
+	static CMapUser*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
@@ -33,12 +32,31 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CShader*								m_pShaderCom_PostEffect = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
+	CTexture*								m_pTextureCom = {nullptr};
 private:
 	TEXINFO									m_tTexInfo = {};
-private:
-	_float									m_fPostEffectTime = 0.f;
-};
 
+private:
+	_float									damageTime{};
+	_float									endTime{};
+	_bool check{};
+public:
+	void setDTime(_float _t) { damageTime = _t; }
+	_float& getDTime() {	return damageTime;	}
+	void setETime(_float _t) { endTime = _t; }
+	_float& getETime() { return endTime; }
+	void setCheck(_bool _b) { check = _b; }
+	_bool& getCheck() {	return check; }
+	
+
+	_bool moveCheck{};
+	void setMCheck(_bool _b) { moveCheck = _b; }
+	_bool& getMCheck() { return moveCheck; }
+
+
+
+	_int  myfriend{};
+	void setfriend(_int _f) { myfriend = _f; }
+	_int& getfirend() { return myfriend; }
+};
 

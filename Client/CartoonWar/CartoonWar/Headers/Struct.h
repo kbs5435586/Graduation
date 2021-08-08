@@ -216,6 +216,19 @@ typedef struct tagMainPass
 	XMFLOAT4	vInvenCamPos;
 	XMFLOAT4	vInvenLook;
 
+	////////////////////////////
+	XMFLOAT4X4	matMapWorld;
+	XMFLOAT4X4	matMapView;
+	XMFLOAT4X4	matMapProj;
+	XMFLOAT4X4	matMapWV;
+	XMFLOAT4X4	matMapWVP;
+	XMFLOAT4X4	matMapProjInv;
+	XMFLOAT4X4	matMapViewInv;
+	XMFLOAT4X4	matMapRev;
+
+	XMFLOAT4	vMapCamPos;
+	XMFLOAT4	vMapLook;
+
 
 
 	XMFLOAT4X4	matLightView;

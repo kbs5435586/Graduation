@@ -43,7 +43,11 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 
 _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 {
-	
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return -1;
+
+
 	if (!m_IsFix)
 	{
 		if (m_tRep.m_arrInt[0])
@@ -56,6 +60,15 @@ _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	m_IsFix = true;
+
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+	m_pTransformCom->Set_PositionY(fY + 0.5f);
+
 	
 
 	return _int();

@@ -49,9 +49,10 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
+		return -1;
 
-
-	//if (GetKeyState(VK_LBUTTON) < 0)
+	if (GetKeyState(VK_LBUTTON) < 0)
 	{
 		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
 	}
@@ -112,6 +113,57 @@ void CTerrain_Height::Render_GameObject()
 
 void CTerrain_Height::Render_GameObject_Shadow()
 {
+}
+
+void CTerrain_Height::Render_GameObject_Map()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMapMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMapMatProj();
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+	REP tRep = {};
+	tRep.m_arrInt[2] = g_DefferedRender;
+
+
+	m_tBrush.fBrushRange = 50.f;
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b10)->SetData((void*)&m_tBrush);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(1), TEXTURE_REGISTER::t1);
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t2);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t3);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
+	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(), TEXTURE_REGISTER::t9);
+
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+	//m_pBufferCom->Render_VIBuffer(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	m_pNaviCom->Render_Navigation();
+
+
+	Safe_Release(pManagement);
 }
 
 HRESULT CTerrain_Height::CreateInputLayout()

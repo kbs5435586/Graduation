@@ -31,7 +31,10 @@ public:
 	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _float n);
 	HRESULT						SetUp_ViewProjMatrices(_float n);
 	void						Invalidate_ViewProjMatrix(_float n);
-
+public:
+	HRESULT						SetUp_CameraProjDesc(const CAMERADESC& CameraDesc, const PROJDESC& ProjDesc, _short n);
+	HRESULT						SetUp_ViewProjMatrices(_short n);
+	void						Invalidate_ViewProjMatrix(_short n);
 
 
 	HRESULT						Once_SetUp_ViewProjMatrices(_bool IsShadow, _vec3 vPos);
@@ -71,6 +74,12 @@ protected:
 protected:
 	_matrix						m_matReflectionProj;
 	PROJDESC					m_tReflectionProjDesc;
+protected:
+	_matrix						m_matMapView;
+	CAMERADESC					m_tMapCameraDesc;
+protected:
+	_matrix						m_matMapProj;
+	PROJDESC					m_tMapProjDesc;
 
 protected:
 	_vec3						m_vRight, m_vUp, m_vLook, m_vPos; 
