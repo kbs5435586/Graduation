@@ -86,9 +86,9 @@ HRESULT CScene_Stage::Ready_Scene()
 	_bool	IsTree = true;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat", (void*)&IsTree)))
 		return E_FAIL;
-	IsTree = false;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat", (void*)&IsTree)))
-		return E_FAIL;
+	//IsTree = false;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat", (void*)&IsTree)))
+	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
 
@@ -215,8 +215,6 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
  	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
-		return E_FAIL;
 	//if (FAILED(Ready_Layer_Inventory(L"Layer_Inventory_Player", pManagement)))
 	//	return E_FAIL;
 	
@@ -235,7 +233,9 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;	
 	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-		return E_FAIL;	
+		return E_FAIL;
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
@@ -263,17 +263,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
-	ZeroMemory(&tLightInfo, sizeof(LIGHT));
-	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
-	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
-	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
-	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f, 0.f);
-	tLightInfo.vLightPos = _vec4(100.f, 5.f, 50.f, 1.f);
-	tLightInfo.fRange = 100;
-	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -290,20 +279,18 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Debug", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 		(CGameObject**)&pCameraObject)))
 		return E_FAIL;
-	//130.f,100.f,300.f
+
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(130.f, 150.f, 300.f);
-	//tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
-	tCameraDesc.vAt = _vec3(130.f, 150.f, 301.f);
-	//tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
+	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 1500.f;
+	tProjDesc.fFar = 300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -447,8 +434,6 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
 
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;

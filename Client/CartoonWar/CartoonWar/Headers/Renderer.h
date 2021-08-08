@@ -17,7 +17,6 @@ public:
 private:
 	void							CopySwapToPosteffect();
 	void							CopySwapToBlur();
-	void							CopySwapToReflection();
 private:
 	void							Render_Priority();
 	void							Render_NoneAlpha();

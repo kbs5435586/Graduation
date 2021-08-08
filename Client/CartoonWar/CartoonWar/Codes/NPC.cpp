@@ -182,7 +182,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		_vec3 vLen = vPlayerPos - vPos;
 		_float fLen = vLen.Length();
 
-		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{
 			m_IsOldMatrix = true;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -197,9 +197,20 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 						return -1;
 				}
 			}
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			}
 			m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
 		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
+
 	}
 
 	Set_Animation(fTimeDelta);
@@ -972,12 +983,11 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_vOBB_Range[0] = { 20.f ,80.f,60.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(100.f);
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -1005,15 +1015,12 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 3;
 			m_iCombatMotion[1] = 4;
 			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(70.f);
 		}
 		break;
 		}
-
 		m_ePreClass = m_eCurClass;
 	}
 }
-
 
 void CNPC::AnimVectorClear()
 {
@@ -1338,32 +1345,32 @@ void CNPC::Combat(const _float& fTimeDelta)
 
 void CNPC::SetSpeed()
 {
-	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS(2)] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS(2)] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_INFANTRY] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_INFANTRY] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS(4)] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeed[(_uint)CLASS(4)] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS(4)] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_SPEARMAN] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_SPEARMAN] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 5.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MAGE] = 10.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MAGE] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 15.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_MMAGE] = 20.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_MMAGE] = 40.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 7.f;
-	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 14.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_ARCHER] = 15.f;
+	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 30.f;
 }
 
 void CNPC::Resurrection()

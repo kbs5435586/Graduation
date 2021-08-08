@@ -191,30 +191,6 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		CMRT* pMRT = CMRT::Create(1, arrRT, m_pDsTex);
 		m_vecMRT.push_back(pMRT);
 	}
-	// REF Tex
-	{
-		tRtt arrRT[2] = {};
-		arrRT[0].vClear_Color = { 1.f,0.f,0.f,1.f };
-
-		arrRT[0].pRtt = CRTT::Create(L"Reflection_Tex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
-
-		if (nullptr == arrRT[0].pRtt)
-			return E_FAIL;
-
-		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
-
-		arrRT[1].pRtt = CRTT::Create(L"Refraction_Tex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
-
-		if (nullptr == arrRT[1].pRtt)
-			return E_FAIL;
-
-		CMRT* pMRT = CMRT::Create(2, arrRT, m_pDsTex);
-		m_vecMRT.push_back(pMRT);
-	}
 
 
 	return S_OK;

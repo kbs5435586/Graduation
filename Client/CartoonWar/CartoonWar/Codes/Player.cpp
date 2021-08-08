@@ -98,14 +98,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_Hit->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 
 
-
-
-	_vec3 vPickPos = {};
-
-	CTransform* pTerrainTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Transform");
-	if (nullptr == pTerrainTransform)
-		return NO_EVENT;
-
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
@@ -244,7 +236,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (server->Get_ShowOtherPlayer(m_iLayerIdx))
 	{
-		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 10.f)
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
@@ -260,10 +252,14 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
 		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
 	}
 
 	Set_Animation(fTimeDelta);
-
 	Safe_Release(server);
 	return _int();
 }
@@ -531,9 +527,7 @@ HRESULT CPlayer::CreateInputLayout()
 		return E_FAIL;	
 	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_BLUR)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom_Reflection->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST, SHADER_TYPE::SHADER_REF)))
+	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -752,6 +746,7 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Reflection, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ReflectionShader", m_pShaderCom_Reflection)))
 		return E_FAIL;
+
 
 
 	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
