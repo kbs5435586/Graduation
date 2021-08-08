@@ -78,7 +78,10 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	SetSpeed();
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	m_eCurTeam = TEAM::TEAM_RED;
+	if (m_iLayerIdx % 2 == 0)
+		m_eCurTeam = TEAM::TEAM_RED;
+	else
+		m_eCurTeam = TEAM::TEAM_BLUE;
 	return S_OK;
 }
 
