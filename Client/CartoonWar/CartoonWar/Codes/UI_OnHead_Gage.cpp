@@ -235,7 +235,7 @@ void CUI_OnHead_Gage::ResetGage()
 
 void CUI_OnHead_Gage::FixGage()
 {
-	if (m_tRep.m_arrInt[0] >= 20.f)
+	if (m_tRep.m_arrInt[0] >= 10.f)
 	{
 		m_IsFix_Gage = true;
 		m_fTimeDelta = 0.f;
