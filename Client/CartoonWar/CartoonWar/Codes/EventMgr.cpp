@@ -31,10 +31,11 @@ void CEventMgr::Access_Flag_Player()
 
 			_vec3	vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
 			_float	fLen = vLenTemp.Length();
-			if (fLen >= 10.f)
-				dynamic_cast<CFlag*>(iter1)->SetTeam(TEAM::TEAM_END);
-			else
+			if (fLen <= 10.f)
+			{
 				dynamic_cast<CFlag*>(iter1)->SetTeam(iter0->GetCurTeam());
+			}
+			
 		}
 	}
 }

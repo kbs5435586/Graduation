@@ -281,6 +281,7 @@
     <ClInclude Include="..\Headers\UI_ClassTap.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_MiniMap.h" />
+    <ClInclude Include="..\Headers\UI_NormalBar.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
     <ClInclude Include="..\Headers\UI_OnHead_Gage.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
@@ -290,6 +291,7 @@
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
+    <ClInclude Include="..\Headers\UI_Score.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\UI_Shop.h" />
     <ClInclude Include="..\Headers\UI_Skill.h" />
@@ -420,6 +422,7 @@
     <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
+    <ClCompile Include="..\Codes\UI_NormalBar.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead_Gage.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
@@ -429,6 +432,7 @@
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
+    <ClCompile Include="..\Codes\UI_Score.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\UI_Shop.cpp" />
     <ClCompile Include="..\Codes\UI_Skill.cpp" />

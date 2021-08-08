@@ -469,6 +469,12 @@
     <Filter Include="02. GameObject\97. UI\08. UI_OnHead_Gage">
       <UniqueIdentifier>{c4064192-0f20-499c-ac55-bcabfe2b5e0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\09. UI_Score">
+      <UniqueIdentifier>{f5a75c2b-92b5-40b9-ba81-1bffa743b93f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\10. UI_NormalBar">
+      <UniqueIdentifier>{f3586e44-b338-4a17-b9de-57237110e832}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -870,6 +876,12 @@
     <ClInclude Include="..\Headers\UI_OnHead_Gage.h">
       <Filter>02. GameObject\97. UI\08. UI_OnHead_Gage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Score.h">
+      <Filter>02. GameObject\97. UI\09. UI_Score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_NormalBar.h">
+      <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1242,6 +1254,12 @@
     <ClCompile Include="..\Codes\UI_OnHead_Gage.cpp">
       <Filter>02. GameObject\97. UI\08. UI_OnHead_Gage</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Score.cpp">
+      <Filter>02. GameObject\97. UI\09. UI_Score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_NormalBar.cpp">
+      <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1365,7 +1383,7 @@
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
-      <Filter>96. ShaderFiles</Filter>
+      <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
