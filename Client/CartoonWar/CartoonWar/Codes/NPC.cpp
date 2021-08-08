@@ -38,7 +38,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	// Compute_Matrix();
 	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {70.f,0.f,70.f };
+	_vec3 vPos = {0.f,0.f,0.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -149,7 +149,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 				m_iCurAnimIdx = m_iDeathMotion[1];
 			m_IsDeadMotion = true;
 		}
-
 	}
 	if (m_IsDead)
 		Resurrection();
@@ -173,20 +172,11 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
-
-	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
-	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vLen = vPlayerPos - vPos;
-	_float fLen = vLen.Length();
-
 	if (server->Get_ShowNPC(m_iLayerIdx))
 	{
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", 0);
+		CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 		_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 		_vec3 vLen = vPlayerPos - vPos;
@@ -207,18 +197,8 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 						return -1;
 				}
 			}
-			else
-			{
-				m_matOldWorld = m_pTransformCom->Get_Matrix();;
-				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-			}
 			m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
-		}
-		else
-		{
-			m_matOldWorld = m_pTransformCom->Get_Matrix();;
-			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
 	}
 

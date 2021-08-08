@@ -1,10 +1,10 @@
 #pragma once
 // 서버 클라 같이 맞춰줘야 되는 모든건 프로토콜 헤더에
-#define MY_NPC_START_SERVER(p) 30 + (14 * p)
-#define MY_NPC_END_SERVER(p) 43 + (14 * p)
+#define MY_NPC_START_SERVER(p) 30 + (9 * p)
+#define MY_NPC_END_SERVER(p) 38 + (9 * p)
 
-#define MY_NPC_START_CLIENT(p) (14 * p)
-#define MY_NPC_END_CLIENT(p) 13 + (14 * p)
+#define MY_NPC_START_CLIENT(p) (9 * p)
+#define MY_NPC_END_CLIENT(p) 8 + (9 * p)
 
 enum PLAYERS {
 	ENUM_PLAYER1, ENUM_PLAYER2, ENUM_PLAYER3, ENUM_PLAYER4, ENUM_PLAYER5, ENUM_PLAYER6, ENUM_PLAYER7, ENUM_PLAYER8,
@@ -32,7 +32,7 @@ constexpr int MAX_CHAT_LEN = 50;
 constexpr int MAX_USER = 29;
 constexpr int NPC_START = 30;
 constexpr int MAX_NPC = 449;
-constexpr int MAX_OWN_NPC = 10;
+constexpr int MAX_OWN_NPC = 9;
 
 constexpr int FLAG_START = 450;
 constexpr int MAX_FLAG = 454;
@@ -40,8 +40,12 @@ constexpr int MAX_FLAG = 454;
 constexpr int OBJECT_START = 450;
 constexpr int MAX_OBJECT = 454;
 
-constexpr int TEST_PLAYERS = 2;
-constexpr int TEST_NPCS = 28;
+constexpr int CL_TEST_PLAYERS = 4;
+constexpr int CL_TEST_NPCS = 36;
+constexpr int CL_NPC_TEAM1 = 9;
+constexpr int CL_NPC_TEAM2 = 18;
+constexpr int CL_NPC_TEAM3 = 27;
+constexpr int CL_NPC_TEAM4 = 36;
 
 constexpr int WORLD_HORIZONTAL = 500; // 월드 가로 x
 constexpr int WORLD_HEIGHT = 400; // 월드 높이 y

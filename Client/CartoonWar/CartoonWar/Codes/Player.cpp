@@ -260,13 +260,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
 		}
-		else
-		{
-			m_matOldWorld = m_pTransformCom->Get_Matrix();;
-			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		}
 	}
-
 
 	Set_Animation(fTimeDelta);
 
@@ -1304,55 +1298,55 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->Set_Attack_CoolTime(high_resolution_clock::now());
 		}
 
-		if (m_eCurClass == CLASS::CLASS_ARCHER)
-		{
-			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-				return;
-		}
-		else if (m_eCurClass == CLASS::CLASS_WORKER)
-		{
-			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-				return;
-		}
-		else
-		{
-			//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-			//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-			//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-			//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-			CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-				return;
-		}
+		//if (m_eCurClass == CLASS::CLASS_ARCHER)
+		//{
+		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
+		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+		//		return;
+		//}
+		//else if (m_eCurClass == CLASS::CLASS_WORKER)
+		//{
+		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
+		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+		//		return;
+		//}
+		//else
+		//{
+		//	//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+		//	//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+		//	//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+		//	//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+		//	CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+		//		return;
+		//}
 		server->send_animation_packet(A_ATTACK);
 		m_IsOnce = true;
 		m_IsHit = true;
 		//m_IsCombat = true;
-		if (m_IsFire)
-		{
-			m_IsFire = false;
-			m_IsFireCheck = true;
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-			int numver = lst.size();
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-			dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
-		}
-		if (m_IsTeleport)
-		{
-			m_IsTeleport = false;
-			m_IsTeleportCheck = true;
+		//if (m_IsFire)
+		//{
+		//	m_IsFire = false;
+		//	m_IsFireCheck = true;
+		//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+		//	int numver = lst.size();
+		//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+		//	dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
+		//}
+		//if (m_IsTeleport)
+		//{
+		//	m_IsTeleport = false;
+		//	m_IsTeleportCheck = true;
 
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-			int numver = lst.size();
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-			dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-			dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
-			++teleportNum;
-			if (teleportNum > 1)
-				teleportNum = 0;
-		}
+		//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+		//	int numver = lst.size();
+		//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+		//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
+		//	dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
+		//	++teleportNum;
+		//	if (teleportNum > 1)
+		//		teleportNum = 0;
+		//}
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))

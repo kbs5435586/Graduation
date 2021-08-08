@@ -88,7 +88,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-	/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
 		{
 			m_pTransform->Go_Straight(fTimeDelta);
 		}
@@ -112,10 +112,10 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 		{
 			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-		}*/
+		}
 	}
 
-	{
+	/*{
 
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
@@ -207,7 +207,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
-		return NO_EVENT;
+		return NO_EVENT;*/
 
 	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransform);
 	//_float		fThisY = m_pTransform->Get_Matrix()._42;

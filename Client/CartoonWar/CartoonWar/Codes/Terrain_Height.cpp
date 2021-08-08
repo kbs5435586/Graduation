@@ -64,7 +64,7 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
 
-	//if (GetKeyState(VK_LBUTTON) < 0)
+	if (GetKeyState(VK_LBUTTON) < 0)
 	{
 		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
 	}
