@@ -975,21 +975,22 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Static_rpg_Rock4",
 				CMesh::Create_Load(L"../Data/MeshData/rpg_Rock4.dat"))))
 				return E_FAIL;
-
-
-
 				*/
 
-			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
-				CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
-				return E_FAIL;
-			if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
-				CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
-				return E_FAIL;		
+
+
+
+	
 	}
 
 
 	{
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
+			CMesh::Create_Load(L"../Data/MeshData/Flag_Blue.dat"))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Red",
+			CMesh::Create_Load(L"../Data/MeshData/Flag_Red.dat"))))
+			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
 			CMesh::Create_Load(L"../Data/MeshData/Brazier01.dat"))))
 			return E_FAIL;
@@ -1378,7 +1379,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			return E_FAIL;
 		
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_HPBar",
-			CTexture::Create(L"../Bin/Resource/Texture/HPBar/HP%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			CTexture::Create(L"../Bin/Resource/Texture/HPBar/HP%d.png", 3, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Font",
@@ -1411,6 +1412,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Castle",
 			CTexture::Create(L"../Bin/Resource/Texture/Castle/Castle%d.jpg", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LastNumber",
+			CTexture::Create(L"../Bin/Resource/Texture/LastNum/LastNumber%d.png", 6, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ScoreBack",
+			CTexture::Create(L"../Bin/Resource/Texture/LastNum/Back%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
 	}
 
 	//TGA
@@ -1442,6 +1449,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/MiniMap_T/WorldMap%d.tga", 11, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Flag",
+			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga",1, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
 	}
 
 	return S_OK;
@@ -1487,6 +1497,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		CShader::Create(L"../ShaderFiles/Shader_UI_Flag.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_OnHead_Gage",
+		CShader::Create(L"../ShaderFiles/Shader_OnHead_Gage.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Light",
 		CShader::Create(L"../ShaderFiles/Shader_UI_Deffered.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;

@@ -68,7 +68,6 @@ _bool CFrustum::Culling_Frustum(CTransform* pTransform, const _float& fRadius)
 
 
 	return Isin_Frustum(m_Plane, &vPosition, fRadius);
-
 }
 
 _bool CFrustum::Isin_Frustum(Plane* pPlane, const _vec3* pPosition, const _float& fRadius)
@@ -125,7 +124,6 @@ CFrustum* CFrustum::Create()
 CComponent* CFrustum::Clone_Component(void* pArg)
 {
 	AddRef();
-
 	return this;
 }
 

@@ -24,7 +24,7 @@ HRESULT CMyRect::Ready_Prototype()
 HRESULT CMyRect::Ready_GameObject(void* pArg)
 {
 
-	FLAG tFlag = *(FLAG*)pArg;
+	//FLAG tFlag = *(FLAG*)pArg;
 	
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -32,11 +32,11 @@ HRESULT CMyRect::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));
-	_vec3 vPos = tFlag.vPos;
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(10.f, 10.f, 1.f);
-
-	m_iNum = tFlag.iNum;
+	//_vec3 vPos = tFlag.vPos;
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+	m_pTransformCom->Scaling(4.f, 4.f, 4.f);
+	//m_iNum = tFlag.iNum;
 
 	return S_OK;
 }
@@ -72,7 +72,7 @@ _int CMyRect::Update_GameObject(const _float& fTimeDelta)
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(fY + 0.5f);
+	m_pTransformCom->Set_PositionY(120.f);
 
 	
 
@@ -251,7 +251,7 @@ HRESULT CMyRect::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 
 
@@ -321,11 +321,14 @@ HRESULT CMyRect::Ready_Component(_uint iNum)
 	if (FAILED(Add_Component(L"Com_Shader0", m_pShaderCom)))
 		return E_FAIL;
 
-
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ClassUI");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_RoundButtonUI");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
+	//m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ClassUI");
+	//NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);

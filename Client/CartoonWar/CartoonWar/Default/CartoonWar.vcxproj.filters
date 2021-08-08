@@ -490,6 +490,18 @@
     <Filter Include="01. Scene\02. Stage">
       <UniqueIdentifier>{6552fa3a-e608-42d9-b5f7-192d4ce50cda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Engine\01. Utility\14. EventMgr">
+      <UniqueIdentifier>{f99c711b-7e2b-437c-a66b-56efe48ae57c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\08. UI_OnHead_Gage">
+      <UniqueIdentifier>{c4064192-0f20-499c-ac55-bcabfe2b5e0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\09. UI_Score">
+      <UniqueIdentifier>{f5a75c2b-92b5-40b9-ba81-1bffa743b93f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\10. UI_NormalBar">
+      <UniqueIdentifier>{f3586e44-b338-4a17-b9de-57237110e832}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\98. Camera\04. Map_Camera">
       <UniqueIdentifier>{617f489f-8875-4eaa-bc0e-6a21d2ead2ad}</UniqueIdentifier>
     </Filter>
@@ -918,6 +930,18 @@
     <ClInclude Include="..\Headers\Lobby.h">
       <Filter>01. Scene\01. Lobby</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\EventMgr.h">
+      <Filter>97. Engine\01. Utility\14. EventMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_OnHead_Gage.h">
+      <Filter>02. GameObject\97. UI\08. UI_OnHead_Gage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Score.h">
+      <Filter>02. GameObject\97. UI\09. UI_Score</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_NormalBar.h">
+      <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Map_Camera.h">
       <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
     </ClInclude>
@@ -1314,6 +1338,18 @@
     <ClCompile Include="..\Codes\Lobby.cpp">
       <Filter>01. Scene\01. Lobby</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\EventMgr.cpp">
+      <Filter>97. Engine\01. Utility\14. EventMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_OnHead_Gage.cpp">
+      <Filter>02. GameObject\97. UI\08. UI_OnHead_Gage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Score.cpp">
+      <Filter>02. GameObject\97. UI\09. UI_Score</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_NormalBar.cpp">
+      <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Map_Camera.cpp">
       <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
     </ClCompile>
@@ -1456,6 +1492,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_MiniMap.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>

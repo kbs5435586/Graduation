@@ -81,7 +81,7 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 	_float fLen = vLen.Length();
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -143,8 +143,6 @@ void CThrow_Arrow::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
-
 	//m_pColliderCom->Render_Collider();
 	Safe_Release(pManagement);
 }
@@ -214,7 +212,7 @@ void CThrow_Arrow::Render_Blur()
 		m_pMeshCom->Render_Mesh(i);
 	}
 	m_iBlurCnt++;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	if (m_iBlurCnt >= 100)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
@@ -271,10 +269,9 @@ void CThrow_Arrow::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pShaderCom_Blur);
+	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pFrustumCom);
-
 	CGameObject::Free();
 }
 

@@ -1,44 +1,43 @@
 #include "framework.h"
-#include "UI_Aim.h"
+#include "UI_NormalBar.h"
 #include "Management.h"
 
-CUI_Aim::CUI_Aim()
+CUI_NormalBar::CUI_NormalBar()
 	: CUI()
 {
 }
 
-CUI_Aim::CUI_Aim(const CUI_Aim& rhs)
+CUI_NormalBar::CUI_NormalBar(const CUI_NormalBar& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Aim::Ready_Prototype()
+HRESULT CUI_NormalBar::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Aim::Ready_GameObject(void* pArg)
+HRESULT CUI_NormalBar::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
+	m_fX = WINCX / 2.f;
+	m_fY = WINCY / 2.f - 500.f;
 
-	m_fX = WINCX/2.f;
-	m_fY = WINCY / 2.f+100.f;
-
-	m_fSizeX = 100.f;
+	m_fSizeX = 400.f;
 	m_fSizeY = 100.f;
 	return S_OK;
 }
 
-_int CUI_Aim::Update_GameObject(const _float& fTimeDelta)
+_int CUI_NormalBar::Update_GameObject(const _float& fTimeDelta)
 {
 	return _int();
 }
 
-_int CUI_Aim::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_NormalBar::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -49,7 +48,7 @@ _int CUI_Aim::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Aim::Render_GameObject()
+void CUI_NormalBar::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -78,7 +77,9 @@ void CUI_Aim::Render_GameObject()
 	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+
 	CDevice::GetInstance()->UpdateTable();
 
 
@@ -88,23 +89,23 @@ void CUI_Aim::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Aim::CreateInputLayout()
+HRESULT CUI_NormalBar::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::DEFAULT)))
 		return E_FAIL;
 
 
 	return S_OK;
 }
 
-CUI_Aim* CUI_Aim::Create()
+CUI_NormalBar* CUI_NormalBar::Create()
 {
-	CUI_Aim* pInstance = new CUI_Aim();
+	CUI_NormalBar* pInstance = new CUI_NormalBar();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -112,9 +113,9 @@ CUI_Aim* CUI_Aim::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Aim::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* CUI_NormalBar::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CUI_Aim* pInstance = new CUI_Aim();
+	CUI_NormalBar* pInstance = new CUI_NormalBar();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -123,7 +124,7 @@ CGameObject* CUI_Aim::Clone_GameObject(void* pArg, _uint iIdx)
 	return pInstance;
 }
 
-void CUI_Aim::Free()
+void CUI_NormalBar::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -135,7 +136,7 @@ void CUI_Aim::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_Aim::Ready_Component()
+HRESULT CUI_NormalBar::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -162,7 +163,7 @@ HRESULT CUI_Aim::Ready_Component()
 		return E_FAIL;
 
 	//Component_Texture_HPBar
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Zoom");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ScoreBack");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

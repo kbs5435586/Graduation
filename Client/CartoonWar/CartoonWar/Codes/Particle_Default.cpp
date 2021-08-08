@@ -49,7 +49,9 @@ _int CParticle_Default::Update_GameObject(const _float& fTimeDelta)
 		m_IsDead = true;
 	}
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->
+		Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);

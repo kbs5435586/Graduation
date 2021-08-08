@@ -46,7 +46,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	_vec3 vPos = { poss,0.f,300.f };
 	poss += 10.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(180.f));
+	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
 	m_tInfo = INFO(100, 1, 1, 0);
@@ -148,7 +148,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
-
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);

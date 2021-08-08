@@ -107,8 +107,8 @@ _int CGameObject_Manager::Update_GameObject_Manager(const _float& fTimeDelta)
 			}
 		}
 	}
-	//if (g_IsCollisionStart)
-		CManagement::GetInstance()->Update_CollisionManager(fTimeDelta);
+	CManagement::GetInstance()->Update_CollisionManager(fTimeDelta);
+	CManagement::GetInstance()->Update_Event_Manager();
 	return _int();
 }
 

@@ -22,6 +22,7 @@ void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
 {
 	Player_to_NPC_Collision();
 	Player_to_Player_Collision();
+	NPC_to_NPC_Collision();
 	Throw_to_NPC_Collision();
 	Player_to_NPC_Attack_Collision();
 	Deffend_to_Player();
@@ -63,6 +64,10 @@ void CCollisionMgr::Player_to_NPC_Collision()
 		}
 	}
 
+}
+
+void CCollisionMgr::NPC_to_NPC_Collision()
+{
 }
 
 void CCollisionMgr::Player_to_Player_Collision()

@@ -197,6 +197,7 @@
     <ClInclude Include="..\Headers\DirectXTex.h" />
     <ClInclude Include="..\Headers\EffectBox.h" />
     <ClInclude Include="..\Headers\Enum.h" />
+    <ClInclude Include="..\Headers\EventMgr.h" />
     <ClInclude Include="..\Headers\Extern.h" />
     <ClInclude Include="..\Headers\FbxLoader.h" />
     <ClInclude Include="..\Headers\Fire.h" />
@@ -281,7 +282,9 @@
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_MiniMap.h" />
+    <ClInclude Include="..\Headers\UI_NormalBar.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
+    <ClInclude Include="..\Headers\UI_OnHead_Gage.h" />
     <ClInclude Include="..\Headers\UI_PointLight.h" />
     <ClInclude Include="..\Headers\UI_HP.h" />
     <ClInclude Include="..\Headers\UI_MP.h" />
@@ -289,6 +292,7 @@
     <ClInclude Include="..\Headers\UI_Loading.h" />
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
+    <ClInclude Include="..\Headers\UI_Score.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\UI_Shop.h" />
     <ClInclude Include="..\Headers\UI_WoL.h" />
@@ -343,6 +347,7 @@
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
     <ClCompile Include="..\Codes\EffectBox.cpp" />
+    <ClCompile Include="..\Codes\EventMgr.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
@@ -420,7 +425,9 @@
     <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
+    <ClCompile Include="..\Codes\UI_NormalBar.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />
+    <ClCompile Include="..\Codes\UI_OnHead_Gage.cpp" />
     <ClCompile Include="..\Codes\UI_PointLight.cpp" />
     <ClCompile Include="..\Codes\UI_HP.cpp" />
     <ClCompile Include="..\Codes\UI_MP.cpp" />
@@ -428,6 +435,7 @@
     <ClCompile Include="..\Codes\UI_Loading.cpp" />
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
+    <ClCompile Include="..\Codes\UI_Score.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\UI_Shop.cpp" />
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
@@ -600,6 +608,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_PostEffect_Buffer.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_MiniMap.hlsl">
