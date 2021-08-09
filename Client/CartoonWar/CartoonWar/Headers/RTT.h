@@ -13,12 +13,12 @@ public:
     HRESULT                         Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                                     , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
                                                     , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr);
-    HRESULT                         Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+    HRESULT                         Create_InvenTexture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                                     , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
-                                                    , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor, _int num);
-    HRESULT                         Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+                                                    , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor);
+    HRESULT                         Create_MapTexture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                                     , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
-                                                    , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor, _bool num);
+                                                    , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor);
 public:
     D3D12_RESOURCE_STATES           GetState() { return m_eState; }
     void                            SetState(D3D12_RESOURCE_STATES eState) { m_eState = eState; }
@@ -34,13 +34,13 @@ public:
     static CRTT*                    Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                             , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
                                             , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr = _vec4());
-    static CRTT*                    Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+    static CRTT*                    CreateInven(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                             , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
-                                            , D3D12_RESOURCE_FLAGS _eResFlag, _int num, _vec4 _vClearClolr = _vec4());
+                                            , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr = _vec4());
 
-    static CRTT*                    Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
+    static CRTT*                    CreateMap(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
                                             , const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
-                                            , D3D12_RESOURCE_FLAGS _eResFlag, _bool num, _vec4 _vClearClolr = _vec4());
+                                            , D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr = _vec4());
 
 
     const _tchar*                   Get_MRT_Tag() { return m_pTag; }

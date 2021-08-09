@@ -114,24 +114,10 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 
 	}
 
-
-	// Create RenderTarget for SwapChain
-	//tRtt  arrRT[2] = {};
-	//for (_uint i = 0; i < 2; ++i)
-	//{
-	//	wsprintf(szName, L"SwapchainTargetTex_%d", i);
-	//	ComPtr<ID3D12Resource>		pTarget;
-	//	CDevice::GetInstance()->GetSwapChain()->GetBuffer(i, IID_PPV_ARGS(&pTarget));
-	//	arrRT[i].pRtt = CRTT::Create(szName, pTarget);
-	//	arrRT[i].vClear_Color = { 0.f,0.f,1.f,1.f };
-	//	if (arrRT[i].pRtt == nullptr)
-	//		return E_FAIL;
-	//}
-
-	m_pDsBackTex = CRTT::Create(L"DepthStencilTex"
+	m_pDsInvenTex = CRTT::CreateInven(L"DepthStencilTex"
 		, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D24_UNORM_S8_UINT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
-		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, 1);
-	if (m_pDsBackTex == nullptr)
+		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+	if (m_pDsInvenTex == nullptr)
 		return E_FAIL;
 
 	// Inventory MRT
@@ -158,7 +144,7 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (arrRT[2].pRtt == nullptr)
 			return E_FAIL;
 
-		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsBackTex);
+		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsInvenTex);
 		m_vecMRT.push_back(pMRT);
 
 	}
@@ -215,9 +201,9 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		m_vecMRT.push_back(pMRT);
 	}
 
-	m_pDsMapTex = CRTT::Create(L"DepthStencilTex"
+	m_pDsMapTex = CRTT::CreateMap(L"DepthStencilTex"
 		, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D24_UNORM_S8_UINT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
-		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, true);
+		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 	if (m_pDsMapTex == nullptr)
 		return E_FAIL;
 	
@@ -276,7 +262,7 @@ void CRTTMananger::Free()
 		Safe_Release(iter);
 	}
 	Safe_Release(m_pDsTex);
-	Safe_Release(m_pDsBackTex);
+	Safe_Release(m_pDsInvenTex);
 	Safe_Release(m_pDsMapTex);
 	Safe_Release(m_pPostEffectTex);
 }

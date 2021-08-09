@@ -163,7 +163,8 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	return S_OK;
 }
 
-HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor, _int num)
+HRESULT CRTT::Create_InvenTexture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, 
+	const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
 {
 	lstrcpy(m_pTag, pTag);
 	m_tDesc.MipLevels = 1;
@@ -255,7 +256,8 @@ HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DX
 	return S_OK;
 }
 
-HRESULT CRTT::Create_Texture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor, _bool num)
+HRESULT CRTT::Create_MapTexture(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, 
+	const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearColor)
 {
 	lstrcpy(m_pTag, pTag);
 	m_tDesc.MipLevels = 1;
@@ -364,21 +366,21 @@ CRTT* CRTT::Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT 
 
 }
 
-CRTT* CRTT::Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty, 
-					D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _int num, _vec4 _vClearClolr)
+CRTT* CRTT::CreateInven(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty, 
+					D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr)
 {
 	CRTT* pInstance = new CRTT;
-	if (FAILED(pInstance->Create_Texture(pTag, _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClolr, num)))
+	if (FAILED(pInstance->Create_InvenTexture(pTag, _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClolr)))
 		Safe_Release(pInstance);
 
 	return pInstance;
 }
 
-CRTT* CRTT::Create(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty, 
-					D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _bool num, _vec4 _vClearClolr)
+CRTT* CRTT::CreateMap(const _tchar* pTag, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat, const D3D12_HEAP_PROPERTIES& _HeapProperty,
+					D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, _vec4 _vClearClolr)
 {
 	CRTT* pInstance = new CRTT;
-	if (FAILED(pInstance->Create_Texture(pTag, _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClolr, num)))
+	if (FAILED(pInstance->Create_MapTexture(pTag, _iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, _vClearClolr)))
 		Safe_Release(pInstance);
 
 	return pInstance;
