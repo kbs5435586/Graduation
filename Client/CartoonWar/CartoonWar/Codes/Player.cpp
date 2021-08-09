@@ -34,18 +34,9 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	if (m_iLayerIdx == 0)
-	{
-		_vec3 vPos = { 392, 0.f,471};
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		m_eCurTeam = TEAM::TEAM_RED;
-	}
-	else
-	{
-		_vec3 vPos = { 385,0.f, 3036.53 };
-		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		m_eCurTeam = TEAM::TEAM_BLUE;
-	}
+	_vec3 vPos = { 50.f, 0.f,50.f };
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_eCurTeam = TEAM::TEAM_RED;
 
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -76,7 +67,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	SetSpeed();
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	//m_eCurTeam = TEAM::TEAM_RED;
+	m_eCurTeam = TEAM::TEAM_RED;
 	return S_OK;
 }
 
