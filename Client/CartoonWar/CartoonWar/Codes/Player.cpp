@@ -155,6 +155,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		else
 		{
 			m_iCurAnimIdx = 0;
+			server->send_animation_packet(A_IDLE);
 		}
 		m_IsOnce = false;
 		m_IsHit = false; // ¼öÁ¤
@@ -1619,8 +1620,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		server->send_npc_act_packet(DO_HOLD);
 	}
 
-	if (8 == server->Get_Anim(m_iLayerIdx))
-		m_IsOnce = true;
+	/*if (8 == server->Get_Anim(m_iLayerIdx))
+		m_IsOnce = true;*/
 
 	Safe_Release(server);
 }

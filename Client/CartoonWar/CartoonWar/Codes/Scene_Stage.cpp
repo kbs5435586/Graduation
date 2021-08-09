@@ -465,8 +465,8 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	XMFLOAT3 two = { 405.f, 100.f, 1.f };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&two)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MiniMap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Aim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
@@ -478,8 +478,6 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MiniMap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_NormalBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
@@ -496,8 +494,8 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	//GameObject_UI_Diffuse
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))

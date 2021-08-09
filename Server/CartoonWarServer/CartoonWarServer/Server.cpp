@@ -1941,7 +1941,7 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_ENTER;
     packet.hp = g_clients[other_id].m_hp;
-    packet.p_class = g_clients[user_id].m_class;
+    packet.p_class = g_clients[other_id].m_class;
     _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
     packet.r_y = pos._12;
@@ -2177,6 +2177,7 @@ void Server::do_attack(int npc_id)
                 n.m_Mcondition = CON_IDLE;
                 n.m_Rcondition = CON_IDLE;
                 n.m_anim = A_ATTACK;
+
             }
             else
             {
