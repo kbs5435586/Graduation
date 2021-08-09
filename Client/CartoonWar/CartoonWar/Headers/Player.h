@@ -112,6 +112,8 @@ private:
 	
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tPlayer = {};
+public:
+	//UNIT&									GetPlayerInfo() {return m_tPlayer;}
 private:
 	_uint									m_iCurMeshNum = 0;
 public:

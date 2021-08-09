@@ -3,6 +3,7 @@
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
+#include "UI_ClassTap.h"
 
 CUI_Shop::CUI_Shop()
 {
@@ -35,7 +36,6 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 	pManagement->AddRef();
 
 	
-
 	if (pManagement->Key_Pressing(KEY_LBUTTON))
 	{
 		GetCursorPos(&MousePos);
@@ -53,7 +53,6 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 	}
 
 
-
 	if (IsDown)
 	{
 		if (pManagement->Key_Up(KEY_LBUTTON))
@@ -64,11 +63,11 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
 			npcNum = LstTemp.size();
 			
-
 			if (npcNum < 14)
-			{
-				UNIT tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
-
+			{	
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+				UNIT tPlayerInfo = pTemp->GetPlayerInfo();
+			
 				if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", nullptr, (void*)&tPlayerInfo)))
 					return E_FAIL;
 			}

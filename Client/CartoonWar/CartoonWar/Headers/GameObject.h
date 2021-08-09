@@ -36,6 +36,7 @@ public:
 	TEAM&									GetCurTeam() { return m_eCurTeam; }
 	TEAM&									GetPreTeam() { return m_ePreTeam; }
 	_uint									GetLayerIdx() { return m_iLayerIdx; }
+	UNIT&									GetPlayerInfo() { return m_tUnit; }
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:

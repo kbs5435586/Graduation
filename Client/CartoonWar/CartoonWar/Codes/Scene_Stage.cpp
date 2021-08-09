@@ -577,7 +577,7 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	ORDER tOrder = ORDER();
 	tOrder.IsPlayer = true;
 	tOrder.iIdx = 0;
-	UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
+	UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_GREEN };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
