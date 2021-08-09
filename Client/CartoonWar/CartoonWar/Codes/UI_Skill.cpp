@@ -55,6 +55,7 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	//m_strCoolTime = to_string(m_CoolTime);
 	//if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strCoolTime.c_str(), m_fSizeX, m_fSizeY)))
 	//	return E_FAIL;
+	
 	//10이 꽉찬 상태
 
 	if (m_Active)

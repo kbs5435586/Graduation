@@ -124,10 +124,12 @@ private:
 
 	CBuffer_CubeTex* m_pBufferCom = nullptr;
 
-
-
-
 	_bool m_IsStart = {};
+
+private:
+	_float NowSkillOne{};
+	_float NowSkillTwo{};
+
 private:
 	void Skill_Fly(const _float& fTimeDelta, _float fY);
 	
@@ -136,32 +138,50 @@ private:
 	_bool m_IsFly_END = {};
 	_bool m_IsUandD = {};
 	
-
 	_float m_fCoolTime_ONE{};
+	_float m_fFlyCoolTImeMax{};
+public:
+	void setFlyMaxTime(_float _t) { m_fFlyCoolTImeMax = _t; }
+	_float& getFlyMaxTime() { return m_fFlyCoolTImeMax; }
 private:
 	void Skill_Invisible(const _float& fTimeDelta);
 
 	_bool m_IsInvisible = {};
 	_float m_fCoolTime_TWO{};
+	_float m_fInvisibleCoolTImeMax{};
+public:
+	void setInvisibleMaxTime(_float _t) { m_fInvisibleCoolTImeMax = _t; }
+	_float& getInvisibleMaxTime() { return m_fInvisibleCoolTImeMax; }
 
 private:
 	void Skill_CastFire(const _float& fTimeDelta);
-
+	void Skill_FireTime(const _float& fTimeDelta);
 	//CGameObject* fireskill = nullptr;
 	//_int fireCnt = {};
+	_bool m_GetFire = {};
 	_bool m_IsFire = {};
 	_bool m_IsFireCheck = {};
 
 	_float m_DamageTime{};
+	_float m_fFireCoolTImeMax{};
 public:
 	void setDTime(_float _t) { m_DamageTime = _t; }
 	_float& getDTime() { return m_DamageTime; }
+	void setFireMaxTime(_float _t) { m_fFireCoolTImeMax = _t; }
+	_float& getFireMaxTime() { return m_fFireCoolTImeMax; }
 	_float m_fCoolTime_THR{};
+
 private:
+	void Skill_CastTeleport(const _float& fTimeDelta);
+	_bool m_GetTeleport = {};
 	_bool m_IsTeleport = {};
 	_bool m_IsTeleportCheck = {};
 	_int teleportNum = {};
 	
 	_float m_fCoolTime_Four{};
+	_float m_fTeleportCoolTImeMax{};
+public:
+	void setTeleportMaxTime(_float _t) { m_fTeleportCoolTImeMax = _t; }
+	_float& getTeleportMaxTime() { return m_fTeleportCoolTImeMax; }
 };
 
