@@ -541,6 +541,291 @@ void Server::set_formation(int user_id)
             c.m_boid[3].angle = c.m_total_angle + 135.f;
             c.m_boid[3].radius = BASIC_FORM_RAD;
         }
+        else if (5 == c.m_boid.size())
+        {
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = c.m_total_angle - 45.f;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = c.m_total_angle + 45.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = c.m_total_angle - 135.f;
+            c.m_boid[2].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            _vec3 new_pos3 = playerPos + set_pos;
+            c.m_boid[3].final_pos = new_pos3;
+            c.m_boid[3].angle = c.m_total_angle + 135.f;
+            c.m_boid[3].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            _vec3 new_pos4 = playerPos + set_pos;
+            c.m_boid[4].final_pos = new_pos4;
+            c.m_boid[4].angle = c.m_total_angle - 75.f;
+            c.m_boid[4].radius = BASIC_FORM_RAD * 2;
+        }
+        else if (6 == c.m_boid.size())
+        {
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = c.m_total_angle - 45.f;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = c.m_total_angle + 45.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = c.m_total_angle - 135.f;
+            c.m_boid[2].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            _vec3 new_pos3 = playerPos + set_pos;
+            c.m_boid[3].final_pos = new_pos3;
+            c.m_boid[3].angle = c.m_total_angle + 135.f;
+            c.m_boid[3].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            _vec3 new_pos4 = playerPos + set_pos;
+            c.m_boid[4].final_pos = new_pos4;
+            c.m_boid[4].angle = c.m_total_angle - 75.f;
+            c.m_boid[4].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            _vec3 new_pos5 = playerPos + set_pos;
+            c.m_boid[5].final_pos = new_pos5;
+            c.m_boid[5].angle = c.m_total_angle + 75.f;
+            c.m_boid[5].radius = BASIC_FORM_RAD * 2;
+        }
+        else if (7 == c.m_boid.size())
+        {
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = c.m_total_angle - 45.f;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = c.m_total_angle + 45.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = c.m_total_angle - 135.f;
+            c.m_boid[2].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            _vec3 new_pos3 = playerPos + set_pos;
+            c.m_boid[3].final_pos = new_pos3;
+            c.m_boid[3].angle = c.m_total_angle + 135.f;
+            c.m_boid[3].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            _vec3 new_pos4 = playerPos + set_pos;
+            c.m_boid[4].final_pos = new_pos4;
+            c.m_boid[4].angle = c.m_total_angle - 75.f;
+            c.m_boid[4].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            _vec3 new_pos5 = playerPos + set_pos;
+            c.m_boid[5].final_pos = new_pos5;
+            c.m_boid[5].angle = c.m_total_angle + 75.f;
+            c.m_boid[5].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 105.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 105.f) * (PIE / 180.f));
+            _vec3 new_pos6 = playerPos + set_pos;
+            c.m_boid[6].final_pos = new_pos6;
+            c.m_boid[6].angle = c.m_total_angle - 105.f;
+            c.m_boid[6].radius = BASIC_FORM_RAD * 2;
+        }
+        else if (8 == c.m_boid.size())
+        {
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = c.m_total_angle - 45.f;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = c.m_total_angle + 45.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = c.m_total_angle - 135.f;
+            c.m_boid[2].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            _vec3 new_pos3 = playerPos + set_pos;
+            c.m_boid[3].final_pos = new_pos3;
+            c.m_boid[3].angle = c.m_total_angle + 135.f;
+            c.m_boid[3].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            _vec3 new_pos4 = playerPos + set_pos;
+            c.m_boid[4].final_pos = new_pos4;
+            c.m_boid[4].angle = c.m_total_angle - 75.f;
+            c.m_boid[4].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            _vec3 new_pos5 = playerPos + set_pos;
+            c.m_boid[5].final_pos = new_pos5;
+            c.m_boid[5].angle = c.m_total_angle + 75.f;
+            c.m_boid[5].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 105.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 105.f) * (PIE / 180.f));
+            _vec3 new_pos6 = playerPos + set_pos;
+            c.m_boid[6].final_pos = new_pos6;
+            c.m_boid[6].angle = c.m_total_angle - 105.f;
+            c.m_boid[6].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle + 105.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle + 105.f) * (PIE / 180.f));
+            _vec3 new_pos7 = playerPos + set_pos;
+            c.m_boid[7].final_pos = new_pos7;
+            c.m_boid[7].angle = c.m_total_angle + 105.f;
+            c.m_boid[7].radius = BASIC_FORM_RAD * 2;
+        }
+        else if (9 == c.m_boid.size())
+        {
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 45.f) * (PIE / 180.f));
+            _vec3 new_pos = playerPos + set_pos;
+            c.m_boid[0].final_pos = new_pos;
+            c.m_boid[0].angle = c.m_total_angle - 45.f;
+            c.m_boid[0].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 45.f) * (PIE / 180.f));
+            _vec3 new_pos1 = playerPos + set_pos;
+            c.m_boid[1].final_pos = new_pos1;
+            c.m_boid[1].angle = c.m_total_angle + 45.f;
+            c.m_boid[1].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle - 135.f) * (PIE / 180.f));
+            _vec3 new_pos2 = playerPos + set_pos;
+            c.m_boid[2].final_pos = new_pos2;
+            c.m_boid[2].angle = c.m_total_angle - 135.f;
+            c.m_boid[2].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * sinf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * cosf((c.m_total_angle + 135.f) * (PIE / 180.f));
+            _vec3 new_pos3 = playerPos + set_pos;
+            c.m_boid[3].final_pos = new_pos3;
+            c.m_boid[3].angle = c.m_total_angle + 135.f;
+            c.m_boid[3].radius = BASIC_FORM_RAD;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 75.f) * (PIE / 180.f));
+            _vec3 new_pos4 = playerPos + set_pos;
+            c.m_boid[4].final_pos = new_pos4;
+            c.m_boid[4].angle = c.m_total_angle - 75.f;
+            c.m_boid[4].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle + 75.f) * (PIE / 180.f));
+            _vec3 new_pos5 = playerPos + set_pos;
+            c.m_boid[5].final_pos = new_pos5;
+            c.m_boid[5].angle = c.m_total_angle + 75.f;
+            c.m_boid[5].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle - 105.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle - 105.f) * (PIE / 180.f));
+            _vec3 new_pos6 = playerPos + set_pos;
+            c.m_boid[6].final_pos = new_pos6;
+            c.m_boid[6].angle = c.m_total_angle - 105.f;
+            c.m_boid[6].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = BASIC_FORM_RAD * 2 * sinf((c.m_total_angle + 105.f) * (PIE / 180.f));
+            set_pos.z = BASIC_FORM_RAD * 2 * cosf((c.m_total_angle + 105.f) * (PIE / 180.f));
+            _vec3 new_pos7 = playerPos + set_pos;
+            c.m_boid[7].final_pos = new_pos7;
+            c.m_boid[7].angle = c.m_total_angle + 105.f;
+            c.m_boid[7].radius = BASIC_FORM_RAD * 2;
+
+            set_pos = {};
+            set_pos.x = 3 * BASIC_FORM_RAD / 2 * sinf((c.m_total_angle) * (PIE / 180.f));
+            set_pos.z = 3 * BASIC_FORM_RAD / 2 * cosf((c.m_total_angle) * (PIE / 180.f));
+            _vec3 new_pos8 = playerPos + set_pos;
+            c.m_boid[8].final_pos = new_pos8;
+            c.m_boid[8].angle = c.m_total_angle;
+            c.m_boid[8].radius = 3 * BASIC_FORM_RAD / 2;
+        }
     }
     break;
     //case FM_SQUARE:
@@ -1247,11 +1532,11 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             continue;
         if (false == is_near(c.second.m_id, player_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        if (check_basic_collision(player_id, c.second.m_id))
+       /* if (check_basic_collision(player_id, c.second.m_id))
         {
             set_formation(c.second.m_id);
             break;
-        }
+        }*/
         //if (check_obb_collision(user_id, c.second.m_id))
         //{
 

@@ -69,7 +69,7 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			{
 				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 					- server->Get_AddNPC_Cooltime());
-				if (cool_time.count() > 2)
+				if (cool_time.count() > 0)
 				{
 					server->send_add_npc_packet();
 					server->Set_AddNPC_CoolTime(high_resolution_clock::now());
