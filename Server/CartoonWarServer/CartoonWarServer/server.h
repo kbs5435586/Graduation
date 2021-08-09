@@ -20,8 +20,8 @@ private:
 
 	float NEAR_APPROACH = 0.7f;
 	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
-	float ATTACK_RADIUS = 7.f; // 데이터 보내줄 시야 범위
-	float DETECT_RADIUS = 15.f; // 데이터 보내줄 시야 범위
+	float ATTACK_RADIUS = 5.f; // 데이터 보내줄 시야 범위
+	float DETECT_RADIUS = 20.f; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 

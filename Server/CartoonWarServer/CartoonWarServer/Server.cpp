@@ -126,7 +126,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ATTACK:
     {
         cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
-        do_attack(user_id);
+        //do_attack(user_id);
     }
     break;
     case CS_PACKET_ANIMATION:
@@ -1541,6 +1541,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         //{
 
         //}
+
     }
     set_formation(player_id);
 
@@ -1910,8 +1911,9 @@ void Server::do_change_npc_act(int player_id, unsigned char act)
 {
     for (int npc_id = MY_NPC_START_SERVER(player_id); npc_id <= MY_NPC_END_SERVER(player_id); npc_id++)
     {
-        if (ST_ACTIVE == g_clients[npc_id].m_status &&
-            ((g_clients[player_id].m_troop == g_clients[npc_id].m_troop) || (g_clients[player_id].m_troop == T_ALL)))
+        if (ST_ACTIVE != g_clients[npc_id].m_status)
+            continue;
+        if (g_clients[player_id].m_troop == g_clients[npc_id].m_troop || g_clients[player_id].m_troop == T_ALL)
         {
             if (DO_FOLLOW == act)
             {
@@ -2073,22 +2075,11 @@ void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
 
 void Server::do_attack(int npc_id)
 {
-    /*
-    1. do_attack 되는 동시에 주인 플레이어 look 값 가져오기
-    2. 내 troop 선택된(troop 선택은 명령 하달 바꿀때 다 판정해줌) npc들 backward+일단left 실행시켜서
-        플레이어 look 값으로 바라보게 하기
-    3. look 통일되면 쭉 직진시키기
-    4. 직진하면서 fight 함수 만들어서 해당 범위 안에 적이 있으면 걔를 쳐다보게 하기
-
-    ----
-
-    5. 전투시키기
-
-    */
     SESSION& n = g_clients[npc_id];
     _vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
     n_look = -1.f * Vector3_::Normalize(n_look);
-    //1
+    _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
     if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
     {
         _vec3 t_look = g_clients[npc_id].m_target_look;
@@ -2103,9 +2094,10 @@ void Server::do_attack(int npc_id)
 
         float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
 
-        if (NPCangle > 1.f || NPCangle < -1.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+        if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
         {
             n.m_Mcondition = CON_STRAIGHT;
+            n.m_transform.BackWard(MOVE_TIME_ELAPSE);
             n.m_anim = A_WALK;
             if (NPCangle > 1.f)
             {
@@ -2123,7 +2115,7 @@ void Server::do_attack(int npc_id)
             n.m_Mcondition = CON_STRAIGHT;
             n.m_Rcondition = CON_IDLE;
             n.m_anim = A_WALK;
-
+            n.m_transform.BackWard(MOVE_TIME_ELAPSE);
             for (int i = 0; i < OBJECT_START; ++i) // 모든 플레이어와 적에 대해서
             {
                 if (ST_ACTIVE != g_clients[i].m_status)
@@ -2134,6 +2126,15 @@ void Server::do_attack(int npc_id)
                     continue;
                 // 활성화 상태이고 내 팀이 아니고 공격범위 안에 있는 상대일때
                 n.m_attack_target = i;
+                //for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
+                //{
+                //    if (ST_ACTIVE != g_clients[i].m_status)
+                //        continue;
+                //    if (true == is_near(npc_id, i))
+                //    {
+                //        send_fix_packet(i, npc_id);
+                //    }
+                //}
                 break;
             }
         }
@@ -2154,16 +2155,16 @@ void Server::do_attack(int npc_id)
 
         float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
 
-        if (NPCangle > 1.f || NPCangle < -1.f) // npc가 공격할 대상을 안바라볼때
+        if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
         {
             n.m_Mcondition = CON_IDLE;
             n.m_anim = A_WALK;
-            if (NPCangle > 1.f)
+            if (NPCangle > 1.5f)
             {
                 n.m_Rcondition = CON_LEFT;
                 n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
             }
-            else if (NPCangle < -1.f)
+            else if (NPCangle < -1.5f)
             {
                 n.m_Rcondition = CON_RIGHT;
                 n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
@@ -2171,13 +2172,17 @@ void Server::do_attack(int npc_id)
         }
         else // npc가 공격할 대상을 바라볼때
         {
-            n.m_Mcondition = CON_STRAIGHT;
-            n.m_Rcondition = CON_IDLE;
             if (is_attackable(n.m_id, n.m_attack_target)) // 전투 범위 안에 들어왔을때
             {
                 n.m_Mcondition = CON_IDLE;
                 n.m_Rcondition = CON_IDLE;
                 n.m_anim = A_ATTACK;
+            }
+            else
+            {
+                n.m_Mcondition = CON_STRAIGHT;
+                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                n.m_Rcondition = CON_IDLE;
             }
         }
     }
@@ -2317,6 +2322,13 @@ bool Server::is_attack_detect(int a, int b)
 {
     _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    float aa = sqrt((a_pos->x - b_pos->x) *
+        (a_pos->x - b_pos->x) +
+        (a_pos->y - b_pos->y) *
+        (a_pos->y - b_pos->y) +
+        (a_pos->z - b_pos->z) *
+        (a_pos->z - b_pos->z));
 
     if (sqrt((a_pos->x - b_pos->x) *
         (a_pos->x - b_pos->x) +
