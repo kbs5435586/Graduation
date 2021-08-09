@@ -34,8 +34,19 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 50.f,0.f,50.f };
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	if (m_iLayerIdx == 0)
+	{
+		_vec3 vPos = { 392, 0.f,471};
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_eCurTeam = TEAM::TEAM_RED;
+	}
+	else
+	{
+		_vec3 vPos = { 385,0.f, 3036.53 };
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_eCurTeam = TEAM::TEAM_BLUE;
+	}
+
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
@@ -65,7 +76,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	SetSpeed();
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	m_eCurTeam = TEAM::TEAM_RED;
+	//m_eCurTeam = TEAM::TEAM_RED;
 	return S_OK;
 }
 
@@ -87,8 +98,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_PositionY(fY);
 
 
-	if(!m_IsDeadMotion)
-		Input_Key(fTimeDelta);
+	if (m_iLayerIdx == 0)
+	{
+		if (!m_IsDeadMotion)
+			Input_Key(fTimeDelta);
+	}
+
 
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -481,12 +496,12 @@ CGameObject* CPlayer::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CPlayer* pInstance = new CPlayer(*this);
 
+	pInstance->m_iLayerIdx = iIdx;
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CPlayer Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
-	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
@@ -1565,7 +1580,7 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 200.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
 	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;

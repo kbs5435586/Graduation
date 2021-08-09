@@ -32,17 +32,43 @@ void CEventMgr::Access_Flag_Player()
 
 			_vec3	vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
 			_float	fLen = vLenTemp.Length();
+
 			if (fLen <= 10.f)
 			{
-				dynamic_cast<CFlag*>(iter1)->SetTeam(iter0->GetCurTeam());
+				if (!iter0->GetIsCheckRange_Flag())
+				{
+					if (iter0->GetCurTeam() == TEAM::TEAM_BLUE)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iBlueCnt++;
+					}
+					else if (iter0->GetCurTeam() == TEAM::TEAM_RED)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iRedCnt++;
+					}
+					iter0->GetIsCheckRange_Flag() = true;
+				}
+
 			}
-			else
+			else if (fLen > 20.f && fLen<=40.f)
 			{
-				dynamic_cast<CUI_OnHead_Gage*>(CManagement::GetInstance()->
-					Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", iter1->GetLayerIdx()))->GetIsReset() = true;
-			}			
+				if (iter0->GetIsCheckRange_Flag())
+				{
+					if (iter0->GetCurTeam() == TEAM::TEAM_BLUE)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iBlueCnt--;
+					}
+					else if (iter0->GetCurTeam() == TEAM::TEAM_RED)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iRedCnt--;
+					}
+					iter0->GetIsCheckRange_Flag() = false;
+				}
+			}
+
+
 		}
 	}
+
 }
 
 void CEventMgr::Access_Flag_NPC()

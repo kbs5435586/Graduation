@@ -460,10 +460,10 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -479,6 +479,14 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 		return E_FAIL;
 
+	tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx = 1;
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
 
 	//GameObject_ThrowArrow
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow")))

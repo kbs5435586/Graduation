@@ -25,10 +25,10 @@ HRESULT CTest_Tess::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,	L"Layer_Player", L"Com_Transform", 0);
-	_vec3 vPos =*pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	vPos.y += 10.f;
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,	L"Layer_Player", L"Com_Transform", 0);
+	//_vec3 vPos =*pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	//vPos.y += 10.f;
+	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
 	return S_OK;
 
