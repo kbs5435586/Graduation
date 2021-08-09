@@ -103,12 +103,15 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
-	if()
-	if (!m_IsActive)asd
+	if (m_iLayerIdx == 0)
 	{
-		if (!m_IsDeadMotion)
-			Input_Key(fTimeDelta);
+		if (!m_IsActive)
+		{
+			if (!m_IsDeadMotion)
+				Input_Key(fTimeDelta);
+		}
 	}
+	
 		
 	//else
 	//{
