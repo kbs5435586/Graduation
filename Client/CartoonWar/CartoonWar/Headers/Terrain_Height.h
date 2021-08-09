@@ -23,6 +23,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_GameObject_Map();
 	virtual void							Render_Blur();
 private:
 	virtual HRESULT							CreateInputLayout();

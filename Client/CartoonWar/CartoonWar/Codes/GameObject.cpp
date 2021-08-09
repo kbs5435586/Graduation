@@ -59,6 +59,10 @@ void CGameObject::Render_Ref()
 {
 }
 
+void CGameObject::Render_GameObject_Map()
+{
+}
+
 HRESULT CGameObject::CreateInputLayout()
 {
 	return S_OK;

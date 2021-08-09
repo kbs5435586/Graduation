@@ -19,16 +19,33 @@ HRESULT CUI_Main::Ready_Prototype()
 
 HRESULT CUI_Main::Ready_GameObject(void* pArg)
 {
+	if (pArg)
+	{
+		m = *(_bool*)pArg;
+	}
+
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = WINCX/2;
-	m_fY = WINCY/2;
+	if (m)
+	{
+		m_fX = WINCX / 2;
+		m_fY = WINCY / 2;
 
-	m_fSizeX = WINCX;
-	m_fSizeY = WINCY;
+		m_fSizeX = 900;
+		m_fSizeY = 900;
+	}
+	else
+	{
+		m_fX = WINCX / 2;
+		m_fY = WINCY / 2;
+
+		m_fSizeX = WINCX;
+		m_fSizeY = WINCY;
+	}
+	
 	return S_OK;
 }
 

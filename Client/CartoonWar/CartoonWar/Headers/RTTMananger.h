@@ -24,7 +24,8 @@ private:
     vector<CMRT*>                           m_vecMRT;
     _uint                                   m_iSize = 0;
     CRTT*                                   m_pDsTex = nullptr;
-    CRTT*                                   m_pDsBackTex = nullptr;
+    CRTT*                                   m_pDsInvenTex = nullptr;
+    CRTT*                                   m_pDsMapTex = nullptr;
 
     CRTT*                                   m_pPostEffectTex = nullptr;
     CRTT*                                   m_pBlurTex = nullptr;

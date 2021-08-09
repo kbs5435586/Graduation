@@ -36,29 +36,8 @@ void CObserver::Update_Observer(DATA_TYPE eType, void* pData)
 		break;
 	case DATA_TYPE::DATA_MATRIX:
 		break;
-	case DATA_TYPE::DATA_VECTOR:
-		m_vec3 = *reinterpret_cast<_vec3*>(*iter_find);
-		break;
-	case DATA_TYPE::DATA_INT:
-		m_int = *reinterpret_cast<_int*>(*iter_find);
-		break;
-	case DATA_TYPE::DATA_BOOL:
-		m_bool = *reinterpret_cast<_bool*>(*iter_find);
-		break;
-
-	case DATA_TYPE::DATA_NPC:
-		m_lstData = lstTemp;
-		break;
-	case DATA_TYPE::DATA_WHICH:
-		m_which = *reinterpret_cast<_int*>(*iter_find);
-		break;
-	case DATA_TYPE::DATA_SKILL:
-		m_skill = *reinterpret_cast<_bool*>(*iter_find);
-		break;
-	case DATA_TYPE::DATA_NPC_NUM:
-		m_npcNum = *reinterpret_cast<_int*>(*iter_find);
-		break;
-	}*/
+	
+		}
 
 }
 
@@ -69,12 +48,7 @@ void CObserver::ReUpdate_Observer(DATA_TYPE eType)
 	if (nullptr == lstTemp)
 		return;
 
-	/*switch (eType)
-	{
-	case DATA_TYPE::DATA_NPC:
-		m_lstData = lstTemp;
-		break;
-	}*/
+
 }
 
 void* CObserver::GetNPC(int num)

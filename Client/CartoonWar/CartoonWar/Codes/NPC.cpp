@@ -266,8 +266,8 @@ void CNPC::Render_GameObject()
 	}
 
 
-	//m_pCollider_OBB->Render_Collider();
-	//m_pCollider_Attack->Render_Collider(1);
+	m_pCollider_OBB->Render_Collider();
+	m_pCollider_Attack->Render_Collider(1);
 	//m_pColiider[1]->Render_Collider();
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)

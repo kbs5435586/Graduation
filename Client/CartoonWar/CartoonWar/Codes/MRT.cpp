@@ -88,19 +88,6 @@ void CMRT::OM_Set()
 	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(m_iRTCnt, &hRTVHandle, TRUE/*DescHeap 에 연속적으로 있다*/, &hDSVHandle);
 }
 
-void CMRT::OM_Set(_bool b)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-	D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDsTex->GetBackDSV()->GetCPUDescriptorHandleForHeapStart();
-
-	CDevice::GetInstance()->GetCmdLst()->RSSetViewports(1, &m_tViewPort);
-	CDevice::GetInstance()->GetCmdLst()->RSSetScissorRects(1, &m_tScissorRect);
-
-	// 타겟 지정	
-	CDevice::GetInstance()->GetCmdLst()->OMSetRenderTargets(m_iRTCnt, &hRTVHandle, TRUE/*DescHeap 에 연속적으로 있다*/, &hDSVHandle);
-}
-
-
 void CMRT::Clear()
 {
 	ResToTargetBarrier();
@@ -124,29 +111,7 @@ void CMRT::Clear()
 		CDevice::GetInstance()->GetCmdLst()->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 	}
 }
-void CMRT::Clear(_bool _b)
-{
-	ResToTargetBarrier();
-	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-	for (UINT i = 0; i < m_iRTCnt; ++i)
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_pRTV->GetCPUDescriptorHandleForHeapStart();
-		hRTVHandle.ptr += iRTVSize * i;
-		float arrClearColor[4] = {
-			m_tArr[i].vClear_Color.x,
-			m_tArr[i].vClear_Color.y,
-			m_tArr[i].vClear_Color.z,
-			m_tArr[i].vClear_Color.w };
-		CDevice::GetInstance()->GetCmdLst()->ClearRenderTargetView(hRTVHandle, arrClearColor, 0, nullptr);
-	}
-
-	if (nullptr != m_pDsTex)
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDsTex->GetBackDSV()->GetCPUDescriptorHandleForHeapStart();
-		CDevice::GetInstance()->GetCmdLst()->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
-	}
-}
 void CMRT::Clear(_uint iRtIdx)
 {
 	UINT iRTVSize = CDevice::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);

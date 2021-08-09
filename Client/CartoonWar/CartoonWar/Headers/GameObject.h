@@ -20,6 +20,7 @@ public:
 	virtual void							Render_PostEffect();
 	virtual void							Render_Blur();
 	virtual void							Render_Ref();
+	virtual void							Render_GameObject_Map();
 public:
 	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}

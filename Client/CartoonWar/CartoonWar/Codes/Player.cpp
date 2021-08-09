@@ -34,7 +34,6 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_tUnit = *(UNIT*)pArg;
 	}
 	
-	
 	m_IsClone = true;
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
@@ -164,6 +163,27 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
+	
+	if (m_eCurClass == CLASS::CLASS_MAGE)
+	{
+		//Z
+		Skill_CastFire(fTimeDelta);
+		//X
+		Skill_CastTeleport(fTimeDelta);
+		
+	}
+	else if (m_eCurClass == CLASS::CLASS_ARCHER)
+	{
+		//Z
+		Skill_Fly(fTimeDelta, fY);
+		//X
+		Skill_Invisible(fTimeDelta);
+	}
+
+	Skill_FireTime(fTimeDelta);
+	
+	
+
 	if (m_tInfo.fHP <= 0.f)
 	{
 		if (!m_IsDeadMotion)
@@ -179,15 +199,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsDead)
 		Resurrection();
 
+	
 	if (m_IsParticleRun)
 	{
 		m_fParticleRunTime += fTimeDelta;
 	}
 
-	//Skill_Fly(fTimeDelta, fY);
-	//Skill_Invisible(fTimeDelta);
-	//Skill_CastFire(fTimeDelta);
-	
 	if (m_fParticleRunTime >= 1.f)
 	{
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
@@ -363,6 +380,64 @@ void CPlayer::Render_GameObject_Shadow()
 		CDevice::GetInstance()->UpdateTable();
 		m_pCurMeshCom->Render_Mesh(i);
 	}
+	Safe_Release(pManagement);
+}
+
+void CPlayer::Render_GameObject_Map()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMapMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMapMatProj();
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+		tRep.m_arrInt[2] = g_DefferedRender;
+
+		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+		if (iSubsetNum >= 2)
+		{
+			if (i == 0)
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
+			else
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+		else
+		{
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+		}
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+
+
+	m_pCollider_OBB->Render_Collider();
+	m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_Hit->Render_Collider();
+	//m_pColiider[1]->Render_Collider();
+
+
+
 	Safe_Release(pManagement);
 }
 
@@ -609,6 +684,12 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
+
+	m_pBufferCom = (CBuffer_CubeTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex");
+	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
+		return E_FAIL;
+
 
 	if(m_tUnit.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
@@ -1936,12 +2017,138 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 			return;
 		m_IsParticle = false;
 
+void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
+{
+	if (m_IsFly_START || m_IsFly_ING)
+	{
+		m_fCoolTime_ONE += fTimeDelta;
+		if (m_fCoolTime_ONE > 5.f)
+		{
+			//m_pTransformCom->m_fVel = 0.f;
+			m_IsStart = false;
+			m_IsFly_ING = false;
+			m_IsFly_END = true;
+			m_fCoolTime_ONE = 0.f;
+		}
+	}
+
+
+	if (!m_IsStart)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
+		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
+		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
+	}
+
+	if (m_IsFly_START)
+	{
+		m_IsStart = true;
+		if (m_pTransformCom->Get_Scale().x > 0.05f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
+				m_pTransformCom->Get_Scale().z - 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
+			m_pTransformCom->UP(fTimeDelta);
+		else
+		{
+			m_IsFly_ING = true;
+		}
+
+	}
+	if (m_IsFly_ING)
+	{
+		if (m_IsUandD)
+		{
+			m_pTransformCom->Fallen(fTimeDelta);
+			if (m_pTransformCom->m_fVel < -5)
+				m_IsUandD = !m_IsUandD;
+		}
+		else
+		{
+			m_pTransformCom->UP(fTimeDelta);
+			if (m_pTransformCom->m_fVel > 5)
+				m_IsUandD = !m_IsUandD;
+		}
+	}
+
+	if (m_IsFly_END)
+	{
+		if (m_pTransformCom->Get_Scale().x < 0.1f)
+			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x + 0.001f, m_pTransformCom->Get_Scale().y + 0.001f,
+				m_pTransformCom->Get_Scale().z + 0.001f);
+		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y > fY)
+			m_pTransformCom->Fallen(fTimeDelta);
+		else
+		{
+			//m_IsFly_ING = false;
+			m_IsFly_END = false;
+			m_IsStart = false;
+
+			m_pTransformCom->m_fVel = 0.f;
+		}
+	}
+
+}
+
+void CPlayer::Skill_Invisible(const _float& fTimeDelta)
+{
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 2);
+	m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
+
+	if (m_IsInvisible)
+	{
+		m_fCoolTime_TWO += fTimeDelta;
+		if (m_fCoolTime_TWO > 20.f)
+		{
+			m_IsInvisible = !m_IsInvisible;
+			m_fCoolTime_TWO = 0.f;
+		}
 	}
 }
 
 void CPlayer::Skill_CastFire(const _float& fTimeDelta)
 {
-	
+	if (!m_IsFire)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
+		m_GetFire = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
+		if (m_GetFire)
+		{
+			//if (CManagement::GetInstance()->Key_Up(KEY_N))
+			//{
+
+			CManagement* pManagement = CManagement::GetInstance();
+			if (nullptr == pManagement)
+				return;
+
+			pManagement->AddRef();
+
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
+				return;
+
+			m_IsFire = !m_IsFire;	//true
+
+			Safe_Release(pManagement);
+			//}
+		}
+	}
+	else
+	{
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+		int numver = lst.size();
+		if (numver > 0)
+		{
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+			BRUSHINFO bTemp = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+			*iter0_Pos = _vec3(bTemp.vBrushPos.x, bTemp.vBrushPos.y, bTemp.vBrushPos.z);
+		}
+	}
+}
+
+void CPlayer::Skill_FireTime(const _float& fTimeDelta)
+{
 	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size() > 0)
 	{
 		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
@@ -1959,6 +2166,47 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta)
 			}
 		}
 	}
-	
+}
+
+void CPlayer::Skill_CastTeleport(const _float& fTimeDelta)
+{
+	if (!m_IsTeleport)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 2);
+		m_GetTeleport = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
+		if (m_GetTeleport)
+		{
+			//if (CManagement::GetInstance()->Key_Up(KEY_M))
+			//{
+			CManagement* pManagement = CManagement::GetInstance();
+			if (nullptr == pManagement)
+				return;
+			pManagement->AddRef();
+
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
+				return;
+			m_IsTeleport = !m_IsTeleport;	//true
+
+			Safe_Release(pManagement);
+			//}
+		}
+	}
+	else
+	{
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+		int numver = lst.size();
+		if (numver > 0)
+		{
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+
+			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
+			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+			BRUSHINFO bTemp = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+
+			*iter0_Pos = _vec3(bTemp.vBrushPos.x, bTemp.vBrushPos.y, bTemp.vBrushPos.z);
+		}
+	}
 }
 

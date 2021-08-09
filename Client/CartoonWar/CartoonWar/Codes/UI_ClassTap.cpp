@@ -93,19 +93,19 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	
 	if (pManagement->Key_Up(KEY_I))
 	{
-		if (m_cansee)
-		{
-			pManagement->Delete_All_Font();
-		}
-		else
-		{
-			float drawX = (float)((((_float)WINCX / 2) * -1));
-			float drawY = (float)(((_float)WINCY / 2) - 10);
-
-			m_strGold = "Gold";
-			if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strGold.c_str(), 150, 150)))
-				return E_FAIL;
-		}
+		//if (m_cansee)
+		//{
+		//	pManagement->Delete_All_Font();
+		//}
+		//else
+		//{
+		//	float drawX = (float)((((_float)WINCX / 2) * -1));
+		//	float drawY = (float)(((_float)WINCY / 2) - 10);
+		//
+		//	m_strGold = "Gold";
+		//	if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strGold.c_str(), 150, 150)))
+		//		return E_FAIL;
+		//}
 
 		m_cansee = !m_cansee;
 	}
@@ -305,7 +305,7 @@ HRESULT CUI_ClassTap::Ready_Component()
 	if (FAILED(Add_Component(L"Com_BlendShader", m_pBlendShaderCom)))
 		return E_FAIL;
 
-	m_pInvenShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UUU");
+	m_pInvenShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Tap");
 	NULL_CHECK_VAL(m_pInvenShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_InvenShader", m_pInvenShaderCom)))
 		return E_FAIL;

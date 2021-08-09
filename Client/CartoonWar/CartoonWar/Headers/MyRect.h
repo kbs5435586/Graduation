@@ -19,6 +19,7 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_GameObject_Map();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:

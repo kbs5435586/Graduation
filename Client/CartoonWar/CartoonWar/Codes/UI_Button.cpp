@@ -49,7 +49,7 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 	server->AddRef();
 
 
-	if (pManagement->Key_Down(KEY_LBUTTON))
+	if (pManagement->Key_Pressing(KEY_LBUTTON))
 	{
 		GetCursorPos(&MousePos);
 		ScreenToClient(g_hWnd, &MousePos);

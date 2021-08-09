@@ -77,7 +77,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IncludePath>../Library/include/</IncludePath>
     <LibraryPath>../Library/lib/;../Library/lib/x64/debug/;$(LibraryPath)</LibraryPath>
@@ -126,12 +126,15 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -211,7 +214,6 @@
     <ClInclude Include="..\Headers\Hash.h" />
     <ClInclude Include="..\Headers\Hatch.h" />
     <ClInclude Include="..\Headers\Input.h" />
-    <ClInclude Include="..\Headers\Inventory_Camera.h" />
     <ClInclude Include="..\Headers\KeyManager.h" />
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Light.h" />
@@ -222,6 +224,8 @@
     <ClInclude Include="..\Headers\Lobby.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\LowPoly.h" />
+    <ClInclude Include="..\Headers\MapUser.h" />
+    <ClInclude Include="..\Headers\Map_Camera.h" />
     <ClInclude Include="..\Headers\Mesh.h" />
     <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
@@ -246,7 +250,7 @@
     <ClInclude Include="..\Headers\Scene_Stage.h" />
     <ClInclude Include="..\Headers\Server_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Headers\Shader.h" />
     <ClInclude Include="..\Headers\SimpleMath.h" />
@@ -275,10 +279,7 @@
     <ClInclude Include="..\Headers\UAVManager.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\UI_Aim.h" />
-    <ClInclude Include="..\Headers\UI_Button.h" />
-    <ClInclude Include="..\Headers\UI_ButtonNPC.h" />
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
-    <ClInclude Include="..\Headers\UI_ClassTap.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_MiniMap.h" />
     <ClInclude Include="..\Headers\UI_NormalBar.h" />
@@ -294,19 +295,23 @@
     <ClInclude Include="..\Headers\UI_Score.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\UI_Shop.h" />
-    <ClInclude Include="..\Headers\UI_Skill.h" />
     <ClInclude Include="..\Headers\UI_WoL.h" />
     <ClInclude Include="..\Headers\UI_WoL_Blue.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="..\Headers\Water.h" />
     <ClInclude Include="CartoonWar.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="..\Headers\Inventory_Camera.h" />
     <ClInclude Include="protocol.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\Headers\UI_ClassTap.h" />
+    <ClInclude Include="..\Headers\UI_Button.h" />
+    <ClInclude Include="..\Headers\UI_ButtonNPC.h" />
+    <ClInclude Include="..\Headers\UI_Skill.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Animals.cpp" />
@@ -355,7 +360,6 @@
     <ClCompile Include="..\Codes\GameObject_Manager.cpp" />
     <ClCompile Include="..\Codes\Hatch.cpp" />
     <ClCompile Include="..\Codes\Input.cpp" />
-    <ClCompile Include="..\Codes\Inventory_Camera.cpp" />
     <ClCompile Include="..\Codes\KeyManager.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Light.cpp" />
@@ -366,6 +370,8 @@
     <ClCompile Include="..\Codes\Lobby.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\LowPoly.cpp" />
+    <ClCompile Include="..\Codes\MapUser.cpp" />
+    <ClCompile Include="..\Codes\Map_Camera.cpp" />
     <ClCompile Include="..\Codes\Mesh.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
@@ -390,7 +396,7 @@
     <ClCompile Include="..\Codes\Scene_Stage.cpp" />
     <ClCompile Include="..\Codes\Server_Manager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Codes\Shader.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
@@ -416,10 +422,7 @@
     <ClCompile Include="..\Codes\UAVManager.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\UI_Aim.cpp" />
-    <ClCompile Include="..\Codes\UI_Button.cpp" />
-    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp" />
     <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
-    <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
     <ClCompile Include="..\Codes\UI_NormalBar.cpp" />
@@ -435,12 +438,16 @@
     <ClCompile Include="..\Codes\UI_Score.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\UI_Shop.cpp" />
-    <ClCompile Include="..\Codes\UI_Skill.cpp" />
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
     <ClCompile Include="..\Codes\UI_WoL_Blue.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="..\Codes\Water.cpp" />
     <ClCompile Include="CartoonWar.cpp" />
+    <ClCompile Include="..\Codes\UI_ClassTap.cpp" />
+    <ClCompile Include="..\Codes\UI_Button.cpp" />
+    <ClCompile Include="..\Codes\Inventory_Camera.cpp" />
+    <ClCompile Include="..\Codes\UI_ButtonNPC.cpp" />
+    <ClCompile Include="..\Codes\UI_Skill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CartoonWar.rc" />
@@ -573,6 +580,21 @@
     <None Include="..\ShaderFiles\Shader_Blur.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\ShaderFiles\Shader_UI_Toon.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Tap.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Flag.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Decal.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <None Include="..\ShaderFiles\Shader_InGame_UI.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -589,6 +611,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_MiniMap.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

@@ -9,8 +9,8 @@ private:
     virtual ~CCollisionMgr() = default;
 public:
     HRESULT                 Ready_CollsionManager();
-    void                    Update_CollisionManager();
-private://Player, NPC
+    void                    Update_CollisionManager(const _float& fTimeDelta);
+private:
     void                    Player_to_NPC_Collision();
     void                    Player_to_NPC_Attack_Collision();
     void                    Player_to_Player_Collision();

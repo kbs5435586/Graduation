@@ -46,12 +46,16 @@ VS_OUT	VS_Main(VS_IN vIn)
 	if (g_int_0 == 1)
 		Skinning(vIn.vPosition, vIn.vTangent, vIn.vBinormal, vIn.vNormal, vIn.vWeight, vIn.vIndices, 0);
 
-
-	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matInvenWVP);
-	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matInvenWV);
-	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matInvenWV));
-	vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matInvenWV).xyz);
-	vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matInvenWV).xyz);
+	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
+	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWV);
+	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWV));
+	vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matWV).xyz);
+	vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matWV).xyz);
+	//vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matInvenWVP);
+	//vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matInvenWV);
+	//vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matInvenWV));
+	//vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matInvenWV).xyz);
+	//vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matInvenWV).xyz);
 
 	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
@@ -65,8 +69,11 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	LIGHT tCurCol = Calculate_Light(0, vIn.vNormal.xyz, vIn.vWorldPos.xyz);
 
 	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	float4	vPosition = mul(vIn.vWorldPos, matInvenViewInv);
-	float4	vNormal = mul(vIn.vNormal, matInvenViewInv);
+	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
+	float4	vNormal = mul(vIn.vNormal, matViewInv);
+	//float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	//float4	vPosition = mul(vIn.vWorldPos, matInvenViewInv);
+	//float4	vNormal = mul(vIn.vNormal, matInvenViewInv);
 	float4	vShade;
 
 	float4	vLightDir = -tLight[0].vLightDir;

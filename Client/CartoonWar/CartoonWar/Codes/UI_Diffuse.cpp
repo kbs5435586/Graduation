@@ -23,12 +23,17 @@ HRESULT CUI_Diffuse::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
+	
+	m_fX = WINCX - 175.f;
+	m_fY = WINCY - 175.f;
 
-	m_fX = 75.f;
-	m_fY = 75.f;
+	//m_fX = WINCX - 75.f;
+	//m_fY = WINCY - 75.f;
 
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
+	m_fSizeX = 300.f;
+	m_fSizeY = 300.f;
+	//m_fSizeX = 150.f;
+	//m_fSizeY = 150.f;
 	return S_OK;
 }
 
@@ -43,6 +48,8 @@ _int CUI_Diffuse::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 			return E_FAIL;
+		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI_MAP, this)))
+		//	return E_FAIL;
 	}
 	return _int();
 }
@@ -72,9 +79,10 @@ void CUI_Diffuse::Render_GameObject()
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_MAP)->Get_RTT(0)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t1);
 	CDevice::GetInstance()->UpdateTable();
 
 	if(!g_DefferedUIRender)
@@ -87,10 +95,13 @@ HRESULT CUI_Diffuse::CreateInputLayout()
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+	
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 
+	
+	//if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+		
 	return S_OK;
 }
 
@@ -121,7 +132,7 @@ void CUI_Diffuse::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-
+	Safe_Release(m_pTextureCom);
 
 	CUI::Free();
 }
@@ -147,11 +158,15 @@ HRESULT CUI_Diffuse::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_MiniMap");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MiniMap");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
