@@ -256,15 +256,25 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 		{
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-				return -1;
 			if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsRun())
 			{
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 					return -1;
 			}
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
+			if (m_IsInvisible)
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
+					return -1;
+			}
+			else
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+					return -1;
+			}
+			//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REF, this)))
+			//	return -1;
 			//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 			//	return -1;
 			m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
@@ -1375,55 +1385,55 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->Set_Attack_CoolTime(high_resolution_clock::now());
 		}
 
-		//if (m_eCurClass == CLASS::CLASS_ARCHER)
-		//{
-		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
-		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-		//		return;
-		//}
+		if (m_eCurClass == CLASS::CLASS_ARCHER)
+		{
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+				return;
+		}
 		//else if (m_eCurClass == CLASS::CLASS_WORKER)
 		//{
 		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
 		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
 		//		return;
 		//}
-		//else
-		//{
-		//	//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-		//	//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-		//	//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-		//	//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-		//	CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-		//		return;
-		//}
+		else
+		{
+			//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+			//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+			//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+			//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+			CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+				return;
+		}
 		server->send_animation_packet(A_ATTACK);
 		m_IsOnce = true;
 		m_IsHit = true;
 		//m_IsCombat = true;
-		//if (m_IsFire)
-		//{
-		//	m_IsFire = false;
-		//	m_IsFireCheck = true;
-		//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-		//	int numver = lst.size();
-		//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-		//	dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
-		//}
-		//if (m_IsTeleport)
-		//{
-		//	m_IsTeleport = false;
-		//	m_IsTeleportCheck = true;
+		if (m_IsFire)
+		{
+			m_IsFire = false;
+			m_IsFireCheck = true;
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
+		}
+		if (m_IsTeleport)
+		{
+			m_IsTeleport = false;
+			m_IsTeleportCheck = true;
 
-		//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-		//	int numver = lst.size();
-		//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-		//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-		//	dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
-		//	++teleportNum;
-		//	if (teleportNum > 1)
-		//		teleportNum = 0;
-		//}
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
+			dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
+			dynamic_cast<CFire*>(fire)->setfriend(teleportNum);
+			++teleportNum;
+			if (teleportNum > 1)
+				teleportNum = 0;
+		}
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1478,6 +1488,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{
+		m_IsDash = true;
 		if (!m_IsCombat)
 			server->send_animation_packet(A_RUN);
 		else
@@ -1516,6 +1527,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//	m_IsSlide = false;
 		//}
 
+		m_IsRun = true;
+		//m_IsActioning = true;
 		m_IsParticleRun = true;
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
@@ -1564,93 +1577,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	{
 		m_IsInvisible = !m_IsInvisible;
 	}
-	if (!m_IsFire)
-	{
-		if (CManagement::GetInstance()->Key_Up(KEY_N))
-		{
-
-			CManagement* pManagement = CManagement::GetInstance();
-			if (nullptr == pManagement)
-				return;
-
-			pManagement->AddRef();
-
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
-				return;
-
-			m_IsFire = !m_IsFire;	//true
-			//list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-			//fireCnt = lst.size()-1;
-			//if (lst.size() == 0)
-			//	fireCnt = lst.size();
-			//else
-			//	fireCnt = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size();
-			Safe_Release(pManagement);
-		}
-	}
-	else
-	{
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-		int numver = lst.size();
-		if (numver > 0)
-		{
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
-			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-
-			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-			BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-
-
-			*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
-		}
-	}
-
-	//////////////////////////////////
-	if (!m_IsTeleport)
-	{
-		if (CManagement::GetInstance()->Key_Up(KEY_M))
-		{
-			CManagement* pManagement = CManagement::GetInstance();
-			if (nullptr == pManagement)
-				return;
-
-			pManagement->AddRef();
-
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport")))
-				return;
-
-			m_IsTeleport = !m_IsTeleport;	//true
-
-			Safe_Release(pManagement);
-		}
-	}
-	else
-	{
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-		int numver = lst.size();
-		if (numver > 0)
-		{
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-
-			//dynamic_cast<CFire*>(fire)->setCheck(fireCheck);
-			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-
-			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-			BRUSHINFO rrr = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-
-
-			*iter0_Pos = _vec3(rrr.vBrushPos.x, rrr.vBrushPos.y, rrr.vBrushPos.z);
-		}
-	}
-
-	//if (m_IsTeleportCheck)
-	//{
-	//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport");
-	//	int numver = lst.size();
-	//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", numver - 1);
-	//	dynamic_cast<CFire*>(fire)->setCheck(m_IsTeleportCheck);
-	//}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))
 	{
@@ -1692,32 +1618,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	{
 		server->send_npc_act_packet(DO_HOLD);
 	}
-
-	/*if ((GetAsyncKeyState('1') & 0x8000))
-	{
-		send_npc_act_packet(DO_ATTACK);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('2') & 0x8000))
-	{
-		send_npc_act_packet(DO_DEFENCE);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('3') & 0x8000))
-	{
-		send_npc_act_packet(DO_HOLD);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('4') & 0x8000))
-	{
-		send_npc_act_packet(DO_FOLLOW);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('5') & 0x8000))
-	{
-		send_npc_act_packet(DO_RANDMOVE);
-		isSendOnePacket = false;
-	}*/
 
 	if (8 == server->Get_Anim(m_iLayerIdx))
 		m_IsOnce = true;
