@@ -32,7 +32,8 @@ HRESULT CNavigation::Ready_Navigation(const _tchar* pFilePath)
  		ReadFile(hFile, vPoints, sizeof(_vec3) * 3, &dwByte, nullptr);
  		if (0 == dwByte)
  			break;
- 
+		for (int i = 0; i < 3; ++i)
+			vPoints[i].y = 150.f;
  		CCell*		pCell = CCell::Create(&vPoints[0], &vPoints[1], &vPoints[2], m_vecCell.size());
  		if (nullptr == pCell)
  			return E_FAIL;
@@ -105,26 +106,33 @@ _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionP
 	CLine* pLine = nullptr;
 
 
-	_bool IsIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
-	if (!IsIn)
-	{
-		if (pNeighbor = m_vecCell[m_iCurrentIdx]->Get_Neighbor(NEIGHBOR(eOutLine)))
-		{
-			m_iCurrentIdx = pNeighbor->Get_CellIndex();
-			return true;
-		}
-		else
-		{
-			pLine = m_vecCell[m_iCurrentIdx]->GetLine(eOutLine);
-			_vec3 vNormal = pLine->Get_Normal();
-			_vec3 vDirectionPerSec_ = *vDirectionPerSec;
 
-			float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
-			*vSliding = vDirectionPerSec_ - fDot* vNormal;
-			return false;
-		}
-	} 
-	return _bool(true);
+	for (auto& iter : m_vecCell)
+	{
+		_bool IsIn = iter->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
+		if (IsIn)
+			return true;
+	}
+	//_bool IsIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
+	//if (!IsIn)
+	//{
+	//	if (pNeighbor = m_vecCell[m_iCurrentIdx]->Get_Neighbor(NEIGHBOR(eOutLine)))
+	//	{
+	//		m_iCurrentIdx = pNeighbor->Get_CellIndex();
+	//		return true;
+	//	}
+	//	else
+	//	{
+	//		pLine = m_vecCell[m_iCurrentIdx]->GetLine(eOutLine);
+	//		_vec3 vNormal = pLine->Get_Normal();
+	//		_vec3 vDirectionPerSec_ = *vDirectionPerSec;
+
+	//		float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
+	//		*vSliding = vDirectionPerSec_ - fDot* vNormal;
+	//		return false;
+	//	}
+	//} 
+	return _bool(false);
 }
 
 

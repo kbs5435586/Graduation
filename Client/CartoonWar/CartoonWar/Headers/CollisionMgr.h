@@ -23,6 +23,9 @@ private://Deffend
     void                    Deffend_to_NPC();
     void                    Deffend_to_Throw();
     void                    Deffend_to_Deffend();
+private:
+    void                    Enviroment_to_Player();
+    void                    Enviroment_to_NPC();
 public:
     static CCollisionMgr*   Create();
 private:

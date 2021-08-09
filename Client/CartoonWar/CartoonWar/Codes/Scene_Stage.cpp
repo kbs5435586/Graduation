@@ -80,13 +80,19 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
 	//	return E_FAIL;
-	if (FAILED(pManagement->Load_File(L"../Data/Demo/FenceTest.dat")))
+	//if (FAILED(pManagement->Load_File(L"../Data/Demo/FenceTest.dat")))
+	//	return E_FAIL;
+	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/TestTree.dat", (void*)&eEnviType)))
 		return E_FAIL;
-	_bool	IsTree = true;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Tree.dat", (void*)&IsTree)))
-		return E_FAIL;
-	//IsTree = false;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Rock.dat", (void*)&IsTree)))
+	//eEnviType = ENVITYPE::ENVI_FLOWER;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/FlowerTest.dat", (void*)&eEnviType)))
+	//	return E_FAIL;
+	//eEnviType = ENVITYPE::ENVI_PLANT;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/PlantTest.dat", (void*)&eEnviType)))
+	//	return E_FAIL;
+	//eEnviType = ENVITYPE::ENVI_ROCK;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/TestRock.dat", (void*)&eEnviType)))
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
@@ -216,8 +222,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;	
 	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
@@ -272,7 +278,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 300.f;
+	tProjDesc.fFar = 350.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -439,19 +445,19 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
-	//tFlag.vPos = _vec3(3249.09f, 0.2f, 3419.41f);
-	//tFlag.iNum = 3;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
-	//	return E_FAIL;
+	tFlag.vPos = _vec3(3249.09f, 0.2f, 3419.41f);
+	tFlag.iNum = 3;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+		return E_FAIL;
 
-	//tFlag.vPos = _vec3(3079.56f, 0.2f, 1106.38f);
-	//tFlag.iNum = 4; 
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
-	//	return E_FAIL;
+	tFlag.vPos = _vec3(2183.09f, 0.2f, 646.43f);
+	tFlag.iNum = 4; 
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+		return E_FAIL;
 
 
 

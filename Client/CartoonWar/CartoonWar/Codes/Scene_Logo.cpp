@@ -723,7 +723,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh",
-		CNavigation::Create(L"../Data/TestNavi.dat"))))
+		CNavigation::Create(L"../Data/Navi/NaviTemp2.dat"))))
 		return E_FAIL;
 	return S_OK;
 }

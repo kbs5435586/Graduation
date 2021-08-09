@@ -35,21 +35,34 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	_vec3 vColliderSize = { 40.f ,160.f,40.f };
+	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	return S_OK;
 }
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
-	float fSize = m_pTransformCom->Get_Scale().x;
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	if (m_IsTree)
+	_float		fSize = m_pTransformCom->Get_Scale().x;
+
+	if (m_eEnviType == ENVITYPE::ENVI_TREE || m_eEnviType == ENVITYPE::ENVI_FLOWER || m_eEnviType == ENVITYPE::ENVI_PLANT)
 		m_pTransformCom->Set_PositionY(fY);
-	else
+	else if (m_eEnviType == ENVITYPE::ENVI_ROCK)
 		m_pTransformCom->Set_PositionY(fY + fSize / 2.f);
 
+	if (m_eEnviType == ENVITYPE::ENVI_ROCK)
+	{
+		m_vColliderSize_Rock = { 2.f,4.f,2.f };
+		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Rock);
+	}
+	else if (m_eEnviType == ENVITYPE::ENVI_TREE)
+	{
+		m_vColliderSize_Tree = { 1.f,8.f,1.f };
+		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Tree);
+	}
 
 	return _int();
 }
@@ -140,6 +153,7 @@ void CLowPoly::Render_GameObject()
 	}
 
 
+	m_pCollider_AABB->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -260,6 +274,15 @@ HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
+	m_pCollider_Obb = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pCollider_Obb, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pCollider_Obb)))
+		return E_FAIL;
+
+	m_pCollider_AABB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pCollider_AABB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pCollider_AABB)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -324,6 +347,8 @@ void CLowPoly::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
+	Safe_Release(m_pCollider_Obb);
+	Safe_Release(m_pCollider_AABB);
 
 	CGameObject::Free();
 }
