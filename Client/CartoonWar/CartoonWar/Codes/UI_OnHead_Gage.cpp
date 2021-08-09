@@ -36,7 +36,23 @@ HRESULT CUI_OnHead_Gage::Ready_GameObject(void* pArg)
 _int CUI_OnHead_Gage::Update_GameObject(const _float& fTimeDelta)
 {
 	if (m_eCurTeam != TEAM::TEAM_END)
+	{
 		m_fTimeDelta += fTimeDelta;
+
+	}
+	m_tRep.m_arrFloat[0] = 0.f;
+	if (m_eCurTeam != TEAM::TEAM_END)
+	{
+		if (m_fTimeDelta >= 1.f)
+		{
+			m_tRep.m_arrInt[0] += 1;
+			m_fTimeDelta = 0.f;
+		}
+	}
+	else
+	{
+		int i = 0;
+	}
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag", L"Com_Transform", m_iLayerIdx);;
 	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag", m_iLayerIdx);
@@ -86,20 +102,8 @@ void CUI_OnHead_Gage::Render_GameObject()
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-	TEAM test = m_eCurTeam;
-	m_tRep.m_arrFloat[0] = 0.f;
-	if (m_eCurTeam != TEAM::TEAM_END)
-	{
-		if (m_fTimeDelta >= 1.f)
-		{
-			m_tRep.m_arrInt[0] += 1;
-			m_fTimeDelta = 0.f;
-		}
-	}
-	else
-	{
-		int i = 0;
-	}
+
+	
 
 
 
@@ -215,17 +219,18 @@ void CUI_OnHead_Gage::ResetGage()
 {
 	if (!m_IsFix_Gage)
 	{
-		if (m_IsReset)
+		if (m_eCurTeam == TEAM::TEAM_BLUE)
+		{
+			m_tRep.m_arrInt[1] = 1;
+		}
+		else if (m_eCurTeam == TEAM::TEAM_RED)
+		{
+			m_tRep.m_arrInt[1] = 0;
+		}
+		else if(m_eCurTeam == TEAM::TEAM_END)
 		{
 			m_fTimeDelta = 0.f;
 			m_tRep.m_arrInt[0] = 0;
-
-			if (m_eCurTeam == TEAM::TEAM_BLUE)
-				m_tRep.m_arrInt[1] = 1;
-			else if (m_eCurTeam == TEAM::TEAM_RED)
-				m_tRep.m_arrInt[1] = 0;
-
-			m_IsReset = false;
 		}
 	}
 

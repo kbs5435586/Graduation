@@ -23,7 +23,7 @@ public:
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_Blur();			
 public:
-	void									SetTeam(TEAM eCurTeam);
+	void									SetTeam();
 private:
 	HRESULT									Ready_Component();
 	virtual HRESULT							CreateInputLayout();
@@ -42,6 +42,7 @@ private:
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 public:
-	_uint									m_iCnt = 0;
+	_uint									m_iRedCnt = 0;
+	_uint									m_iBlueCnt = 0;
 };
 

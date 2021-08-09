@@ -30,39 +30,45 @@ void CEventMgr::Access_Flag_Player()
             _vec3   vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
             _vec3   vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
-            _vec3   vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
-            _float   fLen = vLenTemp.Length();
-            if (fLen <= 10.f)
-            {
-                dynamic_cast<CFlag*>(iter1)->m_iCnt++;
-            }
-            else
-            {
-                dynamic_cast<CFlag*>(iter1)->m_iCnt--;
-            }
-        }
-    }
+			_vec3	vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
+			_float	fLen = vLenTemp.Length();
 
-    for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
-    {
-        for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag"))
-        {
-            _vec3   vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3   vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+			if (fLen <= 10.f)
+			{
+				if (!iter0->GetIsCheckRange_Flag())
+				{
+					if (iter0->GetCurTeam() == TEAM::TEAM_BLUE)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iBlueCnt++;
+					}
+					else if (iter0->GetCurTeam() == TEAM::TEAM_RED)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iRedCnt++;
+					}
+					iter0->GetIsCheckRange_Flag() = true;
+				}
 
-            _vec3   vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
-            _float   fLen = vLenTemp.Length();
-            if (fLen <= 10.f && dynamic_cast<CFlag*>(iter1)->m_iCnt == 1)
-            {
-                dynamic_cast<CFlag*>(iter1)->SetTeam(iter0->GetCurTeam());
-            }
-            else
-            {
-                dynamic_cast<CUI_OnHead_Gage*>(CManagement::GetInstance()->
-                    Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", iter1->GetLayerIdx()))->GetIsReset() = true;
-            }
-        }
-    }
+			}
+			else if (fLen > 20.f && fLen<=40.f)
+			{
+				if (iter0->GetIsCheckRange_Flag())
+				{
+					if (iter0->GetCurTeam() == TEAM::TEAM_BLUE)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iBlueCnt--;
+					}
+					else if (iter0->GetCurTeam() == TEAM::TEAM_RED)
+					{
+						dynamic_cast<CFlag*>(iter1)->m_iRedCnt--;
+					}
+					iter0->GetIsCheckRange_Flag() = false;
+				}
+			}
+
+
+		}
+	}
+
 }
 
 void CEventMgr::Access_Flag_NPC()

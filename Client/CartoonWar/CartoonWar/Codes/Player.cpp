@@ -550,12 +550,12 @@ CGameObject* CPlayer::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CPlayer* pInstance = new CPlayer(*this);
 
+	pInstance->m_iLayerIdx = iIdx;
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CPlayer Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
-	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
@@ -1876,7 +1876,7 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 200.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
 	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
