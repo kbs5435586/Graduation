@@ -44,6 +44,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	_vec3 vPos = { 130.f,0.f,300.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_eCurTeam = TEAM::TEAM_RED;
+
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
@@ -101,8 +103,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
-
-	if (!m_IsActive)
+	if()
+	if (!m_IsActive)asd
 	{
 		if (!m_IsDeadMotion)
 			Input_Key(fTimeDelta);
@@ -591,12 +593,12 @@ CGameObject* CPlayer::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CPlayer* pInstance = new CPlayer(*this);
 
+	pInstance->m_iLayerIdx = iIdx;
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MessageBox(0, L"CPlayer Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
-	m_iLayerIdx = iIdx;
 	return pInstance;
 }
 
@@ -1876,7 +1878,7 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 200.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
 	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;

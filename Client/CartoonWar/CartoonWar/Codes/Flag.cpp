@@ -47,6 +47,7 @@ _int CFlag::Update_GameObject(const _float& fTimeDelta)
 
 	m_pTransformCom->Set_PositionY(fY + 0.5f);
 	m_pTransformCom->Rotation_Y(fTimeDelta);
+	SetTeam();
 	return _int();
 }
 
@@ -192,16 +193,24 @@ void CFlag::Render_Blur()
 	Safe_Release(pManagement);
 }
 
-void CFlag::SetTeam(TEAM eCurTeam)
+void CFlag::SetTeam()
 {
-	m_eCurTeam = eCurTeam;
-	if (m_eCurTeam != m_ePreTeam)
+	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", m_iLayerIdx);
+	if (m_iBlueCnt > m_iRedCnt)
 	{
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", m_iLayerIdx);
-		pGameObject->GetCurTeam() = m_eCurTeam;
-		pGameObject->GetPreTeam() = m_ePreTeam;
-		dynamic_cast<CUI_OnHead_Gage*>(pGameObject)->GetIsReset() = true;
-		m_ePreTeam = m_eCurTeam;
+		pGameObject->GetCurTeam() = TEAM::TEAM_BLUE;
+	}
+	else if (m_iBlueCnt < m_iRedCnt)
+	{
+		if (m_iRedCnt == 2)
+		{
+			int i = 0;
+		}
+		pGameObject->GetCurTeam() = TEAM::TEAM_RED;
+	}
+	else if (m_iBlueCnt == m_iRedCnt)
+	{
+		pGameObject->GetCurTeam() = TEAM::TEAM_END;
 	}
 }
 

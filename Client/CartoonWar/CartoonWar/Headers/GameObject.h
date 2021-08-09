@@ -31,6 +31,7 @@ public:
 	_bool&									GetIsBack() {return m_IsBack;}
 	_bool&									GetIsTree() {return m_IsTree;}
 	_bool&									GetIsRun(){return m_IsRun;}
+	_bool&									GetIsCheckRange_Flag() {return m_IsCheck_FlagRange;}
 	CLASS&									GetClass() { return m_eCurClass; }
 	TEAM&									GetCurTeam() { return m_eCurTeam; }
 	TEAM&									GetPreTeam() { return m_ePreTeam; }
@@ -78,6 +79,7 @@ protected:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tUnit = {};
+	_bool									m_IsCheck_FlagRange = false;
 protected:
 	_uint									m_iBlurCnt = 0;
 protected:

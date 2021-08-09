@@ -46,13 +46,13 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
-	//pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear(true);
-	//pManagement->Get_RTT((_uint)MRT::MRT_MAP)->Clear((_short)1);
 	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Clear();
+
 	Render_Inventory(pManagement);
 	Render_Deffered_Map(pManagement);
+
 	Render_Shadow(pManagement);
 	
 	Render_Deffered(pManagement);
@@ -72,7 +72,6 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	
 	
 	Render_UI();
-	//Render_UI_Back();
 
 
 
@@ -304,14 +303,12 @@ void CRenderer::Render_Deffered(CManagement* pManagement)
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
 	Render_NoneAlpha_PRO();
 	Render_NoneAlpha();
-	//Render_Map(pManagement);
 	
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }
 
 void CRenderer::Render_Deffered_Map(CManagement* pManagement)
 {
-	//pManagement->Get_RTT((_uint)MRT::MRT_MAP)->OM_Set((_short)1);
 	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->OM_Set();
 	for (auto& pGameObject : m_RenderList[RENDER_MAP])
 	{
@@ -322,7 +319,6 @@ void CRenderer::Render_Deffered_Map(CManagement* pManagement)
 		}
 	}
 	m_RenderList[RENDER_MAP].clear();
-	//Render_Map();
 	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->TargetToResBarrier();
 }
 
@@ -339,7 +335,6 @@ void CRenderer::Render_Light(CManagement* pManagement)
 void CRenderer::Render_Inventory(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->OM_Set();
-	//pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->OM_Set(true);
 	for (auto& pGameObject : m_RenderList[RENDER_INVEN])
 	{
 		if (nullptr != pGameObject)

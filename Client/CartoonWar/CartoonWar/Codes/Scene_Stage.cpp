@@ -534,12 +534,12 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
-	//tFlag.vPos = _vec3(1626.96f, 0.2f, 2352.42f);
-	//tFlag.iNum = 2;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
-	//	return E_FAIL;
+	tFlag.vPos = _vec3(1626.96f, 0.2f, 2352.42f);
+	tFlag.iNum = 2;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Flag", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos, tFlag.iNum)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
+		return E_FAIL;
 
 	//tFlag.vPos = _vec3(3249.09f, 0.2f, 3419.41f);
 	//tFlag.iNum = 3;
@@ -566,6 +566,8 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -581,12 +583,22 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 		return E_FAIL;
 
-
-	//GameObject_ThrowArrow
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow")))
+	//tOrder = ORDER();
+	//tOrder.IsPlayer = true;
+	//tOrder.iIdx = 1;
+	//tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
 	//	return E_FAIL;
-	//ANIMALS eAnimals = ANIMALS::ANIMALS_BOAR;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&eAnimals)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+	//	return E_FAIL;
+
+	//tOrder = ORDER();
+	//tOrder.IsPlayer = true;
+	//tOrder.iIdx = 2;
+	//tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 	//	return E_FAIL;
 	
 
