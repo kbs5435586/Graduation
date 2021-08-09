@@ -119,19 +119,22 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	
 	//m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
-
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
 	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 	if (which == 0)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
 		m_tCameraDesc.vAt = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 		//m_tCameraDesc.vAt = dynamic_cast<CPlayer*>(pTemp).get;
 	}
 	else
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
 		m_tCameraDesc.vAt = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 	}
 
@@ -196,12 +199,8 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	//	}
 	//}
-
-
-
-	//Safe_Release(server);
 	}
-
+	Safe_Release(server);
 	return _int();
 }
 
