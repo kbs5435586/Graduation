@@ -202,6 +202,10 @@ void CFlag::SetTeam()
 	}
 	else if (m_iBlueCnt < m_iRedCnt)
 	{
+		if (m_iRedCnt == 2)
+		{
+			int i = 0;
+		}
 		pGameObject->GetCurTeam() = TEAM::TEAM_RED;
 	}
 	else if (m_iBlueCnt == m_iRedCnt)
