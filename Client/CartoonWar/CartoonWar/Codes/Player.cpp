@@ -313,8 +313,8 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	m_pCollider_OBB->Render_Collider();
-	m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_OBB->Render_Collider();
+	//m_pCollider_Attack->Render_Collider(1);
 	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 

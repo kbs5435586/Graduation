@@ -8,7 +8,7 @@ CConstant_Buffer::CConstant_Buffer()
 
 HRESULT CConstant_Buffer::Ready_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
 {
-	m_iBufferSize = (iBufferSize + 255 * 2) & ~255 * 2; // 버퍼 사이즈는 256 바이트 단위여야 한다.
+	m_iBufferSize = (iBufferSize + 255 * 3) & ~255 * 3; // 버퍼 사이즈는 256 바이트 단위여야 한다.
 	m_iMaxCnt = iMaxCnt;
 	m_eType= eType;
 

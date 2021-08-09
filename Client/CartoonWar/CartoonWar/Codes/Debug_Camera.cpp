@@ -167,47 +167,47 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	}
+	}*/
 
 
 
-	if (CManagement::GetInstance()->Key_Pressing(KEY_RBUTTON))
-	{
-		m_tProjDesc.fFovY = XMConvertToRadians(30.f);
-		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
-		m_tProjDesc.fNear = g_Near;
-		m_tProjDesc.fFar = 600.f;
+	//if (CManagement::GetInstance()->Key_Pressing(KEY_RBUTTON))
+	//{
+	//	m_tProjDesc.fFovY = XMConvertToRadians(30.f);
+	//	m_tProjDesc.fAspect = _float(WINCX) / WINCY;
+	//	m_tProjDesc.fNear = g_Near;
+	//	m_tProjDesc.fFar = 600.f;
 
 
-		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
-		m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
-		m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
-		m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
-		m_matProj._34 = 1.f;
-		m_matProj._44 = 0.0f;
+	//	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
+	//	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
+	//	m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
+	//	m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
+	//	m_matProj._34 = 1.f;
+	//	m_matProj._44 = 0.0f;
 
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_RBUTTON))
-	{
-		m_tProjDesc.fFovY = XMConvertToRadians(60.f);
-		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
-		m_tProjDesc.fNear = g_Near;
-		m_tProjDesc.fFar = 600.f;
-
-
-		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
-		m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
-		m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
-		m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
-		m_matProj._34 = 1.f;
-		m_matProj._44 = 0.0f;
-	}
+	//}
+	//if (CManagement::GetInstance()->Key_Up(KEY_RBUTTON))
+	//{
+	//	m_tProjDesc.fFovY = XMConvertToRadians(60.f);
+	//	m_tProjDesc.fAspect = _float(WINCX) / WINCY;
+	//	m_tProjDesc.fNear = g_Near;
+	//	m_tProjDesc.fFar = 600.f;
 
 
+	//	m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
+	//	m_matProj._22 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f)));
+	//	m_matProj._33 = m_tProjDesc.fFar / (m_tProjDesc.fFar - m_tProjDesc.fNear);
+	//	m_matProj._43 = (m_tProjDesc.fFar * m_tProjDesc.fNear) / (m_tProjDesc.fFar - m_tProjDesc.fNear) * -1.f;
+	//	m_matProj._34 = 1.f;
+	//	m_matProj._44 = 0.0f;
+	//}
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return NO_EVENT;*/
+
+
+	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	//if (nullptr == pTerrainBuffer)
+	//	return NO_EVENT;
 
 	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransform);
 	//_float		fThisY = m_pTransform->Get_Matrix()._42;

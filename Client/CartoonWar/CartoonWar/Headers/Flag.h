@@ -41,6 +41,7 @@ private:
 	CShader*								m_pShaderCom_Blur = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
-
+public:
+	_uint									m_iCnt = 0;
 };
 
