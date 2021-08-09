@@ -2,6 +2,9 @@
 #include "Management.h"
 #include "Inventory_Camera.h"
 #include "Server_Manager.h"
+#include "UI_ClassTap.h"
+#include "Player.h"
+#include "NPC.h"
 
 CInventory_Camera::CInventory_Camera()
 {
@@ -33,7 +36,7 @@ HRESULT CInventory_Camera::Ready_GameObject(void* pArg)
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
 
-	CManagement::GetInstance()->Subscribe(m_pObserverCom);
+	//CManagement::GetInstance()->Subscribe(m_pObserverCom);
 
 	return NOERROR;
 }
@@ -115,7 +118,24 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//}
 
 	
-	m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
+	//m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
+
+
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+	if (which == 0)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
+		m_tCameraDesc.vAt = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+		//m_tCameraDesc.vAt = dynamic_cast<CPlayer*>(pTemp).get;
+	}
+	else
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
+		m_tCameraDesc.vAt = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+	}
+
+
 	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(15.f, 0.f, 15.f);
 	_vec3		vLook;
 	_vec3		temp = *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION);
@@ -250,10 +270,10 @@ HRESULT CInventory_Camera::Ready_Component()
 	pManagement->AddRef();
 
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
