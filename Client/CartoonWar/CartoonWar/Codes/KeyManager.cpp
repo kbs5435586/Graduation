@@ -74,12 +74,6 @@ void CKeyManager::Key_Update()
 		m_dwKey |= KEY_F4;
 	if (GetAsyncKeyState(VK_F5) & 0x8000)
 		m_dwKey |= KEY_F5;
-	
-=========
-	if (GetAsyncKeyState('V') & 0x8000)
-		m_dwKey |= KEY_V;
-
->>>>>>>>> Temporary merge branch 2
 }
 _bool CKeyManager::Key_Up(DWORD dwKey)
 {

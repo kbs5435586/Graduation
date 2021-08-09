@@ -679,6 +679,16 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 	return S_OK;
 }
 
+HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	//for(auto iter)
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//   return E_FAIL;
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+}
+
 CScene_Stage* CScene_Stage::Create()
 {
 	CScene_Stage* pInstance = new CScene_Stage();

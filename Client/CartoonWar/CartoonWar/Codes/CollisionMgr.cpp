@@ -18,7 +18,7 @@ HRESULT CCollisionMgr::Ready_CollsionManager()
 	return S_OK;
 }
 
-void CCollisionMgr::Update_CollisionManager()
+void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
 {
 	Player_to_NPC_Collision();
 	Player_to_Player_Collision();
@@ -107,9 +107,9 @@ void CCollisionMgr::Player_to_Player_Collision()
 				/////////
 				if (iter0->GetIsDash())
 				{
-					if (dynamic_cast<CPlayer*>(iter0)->getClass() == (CLASS)2 ||
-						dynamic_cast<CPlayer*>(iter0)->getClass() == (CLASS)4 ||
-						dynamic_cast<CPlayer*>(iter0)->getClass() == (CLASS)7)
+					if (dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)2 ||
+						dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)4 ||
+						dynamic_cast<CPlayer*>(iter0)->GetClass() == (CLASS)7)
 					{
 						(iter1)->GetOBBCollision() = true;
 						(iter0)->GetOBBCollision() = true;

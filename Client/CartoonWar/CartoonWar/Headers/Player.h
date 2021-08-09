@@ -51,9 +51,6 @@ private:
 	void									SetSpeed();
 	void									Resurrection();
 public:
-<<<<<<<<< Temporary merge branch 1
-	CLASS&									getClass(){return m_eCurClass;}
-=========
 	void									Create_Particle(const _vec3& vPoistion);
 
 private:

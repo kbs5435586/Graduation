@@ -1912,10 +1912,12 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 		tParticleSet.fEndScale = 0.2f;
 		tParticleSet.fMaxSpeed = 30.f;
 		tParticleSet.fMinSpeed = 50.f;
-		
+
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
+	}
+}
 
 void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 {
