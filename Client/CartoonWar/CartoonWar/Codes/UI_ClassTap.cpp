@@ -90,7 +90,7 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-	if (npcnumm < 14)
+	if (npcnumm < 9)
 	{
 		list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");	
 		npcnumm = LstTemp.size();	

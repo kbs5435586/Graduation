@@ -57,13 +57,10 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		pManagement->AddRef();
 
 
+		npcnumm = dynamic_cast<CUI_ClassTap*>(uTemp)->GetNPCNum();
 
-		list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
-		npcnumm = LstTemp.size() + 1;
-
-		if (m_iClass < npcnumm)
+		if (m_iClass < npcnumm + 1)
 		{
-
 			if (pManagement->Key_Pressing(KEY_LBUTTON))
 			{
 				GetCursorPos(&MousePos);
@@ -79,7 +76,6 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 					}
 				}
 			}
-
 
 			if (IsDown)
 			{
@@ -123,8 +119,8 @@ void CUI_ButtonNPC::Render_GameObject()
 		pManagement->AddRef();
 
 
-		CGameObject* lTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
-		nowNum = dynamic_cast<CUI_ClassTap*>(lTemp)->GetNPCNum();
+		//CGameObject* lTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+		//nowNum = dynamic_cast<CUI_ClassTap*>(lTemp)->GetNPCNum();
 
 		_uint now{};
 		if (m_iClass == 0)
@@ -134,7 +130,7 @@ void CUI_ButtonNPC::Render_GameObject()
 		}
 		else
 		{
-			if (m_iClass < nowNum + 1)
+			if (m_iClass < npcnumm + 1)
 			{
 				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_iClass - 1);
 				now = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
@@ -174,7 +170,7 @@ void CUI_ButtonNPC::Render_GameObject()
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 
-		if (m_iClass < nowNum + 1)
+		if (m_iClass < npcnumm + 1)
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(now), TEXTURE_REGISTER::t0);
 		CDevice::GetInstance()->UpdateTable();
 		m_pBufferCom->Render_VIBuffer();
