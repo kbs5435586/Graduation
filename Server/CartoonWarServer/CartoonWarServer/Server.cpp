@@ -1817,6 +1817,12 @@ void Server::initialize_clients()
 
 void Server::initialize_objects()
 {
+    for (int i = NPC_START; i < MAX_OBJECT; ++i)
+    {
+        g_clients[i].m_id = i; // 유저 등록
+        g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+    }
+
     for (int i = 0; i < 5; ++i)
     {
         flags[i].isBlue = false;
