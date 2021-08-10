@@ -2096,6 +2096,8 @@ void Server::do_attack(int npc_id)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
                 continue;
+            if (ST_DEAD == g_clients[i].m_status)
+                continue;
             if (g_clients[i].m_team == n.m_team)
                 continue;
             if (!is_attack_detect(i, n.m_id))
