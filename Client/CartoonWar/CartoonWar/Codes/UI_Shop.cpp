@@ -3,6 +3,7 @@
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
+#include "UI_ClassTap.h"
 
 CUI_Shop::CUI_Shop()
 {
@@ -56,7 +57,6 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 	}
 
 
-
 	if (IsDown)
 	{
 		if (pManagement->Key_Up(KEY_LBUTTON))
@@ -64,9 +64,11 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta, _bool b[], int idx)
 			m_fSizeX = 50.f;
 			m_fSizeY = 50.f;
 
-
 			if (server->Get_NpcSize() < MAX_OWN_NPC)
-			{
+			{	
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+				UNIT tPlayerInfo = pTemp->GetPlayerInfo();
+			
 				duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 					- server->Get_AddNPC_Cooltime());
 				if (cool_time.count() > 0)
