@@ -2256,6 +2256,8 @@ void Server::disconnect(int user_id)
         }
     }
 
+    g_clients[user_id].m_boid.clear();
+    g_clients[user_id].m_boid.shrink_to_fit();
     g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
     g_clients[user_id].m_cLock.unlock();
 }

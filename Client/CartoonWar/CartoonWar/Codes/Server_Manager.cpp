@@ -107,7 +107,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
-		m_objects[recv_id].m_class = my_packet->p_class;
+		m_objects[recv_id].m_class = (int)my_packet->p_class;
 
 		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
 		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
