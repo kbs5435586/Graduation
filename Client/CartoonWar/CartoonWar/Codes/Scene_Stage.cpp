@@ -91,7 +91,7 @@ HRESULT CScene_Stage::Ready_Scene()
 	//if (FAILED(pManagement->Load_File(L"../Data/Demo/FenceTest.dat")))
 	//	return E_FAIL;
 	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/TestTree.dat", (void*)&eEnviType)))
+	if (FAILED(pManagement->Load_File_Low(L"../Data/TreeTest.dat", (void*)&eEnviType)))
 		return E_FAIL;
 	//eEnviType = ENVITYPE::ENVI_FLOWER;
 	//if (FAILED(pManagement->Load_File_Low(L"../Data/FlowerTest.dat", (void*)&eEnviType)))
