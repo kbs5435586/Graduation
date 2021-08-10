@@ -61,7 +61,7 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		//list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
 		npcnumm = dynamic_cast<CUI_ClassTap*>(uTemp)->GetNPCNum();
 
-		if (m_iClass < npcnumm)
+		if (m_iClass < npcnumm + 1)
 		{
 
 			if (pManagement->Key_Pressing(KEY_LBUTTON))
