@@ -2448,8 +2448,9 @@ void Server::do_battle(int id)
     if (g_clients[att.m_attack_target].m_hp <= 0) // 죽은 상태면
     {
         g_clients[att.m_attack_target].m_hp = 0;
-        lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
+        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
         g_clients[att.m_attack_target].m_status = ST_DEAD;
+        cout << att.m_attack_target << " is dead\n";
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
@@ -2458,7 +2459,6 @@ void Server::do_battle(int id)
                 continue;
             // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
             send_dead_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
-            send_animation_packet(i, att.m_attack_target,A_DEAD); // 남은 체력 브로드캐스팅
         }
         att.m_attack_target = -1;
     }

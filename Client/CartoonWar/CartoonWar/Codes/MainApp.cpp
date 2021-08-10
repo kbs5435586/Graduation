@@ -197,6 +197,14 @@ HRESULT CMainApp::SetUp_OnShader(const _float& fTimeDelta)
 void CMainApp::Compute_Frame()
 {
 	++m_dwRenderCnt;
+	if (m_fTimeAcc >= 1.f)
+	{
+		wsprintf(m_szFPS, L"FPS:%d", m_dwRenderCnt);
+		m_dwRenderCnt = 0;
+		m_fTimeAcc = 0.f;
+	}
+	SetWindowText(g_hWnd, m_szFPS);
+	/*++m_dwRenderCnt;
 	
 
 
@@ -251,7 +259,7 @@ void CMainApp::Compute_Frame()
 		}
 	}
 
-	SetWindowText(g_hWnd, m_szFPS);
+	SetWindowText(g_hWnd, m_szFPS);*/
 }
 
 HRESULT CMainApp::Create_FbxManager()
