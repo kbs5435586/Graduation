@@ -92,6 +92,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
+	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 	m_IsShow = server->Get_ShowOtherPlayer(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
@@ -274,7 +275,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			//	return -1;
 			//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 			//	return -1;
-			m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 		}
 		else
 		{

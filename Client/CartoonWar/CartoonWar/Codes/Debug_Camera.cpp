@@ -3,7 +3,6 @@
 #include "Debug_Camera.h"
 #include "Server_Manager.h"
 #include "Player.h"
-#include "UI_ClassTap.h"
 
 CDebug_Camera::CDebug_Camera()
 	: CCamera()
@@ -26,23 +25,17 @@ HRESULT CDebug_Camera::Ready_Prototype()
 
 HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 {
-	if (FAILED(Ready_Component()))
-		return E_FAIL;
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
 	m_pTransform->SetUp_Speed(300.f, XMConvertToRadians(90.f));
-
-	_vec3 vPos = { 130.f,100.f,300.f };
-	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransform->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
 	ClientToScreen(g_hWnd, &m_ptMouse);
 
 
-	//CManagement::GetInstance()->Subscribe(m_pObserverCom);
+
 
 	return NOERROR;
 }
@@ -50,10 +43,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
-	m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
-	if (!m_Active)
-		//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -89,31 +79,31 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-		//if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
-		//{
-		//	m_pTransform->Go_Straight(fTimeDelta);
-		//}
-		//if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
-		//{
-		//	m_pTransform->BackWard(fTimeDelta);
-		//}
-		//if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
-		//{
-		//	m_pTransform->Go_Left(fTimeDelta);
-		//}
-		//if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
-		//{
-		//	m_pTransform->Go_Right(fTimeDelta);
-		//}
-		//_long	MouseMove = 0;
-		//if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-		//{
-		//	m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		//}
-		//if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-		//{
-		//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-		//}
+		/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+			{
+				m_pTransform->Go_Straight(fTimeDelta);
+			}
+			if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
+			{
+				m_pTransform->BackWard(fTimeDelta);
+			}
+			if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
+			{
+				m_pTransform->Go_Left(fTimeDelta);
+			}
+			if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
+			{
+				m_pTransform->Go_Right(fTimeDelta);
+			}
+			_long	MouseMove = 0;
+			if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+			{
+				m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+			}
+			if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+			{
+				m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+			}*/
 	}
 
 	{
@@ -121,7 +111,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",g_iPlayerIdx);
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
 
 		_vec3 vPos, vRight, vUp, vLook;
@@ -146,7 +136,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			else
 			{
 				vPos.y += 5.f;
-				vUp *= 49.f ;
+				vUp *= 49.f;
 				vLook *= -2.f;
 			}
 		}
@@ -282,21 +272,6 @@ void CDebug_Camera::Render_GameObject()
 {
 }
 
-HRESULT CDebug_Camera::Ready_Component()
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	NULL_CHECK_VAL(pManagement, E_FAIL);
-	pManagement->AddRef();
-
-	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-	//	return E_FAIL;
-
-	Safe_Release(pManagement);
-	return S_OK;
-}
-
 CDebug_Camera* CDebug_Camera::Create()
 {
 	CDebug_Camera* pInstance = new CDebug_Camera();
@@ -324,7 +299,6 @@ CGameObject* CDebug_Camera::Clone_GameObject(void* pArg, _uint iIdx)
 
 void CDebug_Camera::Free()
 {
-	//Safe_Release(m_pObserverCom);
 	Safe_Release(m_pNaviCom);
 	CCamera::Free();
 }

@@ -93,6 +93,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
 
+	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
@@ -203,7 +204,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 				m_matOldWorld = m_pTransformCom->Get_Matrix();;
 				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 			}
-			m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 			m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
 		}
 		else
