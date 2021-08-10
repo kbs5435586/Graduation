@@ -5,6 +5,7 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CMesh;
+class CCollider;
 class CLowPoly :
 	public CGameObject
 {
@@ -37,6 +38,10 @@ private:
 	CMesh*									m_pMeshCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
+	CCollider*								m_pCollider_Obb = nullptr;
+	CCollider*								m_pCollider_AABB = nullptr;
 private:
-	_bool									m_IsHatch = false;
+	_vec3									m_vColliderSize_Rock = {};
+	_vec3									m_vColliderSize_Tree = {};
+
 };

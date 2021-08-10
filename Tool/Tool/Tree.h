@@ -32,6 +32,8 @@ private:
 	CStatic_Mesh*			m_pMeshCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CPicking*				m_pPickingCom = nullptr;
+private:
+	_bool					m_IsTemp = false;
 
 };
 

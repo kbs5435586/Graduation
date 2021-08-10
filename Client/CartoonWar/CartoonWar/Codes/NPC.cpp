@@ -243,7 +243,7 @@ void CNPC::Render_GameObject()
 
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
-	//m_pColiider[1]->Render_Collider();
+	m_pCollider_AABB->Render_Collider();
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
@@ -457,7 +457,7 @@ void CNPC::Free()
 	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }

@@ -31,6 +31,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
+	m_pTransform->SetUp_Speed(300.f, XMConvertToRadians(90.f));
 
 	_vec3 vPos = { 130.f,100.f,300.f };
 	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);

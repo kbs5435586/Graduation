@@ -25,5 +25,7 @@ public:
 private:
 	vector<CGameObject*>			m_RenderList[RENDER_END];
 	typedef vector<CGameObject*>	OBJECTLIST;
+private:
+	_bool							IsTemp = false;
 };
 

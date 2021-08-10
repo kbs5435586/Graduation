@@ -22,7 +22,6 @@ public:
 	virtual void							Render_Ref();
 	virtual void							Render_GameObject_Map();
 public:
-	INFO&									GetInfo(){return m_tInfo;}
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
 	_bool&									GetIsHit(){return m_IsHit;}
 	_bool&									GetIsDash() { return m_IsDash; }
@@ -32,11 +31,14 @@ public:
 	_bool&									GetIsTree() {return m_IsTree;}
 	_bool&									GetIsRun(){return m_IsRun;}
 	_bool&									GetIsCheckRange_Flag() {return m_IsCheck_FlagRange;}
+	_uint									GetLayerIdx() { return m_iLayerIdx; }
+	INFO&									GetInfo(){return m_tInfo;}
+public:
 	CLASS&									GetClass() { return m_eCurClass; }
 	TEAM&									GetCurTeam() { return m_eCurTeam; }
 	TEAM&									GetPreTeam() { return m_ePreTeam; }
-	_uint									GetLayerIdx() { return m_iLayerIdx; }
 	UNIT&									GetPlayerInfo() { return m_tUnit; }
+	ENVITYPE&								GetEnviType(){return m_eEnviType;}
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
@@ -80,6 +82,7 @@ protected:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tUnit = {};
+	ENVITYPE								m_eEnviType = {};
 	_bool									m_IsCheck_FlagRange = false;
 protected:
 	_uint									m_iBlurCnt = 0;

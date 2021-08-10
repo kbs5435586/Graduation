@@ -55,8 +55,6 @@ private:
 	void									SetSpeed();
 	void									Resurrection();
 
-public:
-	CLASS&									GetClass(){return m_eCurClass;}
 
 private:
 	CTransform*								m_pTransformCom = nullptr;
@@ -77,7 +75,6 @@ private:
 	CCollider*								m_pCollider_OBB =  nullptr;
 	CCollider*								m_pCollider_AABB = nullptr;
 	CCollider*								m_pCollider_Attack = nullptr;
-	CCollider*								m_pCollider_Hit = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;

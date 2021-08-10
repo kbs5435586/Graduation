@@ -325,7 +325,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 		{
 			if (fMoveZ <= 0.5f)
 			{
-				//fMoveZ *= 100.f;
+				//fMoveZ *= 0.1f;
 				vTemp = { pDestTransform->Get_Matrix()._41,
 						pDestTransform->Get_Matrix()._42,
 						pDestTransform->Get_Matrix()._43 + fMoveZ };
@@ -333,7 +333,7 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 			}
 			else
 			{
-				//fMoveZ *= 100.f;
+				//fMoveZ *= 0.1f;
 				vTemp = { pDestTransform->Get_Matrix()._41,
 					pDestTransform->Get_Matrix()._42,
 					pDestTransform->Get_Matrix()._43 - fMoveZ };
@@ -471,11 +471,22 @@ void CCollider::Update_Collider(CTransform* pTransform, _vec3 vSize, CLASS eCurC
 	case COLLIDER_TYPE::COLLIDER_AABB:
 	{
 		_matrix matTemp = Remove_Rotation(pTarget_matrix);
+		if (eCurClass == CLASS::CLASS_MMAGE || eCurClass == CLASS::CLASS_CAVALRY || eCurClass == CLASS(2))
+		{
+			matTemp.m[3][1] += 5.f;
+		}
+		else
+		{
+			matTemp.m[3][1] += 3.f;
+		}
 		matTemp.m[0][0] *= m_vSize.x;
 		matTemp.m[1][1] *= m_vSize.y;
 		matTemp.m[2][2] *= m_vSize.z;
 		matTemp.m[3][1] += 3.f;
 		m_pTransformCom->Set_Matrix(matTemp);
+
+		m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+		m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
 	}
 	break;
 	case COLLIDER_TYPE::COLLIDER_OBB:
