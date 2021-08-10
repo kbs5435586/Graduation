@@ -38,7 +38,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	// Compute_Matrix();
 	// _vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = {0.f,0.f,0.f };
+	_vec3 vPos = {500.f,1000.f,500.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -107,27 +107,36 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_cMoveCondition = server->Get_NpcMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_NpcRCon(m_iLayerIdx);
 
-	switch (m_cMoveCondition)
-	{
-	case CON_STRAIGHT:
-		m_pTransformCom->BackWard(fTimeDelta);
-		break;
-	case CON_RUN:
-		m_pTransformCom->BackWard(fTimeDelta * 2.f);
-		break;
-	case CON_BACK:
-		m_pTransformCom->Go_Straight(fTimeDelta);
-		break;
-	}
+	_vec3 vLook = {};
+	vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vLook = Vector3_::Normalize(vLook);
 
-	switch (m_cRotateCondition)
+	_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+	_vec3 vSlide = {};
+	if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 	{
-	case CON_LEFT:
-		m_pTransformCom->Rotation_Y(-fTimeDelta);
-		break;
-	case CON_RIGHT:
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-		break;
+		switch (m_cMoveCondition)
+		{
+		case CON_STRAIGHT:
+			m_pTransformCom->BackWard(fTimeDelta);
+			break;
+		case CON_RUN:
+			m_pTransformCom->BackWard(fTimeDelta * 2.f);
+			break;
+		case CON_BACK:
+			m_pTransformCom->Go_Straight(fTimeDelta);
+			break;
+		}
+
+		switch (m_cRotateCondition)
+		{
+		case CON_LEFT:
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
+			break;
+		case CON_RIGHT:
+			m_pTransformCom->Rotation_Y(fTimeDelta);
+			break;
+		}
 	}
 
 	Obb_Collision();

@@ -143,7 +143,6 @@ void Server::process_packet(int user_id, char* buf)
         pos.y = packet->y;
         pos.z = packet->z;
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        do_move(user_id, GO_COLLIDE);
     }
     break;
     case CS_PACKET_TROOP_CHANGE:
@@ -1988,7 +1987,7 @@ void Server::send_npc_size_packet(int user_id)
 {
     sc_packet_npc_size packet;
     packet.size = sizeof(packet);
-    packet.type = SC_PACKET_ATTACKED;
+    packet.type = SC_PACKET_NPC_SIZE;
     packet.npc_size = g_clients[user_id].m_boid.size();
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }

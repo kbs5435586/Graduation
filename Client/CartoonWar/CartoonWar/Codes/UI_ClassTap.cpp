@@ -95,9 +95,6 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	npcnumm = server->Get_NpcSize();
-		
-	
 	if (pManagement->Key_Up(KEY_I))
 	{
 		//if (m_cansee)
@@ -134,6 +131,7 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	//¹öÆ°
 	if (m_cansee)
 	{
+		npcnumm = server->Get_NpcSize();
 		//for (int i = 0; i < 9; ++i)
 		//	m_button[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
 		//for (int i = 0; i < 15; ++i)
