@@ -274,7 +274,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		//	pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 		//	send_position_packet(&vPos);
 		//}
-		Safe_Release(managment);
+		//Safe_Release(managment);
 	}
 	break;
 	case SC_PACKET_FLAG_INFO:
