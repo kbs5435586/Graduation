@@ -84,11 +84,12 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	pManagement->AddRef();
 
-	if (npcnumm < 14)
-	{
-		list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");	
-		npcnumm = LstTemp.size();	
-	}
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
+	npcnumm = server->Get_NpcSize();
 		
 	
 	if (pManagement->Key_Up(KEY_I))
@@ -139,6 +140,7 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	m_shop->Update_GameObject(fTimeDelta, m_IsTap, 0);
 
 	Safe_Release(pManagement);
+	Safe_Release(server);
 	return _int();
 }
 
