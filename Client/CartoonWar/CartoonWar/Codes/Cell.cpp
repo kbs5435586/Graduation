@@ -141,7 +141,7 @@ void CCell::Render_Cell()
 	_matrix matWorld = {};
 	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
+	matWorld._42 = 120.f;
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 	_uint iOffeset = pManagement->GetConstantBuffer(0)->SetData((void*)&tMainPass);

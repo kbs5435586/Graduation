@@ -268,7 +268,7 @@ void CNPC::Render_GameObject()
 
 	m_pCollider_OBB->Render_Collider();
 	m_pCollider_Attack->Render_Collider(1);
-	//m_pColiider[1]->Render_Collider();
+	m_pCollider_AABB->Render_Collider();
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
@@ -482,7 +482,7 @@ void CNPC::Free()
 	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }
@@ -708,10 +708,10 @@ HRESULT CNPC::Ready_Component()
 	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
 	//	return E_FAIL;
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;

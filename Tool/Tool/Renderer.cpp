@@ -28,9 +28,14 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eGroup, CGameObject * pGameObject
 
 HRESULT CRenderer::Render_RenderGroup()
 {
+	if (GetAsyncKeyState('P'))
+		IsTemp ^= true;
+
 	Render_Priority();
+
 	Render_NoneAlpha();
-	Render_Alpha();
+	if (IsTemp)
+		Render_Alpha();
 	Render_UI();
 
 	return S_OK;

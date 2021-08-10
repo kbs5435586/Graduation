@@ -57,28 +57,20 @@ HRESULT CLoadManager::Load_File(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
-			_tchar* pName = new _tchar[iLength + 1];
-			ZeroMemory(pName, iLength + 1);
-
-			_tchar* pLayerTag = new _tchar[iLength_Layer + 1];
-			ZeroMemory(pLayerTag, iLength_Layer + 1);
-
 
 			_tchar* pComrTag = new _tchar[iLength_Com + 1];
 			ZeroMemory(pComrTag, iLength_Com + 1);
 
-			lstrcpy(pName, szName);
-			lstrcpy(pLayerTag, szLayerTag);
 			lstrcpy(pComrTag, szComTag);
 
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Building", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pComrTag)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Building", (_uint)SCENEID::SCENE_STAGE, L"Layer_Building", nullptr, pComrTag)))
 			{
 				return E_FAIL;
 
 			}
 
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
-			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, pLayerTag)->Get_ComponentPointer(L"Com_Transform");
+			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Building")->Get_ComponentPointer(L"Com_Transform");
 			pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
 
@@ -129,43 +121,42 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
-			_tchar* pName = new _tchar[iLength + 1];
-			ZeroMemory(pName, iLength + 1);
-
-			_tchar* pLayerTag = new _tchar[iLength_Layer + 1];
-			ZeroMemory(pLayerTag, iLength_Layer + 1);
-
 
 			_tchar* pComrTag = new _tchar[iLength_Com + 1];
 			ZeroMemory(pComrTag, iLength_Com + 1);
 
-			lstrcpy(pName, szName);
-			lstrcpy(pLayerTag, szLayerTag);
 			lstrcpy(pComrTag, szComTag);
-			
-			_uint	iTemp = 0;
-			_bool	IsTemp = *(_bool*)pArg;
+
 
 
 			CGameObject* pGameObject = nullptr;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, pLayerTag, &pGameObject, pComrTag)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly", &pGameObject, pComrTag)))
 			{
 				return E_FAIL;
-
 			}
-			pGameObject->GetIsTree() = IsTemp;
+			pGameObject->GetEnviType() = *(ENVITYPE*)pArg;
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
-			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, pLayerTag)->Get_ComponentPointer(L"Com_Transform");
+			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly")->Get_ComponentPointer(L"Com_Transform");
 			pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
+
+			if (pGameObject->GetEnviType()== ENVITYPE::ENVI_FLOWER)
+			{
+				pTransform->Scaling(4.f, 4.f, 4.f);
+			}
+			else if (pGameObject->GetEnviType()== ENVITYPE::ENVI_PLANT)
+			{
+
+				pTransform->Scaling(4.f, 4.f, 4.f);
+			}
 
 			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
 
 
 			_uint iSize = rand() % 20 + 5;
-			_uint iRot = rand() % 90 + 1;
+			_uint iRot = rand() % 20;
 			pTransform->Scaling(iSize, iSize, iSize);
-			//pTransform->SetUp_RotationX(XMConvertToRadians(iRot));
+			//pTransform->SetUp_RotationY(XMConvertToRadians(180));
 
 
 			pTransform->Set_Add_PosY(fAdd_PosY);
@@ -214,28 +205,21 @@ HRESULT CLoadManager::Load_File_Hatch(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
-			_tchar* pName = new _tchar[iLength + 1];
-			ZeroMemory(pName, iLength + 1);
-
-			_tchar* pLayerTag = new _tchar[iLength_Layer + 1];
-			ZeroMemory(pLayerTag, iLength_Layer + 1);
-
 
 			_tchar* pComrTag = new _tchar[iLength_Com + 1];
 			ZeroMemory(pComrTag, iLength_Com + 1);
 
-			lstrcpy(pName, szName);
-			lstrcpy(pLayerTag, szLayerTag);
+
 			lstrcpy(pComrTag, szComTag);
 
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Hatch", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, pComrTag)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Hatch", (_uint)SCENEID::SCENE_STAGE, L"Layer_Hatch", nullptr, pComrTag)))
 			{
 				return E_FAIL;
 
 			}
 
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
-			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, pLayerTag)->Get_ComponentPointer(L"Com_Transform");
+			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Hatch")->Get_ComponentPointer(L"Com_Transform");
 			//pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
 			//pTransform->Scaling(20.f, 20.f, 20.f);

@@ -25,6 +25,9 @@ private://Deffend
     void                    Deffend_to_Deffend();
     void                    Skill_to_NPC_Collision(const _float& fTimeDelta);
     void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
+private:
+    void                    Enviroment_to_Player();
+    void                    Enviroment_to_NPC();
 public:
     static CCollisionMgr*   Create();
 private:

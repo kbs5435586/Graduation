@@ -31,8 +31,8 @@ HRESULT CTree::Ready_GameObject(void * pArg)
 		lstrcpy(m_pComponent_Tag, tTemp.lstrComponentTag);
 	}
 
-	//m_pTransformCom->Scaling(2.f, 2.f, 2.f);
-	m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
+	m_pTransformCom->Scaling(15.f, 15.f,15.f);
+	//m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
 	m_pTransformCom->Set_Add_PosY(0.5f);
 
 	return S_OK;
@@ -40,7 +40,7 @@ HRESULT CTree::Ready_GameObject(void * pArg)
 
 _int CTree::Update_GameObject(const _float & fTimeDelta)
 {
-	m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
+	m_pTransformCom->Scaling(15.f, 15.f, 15.f);
 	if (m_pPickingCom != nullptr)
 		m_pPickingCom->Update_Ray();
 
@@ -63,6 +63,8 @@ _int CTree::Update_GameObject(const _float & fTimeDelta)
 
 	Safe_Release(pManagement);
 
+
+
 	return _int();
 }
 
@@ -71,8 +73,11 @@ _int CTree::LastUpdate_GameObject(const _float & fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(RENDER_NONEALPHA, this)))
-		return -1;
+
+		if (FAILED(m_pRendererCom->Add_RenderGroup(RENDER_ALPHA, this)))
+			return -1;
+	
+
 
 
 	return _int();
