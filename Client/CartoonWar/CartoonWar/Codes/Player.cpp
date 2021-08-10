@@ -1451,10 +1451,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
-	if (CManagement::GetInstance()->Key_Down(KEY_2))
-	{
-		m_tInfo.fHP -= 1.f;
-	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
