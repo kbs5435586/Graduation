@@ -22,16 +22,16 @@ HRESULT CCollisionMgr::Ready_CollsionManager()
 void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
 {
 	//OBB
-	Player_to_NPC_Collision();
-	Player_to_Player_Collision();
-	NPC_to_NPC_Collision();
-	Throw_to_NPC_Collision();
-	Player_to_NPC_Attack_Collision();
-	Deffend_to_Player();
-	Deffend_to_Deffend();
-	//AABB
-	Enviroment_to_NPC();
-	Enviroment_to_Player();
+	//Player_to_NPC_Collision();
+	//Player_to_Player_Collision();
+	//NPC_to_NPC_Collision();
+	//Throw_to_NPC_Collision();
+	//Player_to_NPC_Attack_Collision();
+	//Deffend_to_Player();
+	//Deffend_to_Deffend();
+	////AABB
+	//Enviroment_to_NPC();
+	//Enviroment_to_Player();
 
 	//Skill_to_NPC_Collision(fTimeDelta);
 	//Teleport_to_NPC_Collision(fTimeDelta);

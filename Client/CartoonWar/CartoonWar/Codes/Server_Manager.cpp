@@ -245,7 +245,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		sc_packet_dead* my_packet = reinterpret_cast<sc_packet_dead*>(ptr);
 		int recv_id = my_packet->id;
 		m_objects[recv_id].hp = my_packet->hp;
-		m_objects[recv_id].anim = my_packet->anim;
+		update_anim(recv_id, my_packet->anim);
 		//m_objects[recv_id].showObject = false;
 
 		//managment = CManagement::GetInstance();  // 플레이어의 죽는 애니메이션이 끝났을때 실행되게
