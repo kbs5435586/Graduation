@@ -420,7 +420,7 @@ HRESULT CScene_Stage::Ready_Layer_Map_Camera(const _tchar* pLayerTag, CManagemen
 	//130.f,100.f,300.f
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(130.f, 150.f, 300.f);
+	tCameraDesc.vEye = _vec3(130.f, 160.f, 300.f);
 	//tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tCameraDesc.vAt = _vec3(130.f, 150.f, 301.f);
 	//tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
@@ -430,7 +430,7 @@ HRESULT CScene_Stage::Ready_Layer_Map_Camera(const _tchar* pLayerTag, CManagemen
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 600.f;
+	tProjDesc.fFar = 1500.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, (_short)1)))
 		return E_FAIL;

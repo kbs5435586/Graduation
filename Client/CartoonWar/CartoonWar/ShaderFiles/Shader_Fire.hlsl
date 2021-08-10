@@ -23,7 +23,6 @@ VS_OUT VS_Main(VS_IN vIn)
 	vOut.vTexUV = vIn.vTexUV;
 
 
-
 	vOut.vTexCoord1 = (vOut.vTexUV * vScale.x);
 	vOut.vTexCoord1.y = vOut.vTexCoord1.y + (fFrameTime* vScrollSpeed.x);
 
