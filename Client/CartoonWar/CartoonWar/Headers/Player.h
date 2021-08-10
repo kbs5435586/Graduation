@@ -106,9 +106,6 @@ private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
 private:
-	CLASS									m_eCurClass = CLASS::CLASS_END;
-	
-	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tPlayer = {};
 public:
 	//UNIT&									GetPlayerInfo() {return m_tPlayer;}
