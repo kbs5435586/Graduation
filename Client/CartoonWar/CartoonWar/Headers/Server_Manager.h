@@ -56,6 +56,7 @@ public:
     void send_change_troop();
 
     void update_key_input();
+    void update_anim(int id, unsigned char anim);
 
     //short player_index(unsigned short id);
     short npc_idx_to_id(unsigned short id);

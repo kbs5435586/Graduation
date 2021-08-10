@@ -553,6 +553,7 @@ struct Session
 	int				id;
 	short			hp;
 	short			anim;
+	unsigned char	anim_stat;
 	char			name[MAX_ID_LEN + 1];
 	bool			showObject = false;
 	unsigned int	m_class;

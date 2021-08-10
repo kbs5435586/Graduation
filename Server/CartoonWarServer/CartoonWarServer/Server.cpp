@@ -1684,6 +1684,7 @@ void Server::do_timer()
             case FUNC_NPC_FOLLOW:
             case FUNC_NPC_ATTACK:
             case FUNC_NPC_HOLD:
+            case FUNC_BATTLE:
             case FUNC_DEAD:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
@@ -1697,11 +1698,6 @@ void Server::do_timer()
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
                 PostQueuedCompletionStatus(g_iocp, 1, event.obj_id, &over->over);
-                //random_move_npc(event.obj_id);
-                //add_timer(event.obj_id, (ENUM_FUNCTION)event.event_id, 1000);
-                // 타이머 쓰레드에서 움직이는거 처리까지 다 하면 과부화가 심하다
-                // PostQueuedCompletionStatus 이걸로 worket thread에 작업 넘겨주고 여기선 어떤 이벤트인지만 알려줌
-                // 오버랩 구조체 따로 초기화 안해줘도 되는게 PostQueuedCompletionStatus 자체가 진짜 넣어주는값 그대로 GetQueued에 넘겨줘서 괜찮음
                 break;
             }
             }
@@ -1758,10 +1754,10 @@ void Server::enter_game(int user_id, char name[])
     strcpy_s(g_clients[user_id].m_name, name);
     g_clients[user_id].m_name[MAX_ID_LEN] = NULL; // 마지막에 NULL 넣어주는 처리
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
-    for (int i = 0; i < 5; ++i)
-        send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
+    for (int i = 0; i < 5; ++i)
+        send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     cout << "Player " << user_id << " login finish" << endl;
     for (int i = 0; i <= MAX_USER; ++i)
     {
@@ -1846,7 +1842,9 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
             g_clients[npc_id].m_team = g_clients[player_id].m_team;
             sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
+            g_clients[npc_id].m_cLock.lock();
             g_clients[npc_id].m_status = ST_SLEEP;
+            g_clients[npc_id].m_cLock.unlock();
             g_clients[npc_id].m_hp = 100;
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
@@ -1869,6 +1867,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_isOut = false;
             g_clients[npc_id].m_isFormSet = true;
             g_clients[npc_id].m_attack_target = -1;
+            g_clients[npc_id].m_isFighting = false;
             FormationInfo formTemp;
             formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
             g_clients[player_id].m_boid.push_back(formTemp);
@@ -2003,6 +2002,8 @@ void Server::send_dead_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_DEAD;
     packet.id = g_clients[other_id].m_id;
+    packet.hp = g_clients[other_id].m_hp;
+    packet.anim = A_DEAD;
     //cout << user_id << " saw " << other_id << " dead\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -2014,9 +2015,12 @@ void Server::send_leave_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_LEAVE;
 
-    g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_view_list.erase(other_id);
-    g_clients[user_id].m_cLock.unlock();
+    if (is_player(user_id))
+    {
+        g_clients[user_id].m_cLock.lock();
+        g_clients[user_id].m_view_list.erase(other_id);
+        g_clients[user_id].m_cLock.unlock();
+    }
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -2082,60 +2086,66 @@ void Server::do_attack(int npc_id)
 
     if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
     {
-        _vec3 t_look = g_clients[npc_id].m_target_look;
-        t_look = -1.f * Vector3_::Normalize(t_look);
-       
-        float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
-        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-        float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-        if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-            radian *= -1.f;
-
-        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-        if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+        for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
         {
-            n.m_Mcondition = CON_STRAIGHT;
-            n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-            n.m_anim = A_WALK;
-            if (NPCangle > 1.f)
-            {
-                n.m_Rcondition = CON_LEFT;
-                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-            }
-            else if (NPCangle < -1.f)
-            {
-                n.m_Rcondition = CON_RIGHT;
-                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-            }
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (g_clients[i].m_team == n.m_team)
+                continue;
+            if (!is_attack_detect(i, n.m_id))
+                continue;
+            // 활성화 상태이고 내 팀이 아니고 공격범위 안에 있는 상대일때
+            n.m_attack_target = i;
+            //for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
+            //{
+            //    if (ST_ACTIVE != g_clients[i].m_status)
+            //        continue;
+            //    if (true == is_near(npc_id, i))
+            //    {
+            //        send_fix_packet(i, npc_id);
+            //    }
+            //}
+            break;
         }
-        else // npc가 바라보는 방향이 플레이어랑 일치할때
+
+        if (n.m_attack_target >= 0) // 주변에 적이 있으면 탐색 멈추고 바로 전투
+            return;
+        else // 주변에 적이 없으면 탐색 움직임 시작
         {
-            n.m_Mcondition = CON_STRAIGHT;
-            n.m_Rcondition = CON_IDLE;
-            n.m_anim = A_WALK;
-            n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-            for (int i = 0; i < OBJECT_START; ++i) // 모든 플레이어와 적에 대해서
+            _vec3 t_look = g_clients[npc_id].m_target_look;
+            t_look = -1.f * Vector3_::Normalize(t_look);
+
+            float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+            float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+            if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                radian *= -1.f;
+
+            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+            if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
             {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
-                if (g_clients[i].m_team == n.m_team)
-                    continue;
-                if (!is_attack_detect(i, n.m_id))
-                    continue;
-                // 활성화 상태이고 내 팀이 아니고 공격범위 안에 있는 상대일때
-                n.m_attack_target = i;
-                //for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                //{
-                //    if (ST_ACTIVE != g_clients[i].m_status)
-                //        continue;
-                //    if (true == is_near(npc_id, i))
-                //    {
-                //        send_fix_packet(i, npc_id);
-                //    }
-                //}
-                break;
+                n.m_Mcondition = CON_STRAIGHT;
+                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                n.m_anim = A_WALK;
+                if (NPCangle > 1.f)
+                {
+                    n.m_Rcondition = CON_LEFT;
+                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                }
+                else if (NPCangle < -1.f)
+                {
+                    n.m_Rcondition = CON_RIGHT;
+                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+                }
+            }
+            else // npc가 바라보는 방향이 플레이어랑 일치할때
+            {
+                n.m_Mcondition = CON_STRAIGHT;
+                n.m_Rcondition = CON_IDLE;
+                n.m_anim = A_WALK;
+                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
             }
         }
     }
@@ -2174,72 +2184,22 @@ void Server::do_attack(int npc_id)
         {
             if (is_attackable(n.m_id, n.m_attack_target)) // 전투 범위 안에 들어왔을때
             {
+                if(!n.m_isFighting)
+                    add_timer(npc_id, FUNC_BATTLE, 1);
                 n.m_Mcondition = CON_IDLE;
                 n.m_Rcondition = CON_IDLE;
                 n.m_anim = A_ATTACK;
-
+                n.m_isFighting = true;
             }
             else
             {
+                n.m_isFighting = false;
                 n.m_Mcondition = CON_STRAIGHT;
                 n.m_transform.BackWard(MOVE_TIME_ELAPSE);
                 n.m_Rcondition = CON_IDLE;
             }
         }
     }
-
-    //cout << user_id << "is do attack\n";
-//    for (auto& c : g_clients)
-//    {
-//        if (ST_ACTIVE != c.second.m_status) // 비접속 상태인 애들 무시
-//            continue;
-//        if (is_object(c.second.m_id))
-//            continue;
-//        if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애들 무시
-//            continue;
-//        if (c.second.m_id == user_id) // 나 자신 무시
-//            continue;
-//        if (c.second.m_owner_id == user_id) // 내 npc들 무시
-//            continue;
-//        if (true == is_attackable(c.second.m_id, user_id)) // 내 공격 범위 안에 상대 + 적npc 가 있으면
-//        {
-//            c.second.m_hp -= ATTACK_DAMAGE;
-//            if (0 < c.second.m_hp) // 맞고 피가 남아있으면
-//            {
-//                do_push(user_id, c.second.m_id);
-//                for (int i = 0; i < NPC_START; ++i)
-//                {
-//                    if (is_near(c.second.m_id, i)) // 맞은애 주변에 있는 플레이어에게
-//                    {
-//                        send_attacked_packet(i, c.second.m_id);
-//                        send_animation_packet(i, c.second.m_id, A_HIT);
-//                    }
-//                }
-//            }
-//            else // 죽으면
-//            {
-//                c.second.m_hp = 0;
-//                g_clients[c.second.m_id].m_last_order = FUNC_DEAD;
-//                if (is_player(c.second.m_id)) // 죽은 애가 유저면
-//                {
-//                    send_dead_packet(c.second.m_id, c.second.m_id); // 자기 자신에게 먼저
-//                    send_animation_packet(c.second.m_id, c.second.m_id, A_DEAD);
-//                    do_dead(c.second.m_id);
-//                    for (int npc_id = MY_NPC_START_SERVER(c.second.m_id); npc_id <= MY_NPC_END_SERVER(c.second.m_id); npc_id++)
-//                    {
-//                        if (ST_ACTIVE == g_clients[npc_id].m_status)
-//                        {
-//                            do_dead(npc_id);
-//                        }
-//                    }
-//                }
-//                else // 죽은 애가 npc 면
-//                {
-//                    do_dead(c.second.m_id);
-//                }
-//            }
-//        }
-//    }
 }
 
 void Server::do_dead(int id)
@@ -2263,24 +2223,31 @@ void Server::disconnect(int user_id)
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
 
-    for (int i = MY_NPC_START_SERVER(user_id); i <= MY_NPC_END_SERVER(user_id); i++)
-    {
-        g_clients[i].m_last_order = FUNC_END;
-        g_clients[i].m_status = ST_SLEEP;
-    }
-
     for (int i = 0; i < NPC_START; ++i)
     {
-        if (user_id == g_clients[i].m_id)
+        if (user_id == i)
             continue;
-
-        // c.second.m_cLock.lock();
         if (ST_ACTIVE == g_clients[i].m_status)
         {
-            send_leave_packet(g_clients[i].m_id, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
+            send_leave_packet(i, user_id); // 어차피 send_leave_packet 내부에서 뷰리스트 삭제 해줘서 여기에 따로 할 필요X
+            for (int npc_id = MY_NPC_START_SERVER(user_id); npc_id <= MY_NPC_END_SERVER(user_id); ++npc_id)
+            {
+                if (ST_ACTIVE == g_clients[npc_id].m_status || ST_DEAD == g_clients[npc_id].m_status)
+                    send_leave_packet(i, npc_id);
+            }
         }
-        // c.second.m_cLock.unlock();
     }
+
+    for (int i = MY_NPC_START_SERVER(user_id); i <= MY_NPC_END_SERVER(user_id); i++)
+    {
+        if (ST_ACTIVE == g_clients[i].m_status || ST_DEAD == g_clients[i].m_status)
+        {
+            g_clients[i].m_cLock.lock();
+            g_clients[i].m_status = ST_SLEEP;
+            g_clients[i].m_cLock.unlock();
+        }
+    }
+
     g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
     g_clients[user_id].m_cLock.unlock();
 }
@@ -2464,6 +2431,42 @@ void Server::set_starting_pos(int user_id)
     //곱하기 7.5배 / 맵사이즈  3750 - 3750
 }
 
+void Server::do_battle(int id)
+{
+    SESSION& att = g_clients[id];
+    g_clients[att.m_attack_target].m_hp -= ATTACK_DAMAGE;
+    if (g_clients[att.m_attack_target].m_hp <= 0) // 죽은 상태면
+    {
+        g_clients[att.m_attack_target].m_hp = 0;
+        att.m_attack_target = -1;
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (!is_near(i, att.m_attack_target))
+                continue;
+            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+            send_dead_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
+        }
+        g_clients[att.m_attack_target].m_cLock.lock();
+        g_clients[att.m_attack_target].m_status = ST_DEAD;
+        g_clients[att.m_attack_target].m_cLock.unlock();
+    }
+    else // 맞은 이후에 체력이 남아있는 상태면
+    {
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (!is_near(i, att.m_attack_target))
+                continue;
+            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+            send_attacked_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
+        }
+        add_timer(id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
+    }
+}
+
 void Server::worker_thread()
 {
     while (true)
@@ -2554,6 +2557,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_troop = T_ALL;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
+                g_clients[user_id].m_isFighting = false;
                 set_starting_pos(user_id);
                
                 DWORD flags = 0;
@@ -2588,6 +2592,10 @@ void Server::worker_thread()
             break;
         case FUNC_NPC_FOLLOW:
             finite_state_machine(id, FUNC_NPC_FOLLOW);
+            delete overEx;
+            break;
+        case FUNC_BATTLE:
+            do_battle(id);
             delete overEx;
             break;
         case FUNC_DEAD:

@@ -30,7 +30,7 @@ private:
 	float MOVE_SPEED_NPC = 50.f;
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
-	int ATTACK_DAMAGE = 25;
+	int ATTACK_DAMAGE = 20;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 300;
@@ -75,6 +75,7 @@ public:
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
 	void do_attack(int npc_id);
+	void do_battle(int id);
 	void do_dead(int id);
 	void do_push(int pusher, int target);
 	void do_change_formation(int player_id);

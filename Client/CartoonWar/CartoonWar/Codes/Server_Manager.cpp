@@ -229,374 +229,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	case SC_PACKET_ANIMATION:
 	{
 		sc_packet_animation* my_packet = reinterpret_cast<sc_packet_animation*>(ptr);
-		int recv_id = my_packet->id;
-		/*
-* 			case CLASS::CLASS_WORKER:
-		{
-			//idle
-			//walk
-			//run
-			//attack
-			//death a
-			//death b
-			//take damage
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-			m_iCombatMotion[0] = 0;
-			m_iCombatMotion[1] = 1;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_INFANTRY:
-		{
-			//	idle
-			//	walk
-			//	run
-			//	charge
-			//	combat idle
-			//	combat walk
-			//	attack a
-			//	attack b
-			//	take damage
-			//	death a
-			//	death b
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-			m_iCombatMotion[0] = 4;
-			m_iCombatMotion[1] = 5;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_CAVALRY:
-		{
-			//idle
-			//walk
-			//run
-			//charge
-			//combat idle
-			//combat walk
-			//combat hit a
-			//combat hit b
-			//take damage
-			//death a
-			//death b
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-			m_iCombatMotion[0] = 4;
-			m_iCombatMotion[1] = 5;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_SPEARMAN:
-		{
-			//		idle
-			//		walk
-			//		run
-			//		charge
-			//		combat idle
-			//		combat walk
-			//		attack
-			//		take damage
-			//		death a
-			//		death b
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,60.f };
-			m_iCombatMotion[0] = 4;
-			m_iCombatMotion[1] = 5;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_MAGE:
-		{
-			//	idle
-			//	walk
-			//	run
-			//	charge
-			//	combat idle
-			//	combat walk
-			//	attack a
-			//	attack b
-			//	take damage
-			//	death a
-			//	death b
-			//	cast a
-			//	cast b
-			//	cast c
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-			m_iCombatMotion[0] = 4;
-			m_iCombatMotion[1] = 5;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_MMAGE:
-		{
-			//	idle
-			//	walk
-			//	run
-			//	attack
-			//	take damage
-			//	death a
-			//	death b
-			//	cast a
-			//	cast b
-			//	cast load
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-			m_iCombatMotion[0] = 0;
-			m_iCombatMotion[1] = 1;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_ARCHER:
-		{
-
-			//	idle
-			//	walk
-			//	run
-			//	combat_idle
-			//	combat walk
-			//	attack a
-			//	take damage
-			//	death a
-			//	death b
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 20.f ,80.f,20.f };
-			m_iCombatMotion[0] = 4;
-			m_iCombatMotion[1] = 5;
-			m_iCombatMotion[2] = 3;
-		}
-		break;
-		case CLASS::CLASS_PRIEST:
-		{
-			m_vecAnimCtrl.push_back(AnimCtrl(0, 100, 0.00f, 3.333f));
-			m_vecAnimCtrl.push_back(AnimCtrl(101, 137, 3.366f, 4.566f));
-			m_vecAnimCtrl.push_back(AnimCtrl(138, 168, 4.599f, 5.599f));
-			m_vecAnimCtrl.push_back(AnimCtrl(169, 194, 5.633f, 6.466f));
-			m_vecAnimCtrl.push_back(AnimCtrl(195, 255, 6.500f, 8.500f));
-			m_vecAnimCtrl.push_back(AnimCtrl(256, 291, 8.533f, 9.699f));
-			m_vecAnimCtrl.push_back(AnimCtrl(292, 322, 9.733f, 10.733f));
-			m_vecAnimCtrl.push_back(AnimCtrl(323, 353, 10.766f, 11.766f));
-			m_vecAnimCtrl.push_back(AnimCtrl(354, 374, 11.800f, 12.466f));
-			m_vecAnimCtrl.push_back(AnimCtrl(367, 426, 12.500f, 14.199f));
-			m_vecAnimCtrl.push_back(AnimCtrl(327, 477, 14.233f, 15.900f));
-			m_vecAnimCtrl.push_back(AnimCtrl(478, 518, 15.933f, 17.266f));
-			m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
-			m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-		}
-		break;
-		}
-	}
-	else
-	{
-	switch (m_eCurClass)
-	{
-	case CLASS::CLASS_WORKER:
-	{
-		//idle
-		//walk
-		//run
-		//attack
-		//death a
-		//death b
-		//take damage
-		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-		m_iCombatMotion[0] = 0;
-		m_iCombatMotion[1] = 1;
-		m_iCombatMotion[2] = 3;
-	}
-	break;
-	case CLASS::CLASS_INFANTRY:
-	{
-		//	idle
-		//	walk
-		//	run
-		//	charge
-		//	combat idle
-		//	combat walk
-		//	attack a
-		//	attack b
-		//	take damage
-		//	death a
-		//	death b
-		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-		m_iCombatMotion[0] = 4;
-		m_iCombatMotion[1] = 5;
-		m_iCombatMotion[2] = 3;
-	}
-	break;
-	case CLASS::CLASS_CAVALRY:
-	{
-		//idle
-		//walk
-		//run
-		//charge
-		//combat idle
-		//combat walk
-		//combat hit a
-		//combat hit b
-		//take damage
-		//death a
-		//death b
-		m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-		m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-		m_iCombatMotion[0] = 4;
-		m_iCombatMotion[1] = 5;
-		m_iCombatMotion[2] = 3;
-	}
-	break;
-	case CLASS(2):
-	{
-		//idle
-		//walk
-		//run
-		//charge
-		//combat idle
-		//combat walk
-		//combat hit a
-		//combat hit b
-		//take damage
-		//death a
-		//death b
-		m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-		m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-		m_iCombatMotion[0] = 4;
-		m_iCombatMotion[1] = 5;
-		m_iCombatMotion[2] = 3;
-	}
-		break;
-	case CLASS(4):
-	{
-		//	idle
-		//	walk
-		//	run
-		//	charge
-		//	combat idle
-		//	combat walk
-		//	attack a
-		//	attack b
-		//	take damage
-		//	death a
-		//	death b
-		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-		m_iCombatMotion[0] = 4;
-		m_iCombatMotion[1] = 5;
-		m_iCombatMotion[2] = 3;
-	}
-		break;
-	case CLASS::CLASS_SPEARMAN:
-	{
-		//		idle
-		//		walk
-		//		run
-		//		charge
-		//		combat idle
-		//		combat walk
-		//		attack
-		//		take damage
-		//		death a
-		//		death b
-		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-		m_vOBB_Range[1] = { 30.f ,80.f,60.f };
-		m_iCombatMotion[0] = 4;
-		m_iCombatMotion[1] = 5;
-		m_iCombatMotion[2] = 3;
-	}
-	break;
-	case CLASS::CLASS_MAGE:
-	{
-		//	idle
-		//	walk
-		//	run
-		//	charge
-		//	combat idle
-		//	combat walk
-		//	attack a
-		//	attack b
-		//	take damage
-		//	death a
-		//	death b
-		//	cast a
-		//	cast b
-		//	cast c
-		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-		m_vOBB_Range[1] = { 30.f ,80.f,30.f };
-		m_iCombatMotion[0] = 4;
-		m_iCombatMotion[1] = 5;
-		m_iCombatMotion[2] = 3;
-	}
-	break;
-	case CLASS::CLASS_MMAGE:
-	{
-
-		//	idle
-		//	walk
-		//	run
-		//	attack
-		//	take damage
-		//	death a
-		//	death b
-		//	cast a
-		//	cast b
-		//	cast load
-		m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-		m_vOBB_Range[1] = { 30.f ,120.f,70.f };
-		m_iCombatMotion[0] = 0;
-		m_iCombatMotion[1] = 1;
-		m_iCombatMotion[2] = 2;
-	}
-	break;
-	case CLASS::CLASS_ARCHER:
-	{
-		//	idle
-		//	walk
-		//	run
-		//	combat_idle
-		//	combat walk
-		//	attack a
-		//	take damage
-		//	death a
-		//	death b
-		m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-		m_vOBB_Range[1] = { 20.f ,80.f,20.f };
-		m_iCombatMotion[0] = 3;
-		m_iCombatMotion[1] = 4;
-		m_iCombatMotion[2] = 2;
-	}
-	break;
-*/
-		switch (my_packet->anim)
-		{
-		case A_IDLE:
-			m_objects[recv_id].anim = 0;
-			break;
-		case A_WALK:
-			m_objects[recv_id].anim = 1;
-			break;
-		case A_RUN:
-			m_objects[recv_id].anim = 2;
-			break;
-		case A_ATTACK:
-			m_objects[recv_id].anim = 6;
-			break;
-		case A_HIT:
-			if (is_player(recv_id))
-				m_objects[recv_id].anim = 8;
-			else
-				m_objects[recv_id].anim = 6;
-			break;
-		case A_DEAD:
-			if (is_player(recv_id))
-				m_objects[recv_id].anim = 9;
-			else
-				m_objects[recv_id].anim = 4;
-			break;
-		}
+		update_anim(my_packet->id, my_packet->anim);
 	}
 	break;
 	case SC_PACKET_ATTACKED:
@@ -611,7 +244,8 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_dead* my_packet = reinterpret_cast<sc_packet_dead*>(ptr);
 		int recv_id = my_packet->id;
-		m_objects[recv_id].hp = 0;
+		m_objects[recv_id].hp = my_packet->hp;
+		m_objects[recv_id].anim = my_packet->anim;
 		//m_objects[recv_id].showObject = false;
 
 		//managment = CManagement::GetInstance();  // 플레이어의 죽는 애니메이션이 끝났을때 실행되게
@@ -867,50 +501,300 @@ void CServer_Manager::send_animation_packet(unsigned char anim)
 
 void CServer_Manager::update_key_input()
 {
-	/*if ((GetAsyncKeyState('1') & 0x8000))
-	{
-		send_npc_act_packet(DO_ATTACK);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('2') & 0x8000))
-	{
-		send_npc_act_packet(DO_DEFENCE);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('3') & 0x8000))
-	{
-		send_npc_act_packet(DO_HOLD);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('4') & 0x8000))
-	{
-		send_npc_act_packet(DO_FOLLOW);
-		isSendOnePacket = false;
-	}
-	if ((GetAsyncKeyState('5') & 0x8000))
-	{
-		send_npc_act_packet(DO_RANDMOVE);
-		isSendOnePacket = false;
-	}*/
-
-	//if (true == isLogin)
-	//{
-	//	if (!(GetAsyncKeyState('T') & 0x8000) && !(GetAsyncKeyState('F') & 0x8000) && !(GetAsyncKeyState('G') & 0x8000) &&
-	//		!(GetAsyncKeyState('H') & 0x8000) && !(GetAsyncKeyState('O') & 0x8000) && !(GetAsyncKeyState('P') & 0x8000) &&
-	//		!(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
-	//	{
-	//		if (false == isSendOnePacket)
-	//		{
-	//			send_idle_packet();
-	//			isSendOnePacket = true;
-	//			m_objects[my_id].anim = 14;
-	//		}
-	//	}
-	//}
 	if (GetAsyncKeyState('Q') & 0x8000)
 	{
 		disconnect();
 		PostQuitMessage(0);
+	}
+}
+
+void CServer_Manager::update_anim(int id, unsigned char anim)
+{
+	switch (m_objects[id].m_class)
+	{
+	case C_WORKER:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 1;
+		if (A_ATTACK == anim)
+			m_objects[id].anim = 3;
+		if (A_HIT == anim)
+			m_objects[id].anim = 6;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 2;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 4;
+			else
+				m_objects[id].anim = 5;
+		}
+		break;
+	case C_CAVALRY:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 4;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 5;
+		if (A_ATTACK == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 6;
+			else
+				m_objects[id].anim = 7;
+		}
+		if (A_HIT == anim)
+			m_objects[id].anim = 8;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 3;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 9;
+			else
+				m_objects[id].anim = 10;
+		}
+		break;
+	case C_TWO:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 4;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 5;
+		if (A_ATTACK == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 6;
+			else
+				m_objects[id].anim = 7;
+		}
+		if (A_HIT == anim)
+			m_objects[id].anim = 8;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 3;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 9;
+			else
+				m_objects[id].anim = 10;
+		}
+		break;
+	case C_INFANTRY:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 4;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 5;
+		if (A_ATTACK == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 6;
+			else
+				m_objects[id].anim = 7;
+		}
+		if (A_HIT == anim)
+			m_objects[id].anim = 8;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 3;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 9;
+			else
+				m_objects[id].anim = 10;
+		}
+		break;
+	case C_FOUR:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 4;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 5;
+		if (A_ATTACK == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 6;
+			else
+				m_objects[id].anim = 7;
+		}
+		if (A_HIT == anim)
+			m_objects[id].anim = 8;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 3;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 9;
+			else
+				m_objects[id].anim = 10;
+		}
+	case C_SPEARMAN:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 4;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 5;
+		if (A_ATTACK == anim)
+			m_objects[id].anim = 6;
+		if (A_HIT == anim)
+			m_objects[id].anim = 7;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 3;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 8;
+			else
+				m_objects[id].anim = 9;
+		}
+		break;
+	case C_MAGE:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 4;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 5;
+		if (A_ATTACK == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 6;
+			else
+				m_objects[id].anim = 7;
+		}
+		if (A_HIT == anim)
+			m_objects[id].anim = 8;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 3;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 9;
+			else
+				m_objects[id].anim = 10;
+		}
+		if (A_CAST == anim)
+		{
+			int i = rand() % 3;
+			if (i == 0)
+				m_objects[id].anim = 11;
+			else if(i == 1)
+				m_objects[id].anim = 12;
+			else
+				m_objects[id].anim = 13;
+		}
+		break;
+	case C_MMAGE:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 1;
+		if (A_ATTACK == anim)
+			m_objects[id].anim = 3;
+		if (A_HIT == anim)
+			m_objects[id].anim = 4;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 2;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 5;
+			else
+				m_objects[id].anim = 6;
+		}
+		if (A_CAST == anim)
+		{
+			int i = rand() % 3;
+			if (i == 0)
+				m_objects[id].anim = 7;
+			else if (i == 1)
+				m_objects[id].anim = 8;
+			else
+				m_objects[id].anim = 9;
+		}
+		break;
+	case C_ARCHER:
+		if (A_IDLE == anim)
+			m_objects[id].anim = 0;
+		if (A_WALK == anim)
+			m_objects[id].anim = 1;
+		if (A_CIDLE == anim)
+			m_objects[id].anim = 3;
+		if (A_CWALK == anim)
+			m_objects[id].anim = 4;
+		if (A_ATTACK == anim)
+			m_objects[id].anim = 5;
+		if (A_HIT == anim)
+			m_objects[id].anim = 6;
+		if (A_RUN == anim)
+			m_objects[id].anim = 2;
+		if (A_CRUN == anim)
+			m_objects[id].anim = 2;
+		if (A_DEAD == anim)
+		{
+			int i = rand() % 2;
+			if (i == 0)
+				m_objects[id].anim = 7;
+			else
+				m_objects[id].anim = 8;
+		}
+		break;
 	}
 }
 

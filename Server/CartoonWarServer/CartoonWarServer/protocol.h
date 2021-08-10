@@ -225,6 +225,8 @@ struct sc_packet_dead
 	char size;
 	char type;
 	int id;
+	char anim;
+	short hp;
 };
 
 struct sc_packet_chat
@@ -282,6 +284,7 @@ constexpr unsigned char A_HIT = 5;
 constexpr unsigned char A_RUN = 6;
 constexpr unsigned char A_CRUN = 7;
 constexpr unsigned char A_DEAD = 8;
+constexpr unsigned char A_CAST = 9;
 
 struct cs_packet_login
 {
