@@ -11,7 +11,6 @@ class CUI_CharTap;
 class CUI_Button;
 class CUI_ButtonNPC;
 class CUI_CharInterface;
-class CUI_Shop;
 
 class CUI_ClassTap :
     public CUI
@@ -59,12 +58,10 @@ private:
 	_bool									m_IsTap[5] = {};
 	
 	
-	CUI_Button*								m_button[9] = {};
-	CUI_ButtonNPC*							m_buttonNPC[15] = {};
-	CUI_CharInterface*						m_charInter = nullptr;
-	CUI_Shop* m_shop = nullptr;
-
-	//CObserver* m_pObserverCom = {};
+	//CUI_Button*								m_button[9] = {};
+	//CUI_ButtonNPC*							m_buttonNPC[15] = {};
+	//CUI_CharInterface*						m_charInter = nullptr;
+	
 
 	POINT MousePos = {};
 	
@@ -82,5 +79,6 @@ public:
 	void SetBool(_bool _b) { m_cansee = _b; }
 	_int GetWhich() { return which; }
 	void SetWhich(_int _w) { which = _w; }
+	_int GetNPCNum() {	return npcnumm;	}
 
 };

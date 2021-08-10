@@ -1453,7 +1453,8 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     if (n.m_LastAnim != n.m_anim)
         do_animation(npc_id, n.m_anim);
 
-    add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
+    if (ST_ACTIVE == g_clients[npc_id].m_status)
+        add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
 void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
@@ -2445,6 +2446,9 @@ void Server::do_battle(int id)
     {
         g_clients[att.m_attack_target].m_hp = 0;
         att.m_attack_target = -1;
+        g_clients[att.m_attack_target].m_cLock.lock();
+        g_clients[att.m_attack_target].m_status = ST_DEAD;
+        g_clients[att.m_attack_target].m_cLock.unlock();
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
@@ -2453,10 +2457,8 @@ void Server::do_battle(int id)
                 continue;
             // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
             send_dead_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
+            send_animation_packet(i, att.m_attack_target,A_DEAD); // 남은 체력 브로드캐스팅
         }
-        g_clients[att.m_attack_target].m_cLock.lock();
-        g_clients[att.m_attack_target].m_status = ST_DEAD;
-        g_clients[att.m_attack_target].m_cLock.unlock();
     }
     else // 맞은 이후에 체력이 남아있는 상태면
     {

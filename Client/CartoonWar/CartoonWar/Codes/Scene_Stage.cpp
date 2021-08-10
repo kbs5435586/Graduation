@@ -37,6 +37,10 @@
 #include "UI_NormalBar.h"
 #include "UI_ClassTap.h"
 #include "UI_Skill.h"
+#include "UI_Shop.h"
+#include "UI_CharInterface.h"
+#include "UI_Button.h"
+#include "UI_ButtonNPC.h"
 
 // Environment
 #include "Fire.h"
@@ -183,6 +187,14 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_NormalBar", CUI_NormalBar::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_ClassTap", CUI_ClassTap::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Shop", CUI_Shop::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_CharInterface", CUI_CharInterface::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Button", CUI_Button::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_ButtonNPC", CUI_ButtonNPC::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Skill", CUI_Skill::Create())))
 		return E_FAIL;
@@ -462,8 +474,40 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 
 HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
+	// 0 샵 버튼
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shop", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	// 1 캐릭터 인터페이스
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_CharInterface", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	_float m_fX = WINCX / 2;
+	_float m_fY = WINCY / 2;
+	_vec2 m_Pos[9] = { {m_fX - 250,465},{ m_fX - 380,525},{m_fX - 380,590},{m_fX - 250,525},
+		{m_fX - 250,590} ,{m_fX - 315,525} ,{m_fX - 120,525},{m_fX - 120,590} ,{m_fX - 185,525} };
+
+	// 2 - 10 클래스 버튼
+	for (int i = 0; i < 9; ++i)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Button", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&m_Pos[i])))
+			return E_FAIL;
+	}
+	// 11 - 19 NPC 버튼
+	for (int i = 0; i < 9; ++i)
+	{
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_ButtonNPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+			return E_FAIL;
+	}
+
+	// 20 클래스 탭
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_ClassTap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+	
+
+
+	
+	
+	
 
 	XMFLOAT3 one = { 560.f, 100.f, 0.f };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&one)))

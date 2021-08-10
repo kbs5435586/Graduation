@@ -4,23 +4,34 @@ class CTransform;
 class CRenderer;
 class CBuffer_RectTex;
 class CShader;
-class CTexture;
-class CObserver;
 
 class CUI_CharInterface :
     public CUI
 {
-public:
+private:
 	CUI_CharInterface();
 	CUI_CharInterface(const CUI_CharInterface& rhs);
 	virtual ~CUI_CharInterface() = default;
 public:
-	//virtual HRESULT							Ready_Prototype();
+	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
-	virtual _int							Update_GameObject(const _float & fTimeDelta, _bool b[], int idx);
-	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
-	virtual void							Render_GameObject(CShader * shader, CBuffer_RectTex * buffer, CTexture * texture);
+	virtual _int							Update_GameObject(const _float& fTimeDelta);
+	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
+	virtual void							Render_GameObject();
+private:
+	virtual HRESULT							CreateInputLayout();
+public:
+	static CUI_CharInterface* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
+private:
+	virtual void							Free();
+	HRESULT									Ready_Component();
 
-	
+private:
+	CRenderer* m_pRendererCom = nullptr;
+	CBuffer_RectTex* m_pBufferCom = nullptr;
+	CShader* m_pShaderCom = nullptr;
+
+	_bool m_cansee{};
 };
 

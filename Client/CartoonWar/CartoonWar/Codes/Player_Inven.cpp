@@ -34,7 +34,7 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 
 	//Compute_Matrix();
 	_vec3 vPos = { 10.f,0.f,10.f };
-	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
@@ -68,10 +68,6 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 
 _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 {
-		//
-		//m_pColiider[0]->Update_Collider(m_pTransformCom, m_eCurClass);
-		//m_pColiider[1]->Update_Collider(m_pTransformCom, m_eCurClass);
-
 		m_pTransformCom->Set_PositionY(0.f);
 
 		CServer_Manager* server = CServer_Manager::GetInstance();
@@ -79,7 +75,7 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 			return -1;
 		server->AddRef();
 
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
 		_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 		if(which == 0)
 		{ 
@@ -120,7 +116,7 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 
-	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
 	if (m_IsActive)
@@ -237,7 +233,7 @@ void CPlayer_Inven::Render_GameObject()
 
 
 HRESULT CPlayer_Inven::CreateInputLayout()
-{
+{	
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -253,7 +249,7 @@ HRESULT CPlayer_Inven::CreateInputLayout()
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED)))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

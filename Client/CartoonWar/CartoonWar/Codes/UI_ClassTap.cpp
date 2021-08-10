@@ -3,7 +3,6 @@
 #include "UI_Button.h"
 #include "UI_ButtonNPC.h"
 #include "UI_CharInterface.h"
-#include "UI_Shop.h"
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
@@ -36,7 +35,14 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	m_fSizeX = 1000.f;
 	m_fSizeY = 500.f;
 
-	
+	//CManagement* pManagement = CManagement::GetInstance();
+	//if (nullptr == pManagement)
+	//	return -1;
+	//pManagement->AddRef();
+	//
+	//
+	//
+	//Safe_Release(pManagement);
 		// 어떤 npc가 선택됐는가?
 	which = 0;
 
@@ -51,27 +57,27 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	//float yyy[9] = { 315, 375, 440, 375, 440, 375, 375, 440, 375 };
 	float yyy[9] = { 465, 525, 590, 525, 590, 525, 525, 590, 525 };
 	
-	for (int i = 0; i < 9; ++i)
-	{
-		m_button[i] = new CUI_Button;
-		m_button[i]->Ready_GameObject();
-		m_button[i]->setPos(xxx[i], yyy[i]);
-		
-	}
+	//for (int i = 0; i < 9; ++i)
+	//{
+	//	m_button[i] = new CUI_Button;
+	//	m_button[i]->Ready_GameObject();
+	//	m_button[i]->setPos(xxx[i], yyy[i]);
+	//	
+	//}
 
-	for (int i = 0; i < 15; ++i)
-	{
-		m_buttonNPC[i] = new CUI_ButtonNPC;
-		m_buttonNPC[i]->Ready_GameObject();
-		
-	}
+	//for (int i = 0; i < 15; ++i)
+	//{
+	//	m_buttonNPC[i] = new CUI_ButtonNPC;
+	//	m_buttonNPC[i]->Ready_GameObject();
+	//	
+	//}
 
 	//다른 화면
-	m_charInter = new CUI_CharInterface;
-	m_charInter->Ready_GameObject();
+	//m_charInter = new CUI_CharInterface;
+	//m_charInter->Ready_GameObject();
 	
-	m_shop = new CUI_Shop;
-	m_shop->Ready_GameObject();
+	//m_shop = new CUI_Shop;
+	//m_shop->Ready_GameObject();
 	
 
 	return S_OK;
@@ -128,16 +134,16 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	//버튼
 	if (m_cansee)
 	{
-		for (int i = 0; i < 9; ++i)
-			m_button[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
-		for (int i = 0; i < 15; ++i)
-		{
-			if(i-1 < npcnumm)
-				m_buttonNPC[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
-		}
+		//for (int i = 0; i < 9; ++i)
+		//	m_button[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
+		//for (int i = 0; i < 15; ++i)
+		//{
+		//	if(i-1 < npcnumm)
+		//		m_buttonNPC[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
+		//}
 	}
 
-	m_shop->Update_GameObject(fTimeDelta, m_IsTap, 0);
+	//m_shop->Update_GameObject(fTimeDelta);
 
 	Safe_Release(pManagement);
 	Safe_Release(server);
@@ -164,24 +170,24 @@ void CUI_ClassTap::Render_GameObject()
 			return;
 		pManagement->AddRef();
 
-		m_shop->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
+		//m_shop->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
 
-		for(int i=0;i<9;++i)
-			m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
+		//for(int i=0;i<9;++i)
+		//	m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
 
-		for (int i = 0; i < 15; ++i)
-		{
-			
-			if (i - 1 < npcnumm)
-			{ 
-				if (i == which)
-					m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
-				else
-					m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
-			}
-			
-			
-		}
+		//for (int i = 0; i < 15; ++i)
+		//{
+		//	
+		//	//if (i - 1 < npcnumm)
+		//	//{ 
+		//		if (i == which)
+		//			m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
+		//		else
+		//			m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
+		//	//}
+		//	
+		//	
+		//}
 
 		///////////////////////////////
 
@@ -199,7 +205,7 @@ void CUI_ClassTap::Render_GameObject()
 		matWorld._42 = -m_fY + (WINCY >> 1);
 
 		m_pInvenShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		m_charInter->Render_GameObject(m_pInvenShaderCom, m_pBufferCom, m_pTextureCom);
+		//m_charInter->Render_GameObject(m_pInvenShaderCom, m_pBufferCom, m_pTextureCom);
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 		
 		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -270,12 +276,12 @@ void CUI_ClassTap::Free()
 	
 	if (m_IsClone)
 	{
-		for(int i=0;i<9;++i)
-			Safe_Delete(m_button[i]);
-		for (int i = 0; i < 15; ++i)
-			Safe_Delete(m_buttonNPC[i]);
-		Safe_Delete(m_charInter);
-		Safe_Delete(m_shop);
+		//for(int i=0;i<9;++i)
+		//	Safe_Delete(m_button[i]);
+		//for (int i = 0; i < 15; ++i)
+		//	Safe_Delete(m_buttonNPC[i]);
+		//Safe_Delete(m_charInter);
+		//Safe_Delete(m_shop);
 	}
 	
 	CGameObject::Free();
