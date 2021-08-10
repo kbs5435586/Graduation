@@ -101,7 +101,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	}
 	
 	
-	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 0);
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 	if (m_iLayerIdx == 0)
 	{
@@ -1882,9 +1882,8 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 
 	if (!m_IsStart)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
 		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
-		//m_IsFly_START = m_pObserverCom->GetSkillInfo();
 	}
 
 	if (m_IsFly_START)
@@ -1938,7 +1937,7 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 
 void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {
-	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 2);
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 3);
 	m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 
 	if (m_IsInvisible)
@@ -1956,7 +1955,7 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta)
 {
 	if (!m_IsFire)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 1);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 2);
 		m_GetFire = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 		if (m_GetFire)
 		{
@@ -2019,7 +2018,7 @@ void CPlayer::Skill_CastTeleport(const _float& fTimeDelta)
 {
 	if (!m_IsTeleport)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 2);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 3);
 		m_GetTeleport = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 		if (m_GetTeleport)
 		{
