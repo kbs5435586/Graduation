@@ -74,21 +74,25 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 _int CNPC::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
-	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
-	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
-
-
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
 
+	m_IsShow = server->Get_ShowNPC(m_iLayerIdx);
+	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
+
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY);
+
+	if (m_IsShow)
+	{
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		m_pTransformCom->Set_PositionY(fY);
+	}
 
 	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
@@ -179,7 +183,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
 
-	if (server->Get_ShowNPC(m_iLayerIdx))
+	if (m_IsShow)
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{

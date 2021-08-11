@@ -110,10 +110,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	if (!m_IsFly_START && !m_IsFly_ING && !m_IsFly_END)
-	{	
-		m_pTransformCom->Set_PositionY(fY);
+	if (m_IsShow)
+	{
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		if (!m_IsFly_START && !m_IsFly_ING && !m_IsFly_END)
+		{
+			m_pTransformCom->Set_PositionY(fY);
+		}
 	}
 	
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
@@ -168,7 +171,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_eCurClass == CLASS::CLASS_MAGE)
 	{
 		//Z
-		Skill_CastFire(fTimeDelta, fY);
+		//Skill_CastFire(fTimeDelta, fY);
 		//X
 		Skill_CastTeleport(fTimeDelta);
 		
@@ -176,7 +179,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	else if (m_eCurClass == CLASS::CLASS_ARCHER)
 	{
 		//Z
-		Skill_Fly(fTimeDelta, fY);
+		//Skill_Fly(fTimeDelta, fY);
 		//X
 		Skill_Invisible(fTimeDelta);
 	}
@@ -1376,6 +1379,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_attack_packet();
 			server->Set_Attack_CoolTime(high_resolution_clock::now());
 			server->send_animation_packet(A_ATTACK);
+			CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+				return;
 		}
 
 		if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -1398,9 +1404,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
 			//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
 			//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-			CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-				return;
 		}
 		m_IsOnce = true;
 		m_IsHit = true;

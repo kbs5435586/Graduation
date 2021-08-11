@@ -3,6 +3,7 @@
 #include "Debug_Camera.h"
 #include "Server_Manager.h"
 #include "Player.h"
+#include "UI_ClassTap.h"
 
 CDebug_Camera::CDebug_Camera()
 	: CCamera()
