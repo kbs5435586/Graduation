@@ -99,6 +99,7 @@ public:
 	bool is_object(int id);
 	void is_flag_near(int flag);
 	bool is_attack_detect(int a, int b);
+	bool is_attack_view(int attack, int gethit);
 	bool check_basic_collision(int a, int b);
 	bool check_obb_collision(int a, int b);
 

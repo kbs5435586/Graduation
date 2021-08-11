@@ -121,7 +121,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
-	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive)
+	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive && !m_IsDead)
 		Input_Key(fTimeDelta);
 
 	switch (m_cMoveCondition)
@@ -1374,6 +1374,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		{
 			server->send_attack_packet();
 			server->Set_Attack_CoolTime(high_resolution_clock::now());
+			server->send_animation_packet(A_ATTACK);
 		}
 
 		if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -1398,7 +1399,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 				return;
 		}
-		server->send_animation_packet(A_ATTACK);
 		m_IsOnce = true;
 		m_IsHit = true;
 		//m_IsCombat = true;

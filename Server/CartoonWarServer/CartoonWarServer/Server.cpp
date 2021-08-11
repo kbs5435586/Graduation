@@ -126,7 +126,22 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ATTACK:
     {
         cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
-        //do_attack(user_id);
+        for (int i = 0; i < OBJECT_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (user_id == i)
+                continue;
+            if (!is_attackable(i, user_id))
+                continue;
+            if (g_clients[i].m_team == g_clients[user_id].m_team)
+                continue;
+            if (!is_attack_view(i, user_id))
+                continue;
+
+            g_clients[user_id].m_attack_target = i;
+            do_battle(user_id);
+        }
     }
     break;
     case CS_PACKET_ANIMATION:
@@ -1366,11 +1381,8 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     //}
     SESSION& n = g_clients[npc_id];
 
-    if (ST_ACTIVE == g_clients[n.m_owner_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
+    if (ST_ACTIVE == g_clients[n.m_owner_id].m_status && ST_ACTIVE == g_clients[npc_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
     {
-        if (FUNC_DEAD == n.m_last_order)
-            return;
- 
         switch (func_id)
         {
         case FUNC_NPC_ATTACK:
@@ -1461,9 +1473,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
     bool isMove = false;
     if (ST_ACTIVE == g_clients[player_id].m_status) // NPC를 소유한 플레이어가 활성화 되어 있을때
     {
-        if (FUNC_DEAD == g_clients[player_id].m_last_order)
-            return;
-
         switch (func_id)
         {
         case FUNC_PLAYER_STRAIGHT:
@@ -1528,7 +1537,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             continue;
         if (ST_ACTIVE != c.second.m_status)
             continue;
-        if (FUNC_DEAD == c.second.m_last_order)
+        if (ST_DEAD == c.second.m_status)
             continue;
         if (false == is_near(c.second.m_id, player_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
@@ -1685,7 +1694,6 @@ void Server::do_timer()
             case FUNC_NPC_ATTACK:
             case FUNC_NPC_HOLD:
             case FUNC_BATTLE:
-            case FUNC_DEAD:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
             case FUNC_PLAYER_IDLE:
@@ -2212,7 +2220,7 @@ void Server::do_attack(int npc_id)
 
 void Server::do_dead(int id)
 {
-    add_timer(id, FUNC_DEAD, 3000);
+    //add_timer(id, FUNC_DEAD, 3000);
     for (int i = 0; i < NPC_START; ++i)
     {
         if (is_near(id, i)) // 죽은애 주변에 있는 플레이어에게
@@ -2294,6 +2302,30 @@ bool Server::is_attackable(int a, int b)
         return true;
     else
         return false;
+}
+
+bool Server::is_attack_view(int attack, int gethit)
+{
+    _vec3* at_pos = g_clients[attack].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3* at_look = g_clients[attack].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    _vec3* gh_pos = g_clients[gethit].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    _vec3 t_look = *gh_pos - *at_pos;
+    t_look = Vector3_::Normalize(t_look);
+
+    float PdotProduct = (at_look->x * t_look.x) + (at_look->y * t_look.y) + (at_look->z * t_look.z); // 내각
+    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+    float PoutProduct = (at_look->x * t_look.z) - (at_look->z * t_look.x); // 앞에 x 벡터 기준 각도 차이
+    if (PoutProduct > 0) // 양수이면 t_look는 at_look로 부터 반시계
+        radian *= -1.f;
+
+    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+    if (NPCangle > 45.f || NPCangle < -45.f) // npc가 공격할 대상을 안바라볼때
+        return false;
+    else
+        return true;
 }
 
 bool Server::is_attack_detect(int a, int b)
@@ -2447,6 +2479,8 @@ void Server::do_battle(int id)
     g_clients[att.m_attack_target].m_hp -= ATTACK_DAMAGE;
     if (g_clients[att.m_attack_target].m_hp <= 0) // 죽은 상태면
     {
+        if (ST_DEAD == g_clients[att.m_attack_target].m_status)
+            return;
         g_clients[att.m_attack_target].m_hp = 0;
         //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
         g_clients[att.m_attack_target].m_status = ST_DEAD;
@@ -2473,7 +2507,8 @@ void Server::do_battle(int id)
             // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
             send_attacked_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
         }
-        add_timer(id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
+        if (!is_player(id))
+            add_timer(id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
     }
 }
 
@@ -2608,7 +2643,7 @@ void Server::worker_thread()
             do_battle(id);
             delete overEx;
             break;
-        case FUNC_DEAD:
+       /* case FUNC_DEAD:
             cout << id << "is dead\n";
             if (is_player(id))
             {
@@ -2619,7 +2654,7 @@ void Server::worker_thread()
                 g_clients[id].m_status = ST_SLEEP;
             }
             delete overEx;
-            break;
+            break;*/
         case FUNC_CHECK_FLAG:
             for (int i = 0; i < 5; ++i)
                 is_flag_near(i);
