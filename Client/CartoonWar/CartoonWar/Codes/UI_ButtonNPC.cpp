@@ -30,19 +30,19 @@ HRESULT CUI_ButtonNPC::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_iClass = tempNum;
+	m_ButtonNow = tempNum;
 	++tempNum;
 	//m_fX = 610.f + ((m_iClass % 5) * 45.f);
 	//m_fY = 475.f + ((m_iClass / 5) * 45.f);
-	if (m_iClass == 0)
+	if (m_ButtonNow == 0)
 	{
 		m_fX = (WINCX / 2) + 40.f;
 		m_fY = 615.f;
 	}
 	else
 	{
-		m_fX = (WINCX / 2) - 5 + (((m_iClass - 1) % 3) * 45.f);
-		m_fY = 660.f + (((m_iClass - 1) / 3) * 45.f);
+		m_fX = (WINCX / 2) - 5 + (((m_ButtonNow - 1) % 3) * 45.f);
+		m_fY = 660.f + (((m_ButtonNow - 1) / 3) * 45.f);
 	}
 	//m_fX = (WINCX / 2) - 5 + ((m_iClass % 3) * 45.f);
 	//m_fY = 615.f + ((m_iClass / 3) * 45.f);
@@ -69,7 +69,7 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 
 		npcnumm = dynamic_cast<CUI_ClassTap*>(uTemp)->GetNPCNum();
 
-		if (m_iClass < npcnumm + 1)
+		if (m_ButtonNow < npcnumm + 1)
 		{
 			if (pManagement->Key_Pressing(KEY_LBUTTON))
 			{
@@ -95,7 +95,7 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 					m_fSizeY = 40.f;
 
 					CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
-					dynamic_cast<CUI_ClassTap*>(UI)->SetWhich(m_iClass);
+					dynamic_cast<CUI_ClassTap*>(UI)->SetWhich(m_ButtonNow);
 
 					IsDown = false;
 				}
@@ -133,17 +133,19 @@ void CUI_ButtonNPC::Render_GameObject()
 		//nowNum = dynamic_cast<CUI_ClassTap*>(lTemp)->GetNPCNum();
 
 		_uint now{};
-		if (m_iClass == 0)
+		if (m_ButtonNow == 0)
 		{
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_iClass);
-			now = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_ButtonNow);
+			//now = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
+			now = (_uint)pTemp->GetClass();
 		}
 		else
 		{
-			if (m_iClass < npcnumm + 1)
+			if (m_ButtonNow < npcnumm + 1)
 			{
-				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_iClass - 1);
-				now = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_ButtonNow - 1);
+				//now = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
+				now = (_uint)pTemp->GetClass();
 			}
 		}
 
@@ -152,7 +154,7 @@ void CUI_ButtonNPC::Render_GameObject()
 
 
 		REP tRep = {};
-		if (w == m_iClass)
+		if (w == m_ButtonNow)
 			tRep.m_arrInt[0] = 1;
 		else
 			tRep.m_arrInt[0] = 99;
@@ -180,7 +182,7 @@ void CUI_ButtonNPC::Render_GameObject()
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 
-		if (m_iClass < npcnumm + 1)
+		if (m_ButtonNow < npcnumm + 1)
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(now), TEXTURE_REGISTER::t0);
 		CDevice::GetInstance()->UpdateTable();
 		m_pBufferCom->Render_VIBuffer();

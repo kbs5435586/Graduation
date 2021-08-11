@@ -40,6 +40,9 @@ public:
 	UNIT&									GetPlayerInfo() { return m_tUnit; }
 	ENVITYPE&								GetEnviType(){return m_eEnviType;}
 public:
+	void									SetClass(CLASS _c) { m_eCurClass = _c; }
+
+public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
 	virtual HRESULT							CreateInputLayout();

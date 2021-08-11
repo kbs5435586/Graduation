@@ -215,9 +215,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	//	return E_FAIL;
 
 
-
-
-
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Player", CPlayer::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Animals", CAnimals::Create())))
@@ -280,12 +277,18 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Skill(L"Layer_Skill", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
+
+
+
+
 	return S_OK;
 }
 
@@ -560,6 +563,12 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+	
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Skill(const _tchar* pLayerTag, CManagement* pManagement)
+{
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;

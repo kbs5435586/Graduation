@@ -102,7 +102,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	if(GetAsyncKeyState('L'))
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 	
-	m_eCurClass = (CLASS)m_iCurMeshNum;
+	//m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
 
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)

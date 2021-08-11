@@ -76,16 +76,18 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 		{ 
 			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
 			m_tUnit = pTemp->GetPlayerInfo();
-			m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();	
+			//m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();	
+			m_eCurClass = pTemp->GetClass();
 		}
 		else
 		{
 			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
 			m_tUnit = pTemp->GetPlayerInfo();
-			m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();	
+			//m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();	
+			m_eCurClass = pTemp->GetClass();
 		}
 
-		m_eCurClass = (CLASS)m_iCurMeshNum;
+		//m_eCurClass = (CLASS)m_iCurMeshNum;
 		
 		Change_Class();
 		if (m_IsActive)
@@ -129,7 +131,8 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 		//1,2,7
 		CAMERADESC		tICameraDesc;
 		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-		if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
+		//if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
+		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
 		{
 			tICameraDesc.vEye = m + _vec3(0.f, 8.5f, -12.f);
 			tICameraDesc.vAt = m + _vec3(0.f, 6.f, 0.f);
@@ -1045,14 +1048,14 @@ void CPlayer_Inven::Input_Inven_Key(const _float& fTimeDelta)
 
 
 
-	if (GetAsyncKeyState('1'))
-	{
-		m_iCurMeshNum++;
-		if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
-			m_iCurMeshNum = 0;
-		m_iCurAnimIdx = 0;
-		m_eCurClass = (CLASS)m_iCurMeshNum;
-	}
+	//if (GetAsyncKeyState('1'))
+	//{
+	//	m_iCurMeshNum++;
+	//	if (m_iCurMeshNum >= (_uint)CLASS::CLASS_END - 1)
+	//		m_iCurMeshNum = 0;
+	//	m_iCurAnimIdx = 0;
+	//	m_eCurClass = (CLASS)m_iCurMeshNum;
+	//}
 }
 
 void CPlayer_Inven::Death(const _float& fTimeDelta)

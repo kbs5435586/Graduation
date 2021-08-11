@@ -76,11 +76,11 @@ private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
 private:
-	CLASS									m_eCurClass = CLASS::CLASS_END;
-	CLASS									m_ePreClass = CLASS::CLASS_END;
+	//CLASS									m_eCurClass = CLASS::CLASS_END;
+	//CLASS									m_ePreClass = CLASS::CLASS_END;
 	//UNIT									m_tPlayer = {};
 private:
-	_uint									m_iCurMeshNum = 0;
+	//_uint									m_iCurMeshNum = 0;
 
 	_vec3									m = {};
 	_bool									m_IsActive = {};

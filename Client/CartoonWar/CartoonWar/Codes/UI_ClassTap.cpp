@@ -35,49 +35,10 @@ HRESULT CUI_ClassTap::Ready_GameObject(void* pArg)
 	m_fSizeX = 1000.f;
 	m_fSizeY = 500.f;
 
-	//CManagement* pManagement = CManagement::GetInstance();
-	//if (nullptr == pManagement)
-	//	return -1;
-	//pManagement->AddRef();
-	//
-	//
-	//
-	//Safe_Release(pManagement);
-		// 어떤 npc가 선택됐는가?
 	which = 0;
 
-	////////////////////
-	//1200  600  250 
-	// 250 380 380 250 250 315 120 120 185
-	// m_fX 
-	// 
-	// 클래스 버튼
-	//float xxx[9] = { 350, 220, 220, 350, 350, 285, 480, 480, 415 };
 	float xxx[9] = { m_fX - 250, m_fX - 380, m_fX - 380, m_fX - 250, m_fX - 250, m_fX - 315, m_fX - 120, m_fX - 120, m_fX - 185 };
-	//float yyy[9] = { 315, 375, 440, 375, 440, 375, 375, 440, 375 };
 	float yyy[9] = { 465, 525, 590, 525, 590, 525, 525, 590, 525 };
-	
-	//for (int i = 0; i < 9; ++i)
-	//{
-	//	m_button[i] = new CUI_Button;
-	//	m_button[i]->Ready_GameObject();
-	//	m_button[i]->setPos(xxx[i], yyy[i]);
-	//	
-	//}
-
-	//for (int i = 0; i < 15; ++i)
-	//{
-	//	m_buttonNPC[i] = new CUI_ButtonNPC;
-	//	m_buttonNPC[i]->Ready_GameObject();
-	//	
-	//}
-
-	//다른 화면
-	//m_charInter = new CUI_CharInterface;
-	//m_charInter->Ready_GameObject();
-	
-	//m_shop = new CUI_Shop;
-	//m_shop->Ready_GameObject();
 	
 
 	return S_OK;
@@ -96,25 +57,8 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 		npcnumm = LstTemp.size();	
 	}
 		
-	
 	if (pManagement->Key_Up(KEY_I))
-	{
-		//if (m_cansee)
-		//{
-		//	pManagement->Delete_All_Font();
-		//}
-		//else
-		//{
-		//	float drawX = (float)((((_float)WINCX / 2) * -1));
-		//	float drawY = (float)(((_float)WINCY / 2) - 10);
-		//
-		//	m_strGold = "Gold";
-		//	if (FAILED(pManagement->Create_Font_Buffer(L"IP", m_strGold.c_str(), 150, 150)))
-		//		return E_FAIL;
-		//}
-
 		m_cansee = !m_cansee;
-	}
 	
 	if (pManagement->Key_Up(KEY_Q))
 	{
@@ -130,20 +74,6 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	
-	//버튼
-	if (m_cansee)
-	{
-		//for (int i = 0; i < 9; ++i)
-		//	m_button[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
-		//for (int i = 0; i < 15; ++i)
-		//{
-		//	if(i-1 < npcnumm)
-		//		m_buttonNPC[i]->Update_GameObject(fTimeDelta, m_IsTap, 0);
-		//}
-	}
-
-	//m_shop->Update_GameObject(fTimeDelta);
-
 	Safe_Release(pManagement);
 	return _int();
 }
@@ -168,27 +98,6 @@ void CUI_ClassTap::Render_GameObject()
 			return;
 		pManagement->AddRef();
 
-		//m_shop->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pButtonTextureCom);
-
-		//for(int i=0;i<9;++i)
-		//	m_button[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
-
-		//for (int i = 0; i < 15; ++i)
-		//{
-		//	
-		//	//if (i - 1 < npcnumm)
-		//	//{ 
-		//		if (i == which)
-		//			m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
-		//		else
-		//			m_buttonNPC[i]->Render_GameObject(m_pBlendShaderCom, m_pBufferCom, m_pIconTextureCom);
-		//	//}
-		//	
-		//	
-		//}
-
-		///////////////////////////////
-
 		MAINPASS	tMainPass = {};
 
 
@@ -202,8 +111,7 @@ void CUI_ClassTap::Render_GameObject()
 		matWorld._41 = m_fX - (WINCX >> 1);
 		matWorld._42 = -m_fY + (WINCY >> 1);
 
-		m_pInvenShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		//m_charInter->Render_GameObject(m_pInvenShaderCom, m_pBufferCom, m_pTextureCom);
+		//m_pInvenShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 		
 		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -211,8 +119,6 @@ void CUI_ClassTap::Render_GameObject()
 		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 		CDevice::GetInstance()->UpdateTable();
 		m_pBufferCom->Render_VIBuffer();
-		///////////////////////////////////////////////////////////////
-		
 		
 		Safe_Release(pManagement);
 	}
@@ -226,10 +132,10 @@ HRESULT CUI_ClassTap::CreateInputLayout()
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS)))
 		return E_FAIL;
-	if (FAILED(m_pBlendShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::DEFAULT)))
-		return E_FAIL;
-	if (FAILED(m_pInvenShaderCom->Create_Shader(vecDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pBlendShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::DEFAULT)))
+	//	return E_FAIL;
+	//if (FAILED(m_pInvenShaderCom->Create_Shader(vecDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -262,25 +168,14 @@ void CUI_ClassTap::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pBlendShaderCom);
-	Safe_Release(m_pInvenShaderCom);
+	//Safe_Release(m_pBlendShaderCom);
+	//Safe_Release(m_pInvenShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pButtonTextureCom);
 	Safe_Release(m_pNPCTextureCom);
 	//Safe_Release(m_pObserverCom);
 	Safe_Release(m_pIconTextureCom);
 	
-
-	
-	if (m_IsClone)
-	{
-		//for(int i=0;i<9;++i)
-		//	Safe_Delete(m_button[i]);
-		//for (int i = 0; i < 15; ++i)
-		//	Safe_Delete(m_buttonNPC[i]);
-		//Safe_Delete(m_charInter);
-		//Safe_Delete(m_shop);
-	}
 	
 	CGameObject::Free();
 }

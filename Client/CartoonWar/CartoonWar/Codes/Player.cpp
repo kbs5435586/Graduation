@@ -82,7 +82,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
 
-	m_eCurClass = (CLASS)m_iCurMeshNum;
+	//m_eCurClass = (CLASS)m_iCurMeshNum;
 
 	Change_Class();
 	Attack(fTimeDelta);
@@ -2003,22 +2003,22 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 	}
 	else
 	{
-		//list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-		//int numver = lst.size();
-		//if (numver > 0)
-		//{
-		//	CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-		//	_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-		//
-		//	CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-		//	BRUSHINFO bTemp = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-		//	*iter0_Pos = _vec3(bTemp.vBrushPos.x, fY, bTemp.vBrushPos.z);
-		//	//*iter0_Pos = { 75,0,75 };
-		//	//
-		//	//_vec3* Ppp = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-		//	//
-		//	//BRUSHINFO asd;
-		//}
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+		int numver = lst.size();
+		if (numver > 0)
+		{
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+		
+			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
+			BRUSHINFO bTemp = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+			*iter0_Pos = _vec3(bTemp.vBrushPos.x, fY, bTemp.vBrushPos.z);
+			//*iter0_Pos = { 75,0,75 };
+			//
+			//_vec3* Ppp = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+			//
+			//BRUSHINFO asd;
+		}
 	}
 }
 
