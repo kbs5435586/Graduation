@@ -1293,11 +1293,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			if (iRand == 0)
 				m_iCurAnimIdx = m_iAttackMotion[0];
 			else
-			{}
-				m_IsActioning = true;
-				m_IsOnce = true;
-				m_IsHit = true;
-				m_IsCombat = true;
+				m_iCurAnimIdx = m_iAttackMotion[1];
+
+			m_IsActioning = true;
+			m_IsOnce = true;
+			m_IsHit = true;
+			m_IsCombat = true;
 			
 			if (m_IsFire)
 			{

@@ -97,7 +97,7 @@ private:
 	_uint									m_iCurMeshNum = 0;
 private:
 	static _float poss;
-
+	_float fLen{};
 	_float m_DamageTime{};
 public:
 	void setDTime(_float _t) { m_DamageTime = _t; }

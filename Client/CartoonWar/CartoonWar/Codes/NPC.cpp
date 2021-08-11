@@ -157,7 +157,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
-	_float fLen = vLen.Length();
+	fLen = vLen.Length();
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		m_IsOldMatrix = true;
