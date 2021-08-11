@@ -24,9 +24,9 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	_vec3 vPos = { 50.f, 10.f, 50.f };
+	_vec3 vPos = { 50.f, 150.f, 50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
 	return S_OK;
 }
 
@@ -58,12 +58,7 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 
 	//m_pTransformCom->Set_PositionY(fY + 0.8f);
 
-	
-
 	Safe_Release(pManagement);
-
-	if (m_IsDead)
-		return DEAD_OBJ;
 
 	return _int();
 }
@@ -95,7 +90,6 @@ void CFire::Render_GameObject()
 
 
 	m_tTexInfo.fFrameTime += 0.01f;
-
 	if (m_tTexInfo.fFrameTime > 1000.0f)
 	{
 		m_tTexInfo.fFrameTime = 0.0f;
@@ -139,7 +133,7 @@ HRESULT CFire::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::ALPHABLEND)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 
 	return S_OK;

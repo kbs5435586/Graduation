@@ -12,6 +12,7 @@
 #include "Terrain_Height.h"
 #include "Fire.h"
 
+#include "Throw_Arrow.h"
 CPlayer::CPlayer()
 	: CGameObject()
 {
@@ -205,7 +206,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_fParticleRunTime += fTimeDelta;
 	}
-
 	if (m_fParticleRunTime >= 1.f)
 	{
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
@@ -336,10 +336,9 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	m_pCollider_OBB->Render_Collider();
-	m_pCollider_Attack->Render_Collider(1);
-	//m_pCollider_Hit->Render_Collider();
-	m_pCollider_AABB->Render_Collider();
+	//m_pCollider_OBB->Render_Collider();
+	//m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_AABB->Render_Collider();
 
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	m_iBlurCnt++;
@@ -437,8 +436,8 @@ void CPlayer::Render_GameObject_Map()
 	}
 
 
-	m_pCollider_OBB->Render_Collider();
-	m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_OBB->Render_Collider();
+	//m_pCollider_Attack->Render_Collider(1);
 	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
@@ -938,6 +937,7 @@ void CPlayer::Change_Class()
 {
 	if (m_eCurClass != m_ePreClass)
 	{
+		m_fRunSoundTime = 0.f;
 		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
@@ -961,7 +961,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
@@ -1379,16 +1379,18 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		if (m_eCurClass == CLASS::CLASS_ARCHER)
 		{
+			CGameObject* pOwnPlayer = nullptr;
 			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+				return;
+			dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+		}
+		else if (m_eCurClass == CLASS::CLASS_WORKER)
+		{
+			_matrix matTemp = m_pTransformCom->Get_Matrix();
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
 				return;
 		}
-		//else if (m_eCurClass == CLASS::CLASS_WORKER)
-		//{
-		//	_matrix matTemp = m_pTransformCom->Get_Matrix();
-		//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-		//		return;
-		//}
 		else
 		{
 			//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
@@ -1501,6 +1503,30 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsRun = true;
 		//m_IsActioning = true;
 		m_IsParticleRun = true;
+
+		//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+		//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+		//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+		//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+		//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN, 0.f, );
+
+		m_fRunSoundTime += fTimeDelta;
+		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
+		{
+			if (m_fRunSoundTime >= 6.f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
+				m_fRunSoundTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fRunSoundTime >= 1.f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
+				m_fRunSoundTime = 0.f;
+			}
+		}
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
@@ -1522,6 +1548,26 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			{
 				server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
 				m_cLastMoveCondition = m_cMoveCondition;
+			}
+		}
+
+		m_IsRun = false;
+
+		m_fRunSoundTime += fTimeDelta;
+		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
+		{
+			if (m_fRunSoundTime >= 24.f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
+				m_fRunSoundTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fRunSoundTime >= 0.5f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
+				m_fRunSoundTime = 0.f;
 			}
 		}
 	}

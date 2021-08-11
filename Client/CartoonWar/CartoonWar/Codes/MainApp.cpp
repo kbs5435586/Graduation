@@ -18,8 +18,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_Management((_uint)SCENEID::SCENE_END)))
 		return E_FAIL;
-	//if (FAILED(Create_FbxManager()))
-	//	return E_FAIL;
+	if (FAILED(Create_FbxManager()))
+		return E_FAIL;
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
@@ -172,9 +172,10 @@ HRESULT CMainApp::Ready_Sound()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, ATTACK, "../Bin/Resource/Sounds/Sword_Whoosh_Attack_1.wav", 0.2f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/Walk_Run.wav", 0.2f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/WR1.wav", 0.2f)))
 		return E_FAIL;
-
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, RUN, "../Bin/Resource/Sounds/Walk_Run.wav", 0.2f)))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -118,7 +118,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     if (dwRefCnt = Safe_Release(pMainApp))
         _MSG_BOX("CMainApp Release Failed");
-    //g_FbxManager->Destroy();
+    g_FbxManager->Destroy();
 
     return (int) msg.wParam;
 }

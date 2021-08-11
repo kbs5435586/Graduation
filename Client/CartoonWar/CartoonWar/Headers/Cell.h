@@ -20,7 +20,12 @@ public:
     _ubyte                      Get_CellIndex()const { return m_iIndex; }
     _vec3*                      GetPoint() { return m_vPoint; }
     _bool&                      GetIsLast() { return m_IsLast; }
-    CLine*                      GetLine(LINE eLine) { return m_pLine[(_uint)eLine]; }
+    CLine*                      GetLine(LINE eLine)
+    {
+        if (m_pLine[(_uint)eLine] == nullptr)
+            return nullptr;
+        return m_pLine[(_uint)eLine];
+    }
 public:
     void                        Set_Neighbor(NEIGHBOR eNeighbor, CCell* pCell);
 private:

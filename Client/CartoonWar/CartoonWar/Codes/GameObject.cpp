@@ -120,3 +120,8 @@ void CGameObject::Free()
 		Safe_Release(Pair.second);
 	m_mapComponent.clear();
 }
+
+void CGameObject::SetComponentTag(_tchar* pTag)
+{
+	lstrcpy(m_pComponentTag, pTag);
+}
