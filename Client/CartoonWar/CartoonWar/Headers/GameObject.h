@@ -37,8 +37,11 @@ public:
 	CLASS&									GetClass() { return m_eCurClass; }
 	TEAM&									GetCurTeam() { return m_eCurTeam; }
 	TEAM&									GetPreTeam() { return m_ePreTeam; }
-	ENVITYPE&								GetEnviType() { return m_eEnviType; }
 	UNIT&									GetPlayerInfo() { return m_tUnit; }
+	ENVITYPE&								GetEnviType(){return m_eEnviType;}
+public:
+	void									SetClass(CLASS _c) { m_eCurClass = _c; }
+
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:

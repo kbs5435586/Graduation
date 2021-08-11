@@ -47,7 +47,7 @@ private:
 	_bool IsDown = {};
 	POINT MousePos;
 
-	_int m_iClass{};
+	CLASS m_ButtonClass{};
 	//_int whichnum{};
 
 	_vec2 vTemp{};

@@ -89,7 +89,7 @@ _int CMap_Camera::Update_GameObject(const _float& fTimeDelta)
 	
 	
 		_vec3 vPos, vRight, vUp, vLook;
-		vPos = _vec3(pTransform->Get_StateInfo(CTransform::STATE_POSITION)->x, 160.f, pTransform->Get_StateInfo(CTransform::STATE_POSITION)->z);
+		vPos = _vec3(pTransform->Get_StateInfo(CTransform::STATE_POSITION)->x, 170.f, pTransform->Get_StateInfo(CTransform::STATE_POSITION)->z);
 		vRight = _vec3(0.1f,0.f,0.f);
 		//vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 		vUp = _vec3(0.f, 0.f, 0.1f);

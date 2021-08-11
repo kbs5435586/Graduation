@@ -6,6 +6,7 @@
 #include "Collider.h"
 #include "Transform.h"
 #include "LowPoly.h"
+//#include "Skill_Fire.h"
 #include "Throw_Arrow.h"
 #include "Fire.h"
 _IMPLEMENT_SINGLETON(CCollisionMgr)
@@ -31,7 +32,8 @@ void CCollisionMgr::Update_CollisionManager(const _float& fTimeDelta)
 	Throw_to_NPC_Collision();
 	Throw_to_Player_Collision();
 	Throw_to_Deffend_Collision();
-
+	Skill_to_NPC_Collision(fTimeDelta);
+	Teleport_to_NPC_Collision(fTimeDelta);
 	//AABB
 	Enviroment_to_NPC();
 	Enviroment_to_Player();
@@ -462,16 +464,16 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 	//리스트로 포문을 돌리지 말고 각각 받아와서 체크
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
 	{
-		if (dynamic_cast<CFire*>(iter0)->getfirend() == 0)
-		{
-			one = true;
-			oneP = iter0;
-		}
-		if (dynamic_cast<CFire*>(iter0)->getfirend() == 1)
-		{
-			two = true;
-			twoP = iter0;
-		}
+		//if (dynamic_cast<CFire*>(iter0)->getfirend() == 0)
+		//{
+		//	one = true;
+		//	oneP = iter0;
+		//}
+		//if (dynamic_cast<CFire*>(iter0)->getfirend() == 1)
+		//{
+		//	two = true;
+		//	twoP = iter0;
+		//}
 	}
 	//if(one)
 	//	oneP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 0);
@@ -533,14 +535,13 @@ void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
 
 void CCollisionMgr::Skill_to_NPC_Collision(const _float& fTimeDelta)
 {
+
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
 	{
 		if (dynamic_cast<CFire*>(iter0)->getCheck())
 		{
 			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 			{
-				if (!iter0->GetIsShow() || !iter1->GetIsShow())
-					continue;
 
 				_float fLength = 0.f;
 

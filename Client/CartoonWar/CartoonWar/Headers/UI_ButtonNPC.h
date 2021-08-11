@@ -48,7 +48,7 @@ private:
 	_bool IsDown = {};
 	POINT MousePos;
 
-	_int m_iClass{};
+	_int m_ButtonNow{};
 	static _int tempNum;
 	_uint npcnumm{};
 	_bool* m_Active{};

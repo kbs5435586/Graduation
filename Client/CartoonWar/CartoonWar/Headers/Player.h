@@ -151,7 +151,7 @@ public:
 	_float& getInvisibleMaxTime() { return m_fInvisibleCoolTImeMax; }
 
 private:
-	void Skill_CastFire(const _float& fTimeDelta);
+	void Skill_CastFire(const _float& fTimeDelta, _float fY);
 	void Skill_FireTime(const _float& fTimeDelta);
 	//CGameObject* fireskill = nullptr;
 	//_int fireCnt = {};

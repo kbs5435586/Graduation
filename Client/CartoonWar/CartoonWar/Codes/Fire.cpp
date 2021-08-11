@@ -50,13 +50,13 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	//if (nullptr == pTerrainBuffer)
-	//	return -1;
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)pManagement->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
 
-	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	//m_pTransformCom->Set_PositionY(fY + 0.8f);
+	m_pTransformCom->Set_PositionY(fY + 0.8f);
 
 	Safe_Release(pManagement);
 
@@ -96,7 +96,7 @@ void CFire::Render_GameObject()
 	}
 
 	m_tTexInfo.vScrollSpeed = _vec3(1.3f, 2.1f, 2.3f);
-	m_tTexInfo.vScale = _vec3(1.f,2.f,3.f);
+	m_tTexInfo.vScale = _vec3(1.f, 2.f, 3.f);
 
 	DISTORTION	tDistortion = {};
 	tDistortion.fDistortion1 = _vec2(0.1f, 0.2f);
@@ -104,7 +104,7 @@ void CFire::Render_GameObject()
 	tDistortion.fDistortion3 = _vec2(0.1f, 0.1f);
 	tDistortion.fDistortionScale = 0.8f;
 	tDistortion.fDistortionBias = 0.5f;
-	
+
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
@@ -152,7 +152,7 @@ CFire* CFire::Create()
 	return pInstance;
 }
 
-CGameObject* CFire::Clone_GameObject(void* pArg , _uint iIdx)
+CGameObject* CFire::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CFire* pInstance = new CFire(*this);
 

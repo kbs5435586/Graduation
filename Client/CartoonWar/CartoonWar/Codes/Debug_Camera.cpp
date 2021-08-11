@@ -28,7 +28,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(300.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(1000.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -43,7 +43,10 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 {
 
-	//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
+	m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
+	if (!m_Active)
+		//SetCursorPos(m_ptMouse.x, m_ptMouse.y);
 
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -79,31 +82,31 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-		/*	if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
-			{
-				m_pTransform->Go_Straight(fTimeDelta);
-			}
-			if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
-			{
-				m_pTransform->BackWard(fTimeDelta);
-			}
-			if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
-			{
-				m_pTransform->Go_Left(fTimeDelta);
-			}
-			if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
-			{
-				m_pTransform->Go_Right(fTimeDelta);
-			}
-			_long	MouseMove = 0;
-			if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-			{
-				m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-			}
-			if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-			{
-				m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-			}*/
+		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+		{
+			m_pTransform->Go_Straight(fTimeDelta);
+		}
+		if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
+		{
+			m_pTransform->BackWard(fTimeDelta);
+		}
+		if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
+		{
+			m_pTransform->Go_Left(fTimeDelta);
+		}
+		if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
+		{
+			m_pTransform->Go_Right(fTimeDelta);
+		}
+		_long	MouseMove = 0;
+		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+		{
+			m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+		}
+		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+		{
+			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		}
 	}
 
 	{

@@ -124,7 +124,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 
-	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 	if (which == 0)
 	{

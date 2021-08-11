@@ -7,6 +7,7 @@
 #include "NPC.h"
 #include "Throw_Arrow.h"
 
+
 // Shape
 #include "MyRect.h"
 #include "Cube.h"
@@ -186,6 +187,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Skill_Fire", CSkill_Fire::Create())))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Run", CParticle_Run::Create())))
@@ -262,6 +265,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
+
+
+
+
 	return S_OK;
 }
 
@@ -403,7 +410,7 @@ HRESULT CScene_Stage::Ready_Layer_Map_Camera(const _tchar* pLayerTag, CManagemen
 	//130.f,100.f,300.f
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(130.f, 150.f, 300.f);
+	tCameraDesc.vEye = _vec3(130.f, 160.f, 300.f);
 	//tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tCameraDesc.vAt = _vec3(130.f, 150.f, 301.f);
 	//tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
@@ -413,7 +420,7 @@ HRESULT CScene_Stage::Ready_Layer_Map_Camera(const _tchar* pLayerTag, CManagemen
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 600.f;
+	tProjDesc.fFar = 1500.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc, (_short)1)))
 		return E_FAIL;
@@ -463,14 +470,14 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Button", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&m_Pos[i])))
 			return E_FAIL;
 	}
-	// 11 - 19 NPC 버튼
-	for (int i = 0; i < 9; ++i)
+	// 11 - 20 NPC 버튼
+	for (int i = 0; i < 10; ++i)
 	{
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_ButtonNPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 			return E_FAIL;
 	}
 
-	// 20 클래스 탭
+	// 21 클래스 탭
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_ClassTap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	
@@ -534,6 +541,14 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Skill(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	return S_OK;
 }
