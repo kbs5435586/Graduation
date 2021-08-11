@@ -44,13 +44,11 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 	{
 		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", g_iPlayerIdx);;
 		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-		//eClass = (CLASS)dynamic_cast<CPlayer*>(pGameObject)->GetCurMesh();
 	}
 	else
 	{
 		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", L"Com_Transform", m_tOrder.iIdx);;
 		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx);
-		//eClass = (CLASS)dynamic_cast<CNPC*>(pGameObject)->GetCurMesh();
 	}
 	CLASS eClass =pGameObject->GetClass();
 	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);

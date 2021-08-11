@@ -53,7 +53,7 @@ HRESULT CUI_Button::Ready_GameObject(void* pArg)
 
 _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 {
-	CGameObject* uTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+	CGameObject* uTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_cansee = dynamic_cast<CUI_ClassTap*>(uTemp)->GetBool();
 
 	if (m_cansee)
@@ -88,7 +88,7 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 				m_fSizeY = 50.f;
 
 
-				CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+				CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 				_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 
 				_uint m_iCurMeshNum{};
@@ -238,7 +238,7 @@ void CUI_Button::Render_GameObject()
 
 		REP tRep = {};
 
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 		_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 
 		_uint m_iCurMeshNum{};

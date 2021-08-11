@@ -11,6 +11,7 @@
 #define NO_EVENT 0
 
 #define MAX_BLURCNT 10
+#define TAPIDX 21
 
 const float	g_Near = 0.1f;
 const float g_Far = 300.f;

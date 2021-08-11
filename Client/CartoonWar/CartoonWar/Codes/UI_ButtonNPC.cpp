@@ -34,19 +34,29 @@ HRESULT CUI_ButtonNPC::Ready_GameObject(void* pArg)
 	++tempNum;
 	//m_fX = 610.f + ((m_iClass % 5) * 45.f);
 	//m_fY = 475.f + ((m_iClass / 5) * 45.f);
-	m_fX = (WINCX / 2) - 5 + ((m_iClass % 3) * 55.f);
-	m_fY = 615.f + ((m_iClass / 3) * 55.f);
+	if (m_iClass == 0)
+	{
+		m_fX = (WINCX / 2) + 40.f;
+		m_fY = 615.f;
+	}
+	else
+	{
+		m_fX = (WINCX / 2) - 5 + (((m_iClass - 1) % 3) * 45.f);
+		m_fY = 660.f + (((m_iClass - 1) / 3) * 45.f);
+	}
+	//m_fX = (WINCX / 2) - 5 + ((m_iClass % 3) * 45.f);
+	//m_fY = 615.f + ((m_iClass / 3) * 45.f);
 
 
-	m_fSizeX = 50.f;
-	m_fSizeY = 50.f;
+	m_fSizeX = 40.f;
+	m_fSizeY = 40.f;
 
 	return S_OK;
 }
 
 _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 {
-	CGameObject* uTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+	CGameObject* uTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_cansee = dynamic_cast<CUI_ClassTap*>(uTemp)->GetBool();
 
 	if (m_cansee)
@@ -70,8 +80,8 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 				{
 					if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
 					{
-						m_fSizeX = 40.f;
-						m_fSizeY = 40.f;
+						m_fSizeX = 30.f;
+						m_fSizeY = 30.f;
 						IsDown = true;
 					}
 				}
@@ -81,10 +91,10 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 			{
 				if (pManagement->Key_Up(KEY_LBUTTON))
 				{
-					m_fSizeX = 50.f;
-					m_fSizeY = 50.f;
+					m_fSizeX = 40.f;
+					m_fSizeY = 40.f;
 
-					CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+					CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 					dynamic_cast<CUI_ClassTap*>(UI)->SetWhich(m_iClass);
 
 					IsDown = false;
@@ -137,7 +147,7 @@ void CUI_ButtonNPC::Render_GameObject()
 			}
 		}
 
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 		int w = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 
 

@@ -511,6 +511,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\09. MapUser">
       <UniqueIdentifier>{49774511-c95f-41cc-80ad-3992b2ac068e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\10. Skill_Fire">
+      <UniqueIdentifier>{5939b1ac-c105-4338-95dc-b63a0726010e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">

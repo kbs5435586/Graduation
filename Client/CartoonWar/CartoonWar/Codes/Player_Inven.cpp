@@ -70,7 +70,7 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 {
 		m_pTransformCom->Set_PositionY(0.f);
 
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 		_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 		if(which == 0)
 		{ 
@@ -111,7 +111,7 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 
-	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
 	if (m_IsActive)

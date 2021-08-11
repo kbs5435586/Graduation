@@ -37,7 +37,7 @@ HRESULT CUI_CharInterface::Ready_GameObject(void* pArg)
 
 _int CUI_CharInterface::Update_GameObject(const _float& fTimeDelta)
 {
-	CGameObject* uTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
+	CGameObject* uTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_cansee = dynamic_cast<CUI_ClassTap*>(uTemp)->GetBool();
 
 	return _int();
