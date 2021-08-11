@@ -19,20 +19,22 @@ HRESULT CLowPoly::Ready_Prototype()
 
 HRESULT CLowPoly::Ready_GameObject(void* pArg)
 {
+	m_IsClone = true;
 	if (nullptr == pArg)
 	{
 		return E_FAIL;
 	}
 	_tchar pTempStr[128] = {};
-
 	lstrcpy(pTempStr, (const _tchar*)pArg);
-
-	if (FAILED(Ready_Component(pTempStr)))
+	_uint iLen = lstrlen(pTempStr);
+	m_pComponentTag = new _tchar[iLen + 1];
+	lstrcpy(m_pComponentTag, pTempStr);
+	if (FAILED(Ready_Component(m_pComponentTag)))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-
-
+	//
+	//
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	_vec3 vColliderSize = { 40.f ,160.f,40.f };
@@ -70,7 +72,7 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", 0);
+		L"Layer_Player", L"Com_Transform",g_iPlayerIdx);
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
@@ -114,6 +116,7 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 
 
+
 	return _int();
 }
 
@@ -153,7 +156,7 @@ void CLowPoly::Render_GameObject()
 	}
 
 
-	m_pCollider_AABB->Render_Collider();
+	//m_pCollider_AABB->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -267,7 +270,7 @@ HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
 		return E_FAIL;
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+	if (FAILED(Add_Component(L"Com_Text ure", m_pTextureCom)))
 		return E_FAIL;
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
@@ -349,6 +352,9 @@ void CLowPoly::Free()
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pCollider_Obb);
 	Safe_Release(m_pCollider_AABB);
+
+	if (m_IsClone)
+		Safe_Delete_Array(m_pComponentTag);
 
 	CGameObject::Free();
 }

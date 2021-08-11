@@ -50,6 +50,11 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", L"Com_Transform", m_tOrder.iIdx);;
 		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx);
 	}
+
+	if (pGameObject == nullptr)
+		return DEAD_OBJ;
+
+
 	CLASS eClass = pGameObject->GetClass();
 	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	SetPosition(vPos, eClass);
@@ -68,6 +73,7 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
 	
+
 	return _int();
 }
 
@@ -157,12 +163,12 @@ CGameObject* CUI_OnHead::Clone_GameObject(void* pArg, _uint iIdx)
 void CUI_OnHead::Free()
 {
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pFrustumCom);
-	CGameObject::Free();
+	CUI::Free();
 }
 
 HRESULT CUI_OnHead::Ready_Component()
@@ -190,10 +196,12 @@ HRESULT CUI_OnHead::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
+
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
+
 	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_HPBar");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))

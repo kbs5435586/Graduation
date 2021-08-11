@@ -118,56 +118,56 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	{
 
-		//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//	L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
-		//
-		//CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",g_iPlayerIdx);
-		//
-		//
-		//_vec3 vPos, vRight, vUp, vLook;
-		//vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		//vRight = {};
-		//vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
-		//vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
-		//
-		//if (m_IsFix)
-		//{
-		//	if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
-		//	{
-		//		vPos.y += 5.f;
-		//		vUp *= 20.f;
-		//		vLook *= -5.f;
-		//	}
-		//	else
-		//	{
-		//		vPos.y += 5.f;
-		//		vUp *= 49.f ;
-		//		vLook *= -2.f;
-		//	}
-		//}
-		//else
-		//{
-		//	vPos.y += 5.f;
-		//	vUp *= 100.f;
-		//	vLook *= -250.f;
-		//}
-		//
-		//
-		//_vec3 vTemp = vUp - vLook;
-		//vPos = vPos + vTemp;
-		//vRight = Vector3_::CrossProduct(vUp, vLook);
-		//vUp = Vector3_::Normalize(vUp);
-		//vLook = Vector3_::Normalize(vLook);
-		//
-		//m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		//m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-		//m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-		//m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+		/*CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
+
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",g_iPlayerIdx);
+
+
+		_vec3 vPos, vRight, vUp, vLook;
+		vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		vRight = {};
+		vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
+		vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+
+		if (m_IsFix)
+		{
+			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+			{
+				vPos.y += 5.f;
+				vUp *= 20.f;
+				vLook *= -5.f;
+			}
+			else
+			{
+				vPos.y += 5.f;
+				vUp *= 49.f ;
+				vLook *= -2.f;
+			}
+		}
+		else
+		{
+			vPos.y += 5.f;
+			vUp *= 100.f;
+			vLook *= -250.f;
+		}
+
+
+		_vec3 vTemp = vUp - vLook;
+		vPos = vPos + vTemp;
+		vRight = Vector3_::CrossProduct(vUp, vLook);
+		vUp = Vector3_::Normalize(vUp);
+		vLook = Vector3_::Normalize(vLook);
+
+		m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);*/
 	}
 
 

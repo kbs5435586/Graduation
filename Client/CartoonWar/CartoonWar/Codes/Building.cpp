@@ -19,20 +19,17 @@ HRESULT CBuilding::Ready_Prototype()
 
 HRESULT CBuilding::Ready_GameObject(void* pArg)
 {
+	m_IsClone = true;
 	if (nullptr == pArg)
 	{
 		return E_FAIL;
-
 	}
-
-
 	_tchar pTempStr[128] = {};
-	
-
 	lstrcpy(pTempStr, (const _tchar*)pArg);
-
-
-	if (FAILED(Ready_Component(pTempStr)))
+	_uint iLen = lstrlen(pTempStr);
+	m_pComponentTag = new _tchar[iLen + 1];
+	lstrcpy(m_pComponentTag, pTempStr);
+	if (FAILED(Ready_Component(m_pComponentTag)))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
@@ -324,5 +321,7 @@ void CBuilding::Free()
 	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pFrustumCom);
+	if (m_IsClone)
+		Safe_Delete_Array(m_pComponentTag);
 	CGameObject::Free();
 }

@@ -93,11 +93,8 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	else 
 		m_pTransformCom->SetSpeed(m_fSpeed);
 
-	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	//{
-	//	m_iCurAnimIdx = 0;
-	//	m_IsOnce = false;
-	//}
+
+
 	Change_Class();
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -120,11 +117,14 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	//	return DEAD_OBJ;
 
 	Set_Animation(fTimeDelta);
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	if (fLen <= 175.f)
 	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-		m_IsActioning = false;
+		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+		{
+			m_iCurAnimIdx = 0;
+			m_IsOnce = false;
+			m_IsActioning = false;
+		}
 	}
 
 	return NO_EVENT;
@@ -138,6 +138,21 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+
+	_vec3 vLook = {};
+	vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vLook = Vector3_::Normalize(vLook);
+	_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+	_vec3 vSlide = {};
+	//if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+	//{
+	//	m_pTransformCom->Go_ToTarget(pTransform->Get_StateInfo(CTransform::STATE_POSITION), fTimeDelta);
+	//}
+	//else
+	//{
+	//	m_pTransformCom->Go_There(vSlide);
+	//}
+
 
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -171,13 +186,15 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 
 	//Set_Animation(fTimeDelta);
-	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//if (fLen <= 175.f)
 	//{
-	//	m_iCurAnimIdx = 0;
-	//	m_IsOnce = false;
-	//	m_IsActioning = false;
+	//	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//	{
+	//		m_iCurAnimIdx = 0;
+	//		m_IsOnce = false;
+	//		m_IsActioning = false;
+	//	}
 	//}
-
 	return _int();
 }
 
@@ -230,9 +247,9 @@ void CNPC::Render_GameObject()
 	}
 
 
-	m_pCollider_OBB->Render_Collider();
-	m_pCollider_Attack->Render_Collider(1);
-	m_pCollider_AABB->Render_Collider();
+	//m_pCollider_OBB->Render_Collider();
+	//m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_AABB->Render_Collider();
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
@@ -690,6 +707,7 @@ void CNPC::Change_Class()
 {
 	if (m_eCurClass != m_ePreClass)
 	{
+		m_fRunSoundTime = 0.f;
 		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
@@ -713,7 +731,7 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
@@ -775,7 +793,7 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -806,7 +824,7 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 30.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -867,7 +885,7 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(340, 390, 11.333f, 13.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(391, 441, 13.033f, 14.699f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,100.f };
+			m_vOBB_Range[1] = { 100.f ,80.f,100.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;

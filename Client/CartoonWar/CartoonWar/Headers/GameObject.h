@@ -53,6 +53,8 @@ protected:
 public:
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx= 0) PURE;
 	virtual void							Free();
+public:
+	void									SetComponentTag(_tchar* pTag);
 protected:
 	map<const _tchar*, CComponent*>			m_mapComponent;
 	typedef map<const _tchar*, CComponent*>	MAPCOMPONENT;
@@ -78,15 +80,20 @@ protected:
 	_bool									m_IsRun = false;
 	_bool									m_IsBack = false;
 	_bool									m_IsTree = false;
-	TEAM									m_eCurTeam = TEAM::TEAM_END;
-	TEAM									m_ePreTeam = TEAM::TEAM_END;
 	_bool									m_IsHit_PostEffect = false;
 	_vec3									m_vColShpereSize = {};
+protected:
+	_tchar*									m_pComponentTag = nullptr;
+protected:
+	ENVITYPE								m_eEnviType = {};
+	TEAM									m_eCurTeam = TEAM::TEAM_END;
+	TEAM									m_ePreTeam = TEAM::TEAM_END;
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tUnit = {};
-	ENVITYPE								m_eEnviType = {};
 	_bool									m_IsCheck_FlagRange = false;
+protected:
+	_float									m_fRunSoundTime = 0.f;
 protected:
 	_uint									m_iBlurCnt = 0;
 protected:

@@ -76,17 +76,17 @@ private:
 private:
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx = 0;
-	_bool									m_IsOnce = false;
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
 	_uint									m_iCombatMotion[3] = {};
-	_vec3									m_vOBB_Range[2] = {};
-	_float									m_fCombatTime = 0.f;
+	_bool									m_IsOnce = false;
 	_bool									m_IsCombat = false;
+	_float									m_fCombatTime = 0.f;
 	_float									m_fArrSpeed[(_uint)CLASS::CLASS_END] = {};
 	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
 	_float									m_fSpeed = 0.f;
 	_float									m_fSpeedUp = 0.f;
+	_vec3									m_vOBB_Range[2] = {};
 private:
 	_matrix									m_matLeft = {};
 	_matrix									m_matRight = {};
@@ -94,7 +94,7 @@ private:
 private:
 
 private:
-	_uint									m_iCurMeshNum{};
+	_uint									m_iCurMeshNum = 0;
 private:
 	static _float poss;
 

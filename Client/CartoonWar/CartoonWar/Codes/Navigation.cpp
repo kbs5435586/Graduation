@@ -19,32 +19,32 @@ HRESULT CNavigation::Ready_Navigation(const _tchar* pFilePath)
 {
 	// Read Data File
 	HANDLE			hFile = 0;
- 	_ulong			dwByte = 0;
- 
- 	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
- 	if (0 == hFile)
- 		return E_FAIL;
- 
- 	while (true)
- 	{
- 		_vec3		vPoints[3];
- 
- 		ReadFile(hFile, vPoints, sizeof(_vec3) * 3, &dwByte, nullptr);
- 		if (0 == dwByte)
- 			break;
+	_ulong			dwByte = 0;
+
+	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+		return E_FAIL;
+
+	while (true)
+	{
+		_vec3		vPoints[3];
+
+		ReadFile(hFile, vPoints, sizeof(_vec3) * 3, &dwByte, nullptr);
+		if (0 == dwByte)
+			break;
 		for (int i = 0; i < 3; ++i)
 			vPoints[i].y = 150.f;
- 		CCell*		pCell = CCell::Create(&vPoints[0], &vPoints[1], &vPoints[2], m_vecCell.size());
- 		if (nullptr == pCell)
- 			return E_FAIL;
- 
- 		m_vecCell.push_back(pCell);
- 	}
- 
-  	CloseHandle(hFile);
- 
-  	if (FAILED(Ready_Neighbor()))
-  		return E_FAIL;
+		CCell* pCell = CCell::Create(&vPoints[0], &vPoints[1], &vPoints[2], m_vecCell.size());
+		if (nullptr == pCell)
+			return E_FAIL;
+
+		m_vecCell.push_back(pCell);
+	}
+
+	CloseHandle(hFile);
+
+	if (FAILED(Ready_Neighbor()))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -98,6 +98,22 @@ void CNavigation::Render_Navigation()
 
 _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec, _vec3* vSliding)
 {
+
+	{
+		//if (m_vecCell.size() <= m_iCurrentIdx)
+		//	return false;
+
+		//LINE			eOutLine = LINE(-1);
+		//const CCell* pNeighbor = nullptr;
+
+
+		//for (auto& iter : m_vecCell)
+		//{
+		//	_bool IsIn = iter->is_InCell(*vPosition + *vDirectionPerSec, &eOutLine);
+		//	if (IsIn)
+		//		return true;
+		//}
+	}
 	if (m_vecCell.size() <= m_iCurrentIdx)
 		return false;
 
@@ -111,8 +127,24 @@ _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionP
 	{
 		_bool IsIn = iter->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
 		if (IsIn)
+		{
+			if (eOutLine == LINE(-1))
+				continue;
+
+			pLine = iter->GetLine(eOutLine);
+			if (nullptr == pLine)
+				continue;
+			_vec3 vNormal = pLine->Get_Normal();
+			_vec3 vDirectionPerSec_ = *vDirectionPerSec;
+
+			float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
+			*vSliding = vDirectionPerSec_ - fDot * vNormal;
 			return true;
+
+		}
 	}
+
+
 	//_bool IsIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
 	//if (!IsIn)
 	//{
@@ -153,7 +185,7 @@ CComponent* CNavigation::Clone_Component(void* pArg)
 	{
 		MessageBox(0, L"CNavigation Cloned Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
-	} 
+	}
 	return pInstance;
 }
 
@@ -165,7 +197,7 @@ void CNavigation::Free()
 		{
 			pCell->Clear_Neighbor();
 		}
-	} 
+	}
 
 	for (auto& pCell : m_vecCell)
 		Safe_Release(pCell);
