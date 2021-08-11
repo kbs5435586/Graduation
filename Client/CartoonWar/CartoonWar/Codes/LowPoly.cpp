@@ -62,7 +62,7 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 	}
 	else if (m_eEnviType == ENVITYPE::ENVI_TREE)
 	{
-		m_vColliderSize_Tree = { 1.f,8.f,1.f };
+		m_vColliderSize_Tree = { 1.f,4.f,1.f };
 		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Tree);
 	}
 
@@ -79,7 +79,7 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_float fLen = vLen.Length();
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom,4.f))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;

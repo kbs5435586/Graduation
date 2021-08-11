@@ -55,15 +55,12 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
+
 	Render_Blend();
-
-
 	Render_Priority();
 	Render_Alpha();
 	pManagement->Render_Font();
 	Render_Post_Effect();
-
-
 	Render_UI();
 	//Render_UI_Back();
 
@@ -230,23 +227,6 @@ void CRenderer::Render_Blur()
 
 	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLUR)->TargetToResBarrier();
 
-}
-
-void CRenderer::Render_Reflection()
-{
-	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_REF)->OM_Set();
-
-	for (auto& pGameObject : m_RenderList[RENDER_REF])
-	{
-		if (nullptr != pGameObject)
-		{
-			pGameObject->Render_Ref();
-			Safe_Release(pGameObject);
-		}
-	}
-	m_RenderList[RENDER_REF].clear();
-
-	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_REF)->TargetToResBarrier();
 }
 
 void CRenderer::Render_Shadow(CManagement* pManagement)

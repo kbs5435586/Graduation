@@ -27,7 +27,6 @@ private:
 	void							Render_Blend();
 	void							Render_Post_Effect();
 	void							Render_Blur();
-	void							Render_Reflection();
 private:
 	void							Render_Deffered(CManagement* pManagement);
 	void							Render_Shadow(CManagement* pManagement);
