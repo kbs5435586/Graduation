@@ -94,21 +94,20 @@ HRESULT CScene_Stage::Ready_Scene()
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
 	//	return E_FAIL;
-	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
-		return E_FAIL;
-	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/OneTree.dat", (void*)&eEnviType)))
-		return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
+	// 
+	//if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
 	//	return E_FAIL;
-	eEnviType = ENVITYPE::ENVI_FLOWER;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleTree.dat", (void*)&eEnviType)))
 		return E_FAIL;
-	eEnviType = ENVITYPE::ENVI_PLANT;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
-		return E_FAIL;
+	//eEnviType = ENVITYPE::ENVI_FLOWER;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+	//	return E_FAIL;
+	//eEnviType = ENVITYPE::ENVI_PLANT;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
+	//	return E_FAIL;
 	eEnviType = ENVITYPE::ENVI_ROCK;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TestRock.dat", (void*)&eEnviType) ))
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
 		return E_FAIL;
 
 
@@ -315,7 +314,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 350.f;
+	tProjDesc.fFar = 300.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;

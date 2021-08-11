@@ -8,7 +8,7 @@ CConstant_Buffer::CConstant_Buffer()
 
 HRESULT CConstant_Buffer::Ready_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType)
 {
-	m_iBufferSize = (iBufferSize + 255*2) & ~255 * 2; // 버퍼 사이즈는 256 바이트 단위여야 한다.
+	m_iBufferSize = (iBufferSize + 255*4) & ~255 * 4; // 버퍼 사이즈는 256 바이트 단위여야 한다.
 	m_iMaxCnt = iMaxCnt;
 	m_eType= eType;
 
@@ -19,7 +19,7 @@ HRESULT CConstant_Buffer::Ready_ConstantBuffer(_uint iBufferSize, _uint iMaxCnt,
 	properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 	properties.CreationNodeMask = 1;
 	properties.VisibleNodeMask = 1;
-
+	
 	D3D12_RESOURCE_DESC resource = {};
 	resource.Alignment = 0;
 	resource.DepthOrArraySize = 1;
