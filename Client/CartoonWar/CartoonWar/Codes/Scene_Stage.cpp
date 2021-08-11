@@ -99,6 +99,8 @@ HRESULT CScene_Stage::Ready_Scene()
 	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/OneTree.dat", (void*)&eEnviType)))
 		return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
+	//	return E_FAIL;
 	eEnviType = ENVITYPE::ENVI_FLOWER;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
 		return E_FAIL;

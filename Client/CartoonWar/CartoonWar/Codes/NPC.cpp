@@ -98,7 +98,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
-
+	SetSpeed();
 	m_fSpeed = m_fArrSpeed[(_uint)m_eCurClass];
 	m_fSpeedUp = m_fArrSpeedUP[(_uint)m_eCurClass];
 
@@ -139,6 +139,10 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_pTransformCom->Rotation_Y(fTimeDelta);
 			break;
 		}
+	}
+	else
+	{
+		m_pTransformCom->Go_There(vSlide);
 	}
 
 	Obb_Collision();

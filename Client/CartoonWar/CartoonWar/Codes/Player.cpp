@@ -1860,7 +1860,7 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 200.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
 	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
