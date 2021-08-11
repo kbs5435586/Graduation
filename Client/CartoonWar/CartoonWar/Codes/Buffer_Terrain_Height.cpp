@@ -95,7 +95,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	_float fTemp = 0.f;
 
 	if (iNumVerticesX >= 1500.f)
-		fTemp = 1.f;
+		fTemp = 2.f;
 	else
 		fTemp = 10.f;
 

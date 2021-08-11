@@ -5,7 +5,7 @@
 #include "UI_OnHeadBack.h"
 
 #include "Deffend.h"
-
+#include "Throw_Arrow.h"
 CPlayer::CPlayer()
 	: CGameObject()
 {
@@ -46,7 +46,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_tInfo = INFO(1.f, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -119,7 +119,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime += fTimeDelta;
 
 	}
-
 	if (m_fParticleRunTime >= 1.f)
 	{
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
@@ -148,10 +147,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
-
-
-
-
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
@@ -250,10 +245,9 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	m_pCollider_OBB->Render_Collider();
-	m_pCollider_Attack->Render_Collider(1);
-	//m_pCollider_Hit->Render_Collider();
-	m_pCollider_AABB->Render_Collider();
+	//m_pCollider_OBB->Render_Collider();
+	//m_pCollider_Attack->Render_Collider(1);
+	//m_pCollider_AABB->Render_Collider();
 
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	m_iBlurCnt++;
@@ -766,6 +760,7 @@ void CPlayer::Change_Class()
 {
 	if (m_eCurClass != m_ePreClass)
 	{
+		m_fRunSoundTime = 0.f;
 		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
@@ -789,7 +784,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
+			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
@@ -1126,43 +1121,45 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 {
 	if (!m_IsActioning)
 	{
-		//if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
-		//{
-		//
-		//	if (m_eCurClass == CLASS::CLASS_ARCHER)
-		//	{
-		//		_matrix matTemp = m_pTransformCom->Get_Matrix();
-		//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-		//			return;
-		//	}
-		//	else if (m_eCurClass == CLASS::CLASS_WORKER)
-		//	{
-		//		_matrix matTemp = m_pTransformCom->Get_Matrix();
-		//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-		//			return;
-		//	}
-		//	else
-		//	{
-		//		//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-		//		//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-		//		//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-		//		//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-		//		CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-		//		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-		//			return;
-		//	}
-		//	_uint iRand = rand() % 2;
-		//	if (iRand == 0)
-		//		m_iCurAnimIdx = m_iAttackMotion[0];
-		//	else
-		//		m_iCurAnimIdx = m_iAttackMotion[1];
-		//
-		//
-		//	m_IsActioning = true;
-		//	m_IsOnce = true;
-		//	m_IsHit = true;
-		//	m_IsCombat = true;
-		//}
+		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+		{
+
+			if (m_eCurClass == CLASS::CLASS_ARCHER)
+			{
+				CGameObject* pOwnPlayer = nullptr;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+					return;
+				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+			}
+			else if (m_eCurClass == CLASS::CLASS_WORKER)
+			{
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+					return;
+			}
+			else
+			{
+				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+					return;
+			}
+			_uint iRand = rand() % 2;
+			if (iRand == 0)
+				m_iCurAnimIdx = m_iAttackMotion[0];
+			else
+				m_iCurAnimIdx = m_iAttackMotion[1];
+
+
+			m_IsActioning = true;
+			m_IsOnce = true;
+			m_IsHit = true;
+			m_IsCombat = true;
+		}
 	}
 
 
@@ -1214,23 +1211,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		vLook = Vector3_::Normalize(vLook);
 
 
-
 		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
+
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_IsSlide)
 		{
 			if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			{
-
 				m_pTransformCom->BackWard(fTimeDelta);
-
-			}
-			else
-			{
-				m_pTransformCom->Go_There(vSlide);
-
-			}
 		}
 		else
 		{
@@ -1242,6 +1230,31 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsRun = true;
 		m_IsActioning = true;
 		m_IsParticleRun = true;
+
+		//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+		//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+		//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+		//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+		//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN, 0.f, );
+
+
+		m_fRunSoundTime += fTimeDelta;
+		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
+		{
+			if (m_fRunSoundTime >= 6.f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
+				m_fRunSoundTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fRunSoundTime >= 1.f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
+				m_fRunSoundTime = 0.f;
+			}
+		}
 
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
@@ -1261,14 +1274,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		{
 			if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 			{
-
 				m_pTransformCom->BackWard(fTimeDelta);
-
 			}
 			else
 			{
 				m_pTransformCom->Go_There(vSlide);
-
 			}
 		}
 		else
@@ -1278,6 +1288,25 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		m_IsActioning = true;
 		m_IsRun = false;
+
+		m_fRunSoundTime += fTimeDelta;
+		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
+		{
+			if (m_fRunSoundTime >= 24.f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
+				m_fRunSoundTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fRunSoundTime >= 0.5f)
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
+				m_fRunSoundTime = 0.f;
+			}
+		}
+
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
@@ -1289,6 +1318,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
 		m_IsRun = false;
+		m_fRunSoundTime = 0.f;
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1326,7 +1356,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		m_eCurTeam = TEAM::TEAM_BLUE;
+		m_tInfo.fHP -= 1.f;
 	}
 
 

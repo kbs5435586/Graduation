@@ -77,25 +77,25 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
-
-	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File(L"../Data/Demo/FenceTest.dat")))
-	//	return E_FAIL;
-	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/TestTree.dat", (void*)&eEnviType)))
-		return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_FLOWER;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/FlowerTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_PLANT;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/PlantTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_ROCK;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/TestRock.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
 	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
 	//	return E_FAIL;
+	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
+		return E_FAIL;
+	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/OneTree.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_FLOWER;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_PLANT;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_ROCK;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TestRock.dat", (void*)&eEnviType) ))
+		return E_FAIL;
+
 
 	g_IsCollisionStart = true;
 	CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
@@ -122,33 +122,17 @@ void CScene_Stage::Render_Scene()
 
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Rect", CMyRect::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Sphere", CShpere::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube", CCube::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Light", CLight_Camera::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Reflection", CReflection_Camera::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain", CTerrain::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Terrain_Height", CTerrain_Height::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Cube_Texture", CCube_Texture::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_HP", CUI_HP::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_MP", CUI_MP::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_WoL_Red", CUI_WoL::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_WoL_Blue", CUI_WoL_Blue::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead", CUI_OnHead::Create())))
 		return E_FAIL;
@@ -174,15 +158,11 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Hatch", CHatch::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Castle", CCastle::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Flag", CFlag::Create())))
 		return E_FAIL;
 
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Player", CPlayer::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Animals", CAnimals::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_NPC", CNPC::Create())))
 		return E_FAIL;
@@ -194,12 +174,12 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
+	//	return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
 		return E_FAIL;
 	return S_OK;
@@ -220,12 +200,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;	
-	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
-	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
@@ -459,7 +437,8 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
-
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -509,12 +488,12 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 40; ++i)
+	for (int i = 0; i < 18; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();
 		tOrder.IsPlayer = false;
-		tOrder.iIdx = i;
+		tOrder.iIdx =i;
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
 			return E_FAIL;
 

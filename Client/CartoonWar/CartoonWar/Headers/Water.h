@@ -5,6 +5,7 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CBuffer_RectTex;
+class CFrustum;
 class CWater :
     public CGameObject
 {
@@ -33,6 +34,7 @@ private:
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
+	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	TEXINFO									m_tTexInfo = {};
 };

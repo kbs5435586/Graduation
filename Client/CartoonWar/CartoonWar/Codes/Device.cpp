@@ -221,7 +221,7 @@ void CDevice::CsCmdClose()
 
 void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegisterNum, const _uint& iIdx)
 {
-	if (m_iCurrentDummyIdx >= 1024)
+	if (m_iCurrentDummyIdx >= 512)
 		return;
 
 	_uint			iDestRange = 1;
@@ -249,7 +249,7 @@ void CDevice::SetTextureToShader(CTexture* pTextureCom,  TEXTURE_REGISTER eRegis
 
 void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REGISTER eRegisterNum)
 {
-	if (m_iCurrentDummyIdx >= 1024)
+	if (m_iCurrentDummyIdx >= 512)
 		return;
 
 	if (nullptr == pTextureDesc)
@@ -270,7 +270,7 @@ void CDevice::SetTextureToShader(ID3D12DescriptorHeap* pTextureDesc, TEXTURE_REG
 
 void CDevice::SetConstantBufferToShader(ID3D12DescriptorHeap* pConstantBuffer, _uint iOffset, CONST_REGISTER eRegisterNum)
 {
-	if (m_iCurrentDummyIdx >= 1024)
+	if (m_iCurrentDummyIdx >= 512)
 		return;
 
 	UINT iDestRange = 1;
@@ -403,7 +403,7 @@ void CDevice::SetUpUAVToRegister_CS(CStructedBuffer* pBuffer, UAV_REGISTER eRegi
 
 void CDevice::SetBufferToRegister(CStructedBuffer* pBuffer, TEXTURE_REGISTER eRegister)
 {
-	if (m_iCurrentDummyIdx >= 1024)
+	if (m_iCurrentDummyIdx >= 512)
 		return;
 
 	UINT iDestRange = 1;
@@ -455,7 +455,7 @@ void CDevice::SetBufferToRegister_CS(CStructedBuffer* pBuffer, TEXTURE_REGISTER 
 
 void CDevice::UpdateTable()
 {
-	if (m_iCurrentDummyIdx >= 1024)
+	if (m_iCurrentDummyIdx >= 512)
 		return;
 
 	ID3D12DescriptorHeap* pDestriptor = m_vecDummyDescriptor[m_iCurrentDummyIdx].Get();
@@ -479,7 +479,7 @@ void CDevice::UpdateTable_CS()
 
 void CDevice::ClearDummyDesc(_uint iIdx)
 {
-	if (iIdx >= 1024)
+	if (iIdx >= 512)
 		return;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE hDestHandle = m_vecDummyDescriptor[iIdx]->GetCPUDescriptorHandleForHeapStart();
@@ -587,7 +587,7 @@ HRESULT CDevice::Create_RootSignature()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-	for (size_t i = 0; i < 1024; ++i)
+	for (size_t i = 0; i < 512; ++i)
 	{
 		ComPtr<ID3D12DescriptorHeap> pDummyDescriptor;
 		m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&pDummyDescriptor));

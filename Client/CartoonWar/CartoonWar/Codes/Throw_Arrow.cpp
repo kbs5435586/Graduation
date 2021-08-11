@@ -1,7 +1,7 @@
 #include "framework.h"
 #include "Throw_Arrow.h"
 #include "Management.h"
-
+#include "Player.h"
 CThrow_Arrow::CThrow_Arrow()
 	: CGameObject()
 {

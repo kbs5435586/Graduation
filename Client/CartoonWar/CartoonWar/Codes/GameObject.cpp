@@ -59,6 +59,8 @@ void CGameObject::Render_Ref()
 {
 }
 
+
+
 HRESULT CGameObject::CreateInputLayout()
 {
 	return S_OK;
@@ -115,4 +117,9 @@ void CGameObject::Free()
 	for (auto& Pair : m_mapComponent)
 		Safe_Release(Pair.second);
 	m_mapComponent.clear();
+}
+
+void CGameObject::SetComponentTag(_tchar* pTag)
+{
+	lstrcpy(m_pComponentTag, pTag);
 }

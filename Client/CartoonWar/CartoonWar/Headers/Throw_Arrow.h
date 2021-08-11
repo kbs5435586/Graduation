@@ -7,6 +7,7 @@ class CTexture;
 class CShader;
 class CCollider;
 class CFrustum;
+class CPlayer;
 class CThrow_Arrow :
     public CGameObject
 {
@@ -33,6 +34,8 @@ private:
 private:
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+public:
+	CPlayer*&								GetOwnPlayer(){return m_pOwnPlayer;}
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
@@ -43,7 +46,8 @@ private:
 	CCollider*								m_pColliderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
-
+private:
+	CPlayer*								m_pOwnPlayer = nullptr;
 private:
 	_vec3									m_vPos = {};
 };

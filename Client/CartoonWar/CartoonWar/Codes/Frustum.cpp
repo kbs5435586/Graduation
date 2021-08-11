@@ -123,7 +123,7 @@ CFrustum* CFrustum::Create()
 
 CComponent* CFrustum::Clone_Component(void* pArg)
 {
-	AddRef();
+	this->AddRef();
 	return this;
 }
 

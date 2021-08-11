@@ -409,6 +409,7 @@ void CManagement::Release_Engine()
 
 	if (dwRefCnt = CSoundMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CSoundMgr Release Failed");
+
 	if (dwRefCnt = CEventMgr::GetInstance()->DestroyInstance())
 		_MSG_BOX("CEventMgr Release Failed");
 
@@ -451,11 +452,11 @@ void CManagement::Release_Engine()
 	if (dwRefCnt = CFrameManager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CTimer_Manager Release Failed");
 
-	if (dwRefCnt = CInput::GetInstance()->DestroyInstance())
-		_MSG_BOX("CInput Release Failed");
-
 	if (dwRefCnt = CCamera_Manager::GetInstance()->DestroyInstance())
 		_MSG_BOX("CCamera_Manager Release Failed");
+
+	if (dwRefCnt = CInput::GetInstance()->DestroyInstance())
+		_MSG_BOX("CInput Release Failed");
 
 	if (dwRefCnt = CDevice::GetInstance()->DestroyInstance())
 		_MSG_BOX("CDevice Release Failed");
@@ -482,12 +483,12 @@ list<CGameObject*> CManagement::Get_GameObjectLst(const _uint& iSceneID, const _
 
 void CManagement::Free()
 {
-	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pEvent_Manager);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pUAV_Manager);
 	Safe_Release(m_pLight_Manager);
+	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pConstant_Buffer_Manager);
 	Safe_Release(m_pRTT_Mananger);

@@ -18,8 +18,8 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Ready_Management((_uint)SCENEID::SCENE_END)))
 		return E_FAIL;
-	//if (FAILED(Create_FbxManager()))
-	//	return E_FAIL;
+	if (FAILED(Create_FbxManager()))
+		return E_FAIL;
 	if (FAILED(Ready_Prototype_Component()))
 		return E_FAIL;
 	if (FAILED(Ready_Prototype_GameObject()))
@@ -172,9 +172,10 @@ HRESULT CMainApp::Ready_Sound()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, ATTACK, "../Bin/Resource/Sounds/Sword_Whoosh_Attack_1.wav", 0.2f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/Walk_Run.wav", 0.2f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/WR1.wav", 0.2f)))
 		return E_FAIL;
-
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, RUN, "../Bin/Resource/Sounds/Walk_Run.wav", 0.2f)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -197,60 +198,12 @@ HRESULT CMainApp::SetUp_OnShader(const _float& fTimeDelta)
 void CMainApp::Compute_Frame()
 {
 	++m_dwRenderCnt;
-	
-
-
-	if (g_MaxTime <= 0.f)
+	if (m_fTimeAcc >= 1.f)
 	{
-		if (g_iBlueNum > g_iRedNum)
-		{
-			if (m_fTimeAcc >= 1.f)
-			{
-				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"BlueWin");
-				m_dwRenderCnt = 0;
-				m_fTimeAcc = 0.f;
-			}
-		}
-		else
-		{
-			if (m_fTimeAcc >= 1.f)
-			{
-				wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"RedWin");
-				m_dwRenderCnt = 0;
-				m_fTimeAcc = 0.f;
-			}
-
-		}
+		wsprintf(m_szFPS, L"FPS:%d", m_dwRenderCnt);
+		m_dwRenderCnt = 0;
+		m_fTimeAcc = 0.f;
 	}
-	else if (g_iRedNum >= 5)
-	{
-		if (m_fTimeAcc >= 1.f)
-		{
-			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"RedWin");
-			m_dwRenderCnt = 0;
-			m_fTimeAcc = 0.f;
-		}
-	}
-	else if (g_iBlueNum >= 5)
-	{
-		if (m_fTimeAcc >= 1.f)
-		{
-			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"BlueWin");
-			m_dwRenderCnt = 0;
-			m_fTimeAcc = 0.f;
-		}
-
-	}
-	else
-	{
-		if (m_fTimeAcc >= 1.f)
-		{
-			wsprintf(m_szFPS, L"FPS:%d, Scene Number: %d, %s", m_dwRenderCnt, (_uint)m_pManagement->Get_Scene()->Get_SceneID() - 1, L"None");
-			m_dwRenderCnt = 0;
-			m_fTimeAcc = 0.f;
-		}
-	}
-
 	SetWindowText(g_hWnd, m_szFPS);
 }
 

@@ -31,22 +31,23 @@ HRESULT CDeffend::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(-180.f));
 	m_pTransformCom->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 
-
+	m_tInfo = INFO(20.f,0.f,0.f,0.f);
 	_matrix pTemp = *(_matrix*)pArg;
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	m_pTransformCom->Set_Matrix(pTemp);
 	m_pTransformCom->Scaling(0.06f, 0.06f, 0.06f);
 
 	_vec3 vColliderSize = { 50.f,50.f,50.f };
-	m_pColliderCom->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-
+	m_pColliderCom_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColliderCom_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 	return S_OK;
 }
 
 _int CDeffend::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColliderCom->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+	m_pColliderCom_OBB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+	m_pColliderCom_AABB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
 
 
 	Obb_Collision();
@@ -67,7 +68,7 @@ _int CDeffend::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 30.f)
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
@@ -122,7 +123,8 @@ void CDeffend::Render_GameObject()
 	}
 
 
-	m_pColliderCom->Render_Collider();
+	//m_pColliderCom_OBB->Render_Collider();
+	//m_pColliderCom_AABB->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -197,6 +199,31 @@ void CDeffend::Render_Blur()
 	Safe_Release(pManagement);
 }
 
+void CDeffend::Create_Particle(const _vec3& vPoistion)
+{
+	if (m_IsParticle)
+	{
+		_vec3 vTemp = vPoistion;
+		vTemp.y += 5.f;
+		PARTICLESET tParticleSet;
+		tParticleSet.vPos = vTemp;
+		tParticleSet.iMaxParticle = 300;
+		tParticleSet.fMaxLifeTime = 0.2f;
+		tParticleSet.iMinLifeTime = 0.01f;
+
+		tParticleSet.fStartScale = 0.5f;
+		tParticleSet.fEndScale = 0.2f;
+
+		tParticleSet.fMaxSpeed = 30.f;
+		tParticleSet.fMinSpeed = 50.f;
+
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
+			return;
+		m_IsParticle = false;
+
+	}
+}
+
 HRESULT CDeffend::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -245,7 +272,8 @@ void CDeffend::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pShaderCom_Blur);
-	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pColliderCom_OBB);
+	Safe_Release(m_pColliderCom_AABB);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
@@ -287,9 +315,14 @@ HRESULT CDeffend::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader_Blur", m_pShaderCom_Blur)))
 		return E_FAIL;
 
-	m_pColliderCom = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pColliderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom)))
+	m_pColliderCom_OBB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
+	NULL_CHECK_VAL(m_pColliderCom_OBB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pColliderCom_OBB)))
+		return E_FAIL;
+	//m_pColliderCom_AABB
+	m_pColliderCom_AABB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
+	NULL_CHECK_VAL(m_pColliderCom_AABB, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pColliderCom_AABB)))
 		return E_FAIL;
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
@@ -313,6 +346,7 @@ void CDeffend::Obb_Collision()
 			m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 			m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 			m_vMidPoint.y += 10.f;
+			Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 			m_IsBazier = true;
 		}
 		Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);

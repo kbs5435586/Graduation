@@ -108,7 +108,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	{
 
-	/*	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		/*CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 
 		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player",g_iPlayerIdx);

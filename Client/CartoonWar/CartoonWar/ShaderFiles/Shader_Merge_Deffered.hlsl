@@ -34,14 +34,14 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vSpecularTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
 	float4	vVelocityTex	= g_texture3.Sample(Sampler0, vIn.vTexUV);
 	float4	vTexMerge		= (float4)0;
-	int		iNumBlurSample	= 5;
+	int		iNumBlurSample	= 25;
 
 	vVelocityTex.xy /= (float)iNumBlurSample;
 	int iCnt = 1;
 	for (int i = iCnt; i < iNumBlurSample; ++i)
 	{
 		float4 BColor = g_texture0.Sample(Sampler0, vIn.vTexUV + vVelocityTex.xy * (float)i);
-		if (vVelocityTex.a < vDiffuseTex.a + 0.04f)
+		if (vVelocityTex.a < vDiffuseTex.a + 1.f)
 		{
 			vDiffuseTex += BColor;
 			iCnt++;

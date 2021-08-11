@@ -23,10 +23,12 @@ public:
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_Blur();
 private:
+	void									Create_Particle(const _vec3& vPoistion);
+private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CDeffend* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg, _uint iIdx = 0) override;
+	static	CDeffend*						Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
@@ -40,7 +42,8 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
-	CCollider*								m_pColliderCom = nullptr;
+	CCollider*								m_pColliderCom_OBB = nullptr;
+	CCollider*								m_pColliderCom_AABB = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 
 private:

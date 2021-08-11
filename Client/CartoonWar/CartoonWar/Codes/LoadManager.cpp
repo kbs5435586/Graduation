@@ -58,12 +58,7 @@ HRESULT CLoadManager::Load_File(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
 
-			_tchar* pComrTag = new _tchar[iLength_Com + 1];
-			ZeroMemory(pComrTag, iLength_Com + 1);
-
-			lstrcpy(pComrTag, szComTag);
-
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Building", (_uint)SCENEID::SCENE_STAGE, L"Layer_Building", nullptr, pComrTag)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Building", (_uint)SCENEID::SCENE_STAGE, L"Layer_Building", nullptr, szComTag)))
 			{
 				return E_FAIL;
 
@@ -122,40 +117,41 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
 
-			_tchar* pComrTag = new _tchar[iLength_Com + 1];
-			ZeroMemory(pComrTag, iLength_Com + 1);
-
-			lstrcpy(pComrTag, szComTag);
-
 
 
 			CGameObject* pGameObject = nullptr;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly", &pGameObject, pComrTag)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly", &pGameObject, szComTag)))
 			{
 				return E_FAIL;
 			}
 			pGameObject->GetEnviType() = *(ENVITYPE*)pArg;
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly")->Get_ComponentPointer(L"Com_Transform");
+			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
+			if (nullptr == pTransform)
+				continue;
+
 			pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
 
-			if (pGameObject->GetEnviType()== ENVITYPE::ENVI_FLOWER)
+
+
+			if (pGameObject->GetEnviType() == ENVITYPE::ENVI_FLOWER)
 			{
 				pTransform->Scaling(4.f, 4.f, 4.f);
 			}
-			else if (pGameObject->GetEnviType()== ENVITYPE::ENVI_PLANT)
+			else if (pGameObject->GetEnviType() == ENVITYPE::ENVI_PLANT)
 			{
 
 				pTransform->Scaling(4.f, 4.f, 4.f);
 			}
+			else
+			{
+				_uint iSize = rand() % 20 + 5;
+				_uint iRot = rand() % 20;
+				pTransform->Scaling(iSize, iSize, iSize);
+			}
 
-			ReadFile(hFile, (void*)&fAdd_PosY, sizeof(_float), &dwByte, nullptr);
-
-
-			_uint iSize = rand() % 20 + 5;
-			_uint iRot = rand() % 20;
-			pTransform->Scaling(iSize, iSize, iSize);
 			//pTransform->SetUp_RotationY(XMConvertToRadians(180));
 
 
