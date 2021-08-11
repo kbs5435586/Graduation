@@ -209,10 +209,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Flag", CFlag::Create())))
 		return E_FAIL;
-	//////////////////////////////////////
-
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Circle", CCircle::Create())))
-	//	return E_FAIL;
 
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Player", CPlayer::Create())))
@@ -235,8 +231,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"Component_Buffer_Circle", CBuffer_Circle::Create())))
-	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
@@ -249,45 +243,44 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 {
  	if (FAILED(Ready_Layer_SkyBox(L"Layer_SkyBox", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Inventory(L"Layer_Inventory_Player", pManagement)))
-		return E_FAIL;
-	
 	if (FAILED(Ready_Layer_Debug_Camera(L"Layer_Camera", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Inventory_Camera(L"Layer_Inventory_Camera", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Map(L"Layer_Map_Camera", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Terrain_Height(L"Layer_Terrain", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Deffered_UI(L"Layer_Deffered_UI", pManagement)))
 		return E_FAIL;
-	
+	if (FAILED(Ready_Layer_Player(L"Layer_Player", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+		return E_FAIL;
+
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-		return E_FAIL;	
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
 	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+
+	if (FAILED(Ready_Layer_Inventory(L"Layer_Inventory_Player", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Inventory_Camera(L"Layer_Inventory_Camera", pManagement)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
+		return E_FAIL;
+	//if (FAILED(Ready_Layer_Map(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
+	
 	//if (FAILED(Ready_Layer_Skill(L"Layer_Skill", pManagement)))
 	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
-
-
-
 
 	return S_OK;
 }
@@ -325,10 +318,8 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	//130.f,100.f,300.f
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(130.f, 150.f, 300.f);
-	//tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
-	tCameraDesc.vAt = _vec3(130.f, 150.f, 301.f);
-	//tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
+	tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
+	tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
@@ -388,8 +379,10 @@ HRESULT CScene_Stage::Ready_Layer_Inventory_Camera(const _tchar* pLayerTag, CMan
 	tIProjDesc.fFovY = XMConvertToRadians(60.f);
 	tIProjDesc.fAspect = _float(WINCX) / WINCY;
 	tIProjDesc.fNear = g_Near;
-	tIProjDesc.fFar = g_Far;
+	//tIProjDesc.fFar = g_Far;
+	tIProjDesc.fFar = 100.f;
 	_float aaa = 1;
+
 	if (FAILED(pICameraObject->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, 1)))
 		return E_FAIL;
 
@@ -504,21 +497,19 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 		return E_FAIL;
 	
 
-
-	
-	
-	
-
 	XMFLOAT3 one = { 560.f, 100.f, 0.f };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&one)))
 		return E_FAIL; 
 	XMFLOAT3 two = { 405.f, 100.f, 1.f };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&two)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MiniMap", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_HP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Aim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	_bool IsRed = true;
@@ -627,8 +618,6 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestTess", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;

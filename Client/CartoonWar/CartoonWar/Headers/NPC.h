@@ -66,7 +66,6 @@ private:
 	CCollider*								m_pCollider_AABB = nullptr;
 	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = { nullptr };
-	//CObserver*								m_pObserverCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
@@ -96,16 +95,8 @@ private:
 
 private:
 	_uint									m_iCurMeshNum{};
-public:
-	_uint									GetCurMesh() { return m_iCurMeshNum; }
-	void									SetCurMesh(_uint _c) { m_iCurMeshNum = _c; }
 private:
-
-
 	static _float poss;
-	static _int npcnum;
-	static _bool first;
-	_int whoami;
 
 	_float m_DamageTime{};
 public:

@@ -4,9 +4,7 @@
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
 
-_int CNPC::npcnum = 0;
 _float CNPC::poss = 25.f;
-_bool CNPC::first = true;
 
 CNPC::CNPC()
 	: CGameObject()
@@ -36,20 +34,16 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 	
-	++npcnum;
-	whoami = npcnum;
 	
-	
-	poss = 90;
 	//Compute_Matrix();
 	//_vec3 vPos = { _float(rand() % 50),0.f,_float(rand() % 50) };
-	_vec3 vPos = { poss,0.f,300.f };
-	poss += 10.f;
+	_vec3 vPos = {40 + poss, 0.f, 50.f };
+	poss += 20.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 
-	m_tInfo = INFO(100, 1, 1, 0);
+	m_tInfo = INFO(2, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -71,7 +65,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
-
+	SetSpeed();
 
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
@@ -99,17 +93,12 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	else 
 		m_pTransformCom->SetSpeed(m_fSpeed);
 
-	if(GetAsyncKeyState('L'))
-		m_pTransformCom->Rotation_Y(fTimeDelta);
-	
-	//m_eCurClass = (CLASS)m_iCurMeshNum;
+	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//{
+	//	m_iCurAnimIdx = 0;
+	//	m_IsOnce = false;
+	//}
 	Change_Class();
-
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		m_iCurAnimIdx = 0;
-		m_IsOnce = false;
-	}
 	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -124,12 +113,12 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 				m_iCurAnimIdx = m_iDeathMotion[1];
 			m_IsDeadMotion = true;
 		}
-
 	}
 	if (m_IsDead)
 		Resurrection();
 	//if (m_IsDead)
 	//	return DEAD_OBJ;
+
 	Set_Animation(fTimeDelta);
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
@@ -171,13 +160,13 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 		else
 		{
-			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldWorld = m_pTransformCom->Get_Matrix();
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
 	}
 	else
 	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
 
@@ -247,7 +236,6 @@ void CNPC::Render_GameObject()
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
-	
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
@@ -457,7 +445,7 @@ void CNPC::Free()
 	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	Safe_Release(m_pNaviCom);
+	//Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }
@@ -677,11 +665,6 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
-
-	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-	//	return E_FAIL;
 
 	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
 	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -955,7 +938,6 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(100.f);
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -983,15 +965,12 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 3;
 			m_iCombatMotion[1] = 4;
 			m_iCombatMotion[2] = 2;
-			m_pTransformCom->SetSpeed(70.f);
 		}
 		break;
 		}
-
 		m_ePreClass = m_eCurClass;
 	}
 }
-
 
 void CNPC::AnimVectorClear()
 {
