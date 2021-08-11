@@ -136,7 +136,7 @@ void Server::process_packet(int user_id, char* buf)
                 continue;
             if (g_clients[i].m_team == g_clients[user_id].m_team)
                 continue;
-            if (!is_attack_view(i, user_id))
+            if (!is_attack_view(user_id, i))
                 continue;
 
             g_clients[user_id].m_attack_target = i;
@@ -2306,17 +2306,18 @@ bool Server::is_attackable(int a, int b)
 
 bool Server::is_attack_view(int attack, int gethit)
 {
-    _vec3* at_pos = g_clients[attack].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* at_look = g_clients[attack].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-    _vec3* gh_pos = g_clients[gethit].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 at_pos = *g_clients[attack].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 at_look = *g_clients[attack].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    _vec3 gh_pos = *g_clients[gethit].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
-    _vec3 t_look = *gh_pos - *at_pos;
+    _vec3 t_look = gh_pos - at_pos;
     t_look = Vector3_::Normalize(t_look);
+    at_look = -1.f * Vector3_::Normalize(at_look);
 
-    float PdotProduct = (at_look->x * t_look.x) + (at_look->y * t_look.y) + (at_look->z * t_look.z); // 내각
+    float PdotProduct = (at_look.x * t_look.x) + (at_look.y * t_look.y) + (at_look.z * t_look.z); // 내각
     float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
 
-    float PoutProduct = (at_look->x * t_look.z) - (at_look->z * t_look.x); // 앞에 x 벡터 기준 각도 차이
+    float PoutProduct = (at_look.x * t_look.z) - (at_look.z * t_look.x); // 앞에 x 벡터 기준 각도 차이
     if (PoutProduct > 0) // 양수이면 t_look는 at_look로 부터 반시계
         radian *= -1.f;
 
@@ -2485,6 +2486,7 @@ void Server::do_battle(int id)
         //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
         g_clients[att.m_attack_target].m_status = ST_DEAD;
         cout << att.m_attack_target << " is dead\n";
+        send_dead_packet(att.m_attack_target, att.m_attack_target);
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
