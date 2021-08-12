@@ -218,8 +218,11 @@ _int CUI_Button::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		if (m_cansee)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}	
 	}
 
 	return _int();
@@ -227,108 +230,107 @@ _int CUI_Button::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CUI_Button::Render_GameObject()
 {
-	if (m_cansee)
+	
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	REP tRep = {};
+
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
+	_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+
+	CLASS cTemp{};
+
+	if (whichnum == 0)
 	{
-		CManagement* pManagement = CManagement::GetInstance();
-		if (nullptr == pManagement)
-			return;
-		pManagement->AddRef();
-
-
-		REP tRep = {};
-
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
-		_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
-
-		CLASS cTemp{};
-
-		if (whichnum == 0)
-		{
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-			cTemp = pTemp->GetClass();
-		}
-		else
-		{
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-			cTemp = pTemp->GetClass();
-		}
-
-
-		if (cTemp == CLASS::CLASS_WORKER)
-		{
-			if (m_ButtonClass == CLASS(2) || m_ButtonClass == CLASS(4) || m_ButtonClass == CLASS::CLASS_MMAGE)
-				tRep.m_arrInt[0] = 2;
-			else
-				tRep.m_arrInt[0] = 0;
-		}
-		else if (cTemp == CLASS::CLASS_CAVALRY || cTemp == CLASS(2))
-		{
-			if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_CAVALRY || m_ButtonClass == CLASS(2))
-				tRep.m_arrInt[0] = 0;
-			else
-				tRep.m_arrInt[0] = 2;
-		}
-		else if (cTemp == CLASS::CLASS_INFANTRY || cTemp == CLASS(4))
-		{
-			if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_INFANTRY || m_ButtonClass == CLASS(4))
-				tRep.m_arrInt[0] = 0;
-			else
-				tRep.m_arrInt[0] = 2;
-		}
-		else if (cTemp == CLASS::CLASS_SPEARMAN)
-		{
-			if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_SPEARMAN)
-				tRep.m_arrInt[0] = 0;
-			else
-				tRep.m_arrInt[0] = 2;
-		}
-		else if (cTemp == CLASS::CLASS_MAGE || cTemp == CLASS::CLASS_MMAGE)
-		{
-			if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_MAGE || m_ButtonClass == CLASS::CLASS_MMAGE)
-				tRep.m_arrInt[0] = 0;
-			else
-				tRep.m_arrInt[0] = 2;
-		}
-		else if (cTemp == CLASS::CLASS_ARCHER)
-		{
-			if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_ARCHER)
-				tRep.m_arrInt[0] = 0;
-			else
-				tRep.m_arrInt[0] = 2;
-		}
-
-		if (cTemp == CLASS(m_ButtonClass))
-			tRep.m_arrInt[0] = 1;
-
-		MAINPASS	tMainPass = {};
-
-
-		_matrix matWorld = Matrix_::Identity();
-		_matrix matView = Matrix_::Identity();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-
-		matWorld._11 = m_fSizeX;
-		matWorld._22 = m_fSizeY;
-
-		matWorld._41 = m_fX - (WINCX >> 1);
-		matWorld._42 = -m_fY + (WINCY >> 1);
-
-
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-
-		_int iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(_uint(m_ButtonClass)), TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->UpdateTable();
-		m_pBufferCom->Render_VIBuffer();
-
-		Safe_Release(pManagement);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+		cTemp = pTemp->GetClass();
 	}
+	else
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+		cTemp = pTemp->GetClass();
+	}
+
+
+	if (cTemp == CLASS::CLASS_WORKER)
+	{
+		if (m_ButtonClass == CLASS(2) || m_ButtonClass == CLASS(4) || m_ButtonClass == CLASS::CLASS_MMAGE)
+			tRep.m_arrInt[0] = 2;
+		else
+			tRep.m_arrInt[0] = 0;
+	}
+	else if (cTemp == CLASS::CLASS_CAVALRY || cTemp == CLASS(2))
+	{
+		if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_CAVALRY || m_ButtonClass == CLASS(2))
+			tRep.m_arrInt[0] = 0;
+		else
+			tRep.m_arrInt[0] = 2;
+	}
+	else if (cTemp == CLASS::CLASS_INFANTRY || cTemp == CLASS(4))
+	{
+		if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_INFANTRY || m_ButtonClass == CLASS(4))
+			tRep.m_arrInt[0] = 0;
+		else
+			tRep.m_arrInt[0] = 2;
+	}
+	else if (cTemp == CLASS::CLASS_SPEARMAN)
+	{
+		if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_SPEARMAN)
+			tRep.m_arrInt[0] = 0;
+		else
+			tRep.m_arrInt[0] = 2;
+	}
+	else if (cTemp == CLASS::CLASS_MAGE || cTemp == CLASS::CLASS_MMAGE)
+	{
+		if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_MAGE || m_ButtonClass == CLASS::CLASS_MMAGE)
+			tRep.m_arrInt[0] = 0;
+		else
+			tRep.m_arrInt[0] = 2;
+	}
+	else if (cTemp == CLASS::CLASS_ARCHER)
+	{
+		if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_ARCHER)
+			tRep.m_arrInt[0] = 0;
+		else
+			tRep.m_arrInt[0] = 2;
+	}
+
+	if (cTemp == CLASS(m_ButtonClass))
+		tRep.m_arrInt[0] = 1;
+
+	MAINPASS	tMainPass = {};
+
+
+	_matrix matWorld = Matrix_::Identity();
+	_matrix matView = Matrix_::Identity();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+
+	matWorld._11 = m_fSizeX;
+	matWorld._22 = m_fSizeY;
+
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -m_fY + (WINCY >> 1);
+
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+	_int iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(_uint(m_ButtonClass)), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
+	Safe_Release(pManagement);
+	
 }
 
 HRESULT CUI_Button::CreateInputLayout()

@@ -112,8 +112,12 @@ _int CUI_ButtonNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		if (m_cansee)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		
 	}
 
 	return _int();
@@ -121,68 +125,67 @@ _int CUI_ButtonNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CUI_ButtonNPC::Render_GameObject()
 {
-	if (m_cansee)
-	{
-		CManagement* pManagement = CManagement::GetInstance();
-		if (nullptr == pManagement)
-			return;
-		pManagement->AddRef();
+	
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
 
-		_uint now{};
-		if (m_ButtonNow == 0)
+	_uint now{};
+	if (m_ButtonNow == 0)
+	{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_ButtonNow);
+		now = (_uint)pTemp->GetClass();
+	}
+	else
+	{
+		if (m_ButtonNow < npcnumm + 1)
 		{
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_ButtonNow);
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_ButtonNow - 1);
 			now = (_uint)pTemp->GetClass();
 		}
-		else
-		{
-			if (m_ButtonNow < npcnumm + 1)
-			{
-				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_ButtonNow - 1);
-				now = (_uint)pTemp->GetClass();
-			}
-		}
-
-		CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
-		int w = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
-
-
-		REP tRep = {};
-		if (w == m_ButtonNow)
-			tRep.m_arrInt[0] = 1;
-		else
-			tRep.m_arrInt[0] = 99;
-
-		MAINPASS	tMainPass = {};
-
-
-		_matrix matWorld = Matrix_::Identity();
-		_matrix matView = Matrix_::Identity();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
-
-		matWorld._11 = m_fSizeX;
-		matWorld._22 = m_fSizeY;
-
-		matWorld._41 = m_fX - (WINCX >> 1);
-		matWorld._42 = -m_fY + (WINCY >> 1);
-
-
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-
-		_int iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
-		if (m_ButtonNow < npcnumm + 1)
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(now), TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->UpdateTable();
-		m_pBufferCom->Render_VIBuffer();
-
-		Safe_Release(pManagement);
 	}
+
+	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
+	int w = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+
+
+	REP tRep = {};
+	if (w == m_ButtonNow)
+		tRep.m_arrInt[0] = 1;
+	else
+		tRep.m_arrInt[0] = 99;
+
+	MAINPASS	tMainPass = {};
+
+
+	_matrix matWorld = Matrix_::Identity();
+	_matrix matView = Matrix_::Identity();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+
+	matWorld._11 = m_fSizeX;
+	matWorld._22 = m_fSizeY;
+
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -m_fY + (WINCY >> 1);
+
+
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+
+	_int iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+	if (m_ButtonNow < npcnumm + 1)
+		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(now), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
+	Safe_Release(pManagement);
+	
 }
 
 HRESULT CUI_ButtonNPC::CreateInputLayout()

@@ -99,8 +99,12 @@ _int CUI_Shop::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		if (m_cansee)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		
 	}
 
 	return _int();
@@ -108,39 +112,38 @@ _int CUI_Shop::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CUI_Shop::Render_GameObject()
 {
-	if (m_cansee)
-	{
-		CManagement* pManagement = CManagement::GetInstance();
-		if (nullptr == pManagement)
-			return;
-		pManagement->AddRef();
+	
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
 
 
-		MAINPASS	tMainPass = {};
+	MAINPASS	tMainPass = {};
 
 
-		_matrix matWorld = Matrix_::Identity();
-		_matrix matView = Matrix_::Identity();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
+	_matrix matWorld = Matrix_::Identity();
+	_matrix matView = Matrix_::Identity();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
-		matWorld._11 = m_fSizeX;
-		matWorld._22 = m_fSizeY;
+	matWorld._11 = m_fSizeX;
+	matWorld._22 = m_fSizeY;
 
-		matWorld._41 = m_fX - (WINCX >> 1);
-		matWorld._42 = -m_fY + (WINCY >> 1);
+	matWorld._41 = m_fX - (WINCX >> 1);
+	matWorld._42 = -m_fY + (WINCY >> 1);
 
-		
-		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+	
+	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
-		_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
-		CDevice::GetInstance()->UpdateTable();
-		m_pBufferCom->Render_VIBuffer();
+	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
 
 
-		Safe_Release(pManagement);
-	}
+	Safe_Release(pManagement);
+	
 
 }
 
@@ -213,5 +216,6 @@ HRESULT CUI_Shop::Ready_Component()
 		return E_FAIL;
 	
 	Safe_Release(pManagement);
+
 	return S_OK;
 }
