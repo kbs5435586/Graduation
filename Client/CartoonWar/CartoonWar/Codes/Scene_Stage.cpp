@@ -87,17 +87,17 @@ HRESULT CScene_Stage::Ready_Scene()
 
 
 
-	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
+	if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
 		return E_FAIL;
 	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleTree.dat", (void*)&eEnviType)))
 		return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_FLOWER;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_PLANT;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
+	////eEnviType = ENVITYPE::ENVI_FLOWER;
+	////if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+	////	return E_FAIL;
+	////eEnviType = ENVITYPE::ENVI_PLANT;
+	////if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
+	////	return E_FAIL;
 	eEnviType = ENVITYPE::ENVI_ROCK;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
 		return E_FAIL;
@@ -262,7 +262,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 600.f;
+	tProjDesc.fFar = 500.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -509,8 +509,6 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 			return E_FAIL;
-
-
 	}
 
 	//tPlayerInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };

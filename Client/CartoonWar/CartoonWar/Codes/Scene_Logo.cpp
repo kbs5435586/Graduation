@@ -675,10 +675,10 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		CBuffer_CubeTex::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
-		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/tttt.bmp", 2.5f))))
+		CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/TerrainTest.bmp", 2.f))))
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain_Height",
-	//	CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/Filter.bmp", 1.f))))
+	//	CBuffer_Terrain_Height::Create(L"../Bin/Resource/Texture/Height/tttt.bmp", 1.f))))
 	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Sphere",
 		CBuffer_Sphere::Create())))
@@ -723,7 +723,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh",
-		CNavigation::Create(L"../Data/Navi/NaviSliding2.dat"))))
+		CNavigation::Create(L"../Data/Navi/NaviTest2.dat"))))
 		return E_FAIL;
 	return S_OK;
 }

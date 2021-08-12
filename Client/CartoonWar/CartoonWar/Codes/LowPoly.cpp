@@ -50,20 +50,17 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	_float		fSize = m_pTransformCom->Get_Scale().x;
 
-	if (m_eEnviType == ENVITYPE::ENVI_TREE || m_eEnviType == ENVITYPE::ENVI_FLOWER || m_eEnviType == ENVITYPE::ENVI_PLANT)
-		m_pTransformCom->Set_PositionY(fY);
-	else if (m_eEnviType == ENVITYPE::ENVI_ROCK)
-		m_pTransformCom->Set_PositionY(fY + fSize / 2.f);
-
 	if (m_eEnviType == ENVITYPE::ENVI_ROCK)
 	{
-		m_vColliderSize_Rock = { 2.f,4.f,2.f };
+		m_vColliderSize_Rock = { 2.5f,3.f,2.5f };
 		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Rock);
+		m_pTransformCom->Set_PositionY(fY);
 	}
 	else if (m_eEnviType == ENVITYPE::ENVI_TREE)
 	{
-		m_vColliderSize_Tree = { 1.f,4.f,1.f };
+		m_vColliderSize_Tree = { 0.5f,3.f,0.5f };
 		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Tree);
+		m_pTransformCom->Set_PositionY(fY);
 	}
 
 	return _int();
@@ -78,34 +75,25 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom,4.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 8.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+	}
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 6.f))
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
-		if (fLen <= 250.f)
+		if (fLen <= 50.f && pPlayer->GetIsRun())
 		{
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
-
-		}
-		if (fLen <= 50.f)
-		{
-			if (pPlayer->GetIsRun())
-			{
-				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-					return -1;
-			}
 			else
 			{
 				m_matOldWorld = m_pTransformCom->Get_Matrix();;
 				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 			}
-		}
-		else
-		{
-			m_matOldWorld = m_pTransformCom->Get_Matrix();;
-			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+
 		}
 
 	}
@@ -114,7 +102,6 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_matOldWorld = m_pTransformCom->Get_Matrix();;
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	}
-
 
 
 	return _int();
@@ -156,7 +143,7 @@ void CLowPoly::Render_GameObject()
 	}
 
 
-	//m_pCollider_AABB->Render_Collider();
+	m_pCollider_AABB->Render_Collider();
 	Safe_Release(pManagement);
 }
 
@@ -224,7 +211,7 @@ void CLowPoly::Render_Blur()
 		m_pMeshCom->Render_Mesh(i);
 	}
 	m_iBlurCnt++;
-	if (m_iBlurCnt >= 20)
+	if (m_iBlurCnt >= 50)
 	{
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_matOldWorld = m_pTransformCom->Get_Matrix();

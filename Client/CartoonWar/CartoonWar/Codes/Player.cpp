@@ -1270,22 +1270,31 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
-		if (!m_IsSlide)
+		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 		{
-			if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			{
-				m_pTransformCom->BackWard(fTimeDelta);
-			}
-			else
-			{
-				m_pTransformCom->Go_There(vSlide);
-			}
+			m_pTransformCom->BackWard(fTimeDelta);
 		}
 		else
 		{
-			m_pTransformCom->BackWard(fTimeDelta);
-			m_IsSlide = false;
+			m_pTransformCom->Go_There(vSlide);
 		}
+
+		//if (!m_IsSlide)
+		//{
+		//	if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		//	{
+		//		m_pTransformCom->BackWard(fTimeDelta);
+		//	}
+		//	else
+		//	{
+		//		m_pTransformCom->Go_There(vSlide);
+		//	}
+		//}
+		//else
+		//{
+		//	m_pTransformCom->BackWard(fTimeDelta);
+		//	m_IsSlide = false;
+		//}
 		m_IsActioning = true;
 		m_IsRun = false;
 
