@@ -150,4 +150,5 @@ HRESULT CUI_CharInterface::Ready_Component()
 		return E_FAIL;
 
 	Safe_Release(pManagement);
+	return S_OK;
 }

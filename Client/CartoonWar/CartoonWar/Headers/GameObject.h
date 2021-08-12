@@ -31,6 +31,7 @@ public:
 	_bool&									GetIsTree() {return m_IsTree;}
 	_bool&									GetIsRun(){return m_IsRun;}
 	_bool&									GetIsCheckRange_Flag() {return m_IsCheck_FlagRange;}
+	_bool&									GetIsFrustum(){return m_IsFrustum;}
 	_uint									GetLayerIdx() { return m_iLayerIdx; }
 	INFO&									GetInfo(){return m_tInfo;}
 public:
@@ -81,6 +82,7 @@ protected:
 	_bool									m_IsBack = false;
 	_bool									m_IsTree = false;
 	_bool									m_IsHit_PostEffect = false;
+	_bool									m_IsFrustum = false;
 	_vec3									m_vColShpereSize = {};
 protected:
 	_tchar*									m_pComponentTag = nullptr;

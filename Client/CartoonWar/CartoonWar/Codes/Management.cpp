@@ -229,9 +229,9 @@ HRESULT CManagement::Ready_CollsionManager()
 	return m_pCollision_Manager->Ready_CollsionManager();
 }
 
-void CManagement::Update_CollisionManager(const _float& fTimeDelta)
+void CManagement::Update_CollisionManager()
 {
-	return m_pCollision_Manager->Update_CollisionManager(fTimeDelta);
+	return m_pCollision_Manager->Update_CollisionManager();
 }
 
 HRESULT CManagement::Ready_FontMgr(const char* pFilePath)
@@ -384,7 +384,7 @@ _int CManagement::Update_Management(const _float& fTimeDelta)
 	if (iProcessCodes & 0x80000000)
 		return iProcessCodes;
 
-	CManagement::GetInstance()->Update_CollisionManager(fTimeDelta);
+	CManagement::GetInstance()->Update_CollisionManager();
 	return _int(0);
 }
 
