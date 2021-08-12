@@ -1859,7 +1859,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_cLock.lock();
             g_clients[npc_id].m_status = ST_SLEEP;
             g_clients[npc_id].m_cLock.unlock();
-            g_clients[npc_id].m_hp = 100;
+            g_clients[npc_id].m_hp = 200;
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
@@ -2593,7 +2593,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
                 g_clients[user_id].m_col.radius = 20.f * SCALE.x;
                 g_clients[user_id].m_owner_id = user_id;
-                g_clients[user_id].m_hp = 100;
+                g_clients[user_id].m_hp = 200;
                 g_clients[user_id].m_total_angle = -90.f;
                 g_clients[user_id].m_Mcondition = CON_IDLE;
                 g_clients[user_id].m_Rcondition = CON_IDLE;

@@ -82,8 +82,6 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	pManagement->AddRef();
 
-
-
 	if (FAILED(Ready_Prototype_GameObject(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Light(pManagement)))
@@ -95,8 +93,8 @@ HRESULT CScene_Stage::Ready_Scene()
 	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
 	//	return E_FAIL;
 	// 
-	//if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
+		return E_FAIL;
 	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleTree.dat", (void*)&eEnviType)))
 		return E_FAIL;
@@ -109,7 +107,6 @@ HRESULT CScene_Stage::Ready_Scene()
 	eEnviType = ENVITYPE::ENVI_ROCK;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
 		return E_FAIL;
-
 
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -521,16 +518,16 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	//GameObject_UI_Diffuse
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	_bool a = true;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&a)))
 		return E_FAIL;
