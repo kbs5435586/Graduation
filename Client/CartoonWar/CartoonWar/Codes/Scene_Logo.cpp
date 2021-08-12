@@ -1321,7 +1321,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	return S_OK;
 }
 
-
 HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 {
 	//DDS 
@@ -1441,9 +1440,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_NGround",
 			CTexture::Create(L"../Bin/Resource/Texture/Terrain/NGround%d.tga", 3, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Flag",
-			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga",1, TEXTURE_TYPE::TEXTURE_TGA))))
-			return E_FAIL;
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon",
 			CTexture::Create(L"../Bin/Resource/Texture/Icon/icon_class_0%d.tga", 13, TEXTURE_TYPE::TEXTURE_TGA))))
@@ -1453,6 +1449,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/MiniMap_T/WorldMap%d.tga", 11, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Flag",
+			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga",1, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
 	}
 
 	return S_OK;
@@ -1485,35 +1484,22 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI",
 		CShader::Create(L"../ShaderFiles/Shader_UI.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_OnHead_Gage",
-		CShader::Create(L"../ShaderFiles/Shader_OnHead_Gage.hlsl", "VS_Main", "PS_Main"))))
-		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_MiniMap",
-		CShader::Create(L"../ShaderFiles/Shader_UI_MiniMap.hlsl", "VS_Main", "PS_Main"))))
-		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Skill",
 		CShader::Create(L"../ShaderFiles/Shader_UI_Skill.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Flag",
-		CShader::Create(L"../ShaderFiles/Shader_UI_Flag.hlsl", "VS_Main", "PS_Main"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_OnHead_Gage",
+		CShader::Create(L"../ShaderFiles/Shader_OnHead_Gage.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Light",
 		CShader::Create(L"../ShaderFiles/Shader_UI_Deffered.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Toon",
-		CShader::Create(L"../ShaderFiles/Shader_UI_Toon.hlsl", "VS_Main", "PS_Main"))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Tap",
-		CShader::Create(L"../ShaderFiles/Shader_UI_Tap.hlsl", "VS_Main", "PS_Main"))))
-		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_InGame_UI",
 		CShader::Create(L"../ShaderFiles/Shader_InGame_UI.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Fire",
 		CShader::Create(L"../ShaderFiles/Shader_Fire.hlsl", "VS_Main", "PS_Main"))))

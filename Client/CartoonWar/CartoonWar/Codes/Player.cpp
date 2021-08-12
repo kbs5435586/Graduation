@@ -237,7 +237,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
-
+	Set_Animation(fTimeDelta);
 
 	Safe_Release(server);
 
@@ -287,7 +287,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 	}
 
-	Set_Animation(fTimeDelta);
 	Safe_Release(server);
 	return _int();
 }
@@ -427,11 +426,11 @@ void CPlayer::Render_GameObject_Map()
 			if (i == 0)
 				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[0], TEXTURE_REGISTER::t0, (_uint)HORSE::HORSE_A);
 			else
-				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+				CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 		else
 		{
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tPlayer.eColor);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom[1], TEXTURE_REGISTER::t0, (_uint)m_tUnit.eColor);
 		}
 
 		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
@@ -440,8 +439,8 @@ void CPlayer::Render_GameObject_Map()
 	}
 
 
-	//m_pCollider_OBB->Render_Collider();
-	//m_pCollider_Attack->Render_Collider(1);
+	m_pCollider_OBB->Render_Collider();
+	m_pCollider_Attack->Render_Collider(1);
 	//m_pCollider_Hit->Render_Collider();
 	//m_pColiider[1]->Render_Collider();
 
@@ -658,10 +657,6 @@ void CPlayer::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pShaderCom_PostEffect);
 	Safe_Release(m_pShaderCom_Blur);
-
-	Safe_Release(m_pShaderCom_Skill);
-	
-
 	Safe_Release(m_pShaderCom_Reflection);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pCollider_OBB);
@@ -670,9 +665,7 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
-	//Safe_Release(m_pObserverCom);
-	//Safe_Release(m_pNaviCom);
-	Safe_Release(m_pBufferCom);
+	//Safe_Release(m_pShaderCom_Skill);
 
 	CGameObject::Free();
 }
@@ -692,12 +685,6 @@ HRESULT CPlayer::Ready_Component()
 	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
-
-	m_pBufferCom = (CBuffer_CubeTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex");
-	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
-		return E_FAIL;
-
 
 	if(m_tUnit.eSpecies == SPECIES::SPECIES_UNDEAD)
 	{
@@ -827,10 +814,10 @@ HRESULT CPlayer::Ready_Component()
 
 
 
-	m_pShaderCom_Skill = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
-	NULL_CHECK_VAL(m_pShaderCom_Skill, E_FAIL);
-	if (FAILED(Add_Component(L"Com_SkillShader", m_pShaderCom_Skill)))
-		return E_FAIL;
+	//m_pShaderCom_Skill = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
+	//NULL_CHECK_VAL(m_pShaderCom_Skill, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_SkillShader", m_pShaderCom_Skill)))
+	//	return E_FAIL;
 	//m_pShaderCom_Reflection
 	m_pShaderCom_Reflection = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflection");
 	NULL_CHECK_VAL(m_pShaderCom_Reflection, E_FAIL);
@@ -912,10 +899,6 @@ HRESULT CPlayer::Ready_Component()
 			return E_FAIL;
 	}
 
-	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-	//	return E_FAIL;
 
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
@@ -1905,21 +1888,23 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 	if (m_IsParticle)
 	{
 		_vec3 vTemp = vPoistion;
-		vTemp.y += 5.f;
+		vTemp.y += 10.f;
 		PARTICLESET tParticleSet;
 		tParticleSet.vPos = vTemp;
 		tParticleSet.iMaxParticle = 300;
 		tParticleSet.fMaxLifeTime = 0.2f;
 		tParticleSet.iMinLifeTime = 0.01f;
+
 		tParticleSet.fStartScale = 0.5f;
 		tParticleSet.fEndScale = 0.2f;
+
 		tParticleSet.fMaxSpeed = 30.f;
 		tParticleSet.fMinSpeed = 50.f;
-
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Particle_Default", (_uint)SCENEID::SCENE_STAGE, L"Layer_Particle", nullptr, (void*)&tParticleSet)))
 			return;
 		m_IsParticle = false;
 	}
+
 }
 
 void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)

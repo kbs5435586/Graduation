@@ -61,7 +61,7 @@ _int CBuilding::LastUpdate_GameObject(const _float& fTimeDelta)
 	_float fLen = vLen.Length();
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 4.f))
 	{
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))

@@ -83,31 +83,31 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	{
-		if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
-		{
-			m_pTransform->Go_Straight(fTimeDelta);
-		}
-		if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
-		{
-			m_pTransform->BackWard(fTimeDelta);
-		}
-		if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
-		{
-			m_pTransform->Go_Left(fTimeDelta);
-		}
-		if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
-		{
-			m_pTransform->Go_Right(fTimeDelta);
-		}
-		_long	MouseMove = 0;
-		if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
-		{
-			m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
-		}
-		if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
-		{
-			m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
-		}
+		//if (m_pInput_Device->Get_DIKeyState(DIK_W) & 0x80)
+		//{
+		//	m_pTransform->Go_Straight(fTimeDelta);
+		//}
+		//if (m_pInput_Device->Get_DIKeyState(DIK_S) & 0x80)
+		//{
+		//	m_pTransform->BackWard(fTimeDelta);
+		//}
+		//if (m_pInput_Device->Get_DIKeyState(DIK_A) & 0x80)
+		//{
+		//	m_pTransform->Go_Left(fTimeDelta);
+		//}
+		//if (m_pInput_Device->Get_DIKeyState(DIK_D) & 0x80)
+		//{
+		//	m_pTransform->Go_Right(fTimeDelta);
+		//}
+		//_long	MouseMove = 0;
+		//if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
+		//{
+		//	m_pTransform->Rotation_Y(MouseMove * fTimeDelta * 0.5f);
+		//}
+		//if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
+		//{
+		//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
+		//}
 	}
 
 	{
@@ -274,6 +274,21 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CDebug_Camera::Render_GameObject()
 {
+}
+
+HRESULT CDebug_Camera::Ready_Component()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	NULL_CHECK_VAL(pManagement, E_FAIL);
+	pManagement->AddRef();
+
+	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
+	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
+	//	return E_FAIL;
+
+	Safe_Release(pManagement);
+	return S_OK;
 }
 
 CDebug_Camera* CDebug_Camera::Create()

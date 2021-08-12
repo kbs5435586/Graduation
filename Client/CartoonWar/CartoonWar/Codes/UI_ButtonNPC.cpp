@@ -128,15 +128,10 @@ void CUI_ButtonNPC::Render_GameObject()
 			return;
 		pManagement->AddRef();
 
-
-		//CGameObject* lTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 20);
-		//nowNum = dynamic_cast<CUI_ClassTap*>(lTemp)->GetNPCNum();
-
 		_uint now{};
 		if (m_ButtonNow == 0)
 		{
 			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_ButtonNow);
-			//now = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
 			now = (_uint)pTemp->GetClass();
 		}
 		else
@@ -144,7 +139,6 @@ void CUI_ButtonNPC::Render_GameObject()
 			if (m_ButtonNow < npcnumm + 1)
 			{
 				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_ButtonNow - 1);
-				//now = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
 				now = (_uint)pTemp->GetClass();
 			}
 		}

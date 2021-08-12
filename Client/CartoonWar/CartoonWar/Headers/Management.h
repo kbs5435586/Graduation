@@ -82,7 +82,8 @@ public://UAV_Manager
 	CUAV*						Get_UAV(const _tchar* pUAVTag);
 public://CCollisionMgr
 	HRESULT						Ready_CollsionManager();
-	void						Update_CollisionManager(const _float& fTimeDelta);
+	void						Update_CollisionManager();
+	//void						Update_CollisionManager(const _float& fTimeDelta);
 public://FontMgr
 	HRESULT						Ready_FontMgr(const char* pFilePath);
 	HRESULT						Create_Font_Buffer(const _tchar* pFontTag, const char* pSentence, float iDrawX, float iDrawY);

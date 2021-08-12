@@ -46,25 +46,12 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
-
-	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
-		return -1;
-	if (pPlayer->GetIsRun())
-	{
-		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-		//	return -1;
-	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	}
+
+	//¿©±â
+	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
+	//	return -1;
 
 	//if (GetKeyState(VK_LBUTTON) < 0)
 	//{
@@ -128,151 +115,7 @@ void CTerrain_Height::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-void CTerrain_Height::Render_GameObject_Shadow()
-{
-}
-
-void CTerrain_Height::Render_Blur()
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
-
-	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-	REP tRep = {};
-	tRep.m_arrMat[0] = m_matOldWorld;//OldWorld
-	tRep.m_arrMat[1] = m_matOldView;//OldView
-
-	m_pShaderCom_Blur->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
-
-	CDevice::GetInstance()->UpdateTable();
-	m_pBufferCom->Render_VIBuffer();
-
-
-	Safe_Release(pManagement);
-}
-
-void CTerrain_Height::Render_GameObject_Map()
-{
-	//CManagement* pManagement = CManagement::GetInstance();
-	//if (nullptr == pManagement)
-	//	return;
-	//pManagement->AddRef();
-	//
-	//
-	//MAINPASS tMainPass = {};
-	//_matrix matWorld = m_pTransformCom->Get_Matrix();
-	//_matrix matView = CCamera_Manager::GetInstance()->GetMapMatView();
-	//_matrix matProj = CCamera_Manager::GetInstance()->GetMapMatProj();
-	//m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-	//
-	//REP tRep = {};
-	//tRep.m_arrInt[2] = g_DefferedRender;
-	//
-	//
-	//m_tBrush.fBrushRange = 50.f;
-	//
-	//_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	//
-	//iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-	//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-	//	(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-	//
-	//iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b10)->SetData((void*)&m_tBrush);
-	//CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-	//	(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
-	//
-	//
-	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(), TEXTURE_REGISTER::t0);
-	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Grass_Mix->GetSRV(1), TEXTURE_REGISTER::t1);
-	//
-	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t2);
-	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t3);
-	//
-	//
-	//CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
-	//CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(), TEXTURE_REGISTER::t9);
-	//
-	//CDevice::GetInstance()->UpdateTable();
-	//m_pBufferCom->Render_VIBuffer();
-	////m_pBufferCom->Render_VIBuffer(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-	//m_pNaviCom->Render_Navigation();
-	//
-	//
-	//Safe_Release(pManagement);
-
-
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
-
-	MAINPASS tMainPass = {};
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	_matrix matView = CCamera_Manager::GetInstance()->GetMapMatView();
-	_matrix matProj = CCamera_Manager::GetInstance()->GetMapMatProj();
-	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-	REP tRep = {};
-	tRep.m_arrInt[2] = g_DefferedRender;
-
-
-	m_tBrush.fBrushRange = 50.f;
-
-	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b10)->SetData((void*)&m_tBrush);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-		(_uint)CONST_REGISTER::b10)->GetCBV().Get(), iOffeset, CONST_REGISTER::b10);
-
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(), TEXTURE_REGISTER::t0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(1), TEXTURE_REGISTER::t1);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Ground->GetSRV(2), TEXTURE_REGISTER::t2);
-
-
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
-	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(), TEXTURE_REGISTER::t9);
-
-	CDevice::GetInstance()->UpdateTable();
-	m_pBufferCom->Render_VIBuffer();
-	m_pNaviCom->Render_Navigation();
-
-	m_matOldView = CCamera_Manager::GetInstance()->GetMapMatView();
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= 100)
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_iBlurCnt = 0;
-	}
-
-	Safe_Release(pManagement);
-
-}
-
+ 
 HRESULT CTerrain_Height::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -299,8 +142,6 @@ HRESULT CTerrain_Height::CreateInputLayout()
 	//if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST)))
 	//	return E_FAIL;
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_DEFFERED, BLEND_TYPE::DEFAULT)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -336,7 +177,6 @@ void CTerrain_Height::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pBrushTextureCom);
 	Safe_Release(m_pNaviCom);
 	Safe_Release(m_pPickingCom);
@@ -379,11 +219,6 @@ HRESULT CTerrain_Height::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL; 
-
-	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
-	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
-	if (FAILED(Add_Component(L"Com_ShaderBlur", m_pShaderCom_Blur)))
-		return E_FAIL;
 
 	{
 		m_pTextureCom_Grass_Mix = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass_Mix");

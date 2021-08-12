@@ -4,9 +4,7 @@
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
 
-_int CNPC::npcnum = 0;
 _float CNPC::poss = 25.f;
-_bool CNPC::first = true;
 
 CNPC::CNPC()
 	: CGameObject()
@@ -35,7 +33,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-
+	
+	
 	//Compute_Matrix();
 	_vec3 vPos = { _float(rand() % 100)+50.f,0.f,_float(rand() % 100) + 50.f };
 	//_vec3 vPos = {70.f,0.f,70.f };
@@ -66,6 +65,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
+
+	SetSpeed();
 
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
@@ -165,6 +166,17 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	//if (m_IsDead)
 	//	return DEAD_OBJ;
 
+	Set_Animation(fTimeDelta);
+	if (fLen <= 175.f)
+	{
+		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+		{
+			m_iCurAnimIdx = 0;
+			m_IsOnce = false;
+			m_IsActioning = false;
+		}
+	}
+
 	Safe_Release(server);
 	return NO_EVENT;
 }
@@ -216,21 +228,10 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_matOldWorld = m_pTransformCom->Get_Matrix();;
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
-
 	}
 
-	Set_Animation(fTimeDelta);
-	if (fLen <= 175.f)
-	{
-		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-		{
-			m_iCurAnimIdx = 0;
-			m_IsOnce = false;
-			m_IsActioning = false;
-		}
-	}
-	Safe_Release(server);
-	return _int();
+		Safe_Release(server);
+		return _int();
 }
 
 void CNPC::Render_GameObject()
@@ -288,7 +289,6 @@ void CNPC::Render_GameObject()
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
-	
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
@@ -498,7 +498,7 @@ void CNPC::Free()
 	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	Safe_Release(m_pNaviCom);
+	//Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }
@@ -719,15 +719,10 @@ HRESULT CNPC::Ready_Component()
 		return E_FAIL;
 
 
-	//m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	//NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-	//	return E_FAIL;
-
-	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
-	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-		return E_FAIL;
+	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh_Test");
+	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+	//   return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -976,8 +971,8 @@ void CNPC::Change_Class()
 			//	walk	
 			//	run		
 			//	attack	
-			//	take damage
-			//	death a	
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 			//	death b	
 			//	cast a	
 			//	cast b	

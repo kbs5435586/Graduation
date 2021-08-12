@@ -91,7 +91,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 				m_fSizeX = 50.f;
 				m_fSizeY = 50.f;
 
-
 				CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 				_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 
@@ -100,13 +99,11 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 				if (whichnum == 0)
 				{
 					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-					//m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
 					cTemp = pTemp->GetClass();
 				}
 				else
 				{
 					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-					//m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
 					cTemp = pTemp->GetClass();
 				}
 
@@ -121,7 +118,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (whichnum == 0)
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-							//dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);				
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
 							server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
@@ -129,7 +125,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						else
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-							//dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
@@ -143,7 +138,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (whichnum == 0)
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-							//dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
 							server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
@@ -151,7 +145,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						else
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-							//dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
@@ -165,7 +158,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (whichnum == 0)
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-							//dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), server->Get_PlayerID(), O_PLAYER);
 							server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
@@ -173,7 +165,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						else
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-							//dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
@@ -187,7 +178,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (whichnum == 0)
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-							//dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), server->Get_PlayerID(), O_PLAYER);
 							server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
@@ -195,7 +185,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						else
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-							//dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
@@ -209,7 +198,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (whichnum == 0)
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-							//dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), server->Get_PlayerID(), O_PLAYER);
 							server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
@@ -217,7 +205,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						else
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-							//dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
@@ -231,7 +218,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (whichnum == 0)
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-							//dynamic_cast<CPlayer*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), server->Get_PlayerID(), O_PLAYER);
 							server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
@@ -239,7 +225,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						else
 						{
 							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-							//dynamic_cast<CNPC*>(pTemp)->SetCurMesh(m_iClass);
 							pTemp->SetClass(CLASS(m_ButtonClass));
 							server->Set_Class((int)(m_ButtonClass), whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
@@ -288,13 +273,11 @@ void CUI_Button::Render_GameObject()
 		if (whichnum == 0)
 		{
 			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-			//m_iCurMeshNum = dynamic_cast<CPlayer*>(pTemp)->GetCurMesh();
 			cTemp = pTemp->GetClass();
 		}
 		else
 		{
 			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-			//m_iCurMeshNum = dynamic_cast<CNPC*>(pTemp)->GetCurMesh();
 			cTemp = pTemp->GetClass();
 		}
 
