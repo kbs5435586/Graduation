@@ -265,8 +265,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_Map(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
 	
-	//if (FAILED(Ready_Layer_Skill(L"Layer_Skill", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -548,10 +548,11 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_Skill(const _tchar* pLayerTag, CManagement* pManagement)
+HRESULT CScene_Stage::Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
 	return S_OK;
 }
 

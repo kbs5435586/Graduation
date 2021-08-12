@@ -54,7 +54,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(1.f, 1, 1, 0);
+	m_tInfo = INFO(100.f, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -146,8 +146,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		Skill_Invisible(fTimeDelta);
 	}
 
-	Skill_FireTime(fTimeDelta);
-	
 	
 
 	if (m_tInfo.fHP <= 0.f)
@@ -1272,12 +1270,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 					return;
 				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
 			}
-			//else if (m_eCurClass == CLASS::CLASS_WORKER)
-			//{
-			//	_matrix matTemp = m_pTransformCom->Get_Matrix();
-			//	if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-			//		return;
-			//}
+			else if (m_eCurClass == CLASS::CLASS_WORKER)
+			{
+				//_matrix matTemp = m_pTransformCom->Get_Matrix();
+				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				//	return;
+			}
 			else
 			{
 				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
@@ -1303,10 +1301,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			{
 				m_IsFire = false;
 				m_IsFireCheck = true;
-				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
 				int numver = lst.size();
-				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-				dynamic_cast<CFire*>(fire)->setCheck(m_IsFireCheck);
+				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
+				dynamic_cast<CFire*>(fire)->SetSCheck(m_IsFireCheck);
+				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+				dynamic_cast<CUI_Skill*>(sTemp)->SetOne(m_IsFireCheck);
 			}
 			if (m_IsTeleport)
 			{
@@ -1965,10 +1965,9 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 	{
 		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
 		m_GetFire = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
-		if (m_GetFire)
+		_bool onetouch = dynamic_cast<CUI_Skill*>(pTemp)->GetOne();
+		if (m_GetFire && !onetouch)
 		{
-			//if (CManagement::GetInstance()->Key_Up(KEY_N))
-			//{
 
 			CManagement* pManagement = CManagement::GetInstance();
 			if (nullptr == pManagement)
@@ -1976,54 +1975,47 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 
 			pManagement->AddRef();
 
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_Skill")))
+			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire")))
 				return;
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
-			int numver = lst.size();
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
-			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-			*iter0_Pos = { 60.f, 10.f, 100.f };
-			m_IsFire = !m_IsFire;	//true
 
+			//dynamic_cast<CUI_Skill*>(pTemp)->SetActive(false);
+			m_IsFire = true;	//true
+			//m_FirstFire = true;
 			Safe_Release(pManagement);
-			//}
 		}
 	}
 	else
 	{
-		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill");
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
 		int numver = lst.size();
 		if (numver > 0)
 		{
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill", numver - 1);
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
 			_vec3* iter0_Pos = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-		
+
 			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
-			BRUSHINFO bTemp = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-			*iter0_Pos = _vec3(bTemp.vBrushPos.x, fY, bTemp.vBrushPos.z);
-			//*iter0_Pos = { 75,0,75 };
-			//
-			//_vec3* Ppp = dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-			//
-			//BRUSHINFO asd;
+			BRUSHINFO bPos = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
+
+
+			*iter0_Pos = _vec3(bPos.vBrushPos.x, bPos.vBrushPos.y, bPos.vBrushPos.z);
 		}
 	}
 }
 
 void CPlayer::Skill_FireTime(const _float& fTimeDelta)
 {
-	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill").size() > 0)
+	if (CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire").size() > 0)
 	{
-		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Skill"))
+		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire"))
 		{
-			_float t = dynamic_cast<CFire*>(iter0)->getETime();
+			_float t = dynamic_cast<CFire*>(iter0)->GetETime();
 			if (t < 10.f)
 			{
-				dynamic_cast<CFire*>(iter0)->setETime(t + fTimeDelta);
+				dynamic_cast<CFire*>(iter0)->SetETime(t + fTimeDelta);
 			}
 			else
 			{
-				dynamic_cast<CFire*>(iter0)->setETime(0.f);
+				dynamic_cast<CFire*>(iter0)->SetETime(0.f);
 				dynamic_cast<CGameObject*>(iter0)->GetIsDead() = true;
 				m_IsFireCheck = false;
 			}
