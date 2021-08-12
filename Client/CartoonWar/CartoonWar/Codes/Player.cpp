@@ -238,8 +238,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 
 		
-
-		
+	
 		if (m_IsInvisible)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))

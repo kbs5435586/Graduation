@@ -27,10 +27,7 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 {
 	float4 vColor;
 	float4 vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
-
-	float PI = 3.141592;
-	// PI + 1, ´ë·« -2.14
-	   
+  
 	if (g_int_0 == 1)
 	{
 		if (vIn.vTexUV.x <= 0.1f || vIn.vTexUV.x >= 0.9f || vIn.vTexUV.y <= 0.1f || vIn.vTexUV.y >= 0.9f)

@@ -84,8 +84,8 @@ _int CMyRect::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
-		return -1;
+	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
+	//	return -1;
 
 	m_fDeltaTime += fTimeDelta;
 	if (m_fDeltaTime > 10.f)
