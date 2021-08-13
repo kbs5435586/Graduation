@@ -28,7 +28,8 @@ struct OverEx // 확장 오버랩 구조체
 
 struct Collision
 {
-	_vec3 col_range;
+	_vec3 m_vMin;
+	_vec3 m_vMax;
 	float radius;
 };
 
@@ -108,3 +109,10 @@ struct Flag
 	_vec3 pos;
 };
 
+typedef struct tagOBB
+{
+	Vector3			vPoint[8];
+	Vector3			vCenter;
+	Vector3			vAlignAxis[3];
+	Vector3			vProjAxis[3];
+}OBB;
