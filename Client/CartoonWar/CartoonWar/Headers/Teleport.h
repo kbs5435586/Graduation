@@ -40,13 +40,31 @@ private:
 	CFrustum* m_pFrustumCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
 public:
+	_bool									StartCheck{};
+	_bool									OnceCheck{};
+
 	_uint									m_MyID{};
 	_uint									m_FriendID{};
+	_vec3									m_FriendPos{};
 
-	_uint& GetID() { return m_MyID; };
-	void SetID(_uint _f) { m_MyID = _f; };
+	CGameObject* m_MyFriend = {};
 
-	_uint& GetFriend() { return m_FriendID; };
-	void SetFriend(_uint _f) { m_FriendID = _f; };
+	CGameObject* GetMyFriend() { return m_MyFriend; };
+	void SetMyFriend(CGameObject* _b) { m_MyFriend = _b; };
+
+	_bool& GetSCheck() { return StartCheck; };
+	void SetSCheck(_bool _b) { StartCheck = _b; };
+
+	_bool& GetOnce() { return OnceCheck; };
+	void SetOnce(_bool _b) { OnceCheck = _b; };
+
+	//_uint& GetID() { return m_MyID; };
+	//void SetID(_uint _f) { m_MyID = _f; };
+	//
+	//_uint& GetFriend() { return m_FriendID; };
+	//void SetFriend(_uint _f) { m_FriendID = _f; };
+	//
+	//_vec3& GetFPos() { return m_FriendPos; };
+	//void SetFPos(_vec3 _f) { m_FriendPos = _f; };
 };
 

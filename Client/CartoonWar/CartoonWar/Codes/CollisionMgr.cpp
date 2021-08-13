@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "LowPoly.h"
 #include "Fire.h"
+#include "Teleport.h"
 #include "Throw_Arrow.h"
 _IMPLEMENT_SINGLETON(CCollisionMgr)
 
@@ -26,6 +27,7 @@ void CCollisionMgr::Update_CollisionManager()
 	Range();
 	OBB();
 	Skill_to_NPC_Collision();
+	Teleport_to_NPC_Collision();
 }
 void CCollisionMgr::AABB()
 {
@@ -296,83 +298,52 @@ void CCollisionMgr::Skill_to_NPC_Collision()
 	}
 }
 
-//void CCollisionMgr::Teleport_to_NPC_Collision(const _float& fTimeDelta)
-//{
-//
-//
-//	_bool one{};
-//	_bool two{};
-//	CGameObject* oneP{};
-//	CGameObject* twoP{};
-//	//리스트로 포문을 돌리지 말고 각각 받아와서 체크
-//	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
-//	{
-//		//if (dynamic_cast<CFire*>(iter0)->getfirend() == 0)
-//		//{
-//		//	one = true;
-//		//	oneP = iter0;
-//		//}
-//		//if (dynamic_cast<CFire*>(iter0)->getfirend() == 1)
-//		//{
-//		//	two = true;
-//		//	twoP = iter0;
-//		//}
-//	}
-//	//if(one)
-//	//	oneP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 0);
-//	//if(two)
-//	//	twoP = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport", 1);
-//	_bool yeah{};
-//	if (one && two)
-//	{
-//		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Teleport"))
-//		{
-//			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
-//			{
-//				_float fLength = 0.f;
-//
-//				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
-//				_vec3 iter1_Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// NPC
-//
-//				_vec3 vDistance = iter1_Pos - iter0_Pos;
-//
-//				fLength = vDistance.Length();
-//
-//
-//				if (fLength <= 30.f)
-//				{
-//					iter1->GetIsParticle() = true;
-//					if (oneP == iter0)
-//					{
-//						_vec3 tttt = *dynamic_cast<CTransform*>(twoP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-//						*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) = tttt + vDistance;
-//							
-//						
-//						oneP->GetIsDead() = true;
-//						twoP->GetIsDead() = true;
-//						//iter0->GetIsDead() = true;
-//						yeah = true;
-//					}
-//					if (twoP == iter0)
-//					{
-//						_vec3 tttt = *dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-//						*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) = tttt + vDistance;
-//						//*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) =
-//						//	*dynamic_cast<CTransform*>(oneP->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION)+ vDistance;
-//						
-//						oneP->GetIsDead() = true;
-//						twoP->GetIsDead() = true;
-//						yeah = true;
-//						//iter0->GetIsDead() = true;
-//					}								
-//				}
-//			}
-//			if (yeah)
-//				break;
-//
-//		}
-//	}
-//}
+void CCollisionMgr::Teleport_to_NPC_Collision()
+{
+
+	_bool yeah{};
+	
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport"))
+	{
+		if (dynamic_cast<CTeleport*>(iter0)->GetSCheck())
+		{			
+			if (dynamic_cast<CTeleport*>(iter0)->GetOnce() == false)
+			{
+				for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+				{
+					_float fLength = 0.f;
+
+					_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Fire
+					_vec3 iter1_Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// NPC
+
+					_vec3 vDistance = iter1_Pos - iter0_Pos;
+
+					fLength = vDistance.Length();
+
+
+					if (fLength <= 30.f)
+					{				
+						CGameObject* tTemp = dynamic_cast<CTeleport*>(iter0)->GetMyFriend();
+						if (tTemp != nullptr)
+						{
+							_vec3 tttt = *dynamic_cast<CTransform*>(tTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+							*dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION) = tttt + vDistance;
+
+							dynamic_cast<CTeleport*>(iter0)->SetOnce(true);
+							dynamic_cast<CTeleport*>(tTemp)->SetOnce(true);
+							iter0->GetIsDead() = true;
+							tTemp->GetIsDead() = true;
+							yeah = true;
+						}						
+					}
+				}
+			}		
+		}	
+	}
+
+	
+}
+
 //AABB
 
 void CCollisionMgr::Deffend()

@@ -68,6 +68,10 @@ _int CTeleport::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_PositionY(fY + 0.5f);
 	m_pTransformCom->Rotation_Y(fTimeDelta);
 	
+
+	if (m_IsDead)
+		return DEAD_OBJ;
+
 	return _int();
 }
 

@@ -1333,13 +1333,17 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 					CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 2);
 					CGameObject* tTwo = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
 
-					_uint oID = dynamic_cast<CTeleport*>(tOne)->GetID();
-					_uint tID = dynamic_cast<CTeleport*>(tTwo)->GetID();
-					dynamic_cast<CTeleport*>(tOne)->SetFriend(tID);
-					dynamic_cast<CTeleport*>(tTwo)->SetFriend(oID);
+					dynamic_cast<CTeleport*>(tTwo)->SetSCheck(true);
+
+					dynamic_cast<CTeleport*>(tOne)->SetMyFriend(tTwo);
+					dynamic_cast<CTeleport*>(tTwo)->SetMyFriend(tOne);
 				}	
 				else
 				{
+					list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+					int numver = lst.size();
+					CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+					dynamic_cast<CTeleport*>(tOne)->SetSCheck(true);
 					dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(true);
 				}
 			}
