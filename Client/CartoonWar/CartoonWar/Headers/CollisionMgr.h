@@ -22,8 +22,8 @@ private: //OBB
     void                    Player_to_NPC_Attack_Collision();
     void                    Player_to_Deffend_Attack_Collision();
     void                    NPC_to_Deffend_Attack_Collision();
-    void                    Skill_to_NPC_Collision(const _float& fTimeDelta);
-    void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
+    void                    Skill_to_NPC_Collision();
+    //void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
 private:
     void                    AABB();
     void                    OBB();

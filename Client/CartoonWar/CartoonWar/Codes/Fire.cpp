@@ -1,6 +1,6 @@
 #include "framework.h"
-#include "Management.h"
 #include "Fire.h"
+#include "Management.h"
 
 CFire::CFire()
 	: CGameObject()
@@ -14,6 +14,7 @@ CFire::CFire(const CFire& rhs)
 
 HRESULT CFire::Ready_Prototype()
 {
+
 	return S_OK;
 }
 
@@ -21,10 +22,10 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
-
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	_vec3 vPos = { 50.f, 150.f, 50.f };
+
+	_vec3 vPos = { 0.f, 0.f, 0.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
 	return S_OK;
@@ -57,9 +58,28 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
 	m_pTransformCom->Set_PositionY(fY + 0.8f);
+	
+
+	
+	if (startCheck)
+	{
+		endTime += fTimeDelta;
+		if (endTime > 10.f)
+			m_IsDead = true;
+
+		if (damageCheck)
+		{
+			damageTime += fTimeDelta;
+
+			if (damageTime > 0.1f)
+				IsGetDamage = true;
+		}
+	}
 
 	Safe_Release(pManagement);
 
+	if (m_IsDead)
+		return DEAD_OBJ;
 	return _int();
 }
 
@@ -90,6 +110,7 @@ void CFire::Render_GameObject()
 
 
 	m_tTexInfo.fFrameTime += 0.01f;
+
 	if (m_tTexInfo.fFrameTime > 1000.0f)
 	{
 		m_tTexInfo.fFrameTime = 0.0f;
@@ -141,28 +162,18 @@ HRESULT CFire::CreateInputLayout()
 
 CFire* CFire::Create()
 {
-	CFire* pInstance = new CFire();
-
-	if (FAILED(pInstance->Ready_Prototype()))
-	{
-		MessageBox(0, L"CFire Created Failed", L"System Error", MB_OK);
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
+	CFire* pInstnace = new CFire;
+	if (FAILED(pInstnace->Ready_Prototype()))
+		Safe_Release(pInstnace);
+	return pInstnace;
 }
 
 CGameObject* CFire::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CFire* pInstance = new CFire(*this);
-
-	if (FAILED(pInstance->Ready_GameObject()))
-	{
-		MessageBox(0, L"CFire Created Failed", L"System Error", MB_OK);
-		Safe_Release(pInstance);
-	}
-	m_iLayerIdx = iIdx;
-	return pInstance;
+	CFire* pInstnace = new CFire;
+	if (FAILED(pInstnace->Ready_GameObject()))
+		Safe_Release(pInstnace);
+	return pInstnace;
 }
 
 void CFire::Free()
@@ -225,3 +236,5 @@ HRESULT CFire::Ready_Component()
 	Safe_Release(pManagement);
 	return S_OK;
 }
+
+

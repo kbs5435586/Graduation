@@ -98,20 +98,20 @@ HRESULT CScene_Stage::Ready_Scene()
 
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
-	//	return E_FAIL;
-	//ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	////eEnviType = ENVITYPE::ENVI_FLOWER;
-	////if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
-	////	return E_FAIL;
-	////eEnviType = ENVITYPE::ENVI_PLANT;
-	////if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
-	////	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_ROCK;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
+		return E_FAIL;
+	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_FLOWER;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_PLANT;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_ROCK;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
+		return E_FAIL;
 
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
@@ -270,8 +270,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_Map(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
 	
-	//if (FAILED(Ready_Layer_Skill(L"Layer_Skill", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -553,10 +553,11 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 	return S_OK;
 }
 
-HRESULT CScene_Stage::Ready_Layer_Skill(const _tchar* pLayerTag, CManagement* pManagement)
+HRESULT CScene_Stage::Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
 	return S_OK;
 }
 

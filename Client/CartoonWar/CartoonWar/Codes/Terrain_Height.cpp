@@ -53,10 +53,10 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_MAP, this)))
 	//	return -1;
 
-	//if (GetKeyState(VK_LBUTTON) < 0)
-	//{
-	//	m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
-	//}
+	if (GetKeyState(VK_LBUTTON) < 0)
+	{
+		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
+	}
 
 	return _int();
 }

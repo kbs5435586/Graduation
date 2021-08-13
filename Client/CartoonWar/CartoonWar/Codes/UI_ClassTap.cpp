@@ -96,8 +96,11 @@ _int CUI_ClassTap::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		if (m_cansee)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
 	}
 
 	return _int();
@@ -105,8 +108,8 @@ _int CUI_ClassTap::LastUpdate_GameObject(const _float& fTimeDelta)
 
 void CUI_ClassTap::Render_GameObject()
 {
-	if (m_cansee)
-	{
+	//if (m_cansee)
+	//{
 		CManagement* pManagement = CManagement::GetInstance();
 		if (nullptr == pManagement)
 			return;
@@ -133,7 +136,7 @@ void CUI_ClassTap::Render_GameObject()
 		m_pBufferCom->Render_VIBuffer();
 		
 		Safe_Release(pManagement);
-	}
+	//}
 }
 
 HRESULT CUI_ClassTap::CreateInputLayout()
@@ -141,7 +144,7 @@ HRESULT CUI_ClassTap::CreateInputLayout()
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
-
+	
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS)))
 		return E_FAIL;
 

@@ -142,6 +142,7 @@ private:
 	_bool m_GetFire = {};
 	_bool m_IsFire = {};
 	_bool m_IsFireCheck = {};
+	_bool m_FirstFire = {};
 
 	_float m_DamageTime{};
 	_float m_fFireCoolTImeMax{};

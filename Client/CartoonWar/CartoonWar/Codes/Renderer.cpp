@@ -71,8 +71,6 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Post_Effect();
 	Render_UI();
 
-
-
 	Safe_Release(pManagement);
 	return S_OK;
 }

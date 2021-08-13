@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-
 class CTransform;
 class CRenderer;
 class CBuffer_RectTex;
@@ -22,41 +21,40 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CFire* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
+	static	CFire*							Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
+
 private:
-	CTransform* m_pTransformCom = nullptr;
-	CRenderer* m_pRendererCom = nullptr;
-	CBuffer_RectTex* m_pBufferCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
-	CTexture* m_pTextureCom[3] = { nullptr };
+	CTransform*								m_pTransformCom = nullptr;
+	CRenderer*								m_pRendererCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CShader*								m_pShaderCom = nullptr;
+	CTexture*								m_pTextureCom[3] = { nullptr };
 private:
 	TEXINFO									m_tTexInfo = {};
-
 private:
 	_float									damageTime{};
 	_float									endTime{};
-	_bool check{};
+	_bool									startCheck{};
+	_bool									damageCheck{};
+	_bool									IsGetDamage{};
 public:
 	void setDTime(_float _t) { damageTime = _t; }
-	_float& getDTime() { return damageTime; }
-	void setETime(_float _t) { endTime = _t; }
-	_float& getETime() { return endTime; }
-	void setCheck(_bool _b) { check = _b; }
-	_bool& getCheck() { return check; }
+	_float& GetDTime() { return damageTime; }
 
+	void SetETime(_float _t) { endTime = _t; }
+	_float& GetETime() { return endTime; }
 
-	_bool moveCheck{};
-	void setMCheck(_bool _b) { moveCheck = _b; }
-	_bool& getMCheck() { return moveCheck; }
+	void SetSCheck(_bool _b) { startCheck = _b; }
+	_bool& GetSCheck() { return startCheck; }
 
+	void SetDCheck(_bool _b) { damageCheck = _b; }
+	_bool& GetDCheck() { return damageCheck; }
 
-
-	_int  myfriend{};
-	void setfriend(_int _f) { myfriend = _f; }
-	_int& getfirend() { return myfriend; }
+	void SetDamage(_bool _b) { IsGetDamage = _b; }
+	_bool& GetDamage() { return IsGetDamage; }
 };
 
