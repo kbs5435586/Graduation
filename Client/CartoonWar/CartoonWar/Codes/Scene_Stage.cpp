@@ -138,8 +138,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_HP", CUI_HP::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_MP", CUI_MP::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead", CUI_OnHead::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead_Gage", CUI_OnHead_Gage::Create())))
@@ -180,12 +178,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
-		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestTess", CTest_Tess::Create())))
-	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
 		return E_FAIL;
 	return S_OK;
@@ -208,8 +200,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;	
 	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))

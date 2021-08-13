@@ -1211,14 +1211,19 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		vLook = Vector3_::Normalize(vLook);
 
 
-		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
-
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_IsSlide)
 		{
-			if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
 				m_pTransformCom->BackWard(fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
 		}
 		else
 		{
@@ -1230,13 +1235,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsRun = true;
 		m_IsActioning = true;
 		m_IsParticleRun = true;
-
-		//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-		//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-		//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-		//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-		//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN, 0.f, );
-
 
 		m_fRunSoundTime += fTimeDelta;
 		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
@@ -1270,13 +1268,21 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
-		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		if (!m_IsSlide)
 		{
-			m_pTransformCom->BackWard(fTimeDelta);
-		}
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->BackWard(fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+		}		
 		else
 		{
-			m_pTransformCom->Go_There(vSlide);
+			m_pTransformCom->BackWard(fTimeDelta);
+			m_IsSlide = false;
 		}
 
 		//if (!m_IsSlide)
@@ -1361,6 +1367,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_eCurClass = (CLASS)m_iCurMeshNum;
 
 	}
+
 
 
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
@@ -1604,7 +1611,7 @@ void CPlayer::SetSpeed()
 	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_WORKER] = 20.f;
 
-	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 200.f;
+	m_fArrSpeed[(_uint)CLASS::CLASS_CAVALRY] = 20.f;
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_CAVALRY] = 40.f;
 
 	m_fArrSpeed[(_uint)CLASS(2)] = 20.f;
