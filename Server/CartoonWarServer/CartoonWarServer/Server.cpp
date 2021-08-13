@@ -2752,22 +2752,27 @@ void Server::mainServer()
     WSACleanup();
 }
 
-/*
-_matrix CCollider::Compute_WorldTransform()
-{
-    _matrix matTransform = m_matWorld;
-
-    if (m_eType == COLLIDER_TYPE::COLLIDER_AABB)
-    {
-        matTransform = Remove_Rotation(matTransform);
-    }
-    return _matrix(matTransform);
-}
-*/
-
 //bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
 //{
-//    _matrix		matSour = Compute_WorldTransform();
+//    _matrix matTransform = {};
+//
+//    _vec3 vRight = _vec3(1.f, 0.f, 0.f);
+//    _vec3 vUp = _vec3(0.f, 1.f, 0.f);
+//    _vec3 vLook = _vec3(0.f, 0.f, 1.f);
+//
+//    _vec3 vRightTemp = _vec3(matTransform.m[0][0], matTransform.m[0][1], matTransform.m[0][2]);
+//    _vec3 vUpTemp = _vec3(matTransform.m[1][0], matTransform.m[1][1], matTransform.m[1][2]);
+//    _vec3 vLookTemp = _vec3(matTransform.m[2][0], matTransform.m[2][1], matTransform.m[2][2]);
+//
+//    vRight *= Vector3_::Length(vRightTemp);
+//    vUp *= Vector3_::Length(vUpTemp);
+//    vLook *= Vector3_::Length(vLookTemp);
+//
+//    memcpy(&matTransform.m[0][0], &vRight, sizeof(_vec3));
+//    memcpy(&matTransform.m[1][0], &vUp, sizeof(_vec3));
+//    memcpy(&matTransform.m[2][0], &vLook, sizeof(_vec3));
+//
+//    _matrix		matSour = matTransform;
 //    _matrix		matDest = pTargetCollider->Compute_WorldTransform();
 //
 //    _vec3		vSourMin, vSourMax;
@@ -2782,8 +2787,8 @@ _matrix CCollider::Compute_WorldTransform()
 //    vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
 //    vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
 //
-//    _vec3 vSourPos = *pSourTransform->Get_StateInfo(CTransform::STATE_POSITION);
-//    _vec3 vDestPos = *pDestTransform->Get_StateInfo(CTransform::STATE_POSITION);
+//    _vec3 vSourPos = *g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+//    _vec3 vDestPos = *g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 //
 //    _float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
 //    _float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
@@ -2828,7 +2833,6 @@ _matrix CCollider::Compute_WorldTransform()
 //            return;
 //        }
 //    }
-//
 //}
 
 //bool Server::check_obb_collision(int a, int b)
