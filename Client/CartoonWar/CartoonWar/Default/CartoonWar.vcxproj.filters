@@ -511,6 +511,9 @@
     <Filter Include="02. GameObject\97. UI\05. UI_ClassTap\03. UI_Shop">
       <UniqueIdentifier>{c828c80b-fd18-4476-a88d-3fe9470ac81b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\09. Teleport">
+      <UniqueIdentifier>{9d00644a-66fc-4128-993b-83138de30256}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -948,6 +951,9 @@
     <ClInclude Include="..\Headers\MapUser.h">
       <Filter>02. GameObject\01. Scene_Stage\09. MapUser</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Teleport.h">
+      <Filter>02. GameObject\01. Scene_Stage\09. Teleport</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1355,6 +1361,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MapUser.cpp">
       <Filter>02. GameObject\01. Scene_Stage\09. MapUser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Teleport.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\09. Teleport</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
