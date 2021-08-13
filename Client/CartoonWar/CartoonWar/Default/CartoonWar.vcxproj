@@ -261,7 +261,6 @@
     <ClInclude Include="..\Headers\ObserverManager.h" />
     <ClInclude Include="..\Headers\StructedBuffer.h" />
     <ClInclude Include="..\Headers\System.h" />
-    <ClInclude Include="..\Headers\Teleport.h" />
     <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\Terrain_Height.h" />
     <ClInclude Include="..\Headers\TestAnimMesh.h" />
@@ -406,7 +405,6 @@
     <ClCompile Include="..\Codes\Sphere.cpp" />
     <ClCompile Include="..\Codes\StructedBuffer.cpp" />
     <ClCompile Include="..\Codes\System.cpp" />
-    <ClCompile Include="..\Codes\Teleport.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\Terrain_Height.cpp" />
     <ClCompile Include="..\Codes\TestAnimMesh.cpp" />

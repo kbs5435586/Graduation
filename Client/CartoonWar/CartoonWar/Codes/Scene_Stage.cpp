@@ -100,20 +100,20 @@ HRESULT CScene_Stage::Ready_Scene()
 
 
 
-	//if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
-	//	return E_FAIL;
-	//ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_FLOWER;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_PLANT;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
-	//	return E_FAIL;
-	//eEnviType = ENVITYPE::ENVI_ROCK;
-	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
+		return E_FAIL;
+	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_FLOWER;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_PLANT;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
+		return E_FAIL;
+	eEnviType = ENVITYPE::ENVI_ROCK;
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
+		return E_FAIL;
 
 
 	g_IsCollisionStart = true;
