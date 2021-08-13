@@ -136,7 +136,7 @@ public:
 
 private:
 	void Skill_CastFire(const _float& fTimeDelta, _float fY);
-	void Skill_FireTime(const _float& fTimeDelta);
+	//void Skill_FireTime(const _float& fTimeDelta);
 	//CGameObject* fireskill = nullptr;
 	//_int fireCnt = {};
 	_bool m_GetFire = {};
@@ -157,7 +157,10 @@ private:
 	void Skill_CastTeleport(const _float& fTimeDelta);
 	_bool m_GetTeleport = {};
 	_bool m_IsTeleport = {};
+	_bool m_OneORTwo = {};
 	_bool m_IsTeleportCheck = {};
+
+
 	_int teleportNum = {};
 	
 	_float m_fCoolTime_Four{};

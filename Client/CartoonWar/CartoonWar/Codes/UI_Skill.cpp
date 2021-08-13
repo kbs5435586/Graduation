@@ -60,14 +60,19 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_Active)
 	{
-		m_CoolTime += fTimeDelta;
-		
-		if (m_CoolTime > m_MaxCoolTime)
+		if (StartTime)
 		{
-			m_Active = false;
-			IsOnetouch = false;
-			m_CoolTime = m_MaxCoolTime;
-		}
+			m_CoolTime += fTimeDelta;
+
+			if (m_CoolTime > m_MaxCoolTime)
+			{
+				m_Active = false;
+				IsOnetouch = false;
+				
+				StartTime = false;
+				m_CoolTime = m_MaxCoolTime;
+			}
+		}	
 	}
 	else
 	{

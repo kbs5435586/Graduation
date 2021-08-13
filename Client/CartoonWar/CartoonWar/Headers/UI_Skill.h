@@ -43,6 +43,9 @@ private:
 	_bool m_Active{};
 	_bool IsDown{};
 	_bool IsOnetouch{};
+	_bool IsTwo{};
+	_bool StartTime{};
+
 	POINT MousePos{};
 
 	_float m_CoolTime{};
@@ -51,11 +54,17 @@ private:
 
 	string m_strCoolTime{};
 public:
+	_bool GetSTime() { return StartTime; }
+	void SetStime(_bool _t) { StartTime = _t; }
+
 	_bool GetActive() { return m_Active; }
 	void SetActive(_bool _t) { m_Active = _t; }
 
-	_bool GetOne() { return IsOnetouch; }
-	void SetOne(_bool _t) { IsOnetouch = _t; }
+	//_bool GetOne() { return IsOnetouch; }
+	//void SetOne(_bool _t) { IsOnetouch = _t; }
+
+	_bool GetIsTwo() { return IsTwo; }
+	void SetIsTwo(_bool _t) { IsTwo = _t; }
 
 	_float GetCoolTime() { return m_CoolTime; }
 	void SetCoolTime(_float _t) { m_CoolTime = _t; }

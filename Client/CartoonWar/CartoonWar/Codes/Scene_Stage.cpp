@@ -61,6 +61,7 @@
 #include "LowPoly.h"
 #include "Flag.h"
 #include "Castle.h"
+#include "Teleport.h"
 
 #include "Water.h"
 #include "Deffend.h"
@@ -98,17 +99,17 @@ HRESULT CScene_Stage::Ready_Scene()
 
 
 
-	if (FAILED(pManagement->Load_File(L"../Data/Map/FenceTest.dat")))
+	if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
 		return E_FAIL;
 	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/TreeTest.dat", (void*)&eEnviType)))
+	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleTree.dat", (void*)&eEnviType)))
 		return E_FAIL;
-	eEnviType = ENVITYPE::ENVI_FLOWER;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
-		return E_FAIL;
-	eEnviType = ENVITYPE::ENVI_PLANT;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
-		return E_FAIL;
+	////eEnviType = ENVITYPE::ENVI_FLOWER;
+	////if (FAILED(pManagement->Load_File_Low(L"../Data/Map/FlowerTest.dat", (void*)&eEnviType)))
+	////	return E_FAIL;
+	////eEnviType = ENVITYPE::ENVI_PLANT;
+	////if (FAILED(pManagement->Load_File_Low(L"../Data/Map/PlantTest.dat", (void*)&eEnviType)))
+	////	return E_FAIL;
 	eEnviType = ENVITYPE::ENVI_ROCK;
 	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType) ))
 		return E_FAIL;
@@ -218,6 +219,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Deffend", CDeffend::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Teleport", CTeleport::Create())))
+		return E_FAIL;
 
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
@@ -321,7 +324,7 @@ HRESULT CScene_Stage::Ready_Layer_Debug_Camera(const _tchar* pLayerTag, CManagem
 	tProjDesc.fFovY = XMConvertToRadians(60.f);
 	tProjDesc.fAspect = _float(WINCX) / WINCY;
 	tProjDesc.fNear = g_Near;
-	tProjDesc.fFar = 600.f;
+	tProjDesc.fFar = 500.f;
 
 	if (FAILED(pCameraObject->SetUp_CameraProjDesc(tCameraDesc, tProjDesc)))
 		return E_FAIL;
@@ -606,8 +609,9 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
-	//	return E_FAIL;
+	tFlag.vPos = _vec3(50, 0.2f, 50);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Teleport", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos)))
+		return E_FAIL;
 
 	return S_OK;
 }

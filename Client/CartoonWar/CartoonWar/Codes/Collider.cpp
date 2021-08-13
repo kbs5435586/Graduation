@@ -317,7 +317,6 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 
 	_float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
 	_float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
-
 	if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) && 
 		max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
 	{

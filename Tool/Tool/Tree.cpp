@@ -40,6 +40,7 @@ HRESULT CTree::Ready_GameObject(void * pArg)
 
 _int CTree::Update_GameObject(const _float & fTimeDelta)
 {
+	//m_pTransformCom->Scaling(15, 15, 15);
 	m_pTransformCom->Scaling(0.03f, 0.03f, 0.03f);
 	if (m_pPickingCom != nullptr)
 		m_pPickingCom->Update_Ray();

@@ -92,12 +92,7 @@ HRESULT CBuffer_Terrain_Height::Ready_VIBuffer(const _tchar* pFilePath, const _f
 	m_pPosition = new _vec3[iNumVerticesX * iNumVerticesZ];
 	m_pPixel = new _ulong[iNumVerticesX * iNumVerticesZ];
 
-	_float fTemp = 0.f;
-
-	if (iNumVerticesX >= 1500.f)
-		fTemp = 2.f;
-	else
-		fTemp = 10.f;
+	_float fTemp = 3.f;
 
 	// 픽셀정보
 	ReadFile(hFile, m_pPixel, sizeof(_ulong) * (iNumVerticesX * iNumVerticesZ), &dwByte, nullptr);

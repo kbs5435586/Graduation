@@ -33,7 +33,7 @@ HRESULT CNavigation::Ready_Navigation(const _tchar* pFilePath)
 		if (0 == dwByte)
 			break;
 		for (int i = 0; i < 3; ++i)
-			vPoints[i].y = 150.f;
+			vPoints[i].y = 50;
 		CCell* pCell = CCell::Create(&vPoints[0], &vPoints[1], &vPoints[2], m_vecCell.size());
 		if (nullptr == pCell)
 			return E_FAIL;
@@ -97,73 +97,35 @@ void CNavigation::Render_Navigation()
 }
 
 _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionPerSec, _vec3* vSliding)
-{
-
-	{
-		//if (m_vecCell.size() <= m_iCurrentIdx)
-		//	return false;
-
-		//LINE			eOutLine = LINE(-1);
-		//const CCell* pNeighbor = nullptr;
-
-
-		//for (auto& iter : m_vecCell)
-		//{
-		//	_bool IsIn = iter->is_InCell(*vPosition + *vDirectionPerSec, &eOutLine);
-		//	if (IsIn)
-		//		return true;
-		//}
-	}
+{	
 	if (m_vecCell.size() <= m_iCurrentIdx)
 		return false;
-
-	LINE		eOutLine = LINE(-1);
-	const CCell* pNeighbor = nullptr;
-	CLine* pLine = nullptr;
-
-
-
-	for (auto& iter : m_vecCell)
+	LINE	eOutLine = LINE(-1);
+	CCell*	pNeighbor = nullptr;
+	CLine*	pLine = nullptr;
+	_bool	isIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
+	if (false == isIn)
 	{
-		_bool IsIn = iter->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
-		if (IsIn)
+		// 이웃이 있으면
+		if (pNeighbor = m_vecCell[m_iCurrentIdx]->Get_Neighbor(NEIGHBOR(eOutLine)))
 		{
-			if (eOutLine == LINE(-1))
-				continue;
-
-			pLine = iter->GetLine(eOutLine);
-			if (nullptr == pLine)
-				continue;
-			_vec3 vNormal = pLine->Get_Normal();
-			_vec3 vDirectionPerSec_ = *vDirectionPerSec;
-
-			float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
-			*vSliding = vDirectionPerSec_ - fDot * vNormal;
+			//	m_vecCell[m_iCurrentIdx]->Set_OnObject(false);
+			m_iCurrentIdx = pNeighbor->Get_CellIndex();
 			return true;
-
+		}
+		// 이웃이 없으면
+		else
+		{
+			pLine = m_vecCell[m_iCurrentIdx]->GetLine(eOutLine);
+			_vec3 vNormal = pLine->Get_Normal();
+			_vec3 DirectionPerec = *vDirectionPerSec;
+			_float fDot = Vector3_::DotProduct(DirectionPerec, vNormal);
+			*vSliding = DirectionPerec - fDot * vNormal;
+			return false;
 		}
 	}
-
-
-	//_bool IsIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
-	//if (!IsIn)
-	//{
-	//	if (pNeighbor = m_vecCell[m_iCurrentIdx]->Get_Neighbor(NEIGHBOR(eOutLine)))
-	//	{
-	//		m_iCurrentIdx = pNeighbor->Get_CellIndex();
-	//		return true;
-	//	}
-	//	else
-	//	{
-	//		pLine = m_vecCell[m_iCurrentIdx]->GetLine(eOutLine);
-	//		_vec3 vNormal = pLine->Get_Normal();
-	//		_vec3 vDirectionPerSec_ = *vDirectionPerSec;
-
-	//		float fDot = Vector3_::DotProduct(vDirectionPerSec_, vNormal);
-	//		*vSliding = vDirectionPerSec_ - fDot* vNormal;
-	//		return false;
-	//	}
-	//} 
+	else
+		return true;
 	return _bool(false);
 }
 
