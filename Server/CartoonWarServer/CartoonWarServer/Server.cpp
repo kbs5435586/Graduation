@@ -2752,59 +2752,84 @@ void Server::mainServer()
     WSACleanup();
 }
 
-bool Server::check_basic_collision(int a, int b)
+/*
+_matrix CCollider::Compute_WorldTransform()
 {
-    _vec3* a_pos = g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* b_pos = g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    float a_rad = g_clients[a].m_col.radius;
-    float b_rad = g_clients[b].m_col.radius;
-    //_vec3 a_col = g_clients[a].m_col.col_range;
-    //_vec3 b_col = g_clients[b].m_col.col_range;
+    _matrix matTransform = m_matWorld;
 
-    //_vec3 a_min = { a_pos->x - a_col.x / 2,a_pos->y ,a_pos->z - a_col.z / 2 }; // AABB 충돌
-    //_vec3 a_max = { a_pos->x + a_col.x / 2,a_pos->y + a_col.y ,a_pos->z + a_col.z / 2 };
-    //_vec3 b_min = { b_pos->x - b_col.x / 2,b_pos->y ,b_pos->z - b_col.z / 2 };
-    //_vec3 b_max = { b_pos->x + b_col.x / 2,b_pos->y + b_col.y ,b_pos->z + b_col.z / 2 };
-
-    //if ((a_min.x <= b_max.x && a_max.x >= b_min.x) &&
-    //    (a_min.y <= b_max.y && a_max.y >= b_min.y) &&
-    //    (a_min.z <= b_max.z && a_max.z >= b_min.z))
-    //{
-    //    //Pos = PrevPos; 이전 위치로 되돌리기
-    //    cout << "id " << a << " has collide with " << b << "\n";
-    //    return true;
-    //}
-    //else
-    //    return false;
-
-    float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
-        (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
-        (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
-
-    float overlap = (a_rad + b_rad - dist);
-
-    if (dist > 0 && dist < (a_rad + b_rad))
+    if (m_eType == COLLIDER_TYPE::COLLIDER_AABB)
     {
-        //cout << "id " << a << " has collide with " << b << "\n";
-        //a_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-        //a_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
-        //a_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
-        if ((g_clients[a].m_owner_id == g_clients[b].m_owner_id) && a < b)
-        {
-            // 수정
-        }
-        else
-        {
-            b_pos->x -= overlap * (a_pos->x - b_pos->x) / dist;
-            b_pos->y -= overlap * (a_pos->y - b_pos->y) / dist;
-            b_pos->z -= overlap * (a_pos->z - b_pos->z) / dist;
-
-        }
-        return true;
+        matTransform = Remove_Rotation(matTransform);
     }
-    else
-        return false;
+    return _matrix(matTransform);
 }
+*/
+
+//bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
+//{
+//    _matrix		matSour = Compute_WorldTransform();
+//    _matrix		matDest = pTargetCollider->Compute_WorldTransform();
+//
+//    _vec3		vSourMin, vSourMax;
+//    _vec3		vDestMin, vDestMax;
+//
+//    XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
+//    XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
+//    //XMLoadFloat4x4
+//    vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
+//    vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
+//
+//    vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
+//    vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
+//
+//    _vec3 vSourPos = *pSourTransform->Get_StateInfo(CTransform::STATE_POSITION);
+//    _vec3 vDestPos = *pDestTransform->Get_StateInfo(CTransform::STATE_POSITION);
+//
+//    _float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
+//    _float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
+//
+//    if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) &&
+//        max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
+//    {
+//        if (abs(fMoveX) < abs(fMoveZ))
+//        {
+//            if (vSourPos.x < vDestPos.x)
+//            {
+//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 + fMoveX,
+//                                  pDestTransform->Get_Matrix()._42,
+//                                  pDestTransform->Get_Matrix()._43 };
+//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+//            }
+//            else
+//            {
+//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 - fMoveX,
+//                                  pDestTransform->Get_Matrix()._42,
+//                                  pDestTransform->Get_Matrix()._43 };
+//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+//            }
+//            return;
+//        }
+//        else
+//        {
+//            if (vSourPos.z < vDestPos.z)
+//            {
+//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41,
+//                                  pDestTransform->Get_Matrix()._42,
+//                                  pDestTransform->Get_Matrix()._43 + fMoveZ };
+//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+//            }
+//            else
+//            {
+//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 ,
+//                                  pDestTransform->Get_Matrix()._42,
+//                                  pDestTransform->Get_Matrix()._43 - fMoveZ };
+//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+//            }
+//            return;
+//        }
+//    }
+//
+//}
 
 //bool Server::check_obb_collision(int a, int b)
 //{
