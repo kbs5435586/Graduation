@@ -134,8 +134,6 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			pTransform->SetUp_RotationX(XMConvertToRadians(90.f));
 			pTransform->Set_Matrix(mat, true);
 
-
-
 			if (pGameObject->GetEnviType() == ENVITYPE::ENVI_FLOWER)
 			{
 				pTransform->Scaling(4.f, 4.f, 4.f);

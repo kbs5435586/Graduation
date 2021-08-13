@@ -450,7 +450,7 @@ void CCollisionMgr::Enviroment_to_Player_Or_NPC()
 			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
 			_float fLen = vLenTemp.Length();
 
-			if (fLen >= 10.f)
+			if (fLen >= 50.f)
 				continue;
 
  			dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_AABB"))
@@ -470,7 +470,7 @@ void CCollisionMgr::Enviroment_to_Player_Or_NPC()
 			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
 			_float fLen = vLenTemp.Length();
 
-			if (fLen >= 10.f)
+			if (fLen >= 50.f)
 				continue;
 
 			dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_AABB"))
