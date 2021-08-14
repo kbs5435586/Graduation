@@ -96,15 +96,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
+	if ((m_IsFly_START == true))
+	{}
+	else if (m_IsFly_START == false)
+		m_pTransformCom->Set_PositionY(fY);
 
-	//if (m_IsFly_START || m_IsFly_END)
-	//{	
-	//	
-	//}
-	//else
-	//{
-	//	m_pTransformCom->Set_PositionY(fY);
-	//}
 	
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
@@ -117,21 +113,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 				Input_Key(fTimeDelta);
 		}
 	}
-	
-		
-	//else
-	//{
-	//	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	//	{
-	//		m_iCurAnimIdx = 0;
-	//		m_IsOnce = false;
-	//	}
-	//}
-	//m_pTransformCom->Set_PositionY(fY);
-
-
-	//if(!m_IsDeadMotion)
-	//	Input_Key(fTimeDelta);
 
 	Obb_Collision();
 	Combat(fTimeDelta);
@@ -153,14 +134,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		Skill_Invisible(fTimeDelta);
 	}
 
-	if ((m_IsFly_START == true) )
-	{
-		
-	}
-	else if(m_IsFly_START == false)
-	{
-		m_pTransformCom->Set_PositionY(fY);
-	}
+	
 
 	if (m_tInfo.fHP <= 0.f)
 	{
@@ -1286,9 +1260,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
 			{
-				//_matrix matTemp = m_pTransformCom->Get_Matrix();
-				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-				//	return;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+					return;
 
 				//_vec3 matTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 				//matTemp.x += 1.f;
@@ -1311,10 +1285,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			else
 				m_iCurAnimIdx = m_iAttackMotion[1];
 
-			m_IsActioning = true;
-			m_IsOnce = true;
-			m_IsHit = true;
-			m_IsCombat = true;
+			
 			
 			if (m_IsFire)
 			{
@@ -1325,6 +1296,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
 				dynamic_cast<CFire*>(fire)->SetSCheck(true);
 
+				// 파이어 좌표 
+				_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+				XMFLOAT2 fPos = { vPos.x, vPos.y };
+
 				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);	
 				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
 	
@@ -1333,34 +1308,48 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			{
 				m_IsTeleport = false;
 
+				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+				int numver = lst.size();
+				CGameObject* tele = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+
+				// 텔레포트 좌표 
+				_vec3 vPos = *dynamic_cast<CTransform*>(tele->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+				XMFLOAT2 fPos = { vPos.x, vPos.y };
+
 				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 				dynamic_cast<CUI_Skill*>(pTemp)->SetStime(true);
 
-				_bool IsTwo = dynamic_cast<CUI_Skill*>(pTemp)->GetIsTwo();
-				if (IsTwo)
-				{
-					dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(false);
-
-					list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
-					int numver = lst.size();
-
-					CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 2);
-					CGameObject* tTwo = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
-
-					dynamic_cast<CTeleport*>(tTwo)->SetSCheck(true);
-
-					dynamic_cast<CTeleport*>(tOne)->SetMyFriend(tTwo);
-					dynamic_cast<CTeleport*>(tTwo)->SetMyFriend(tOne);
-				}	
-				else
-				{
-					list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
-					int numver = lst.size();
-					CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
-					dynamic_cast<CTeleport*>(tOne)->SetSCheck(true);
-					dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(true);
-				}
+				//_bool IsTwo = dynamic_cast<CUI_Skill*>(pTemp)->GetIsTwo();
+				//if (IsTwo)
+				//{
+				//	dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(false);
+				//
+				//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+				//	int numver = lst.size();
+				//
+				//	CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 2);
+				//	CGameObject* tTwo = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+				//
+				//	dynamic_cast<CTeleport*>(tTwo)->SetSCheck(true);
+				//
+				//	dynamic_cast<CTeleport*>(tOne)->SetMyFriend(tTwo);
+				//	dynamic_cast<CTeleport*>(tTwo)->SetMyFriend(tOne);
+				//}	
+				//else
+				//{
+				//	list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+				//	int numver = lst.size();
+				//	CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+				//	dynamic_cast<CTeleport*>(tOne)->SetSCheck(true);
+				//	dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(true);
+				//}
 			}
+
+			m_IsActioning = true;
+			m_IsOnce = true;
+			m_IsHit = true;
+			m_IsCombat = true;
+
 		}
 	}
 	
@@ -2017,17 +2006,11 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 		_bool bStart = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
 		if (m_GetFire && !bStart)
 		{
-			CManagement* pManagement = CManagement::GetInstance();
-			if (nullptr == pManagement)
+			XMFLOAT2 fTemp = { 0,0 };
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
 				return;
 
-			pManagement->AddRef();
-
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire")))
-				return;
-		
-			m_IsFire = true;	//true			
-			Safe_Release(pManagement);
+			m_IsFire = true;	//true				
 		}
 	}
 	else
@@ -2057,19 +2040,12 @@ void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 
 		_bool bStart = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
 		if (m_GetTeleport && !bStart)
-		{
-		
-			CManagement* pManagement = CManagement::GetInstance();
-			if (nullptr == pManagement)
-				return;
-			pManagement->AddRef();
-		
-			_vec3 vTemp = { 0,0,0, };
-			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Teleport", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", nullptr, (void*)&vTemp)))
+		{	
+			XMFLOAT2 fTemp = { 0,0 };
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Teleport", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", nullptr, (void*)&fTemp)))
 				return;
 			
 			m_IsTeleport = true;	//true
-			Safe_Release(pManagement);
 		}	
 	}
 	else

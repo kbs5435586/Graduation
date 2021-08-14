@@ -36,6 +36,7 @@ private:
 private:
 	TEXINFO									m_tTexInfo = {};
 private:
+	_float									m_range = {};
 	_float									damageTime{};
 	_float									endTime{};
 	_bool									startCheck{};

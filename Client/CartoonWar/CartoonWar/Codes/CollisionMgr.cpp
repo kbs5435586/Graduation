@@ -26,8 +26,6 @@ void CCollisionMgr::Update_CollisionManager()
 	AABB();
 	Range();
 	OBB();
-	Skill_to_NPC_Collision();
-	Teleport_to_NPC_Collision();
 }
 void CCollisionMgr::AABB()
 {
@@ -491,10 +489,9 @@ void CCollisionMgr::Player_to_NPC_Collision()
 					->Collision_AABB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_AABB")), pIter0Transform, pIter1Transform);
 			}
 		}
-
 	}
-
 }
+
 void CCollisionMgr::NPC_to_NPC_Collision()
 {
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))

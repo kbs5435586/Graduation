@@ -25,9 +25,11 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 100.f, 0.f, 100.f };
+	_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
+	m_range = 50.f;
+
 	return S_OK;
 }
 
@@ -171,7 +173,7 @@ CFire* CFire::Create()
 CGameObject* CFire::Clone_GameObject(void* pArg, _uint iIdx)
 {
 	CFire* pInstnace = new CFire;
-	if (FAILED(pInstnace->Ready_GameObject()))
+	if (FAILED(pInstnace->Ready_GameObject(pArg)))
 		Safe_Release(pInstnace);
 	return pInstnace;
 }

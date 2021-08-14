@@ -99,8 +99,6 @@ HRESULT CScene_Stage::Ready_Scene()
 	// 
 	
 
-
-
 	if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
 		return E_FAIL;
 	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
@@ -545,7 +543,8 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 
 HRESULT CScene_Stage::Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	XMFLOAT2 fTemp = { 0,0 };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&fTemp)))
 		return E_FAIL;
 
 	return S_OK;
