@@ -1,19 +1,19 @@
 #pragma once
-#include "GameObject.h"
+#include "UI.h"
 class CTransform;
 class CRenderer;
-class CBuffer_Point;
+class CBuffer_RectTex;
 class CShader;
-class CParticle;
 class CTexture;
+class CObserver;
 
-class CParticle_Default :
-    public CGameObject
+class CUI_GoldIcon :
+	public CUI
 {
 private:
-    CParticle_Default();
-    CParticle_Default(const CParticle_Default& rhs);
-    virtual ~CParticle_Default() = default;
+	CUI_GoldIcon();
+	CUI_GoldIcon(const CUI_GoldIcon& rhs);
+	virtual ~CUI_GoldIcon() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -23,25 +23,16 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CParticle_Default*				Create();
+	static CUI_GoldIcon*					Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
-public:
-	void									Set_Particle(PARTICLESET tParticleSet);
-
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_Point*							m_pBufferCom = nullptr;
-	CShader*								m_pShaderCom[2] = {nullptr};
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
-	CTexture*								m_pTextureCom_Noise = nullptr;
-	CParticle*								m_pParticleCom = nullptr;
-private:
-	_float									m_fMaxLifeTime = 0.f;
-	_float									m_fLifeTime = 0.f;
-	_uint									m_iTextureCnt = 0;
 };
 

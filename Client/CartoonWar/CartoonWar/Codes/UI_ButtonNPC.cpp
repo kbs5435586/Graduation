@@ -250,7 +250,7 @@ HRESULT CUI_ButtonNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_InvenShader", m_pShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon_Class");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_IconTexture", m_pTextureCom)))
 		return E_FAIL;

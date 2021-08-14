@@ -2,8 +2,7 @@
 #include "Management.h"
 #include "Player.h"
 #include "UI_OnHead.h"
-#include "UI_OnHeadBack.h"
-
+#include "UI_Select.h"
 #include "Deffend.h"
 
 #include "UI_ClassTap.h"
@@ -1243,6 +1242,11 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	fCnt += 0.02f;
 }
 
+void CPlayer::Select_Class()
+{
+	
+}
+
 void CPlayer::Input_Key(const _float& fTimeDelta)
 {
 	if (!m_IsActioning)
@@ -1352,8 +1356,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		}
 	}
-	
-
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
 		if (!m_IsCombat)
@@ -1550,8 +1552,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsActioning = false;
 	}
 
-
-
 	if (CManagement::GetInstance()->Key_Down(KEY_1))
 	{
 		m_iCurMeshNum++;
@@ -1561,63 +1561,58 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_eCurClass = (CLASS)m_iCurMeshNum;
 		m_tInfo.fHP -= 10;
 	}
-
-
-
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
 		m_tInfo.fHP -= 1.f;
 	}
 
-	
-	
-	if (CManagement::GetInstance()->Key_Down(KEY_3))
-	{
-	}
-	if (CManagement::GetInstance()->Key_Down(KEY_4))
-	{
-	}
-	if (CManagement::GetInstance()->Key_Down(KEY_5))
-	{
-	}
-
-
-	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
-	{
-		m_IsInvisible = !m_IsInvisible;
-	}
-
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))
-	{ }
+	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 0);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
+
+		// server->SetTroop
+	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F2))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 1);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F3))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 2);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F4))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 3);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F5))
 	{
-	}
-
-
-
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		if (m_IsCombat)
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
 		{
-			m_iCurAnimIdx = m_iCombatMotion[0];
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
 		}
-		else
-		{
-			m_iCurAnimIdx = 0;
-		}
-		m_IsOnce = false;
-		m_IsHit = false;
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 4);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 	}
-	
 }
 
 void CPlayer::Compute_Matrix_Z()
@@ -1882,7 +1877,7 @@ void CPlayer::Resurrection()
 {
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
-	_vec3 vPos = { 5.f,0.f,5.f };
+	_vec3 vPos = { 50.f,0.f,50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);

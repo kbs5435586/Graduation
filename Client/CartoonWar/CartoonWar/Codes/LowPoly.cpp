@@ -75,15 +75,17 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 8.f))
-	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
-	}
+
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 6.f))
 	{
+		
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
+		if (fLen <= 250.f)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
+		}
 		if (fLen <= 50.f && pPlayer->GetIsRun())
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))

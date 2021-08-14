@@ -22,3 +22,4 @@ extern int			g_DefferedRender;
 extern bool			g_InputMode;
 extern bool			g_IsCollisionStart;
 extern int			g_iPlayerIdx;
+extern int			g_iGold;
