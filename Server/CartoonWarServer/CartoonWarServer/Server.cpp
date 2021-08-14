@@ -2752,6 +2752,36 @@ void Server::mainServer()
     WSACleanup();
 }
 
+_matrix Server::Compute_WorldTransform(int id)
+{
+    _matrix matTransform = g_clients[id].m_transform.Get_Matrix();
+    matTransform = Remove_Rotation(matTransform);
+
+    return _matrix(matTransform);
+}
+
+_matrix Server::Remove_Rotation(_matrix matWorld)
+{
+    _vec3 vRight = _vec3(1.f, 0.f, 0.f);
+    _vec3 vUp = _vec3(0.f, 1.f, 0.f);
+    _vec3 vLook = _vec3(0.f, 0.f, 1.f);
+
+    _vec3 vRightTemp = _vec3(matWorld.m[0][0], matWorld.m[0][1], matWorld.m[0][2]);
+    _vec3 vUpTemp = _vec3(matWorld.m[1][0], matWorld.m[1][1], matWorld.m[1][2]);
+    _vec3 vLookTemp = _vec3(matWorld.m[2][0], matWorld.m[2][1], matWorld.m[2][2]);
+
+    vRight *= Vector3_::Length(vRightTemp);
+    vUp *= Vector3_::Length(vUpTemp);
+    vLook *= Vector3_::Length(vLookTemp);
+
+
+    memcpy(&matWorld.m[0][0], &vRight, sizeof(_vec3));
+    memcpy(&matWorld.m[1][0], &vUp, sizeof(_vec3));
+    memcpy(&matWorld.m[2][0], &vLook, sizeof(_vec3));
+
+    return _matrix(matWorld);
+}
+
 bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
 {
     _matrix matTransform = {};

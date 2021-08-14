@@ -100,6 +100,9 @@ public:
 	void is_flag_near(int flag);
 	bool is_attack_detect(int a, int b);
 	bool is_attack_view(int attack, int gethit);
+
+	_matrix Compute_WorldTransform(int id);
+	_matrix Remove_Rotation(_matrix matWorld);
 	bool check_basic_collision(int a, int b);
 	bool check_obb_collision(int a, int b);
 

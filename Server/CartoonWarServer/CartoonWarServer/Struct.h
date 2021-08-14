@@ -26,9 +26,11 @@ struct OverEx // 확장 오버랩 구조체
 	};
 };
 
-struct Collision
+struct Collider
 {
-	_vec3 col_range;
+	_vec3 col_size;
+	_vec3 m_vMin;
+	_vec3 m_vMax;
 	float radius;
 };
 
