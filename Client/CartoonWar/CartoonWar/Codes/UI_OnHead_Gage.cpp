@@ -40,18 +40,15 @@ _int CUI_OnHead_Gage::Update_GameObject(const _float& fTimeDelta)
 		m_fTimeDelta += fTimeDelta;
 
 	}
-	m_tRep.m_arrFloat[0] = 0.f;
+
+
 	if (m_eCurTeam != TEAM::TEAM_END)
 	{
 		if (m_fTimeDelta >= 1.f)
 		{
-			m_tRep.m_arrInt[0] += 1;
+			m_iTeamCnt += 1;
 			m_fTimeDelta = 0.f;
 		}
-	}
-	else
-	{
-		int i = 0;
 	}
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Flag", L"Com_Transform", m_iLayerIdx);;
@@ -104,7 +101,10 @@ void CUI_OnHead_Gage::Render_GameObject()
 
 
 	
-
+	//0  Cnt
+	REP tRep = {};
+	tRep.m_arrInt[0] = m_iTeamCnt;
+	tRep.m_arrInt[1] = m_iTeam;
 
 
 
@@ -114,7 +114,7 @@ void CUI_OnHead_Gage::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+	iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
@@ -221,16 +221,16 @@ void CUI_OnHead_Gage::ResetGage()
 	{
 		if (m_eCurTeam == TEAM::TEAM_BLUE)
 		{
-			m_tRep.m_arrInt[1] = 1;
+			m_iTeam = 1;
 		}
 		else if (m_eCurTeam == TEAM::TEAM_RED)
 		{
-			m_tRep.m_arrInt[1] = 0;
+			m_iTeam = 0;
 		}
 		else if(m_eCurTeam == TEAM::TEAM_END)
 		{
 			m_fTimeDelta = 0.f;
-			m_tRep.m_arrInt[0] = 0;
+			m_iTeamCnt = 0;
 		}
 	}
 
@@ -240,16 +240,16 @@ void CUI_OnHead_Gage::FixGage()
 {
 	if (!m_IsFix_Gage)
 	{
-		if (m_tRep.m_arrInt[0] >= 10.f)
+		if (m_iTeamCnt >= 10.f)
 		{
 			m_IsFix_Gage = true;
 			m_fTimeDelta = 0.f;
 
-			if (m_tRep.m_arrInt[1] == 1)// BLUE
+			if (m_iTeam == 1)// BLUE
 			{
 				g_iBlueNum++;
 			}
-			else if (m_eCurTeam == TEAM::TEAM_RED)// RED
+			else if (m_iTeam ==0)// RED
 			{
 				g_iRedNum++;
 			}

@@ -1,44 +1,50 @@
 #include "framework.h"
-#include "UI_Aim.h"
+#include "UI_LastTimeBar.h"
 #include "Management.h"
 
-CUI_Aim::CUI_Aim()
+CUI_LastTimeBar::CUI_LastTimeBar()
 	: CUI()
 {
 }
 
-CUI_Aim::CUI_Aim(const CUI_Aim& rhs)
+CUI_LastTimeBar::CUI_LastTimeBar(const CUI_LastTimeBar& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Aim::Ready_Prototype()
+HRESULT CUI_LastTimeBar::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Aim::Ready_GameObject(void* pArg)
+HRESULT CUI_LastTimeBar::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-
+	m_fSizeX = 300.f;
+	m_fSizeY = 15.f;
 	m_fX = WINCX/2.f;
-	m_fY = WINCY / 2.f+100.f;
+	m_fY = WINCY/ 2.f - m_fSizeY*29.5f;
 
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
+
 	return S_OK;
 }
 
-_int CUI_Aim::Update_GameObject(const _float& fTimeDelta)
+_int CUI_LastTimeBar::Update_GameObject(const _float& fTimeDelta)
 {
+	m_fTimeDelta += fTimeDelta;
+	if (m_fTimeDelta >= 1.f)
+	{
+		m_iTimeCnt += 1;
+		m_fTimeDelta = 0.f;
+	}
 	return _int();
 }
 
-_int CUI_Aim::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_LastTimeBar::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
@@ -49,12 +55,14 @@ _int CUI_Aim::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CUI_Aim::Render_GameObject()
+void CUI_LastTimeBar::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
+
+
 
 
 	MAINPASS	tMainPass = {};
@@ -70,17 +78,17 @@ void CUI_Aim::Render_GameObject()
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
+	REP tRep = {};
+	tRep.m_arrInt[0] = m_iTimeCnt;
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-
-	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&m_tRep);
+	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
-
 
 
 
@@ -88,7 +96,7 @@ void CUI_Aim::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Aim::CreateInputLayout()
+HRESULT CUI_LastTimeBar::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -102,9 +110,9 @@ HRESULT CUI_Aim::CreateInputLayout()
 	return S_OK;
 }
 
-CUI_Aim* CUI_Aim::Create()
+CUI_LastTimeBar* CUI_LastTimeBar::Create()
 {
-	CUI_Aim* pInstance = new CUI_Aim();
+	CUI_LastTimeBar* pInstance = new CUI_LastTimeBar();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -112,9 +120,9 @@ CUI_Aim* CUI_Aim::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Aim::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* CUI_LastTimeBar::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CUI_Aim* pInstance = new CUI_Aim();
+	CUI_LastTimeBar* pInstance = new CUI_LastTimeBar();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -123,7 +131,7 @@ CGameObject* CUI_Aim::Clone_GameObject(void* pArg, _uint iIdx)
 	return pInstance;
 }
 
-void CUI_Aim::Free()
+void CUI_LastTimeBar::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
@@ -135,7 +143,7 @@ void CUI_Aim::Free()
 	CUI::Free();
 }
 
-HRESULT CUI_Aim::Ready_Component()
+HRESULT CUI_LastTimeBar::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -156,13 +164,12 @@ HRESULT CUI_Aim::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_LastTime");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-	//Component_Texture_HPBar
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Zoom");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Gold");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

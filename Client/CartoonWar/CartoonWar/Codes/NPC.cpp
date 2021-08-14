@@ -450,7 +450,7 @@ void CNPC::Free()
 	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }
@@ -671,10 +671,10 @@ HRESULT CNPC::Ready_Component()
 		return E_FAIL;
 
 
-	//m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
-	//NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	//	return E_FAIL;
+	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
+	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -1026,7 +1026,7 @@ void CNPC::Obb_Collision()
 				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 				//m_vMidPoint.y += 10.f;
-				//Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 				m_IsBazier = true;
 			}
 			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);

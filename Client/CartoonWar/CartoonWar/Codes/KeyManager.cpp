@@ -47,6 +47,33 @@ void CKeyManager::Key_Update()
 	if (GetAsyncKeyState('V') & 0x8000)
 		m_dwKey |= KEY_V;
 
+	if (GetAsyncKeyState('3') & 0x8000)
+		m_dwKey |= KEY_3;
+	if (GetAsyncKeyState('4') & 0x8000)
+		m_dwKey |= KEY_4;
+	if (GetAsyncKeyState('5') & 0x8000)
+		m_dwKey |= KEY_5;
+
+	if (GetAsyncKeyState('I') & 0x8000)
+		m_dwKey |= KEY_I;
+	if (GetAsyncKeyState('Z') & 0x8000)
+		m_dwKey |= KEY_Z;
+	if (GetAsyncKeyState('X') & 0x8000)
+		m_dwKey |= KEY_X;
+	if (GetAsyncKeyState('N') & 0x8000)
+		m_dwKey |= KEY_N;
+	if (GetAsyncKeyState('M') & 0x8000)
+		m_dwKey |= KEY_M;
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+		m_dwKey |= KEY_F1;
+	if (GetAsyncKeyState(VK_F2) & 0x8000)
+		m_dwKey |= KEY_F2;
+	if (GetAsyncKeyState(VK_F3) & 0x8000)
+		m_dwKey |= KEY_F3;
+	if (GetAsyncKeyState(VK_F4) & 0x8000)
+		m_dwKey |= KEY_F4;
+	if (GetAsyncKeyState(VK_F5) & 0x8000)
+		m_dwKey |= KEY_F5;
 }
 _bool CKeyManager::Key_Up(DWORD dwKey)
 {

@@ -475,6 +475,24 @@
     <Filter Include="02. GameObject\97. UI\10. UI_NormalBar">
       <UniqueIdentifier>{f3586e44-b338-4a17-b9de-57237110e832}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\98. UI_Select">
+      <UniqueIdentifier>{cb2d6f82-eadc-4919-b9fc-4c3a0abf7201}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\97. UI_GoldIcon">
+      <UniqueIdentifier>{43a1a1ec-945d-4374-b414-06bc66de5dc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\96. UI_Mul">
+      <UniqueIdentifier>{7038b736-30c0-43bf-b908-bf491ecf3dd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\95. UI_LastTime">
+      <UniqueIdentifier>{2dd9a020-b4d1-4b70-abda-3da140ca30d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\94. UI_LastTimeBar">
+      <UniqueIdentifier>{223e3426-6f27-49b7-a47e-78bdd5e416c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\93. UI_Gold">
+      <UniqueIdentifier>{6918c0cd-ba06-43af-9546-44d7a4172453}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -882,6 +900,24 @@
     <ClInclude Include="..\Headers\UI_NormalBar.h">
       <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Select.h">
+      <Filter>02. GameObject\97. UI\98. UI_Select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_GoldIcon.h">
+      <Filter>02. GameObject\97. UI\97. UI_GoldIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Mul.h">
+      <Filter>02. GameObject\97. UI\96. UI_Mul</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_LastTime.h">
+      <Filter>02. GameObject\97. UI\95. UI_LastTime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_LastTimeBar.h">
+      <Filter>02. GameObject\97. UI\94. UI_LastTimeBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Gold.h">
+      <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1260,6 +1296,24 @@
     <ClCompile Include="..\Codes\UI_NormalBar.cpp">
       <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Select.cpp">
+      <Filter>02. GameObject\97. UI\98. UI_Select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_GoldIcon.cpp">
+      <Filter>02. GameObject\97. UI\97. UI_GoldIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Mul.cpp">
+      <Filter>02. GameObject\97. UI\96. UI_Mul</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_LastTime.cpp">
+      <Filter>02. GameObject\97. UI\95. UI_LastTime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_LastTimeBar.cpp">
+      <Filter>02. GameObject\97. UI\94. UI_LastTimeBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Gold.cpp">
+      <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1383,6 +1437,12 @@
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Select.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_LastTime.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
   </ItemGroup>

@@ -24,7 +24,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-_float      g_MaxTime = 300.f;
+_float      g_MaxTime = 60.f;
 int			g_iRedNum=0;
 int			g_iBlueNum=0;
 bool        g_DefferedUIRender = false;
@@ -32,6 +32,8 @@ int         g_DefferedRender = 0;
 bool        g_InputMode = false;
 bool        g_IsCollisionStart = false;
 int         g_iPlayerIdx = 0;
+int         g_iGold = 0;
+
 
 _vec3 g_vEyePt = _vec3(30.f, 100.0f, -20.0f);
 _vec3 g_vLookatPt = _vec3(0.0f, 0.f, 0.f);
