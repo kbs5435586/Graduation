@@ -436,9 +436,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\12. Picking">
       <UniqueIdentifier>{1404fc5e-7bb4-4966-b744-af1fd36c8787}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\06. UI_MiniMap">
-      <UniqueIdentifier>{c5c77d04-f91a-4a04-8c9b-782cbcec6777}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\97. UI\07. UI_Aim">
       <UniqueIdentifier>{7843105d-83e0-4e99-934c-332f0fd3f17d}</UniqueIdentifier>
     </Filter>
@@ -918,9 +915,6 @@
     <ClInclude Include="..\Headers\Picking.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_MiniMap.h">
-      <Filter>02. GameObject\97. UI\06. UI_MiniMap</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\UI_Aim.h">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
     </ClInclude>
@@ -1346,9 +1340,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Picking.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\UI_MiniMap.cpp">
-      <Filter>02. GameObject\97. UI\06. UI_MiniMap</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Aim.cpp">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
