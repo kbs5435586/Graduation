@@ -1377,9 +1377,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		else if (m_eCurClass == CLASS::CLASS_WORKER)
 		{
-			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-				return;
+			//_matrix matTemp = m_pTransformCom->Get_Matrix();
+			//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+			//	return;
 		}
 		else
 		{
@@ -1481,6 +1481,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{
+		m_IsSlide = true;
 		if (!m_IsCombat)
 			server->send_animation_packet(A_RUN);
 		else
@@ -1502,6 +1503,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				server->send_condition_packet(CON_TYPE_MOVE, CON_RUN);
 				m_cLastMoveCondition = m_cMoveCondition;
 			}
+		}
+		else
+		{
+			m_pTransformCom->Go_There(vSlide);
 		}
 
 		m_IsRun = true;
@@ -1534,6 +1539,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
+		m_IsSlide = true;
 		if (!m_IsCombat)
 			server->send_animation_packet(A_WALK);
 		else
@@ -1543,9 +1549,26 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 		vLook = Vector3_::Normalize(vLook);
 
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
-		if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_cMoveCondition = CON_STRAIGHT;
+				if (m_cLastMoveCondition != m_cMoveCondition)
+				{
+					server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
+					m_cLastMoveCondition = m_cMoveCondition;
+				}
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+		}
+		else
 		{
 			m_cMoveCondition = CON_STRAIGHT;
 			if (m_cLastMoveCondition != m_cMoveCondition)
@@ -1553,6 +1576,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
 				m_cLastMoveCondition = m_cMoveCondition;
 			}
+			m_IsSlide = false;
 		}
 
 		m_IsRun = false;

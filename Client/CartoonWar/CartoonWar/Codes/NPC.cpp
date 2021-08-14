@@ -146,6 +146,40 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Go_There(vSlide);
 	}
 
+	//_vec3 vLook = {};
+	//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	//vLook = Vector3_::Normalize(vLook);
+
+	//m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+	//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+	//_vec3 vSlide = {};
+	//if (!m_IsSlide)
+	//{
+	//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+	//	{
+	//		m_cMoveCondition = CON_STRAIGHT;
+	//		if (m_cLastMoveCondition != m_cMoveCondition)
+	//		{
+	//			server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
+	//			m_cLastMoveCondition = m_cMoveCondition;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		m_pTransformCom->Go_There(vSlide);
+	//	}
+	//}
+	//else
+	//{
+	//	m_cMoveCondition = CON_STRAIGHT;
+	//	if (m_cLastMoveCondition != m_cMoveCondition)
+	//	{
+	//		server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
+	//		m_cLastMoveCondition = m_cMoveCondition;
+	//	}
+	//	m_IsSlide = false;
+	//}
+
 	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -498,7 +532,7 @@ void CNPC::Free()
 	Safe_Release(m_pCollider_Attack);
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
-	//Safe_Release(m_pNaviCom);
+	Safe_Release(m_pNaviCom);
 
 	CGameObject::Free();
 }

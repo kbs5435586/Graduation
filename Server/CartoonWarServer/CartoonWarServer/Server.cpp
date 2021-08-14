@@ -2752,88 +2752,88 @@ void Server::mainServer()
     WSACleanup();
 }
 
-//bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
-//{
-//    _matrix matTransform = {};
-//
-//    _vec3 vRight = _vec3(1.f, 0.f, 0.f);
-//    _vec3 vUp = _vec3(0.f, 1.f, 0.f);
-//    _vec3 vLook = _vec3(0.f, 0.f, 1.f);
-//
-//    _vec3 vRightTemp = _vec3(matTransform.m[0][0], matTransform.m[0][1], matTransform.m[0][2]);
-//    _vec3 vUpTemp = _vec3(matTransform.m[1][0], matTransform.m[1][1], matTransform.m[1][2]);
-//    _vec3 vLookTemp = _vec3(matTransform.m[2][0], matTransform.m[2][1], matTransform.m[2][2]);
-//
-//    vRight *= Vector3_::Length(vRightTemp);
-//    vUp *= Vector3_::Length(vUpTemp);
-//    vLook *= Vector3_::Length(vLookTemp);
-//
-//    memcpy(&matTransform.m[0][0], &vRight, sizeof(_vec3));
-//    memcpy(&matTransform.m[1][0], &vUp, sizeof(_vec3));
-//    memcpy(&matTransform.m[2][0], &vLook, sizeof(_vec3));
-//
-//    _matrix		matSour = matTransform;
-//    _matrix		matDest = pTargetCollider->Compute_WorldTransform();
-//
-//    _vec3		vSourMin, vSourMax;
-//    _vec3		vDestMin, vDestMax;
-//
-//    XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
-//    XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
-//    //XMLoadFloat4x4
-//    vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
-//    vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
-//
-//    vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
-//    vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
-//
-//    _vec3 vSourPos = *g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-//    _vec3 vDestPos = *g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    _float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
-//    _float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
-//
-//    if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) &&
-//        max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
-//    {
-//        if (abs(fMoveX) < abs(fMoveZ))
-//        {
-//            if (vSourPos.x < vDestPos.x)
-//            {
-//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 + fMoveX,
-//                                  pDestTransform->Get_Matrix()._42,
-//                                  pDestTransform->Get_Matrix()._43 };
-//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
-//            }
-//            else
-//            {
-//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 - fMoveX,
-//                                  pDestTransform->Get_Matrix()._42,
-//                                  pDestTransform->Get_Matrix()._43 };
-//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
-//            }
-//            return;
-//        }
-//        else
-//        {
-//            if (vSourPos.z < vDestPos.z)
-//            {
-//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41,
-//                                  pDestTransform->Get_Matrix()._42,
-//                                  pDestTransform->Get_Matrix()._43 + fMoveZ };
-//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
-//            }
-//            else
-//            {
-//                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 ,
-//                                  pDestTransform->Get_Matrix()._42,
-//                                  pDestTransform->Get_Matrix()._43 - fMoveZ };
-//                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
-//            }
-//            return;
-//        }
-//    }
-//}
+bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
+{
+    _matrix matTransform = {};
+
+    _vec3 vRight = _vec3(1.f, 0.f, 0.f);
+    _vec3 vUp = _vec3(0.f, 1.f, 0.f);
+    _vec3 vLook = _vec3(0.f, 0.f, 1.f);
+
+    _vec3 vRightTemp = _vec3(matTransform.m[0][0], matTransform.m[0][1], matTransform.m[0][2]);
+    _vec3 vUpTemp = _vec3(matTransform.m[1][0], matTransform.m[1][1], matTransform.m[1][2]);
+    _vec3 vLookTemp = _vec3(matTransform.m[2][0], matTransform.m[2][1], matTransform.m[2][2]);
+
+    vRight *= Vector3_::Length(vRightTemp);
+    vUp *= Vector3_::Length(vUpTemp);
+    vLook *= Vector3_::Length(vLookTemp);
+
+    memcpy(&matTransform.m[0][0], &vRight, sizeof(_vec3));
+    memcpy(&matTransform.m[1][0], &vUp, sizeof(_vec3));
+    memcpy(&matTransform.m[2][0], &vLook, sizeof(_vec3));
+
+    _matrix		matSour = matTransform;
+    _matrix		matDest = pTargetCollider->Compute_WorldTransform();
+
+    _vec3		vSourMin, vSourMax;
+    _vec3		vDestMin, vDestMax;
+
+    XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
+    XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
+    //XMLoadFloat4x4
+    vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
+    vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
+
+    vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
+    vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
+
+    _vec3 vSourPos = *g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 vDestPos = *g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    _float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
+    _float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
+
+    if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) &&
+        max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
+    {
+        if (abs(fMoveX) < abs(fMoveZ))
+        {
+            if (vSourPos.x < vDestPos.x)
+            {
+                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 + fMoveX,
+                                  pDestTransform->Get_Matrix()._42,
+                                  pDestTransform->Get_Matrix()._43 };
+                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+            }
+            else
+            {
+                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 - fMoveX,
+                                  pDestTransform->Get_Matrix()._42,
+                                  pDestTransform->Get_Matrix()._43 };
+                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+            }
+            return;
+        }
+        else
+        {
+            if (vSourPos.z < vDestPos.z)
+            {
+                _vec3	vTemp = { pDestTransform->Get_Matrix()._41,
+                                  pDestTransform->Get_Matrix()._42,
+                                  pDestTransform->Get_Matrix()._43 + fMoveZ };
+                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+            }
+            else
+            {
+                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 ,
+                                  pDestTransform->Get_Matrix()._42,
+                                  pDestTransform->Get_Matrix()._43 - fMoveZ };
+                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+            }
+            return;
+        }
+    }
+}
 
 //bool Server::check_obb_collision(int a, int b)
 //{
