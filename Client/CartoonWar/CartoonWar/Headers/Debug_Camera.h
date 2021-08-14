@@ -31,5 +31,17 @@ private:
 	_bool						m_IsFix = false;
 	_bool						m_IsChangeIn = false;
 	_bool						m_Active = false;
+
+	_bool						m_IsRotAxisOn = false;
+	_bool						m_IsYTurn = false;
+
+	_bool						m_IsRotXOn = false;
+	_bool						m_IsRotZOn = false;
+	_bool						m_IsXTurn = false;
+	_bool						m_IsCameraMove = false;
+	void						Move_Camera(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+
+	CTransform* m_targetTransform = nullptr;
+
 };
 
