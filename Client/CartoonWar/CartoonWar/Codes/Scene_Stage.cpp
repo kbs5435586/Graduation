@@ -262,8 +262,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	
 	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
 
@@ -497,12 +497,12 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Aim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	_bool IsRed = true;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
-		return E_FAIL;
-	IsRed = false;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
-		return E_FAIL;
+	//_bool IsRed = true;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
+	//	return E_FAIL;
+	//IsRed = false;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
+	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_NormalBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
@@ -596,9 +596,6 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
-	//tFlag.vPos = _vec3(50, 0.2f, 50);
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Teleport", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tFlag.vPos)))
-	//	return E_FAIL;
 
 	return S_OK;
 }

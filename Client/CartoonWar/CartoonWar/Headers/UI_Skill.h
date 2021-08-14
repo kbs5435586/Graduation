@@ -41,6 +41,7 @@ private:
 	CObserver* m_pObserverCom = {};
 
 	_bool m_Active{};
+	_bool m_SkillActive{};
 	_bool IsDown{};
 	_bool IsOnetouch{};
 	_bool IsTwo{};
@@ -54,6 +55,8 @@ private:
 	XMFLOAT3 pArgTemp{};
 
 	string m_strCoolTime{};
+
+	CLASS pClass{};
 public:
 	//스킬 사용 후 쿨타임 돌게
 	_bool GetSTime() { return StartTime; }
@@ -61,6 +64,9 @@ public:
 
 	_bool GetActive() { return m_Active; }
 	void SetActive(_bool _t) { m_Active = _t; }
+
+	_bool GetSkillActive() { return m_SkillActive; }
+	void SetSkillActive(_bool _t) { m_SkillActive = _t; }
 
 	_bool GetTurnCam() { return TurnCam; }
 	void SetTurnCam(_bool _t) { TurnCam = _t; }

@@ -25,7 +25,7 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { 0.f, 0.f, 0.f };
+	_vec3 vPos = { 100.f, 0.f, 100.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
 	return S_OK;

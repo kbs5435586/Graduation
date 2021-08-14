@@ -3,6 +3,7 @@
 #include "Management.h"
 #include "Layer.h"
 #include "UAV.h"
+#include "Player.h"
 
 CUI_Skill::CUI_Skill()
 {
@@ -57,76 +58,87 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	//	return E_FAIL;
 	
 	//10ÀÌ ²ËÂù »óÅÂ
-
-	if (m_Active)
+	CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+	pClass = (tOne)->GetClass();
+	if (pClass == CLASS::CLASS_WORKER || pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY || 
+		pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
 	{
-		if (StartTime)
-		{
-			m_CoolTime += fTimeDelta;
 
-			if (m_CoolTime > m_MaxCoolTime)
-			{
-				m_Active = false;
-				IsOnetouch = false;
-				
-				StartTime = false;
-				m_CoolTime = m_MaxCoolTime;
-			}
-		}	
 	}
 	else
 	{
-		if (pArgTemp.z == 0)
+		if (m_Active)
 		{
-			if (pManagement->Key_Down(KEY_Z))
+			if (StartTime)
 			{
+				m_SkillActive = false;
+				
+				m_CoolTime += fTimeDelta;
 
-				m_fSizeX = m_fSizeX - 10.f;
-				m_fSizeY = m_fSizeY - 10.f;
-				IsDown = true;
-
-			}
-
-			if (IsDown)
-			{
-				if (pManagement->Key_Up(KEY_Z))
+				if (m_CoolTime > m_MaxCoolTime)
 				{
-					m_fSizeX = m_fSizeX + 10.f;
-					m_fSizeY = m_fSizeY + 10.f;
-
-					m_CoolTime = 0.f;
-					m_Active = true;
-
-					IsDown = false;
+					m_Active = false;
+					IsOnetouch = false;
+					StartTime = false;
+					m_CoolTime = m_MaxCoolTime;
 				}
 			}
 		}
-		else if (pArgTemp.z == 1)
+		else
 		{
-			if (pManagement->Key_Down(KEY_X))
+			if (pArgTemp.z == 0)
 			{
-			
-				m_fSizeX = m_fSizeX - 10.f;
-				m_fSizeY = m_fSizeY - 10.f;
-				IsDown = true;
-			
-			}
-			
-			if (IsDown)
-			{
-				if (pManagement->Key_Up(KEY_X))
+				if (pManagement->Key_Down(KEY_Z))
 				{
-					m_fSizeX = m_fSizeX + 10.f;
-					m_fSizeY = m_fSizeY + 10.f;
-			
-					m_CoolTime = 0.f;
-					m_Active = true;
-			
-					IsDown = false;
+
+					m_fSizeX = m_fSizeX - 10.f;
+					m_fSizeY = m_fSizeY - 10.f;
+					IsDown = true;
+
+				}
+
+				if (IsDown)
+				{
+					if (pManagement->Key_Up(KEY_Z))
+					{
+						m_fSizeX = m_fSizeX + 10.f;
+						m_fSizeY = m_fSizeY + 10.f;
+
+						m_CoolTime = 0.f;
+						m_Active = true;
+						m_SkillActive = true;
+						IsDown = false;
+					}
+				}
+			}
+			else if (pArgTemp.z == 1)
+			{
+				if (pManagement->Key_Down(KEY_X))
+				{
+
+					m_fSizeX = m_fSizeX - 10.f;
+					m_fSizeY = m_fSizeY - 10.f;
+					IsDown = true;
+
+				}
+
+				if (IsDown)
+				{
+					if (pManagement->Key_Up(KEY_X))
+					{
+						m_fSizeX = m_fSizeX + 10.f;
+						m_fSizeY = m_fSizeY + 10.f;
+
+						m_CoolTime = 0.f;
+						m_Active = true;
+						m_SkillActive = true;
+						IsDown = false;
+					}
 				}
 			}
 		}
 	}
+	
 
 	Safe_Release(pManagement);
 	return _int();
@@ -136,8 +148,17 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-			return E_FAIL;
+		if (pClass == CLASS::CLASS_WORKER || pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
+			pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
+		{
+
+		}
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		
 	}
 	return _int();
 }

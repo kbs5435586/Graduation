@@ -95,12 +95,18 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		return NO_EVENT;
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	if (!m_IsFly_START && !m_IsFly_ING && !m_IsFly_END)
-	{	
-		m_pTransformCom->Set_PositionY(fY);
-	}
+
+
+	//if (m_IsFly_START || m_IsFly_END)
+	//{	
+	//	
+	//}
+	//else
+	//{
+	//	m_pTransformCom->Set_PositionY(fY);
+	//}
 	
-	
+
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 	if (m_iLayerIdx == 0)
@@ -136,7 +142,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		//Z
 		Skill_CastFire(fTimeDelta, fY);
 		//X
-		Skill_CastTeleport(fTimeDelta);
+		Skill_CastTeleport(fTimeDelta, fY);
 		
 	}
 	else if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -147,7 +153,14 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		Skill_Invisible(fTimeDelta);
 	}
 
-	
+	if ((m_IsFly_START == true) )
+	{
+		
+	}
+	else if(m_IsFly_START == false)
+	{
+		m_pTransformCom->Set_PositionY(fY);
+	}
 
 	if (m_tInfo.fHP <= 0.f)
 	{
@@ -1265,11 +1278,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_eCurClass == CLASS::CLASS_ARCHER)
 			{
-				CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-					return;
-				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+				//CGameObject* pOwnPlayer = nullptr;
+				//_matrix matTemp = m_pTransformCom->Get_Matrix();
+				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
+				//	return;
+				//dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
 			{
@@ -1916,56 +1929,38 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 {
-	if (m_IsFly_START || m_IsFly_ING)
-	{
-		m_fCoolTime_ONE += fTimeDelta;
-		if (m_fCoolTime_ONE > 5.f)
-		{
-			//m_pTransformCom->m_fVel = 0.f;
-			m_IsStart = false;
-			m_IsFly_ING = false;
-			m_IsFly_END = true;
-			m_fCoolTime_ONE = 0.f;
-		}
-	}
-
-
-	if (!m_IsStart)
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+	m_IsSTime = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
+	if (!m_IsOn && !m_IsSTime)
 	{
 		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
-		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
+		m_IsFly_START = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
+		m_IsSTime = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
+		m_fFlyCoolTImeMax = dynamic_cast<CUI_Skill*>(pTemp)->GetMaxCoolTime();
 	}
 
-	if (m_IsFly_START)
+	if (m_IsFly_START && !m_IsSTime)
 	{
-		m_IsStart = true;
-		if (m_pTransformCom->Get_Scale().x > 0.05f)
-			m_pTransformCom->Scaling(m_pTransformCom->Get_Scale().x - 0.001f, m_pTransformCom->Get_Scale().y - 0.001f,
-				m_pTransformCom->Get_Scale().z - 0.001f);
+		m_IsOn = true;
+		
 		if (m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION)->y < fY + 20.f)
 			m_pTransformCom->UP(fTimeDelta);
 		else
 		{
-			m_IsFly_ING = true;
+			m_IsFly_END = true;
+			m_pTransformCom->m_fVel = 0.f;
 		}
 
-	}
-	if (m_IsFly_ING)
-	{
-		if (m_IsUandD)
-		{
-			m_pTransformCom->Fallen(fTimeDelta);
-			if (m_pTransformCom->m_fVel < -5)
-				m_IsUandD = !m_IsUandD;
-		}
-		else
-		{
-			m_pTransformCom->UP(fTimeDelta);
-			if (m_pTransformCom->m_fVel > 5)
-				m_IsUandD = !m_IsUandD;
+		m_fCoolTime_ONE += fTimeDelta;
+		if (m_fCoolTime_ONE > m_fFlyCoolTImeMax)
+		{		
+			
+			m_IsOn = false;
+			m_fCoolTime_ONE = 0.f;
+			CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+			dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
 		}
 	}
-
 	if (m_IsFly_END)
 	{
 		if (m_pTransformCom->Get_Scale().x < 0.1f)
@@ -1975,30 +1970,41 @@ void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 			m_pTransformCom->Fallen(fTimeDelta);
 		else
 		{
-			//m_IsFly_ING = false;
+			m_IsFly_START = false;
 			m_IsFly_END = false;
 			m_IsStart = false;
 
 			m_pTransformCom->m_fVel = 0.f;
-		}
+		}	
 	}
 
 }
 
 void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {
-	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
-	m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 
-	if (m_IsInvisible)
-	{
-		m_fCoolTime_TWO += fTimeDelta;
-		if (m_fCoolTime_TWO > 20.f)
+	//if (!m_InvisibleOnce)
+	//{
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+		m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
+		_bool m_STime = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
+		if (m_IsInvisible && !m_STime)
 		{
-			m_IsInvisible = !m_IsInvisible;
-			m_fCoolTime_TWO = 0.f;
+			m_fCoolTime_TWO += fTimeDelta;
+			if (m_fCoolTime_TWO > 10.f)
+			{
+				
+				m_fCoolTime_TWO = 0.f;
+				m_IsInvisible = true;
+				m_InvisibleOnce = true;
+				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
+			}
 		}
-	}
+		else
+			m_IsInvisible = false;
+	//}
+	
 }
 
 void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
@@ -2042,7 +2048,7 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 	}
 }
 
-void CPlayer::Skill_CastTeleport(const _float& fTimeDelta)
+void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 {
 	if (!m_IsTeleport)
 	{
@@ -2080,7 +2086,7 @@ void CPlayer::Skill_CastTeleport(const _float& fTimeDelta)
 			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
 			BRUSHINFO bTemp = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
 
-			*iter0_Pos = _vec3(bTemp.vBrushPos.x, bTemp.vBrushPos.y, bTemp.vBrushPos.z);
+			*iter0_Pos = _vec3(bTemp.vBrushPos.x, fY, bTemp.vBrushPos.z);
 		}
 	}
 }
