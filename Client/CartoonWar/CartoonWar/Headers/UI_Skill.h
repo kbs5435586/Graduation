@@ -45,6 +45,7 @@ private:
 	_bool IsOnetouch{};
 	_bool IsTwo{};
 	_bool StartTime{};
+	_bool TurnCam{};
 
 	POINT MousePos{};
 
@@ -60,6 +61,10 @@ public:
 
 	_bool GetActive() { return m_Active; }
 	void SetActive(_bool _t) { m_Active = _t; }
+
+	_bool GetTurnCam() { return TurnCam; }
+	void SetTurnCam(_bool _t) { TurnCam = _t; }
+
 
 	//_bool GetOne() { return IsOnetouch; }
 	//void SetOne(_bool _t) { IsOnetouch = _t; }

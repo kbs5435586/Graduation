@@ -1314,6 +1314,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);	
 				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
+	
 			}
 			if (m_IsTeleport)
 			{

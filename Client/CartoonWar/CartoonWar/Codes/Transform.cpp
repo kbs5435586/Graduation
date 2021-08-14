@@ -125,6 +125,18 @@ void CTransform::Go_Right(const _float& fTimeDelta)
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
+void CTransform::Go_Up(const _float& fTimeDelta)
+{
+	_vec3		vUp, vPosition;
+	vUp = *Get_StateInfo(STATE_UP);
+	vPosition = *Get_StateInfo(STATE_POSITION);
+	
+	vUp = Vector3_::Normalize(vUp);
+	vUp = Vector3_::ScalarProduct(vUp, 30.f * -fTimeDelta, false);
+	vPosition = Vector3_::Add(vPosition, vUp);
+	Set_StateInfo(CTransform::STATE_POSITION, &vPosition);
+}
+
 void CTransform::Go_There(const _vec3& vPos)
 {
 	m_matWorld._41 -= (vPos.x);
