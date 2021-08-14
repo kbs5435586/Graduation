@@ -54,6 +54,7 @@ private:
 
 	string m_strCoolTime{};
 public:
+	//스킬 사용 후 쿨타임 돌게
 	_bool GetSTime() { return StartTime; }
 	void SetStime(_bool _t) { StartTime = _t; }
 
@@ -63,12 +64,14 @@ public:
 	//_bool GetOne() { return IsOnetouch; }
 	//void SetOne(_bool _t) { IsOnetouch = _t; }
 
+	//두개짜리 생성 확인용
 	_bool GetIsTwo() { return IsTwo; }
 	void SetIsTwo(_bool _t) { IsTwo = _t; }
 
 	_float GetCoolTime() { return m_CoolTime; }
 	void SetCoolTime(_float _t) { m_CoolTime = _t; }
 
+	//클래스 변경 시 쿨타임 변경
 	_float GetMaxCoolTime() { return m_MaxCoolTime; }
 	void SetMaxCoolTime(_float _t) { m_MaxCoolTime = _t; }
 };

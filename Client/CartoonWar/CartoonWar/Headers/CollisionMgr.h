@@ -23,7 +23,7 @@ private: //OBB
     void                    Player_to_Deffend_Attack_Collision();
     void                    NPC_to_Deffend_Attack_Collision();
     void                    Skill_to_NPC_Collision();
-    //void                    Teleport_to_NPC_Collision(const _float& fTimeDelta);
+    void                    Teleport_to_NPC_Collision();
 private:
     void                    AABB();
     void                    OBB();
@@ -35,5 +35,6 @@ private:
     
     _float time;
     _bool damage{};
+    
 };
 

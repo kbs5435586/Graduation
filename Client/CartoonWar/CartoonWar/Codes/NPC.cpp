@@ -195,8 +195,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-	if (m_IsDead)
-		Resurrection();
 	//if (m_IsDead)
 	//	return DEAD_OBJ;
 
@@ -728,11 +726,11 @@ HRESULT CNPC::Ready_Component()
 	NULL_CHECK_VAL(m_pCollider_Attack, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Collider_Attack", m_pCollider_Attack)))
 		return E_FAIL;
+
 	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Horse");
 	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture0", m_pTextureCom[0])))
 		return E_FAIL;
-
 	if (m_tUnit.eSpecies == SPECIES::SPECIES_HUMAN)
 	{
 		m_pTextureCom[1] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Human");
@@ -1296,6 +1294,7 @@ void CNPC::DeathMontion_Init()
 		Compute_Matrix_X();
 		m_iDeathMotion[0] = 4;
 		m_iDeathMotion[1] = 5;
+		break;
 	case CLASS::CLASS_INFANTRY:
 		Compute_Matrix_X();
 		m_iDeathMotion[0] = 9;

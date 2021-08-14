@@ -1421,13 +1421,17 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 2);
 				CGameObject* tTwo = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
 
-				_uint oID = dynamic_cast<CTeleport*>(tOne)->GetID();
-				_uint tID = dynamic_cast<CTeleport*>(tTwo)->GetID();
-				dynamic_cast<CTeleport*>(tOne)->SetFriend(tID);
-				dynamic_cast<CTeleport*>(tTwo)->SetFriend(oID);
+				dynamic_cast<CTeleport*>(tTwo)->SetSCheck(true);
+
+				dynamic_cast<CTeleport*>(tOne)->SetMyFriend(tTwo);
+				dynamic_cast<CTeleport*>(tTwo)->SetMyFriend(tOne);
 			}
 			else
 			{
+				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+				int numver = lst.size();
+				CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+				dynamic_cast<CTeleport*>(tOne)->SetSCheck(true);
 				dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(true);
 			}
 		}
@@ -1493,6 +1497,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		
 		 m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
 
+		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
@@ -1512,12 +1517,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsRun = true;
 		//m_IsActioning = true;
 		m_IsParticleRun = true;
-
-		//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-		//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-		//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-		//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-		//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN, 0.f, );
 
 		m_fRunSoundTime += fTimeDelta;
 		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
