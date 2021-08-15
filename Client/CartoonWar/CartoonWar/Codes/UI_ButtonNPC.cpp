@@ -67,40 +67,56 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		pManagement->AddRef();
 
 
-		npcnumm = dynamic_cast<CUI_ClassTap*>(uTemp)->GetNPCNum();
-
-		if (m_ButtonNow < npcnumm + 1)
+		if (m_ButtonNow == 0)
 		{
-			if (pManagement->Key_Pressing(KEY_LBUTTON))
-			{
-				GetCursorPos(&MousePos);
-				ScreenToClient(g_hWnd, &MousePos);
+			//플레이어
+			//UnitActive = server->getIsShow(server->Get_PlayerID())
+		}
+		else
+		{
+			//엔피씨
+			//UnitActive = server->getIsShow(MY_NPC_START_CLIENT(server->Get_PlayerID() + m_ButtonNow - 1)
+		}
 
-				if (MousePos.x > m_fX - (m_fSizeX / 2) && MousePos.x < m_fX + (m_fSizeX / 2))
+		if (UnitActive)
+		{
+			npcnumm = dynamic_cast<CUI_ClassTap*>(uTemp)->GetNPCNum();
+
+			if (m_ButtonNow < npcnumm + 1)
+			{
+				if (pManagement->Key_Pressing(KEY_LBUTTON))
 				{
-					if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
+					GetCursorPos(&MousePos);
+					ScreenToClient(g_hWnd, &MousePos);
+
+					if (MousePos.x > m_fX - (m_fSizeX / 2) && MousePos.x < m_fX + (m_fSizeX / 2))
 					{
-						m_fSizeX = 30.f;
-						m_fSizeY = 30.f;
-						IsDown = true;
+						if (MousePos.y > m_fY - (m_fSizeY / 2) && MousePos.y < m_fY + (m_fSizeY / 2))
+						{
+							m_fSizeX = 30.f;
+							m_fSizeY = 30.f;
+							IsDown = true;
+						}
+					}
+				}
+
+				if (IsDown)
+				{
+					if (pManagement->Key_Up(KEY_LBUTTON))
+					{
+						m_fSizeX = 40.f;
+						m_fSizeY = 40.f;
+
+						CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
+						dynamic_cast<CUI_ClassTap*>(UI)->SetWhich(m_ButtonNow);
+
+						IsDown = false;
 					}
 				}
 			}
-
-			if (IsDown)
-			{
-				if (pManagement->Key_Up(KEY_LBUTTON))
-				{
-					m_fSizeX = 40.f;
-					m_fSizeY = 40.f;
-
-					CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
-					dynamic_cast<CUI_ClassTap*>(UI)->SetWhich(m_ButtonNow);
-
-					IsDown = false;
-				}
-			}
 		}
+
+		
 
 		Safe_Release(pManagement);
 	}
@@ -179,7 +195,8 @@ void CUI_ButtonNPC::Render_GameObject()
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
 
-	if (m_ButtonNow < npcnumm + 1)
+	//if (m_ButtonNow < npcnumm + 1)
+	if(UnitActive)
 		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(now), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();

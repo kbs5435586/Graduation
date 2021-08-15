@@ -1431,9 +1431,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_GoldNum",
 			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
-		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Skill",
-		//	CTexture::Create(L"../Bin/Resource/Texture/Icon/png_sIcon0%d.jpg", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
-		//	return E_FAIL;
+	
 
 
 	}
@@ -1443,8 +1441,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Skill",
 			CTexture::Create(L"../Bin/Resource/Texture/Icon/sIcon_0%d.tga", 4, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
-
-
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
 			CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
