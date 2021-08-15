@@ -64,9 +64,12 @@ typedef struct tagOBB
 
 struct Collider
 {
-	_vec3	col_size;
-	_vec3	m_vMin;
-	_vec3	m_vMax;
+	_vec3	aabb_size;
+	_vec3	obb_size;
+	_vec3	m_ABvMin;
+	_vec3	m_ABvMax;
+	_vec3	m_OBvMin;
+	_vec3	m_OBvMax;
 	OBB		m_pOBB;
 };
 
@@ -96,6 +99,7 @@ struct SESSION // 클라이언트 정보
 	ENUM_FUNCTION m_last_move;
 	ENUM_FUNCTION m_last_rotate;
 
+	int m_attack_target;
 	float m_move_speed;
 	float m_rotate_speed;
 	float m_total_angle;
@@ -111,11 +115,13 @@ struct SESSION // 클라이언트 정보
 	CTransform m_transform;
 
 	bool m_isFighting;
-	bool m_isHit;
-	bool m_isOBB;
-	bool m_isBack;
+	bool m_isHit; // 트루면 공격 한거
+	bool m_isOBB; // 트루면 공격 당한거
 	bool m_isBazier;
 
+	_vec3	m_vStartPoint = {};
+	_vec3	m_vEndPoint = {};
+	_vec3	m_vMidPoint = {};
 
 	// 플레이어
 	vector <FormationInfo> m_boid;
@@ -129,5 +135,4 @@ struct SESSION // 클라이언트 정보
 	bool m_isFormSet;
 	unsigned short m_boid_num;
 	_vec3 m_target_look;
-	int m_attack_target;
 };

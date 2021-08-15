@@ -86,7 +86,7 @@ public:
 	_vec3 move_to_spot(int id, _vec3* goto_pos);
 	float dist_between(int user_id, int other_id);
 	float dist_between_finalPos(int user_id, int i);
-	void update_speed(int user_id);
+	void update_speed_and_collider(int user_id);
 	void update_npc_troop(int npc_id);
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
@@ -110,10 +110,8 @@ public:
 	void Compute_AlignAxis(OBB* pOBB);
 	void Compute_ProjAxis(OBB* pOBB);
 	void Obb_Collision(int id);
-	void Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
-	//int API_SendMessage(lua_State* L);
-	//int API_get_x(lua_State* L);
-	//int API_get_y(lua_State* L);
+	void Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+
 public:
 	void get_player_pos();
 	void calculate_next_pos();

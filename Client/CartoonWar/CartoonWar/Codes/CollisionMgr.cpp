@@ -154,7 +154,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 				{
 					(iter0)->GetIsBack() = true;
 					(iter0)->GetOBBCollision() = true;
-					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
 					iter0->GetInfo().fHP -= 1;

@@ -956,6 +956,37 @@ short CServer_Manager::Get_AnimNPC(int id)
 	return m_objects[npc_id].anim;
 }
 
+void CServer_Manager::Set_AnimPL(int id, short anim)
+{
+	m_objects[id].anim = anim;
+}
+
+void CServer_Manager::Set_AnimNPC(int id, short anim)
+{
+	m_objects[npc_idx_to_id(id)].anim = anim;
+}
+
+bool CServer_Manager::Get_isHitPL(int id)
+{
+	return m_objects[id].isHit;
+}
+
+bool CServer_Manager::Get_isHitNPC(int id)
+{
+	int npc_id = npc_idx_to_id(id);
+	return m_objects[npc_id].isHit;
+}
+
+void CServer_Manager::Set_isHitPL(int id, bool ishit)
+{
+	m_objects[id].isHit = ishit;
+}
+
+void CServer_Manager::Set_isHitNPC(int id, bool ishit)
+{
+	m_objects[npc_idx_to_id(id)].isHit = ishit;
+}
+
 short CServer_Manager::Get_NpcSize()
 {
 	return my_npc;

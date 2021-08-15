@@ -87,7 +87,14 @@ public:
     float Get_GameTime();
     short Get_NpcSize();
     short Get_TroopClass();
+    bool Get_isHitPL(int id);
+    bool Get_isHitNPC(int id);
+
     void Set_TroopClass(short mclass);
+    void Set_AnimPL(int id, short anim);
+    void Set_AnimNPC(int id, short anim);
+    void Set_isHitPL(int id, bool ishit);
+    void Set_isHitNPC(int id, bool ishit);
 
     bool is_player(int id);
     bool is_npc(int id);

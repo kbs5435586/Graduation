@@ -188,6 +188,7 @@ struct sc_packet_attacked
 	char type;
 	int id;
 	short hp;
+	bool ishit;
 };
 
 struct sc_packet_condition
