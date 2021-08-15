@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "UAV.h"
 #include "UI_ClassTap.h"
+#include "UI_Skill.h"
 
 #include "Player.h"
 #include "NPC.h"
@@ -63,6 +64,7 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 			return -1;
 		pManagement->AddRef();
 
+		
 
 		if (pManagement->Key_Pressing(KEY_LBUTTON))
 		{
@@ -86,6 +88,31 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 			{
 				m_fSizeX = 50.f;
 				m_fSizeY = 50.f;
+
+				//_bool GetSTime() { return StartTime; }
+			//void SetStime(_bool _t) { StartTime = _t; }
+			//
+			//_bool GetActive() { return m_Active; }
+			//void SetActive(_bool _t) { m_Active = _t; }
+			//
+			//_bool GetSkillActive() { return m_SkillActive; }
+			//void SetSkillActive(_bool _t) { m_SkillActive = _t; }
+			//
+			//_float& GetCoolTime() { return m_CoolTime; }
+			//void SetCoolTime(_float _t) { m_CoolTime = _t; }
+
+				CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+				CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+			
+				dynamic_cast<CUI_Skill*>(zTemp)->GetSTime() = false;
+				dynamic_cast<CUI_Skill*>(zTemp)->GetActive() = false;
+				dynamic_cast<CUI_Skill*>(zTemp)->GetSkillActive() = false;
+				dynamic_cast<CUI_Skill*>(zTemp)->GetCoolTime() = dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime();
+
+				dynamic_cast<CUI_Skill*>(xTemp)->GetSTime() = false;
+				dynamic_cast<CUI_Skill*>(xTemp)->GetActive() = false;
+				dynamic_cast<CUI_Skill*>(xTemp)->GetSkillActive() = false;
+				dynamic_cast<CUI_Skill*>(xTemp)->GetCoolTime() = dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime();
 
 				CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 				_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();

@@ -117,7 +117,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 	
-	if (m_eCurClass == CLASS::CLASS_MAGE)
+	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 	{
 		//Z
 		Skill_CastFire(fTimeDelta, fY);
@@ -1406,7 +1406,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		vLook = Vector3_::Normalize(vLook);
 
 
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_IsSlide)

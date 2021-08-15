@@ -526,6 +526,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\10. Skill_Teleport">
       <UniqueIdentifier>{5939b1ac-c105-4338-95dc-b63a0726010e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain">
+      <UniqueIdentifier>{b99bf50c-61d0-418f-95f4-e97fdf643d0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -981,6 +984,12 @@
     <ClInclude Include="..\Headers\Teleport.h">
       <Filter>02. GameObject\01. Scene_Stage\10. Skill_Teleport</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_MiniMap.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\98. UI_MiniMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map_Terrain.h">
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1406,6 +1415,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Teleport.cpp">
       <Filter>02. GameObject\01. Scene_Stage\10. Skill_Teleport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_MiniMap.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\98. UI_MiniMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map_Terrain.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

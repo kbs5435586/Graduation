@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Map_Terrain.h" />
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Animals.h" />
     <ClInclude Include="..\Headers\Animator.h" />
@@ -286,6 +287,7 @@
     <ClInclude Include="..\Headers\UI_GoldIcon.h" />
     <ClInclude Include="..\Headers\UI_LastTime.h" />
     <ClInclude Include="..\Headers\UI_LastTimeBar.h" />
+    <ClInclude Include="..\Headers\UI_MiniMap.h" />
     <ClInclude Include="..\Headers\UI_Mul.h" />
     <ClInclude Include="..\Headers\UI_NormalBar.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
@@ -378,6 +380,7 @@
     <ClCompile Include="..\Codes\LowPoly.cpp" />
     <ClCompile Include="..\Codes\MapUser.cpp" />
     <ClCompile Include="..\Codes\Map_Camera.cpp" />
+    <ClCompile Include="..\Codes\Map_Terrain.cpp" />
     <ClCompile Include="..\Codes\Mesh.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
@@ -435,6 +438,7 @@
     <ClCompile Include="..\Codes\UI_GoldIcon.cpp" />
     <ClCompile Include="..\Codes\UI_LastTime.cpp" />
     <ClCompile Include="..\Codes\UI_LastTimeBar.cpp" />
+    <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
     <ClCompile Include="..\Codes\UI_Mul.cpp" />
     <ClCompile Include="..\Codes\UI_NormalBar.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />

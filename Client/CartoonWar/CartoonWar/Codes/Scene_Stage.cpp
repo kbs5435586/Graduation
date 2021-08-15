@@ -17,12 +17,13 @@
 #include "Light_Camera.h"
 #include "Inventory_Camera.h"
 #include "Reflection_Camera.h"
-#include "Map_Camera.h"
 #include "Terrain.h"
 #include "Terrain_Height.h"
 #include "Sphere.h"
 #include "MapUser.h"
-
+//#include "Map_Camera.h"
+//#include "Map_Terrain.h"
+//#include "UI_MiniMap.h"
 
 // UI
 #include "UI_Loading.h"
@@ -42,6 +43,7 @@
 #include "UI_Button.h"
 #include "UI_ButtonNPC.h"
 #include "UI_Select.h"
+
 
 #include "UI_GoldIcon.h"
 #include "UI_LastTime.h"
@@ -144,8 +146,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Inventory", CInventory_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Reflection", CReflection_Camera::Create())))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Map", CMap_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_SkyBox", CSkyBox::Create())))
 		return E_FAIL;
@@ -269,11 +269,10 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Inventory_Camera(L"Layer_Inventory_Camera", pManagement)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
-		return E_FAIL;
-	//if (FAILED(Ready_Layer_Map(L"Layer_Map_Camera", pManagement)))
+	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
-	
+	//if (FAILED(Ready_Layer_Map(L"Layer_Map", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
 
@@ -494,10 +493,10 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 		return E_FAIL;
 	
 
-	XMFLOAT3 one = { 560.f, 100.f, 0.f };
+	XMFLOAT3 one = { 295.f, 100.f, 0.f };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&one)))
 		return E_FAIL; 
-	XMFLOAT3 two = { 405.f, 100.f, 1.f };
+	XMFLOAT3 two = { 145.f, 100.f, 1.f };
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Skill", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&two)))
 		return E_FAIL;
 
@@ -525,6 +524,7 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_LastTimeBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
+	
 
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;	
@@ -568,7 +568,8 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	//	return E_FAIL;	
+
 	_bool a = true;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&a)))
 		return E_FAIL;
@@ -711,7 +712,9 @@ HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pMan
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Map_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	return S_OK;

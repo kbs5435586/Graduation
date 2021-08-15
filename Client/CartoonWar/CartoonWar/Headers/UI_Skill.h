@@ -59,16 +59,16 @@ private:
 	CLASS pClass{};
 public:
 	//스킬 사용 후 쿨타임 돌게
-	_bool GetSTime() { return StartTime; }
+	_bool& GetSTime() { return StartTime; }
 	void SetStime(_bool _t) { StartTime = _t; }
 
-	_bool GetActive() { return m_Active; }
+	_bool& GetActive() { return m_Active; }
 	void SetActive(_bool _t) { m_Active = _t; }
 
-	_bool GetSkillActive() { return m_SkillActive; }
+	_bool& GetSkillActive() { return m_SkillActive; }
 	void SetSkillActive(_bool _t) { m_SkillActive = _t; }
 
-	_bool GetTurnCam() { return TurnCam; }
+	_bool& GetTurnCam() { return TurnCam; }
 	void SetTurnCam(_bool _t) { TurnCam = _t; }
 
 
@@ -79,7 +79,7 @@ public:
 	_bool GetIsTwo() { return IsTwo; }
 	void SetIsTwo(_bool _t) { IsTwo = _t; }
 
-	_float GetCoolTime() { return m_CoolTime; }
+	_float& GetCoolTime() { return m_CoolTime; }
 	void SetCoolTime(_float _t) { m_CoolTime = _t; }
 
 	//클래스 변경 시 쿨타임 변경
