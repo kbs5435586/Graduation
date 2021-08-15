@@ -862,87 +862,6 @@ void Server::set_formation(int user_id)
     }
 }
 
-void Server::do_random_move(int npc_id)
-{
-    _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-
-    switch (rand() % 4)
-    {
-    case MV_UP:
-        if (pos->y > 0)
-            pos->y--;
-        else if (pos->y < 0)
-            pos->y = 0;
-        break;
-    case MV_DOWN:
-        if (pos->y < (WORLD_HEIGHT - 1))
-            pos->y++;
-        else if (pos->y > (WORLD_HEIGHT - 1))
-            pos->y = WORLD_HEIGHT - 1;
-        break;
-    case MV_RIGHT:
-        if (pos->x < (WORLD_HORIZONTAL - 1))
-            g_clients[npc_id].m_transform.Go_Right(MOVE_SPEED_NPC);
-        else if (pos->x > (WORLD_HORIZONTAL - 1))
-            pos->x = WORLD_HORIZONTAL - 1;
-        break;
-    case MV_LEFT:
-        if (pos->x > 0)
-            g_clients[npc_id].m_transform.Go_Left(MOVE_SPEED_NPC);
-        else if (pos->x < 0)
-            pos->x = 0;
-        break;
-    case MV_FORWARD:
-        if (pos->z < (WORLD_VERTICAL - 1))
-            g_clients[npc_id].m_transform.Go_Straight(MOVE_SPEED_NPC);
-        else if (pos->z > (WORLD_VERTICAL - 1))
-            pos->z = WORLD_VERTICAL - 1;
-        break;
-    case MV_BACK:
-        if (pos->z > 0)
-            g_clients[npc_id].m_transform.BackWard(MOVE_SPEED_NPC);
-        else if (pos->z < 0)
-            pos->z = 0;
-        break;
-    }
-
-    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
-
-    for (int i = 0; i < NPC_START; ++i)
-    {
-        if (ST_ACTIVE != g_clients[i].m_status)
-            continue;
-
-        if (true == is_near(i, npc_id))
-        {
-            g_clients[i].m_cLock.lock();
-            if (0 != g_clients[i].m_view_list.count(npc_id))
-            {
-                g_clients[i].m_cLock.unlock();
-                //send_move_packet(i, npc_id);
-            }
-            else
-            {
-                g_clients[i].m_cLock.unlock();
-                send_enter_packet(i, npc_id);
-            }
-        }
-        else
-        {
-            g_clients[i].m_cLock.lock();
-            if (0 != g_clients[i].m_view_list.count(npc_id))
-            {
-                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
-                send_leave_packet(i, npc_id);
-            }
-            else
-                g_clients[i].m_cLock.unlock();
-        }
-    }
-
-    // 근데 이제 플레이어가 문제임, 플레이어 뷰 리스트 관리할때 npc까지 고려해서 뷰 리스트 관리해줘야 되므로 처음부터 끝까지 뷰리스트 다 살펴봐야함
-}
-
 void Server::do_follow(int npc_id)
 {
     SESSION& n = g_clients[npc_id];
@@ -1329,9 +1248,25 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
             continue;
         if (ST_DEAD == c.second.m_status)
             continue;
-        if (false == is_near(c.second.m_id, npc_id)) // 근처에 없는애는 그냥 깨우지도 마라
-            continue;
-        check_aabb_collision(npc_id, c.second.m_id);
+
+        if (!is_object(c.second.m_id))
+        {
+            if (dist_between(c.second.m_id, npc_id) <= 4.f)
+                check_aabb_collision(npc_id, c.second.m_id);
+        }
+        else
+        {
+            if (TP_NATURE == c.second.m_type)
+            {
+                if (dist_between(c.second.m_id, npc_id) <= 50.f)
+                    check_aabb_collision(npc_id, c.second.m_id);
+            }
+            else if (TP_DEFFEND == c.second.m_type)
+            {
+                if (dist_between(c.second.m_id, npc_id) <= 10.f)
+                    check_aabb_collision(npc_id, c.second.m_id);
+            }
+        }
     }
 
     for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
@@ -1468,9 +1403,25 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             continue;
         if (ST_DEAD == o.second.m_status)
             continue;
-        if (false == is_near(o.second.m_id, player_id)) // 근처에 없는애는 그냥 깨우지도 마라
-            continue;
-        check_aabb_collision(player_id, o.second.m_id);
+
+        if (!is_object(o.second.m_id))
+        {
+            if (dist_between(o.second.m_id, player_id) <= 4.f)
+                check_aabb_collision(player_id, o.second.m_id);
+        }
+        else
+        {
+            if (TP_NATURE == o.second.m_type)
+            {
+                if (dist_between(o.second.m_id, player_id) <= 50.f)
+                    check_aabb_collision(player_id, o.second.m_id);
+            }
+            else if (TP_DEFFEND == o.second.m_type)
+            {
+                if (dist_between(o.second.m_id, player_id) <= 10.f)
+                    check_aabb_collision(player_id, o.second.m_id);
+            }
+        }
     }
     set_formation(player_id);
 
@@ -1772,6 +1723,7 @@ void Server::initialize_NPC(int player_id)
             cout << npc_id << " is intit\n";
             g_clients[npc_id].m_socket = 0;
             g_clients[npc_id].m_id = npc_id;
+            g_clients[npc_id].m_type = TP_NPC;
             g_clients[npc_id].m_owner_id = player_id;
             g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
             g_clients[npc_id].m_team = g_clients[player_id].m_team;
@@ -2520,6 +2472,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_formation = F_SQUARE;
 
                 g_clients[user_id].m_owner_id = user_id;
+                g_clients[user_id].m_type = TP_PLAYER;
                 g_clients[user_id].m_hp = 200;
                 g_clients[user_id].m_total_angle = -90.f;
                 g_clients[user_id].m_Mcondition = CON_IDLE;

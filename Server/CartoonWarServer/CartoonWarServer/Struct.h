@@ -8,7 +8,7 @@ enum ENUM_FUNCTION
 	FUNC_PLAYER_RIGHT, FUNC_PLAYER_RUN, FUNC_END
 };
 enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_DEAD, ST_END };
-enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
+enum ENUM_TYPE { TP_PLAYER, TP_NPC, TP_ARROW, TP_DEFFEND, TP_NATURE, TP_END };
 enum ENUM_TEAM { TEAM_RED, TEAM_BLUE, TEAM_END };
 
 enum class COLLIDER_TYPE
@@ -98,6 +98,7 @@ struct SESSION // 클라이언트 정보
 	ENUM_FUNCTION m_curr_rotate;
 	ENUM_FUNCTION m_last_move;
 	ENUM_FUNCTION m_last_rotate;
+	ENUM_TYPE m_type;
 
 	int m_attack_target;
 	float m_move_speed;
