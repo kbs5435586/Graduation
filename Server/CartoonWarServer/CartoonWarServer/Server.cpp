@@ -842,88 +842,6 @@ void Server::set_formation(int user_id)
         }
     }
     break;
-    //case FM_SQUARE:
-    //{
-    //    if (1 == c.m_boid.size())
-    //    {
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Left(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[0]->m_target_pos = *new_pos;
-    //    }
-    //    else if (2 == c.m_boid.size())
-    //    {
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Left(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[0]->m_target_pos = *new_pos1;
-
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Right(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[1]->m_target_pos = *new_pos2;
-    //    }
-    //    else if (3 == c.m_boid.size())
-    //    {
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Left(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[0]->m_target_pos = *new_pos1;
-
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Right(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[1]->m_target_pos = *new_pos2;
-
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Left(FORMATION_SPACE);
-    //        set_pos.Go_Straight(FORMATION_SPACE);
-    //        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[2]->m_target_pos = *new_pos3;
-    //    }
-    //    else if (4 == c.m_boid.size())
-    //    {
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Left(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos1 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[0]->m_target_pos = *new_pos1;
-
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Right(FORMATION_SPACE);
-    //        set_pos.BackWard(FORMATION_SPACE);
-    //        _vec3* new_pos2 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[1]->m_target_pos = *new_pos2;
-
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Left(FORMATION_SPACE);
-    //        set_pos.Go_Straight(FORMATION_SPACE);
-    //        _vec3* new_pos3 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[2]->m_target_pos = *new_pos3;
-
-    //        set_pos.Set_Matrix(&temp);
-    //        set_pos.Go_Right(FORMATION_SPACE);
-    //        set_pos.Go_Straight(FORMATION_SPACE);
-    //        _vec3* new_pos4 = set_pos.Get_StateInfo(CTransform::STATE_POSITION);
-    //        c.m_boid[3]->m_target_pos = *new_pos4;
-    //    }
-    //}
-    //break;
-    case F_PIRAMID:
-    {
-
-    }
-    break;
-    case F_CIRCLE:
-    {
-
-    }
-    break;
     }
 }
 
@@ -1882,6 +1800,10 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_isFormSet = true;
             g_clients[npc_id].m_attack_target = -1;
             g_clients[npc_id].m_isFighting = false;
+            g_clients[npc_id].m_isBack = false;
+            g_clients[npc_id].m_isHit = false;
+            g_clients[npc_id].m_isOBB = false;
+
             FormationInfo formTemp;
             formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
             g_clients[player_id].m_boid.push_back(formTemp);
@@ -2605,8 +2527,11 @@ void Server::worker_thread()
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
                 g_clients[user_id].m_isFighting = false;
+                g_clients[user_id].m_isBack = false;
+                g_clients[user_id].m_isHit = false;
+                g_clients[user_id].m_isOBB = false;
                 set_starting_pos(user_id);
-               
+
                 DWORD flags = 0;
                 WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
                     &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
@@ -2887,7 +2812,7 @@ void Server::Ready_Collider_OBB_BOX(int id, const _vec3 vSize)
     c.m_pOBB.vPoint[7] = _vec3(c.m_vMin.x, c.m_vMin.y, c.m_vMax.z);
 }
 
-bool Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
+void Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
 {
     _matrix		matSour = Compute_WorldTransform(a);
     _matrix		matDest = Compute_WorldTransform(b);
@@ -2953,22 +2878,19 @@ bool Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, 
 
 bool Server::check_obb_collision(int a, int b)
 {
-    	OBB* pTargetOBB = pTargetCollider->m_pOBB;
+    OBB* pTargetOBB = &g_clients[b].m_col.m_pOBB;
 	if (nullptr == pTargetOBB)
 		return false;
-
-
-	m_IsColl = false;
 
 	OBB			tOBB[2];
 	ZeroMemory(tOBB, sizeof(OBB) * 2);
 
 	for (size_t i = 0; i < 8; ++i)
 	{
-		_matrix		matWorld = Compute_WorldTransform();
-		_matrix		matTargetWorld = pTargetCollider->Compute_WorldTransform();
+        _matrix		matWorld = Compute_WorldTransform(a);
+        _matrix		matTargetWorld = Compute_WorldTransform(b);
 
-		tOBB[0].vPoint[i] = _vec3::Transform(m_pOBB->vPoint[i], matWorld);
+		tOBB[0].vPoint[i] = _vec3::Transform(g_clients[a].m_col.m_pOBB.vPoint[i], matWorld);
 		tOBB[1].vPoint[i] = _vec3::Transform(pTargetOBB->vPoint[i], matTargetWorld);
 
 	}
@@ -2992,7 +2914,6 @@ bool Server::check_obb_collision(int a, int b)
 			vAlignAxis[iIndex] = Vector3_::CrossProduct(tOBB[0].vAlignAxis[i], tOBB[1].vAlignAxis[j], false);
 		}
 	}
-
 
 	_float		fDistance[3] = {};
 	for (size_t i = 0; i < 2; ++i)
@@ -3040,9 +2961,7 @@ bool Server::check_obb_collision(int a, int b)
 		if (fDistance[1] + fDistance[2] < fDistance[0])
 			return false;
 	}
-
-
-	return _bool(m_IsColl = true);
+	return true;
 }
 
 bool Server::is_object(int id)
@@ -3052,3 +2971,100 @@ bool Server::is_object(int id)
     else
         return false;
 }
+
+void Server::Compute_AlignAxis(OBB* pOBB)
+{
+    pOBB->vAlignAxis[0] = (pOBB->vPoint[2] - pOBB->vPoint[3]);
+    pOBB->vAlignAxis[1] = (pOBB->vPoint[0] - pOBB->vPoint[3]);
+    pOBB->vAlignAxis[2] = (pOBB->vPoint[7] - pOBB->vPoint[3]);
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        pOBB->vAlignAxis[i] = Vector3_::Normalize(pOBB->vAlignAxis[i]);
+    }
+}
+
+void Server::Compute_ProjAxis(OBB* pOBB)
+{
+    _vec3 vAdd[3];
+    vAdd[0] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[2]);
+    vAdd[1] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[0]);
+    vAdd[2] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[7]);
+
+    _vec3 vProd[3];
+    vProd[0] = Vector3_::ScalarProduct(vAdd[0], 0.5f, false);
+    vProd[1] = Vector3_::ScalarProduct(vAdd[1], 0.5f, false);
+    vProd[2] = Vector3_::ScalarProduct(vAdd[2], 0.5f, false);
+
+    pOBB->vProjAxis[0] = (vProd[0] - pOBB->vCenter);
+    pOBB->vProjAxis[1] = (vProd[1] - pOBB->vCenter);
+    pOBB->vProjAxis[2] = (vProd[2] - pOBB->vCenter);
+}
+
+//void Server::Obb_Collision(int id)
+//{
+//    SESSION& o = g_clients[id];
+//    if (o.m_isBack)
+//    {
+//        if (o.m_isOBB && o.m_fBazierCnt <= 1.f)
+//        {
+//            if (o.m_isBazier)
+//            {
+//                _vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+//                _vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+//                _vec3 vTemp = { vPos - vTargetPos };
+//                vTemp *= 5.f;
+//                m_vStartPoint = vPos;
+//                m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+//                m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+//                m_vMidPoint.y += 10.f;
+//                Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+//                m_IsBazier = true;
+//            }
+//            Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+//        }
+//        if (m_fBazierCnt >= 1.f)
+//        {
+//            o.m_fBazierCnt = 0.f;
+//            o.m_isOBB = false;
+//            o.m_isBazier = false;
+//        }
+//    }
+//    else
+//    {
+//        if (o.m_isOBB && o.m_fBazierCnt <= 1.f)
+//        {
+//            if (!o.m_isBazier)
+//            {
+//                _vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
+//                _vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+//                _vec3 vTemp = { vPos - vTargetPos };
+//                vTemp *= 1.f;
+//                m_vStartPoint = vPos;
+//                m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
+//                m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
+//                //m_vMidPoint.y += 10.f;
+//                Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+//                m_IsBazier = true;
+//            }
+//            Hit_Object(o.m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
+//        }
+//        if (o.m_fBazierCnt >= 1.f)
+//        {
+//            o.m_fBazierCnt = 0.f;
+//            o.m_isOBB = false;
+//            o.m_isBazier = false;
+//        }
+//    }
+//}
+//
+//void Server::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
+//{
+//    _float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
+//    _float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
+//    _float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
+//
+//    _vec3 vPos = { fX, fY, fZ };
+//    m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+//    fCnt += 0.02f;
+//}

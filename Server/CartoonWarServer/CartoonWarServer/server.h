@@ -103,11 +103,14 @@ public:
 	void Update_Collider(int id, _vec3 vSize, COLLIDER_TYPE eType); // aabb 및 obb min, max 값 업데이트 용도
 	_matrix Compute_WorldTransform(int id);
 	_matrix Remove_Rotation(_matrix matWorld);
-	bool check_aabb_collision(int a, int b);
+	void check_aabb_collision(int a, int b);
 	bool check_obb_collision(int a, int b);
 	void Ready_Collider_AABB_BOX(int id, const _vec3 vSize);
 	void Ready_Collider_OBB_BOX(int id, const _vec3 vSize);
-
+	void Compute_AlignAxis(OBB* pOBB);
+	void Compute_ProjAxis(OBB* pOBB);
+	void Obb_Collision(int id);
+	void Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 	//int API_SendMessage(lua_State* L);
 	//int API_get_x(lua_State* L);
 	//int API_get_y(lua_State* L);

@@ -99,6 +99,7 @@ struct SESSION // 클라이언트 정보
 	float m_move_speed;
 	float m_rotate_speed;
 	float m_total_angle;
+	float m_fBazierCnt;
 
 	Collider m_col;
 	unordered_set <int> m_view_list;
@@ -110,6 +111,11 @@ struct SESSION // 클라이언트 정보
 	CTransform m_transform;
 
 	bool m_isFighting;
+	bool m_isHit;
+	bool m_isOBB;
+	bool m_isBack;
+	bool m_isBazier;
+
 
 	// 플레이어
 	vector <FormationInfo> m_boid;

@@ -159,10 +159,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 					iter1->GetIsHit() = false;
 					iter0->GetInfo().fHP -= 1;
 				}
-
-
 			}
-
 		}
 	}
 }
