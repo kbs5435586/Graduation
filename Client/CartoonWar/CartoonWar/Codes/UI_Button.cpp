@@ -290,6 +290,10 @@ void CUI_Button::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return;
+	server->AddRef();
 
 	REP tRep = {};
 
@@ -383,8 +387,8 @@ void CUI_Button::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
+	Safe_Release(server);
 	Safe_Release(pManagement);
-	
 }
 
 HRESULT CUI_Button::CreateInputLayout()
