@@ -147,33 +147,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Go_There(vSlide);
 	}
 
-	//if (!m_IsSlide)
-	//{
-	//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-	//	{
-	//		m_cMoveCondition = CON_STRAIGHT;
-	//		if (m_cLastMoveCondition != m_cMoveCondition)
-	//		{
-	//			server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
-	//			m_cLastMoveCondition = m_cMoveCondition;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		m_pTransformCom->Go_There(vSlide);
-	//	}
-	//}
-	//else
-	//{
-	//	m_cMoveCondition = CON_STRAIGHT;
-	//	if (m_cLastMoveCondition != m_cMoveCondition)
-	//	{
-	//		server->send_condition_packet(CON_TYPE_MOVE, CON_STRAIGHT);
-	//		m_cLastMoveCondition = m_cMoveCondition;
-	//	}
-	//	m_IsSlide = false;
-	//}
-
 	Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
@@ -189,8 +162,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-	//if (m_IsDead)
-	//	return DEAD_OBJ;
 
 	Set_Animation(fTimeDelta);
 	if (fLen <= 175.f)
