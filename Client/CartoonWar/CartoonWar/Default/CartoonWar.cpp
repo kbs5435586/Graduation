@@ -33,6 +33,8 @@ bool        g_InputMode = false;
 bool        g_IsCollisionStart = false;
 int         g_iPlayerIdx = 0;
 int         g_iGold = 0;
+int         g_iTotalTime = 0;
+bool        g_IsRedWin = false;
 
 
 _vec3 g_vEyePt = _vec3(30.f, 100.0f, -20.0f);
