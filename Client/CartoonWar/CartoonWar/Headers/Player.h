@@ -43,6 +43,7 @@ private:
 	void									Compute_Matrix_Z();
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+	void									Select_Class();
 private:
 	void									Input_Key(const _float& fTimeDelta);
 private:

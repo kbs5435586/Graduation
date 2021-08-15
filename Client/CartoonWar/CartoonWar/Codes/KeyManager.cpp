@@ -53,7 +53,7 @@ void CKeyManager::Key_Update()
 		m_dwKey |= KEY_4;
 	if (GetAsyncKeyState('5') & 0x8000)
 		m_dwKey |= KEY_5;
-	
+
 	if (GetAsyncKeyState('I') & 0x8000)
 		m_dwKey |= KEY_I;
 	if (GetAsyncKeyState('Z') & 0x8000)

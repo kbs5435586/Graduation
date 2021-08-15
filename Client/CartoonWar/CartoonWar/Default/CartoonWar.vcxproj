@@ -161,6 +161,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Map_Terrain.h" />
+    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Animals.h" />
     <ClInclude Include="..\Headers\Animator.h" />
     <ClInclude Include="..\Headers\Base.h" />
@@ -282,7 +284,11 @@
     <ClInclude Include="..\Headers\UI_Aim.h" />
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_GoldIcon.h" />
+    <ClInclude Include="..\Headers\UI_LastTime.h" />
+    <ClInclude Include="..\Headers\UI_LastTimeBar.h" />
     <ClInclude Include="..\Headers\UI_MiniMap.h" />
+    <ClInclude Include="..\Headers\UI_Mul.h" />
     <ClInclude Include="..\Headers\UI_NormalBar.h" />
     <ClInclude Include="..\Headers\UI_OnHead.h" />
     <ClInclude Include="..\Headers\UI_OnHead_Gage.h" />
@@ -294,6 +300,7 @@
     <ClInclude Include="..\Headers\UI_Main.h" />
     <ClInclude Include="..\Headers\UI_Normal.h" />
     <ClInclude Include="..\Headers\UI_Score.h" />
+    <ClInclude Include="..\Headers\UI_Select.h" />
     <ClInclude Include="..\Headers\UI_Shade.h" />
     <ClInclude Include="..\Headers\UI_Shop.h" />
     <ClInclude Include="..\Headers\UI_WoL.h" />
@@ -373,6 +380,7 @@
     <ClCompile Include="..\Codes\LowPoly.cpp" />
     <ClCompile Include="..\Codes\MapUser.cpp" />
     <ClCompile Include="..\Codes\Map_Camera.cpp" />
+    <ClCompile Include="..\Codes\Map_Terrain.cpp" />
     <ClCompile Include="..\Codes\Mesh.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
@@ -426,7 +434,12 @@
     <ClCompile Include="..\Codes\UI_Aim.cpp" />
     <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_Gold.cpp" />
+    <ClCompile Include="..\Codes\UI_GoldIcon.cpp" />
+    <ClCompile Include="..\Codes\UI_LastTime.cpp" />
+    <ClCompile Include="..\Codes\UI_LastTimeBar.cpp" />
     <ClCompile Include="..\Codes\UI_MiniMap.cpp" />
+    <ClCompile Include="..\Codes\UI_Mul.cpp" />
     <ClCompile Include="..\Codes\UI_NormalBar.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead.cpp" />
     <ClCompile Include="..\Codes\UI_OnHead_Gage.cpp" />
@@ -438,6 +451,7 @@
     <ClCompile Include="..\Codes\UI_Main.cpp" />
     <ClCompile Include="..\Codes\UI_Normal.cpp" />
     <ClCompile Include="..\Codes\UI_Score.cpp" />
+    <ClCompile Include="..\Codes\UI_Select.cpp" />
     <ClCompile Include="..\Codes\UI_Shade.cpp" />
     <ClCompile Include="..\Codes\UI_Shop.cpp" />
     <ClCompile Include="..\Codes\UI_WoL.cpp" />
@@ -604,6 +618,12 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Select.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_LastTime.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

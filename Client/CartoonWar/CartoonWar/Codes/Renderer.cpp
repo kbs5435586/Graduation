@@ -42,7 +42,6 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	_uint iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	
-	
 
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->Clear(iSwapChainIdx);
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Clear();

@@ -243,7 +243,7 @@ void CScene_Logo::Input_ID_IP()
 		m_IsIP = false;
 
 
-	if (m_pInput->Get_DIKeyState(DIK_1) & 0x80)
+	if (m_pInput->Get_DIKeyState(DIK_1) & 0x8000)
 	{
 
 		if (m_IsIP)
@@ -1418,10 +1418,33 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ScoreBack",
 			CTexture::Create(L"../Bin/Resource/Texture/LastNum/Back%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
+
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Hit",
+			CTexture::Create(L"../Bin/Resource/Texture/Particle/Hit/%d.png", 16, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon",
+			CTexture::Create(L"../Bin/Resource/Texture/Icon/Icon%d.png", 5, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Gold",
+			CTexture::Create(L"../Bin/Resource/Texture/Gold/Gold%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_GoldNum",
+			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Skill",
+		//	CTexture::Create(L"../Bin/Resource/Texture/Icon/png_sIcon0%d.jpg", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+		//	return E_FAIL;
+
+
 	}
 
 	//TGA
 	{
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Skill",
+			CTexture::Create(L"../Bin/Resource/Texture/Icon/sIcon_0%d.tga", 4, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
+
+
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
 			CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
@@ -1441,8 +1464,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/Terrain/NGround%d.tga", 3, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon",
-			CTexture::Create(L"../Bin/Resource/Texture/Icon/icon_class_0%d.tga", 13, TEXTURE_TYPE::TEXTURE_TGA))))
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Icon_Class",
+			CTexture::Create(L"../Bin/Resource/Texture/Icon/Icon_%d.tga", 9, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_MiniMap",
@@ -1522,7 +1545,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Collider",
 		CShader::Create(L"../ShaderFiles/Shader_Collider.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Select",
+		CShader::Create(L"../ShaderFiles/Shader_UI_Select.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_LastTime",
+		CShader::Create(L"../ShaderFiles/Shader_UI_LastTime.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	//Compute_Shader_Compile
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default",

@@ -49,7 +49,8 @@ private:
 private:
 	_bool									m_IsReset = false;
 	_bool									m_IsFix_Gage = false;
-	REP										m_tRep = { };
 	_float									m_fTimeDelta = 0.f;
+	_uint									m_iTeam = 0;
+	_uint									m_iTeamCnt = 0;
 };
 

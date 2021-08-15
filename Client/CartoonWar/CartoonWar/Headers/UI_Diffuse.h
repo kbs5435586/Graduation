@@ -8,12 +8,12 @@ class CTexture;
 
 
 class CUI_Diffuse :
-    public CUI
+	public CUI
 {
 private:
-    CUI_Diffuse();
-    CUI_Diffuse(const CUI_Diffuse& rhs);
-    virtual ~CUI_Diffuse() = default;
+	CUI_Diffuse();
+	CUI_Diffuse(const CUI_Diffuse& rhs);
+	virtual ~CUI_Diffuse() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -33,7 +33,5 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	//CShader*								m_pShaderCom_Mini = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
 };
 

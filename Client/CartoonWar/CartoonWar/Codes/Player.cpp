@@ -2,8 +2,7 @@
 #include "Management.h"
 #include "Player.h"
 #include "UI_OnHead.h"
-#include "UI_OnHeadBack.h"
-
+#include "UI_Select.h"
 #include "Deffend.h"
 
 #include "UI_ClassTap.h"
@@ -172,7 +171,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsHit = false; // ¼öÁ¤
 	}
 
-	if (m_eCurClass == CLASS::CLASS_MAGE)
+	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 	{
 		//Z
 		//Skill_CastFire(fTimeDelta, fY);
@@ -1284,6 +1283,11 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	fCnt += 0.02f;
 }
 
+void CPlayer::Select_Class()
+{
+	
+}
+
 void CPlayer::Input_Key(const _float& fTimeDelta)
 {
 	CServer_Manager* server = CServer_Manager::GetInstance();
@@ -1469,7 +1473,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 	}
-
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
 		if (!m_IsCombat)
@@ -1512,10 +1515,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		_vec3 vLook = {};
 		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 		vLook = Vector3_::Normalize(vLook);
-		
-		 m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
 
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+
+		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
@@ -1628,18 +1630,42 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F2))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 1);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 		server->Set_TroopClass(T_HORSE);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F3))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 2);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 		server->Set_TroopClass(T_MAGE);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F4))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 3);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 		server->Set_TroopClass(T_BOW);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_F5))
 	{
+		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
+		{
+			dynamic_cast<CUI_Select*>(iter)->Get_IsCheck() = false;
+		}
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select", 4);
+		dynamic_cast<CUI_Select*>(pGameObject)->Get_IsCheck() = true;
 		server->Set_TroopClass(T_ALL);
 	}
 
@@ -1662,10 +1688,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	{
 		server->send_npc_act_packet(DO_HOLD);
 	}
-
-	/*if (8 == server->Get_Anim(m_iLayerIdx))
-		m_IsOnce = true;*/
-
 	Safe_Release(server);
 }
 
@@ -1931,7 +1953,7 @@ void CPlayer::Resurrection()
 {
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
-	_vec3 vPos = { 5.f,0.f,5.f };
+	_vec3 vPos = { 50.f,0.f,50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);

@@ -1,53 +1,59 @@
 #include "framework.h"
-#include "UI_Diffuse.h"
+#include "UI_GoldIcon.h"
 #include "Management.h"
 
-CUI_Diffuse::CUI_Diffuse()
+CUI_GoldIcon::CUI_GoldIcon()
 	: CUI()
 {
 }
 
-CUI_Diffuse::CUI_Diffuse(const CUI_Diffuse& rhs)
+CUI_GoldIcon::CUI_GoldIcon(const CUI_GoldIcon& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Diffuse::Ready_Prototype()
+HRESULT CUI_GoldIcon::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUI_Diffuse::Ready_GameObject(void* pArg)
+HRESULT CUI_GoldIcon::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 75.f;
-	m_fY = 75.f;
+	m_fSizeX = 75.f;
+	m_fSizeY = 75.f;
+	//m_fX = 0 + m_fSizeX / 2.f;
 
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
+	m_fX = WINCX / 2.f - m_fSizeX*12.f;
+	m_fY = WINCY/2.f + m_fSizeY*5.f;
+
+
 	return S_OK;
 }
 
-_int CUI_Diffuse::Update_GameObject(const _float& fTimeDelta)
+_int CUI_GoldIcon::Update_GameObject(const _float& fTimeDelta)
 {
+
+
 	return _int();
 }
 
-_int CUI_Diffuse::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CUI_GoldIcon::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 			return E_FAIL;
 	}
+
 	return _int();
 }
 
-void CUI_Diffuse::Render_GameObject()
+void CUI_GoldIcon::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -55,7 +61,10 @@ void CUI_Diffuse::Render_GameObject()
 	pManagement->AddRef();
 
 
-	MAINPASS tMainPass = {};
+
+
+	MAINPASS	tMainPass = {};
+
 
 	_matrix matWorld = Matrix_::Identity();
 	_matrix matView = Matrix_::Identity();
@@ -67,36 +76,33 @@ void CUI_Diffuse::Render_GameObject()
 	matWorld._41 = m_fX - (WINCX >> 1);
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
-
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-
-
-	ComPtr<ID3D12DescriptorHeap>	pTextureDesc = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(pTextureDesc.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
 	CDevice::GetInstance()->UpdateTable();
 
-	if (!g_DefferedUIRender)
-		m_pBufferCom->Render_VIBuffer();
+	m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 
-HRESULT CUI_Diffuse::CreateInputLayout()
+HRESULT CUI_GoldIcon::CreateInputLayout()
 {
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
 
-CUI_Diffuse* CUI_Diffuse::Create()
+CUI_GoldIcon* CUI_GoldIcon::Create()
 {
-	CUI_Diffuse* pInstance = new CUI_Diffuse();
+	CUI_GoldIcon* pInstance = new CUI_GoldIcon();
 	if (FAILED(pInstance->Ready_Prototype()))
 	{
 		Safe_Release(pInstance);
@@ -104,9 +110,9 @@ CUI_Diffuse* CUI_Diffuse::Create()
 	return pInstance;
 }
 
-CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* CUI_GoldIcon::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CUI_Diffuse* pInstance = new CUI_Diffuse();
+	CUI_GoldIcon* pInstance = new CUI_GoldIcon();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		Safe_Release(pInstance);
@@ -115,18 +121,19 @@ CGameObject* CUI_Diffuse::Clone_GameObject(void* pArg, _uint iIdx)
 	return pInstance;
 }
 
-void CUI_Diffuse::Free()
+void CUI_GoldIcon::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
 
 
 	CUI::Free();
 }
 
-HRESULT CUI_Diffuse::Ready_Component()
+HRESULT CUI_GoldIcon::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	NULL_CHECK_VAL(pManagement, E_FAIL);
@@ -152,7 +159,10 @@ HRESULT CUI_Diffuse::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
-
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Gold");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
 	Safe_Release(pManagement);
 	return S_OK;
 }

@@ -58,6 +58,9 @@ _int CDeffend::Update_GameObject(const _float& fTimeDelta)
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY+0.5f);
 
+	if (m_tInfo.fHP <= 0.f)
+		m_IsDead = true;
+
 
 	if (m_IsDead)
 		return DEAD_OBJ;

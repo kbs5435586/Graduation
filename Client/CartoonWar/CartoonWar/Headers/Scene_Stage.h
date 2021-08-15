@@ -27,6 +27,7 @@ private:
 	HRESULT					Ready_Layer_Terrain(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_UI_Select(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement* pManagement);

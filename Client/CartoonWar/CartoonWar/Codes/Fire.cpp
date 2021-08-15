@@ -2,6 +2,8 @@
 #include "Fire.h"
 #include "Management.h"
 
+_bool CFire::First = false;
+
 CFire::CFire()
 	: CGameObject()
 {
@@ -27,7 +29,13 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 
 	_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(100.f, 100.f, 100.f);
+	if (!First)
+	{
+		m_pTransformCom->Scaling(1.f, 1.f, 1.f);
+		First = true;
+	}
+	else
+		m_pTransformCom->Scaling(100.f, 100.f, 100.f);
 	m_range = 50.f;
 
 	return S_OK;

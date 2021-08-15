@@ -197,7 +197,22 @@ void CUI_Skill::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 		(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(), TEXTURE_REGISTER::t0);
+	if (pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
+	{
+		if(pArgTemp.z == 0)
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(2), TEXTURE_REGISTER::t0);
+		if(pArgTemp.z == 1)
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(0), TEXTURE_REGISTER::t0);
+	}
+	else if (pClass == CLASS::CLASS_ARCHER)
+	{
+		if (pArgTemp.z == 0)
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t0);
+		if (pArgTemp.z == 1)
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
+	}
+
+	
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
@@ -280,7 +295,7 @@ HRESULT CUI_Skill::Ready_Component()
 	if (FAILED(Add_Component(L"Com_BlendShader", m_pBlendShaderCom)))
 		return E_FAIL;
 
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_ClassUI");
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Skill");
 	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;

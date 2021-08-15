@@ -436,9 +436,6 @@
     <Filter Include="97. Engine\01. Utility\02. Component\00. Component\12. Picking">
       <UniqueIdentifier>{1404fc5e-7bb4-4966-b744-af1fd36c8787}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\97. UI\06. UI_MiniMap">
-      <UniqueIdentifier>{c5c77d04-f91a-4a04-8c9b-782cbcec6777}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\97. UI\07. UI_Aim">
       <UniqueIdentifier>{7843105d-83e0-4e99-934c-332f0fd3f17d}</UniqueIdentifier>
     </Filter>
@@ -487,6 +484,24 @@
     <Filter Include="02. GameObject\97. UI\10. UI_NormalBar">
       <UniqueIdentifier>{f3586e44-b338-4a17-b9de-57237110e832}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\98. UI_Select">
+      <UniqueIdentifier>{cb2d6f82-eadc-4919-b9fc-4c3a0abf7201}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\97. UI_GoldIcon">
+      <UniqueIdentifier>{43a1a1ec-945d-4374-b414-06bc66de5dc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\96. UI_Mul">
+      <UniqueIdentifier>{7038b736-30c0-43bf-b908-bf491ecf3dd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\95. UI_LastTime">
+      <UniqueIdentifier>{2dd9a020-b4d1-4b70-abda-3da140ca30d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\94. UI_LastTimeBar">
+      <UniqueIdentifier>{223e3426-6f27-49b7-a47e-78bdd5e416c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\93. UI_Gold">
+      <UniqueIdentifier>{6918c0cd-ba06-43af-9546-44d7a4172453}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\98. Camera\04. Map_Camera">
       <UniqueIdentifier>{617f489f-8875-4eaa-bc0e-6a21d2ead2ad}</UniqueIdentifier>
     </Filter>
@@ -510,6 +525,9 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\10. Skill_Teleport">
       <UniqueIdentifier>{5939b1ac-c105-4338-95dc-b63a0726010e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain">
+      <UniqueIdentifier>{b99bf50c-61d0-418f-95f4-e97fdf643d0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -900,9 +918,6 @@
     <ClInclude Include="..\Headers\Picking.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_MiniMap.h">
-      <Filter>02. GameObject\97. UI\06. UI_MiniMap</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\UI_Aim.h">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
     </ClInclude>
@@ -942,6 +957,24 @@
     <ClInclude Include="..\Headers\UI_NormalBar.h">
       <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Select.h">
+      <Filter>02. GameObject\97. UI\98. UI_Select</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_GoldIcon.h">
+      <Filter>02. GameObject\97. UI\97. UI_GoldIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Mul.h">
+      <Filter>02. GameObject\97. UI\96. UI_Mul</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_LastTime.h">
+      <Filter>02. GameObject\97. UI\95. UI_LastTime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_LastTimeBar.h">
+      <Filter>02. GameObject\97. UI\94. UI_LastTimeBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Gold.h">
+      <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Map_Camera.h">
       <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
     </ClInclude>
@@ -950,6 +983,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Teleport.h">
       <Filter>02. GameObject\01. Scene_Stage\10. Skill_Teleport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_MiniMap.h">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\98. UI_MiniMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map_Terrain.h">
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1311,9 +1350,6 @@
     <ClCompile Include="..\Codes\Picking.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_MiniMap.cpp">
-      <Filter>02. GameObject\97. UI\06. UI_MiniMap</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\UI_Aim.cpp">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
     </ClCompile>
@@ -1353,6 +1389,24 @@
     <ClCompile Include="..\Codes\UI_NormalBar.cpp">
       <Filter>02. GameObject\97. UI\10. UI_NormalBar</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_Select.cpp">
+      <Filter>02. GameObject\97. UI\98. UI_Select</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_GoldIcon.cpp">
+      <Filter>02. GameObject\97. UI\97. UI_GoldIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Mul.cpp">
+      <Filter>02. GameObject\97. UI\96. UI_Mul</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_LastTime.cpp">
+      <Filter>02. GameObject\97. UI\95. UI_LastTime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_LastTimeBar.cpp">
+      <Filter>02. GameObject\97. UI\94. UI_LastTimeBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Gold.cpp">
+      <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Map_Camera.cpp">
       <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
     </ClCompile>
@@ -1361,6 +1415,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Teleport.cpp">
       <Filter>02. GameObject\01. Scene_Stage\10. Skill_Teleport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_MiniMap.cpp">
+      <Filter>02. GameObject\97. UI\99. UI_Deffered\98. UI_MiniMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map_Terrain.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1488,6 +1548,12 @@
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_OnHead_Gage.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Select.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_LastTime.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">

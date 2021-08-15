@@ -25,7 +25,7 @@ HRESULT CWater::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 	//_vec3 vPos = { 100.f , 150.f, 100.f };
-	_vec3 vPos = { 3079.56,45, 1106.38 };
+	_vec3 vPos = { 3079.56f, 45.f, 1106.38f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(580.f, 580.f, 2.f);
 	m_pTransformCom->SetUp_RotationX(XMConvertToRadians(90.f));

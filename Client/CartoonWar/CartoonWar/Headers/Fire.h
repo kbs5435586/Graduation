@@ -42,6 +42,8 @@ private:
 	_bool									startCheck{};
 	_bool									damageCheck{};
 	_bool									IsGetDamage{};
+
+	static _bool First;
 public:
 	void setDTime(_float _t) { damageTime = _t; }
 	_float& GetDTime() { return damageTime; }

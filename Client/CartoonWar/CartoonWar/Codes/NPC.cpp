@@ -4,7 +4,7 @@
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
 
-_float CNPC::poss = 25.f;
+//_float CNPC::poss = 25.f;
 
 CNPC::CNPC()
 	: CGameObject()
@@ -36,8 +36,9 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	
 	
 	//Compute_Matrix();
-	_vec3 vPos = { _float(rand() % 100)+50.f,0.f,_float(rand() % 100) + 50.f };
-	//_vec3 vPos = {70.f,0.f,70.f };
+	_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
+	//_vec3 vPos = {40 + poss, 0.f, 50.f };
+	//poss += 20.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -750,10 +751,11 @@ HRESULT CNPC::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
 
+
 	m_pNaviCom = (CNavigation*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_NaviMesh");
 	NULL_CHECK_VAL(m_pNaviCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Navi", m_pNaviCom)))
-	   return E_FAIL;
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -1002,8 +1004,8 @@ void CNPC::Change_Class()
 			//	walk	
 			//	run		
 			//	attack	
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			//	take damage
+			//	death a	
 			//	death b	
 			//	cast a	
 			//	cast b	
