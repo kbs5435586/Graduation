@@ -76,7 +76,7 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta)
 				list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
 				npcNum = LstTemp.size();
 
-				if (npcNum < 14)
+				if (npcNum < 9)
 				{
 					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
 					UNIT tPlayerInfo = pTemp->GetPlayerInfo();

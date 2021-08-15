@@ -46,6 +46,7 @@ private:
 
 	_bool m_cansee = {};
 	_bool IsDown = {};
+	_bool UnitActive{};
 	POINT MousePos;
 
 	_int m_ButtonNow{};

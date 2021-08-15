@@ -73,7 +73,6 @@ private:
 	CCollider*								m_pCollider_Attack = nullptr;
 	CTexture*								m_pTextureCom[2] = {nullptr};
 	CFrustum*								m_pFrustumCom = nullptr;
-	//CShader*								m_pShaderCom_Skill = nullptr;
 private:
 	CMesh*									m_pCurMeshCom = nullptr;
 	CAnimator*								m_pCurAnimCom = nullptr;

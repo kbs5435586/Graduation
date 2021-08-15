@@ -157,7 +157,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_OnHead_Gage", CUI_OnHead_Gage::Create())))
 		return E_FAIL;
-
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Aim", CUI_Aim::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Score", CUI_Score::Create())))
@@ -192,8 +191,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Skill_Fire", CSkill_Fire::Create())))
-	//	return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Run", CParticle_Run::Create())))
@@ -255,28 +252,17 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI_Select(L"Layer_UI_Select", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Reflection_Camera(L"Layer_Reflection_Camera", pManagement)))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Particle(L"Layer_Particle", pManagement)))
-	//	return E_FAIL;
-
 	if (FAILED(Ready_Layer_Inventory(L"Layer_Inventory_Player", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Inventory_Camera(L"Layer_Inventory_Camera", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map(L"Layer_Map", pManagement)))
 	//	return E_FAIL;
-	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
-		return E_FAIL;
-
-;
 
 	return S_OK;
 }
@@ -418,13 +404,11 @@ HRESULT CScene_Stage::Ready_Layer_Map_Camera(const _tchar* pLayerTag, CManagemen
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Camera_Map", (_uint)SCENEID::SCENE_STAGE, pLayerTag,
 		(CGameObject**)&pCameraObject)))
 		return E_FAIL;
-	//130.f,100.f,300.f
+
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
 	tCameraDesc.vEye = _vec3(130.f, 160.f, 300.f);
-	//tCameraDesc.vEye = _vec3(0.f, 0.f, 0.f);
 	tCameraDesc.vAt = _vec3(130.f, 150.f, 301.f);
-	//tCameraDesc.vAt = _vec3(0.f, 0.f, 1.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 	PROJDESC		tProjDesc;
 	ZeroMemory(&tProjDesc, sizeof(tProjDesc));
@@ -506,12 +490,13 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Aim", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	//_bool IsRed = true;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
-	//	return E_FAIL;
-	//IsRed = false;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
-	//	return E_FAIL;
+	_bool IsRed = true;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
+		return E_FAIL;
+	IsRed = false;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Score", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&IsRed)))
+		return E_FAIL;
+
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_NormalBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_GoldIcon", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
@@ -672,10 +657,6 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 	//	return E_FAIL;
 	
-
-
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Cube_Texture", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
-	//	return E_FAIL;
 	
 	return S_OK;
 }
@@ -708,10 +689,6 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 
 HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	//for(auto iter)
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Rect", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Map_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))

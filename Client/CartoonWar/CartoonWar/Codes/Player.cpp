@@ -197,11 +197,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsActioning = false;
 	}
 
-	if (m_eCurClass == CLASS::CLASS_END)
-	{
-		int i = 0;
-	}
-
 
 	return NO_EVENT;
 }
@@ -222,8 +217,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 		}
 
-		
-	
 		if (m_IsInvisible)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
@@ -235,8 +228,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 		}
 		
-		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_REF, this)))
-		//	return -1;
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
@@ -617,7 +608,6 @@ void CPlayer::Free()
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pShaderCom_PostEffect);
 	Safe_Release(m_pShaderCom_Blur);
-	Safe_Release(m_pShaderCom_Reflection);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pCollider_OBB);
 	Safe_Release(m_pCollider_AABB);
@@ -625,7 +615,6 @@ void CPlayer::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pNaviCom);
-	//Safe_Release(m_pShaderCom_Skill);
 
 	CGameObject::Free();
 }
@@ -770,18 +759,6 @@ HRESULT CPlayer::Ready_Component()
 	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
 	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
 	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
-		return E_FAIL;
-
-
-
-	//m_pShaderCom_Skill = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
-	//NULL_CHECK_VAL(m_pShaderCom_Skill, E_FAIL);
-	//if (FAILED(Add_Component(L"Com_SkillShader", m_pShaderCom_Skill)))
-	//	return E_FAIL;
-	//m_pShaderCom_Reflection
-	m_pShaderCom_Reflection = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Reflection");
-	NULL_CHECK_VAL(m_pShaderCom_Reflection, E_FAIL);
-	if (FAILED(Add_Component(L"Com_ReflectionShader", m_pShaderCom_Reflection)))
 		return E_FAIL;
 
 
@@ -1256,22 +1233,17 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_eCurClass == CLASS::CLASS_ARCHER)
 			{
-				//CGameObject* pOwnPlayer = nullptr;
-				//_matrix matTemp = m_pTransformCom->Get_Matrix();
-				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp)))
-				//	return;
-				//dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+				CGameObject* pOwnPlayer = nullptr;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+					return;
+				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
 			{
 				_matrix matTemp = m_pTransformCom->Get_Matrix();
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
 					return;
-
-				//_vec3 matTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-				//matTemp.x += 1.f;
-				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Teleport", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", nullptr, (void*)&matTemp)))
-				//	return;
 			}
 			else
 			{
@@ -1374,7 +1346,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsActioning = false;
 	}
 	
-
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
 	{
 		if (!m_IsCombat)
