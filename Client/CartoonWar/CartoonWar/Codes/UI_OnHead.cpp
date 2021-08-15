@@ -94,8 +94,9 @@ _int CUI_OnHead::LastUpdate_GameObject(const _float& fTimeDelta)
 					return E_FAIL;
 			}
 		}
-		return _int();
+		
 	}
+	return _int();
 }
 
 void CUI_OnHead::Render_GameObject()

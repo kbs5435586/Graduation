@@ -126,40 +126,40 @@ DS_OUT DS_Main(const OutputPatch<HS_OUT, 3> vIn, float3 vLocation : SV_DomainLoc
 	
 	return vOut;
 }
-//
-//float4	PS_Main(DS_OUT vIn) :SV_TARGET0
-//{
-//	float2 vScreenUV = float2(vIn.vPosition.x / 1920, vIn.vPosition.y / 1080);
-//	float2 vDir = normalize(float2(0.5f, 0.5f) - vIn.vTexUV);
-//	float fDist = distance(float2(0.5f, 0.5f), vIn.vTexUV);
-//
-//	float fRatio = (fDist / 0.5f);
-//	fRatio = fRatio * (0.2f + (fRatio) * 0.4f);
-//
-//	vScreenUV += vDir * sin(abs((fRatio - g_fAccTime * 0.06f) * 80.f)) * 0.03f;
-//	vScreenUV.x += fFrameTime;
-//	vIn.vTexUV.x += fFrameTime;
-//	float4 vDiffuse = g_texture0.Sample(Sampler0, vScreenUV);
-//	float4 vDiffuse_T = g_texture0.Sample(Sampler0, vIn.vTexUV);
-//
-//
-//	return vDiffuse;
-//}
 
-
-PS_OUT	PS_Main(DS_OUT vIn)
+float4	PS_Main(DS_OUT vIn) :SV_TARGET0
 {
-	PS_OUT vOut = (PS_OUT)0;
+	float2 vScreenUV = float2(vIn.vPosition.x / 1920, vIn.vPosition.y / 1080);
+	float2 vDir = normalize(float2(0.5f, 0.5f) - vIn.vTexUV);
+	float fDist = distance(float2(0.5f, 0.5f), vIn.vTexUV);
 
-	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
-	float4	vNormal = mul(vIn.vNormal, matViewInv);
-	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
+	float fRatio = (fDist / 0.5f);
+	fRatio = fRatio * (0.2f + (fRatio) * 0.4f);
+
+	vScreenUV += vDir * sin(abs((fRatio - g_fAccTime * 0.06f) * 80.f)) * 0.03f;
+	vScreenUV.x += fFrameTime;
+	vIn.vTexUV.x += fFrameTime;
+	float4 vDiffuse = g_texture0.Sample(Sampler0, vScreenUV);
+	float4 vDiffuse_T = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
 
-
-	vOut.vDiffuseTex = vDiffuse;
-	vOut.vPositionTex = vIn.vWorldPos;
-	vOut.vNormalTex = vIn.vNormal;
-	vOut.vDepthTex = float4(1.f, 1.f, 1.f, 1.f);
-	return vOut;
+	return vDiffuse;
 }
+
+//
+//PS_OUT	PS_Main(DS_OUT vIn)
+//{
+//	PS_OUT vOut = (PS_OUT)0;
+//
+//	float4	vPosition = mul(vIn.vWorldPos, matViewInv);
+//	float4	vNormal = mul(vIn.vNormal, matViewInv);
+//	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
+//
+//
+//
+//	vOut.vDiffuseTex = vDiffuse;
+//	vOut.vPositionTex = vIn.vWorldPos;
+//	vOut.vNormalTex = vIn.vNormal;
+//	vOut.vDepthTex = float4(1.f, 1.f, 1.f, 1.f);
+//	return vOut;
+//}

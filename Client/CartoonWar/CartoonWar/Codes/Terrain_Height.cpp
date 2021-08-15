@@ -98,15 +98,9 @@ void CTerrain_Height::Render_GameObject()
 
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
-	m_pNaviCom->Render_Navigation();
 
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= 100)
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_iBlurCnt = 0;
-	}
+	if(g_IsNaviMesh)
+		m_pNaviCom->Render_Navigation();
 
 	Safe_Release(pManagement);
 }

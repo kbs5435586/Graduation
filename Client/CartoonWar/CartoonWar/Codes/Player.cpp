@@ -246,9 +246,13 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	//m_pCollider_OBB->Render_Collider();
-	//m_pCollider_Attack->Render_Collider(1);
-	//m_pCollider_AABB->Render_Collider();
+	if (g_IsCollisionBox)
+	{
+		m_pCollider_OBB->Render_Collider();
+		m_pCollider_Attack->Render_Collider(1);
+		m_pCollider_AABB->Render_Collider();
+	}
+
 
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	m_iBlurCnt++;

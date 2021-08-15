@@ -143,7 +143,10 @@ void CThrow_Arrow::Render_GameObject()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	//m_pColliderCom->Render_Collider();
+	if (g_IsCollisionBox)
+	{
+		m_pColliderCom->Render_Collider();
+	}
 	Safe_Release(pManagement);
 }
 

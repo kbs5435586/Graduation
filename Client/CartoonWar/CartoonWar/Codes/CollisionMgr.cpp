@@ -55,7 +55,7 @@ void CCollisionMgr::Range()
 			fLength = vDistance.Length();
 
 
-			if (fLength <= 5.f)
+			if (fLength <= 10.f)
 			{
 				(iter1)->GetOBBCollision() = true;
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
@@ -77,7 +77,7 @@ void CCollisionMgr::Range()
 			fLength = vDistance.Length();
 
 
-			if (fLength <= 5.f)
+			if (fLength <= 10.f)
 			{
 				(iter1)->GetOBBCollision() = true;
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
@@ -102,7 +102,7 @@ void CCollisionMgr::Range()
 			fLength = vDistance.Length();
 
 
-			if (fLength <= 5.f)
+			if (fLength <= 10.f)
 			{
 				(iter1)->GetOBBCollision() = true;
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();

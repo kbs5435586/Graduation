@@ -1,6 +1,6 @@
 ﻿#include "framework.h"
-#include "Camera.h"
 #include "Management.h"
+#include "Camera.h"
 
 CCamera::CCamera( )
 	: m_pInput_Device(CInput::GetInstance())
