@@ -137,9 +137,9 @@ void Server::process_packet(int user_id, char* buf)
             if (g_clients[i].m_team == g_clients[user_id].m_team)
                 continue;
 
-            check_obb_collision(user_id, i);
-            //g_clients[user_id].m_attack_target = i;
-            //do_battle(user_id);
+            //check_obb_collision(user_id, i);
+            g_clients[user_id].m_attack_target = i;
+            do_battle(user_id);
         }
     }
     break;
@@ -2075,7 +2075,7 @@ void Server::do_attack(int npc_id)
         }
         else // npc가 공격할 대상을 바라볼때
         {
-            if (is_attackable(n.m_id, n.m_attack_target)) // OBB 공격 범위 안에 들어왔을때
+            if (dist_between(n.m_id, n.m_attack_target) <= 4.f) // OBB 공격 범위 안에 들어왔을때
             {
                 if(!n.m_isFighting)
                     add_timer(npc_id, FUNC_BATTLE, 1);

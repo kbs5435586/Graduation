@@ -182,7 +182,12 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			server->send_animation_packet(A_IDLE);
 		}
 		m_IsOnce = false;
-		m_IsHit = false; // 수정
+		if (m_IsHit)
+		{
+			m_IsHit = false; // 수정
+			server->Set_AnimNPC(m_iLayerIdx, 0);
+			server->Set_isHitNPC(m_iLayerIdx, m_IsHit);
+		}
 	}
 	
 	Obb_Collision();
