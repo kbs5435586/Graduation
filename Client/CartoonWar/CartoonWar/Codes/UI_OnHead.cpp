@@ -27,7 +27,7 @@ HRESULT CUI_OnHead::Ready_GameObject(void* pArg)
 	m_tOrder = *(ORDER*)pArg;
 
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
-	m_vSize = {5.f, 0.25f, 1.f};
+	m_vSize = { 5.f, 0.25f, 1.f };
 	m_pTransformCom->Scaling(m_vSize);
 
 	return S_OK;
@@ -37,7 +37,7 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 {
 	CTransform* pTransform = nullptr;
 	CGameObject* pGameObject = nullptr;
-	if(m_tOrder.IsPlayer)
+	if (m_tOrder.IsPlayer)
 	{
 		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", g_iPlayerIdx);;
 		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
@@ -69,22 +69,33 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &m_vPos);
-	
+
 
 	return _int();
 }
 
 _int CUI_OnHead::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+	if (m_pRendererCom == nullptr)
+		return -1;
+
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
-		if (m_pRendererCom != nullptr)
+		if (m_tOrder.IsPlayer)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
 		}
+		else
+		{
+			if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx)->GetIsFrustum())
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+					return E_FAIL;
+			}
+		}
+		return _int();
 	}
-	return _int();
 }
 
 void CUI_OnHead::Render_GameObject()
@@ -101,8 +112,8 @@ void CUI_OnHead::Render_GameObject()
 
 	REP tRep = {};
 	tRep.m_arrInt[0] = m_tInfo.fHP;
-	tRep.m_arrInt[1] =1;
-	
+	tRep.m_arrInt[1] = 1;
+
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
@@ -236,7 +247,7 @@ void CUI_OnHead::SetPosition(_vec3 vPos, CLASS eClass)
 
 
 
-	
+
 }
 
 void CUI_OnHead::SetPosition(_vec3 vPos, ANIMALS eAnimals)
@@ -254,5 +265,5 @@ void CUI_OnHead::SetPosition(_vec3 vPos, ANIMALS eAnimals)
 
 void CUI_OnHead::SetInfo(INFO tInfo)
 {
-	m_tInfo = tInfo; 
+	m_tInfo = tInfo;
 }

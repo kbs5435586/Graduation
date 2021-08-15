@@ -170,8 +170,9 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
 	{
+		m_IsFrustum = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
@@ -189,6 +190,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();;
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_IsFrustum = false;
 	}
 
 
@@ -196,7 +198,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CPlayer::Render_GameObject()
+void CPlayer::Render_GameObject()     
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
