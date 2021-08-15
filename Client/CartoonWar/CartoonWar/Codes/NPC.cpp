@@ -117,7 +117,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 	_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 	_vec3 vSlide = {};
-	if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 	{
 		switch (m_cMoveCondition)
 		{
@@ -147,13 +147,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Go_There(vSlide);
 	}
 
-	//_vec3 vLook = {};
-	//vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-	//vLook = Vector3_::Normalize(vLook);
-
-	//m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-	//_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-	//_vec3 vSlide = {};
 	//if (!m_IsSlide)
 	//{
 	//	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
