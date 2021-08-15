@@ -27,6 +27,4 @@ const DWORD KEY_F5 =			0x00800000;
 const DWORD KEY_3 =				0x01000000;
 const DWORD KEY_4 =				0x02000000;
 const DWORD KEY_5 =				0x04000000;
-//const DWORD KEY_N =				0x04000000;
-//const DWORD KEY_M =				0x08000000;
 

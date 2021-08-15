@@ -1876,8 +1876,8 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_Rcondition = CON_IDLE;
             g_clients[npc_id].m_LastMcondition = CON_IDLE;
             g_clients[npc_id].m_LastRcondition = CON_IDLE;
-            g_clients[npc_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
-            g_clients[npc_id].m_col.radius = 20.f * SCALE.x;
+            g_clients[npc_id].m_col.col_size = { 40.f ,160.f,40.f };
+
             g_clients[npc_id].m_isOut = false;
             g_clients[npc_id].m_isFormSet = true;
             g_clients[npc_id].m_attack_target = -1;
@@ -2590,8 +2590,8 @@ void Server::worker_thread()
                 g_clients[user_id].m_rotate_speed = XMConvertToRadians(90.f);
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = F_SQUARE;
-                g_clients[user_id].m_col.col_range = { 20.f * SCALE.x,80.f * SCALE.y,20.f * SCALE.z };
-                g_clients[user_id].m_col.radius = 20.f * SCALE.x;
+                g_clients[user_id].m_col.col_size = { 40.f ,160.f,40.f };
+
                 g_clients[user_id].m_owner_id = user_id;
                 g_clients[user_id].m_hp = 200;
                 g_clients[user_id].m_total_angle = -90.f;
@@ -2782,28 +2782,115 @@ _matrix Server::Remove_Rotation(_matrix matWorld)
     return _matrix(matWorld);
 }
 
-bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
+void Server::Update_Collider(int id, _vec3 vSize, COLLIDER_TYPE eType)
 {
-    _matrix matTransform = {};
+    _matrix pTarget_matrix = g_clients[id].m_transform.Get_Matrix();
+    Collider& c = g_clients[id].m_col;
+    switch (eType)
+    {
+    case COLLIDER_TYPE::COLLIDER_AABB:
+    {
+        _matrix matTemp = Remove_Rotation(pTarget_matrix);
+        if (g_clients[id].m_class == C_MMAGE || g_clients[id].m_class == C_CAVALRY || g_clients[id].m_class == C_TWO)
+        {
+            matTemp.m[3][1] += 5.f;
+        }
+        else
+        {
+            matTemp.m[3][1] += 3.f;
+        }
+        matTemp.m[0][0] *= vSize.x;
+        matTemp.m[1][1] *= vSize.y;
+        matTemp.m[2][2] *= vSize.z;
+        matTemp.m[3][1] += 3.f;
 
-    _vec3 vRight = _vec3(1.f, 0.f, 0.f);
-    _vec3 vUp = _vec3(0.f, 1.f, 0.f);
-    _vec3 vLook = _vec3(0.f, 0.f, 1.f);
+        c.m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+        c.m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
+    }
+    break;
+    case COLLIDER_TYPE::COLLIDER_OBB:
+    {
 
-    _vec3 vRightTemp = _vec3(matTransform.m[0][0], matTransform.m[0][1], matTransform.m[0][2]);
-    _vec3 vUpTemp = _vec3(matTransform.m[1][0], matTransform.m[1][1], matTransform.m[1][2]);
-    _vec3 vLookTemp = _vec3(matTransform.m[2][0], matTransform.m[2][1], matTransform.m[2][2]);
+        _matrix matTemp_Rotate = pTarget_matrix;
+        _matrix matTemp;
+        matTemp.m[0][0] *= vSize.x;
+        matTemp.m[1][1] *= vSize.y;
+        matTemp.m[2][2] *= vSize.z;
 
-    vRight *= Vector3_::Length(vRightTemp);
-    vUp *= Vector3_::Length(vUpTemp);
-    vLook *= Vector3_::Length(vLookTemp);
+        matTemp = matTemp * matTemp_Rotate;
+        if (g_clients[id].m_class == C_MMAGE || g_clients[id].m_class == C_CAVALRY || g_clients[id].m_class == C_TWO)
+        {
+            matTemp.m[3][1] += 5.f;
+        }
+        else
+        {
+            matTemp.m[3][1] += 3.f;
+        }
+       c.m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+       c.m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
 
-    memcpy(&matTransform.m[0][0], &vRight, sizeof(_vec3));
-    memcpy(&matTransform.m[1][0], &vUp, sizeof(_vec3));
-    memcpy(&matTransform.m[2][0], &vLook, sizeof(_vec3));
+       c.m_pOBB.vPoint[0] = _vec3(c.m_vMin.x, c.m_vMax.y, c.m_vMin.z);
+       c.m_pOBB.vPoint[1] = _vec3(c.m_vMax.x, c.m_vMax.y, c.m_vMin.z);
+       c.m_pOBB.vPoint[2] = _vec3(c.m_vMax.x, c.m_vMin.y, c.m_vMin.z);
+       c.m_pOBB.vPoint[3] = _vec3(c.m_vMin.x, c.m_vMin.y, c.m_vMin.z);
 
-    _matrix		matSour = matTransform;
-    _matrix		matDest = pTargetCollider->Compute_WorldTransform();
+       c.m_pOBB.vPoint[4] = _vec3(c.m_vMin.x, c.m_vMax.y, c.m_vMax.z);
+       c.m_pOBB.vPoint[5] = _vec3(c.m_vMax.x, c.m_vMax.y, c.m_vMax.z);
+       c.m_pOBB.vPoint[6] = _vec3(c.m_vMax.x, c.m_vMin.y, c.m_vMax.z);
+       c.m_pOBB.vPoint[7] = _vec3(c.m_vMin.x, c.m_vMin.y, c.m_vMax.z);
+    }                                          
+    break;
+    default:
+        break;
+    }
+}
+
+void Server::Ready_Collider_AABB_BOX(int id, const _vec3 vSize)
+{
+    // 대상으로 한 객체의 회전 값 받아와서 회전 죽이기
+
+    _matrix pTarget_matrix = g_clients[id].m_transform.Get_Matrix();
+    _matrix matTemp = Remove_Rotation(pTarget_matrix);
+
+    CTransform m_pTransformCom;
+    m_pTransformCom.Set_Matrix(&matTemp);
+    m_pTransformCom.Scaling(vSize);
+
+    g_clients[id].m_col.m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+    g_clients[id].m_col.m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
+}
+
+void Server::Ready_Collider_OBB_BOX(int id, const _vec3 vSize)
+{
+    // 대상으로 한 객체의 회전 값 받아와서 Collider Transform에 적용하기
+    CTransform* pTarget_Transform = &g_clients[id].m_transform;
+    Collider& c = g_clients[id].m_col;
+    _vec3		vDir[3];
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        vDir[i] = *pTarget_Transform->Get_StateInfo(CTransform::STATE(i));
+        vDir[i] = Vector3_::Normalize(vDir[i]);
+    }
+
+    c.m_vMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
+    c.m_vMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
+
+    c.m_pOBB.vPoint[0] = _vec3(c.m_vMin.x, c.m_vMax.y, c.m_vMin.z);
+    c.m_pOBB.vPoint[1] = _vec3(c.m_vMax.x, c.m_vMax.y, c.m_vMin.z);
+    c.m_pOBB.vPoint[2] = _vec3(c.m_vMax.x, c.m_vMin.y, c.m_vMin.z);
+    c.m_pOBB.vPoint[3] = _vec3(c.m_vMin.x, c.m_vMin.y, c.m_vMin.z);
+                                                   
+    c.m_pOBB.vPoint[4] = _vec3(c.m_vMin.x, c.m_vMax.y, c.m_vMax.z);
+    c.m_pOBB.vPoint[5] = _vec3(c.m_vMax.x, c.m_vMax.y, c.m_vMax.z);
+    c.m_pOBB.vPoint[6] = _vec3(c.m_vMax.x, c.m_vMin.y, c.m_vMax.z);
+    c.m_pOBB.vPoint[7] = _vec3(c.m_vMin.x, c.m_vMin.y, c.m_vMax.z);
+}
+
+bool Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
+{
+    _matrix		matSour = Compute_WorldTransform(a);
+    _matrix		matDest = Compute_WorldTransform(b);
 
     _vec3		vSourMin, vSourMax;
     _vec3		vDestMin, vDestMax;
@@ -2811,18 +2898,17 @@ bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider,
     XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
     XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
     //XMLoadFloat4x4
-    vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
-    vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
+    vSourMin = Vector3_::TransformCoord(g_clients[a].m_col.m_vMin, xmMatSour);
+    vSourMax = Vector3_::TransformCoord(g_clients[a].m_col.m_vMax, xmMatSour);
 
-    vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
-    vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
+    vDestMin = Vector3_::TransformCoord(g_clients[b].m_col.m_vMin, xmMatDest);
+    vDestMax = Vector3_::TransformCoord(g_clients[b].m_col.m_vMax, xmMatDest);
 
     _vec3 vSourPos = *g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     _vec3 vDestPos = *g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     _float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
     _float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
-
     if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) &&
         max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
     {
@@ -2830,17 +2916,17 @@ bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider,
         {
             if (vSourPos.x < vDestPos.x)
             {
-                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 + fMoveX,
-                                  pDestTransform->Get_Matrix()._42,
-                                  pDestTransform->Get_Matrix()._43 };
-                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+                _vec3	vTemp = { g_clients[b].m_transform.Get_Matrix()._41 + fMoveX,
+                                  g_clients[b].m_transform.Get_Matrix()._42,
+                                  g_clients[b].m_transform.Get_Matrix()._43 };
+                g_clients[b].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
             }
             else
             {
-                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 - fMoveX,
-                                  pDestTransform->Get_Matrix()._42,
-                                  pDestTransform->Get_Matrix()._43 };
-                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+                _vec3	vTemp = { g_clients[b].m_transform.Get_Matrix()._41 - fMoveX,
+                                  g_clients[b].m_transform.Get_Matrix()._42,
+                                  g_clients[b].m_transform.Get_Matrix()._43 };
+                g_clients[b].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
             }
             return;
         }
@@ -2848,122 +2934,115 @@ bool Server::check_basic_collision(int a, int b) // (CCollider* pTargetCollider,
         {
             if (vSourPos.z < vDestPos.z)
             {
-                _vec3	vTemp = { pDestTransform->Get_Matrix()._41,
-                                  pDestTransform->Get_Matrix()._42,
-                                  pDestTransform->Get_Matrix()._43 + fMoveZ };
-                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+                _vec3	vTemp = { g_clients[b].m_transform.Get_Matrix()._41,
+                                  g_clients[b].m_transform.Get_Matrix()._42,
+                                  g_clients[b].m_transform.Get_Matrix()._43 + fMoveZ };
+                g_clients[b].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
             }
             else
             {
-                _vec3	vTemp = { pDestTransform->Get_Matrix()._41 ,
-                                  pDestTransform->Get_Matrix()._42,
-                                  pDestTransform->Get_Matrix()._43 - fMoveZ };
-                pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+                _vec3	vTemp = { g_clients[b].m_transform.Get_Matrix()._41 ,
+                                  g_clients[b].m_transform.Get_Matrix()._42,
+                                  g_clients[b].m_transform.Get_Matrix()._43 - fMoveZ };
+                g_clients[b].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
             }
             return;
         }
     }
 }
 
-//bool Server::check_obb_collision(int a, int b)
-//{
-//    _vec3 a_Points[4];
-//    _vec3 b_Points[4];
-//
-//    _vec3 a_pos = *g_clients[a].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-//    _vec3 b_pos = *g_clients[b].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    CTransform set_a_pos;
-//    set_a_pos.Set_StateInfo(CTransform::STATE_POSITION, &a_pos);
-//
-//    set_a_pos.Go_Left(g_clients[a].m_col.col_range.x / 2);
-//    set_a_pos.BackWard(g_clients[a].m_col.col_range.z / 2);
-//    a_Points[0] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    set_a_pos.Go_Right(g_clients[a].m_col.col_range.x / 2);
-//    set_a_pos.BackWard(g_clients[a].m_col.col_range.z / 2);
-//    a_Points[1] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    set_a_pos.Go_Left(g_clients[a].m_col.col_range.x / 2);
-//    set_a_pos.Go_Straight(g_clients[a].m_col.col_range.z / 2);
-//    a_Points[2] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    set_a_pos.Go_Right(g_clients[a].m_col.col_range.x / 2);
-//    set_a_pos.Go_Straight(g_clients[a].m_col.col_range.z / 2);
-//    a_Points[3] = *set_a_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    CTransform set_b_pos;
-//    set_b_pos.Set_StateInfo(CTransform::STATE_POSITION, &b_pos);
-//
-//    set_b_pos.Go_Left(g_clients[b].m_col.col_range.x / 2);
-//    set_b_pos.BackWard(g_clients[b].m_col.col_range.z / 2);
-//    b_Points[0] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    set_b_pos.Go_Right(g_clients[b].m_col.col_range.x / 2);
-//    set_b_pos.BackWard(g_clients[b].m_col.col_range.z / 2);
-//    b_Points[1] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    set_b_pos.Go_Left(g_clients[b].m_col.col_range.x / 2);
-//    set_b_pos.Go_Straight(g_clients[b].m_col.col_range.z / 2);
-//    b_Points[2] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    set_b_pos.Go_Right(g_clients[b].m_col.col_range.x / 2);
-//    set_b_pos.Go_Straight(g_clients[b].m_col.col_range.z / 2);
-//    b_Points[3] = *set_b_pos.Get_StateInfo(CTransform::STATE_POSITION);
-//
-//    float a_rad = g_clients[a].m_col.radius;
-//    float b_rad = g_clients[b].m_col.radius;
-//    //_vec3 a_col = g_clients[a].m_col.col_range;
-//    //_vec3 b_col = g_clients[b].m_col.col_range;
-//
-//    //_vec3 a_min = { a_pos->x - a_col.x / 2,a_pos->y ,a_pos->z - a_col.z / 2 };
-//    //_vec3 a_max = { a_pos->x + a_col.x / 2,a_pos->y + a_col.y ,a_pos->z + a_col.z / 2 };
-//    //_vec3 b_min = { b_pos->x - b_col.x / 2,b_pos->y ,b_pos->z - b_col.z / 2 };
-//    //_vec3 b_max = { b_pos->x + b_col.x / 2,b_pos->y + b_col.y ,b_pos->z + b_col.z / 2 };
-//
-//    //if ((a_min.x <= b_max.x && a_max.x >= b_min.x) &&
-//    //    (a_min.y <= b_max.y && a_max.y >= b_min.y) &&
-//    //    (a_min.z <= b_max.z && a_max.z >= b_min.z))
-//    //{
-//    //    //Pos = PrevPos; 이전 위치로 되돌리기
-//    //    cout << "id " << a << " has collide with " << b << "\n";
-//    //    return true;
-//    //}
-//    //else
-//    //    return false;
-//
-//    float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
-//        (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
-//        (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
-//
-//    float overlap = (a_rad + b_rad - dist);
-//
-//   
-//        return true;
-//
-//    else
-//        return false;
-//}
-
-void Server::do_push(int pusher, int target)
+bool Server::check_obb_collision(int a, int b)
 {
-    _vec3* a_pos = g_clients[pusher].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* b_pos = g_clients[target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    float a_rad = g_clients[pusher].m_col.radius;
-    float b_rad = g_clients[target].m_col.radius;
+    	OBB* pTargetOBB = pTargetCollider->m_pOBB;
+	if (nullptr == pTargetOBB)
+		return false;
 
-    float dist = sqrt((a_pos->x - b_pos->x) * (a_pos->x - b_pos->x) +
-        (a_pos->y - b_pos->y) * (a_pos->y - b_pos->y) +
-        (a_pos->z - b_pos->z) * (a_pos->z - b_pos->z));
 
-    if (dist > 0)
-    {
-        b_pos->x -= (a_pos->x - b_pos->x) / dist;
-        b_pos->y -= (a_pos->y - b_pos->y) / dist;
-        b_pos->z -= (a_pos->z - b_pos->z) / dist;
+	m_IsColl = false;
 
-        do_move(target, GO_COLLIDE);
-    }
+	OBB			tOBB[2];
+	ZeroMemory(tOBB, sizeof(OBB) * 2);
+
+	for (size_t i = 0; i < 8; ++i)
+	{
+		_matrix		matWorld = Compute_WorldTransform();
+		_matrix		matTargetWorld = pTargetCollider->Compute_WorldTransform();
+
+		tOBB[0].vPoint[i] = _vec3::Transform(m_pOBB->vPoint[i], matWorld);
+		tOBB[1].vPoint[i] = _vec3::Transform(pTargetOBB->vPoint[i], matTargetWorld);
+
+	}
+
+	tOBB[0].vCenter = (tOBB[0].vPoint[0] + tOBB[0].vPoint[6]) * 0.5f;
+	tOBB[1].vCenter = (tOBB[1].vPoint[0] + tOBB[1].vPoint[6]) * 0.5f;
+
+	for (size_t i = 0; i < 2; ++i)
+	{
+		Compute_AlignAxis(&tOBB[i]);
+		Compute_ProjAxis(&tOBB[i]);
+	}
+
+	_vec3	vAlignAxis[9];
+
+	for (size_t i = 0; i < 3; ++i)
+	{
+		for (size_t j = 0; j < 3; ++j)
+		{
+			_uint		iIndex = i * 3 + j;
+			vAlignAxis[iIndex] = Vector3_::CrossProduct(tOBB[0].vAlignAxis[i], tOBB[1].vAlignAxis[j], false);
+		}
+	}
+
+
+	_float		fDistance[3] = {};
+	for (size_t i = 0; i < 2; ++i)
+	{
+		for (size_t j = 0; j < 3; ++j)
+		{
+			_vec3		vCenterDir = tOBB[1].vCenter - tOBB[0].vCenter;
+
+			fDistance[0] = fabs(vCenterDir.Dot(tOBB[i].vAlignAxis[j]));
+
+
+			fDistance[1] =
+				fabs(tOBB[0].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[0].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[0].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
+
+
+			fDistance[2] =
+				fabs(tOBB[1].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[1].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
+				fabs(tOBB[1].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
+
+
+			if (fDistance[1] + fDistance[2] < fDistance[0])
+				return false;
+
+		}
+	}
+
+	for (size_t i = 0; i < 9; ++i)
+	{
+		_vec3		vCenterDir = tOBB[1].vCenter - tOBB[0].vCenter;
+		fDistance[0] = fabs(vCenterDir.Dot(vAlignAxis[i]));
+
+		fDistance[1] =
+			fabs(tOBB[0].vProjAxis[0].Dot(vAlignAxis[i])) +
+			fabs(tOBB[0].vProjAxis[1].Dot(vAlignAxis[i])) +
+			fabs(tOBB[0].vProjAxis[2].Dot(vAlignAxis[i]));
+
+		fDistance[2] =
+			fabs(tOBB[1].vProjAxis[0].Dot(vAlignAxis[i])) +
+			fabs(tOBB[1].vProjAxis[1].Dot(vAlignAxis[i])) +
+			fabs(tOBB[1].vProjAxis[2].Dot(vAlignAxis[i]));
+
+		if (fDistance[1] + fDistance[2] < fDistance[0])
+			return false;
+	}
+
+
+	return _bool(m_IsColl = true);
 }
 
 bool Server::is_object(int id)

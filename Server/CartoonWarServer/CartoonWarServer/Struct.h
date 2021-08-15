@@ -11,6 +11,14 @@ enum ENUM_STATUS { ST_FREE, ST_ALLOC, ST_ACTIVE, ST_SLEEP, ST_DEAD, ST_END };
 enum ENUM_MOVE { MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT, MV_FORWARD, MV_BACK, MV_END };
 enum ENUM_TEAM { TEAM_RED, TEAM_BLUE, TEAM_END };
 
+enum class COLLIDER_TYPE
+{
+	COLLIDER_AABB,
+	COLLIDER_OBB,
+	COLLIDER_SPHERE,
+	COLLIDER_END
+};
+
 // 나중에 상태 추가 가능, 클라 접속이 끊어졌지만 클라 구조체가 남아서 뒷처리 해야할때가 있음 INACTIVE 등
 
 struct OverEx // 확장 오버랩 구조체
@@ -26,12 +34,40 @@ struct OverEx // 확장 오버랩 구조체
 	};
 };
 
+struct event_type
+{
+	int obj_id; // 어떤 객체가 움직여야 하는가
+	int event_id; // 어떤 이벤트인가
+	high_resolution_clock::time_point wakeup_time; // 언제 이 이벤트가 실행되야 하는가
+	int target_id; // 발생하는 추가정보
+
+	constexpr bool operator < (const event_type& left) const
+	{
+		return (wakeup_time > left.wakeup_time); // 순서대로 저장하는 용도
+	}
+};
+
+struct Flag
+{
+	bool isRed;
+	bool isBlue;
+	_vec3 pos;
+};
+
+typedef struct tagOBB
+{
+	Vector3			vPoint[8];
+	Vector3			vCenter;
+	Vector3			vAlignAxis[3];
+	Vector3			vProjAxis[3];
+}OBB;
+
 struct Collider
 {
-	_vec3 col_size;
-	_vec3 m_vMin;
-	_vec3 m_vMax;
-	float radius;
+	_vec3	col_size;
+	_vec3	m_vMin;
+	_vec3	m_vMax;
+	OBB		m_pOBB;
 };
 
 struct SESSION // 클라이언트 정보
@@ -64,7 +100,7 @@ struct SESSION // 클라이언트 정보
 	float m_rotate_speed;
 	float m_total_angle;
 
-	Collision m_col;
+	Collider m_col;
 	unordered_set <int> m_view_list;
 
 	char m_LastMcondition;
@@ -74,7 +110,7 @@ struct SESSION // 클라이언트 정보
 	CTransform m_transform;
 
 	bool m_isFighting;
-	
+
 	// 플레이어
 	vector <FormationInfo> m_boid;
 	char m_formation;
@@ -89,24 +125,3 @@ struct SESSION // 클라이언트 정보
 	_vec3 m_target_look;
 	int m_attack_target;
 };
-
-struct event_type
-{
-	int obj_id; // 어떤 객체가 움직여야 하는가
-	int event_id; // 어떤 이벤트인가
-	high_resolution_clock::time_point wakeup_time; // 언제 이 이벤트가 실행되야 하는가
-	int target_id; // 발생하는 추가정보
-
-	constexpr bool operator < (const event_type& left) const
-	{
-		return (wakeup_time > left.wakeup_time); // 순서대로 저장하는 용도
-	}
-};
-
-struct Flag
-{
-	bool isRed;
-	bool isBlue;
-	_vec3 pos;
-};
-

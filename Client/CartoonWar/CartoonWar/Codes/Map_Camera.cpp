@@ -85,7 +85,7 @@ _int CMap_Camera::Update_GameObject(const _float& fTimeDelta)
 		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", 0);
 	
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 	
 	
 		_vec3 vPos, vRight, vUp, vLook;

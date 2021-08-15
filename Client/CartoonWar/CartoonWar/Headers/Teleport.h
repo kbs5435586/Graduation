@@ -45,6 +45,7 @@ public:
 
 	_uint									m_MyID{};
 	_uint									m_FriendID{};
+	_float									m_range = {};
 	_vec3									m_FriendPos{};
 
 	CGameObject* m_MyFriend = {};
@@ -57,6 +58,9 @@ public:
 
 	_bool& GetOnce() { return OnceCheck; };
 	void SetOnce(_bool _b) { OnceCheck = _b; };
+
+	_float& GetRange() { return m_range; };
+	void SetRange(_bool _b) { m_range = _b; };
 
 	//_uint& GetID() { return m_MyID; };
 	//void SetID(_uint _f) { m_MyID = _f; };

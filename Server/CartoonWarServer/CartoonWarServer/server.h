@@ -77,7 +77,6 @@ public:
 	void do_attack(int npc_id);
 	void do_battle(int id);
 	void do_dead(int id);
-	void do_push(int pusher, int target);
 	void do_change_formation(int player_id);
 	void do_change_npc_act(int player_id, unsigned char act);
 	void do_npc_rotate(int user_id, char con);
@@ -101,10 +100,13 @@ public:
 	bool is_attack_detect(int a, int b);
 	bool is_attack_view(int attack, int gethit);
 
+	void Update_Collider(int id, _vec3 vSize, COLLIDER_TYPE eType); // aabb 및 obb min, max 값 업데이트 용도
 	_matrix Compute_WorldTransform(int id);
 	_matrix Remove_Rotation(_matrix matWorld);
-	bool check_basic_collision(int a, int b);
+	bool check_aabb_collision(int a, int b);
 	bool check_obb_collision(int a, int b);
+	void Ready_Collider_AABB_BOX(int id, const _vec3 vSize);
+	void Ready_Collider_OBB_BOX(int id, const _vec3 vSize);
 
 	//int API_SendMessage(lua_State* L);
 	//int API_get_x(lua_State* L);

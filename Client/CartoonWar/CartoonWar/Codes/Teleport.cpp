@@ -24,31 +24,16 @@ HRESULT CTeleport::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	_vec3 vPos = *(_vec3*)pArg;
+	//_vec3 vPos = *(XMFLOAT2*)pArg;
+	_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
+
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
-	uniform_int_distribution<> uid(0, 1000);
-	default_random_engine dre(random_device{}());
 
-	m_MyID = uid(dre);
-	//list<CGameObject*> lTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
-	//if (lTemp.size() > 1)
-	//{
-	//	while (1)
-	//	{
-	//
-	//		for (int i = 0; i << lTemp.size(); ++i)
-	//		{
-	//			CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", i);
-	//		}
-	//	}
-	//}
+	m_range = 30.f;
 	
-	
-
-
 	return S_OK;
 }
 

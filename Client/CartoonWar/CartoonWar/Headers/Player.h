@@ -113,9 +113,12 @@ private:
 private:
 	void Skill_Fly(const _float& fTimeDelta, _float fY);
 	
+	_bool m_IsOn = false;
+
 	_bool m_IsStart = {};
+	_bool m_IsSTime = {};
 	_bool m_IsFly_START = {};
-	_bool m_IsFly_ING = {};
+	
 	_bool m_IsFly_END = {};
 	_bool m_IsUandD = {};
 	
@@ -127,6 +130,7 @@ public:
 private:
 	void Skill_Invisible(const _float& fTimeDelta);
 
+	_bool m_InvisibleOnce = {};
 	_bool m_IsInvisible = {};
 	_float m_fCoolTime_TWO{};
 	_float m_fInvisibleCoolTImeMax{};
@@ -154,7 +158,7 @@ public:
 	_float m_fCoolTime_THR{};
 
 private:
-	void Skill_CastTeleport(const _float& fTimeDelta);
+	void Skill_CastTeleport(const _float& fTimeDelta, _float fY);
 	_bool m_GetTeleport = {};
 	_bool m_IsTeleport = {};
 	_bool m_OneORTwo = {};

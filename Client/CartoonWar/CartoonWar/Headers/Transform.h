@@ -35,6 +35,7 @@ public:
 	void					Go_Straight(const _float& fTimeDelta);
 	void					Go_Left(const _float& fTimeDelta);
 	void					Go_Right(const _float& fTimeDelta);
+	void					Go_Up(const _float& fTimeDelta);
 	void					Go_There(const _vec3& vPos);
 	void					BackWard(const _float& fTimeDelta);
 	void					UP(const _float& fTimeDelta);
@@ -56,6 +57,7 @@ private:
 
 public:
 	_float					m_fVel = 0.f;
+	_float					m_fDVel = 0.f;
 public:
 	static CTransform*		Create();
 	virtual CComponent*		Clone_Component(void* pArg = nullptr);

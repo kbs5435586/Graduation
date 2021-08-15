@@ -30,6 +30,7 @@ public:
 	void					Rotation_X(const _float& fTimeDelta);
 	void					Rotation_Y(const _float& fTimeDelta);
 	void					Rotation_Z(const _float& fTimeDelta);
+	void					Scaling(const _vec3& vScale);
 	void					Scaling(const _float& fX, const _float& fY, const _float& fZ);
 	void					Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta);
 	void					Rotation_Axis(const _float& fTimeDelta,const _vec3* pAxis);
