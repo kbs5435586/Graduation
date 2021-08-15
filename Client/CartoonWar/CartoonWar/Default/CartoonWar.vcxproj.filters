@@ -1559,6 +1559,9 @@
     <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
+    <None Include="..\ShaderFiles\Shader_UI_Interface.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

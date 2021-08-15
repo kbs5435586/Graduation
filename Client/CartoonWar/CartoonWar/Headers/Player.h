@@ -107,6 +107,14 @@ private:
 
 
 private:
+	void Skill_Deffend(const _float& fTimeDelta);
+
+	_bool m_DeffendOnce = {};
+	_bool m_IsDeffend = {};
+	_float m_fCoolTime_Three{};
+	_float m_fDeffendCoolTImeMax{};
+
+private:
 	void Skill_Fly(const _float& fTimeDelta, _float fY);
 	
 	_bool m_IsOn = false;

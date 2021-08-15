@@ -65,7 +65,7 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	{
 
 	}
-	else
+	else if(pClass == CLASS::CLASS_ARCHER || pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
 	{
 		if (m_Active)
 		{
@@ -148,12 +148,17 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (pClass == CLASS::CLASS_WORKER || pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
+		if ( pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
 			pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
 		{
 
 		}
-		else
+		else if (pClass == CLASS::CLASS_WORKER && pArgTemp.z == 1)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		else if(pClass == CLASS::CLASS_ARCHER || pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;

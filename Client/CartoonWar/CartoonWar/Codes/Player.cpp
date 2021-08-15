@@ -132,6 +132,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		//X
 		Skill_Invisible(fTimeDelta);
 	}
+	else if (m_eCurClass == CLASS::CLASS_WORKER)
+	{
+		Skill_Deffend(fTimeDelta);
+	}
 
 	
 
@@ -1880,6 +1884,28 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 		m_IsParticle = false;
 	}
 
+}
+
+void CPlayer::Skill_Deffend(const _float& fTimeDelta)
+{
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+	m_IsDeffend = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
+	_bool m_STime = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
+	if (m_IsDeffend && !m_STime)
+	{
+		m_fCoolTime_Three += fTimeDelta;
+		if (m_fCoolTime_Three > 10.f)
+		{
+
+			m_fCoolTime_Three = 0.f;
+			m_IsDeffend = true;
+			m_DeffendOnce = true;
+			CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+			dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
+		}
+	}
+	else
+		m_IsDeffend = false;
 }
 
 void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)

@@ -4,6 +4,7 @@ class CTransform;
 class CRenderer;
 class CBuffer_RectTex;
 class CShader;
+class CTexture;
 
 class CUI_CharInterface :
     public CUI
@@ -31,7 +32,7 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
-
+	CTexture* m_pTextureCom = nullptr;
 	_bool m_cansee{};
 };
 
