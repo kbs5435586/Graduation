@@ -74,17 +74,18 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
+
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 	if(which == 0)
 	{ 
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
 		m_tUnit = pTemp->GetPlayerInfo();
 		m_eCurClass = pTemp->GetClass();
 	}
 	else
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
 		m_tUnit = pTemp->GetPlayerInfo();
 		m_eCurClass = pTemp->GetClass();
 	}
@@ -98,13 +99,6 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 			m_IsOnce = false;
 		}
 	}
-	
-	//Obb_Collision();
-	//Combat(fTimeDelta);
-	//Death(fTimeDelta);
-
-	//if (m_IsDead)
-	//	return DEAD_OBJ;
 	
 	Safe_Release(server);
 	return NO_EVENT;

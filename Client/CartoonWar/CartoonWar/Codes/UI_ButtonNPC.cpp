@@ -151,17 +151,22 @@ void CUI_ButtonNPC::Render_GameObject()
 		return;
 	pManagement->AddRef();
 
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return;
+	server->AddRef();
+
 	_uint now{};
 	if (m_ButtonNow == 0)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_ButtonNow);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
 		now = (_uint)pTemp->GetClass();
 	}
 	else
 	{
 		if (m_ButtonNow < npcnumm + 1)
 		{
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_ButtonNow - 1);
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_ButtonNow - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
 			now = (_uint)pTemp->GetClass();
 		}
 	}
@@ -206,6 +211,7 @@ void CUI_ButtonNPC::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 
 	Safe_Release(pManagement);
+	Safe_Release(server);
 	
 }
 
