@@ -66,16 +66,20 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 			return -1;
 		pManagement->AddRef();
 
+		CServer_Manager* server = CServer_Manager::GetInstance();
+		if (nullptr == server)
+			return -1;
+		server->AddRef();
 
 		if (m_ButtonNow == 0)
 		{
 			//플레이어
-			//UnitActive = server->getIsShow(server->Get_PlayerID())
+			UnitActive = server->Get_ShowOtherPlayer(server->Get_PlayerID());
 		}
 		else
 		{
 			//엔피씨
-			//UnitActive = server->getIsShow(MY_NPC_START_CLIENT(server->Get_PlayerID() + m_ButtonNow - 1)
+			UnitActive = server->Get_ShowNPC(m_ButtonNow - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
 		}
 
 		if (UnitActive)
@@ -117,7 +121,7 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 
 		
-
+		Safe_Release(server);
 		Safe_Release(pManagement);
 	}
 	
