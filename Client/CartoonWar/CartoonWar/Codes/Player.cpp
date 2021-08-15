@@ -118,12 +118,26 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 		else if (m_IsFly_START == false)
 			m_pTransformCom->Set_PositionY(fY);
+
+		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
+		{
+			//Z
+			//Skill_CastFire(fTimeDelta, fY);
+			//X
+			Skill_CastTeleport(fTimeDelta, fY);
+
+		}
+		else if (m_eCurClass == CLASS::CLASS_ARCHER)
+		{
+			//Z
+			//Skill_Fly(fTimeDelta, fY);
+			//X
+			Skill_Invisible(fTimeDelta);
+		}
 	}
 	
 	m_cMoveCondition = server->Get_PlayerMCon(m_iLayerIdx);
 	m_cRotateCondition = server->Get_PlayerRCon(m_iLayerIdx);
-
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
@@ -170,23 +184,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 		m_IsHit = false; // ¼öÁ¤
 	}
-
-	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
-	{
-		//Z
-		//Skill_CastFire(fTimeDelta, fY);
-		//X
-		Skill_CastTeleport(fTimeDelta, fY);
-		
-	}
-	else if (m_eCurClass == CLASS::CLASS_ARCHER)
-	{
-		//Z
-		//Skill_Fly(fTimeDelta, fY);
-		//X
-		Skill_Invisible(fTimeDelta);
-	}
-
 	
 	Obb_Collision();
 	Combat(fTimeDelta);
