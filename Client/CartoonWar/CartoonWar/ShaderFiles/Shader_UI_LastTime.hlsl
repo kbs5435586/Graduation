@@ -27,7 +27,7 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 {
 	float4	vOut;
 	float4	vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	float	fPersent = g_int_0 / 60.f;
+	float	fPersent = g_int_0 / 480.f;
 
 	if (g_int_1)
 	{

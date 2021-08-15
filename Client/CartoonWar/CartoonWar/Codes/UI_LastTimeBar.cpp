@@ -38,6 +38,7 @@ _int CUI_LastTimeBar::Update_GameObject(const _float& fTimeDelta)
 	m_fTimeDelta += fTimeDelta;
 	if (m_fTimeDelta >= 1.f)
 	{
+		g_iTotalTime += 1;
 		m_iTimeCnt += 1;
 		m_fTimeDelta = 0.f;
 	}

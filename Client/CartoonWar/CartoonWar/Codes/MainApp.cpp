@@ -82,6 +82,19 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 	if (g_iGold >= 9)
 		g_iGold = 9;
+	if (g_iTotalTime >= 480.f)
+	{
+		if (g_iRedNum >= g_iBlueNum)
+		{
+			// Red Win
+			g_IsRedWin = true;
+		}
+		else
+		{
+			// Blue Win
+			g_IsRedWin = false; 
+		}
+	}
 
 	if (GetAsyncKeyState('O'))
 		g_DefferedUIRender = true;

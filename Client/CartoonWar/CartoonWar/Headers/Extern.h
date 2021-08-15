@@ -21,5 +21,7 @@ extern bool			g_DefferedUIRender;
 extern int			g_DefferedRender;
 extern bool			g_InputMode;
 extern bool			g_IsCollisionStart;
+extern bool			g_IsRedWin;
 extern int			g_iPlayerIdx;
 extern int			g_iGold;
+extern int			g_iTotalTime;
