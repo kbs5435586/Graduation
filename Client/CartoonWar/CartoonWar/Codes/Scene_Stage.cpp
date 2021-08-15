@@ -124,6 +124,11 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 {
+	if (CManagement::GetInstance()->Key_Down(KEY_F6))
+		g_IsCollisionBox ^= true;
+	if (CManagement::GetInstance()->Key_Down(KEY_F7))
+		g_IsNaviMesh ^= true;
+
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -251,6 +256,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI_Select(L"Layer_UI_Select", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Inventory(L"Layer_Inventory_Player", pManagement)))
 		return E_FAIL;

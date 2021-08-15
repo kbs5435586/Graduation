@@ -284,6 +284,7 @@
     <ClInclude Include="..\Headers\UI_Aim.h" />
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_GoldIcon.h" />
     <ClInclude Include="..\Headers\UI_LastTime.h" />
     <ClInclude Include="..\Headers\UI_LastTimeBar.h" />

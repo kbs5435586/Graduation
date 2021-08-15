@@ -160,6 +160,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	fLen = vLen.Length();
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
+		m_IsFrustum = true;
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
@@ -183,6 +184,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_IsFrustum = false;
 	}
 
 	//Set_Animation(fTimeDelta);
@@ -247,9 +249,12 @@ void CNPC::Render_GameObject()
 	}
 
 
-	//m_pCollider_OBB->Render_Collider();
-	//m_pCollider_Attack->Render_Collider(1);
-	//m_pCollider_AABB->Render_Collider();
+	if (g_IsCollisionBox)
+	{
+		m_pCollider_OBB->Render_Collider();
+		m_pCollider_Attack->Render_Collider(1);
+		m_pCollider_AABB->Render_Collider();
+	}
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{

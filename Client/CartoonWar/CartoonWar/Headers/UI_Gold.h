@@ -1,4 +1,3 @@
-
 #pragma once
 #include "UI.h"
 class CTransform;
@@ -6,8 +5,8 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CUI_Gold :
-	public CUI
+class  CUI_Gold:
+    public CUI
 {
 private:
 	CUI_Gold();
@@ -22,16 +21,16 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static CUI_Gold* Create();
-	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
+	static CUI_Gold*						Create();
+	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
-	CTransform* m_pTransformCom = nullptr;
-	CRenderer* m_pRendererCom = nullptr;
-	CBuffer_RectTex* m_pBufferCom = nullptr;
-	CShader* m_pShaderCom = nullptr;
-	CTexture* m_pTextureCom = nullptr;
+	CTransform*								m_pTransformCom = nullptr;
+	CRenderer*								m_pRendererCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CShader*								m_pShaderCom = nullptr;
+	CTexture*								m_pTextureCom = nullptr;
 };
 

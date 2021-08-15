@@ -25,3 +25,5 @@ extern bool			g_IsRedWin;
 extern int			g_iPlayerIdx;
 extern int			g_iGold;
 extern int			g_iTotalTime;
+extern bool			g_IsCollisionBox;
+extern bool			g_IsNaviMesh;
