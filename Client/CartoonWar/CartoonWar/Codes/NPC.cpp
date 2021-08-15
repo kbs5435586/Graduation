@@ -97,6 +97,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+	m_IsHit = server->Get_isHitNPC(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
@@ -170,6 +171,12 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		{
 			m_iCurAnimIdx = 0;
 			m_IsOnce = false;
+			if (m_IsHit)
+			{
+				m_IsHit = false; // ¼öÁ¤
+				server->Set_AnimNPC(m_iLayerIdx, 0);
+				server->Set_isHitNPC(m_iLayerIdx, m_IsHit);
+			}
 			m_IsActioning = false;
 		}
 	}

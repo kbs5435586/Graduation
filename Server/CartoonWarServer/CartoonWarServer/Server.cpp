@@ -136,11 +136,10 @@ void Server::process_packet(int user_id, char* buf)
                 continue;
             if (g_clients[i].m_team == g_clients[user_id].m_team)
                 continue;
-            if (!is_attack_view(user_id, i))
-                continue;
 
-            g_clients[user_id].m_attack_target = i;
-            do_battle(user_id);
+            check_obb_collision(user_id, i);
+            //g_clients[user_id].m_attack_target = i;
+            //do_battle(user_id);
         }
     }
     break;
@@ -1912,7 +1911,7 @@ void Server::send_attacked_packet(int user_id, int other_id)
     packet.type = SC_PACKET_ATTACKED;
     packet.id = other_id;
     packet.hp = g_clients[other_id].m_hp;
-    packet.ishit = g_clients[other_id].m_isHit;
+    //packet.ishit = g_clients[other_id].m_isHit;
     //cout << user_id << " saw " << other_id << " attacked\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -2124,7 +2123,7 @@ void Server::do_attack(int npc_id)
         }
         else // npc가 공격할 대상을 바라볼때
         {
-            if (is_attackable(n.m_id, n.m_attack_target)) // 전투 범위 안에 들어왔을때
+            if (is_attackable(n.m_id, n.m_attack_target)) // OBB 공격 범위 안에 들어왔을때
             {
                 if(!n.m_isFighting)
                     add_timer(npc_id, FUNC_BATTLE, 1);
@@ -2224,7 +2223,7 @@ bool Server::is_attackable(int a, int b)
         (a_pos->y - b_pos->y) *
         (a_pos->y - b_pos->y) +
         (a_pos->z - b_pos->z) *
-        (a_pos->z - b_pos->z)) < ATTACK_RADIUS)
+        (a_pos->z - b_pos->z)) <= ATTACK_RADIUS)
         return true;
     else
         return false;
