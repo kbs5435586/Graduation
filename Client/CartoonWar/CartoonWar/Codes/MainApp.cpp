@@ -80,6 +80,9 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	if (nullptr == m_pManagement)
 		return - 1;
 
+	if (g_iGold >= 9)
+		g_iGold = 9;
+
 	if (GetAsyncKeyState('O'))
 		g_DefferedUIRender = true;
 	if (GetAsyncKeyState('P'))
