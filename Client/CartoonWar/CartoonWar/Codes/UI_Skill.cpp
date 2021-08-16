@@ -164,7 +164,7 @@ void CUI_Skill::Render_GameObject()
 	else if (pClass == CLASS::CLASS_WORKER)
 	{
 		if (pArgTemp.z == 1)
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(4), TEXTURE_REGISTER::t0);
 	}
 	
 	CDevice::GetInstance()->UpdateTable();

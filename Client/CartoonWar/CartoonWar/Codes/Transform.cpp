@@ -152,7 +152,7 @@ void CTransform::Go_MouseMoveUD(const _float& fTimeDelta)
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
 	vUp = Vector3_::Normalize(vUp);
-	vUp = Vector3_::ScalarProduct(vUp, (m_fSpeed_Move / 3) * -fTimeDelta, false);
+	vUp = Vector3_::ScalarProduct(vUp, (m_fSpeed_Move / 6) * -fTimeDelta, false);
 	vPosition = Vector3_::Add(vPosition, vUp);
 	Set_StateInfo(CTransform::STATE_POSITION, &vPosition);
 }

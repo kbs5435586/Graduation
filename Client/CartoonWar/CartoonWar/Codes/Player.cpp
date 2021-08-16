@@ -1282,7 +1282,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				// 파이어 좌표 
 				_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-				XMFLOAT2 fPos = { vPos.x, vPos.y };
+				XMFLOAT2 fPos = { vPos.x, vPos.z };
 
 				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);	
 				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
@@ -1298,7 +1298,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				// 텔레포트 좌표 
 				_vec3 vPos = *dynamic_cast<CTransform*>(tele->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-				XMFLOAT2 fPos = { vPos.x, vPos.y };
+				XMFLOAT2 fPos = { vPos.x, vPos.z };
 
 				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 				dynamic_cast<CUI_Skill*>(pTemp)->SetStime(true);

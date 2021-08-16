@@ -1451,7 +1451,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 	//TGA
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Skill",
-			CTexture::Create(L"../Bin/Resource/Texture/Icon/sIcon_0%d.tga", 4, TEXTURE_TYPE::TEXTURE_TGA))))
+			CTexture::Create(L"../Bin/Resource/Texture/Icon/sIcon_0%d.tga", 5, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass",
 			CTexture::Create(L"../Bin/Resource/Texture/Grass/Grass_%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
