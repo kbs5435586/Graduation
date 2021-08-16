@@ -324,10 +324,9 @@ void Server::send_time_packet()
 
     for (int i = 0; i <= MAX_USER; ++i)
     {
-        if (ST_ACTIVE != g_clients[i].m_status) // 비접속 상태인 애들 무시
+        if (ST_ACTIVE != g_clients[i].m_status)
             continue;
-
-        send_packet(i, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+        send_packet(i, &packet);
     }
 }
 
@@ -1750,7 +1749,7 @@ void Server::enter_game(int user_id, char name[])
             if (StartGame_PlayerCount < count)
             {
                 //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
-                //add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
+                add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
                 isGameStart = true;
                 cout << "Game Routine Start!\n";
                 break;
@@ -2671,10 +2670,10 @@ void Server::worker_thread()
             delete overEx;
             break;
         case FUNC_CHECK_TIME:
-            if (play_time >= 0)
+            if (play_time < 300)
             {
+                play_time += 1;
                 send_time_packet();
-                play_time -= 1;
                 add_timer(-1, FUNC_CHECK_TIME, 1000);
             }
             delete overEx;

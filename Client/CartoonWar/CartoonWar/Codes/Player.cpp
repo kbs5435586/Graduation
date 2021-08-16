@@ -119,7 +119,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 		{
 			//Z
-			//Skill_CastFire(fTimeDelta, fY);
+			Skill_CastFire(fTimeDelta, fY);
 			//X
 			Skill_CastTeleport(fTimeDelta, fY);
 
@@ -238,10 +238,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
+
 	Set_Animation(fTimeDelta);
-
 	Safe_Release(server);
-
 	return NO_EVENT;
 }
 
@@ -1393,7 +1392,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
 			int numver = lst.size();
 			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
-			//dynamic_cast<CFire*>(fire)->SetSCheck(true);
+			dynamic_cast<CFire*>(fire)->SetSCheck(true);
 
 			// ÆÄÀÌ¾î ÁÂÇ¥ 
 			_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);

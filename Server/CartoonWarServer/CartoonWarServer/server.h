@@ -34,7 +34,7 @@ private:
 	int SET_HP = 100;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
-	float play_time = 300;
+	float play_time = 0;
 
 public:
 	void mainServer(); // 메인 서버
