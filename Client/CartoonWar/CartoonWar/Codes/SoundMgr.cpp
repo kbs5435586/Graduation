@@ -76,9 +76,9 @@ void CSoundMgr::Play_BGSound(Sound_Character eCharacter, SoundState State)
 }
 void CSoundMgr::Pause_Sound()
 {
-	if (FMOD_OK != m_pCh[CHANNEL_EFEECT]->setPaused(false))
+	if (FMOD_OK != m_pCh[CHANNEL_EFEECT]->setPaused(true))
 	{
-		_MSG_BOX("Sound Pause Failed!");
+		//_MSG_BOX("Sound Pause Failed!");
 		return;
 	}
 }

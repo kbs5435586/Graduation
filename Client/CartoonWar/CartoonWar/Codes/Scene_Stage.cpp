@@ -86,23 +86,19 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Hatch(L"../Data/Demo/Hatch.dat")))
+
+	//if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
 	//	return E_FAIL;
-	//if (FAILED(pManagement->Load_File_Castle(L"../Data/Castle/Castle.dat")))
+	//ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleTree.dat", (void*)&eEnviType)))
 	//	return E_FAIL;
-	
-	if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
-		return E_FAIL;
-	ENVITYPE eEnviType = ENVITYPE::ENVI_TREE;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleTree.dat", (void*)&eEnviType)))
-		return E_FAIL;
-	eEnviType = ENVITYPE::ENVI_ROCK;
-	if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType)))
-		return E_FAIL;
+	//eEnviType = ENVITYPE::ENVI_ROCK;
+	//if (FAILED(pManagement->Load_File_Low(L"../Data/Map/LittleRock.dat", (void*)&eEnviType)))
+	//	return E_FAIL;
 
 	g_IsCollisionStart = true;
 	CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
-	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 0.f, FMOD_LOOP_NORMAL);
+	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 10.f, FMOD_LOOP_NORMAL);
 
 	Safe_Release(pManagement);
 	return S_OK;

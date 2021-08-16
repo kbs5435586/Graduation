@@ -50,6 +50,7 @@ private:
 	void									Combat(const _float& fTimeDelta);
 	void									SetSpeed();
 	void									Resurrection();
+	void									Play_Sound(const _float& fTimeDelta);
 public:
 	void									Create_Particle(const _vec3& vPoistion);
 

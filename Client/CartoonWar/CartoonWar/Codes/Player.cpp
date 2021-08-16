@@ -45,7 +45,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(1.f, 1, 1, 0);
+	m_tInfo = INFO(2.f, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -68,6 +68,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 	m_eCurTeam = TEAM::TEAM_RED;
+	m_eCurState = STATE::STATE_IDLE;
 	return S_OK;
 }
 
@@ -75,6 +76,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
 	Change_Class();
 	Attack(fTimeDelta);
+	Play_Sound(fTimeDelta);
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
@@ -101,7 +103,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_tInfo.fHP <= 0.f)
 	{
 		if (!m_IsDeadMotion)
-		{
+		{		
+			m_eCurState = STATE::STATE_DEAD;
 			_uint iRand = rand() % 2;
 			if (iRand == 0)
 				m_iCurAnimIdx = m_iDeathMotion[0];
@@ -111,7 +114,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	if (m_IsDead)
+	{
 		Resurrection();
+	}
 
 	if (m_IsParticleRun)
 	{
@@ -198,7 +203,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CPlayer::Render_GameObject()     
+void CPlayer::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -789,7 +794,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
@@ -1070,6 +1075,7 @@ void CPlayer::Obb_Collision()
 				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 				m_vMidPoint.y += 10.f;
+				m_eCurState = STATE::STATE_HITTED;
 				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 				m_IsBazier = true;
 			}
@@ -1097,6 +1103,7 @@ void CPlayer::Obb_Collision()
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 				//m_vMidPoint.y += 10.f;
 				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_eCurState = STATE::STATE_HITTED;
 				m_IsBazier = true;
 			}
 			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
@@ -1124,7 +1131,7 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 
 void CPlayer::Select_Class()
 {
-	
+
 }
 
 void CPlayer::Input_Key(const _float& fTimeDelta)
@@ -1141,11 +1148,15 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
 					return;
 				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+				m_eCurState = STATE::STATE_ARROW;
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
 			{
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				//_matrix matTemp = m_pTransformCom->Get_Matrix();
+				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				//	return;
+				m_eCurState = STATE::STATE_ATTACK;
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 					return;
 			}
 			else
@@ -1154,7 +1165,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
 				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
 				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+				m_eCurState = STATE::STATE_ATTACK;
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 					return;
 			}
@@ -1170,6 +1181,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_IsHit = true;
 			m_IsCombat = true;
 		}
+		if (CManagement::GetInstance()->Key_Up(KEY_LBUTTON))
+		{
+			m_eCurState = STATE::STATE_IDLE;
+		}
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
@@ -1179,6 +1194,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		m_pTransformCom->Rotation_Y(-fTimeDelta);
 		m_IsActioning = true;
+		m_eCurState = STATE::STATE_WALK;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 	{
@@ -1187,6 +1203,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
@@ -1197,6 +1214,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		m_pTransformCom->Rotation_Y(fTimeDelta);
 		m_IsActioning = true;
+		m_eCurState = STATE::STATE_WALK;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
 	{
@@ -1205,6 +1223,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
@@ -1243,24 +1262,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsRun = true;
 		m_IsActioning = true;
 		m_IsParticleRun = true;
-
-		m_fRunSoundTime += fTimeDelta;
-		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
-		{
-			if (m_fRunSoundTime >= 6.f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
-				m_fRunSoundTime = 0.f;
-			}
-		}
-		else
-		{
-			if (m_fRunSoundTime >= 1.f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
-				m_fRunSoundTime = 0.f;
-			}
-		}
+		m_eCurState = STATE::STATE_RUN;
 
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
@@ -1286,49 +1288,16 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			{
 				m_pTransformCom->Go_There(vSlide);
 			}
-		}		
+		}
 		else
 		{
 			m_pTransformCom->BackWard(fTimeDelta);
 			m_IsSlide = false;
 		}
 
-		//if (!m_IsSlide)
-		//{
-		//	if (!m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-		//	{
-		//		m_pTransformCom->BackWard(fTimeDelta);
-		//	}
-		//	else
-		//	{
-		//		m_pTransformCom->Go_There(vSlide);
-		//	}
-		//}
-		//else
-		//{
-		//	m_pTransformCom->BackWard(fTimeDelta);
-		//	m_IsSlide = false;
-		//}
 		m_IsActioning = true;
 		m_IsRun = false;
-
-		m_fRunSoundTime += fTimeDelta;
-		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
-		{
-			if (m_fRunSoundTime >= 24.f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
-				m_fRunSoundTime = 0.f;
-			}
-		}
-		else
-		{
-			if (m_fRunSoundTime >= 0.5f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
-				m_fRunSoundTime = 0.f;
-			}
-		}
+		m_eCurState = STATE::STATE_WALK;
 
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_UP))
@@ -1341,7 +1310,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
 		m_IsRun = false;
-		m_fRunSoundTime = 0.f;
+		m_fRunSoundTime = 1.f;
+		m_fHorseRunSoundTime = 6.f;
+
+		m_fWalkSoundTime = 0.5f;
+		m_fHorseWalkSoundTime = 24.f;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1353,6 +1327,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_iCurAnimIdx = m_iCombatMotion[1];
 		m_pTransformCom->Go_Straight(fTimeDelta);
 		m_IsActioning = true;
+		m_eCurState = STATE::STATE_WALK;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
 	{
@@ -1362,6 +1337,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_1))
@@ -1375,7 +1351,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		m_eCurTeam = TEAM::TEAM_BLUE;
+		m_tInfo.fHP -= 1;
+		m_eCurState = STATE::STATE_HITTED;
+	
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_2))
+	{
+		m_eCurState = STATE::STATE_IDLE;
+
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))
@@ -1697,6 +1680,61 @@ void CPlayer::Resurrection()
 	m_tInfo = INFO(1, 1, 1, 0);
 	m_IsDead = false;
 	m_IsDeadMotion = false;
+	m_eCurState = STATE::STATE_IDLE;
+}
+
+void CPlayer::Play_Sound(const _float& fTimeDelta)
+{
+	if (m_ePreState != m_eCurState)
+	{
+		CManagement::GetInstance()->Pause_Sound();
+		switch (m_eCurState)
+		{
+		case STATE::STATE_IDLE:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
+			break;
+		case STATE::STATE_WALK:
+		{
+			if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
+			}
+
+			else
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
+			}
+		}
+			break;
+		case STATE::STATE_RUN:
+		{
+			if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, HORSE_RUN, 2.f, FMOD_LOOP_NORMAL);
+			}
+			else
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN, 2.f, FMOD_LOOP_NORMAL);
+			}
+		}
+			break;
+		case STATE::STATE_ATTACK:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, ATTACK, 0.2f, FMOD_LOOP_NORMAL);
+			break;
+		case STATE::STATE_ARROW:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, SHOOT, 0.2f);
+			break;
+		case STATE::STATE_DEAD:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, DIE, 0.2f);
+			break;
+		case STATE::STATE_HITTED:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, HITTED, 0.2f);
+			break;
+		}
+
+		m_ePreState = m_eCurState;
+	}
+
 }
 
 void CPlayer::Create_Particle(const _vec3& vPoistion)
