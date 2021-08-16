@@ -287,9 +287,12 @@ void CNPC::Render_GameObject()
 	}
 
 
-	//m_pCollider_OBB->Render_Collider();
-	//m_pCollider_Attack->Render_Collider(1);
-	//m_pCollider_AABB->Render_Collider();
+	if (g_IsCollisionBox)
+	{
+		m_pCollider_OBB->Render_Collider();
+		m_pCollider_Attack->Render_Collider(1);
+		m_pCollider_AABB->Render_Collider();
+	}
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
@@ -991,8 +994,8 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-			m_vOBB_Range[0] = { 20.f ,80.f,60.f };
-			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
+			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
+			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;

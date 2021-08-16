@@ -1431,6 +1431,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_GoldNum",
 			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_PopUp",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/popup%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Slot_Frame",
+			CTexture::Create(L"../Bin/Resource/Texture/UI/slot_frame%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
 	
 
 
@@ -1502,6 +1508,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI",
 		CShader::Create(L"../ShaderFiles/Shader_UI.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Interface",
+		CShader::Create(L"../ShaderFiles/Shader_UI_Interface.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_Skill",

@@ -35,55 +35,49 @@ private:
 	CShader* m_pCompute_ShaderCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
 
+
+private:
+	void sWorker(const _float& fTimeDelta);
+	void sArcher(const _float& fTimeDelta);
+	void sMages(const _float& fTimeDelta);
+
 private:
 	REP										m_tRep = {};
-	
-	CObserver* m_pObserverCom = {};
-
-	_bool m_Active{};
-	_bool m_SkillActive{};
-	_bool IsDown{};
-	_bool IsOnetouch{};
-	_bool IsTwo{};
-	_bool StartTime{};
-	_bool TurnCam{};
-
-	POINT MousePos{};
-
-	_float m_CoolTime{};
-	_float m_MaxCoolTime{};
 	XMFLOAT3 pArgTemp{};
-
-	string m_strCoolTime{};
-
 	CLASS pClass{};
+	
+	_bool IsDown{};
+
+private:	//스킬이 다끝날때
+	_bool m_SkillActive{};
 public:
-	//스킬 사용 후 쿨타임 돌게
+	_bool& GetSkillActive() { return m_SkillActive; }
+	void SetSkillActive(_bool _t) { m_SkillActive = _t; }
+private:	//스킬 사용 후 쿨타임 돌게
+	_bool StartTime{};
+public:		
 	_bool& GetSTime() { return StartTime; }
 	void SetStime(_bool _t) { StartTime = _t; }
-
+private:	//스킬과 stime모두 끝날때
+	_bool m_Active{};
+public:
 	_bool& GetActive() { return m_Active; }
 	void SetActive(_bool _t) { m_Active = _t; }
 
-	_bool& GetSkillActive() { return m_SkillActive; }
-	void SetSkillActive(_bool _t) { m_SkillActive = _t; }
-
-	_bool& GetTurnCam() { return TurnCam; }
-	void SetTurnCam(_bool _t) { TurnCam = _t; }
-
-
-	//_bool GetOne() { return IsOnetouch; }
-	//void SetOne(_bool _t) { IsOnetouch = _t; }
-
-	//두개짜리 생성 확인용
-	_bool GetIsTwo() { return IsTwo; }
-	void SetIsTwo(_bool _t) { IsTwo = _t; }
-
+private:
+	_float m_CoolTime_ING{};
+	_float m_CoolTime{};
+	_float m_MaxCoolTime{}; // 클래스 변경 시 쿨타임 최대치 변경
+public:
 	_float& GetCoolTime() { return m_CoolTime; }
 	void SetCoolTime(_float _t) { m_CoolTime = _t; }
 
-	//클래스 변경 시 쿨타임 변경
 	_float GetMaxCoolTime() { return m_MaxCoolTime; }
 	void SetMaxCoolTime(_float _t) { m_MaxCoolTime = _t; }
+
+	//두개짜리 생성 확인용
+	//_bool IsTwo{};
+	//_bool GetIsTwo() { return IsTwo; }
+	//void SetIsTwo(_bool _t) { IsTwo = _t; }
 };
 

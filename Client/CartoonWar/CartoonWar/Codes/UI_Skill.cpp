@@ -60,83 +60,22 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	//10ÀÌ ²ËÂù »óÅÂ
 	CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 	pClass = (tOne)->GetClass();
-	if (pClass == CLASS::CLASS_WORKER || pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY || 
+	if ( pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY || 
 		pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
 	{
 
 	}
-	else
+	else if (pClass == CLASS::CLASS_WORKER)
 	{
-		if (m_Active)
-		{
-			if (StartTime)
-			{
-				m_SkillActive = false;
-				
-				m_CoolTime += fTimeDelta;
-
-				if (m_CoolTime > m_MaxCoolTime)
-				{
-					m_Active = false;
-					IsOnetouch = false;
-					StartTime = false;
-					m_CoolTime = m_MaxCoolTime;
-				}
-			}
-		}
-		else
-		{
-			if (pArgTemp.z == 0)
-			{
-				if (pManagement->Key_Down(KEY_Z))
-				{
-
-					m_fSizeX = m_fSizeX - 10.f;
-					m_fSizeY = m_fSizeY - 10.f;
-					IsDown = true;
-
-				}
-
-				if (IsDown)
-				{
-					if (pManagement->Key_Up(KEY_Z))
-					{
-						m_fSizeX = m_fSizeX + 10.f;
-						m_fSizeY = m_fSizeY + 10.f;
-
-						m_CoolTime = 0.f;
-						m_Active = true;
-						m_SkillActive = true;
-						IsDown = false;
-					}
-				}
-			}
-			else if (pArgTemp.z == 1)
-			{
-				if (pManagement->Key_Down(KEY_X))
-				{
-
-					m_fSizeX = m_fSizeX - 10.f;
-					m_fSizeY = m_fSizeY - 10.f;
-					IsDown = true;
-
-				}
-
-				if (IsDown)
-				{
-					if (pManagement->Key_Up(KEY_X))
-					{
-						m_fSizeX = m_fSizeX + 10.f;
-						m_fSizeY = m_fSizeY + 10.f;
-
-						m_CoolTime = 0.f;
-						m_Active = true;
-						m_SkillActive = true;
-						IsDown = false;
-					}
-				}
-			}
-		}
+		sWorker(fTimeDelta);
+	}
+	else if (pClass == CLASS::CLASS_ARCHER)
+	{
+		sArcher(fTimeDelta);
+	}
+	else if(pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
+	{
+		sMages(fTimeDelta);
 	}
 	
 
@@ -148,12 +87,17 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (pClass == CLASS::CLASS_WORKER || pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
+		if ( pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
 			pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
 		{
 
 		}
-		else
+		else if (pClass == CLASS::CLASS_WORKER && pArgTemp.z == 1)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		else if(pClass == CLASS::CLASS_ARCHER || pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
@@ -211,7 +155,11 @@ void CUI_Skill::Render_GameObject()
 		if (pArgTemp.z == 1)
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
 	}
-
+	else if (pClass == CLASS::CLASS_WORKER)
+	{
+		if (pArgTemp.z == 1)
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
+	}
 	
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
@@ -263,8 +211,7 @@ void CUI_Skill::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pBlendShaderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pObserverCom);
-
+	
 
 	CGameObject::Free();
 }
@@ -300,12 +247,211 @@ HRESULT CUI_Skill::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
 		return E_FAIL;
 
-	m_pObserverCom = (CObserver*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Observer");
-	NULL_CHECK_VAL(m_pObserverCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Observer", m_pObserverCom)))
-		return E_FAIL;
+
 
 
 	Safe_Release(pManagement);
 	return S_OK;
+}
+
+void CUI_Skill::sWorker(const _float& fTimeDelta)
+{
+	if (m_Active)
+	{
+		if (StartTime)
+		{
+			m_SkillActive = false;
+
+			m_CoolTime += fTimeDelta;
+
+			if (m_CoolTime > m_MaxCoolTime)
+			{
+				m_Active = false;
+				StartTime = false;
+				m_CoolTime = m_MaxCoolTime;
+			}
+		}
+	}
+	else
+	{
+		if (pArgTemp.z == 1)
+		{
+			if (CManagement::GetInstance()->Key_Down(KEY_X))
+			{
+
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
+			}
+
+			if (IsDown)
+			{
+				if (CManagement::GetInstance()->Key_Up(KEY_X))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+
+					m_CoolTime = 0.f;
+					m_Active = true;
+					m_SkillActive = true;
+					IsDown = false;
+				}
+			}
+		}
+	}
+}
+
+void CUI_Skill::sArcher(const _float& fTimeDelta)
+{
+	if (m_Active)
+	{
+		if (pArgTemp.z == 1)
+		{
+			m_CoolTime_ING += fTimeDelta;
+
+			if (m_CoolTime_ING > m_MaxCoolTime)
+				StartTime = true;
+		}
+
+		if (StartTime)
+		{
+			m_SkillActive = false;
+
+			m_CoolTime += fTimeDelta;
+
+			if (m_CoolTime > m_MaxCoolTime)
+			{
+				m_Active = false;
+				StartTime = false;
+				m_CoolTime = m_MaxCoolTime;
+			}
+		}
+	}
+	else
+	{
+		if (pArgTemp.z == 0)
+		{
+			if (CManagement::GetInstance()->Key_Down(KEY_Z))
+			{
+
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
+
+			}
+
+			if (IsDown)
+			{
+				if (CManagement::GetInstance()->Key_Up(KEY_Z))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+
+					m_CoolTime = 0.f;
+					m_Active = true;
+					m_SkillActive = true;
+					IsDown = false;
+				}
+			}
+		}
+		else if (pArgTemp.z == 1)
+		{
+			if (CManagement::GetInstance()->Key_Down(KEY_X))
+			{
+
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
+
+			}
+
+			if (IsDown)
+			{
+				if (CManagement::GetInstance()->Key_Up(KEY_X))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+
+					m_CoolTime_ING = 0.f;
+					m_CoolTime = 0.f;
+					m_Active = true;
+					m_SkillActive = true;
+					IsDown = false;
+				}
+			}
+		}
+	}
+}
+
+void CUI_Skill::sMages(const _float& fTimeDelta)
+{
+	if (m_Active)
+	{
+		if (StartTime)
+		{
+			m_SkillActive = false;
+
+			m_CoolTime += fTimeDelta;
+
+			if (m_CoolTime > m_MaxCoolTime)
+			{
+				m_Active = false;
+				StartTime = false;
+				m_CoolTime = m_MaxCoolTime;
+			}
+		}
+	}
+	else
+	{
+		if (pArgTemp.z == 0)
+		{
+			if (CManagement::GetInstance()->Key_Down(KEY_Z))
+			{
+
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
+
+			}
+
+			if (IsDown)
+			{
+				if (CManagement::GetInstance()->Key_Up(KEY_Z))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+
+					m_CoolTime = 0.f;
+					m_Active = true;
+					m_SkillActive = true;
+					IsDown = false;
+				}
+			}
+		}
+		else if (pArgTemp.z == 1)
+		{
+			if (CManagement::GetInstance()->Key_Down(KEY_X))
+			{
+
+				m_fSizeX = m_fSizeX - 10.f;
+				m_fSizeY = m_fSizeY - 10.f;
+				IsDown = true;
+
+			}
+
+			if (IsDown)
+			{
+				if (CManagement::GetInstance()->Key_Up(KEY_X))
+				{
+					m_fSizeX = m_fSizeX + 10.f;
+					m_fSizeY = m_fSizeY + 10.f;
+
+					m_CoolTime = 0.f;
+					m_Active = true;
+					m_SkillActive = true;
+					IsDown = false;
+				}
+			}
+		}
+	}
 }

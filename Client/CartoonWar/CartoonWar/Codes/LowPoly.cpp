@@ -144,8 +144,8 @@ void CLowPoly::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-
-	m_pCollider_AABB->Render_Collider();
+	if (g_IsCollisionBox)
+		m_pCollider_AABB->Render_Collider();
 	Safe_Release(pManagement);
 }
 

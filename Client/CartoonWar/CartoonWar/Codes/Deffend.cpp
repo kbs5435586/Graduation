@@ -125,9 +125,12 @@ void CDeffend::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-
-	//m_pColliderCom_OBB->Render_Collider();
-	//m_pColliderCom_AABB->Render_Collider();
+	if (g_IsCollisionBox)
+	{
+		m_pColliderCom_OBB->Render_Collider();
+		m_pColliderCom_AABB->Render_Collider();
+	}
+	
 	Safe_Release(pManagement);
 }
 

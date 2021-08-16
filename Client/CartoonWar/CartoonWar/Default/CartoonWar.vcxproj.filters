@@ -990,6 +990,7 @@
     <ClInclude Include="..\Headers\Map_Terrain.h">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Gold.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1557,6 +1558,9 @@
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Skill.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_Interface.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
   </ItemGroup>
