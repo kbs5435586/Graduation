@@ -872,8 +872,8 @@ void CPlayer::Change_Class()
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
 
+		//여기
 		SkillClear();
-
 		DeathMontion_Init();
 		AnimVectorClear();
 		switch (m_eCurClass)
@@ -1865,6 +1865,10 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 void CPlayer::SkillClear()
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return;
+	server->AddRef();
 	///
 	m_DeffendOnce = false;
 	m_IsDeffend = false;
@@ -1872,7 +1876,7 @@ void CPlayer::SkillClear()
 	m_InvisibleOnce = false;
 	m_IsInvisible = false;
 	m_IsInvisibleON = false;
-	//클라에서 서버로 쏴주는 함수
+	server->send_invisible_packet(false);
 
 	m_GetFire = false;
 	m_IsFire = false;
@@ -1894,6 +1898,7 @@ void CPlayer::SkillClear()
 	dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
 
 	///
+	Safe_Release(server);
 }
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
