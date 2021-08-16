@@ -207,6 +207,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{
+			m_IsFrustum = true;
 			m_IsOldMatrix = true;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
@@ -231,6 +232,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			m_matOldWorld = m_pTransformCom->Get_Matrix();;
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			m_IsFrustum = false;
 		}
 	}
 
