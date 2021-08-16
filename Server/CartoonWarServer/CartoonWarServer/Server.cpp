@@ -1412,7 +1412,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     if (n.m_LastAnim != n.m_anim)
         do_animation(npc_id, n.m_anim);
 
-    if (ST_ACTIVE == g_clients[npc_id].m_status && !g_clients[npc_id].m_isOBB)
+    if (ST_ACTIVE == g_clients[npc_id].m_status)
         add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
@@ -1653,7 +1653,6 @@ void Server::do_timer()
             case FUNC_NPC_FOLLOW:
             case FUNC_NPC_ATTACK:
             case FUNC_NPC_HOLD:
-            case FUNC_BATTLE:
             case FUNC_DOT_DAMAGE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
@@ -1843,7 +1842,6 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_isOut = false;
             g_clients[npc_id].m_isFormSet = true;
             g_clients[npc_id].m_attack_target = -1;
-            g_clients[npc_id].m_isFighting = false;
             g_clients[npc_id].m_isHit = false;
             g_clients[npc_id].m_isOBB = false;
 
@@ -2106,38 +2104,72 @@ void Server::do_attack(int npc_id)
     n_look = -1.f * Vector3_::Normalize(n_look);
     _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
-    if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
+    if (!n.m_isOBB)
     {
-        for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
+        if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
         {
-            if (ST_ACTIVE != g_clients[i].m_status)
-                continue;
-            if (ST_DEAD == g_clients[i].m_status)
-                continue;
-            if (g_clients[i].m_team == n.m_team)
-                continue;
-            if (!is_attack_detect(i, n.m_id))
-                continue;
-            // 활성화 상태이고 내 팀이 아니고 공격범위 안에 있는 상대일때
-            n.m_attack_target = i;
-            //for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-            //{
-            //    if (ST_ACTIVE != g_clients[i].m_status)
-            //        continue;
-            //    if (true == is_near(npc_id, i))
-            //    {
-            //        send_fix_packet(i, npc_id);
-            //    }
-            //}
-            break;
-        }
+            for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
+            {
+                if (ST_ACTIVE != g_clients[i].m_status)
+                    continue;
+                if (ST_DEAD == g_clients[i].m_status)
+                    continue;
+                if (g_clients[i].m_team == n.m_team)
+                    continue;
+                if (!is_attack_detect(i, n.m_id))
+                    continue;
 
-        if (n.m_attack_target >= 0) // 주변에 적이 있으면 탐색 멈추고 바로 전투
-            return;
-        else // 주변에 적이 없으면 탐색 움직임 시작
+                n.m_attack_target = i;
+                break;
+            }
+
+            if (n.m_attack_target >= 0)
+                return;
+            else // 주변에 적이 없으면 탐색 움직임 시작
+            {
+                _vec3 t_look = g_clients[npc_id].m_target_look;
+                t_look = -1.f * Vector3_::Normalize(t_look);
+
+                float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+                float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+                if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                    radian *= -1.f;
+
+                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+                if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+                {
+                    n.m_Mcondition = CON_STRAIGHT;
+                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                    n.m_anim = A_WALK;
+                    if (NPCangle > 1.f)
+                    {
+                        n.m_Rcondition = CON_LEFT;
+                        n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+                    }
+                    else if (NPCangle < -1.f)
+                    {
+                        n.m_Rcondition = CON_RIGHT;
+                        n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+                    }
+                }
+                else // npc가 바라보는 방향이 플레이어랑 일치할때
+                {
+                    n.m_Mcondition = CON_STRAIGHT;
+                    n.m_Rcondition = CON_IDLE;
+                    n.m_anim = A_WALK;
+                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                }
+            }
+        }
+        else // 공격할 대상이 지정이 되었을때
         {
-            _vec3 t_look = g_clients[npc_id].m_target_look;
-            t_look = -1.f * Vector3_::Normalize(t_look);
+            _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 t_look = *t_pos - *n_pos;
+            t_look = Vector3_::Normalize(t_look);
 
             float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
             float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
@@ -2148,79 +2180,89 @@ void Server::do_attack(int npc_id)
 
             float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
 
-            if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+            if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
             {
-                n.m_Mcondition = CON_STRAIGHT;
-                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                n.m_Mcondition = CON_IDLE;
                 n.m_anim = A_WALK;
-                if (NPCangle > 1.f)
+                if (NPCangle > 1.5f)
                 {
                     n.m_Rcondition = CON_LEFT;
                     n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
                 }
-                else if (NPCangle < -1.f)
+                else if (NPCangle < -1.5f)
                 {
                     n.m_Rcondition = CON_RIGHT;
                     n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
                 }
             }
-            else // npc가 바라보는 방향이 플레이어랑 일치할때
+            else // npc가 공격할 대상을 바라볼때
             {
-                n.m_Mcondition = CON_STRAIGHT;
-                n.m_Rcondition = CON_IDLE;
-                n.m_anim = A_WALK;
-                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-            }
-        }
-    }
-    else // 공격할 대상이 지정이 되었을때
-    {
-        _vec3 t_pos = *g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-        _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-        _vec3 t_look = t_pos - n_pos;
-        t_look = Vector3_::Normalize(t_look);
+                if (dist_between(n.m_id, n.m_attack_target) <= 4.f) // OBB 공격 범위 안에 들어왔을때
+                {
+                    n.m_isHit = true;
+                    for (int i = 0; i < NPC_START; ++i)
+                    {
+                        if (ST_ACTIVE != g_clients[i].m_status)
+                            continue;
+                        if (!is_near(i, npc_id))
+                            continue;
 
-        float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
-        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                        send_fix_packet(i, npc_id);
+                        send_hit_packet(i, npc_id);
+                    }
 
-        float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-        if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-            radian *= -1.f;
+                    if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                    {
+                        if (check_obb_collision(npc_id, n.m_attack_target))
+                        {
+                            if (n.m_isHit)
+                            {
+                                g_clients[n.m_attack_target].m_isOBB = true;
+                                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                                n.m_isHit = false;
+                                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
 
-        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-        if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
-        {
-            n.m_Mcondition = CON_IDLE;
-            n.m_anim = A_WALK;
-            if (NPCangle > 1.5f)
-            {
-                n.m_Rcondition = CON_LEFT;
-                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-            }
-            else if (NPCangle < -1.5f)
-            {
-                n.m_Rcondition = CON_RIGHT;
-                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-            }
-        }
-        else // npc가 공격할 대상을 바라볼때
-        {
-            if (dist_between(n.m_id, n.m_attack_target) <= 4.f) // OBB 공격 범위 안에 들어왔을때
-            {
-                if(!n.m_isFighting)
-                    add_timer(npc_id, FUNC_BATTLE, 1);
-                n.m_Mcondition = CON_IDLE;
-                n.m_Rcondition = CON_IDLE;
-                n.m_anim = A_ATTACK;
-                n.m_isFighting = true;
-            }
-            else
-            {
-                n.m_isFighting = false;
-                n.m_Mcondition = CON_STRAIGHT;
-                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                n.m_Rcondition = CON_IDLE;
+                                for (int i = 0; i < NPC_START; ++i)
+                                {
+                                    if (ST_ACTIVE != g_clients[i].m_status)
+                                        continue;
+                                    if (!is_near(i, n.m_attack_target))
+                                        continue;
+                                    // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+                                    send_attacked_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                }
+                            }
+                        }
+                    }
+                    else // 상대방이 죽었을때
+                    {
+                        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
+                            return;
+                        g_clients[n.m_attack_target].m_hp = 0;
+                        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
+                        g_clients[n.m_attack_target].m_status = ST_DEAD;
+                        cout << n.m_attack_target << " is dead\n";
+                        for (int i = 0; i < NPC_START; ++i)
+                        {
+                            if (ST_ACTIVE != g_clients[i].m_status)
+                                continue;
+                            if (!is_near(i, n.m_attack_target))
+                                continue;
+                            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+                            send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                        }
+                        n.m_attack_target = -1;
+                    }
+                    n.m_Mcondition = CON_IDLE;
+                    n.m_Rcondition = CON_IDLE;
+                    n.m_anim = A_ATTACK;
+                }
+                else // OBB 공격범위 밖일때
+                {
+                    n.m_Mcondition = CON_STRAIGHT;
+                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                    n.m_Rcondition = CON_IDLE;
+                }
             }
         }
     }
@@ -2536,67 +2578,6 @@ void Server::do_dot_damage(int id)
     }
 }
 
-void Server::do_battle(int npc_id)
-{
-    SESSION& n = g_clients[npc_id];
-    n.m_isHit = true;
-
-    for (int i = 0; i < NPC_START; ++i)
-    {
-        if (ST_ACTIVE != g_clients[i].m_status)
-            continue;
-        if (!is_near(i, npc_id))
-            continue;
-
-        send_fix_packet(i, npc_id);
-        send_hit_packet(i, npc_id);
-    }
-
-    if (g_clients[n.m_attack_target].m_hp > 0)
-    {
-        if (check_obb_collision(npc_id, n.m_attack_target))
-        {
-            if (n.m_isHit)
-            {
-                g_clients[n.m_attack_target].m_isOBB = true;
-                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                n.m_isHit = false;
-                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-
-                for (int i = 0; i < NPC_START; ++i)
-                {
-                    if (ST_ACTIVE != g_clients[i].m_status)
-                        continue;
-                    if (!is_near(i, n.m_attack_target))
-                        continue;
-                    // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-                    send_attacked_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                }
-            }
-        }
-        add_timer(npc_id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
-    }
-    else
-    {
-        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
-            return;
-        g_clients[n.m_attack_target].m_hp = 0;
-        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
-        g_clients[n.m_attack_target].m_status = ST_DEAD;
-        cout << n.m_attack_target << " is dead\n";
-        for (int i = 0; i < NPC_START; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status)
-                continue;
-            if (!is_near(i, n.m_attack_target))
-                continue;
-            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-            send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-        }
-        n.m_attack_target = -1;
-    }
-}
-
 void Server::worker_thread()
 {
     while (true)
@@ -2689,7 +2670,6 @@ void Server::worker_thread()
                 g_clients[user_id].m_troop = T_ALL;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
-                g_clients[user_id].m_isFighting = false;
                 g_clients[user_id].m_isHit = false;
                 g_clients[user_id].m_isOBB = false;
                 set_starting_pos(user_id);
@@ -2726,10 +2706,6 @@ void Server::worker_thread()
             break;
         case FUNC_NPC_FOLLOW:
             finite_state_machine(id, FUNC_NPC_FOLLOW);
-            delete overEx;
-            break;
-        case FUNC_BATTLE:
-            do_battle(id);
             delete overEx;
             break;
         case FUNC_DOT_DAMAGE:
@@ -2938,8 +2914,6 @@ void Server::Update_Collider(int id, _vec3 vSize, COLLIDER_TYPE eType)
 
 void Server::Ready_Collider_AABB_BOX(int id, const _vec3 vSize)
 {
-    // 대상으로 한 객체의 회전 값 받아와서 회전 죽이기
-
     _matrix pTarget_matrix = g_clients[id].m_transform.Get_Matrix();
     _matrix matTemp = Remove_Rotation(pTarget_matrix);
 
@@ -2953,7 +2927,6 @@ void Server::Ready_Collider_AABB_BOX(int id, const _vec3 vSize)
 
 void Server::Ready_Collider_OBB_BOX(int id, const _vec3 vSize)
 {
-    // 대상으로 한 객체의 회전 값 받아와서 Collider Transform에 적용하기
     CTransform* pTarget_Transform = &g_clients[id].m_transform;
     Collider& c = g_clients[id].m_col;
     _vec3		vDir[3];
@@ -3200,6 +3173,9 @@ void Server::Obb_Collision(int id)
         o.m_fBazierCnt = 0.f;
         o.m_isOBB = false;
         o.m_isBazier = false;
+        o.m_attack_target = -1;
+        o.m_Mcondition = CON_IDLE;
+        o.m_Rcondition = CON_IDLE;
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
@@ -3208,8 +3184,6 @@ void Server::Obb_Collision(int id)
                 continue;
             send_fix_packet(i, id);
         }
-        if (!is_player(id) && is_object(id))
-            add_timer(id, g_clients[id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
     }
 }
 
