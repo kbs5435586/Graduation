@@ -35,13 +35,15 @@ HRESULT CUI_LastTimeBar::Ready_GameObject(void* pArg)
 
 _int CUI_LastTimeBar::Update_GameObject(const _float& fTimeDelta)
 {
-	m_fTimeDelta += fTimeDelta;
-	if (m_fTimeDelta >= 1.f)
-	{
-		g_iTotalTime += 1;
-		m_iTimeCnt += 1;
-		m_fTimeDelta = 0.f;
-	}
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+	server->AddRef();
+
+	g_iTotalTime = server->Get_GameTime();
+	m_iTimeCnt = server->Get_GameTime();
+
+	Safe_Release(server);
 	return _int();
 }
 
