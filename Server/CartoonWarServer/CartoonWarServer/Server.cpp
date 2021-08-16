@@ -320,10 +320,9 @@ void Server::do_rotate(int user_id, char con)
     if (CON_IDLE == con)
     {
         c.m_cLock.lock();
-        c.m_curr_rotate = FUNC_PLAYER_R_IDLE;
+        c.m_curr_rotate = FUNC_PLAYER_IDLE;
         c.m_cLock.unlock();
         c.m_Rcondition = CON_IDLE;
-        add_timer(user_id, FUNC_PLAYER_R_IDLE, FRAME_TIME);
     }
     else if (CON_RIGHT == con)
     {
@@ -457,10 +456,9 @@ void Server::do_move(int user_id, char con)
     case CON_IDLE:
     {
         c.m_cLock.lock();
-        c.m_curr_move = FUNC_PLAYER_M_IDLE;
+        c.m_curr_move = FUNC_PLAYER_IDLE;
         c.m_cLock.unlock();
         c.m_Mcondition = CON_IDLE;
-        add_timer(user_id, FUNC_PLAYER_M_IDLE, FRAME_TIME);
     }
     break;
     case CON_STRAIGHT:
@@ -1377,12 +1375,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
     {
         switch (func_id)
         {
-        case FUNC_PLAYER_M_IDLE:
-        {
-            isMove = true;
-            c.m_last_move = FUNC_PLAYER_M_IDLE;
-        }
-        break;
         case FUNC_PLAYER_STRAIGHT:
         {
             isMove = true;
@@ -1402,11 +1394,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             c.m_last_move = FUNC_PLAYER_BACK;
             c.m_transform.Go_Straight(MOVE_TIME_ELAPSE);
-        }
-        break;
-        case FUNC_PLAYER_R_IDLE:
-        {
-            c.m_last_rotate = FUNC_PLAYER_R_IDLE;
         }
         break;
         case FUNC_PLAYER_LEFT:
@@ -1620,8 +1607,6 @@ void Server::do_timer()
             case FUNC_BATTLE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
-            case FUNC_PLAYER_M_IDLE:
-            case FUNC_PLAYER_R_IDLE:
             case FUNC_PLAYER_STRAIGHT:
             case FUNC_PLAYER_BACK:
             case FUNC_PLAYER_LEFT:
@@ -2639,14 +2624,6 @@ void Server::worker_thread()
             break;
         case FUNC_PLAYER_BACK:
             dead_reckoning(id, FUNC_PLAYER_BACK);
-            delete overEx;
-            break;
-        case FUNC_PLAYER_M_IDLE:
-            dead_reckoning(id, FUNC_PLAYER_M_IDLE);
-            delete overEx;
-            break;
-        case FUNC_PLAYER_R_IDLE:
-            dead_reckoning(id, FUNC_PLAYER_R_IDLE);
             delete overEx;
             break;
         case FUNC_PLAYER_STRAIGHT:

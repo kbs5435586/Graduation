@@ -93,6 +93,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	server->AddRef();
 	m_IsHit = server->Get_isHitPL(m_iLayerIdx);
+	m_IsOnce = server->Get_isHitPL(m_iLayerIdx);
 	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 	m_IsShow = server->Get_ShowOtherPlayer(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
