@@ -1900,14 +1900,15 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);	
 	m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
-	
+	//m_IsInvisibleON = 서버에서 받아주는 함수
 
 	if (!m_IsInvisible)
 	{
 		if (!m_InvisibleOnce)
 		{				
 			m_IsInvisible = false;
-			m_InvisibleOnce = true;				
+			m_InvisibleOnce = true;			
+			//클라에서 서버로 쏴주는 함수
 		}		
 	}
 	
@@ -1916,7 +1917,7 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 	{
 		m_InvisibleOnce = false;
 		m_IsInvisibleSkillActive = true;
-		
+			//클라에서 서버로 쏴주는 함수
 	}
 	
 }
