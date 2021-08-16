@@ -135,7 +135,6 @@ private:
 	_bool m_IsTeleport = {};
 	_bool m_OneORTwo = {};
 	
-
 	_float m_fTeleportCoolTImeMax{};
 public:
 	void setTeleportMaxTime(_float _t) { m_fTeleportCoolTImeMax = _t; }
