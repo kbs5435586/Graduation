@@ -32,7 +32,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, "222.237.217.211", &server_a.sin_addr); //SERVER_IP.c_str() // 222.237.217.227 // 255.255.255.192 // 222.237.217.193
+	inet_pton(AF_INET, "192.168.218.157", &server_a.sin_addr); //SERVER_IP.c_str() // 192.168.218.157 / 255.255.255.0 / 192.168.218.181
 	server_a.sin_port = htons(SERVER_PORT);
 
 	init_client();
