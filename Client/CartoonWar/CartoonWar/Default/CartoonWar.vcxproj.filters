@@ -990,6 +990,7 @@
     <ClInclude Include="..\Headers\Map_Terrain.h">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Gold.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">

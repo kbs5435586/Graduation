@@ -141,10 +141,7 @@ void CUI_Shop::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
-
 	Safe_Release(pManagement);
-	
-
 }
 
 
