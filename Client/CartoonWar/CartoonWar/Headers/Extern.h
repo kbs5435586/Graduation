@@ -28,3 +28,5 @@ extern int			g_iTotalTime;
 extern bool			g_IsCollisionBox;
 extern bool			g_IsNaviMesh;
 extern bool			g_IsEnd;
+extern bool			g_IsFix;
+extern string		g_strIP;

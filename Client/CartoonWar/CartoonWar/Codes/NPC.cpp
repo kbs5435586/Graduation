@@ -37,8 +37,7 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	
 	//Compute_Matrix();
 	_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
-	//_vec3 vPos = {40 + poss, 0.f, 50.f };
-	//poss += 20.f;
+	//_vec3 vPos = {70.f,0.f,70.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -92,7 +91,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsRun)
 		m_pTransformCom->SetSpeed(m_fSpeedUp);
-	else 
+	else
 		m_pTransformCom->SetSpeed(m_fSpeed);
 
 
@@ -149,9 +148,10 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
-	fLen = vLen.Length();
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	_float fLen = vLen.Length();
+	if (g_IsFix)
 	{
+
 		m_IsFrustum = true;
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -168,15 +168,41 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 		else
 		{
-			m_matOldWorld = m_pTransformCom->Get_Matrix();
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
+
 	}
 	else
 	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		m_IsFrustum = false;
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		{
+			m_IsFrustum = true;
+			m_IsOldMatrix = true;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			if (fLen <= 250.f)
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+					return -1;
+				if (pPlayer->GetIsRun())
+				{
+					if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+						return -1;
+				}
+			}
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			}
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			m_IsFrustum = false;
+		}
 	}
 
 	//Set_Animation(fTimeDelta);
@@ -250,6 +276,7 @@ void CNPC::Render_GameObject()
 	m_iBlurCnt++;
 	if (m_iBlurCnt >= MAX_BLURCNT)
 	{
+
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
@@ -1013,7 +1040,7 @@ void CNPC::Obb_Collision()
 				m_eCurState = STATE::STATE_HITTED;
 				m_IsBazier = true;
 			}
-		
+
 			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
 		}
 		if (m_fBazierCnt >= 1.f)
@@ -1065,7 +1092,7 @@ void CNPC::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 	_vec3 vPos = { fX, fY, fZ };
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
-		return ;
+		return;
 	_float		fY_ = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	if (vPos.y <= fY_)
 		vPos.y = fY_;
