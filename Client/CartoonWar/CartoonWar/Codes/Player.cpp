@@ -53,7 +53,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(100.f, 1, 1, 0);
+	m_tInfo = INFO(2.f, 1, 1, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -83,6 +83,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 		m_eCurTeam = TEAM::TEAM_RED;
 	else
 		m_eCurTeam = TEAM::TEAM_BLUE;
+	m_eCurState = STATE::STATE_IDLE;
 	return S_OK;
 }
 
@@ -103,6 +104,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
 
 	Attack(fTimeDelta);
+	Play_Sound(fTimeDelta);
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
@@ -192,7 +194,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_tInfo.fHP <= 0.f)
 	{
 		if (!m_IsDeadMotion)
-		{
+		{		
+			m_eCurState = STATE::STATE_DEAD;
 			_uint iRand = rand() % 2;
 			if (iRand == 0)
 				m_iCurAnimIdx = m_iDeathMotion[0];
@@ -202,7 +205,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	if (m_IsDead)
+	{
 		Resurrection();
+	}
 
 	if (m_IsParticleRun)
 	{
@@ -256,6 +261,8 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	{
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 		{
+			m_IsFrustum = true;
+
 			if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsRun())
 			{
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
@@ -282,6 +289,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			m_matOldWorld = m_pTransformCom->Get_Matrix();;
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			m_IsFrustum = false;
 		}
 	}
 
@@ -289,7 +297,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CPlayer::Render_GameObject()     
+void CPlayer::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -916,6 +924,9 @@ void CPlayer::Change_Class()
 		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
+
+		//¿©±â
+		SkillClear();
 		DeathMontion_Init();
 		AnimVectorClear();
 		switch (m_eCurClass)
@@ -936,7 +947,7 @@ void CPlayer::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(194, 249, 6.466f, 8.300f));
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
-			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
+			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
 			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
@@ -1217,6 +1228,7 @@ void CPlayer::Obb_Collision()
 				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 				m_vMidPoint.y += 10.f;
+				m_eCurState = STATE::STATE_HITTED;
 				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 				m_IsBazier = true;
 			}
@@ -1244,6 +1256,7 @@ void CPlayer::Obb_Collision()
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
 				//m_vMidPoint.y += 10.f;
 				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+				m_eCurState = STATE::STATE_HITTED;
 				m_IsBazier = true;
 			}
 			Hit_Object(m_fBazierCnt, m_vStartPoint, m_vEndPoint, m_vMidPoint);
@@ -1271,7 +1284,7 @@ void CPlayer::Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
 
 void CPlayer::Select_Class()
 {
-	
+
 }
 
 void CPlayer::Input_Key(const _float& fTimeDelta)
@@ -1362,8 +1375,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
 				server->send_animation_packet(A_ATTACK);
 				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-					return;
 			}
 
 			if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -1374,12 +1385,16 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 					return;
 				server->send_arrow_packet();
 				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+				m_eCurState = STATE::STATE_ARROW;
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
 			{
 				//_matrix matTemp = m_pTransformCom->Get_Matrix();
 				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
 				//	return;
+				m_eCurState = STATE::STATE_ATTACK;
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+					return;
 			}
 			else
 			{
@@ -1387,6 +1402,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
 				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
 				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+				m_eCurState = STATE::STATE_ATTACK;
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+					return;
 			}
 
 			if (m_IsFire)
@@ -1430,6 +1448,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_IsHit = true;
 			//m_IsCombat = true;
 		}
+		if (CManagement::GetInstance()->Key_Up(KEY_LBUTTON))
+		{
+			m_eCurState = STATE::STATE_IDLE;
+		}
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1446,6 +1468,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
 		m_IsActioning = true;
+		m_eCurState = STATE::STATE_WALK;
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
@@ -1461,6 +1484,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cLastRotateCondition = m_cRotateCondition;
 		}
 		m_IsActioning = true;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 	
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
@@ -1477,6 +1501,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_cLastRotateCondition = m_cRotateCondition;
 		}
 		m_IsActioning = true;
+		m_eCurState = STATE::STATE_WALK;
 	}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
@@ -1490,7 +1515,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		_vec3 vLook = {};
 		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 		vLook = Vector3_::Normalize(vLook);
-
 
 		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
@@ -1512,24 +1536,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_IsRun = true;
 		m_IsActioning = true;
 		m_IsParticleRun = true;
+		m_eCurState = STATE::STATE_RUN;
 
-		m_fRunSoundTime += fTimeDelta;
-		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
-		{
-			if (m_fRunSoundTime >= 6.f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
-				m_fRunSoundTime = 0.f;
-			}
-		}
-		else
-		{
-			if (m_fRunSoundTime >= 1.f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN);
-				m_fRunSoundTime = 0.f;
-			}
-		}
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
@@ -1572,6 +1580,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 			m_IsSlide = false;
 		}
+
 		m_IsActioning = true;
 		m_IsRun = false;
 
@@ -1931,6 +1940,61 @@ void CPlayer::Resurrection()
 	m_tInfo = INFO(1, 1, 1, 0);
 	m_IsDead = false;
 	m_IsDeadMotion = false;
+	m_eCurState = STATE::STATE_IDLE;
+}
+
+void CPlayer::Play_Sound(const _float& fTimeDelta)
+{
+	if (m_ePreState != m_eCurState)
+	{
+		CManagement::GetInstance()->Pause_Sound();
+		switch (m_eCurState)
+		{
+		case STATE::STATE_IDLE:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
+			break;
+		case STATE::STATE_WALK:
+		{
+			if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
+			}
+
+			else
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
+			}
+		}
+			break;
+		case STATE::STATE_RUN:
+		{
+			if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, HORSE_RUN, 2.f, FMOD_LOOP_NORMAL);
+			}
+			else
+			{
+				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, RUN, 2.f, FMOD_LOOP_NORMAL);
+			}
+		}
+			break;
+		case STATE::STATE_ATTACK:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, ATTACK, 0.2f, FMOD_LOOP_NORMAL);
+			break;
+		case STATE::STATE_ARROW:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, SHOOT, 0.2f);
+			break;
+		case STATE::STATE_DEAD:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, DIE, 0.2f);
+			break;
+		case STATE::STATE_HITTED:
+			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, HITTED, 0.2f);
+			break;
+		}
+
+		m_ePreState = m_eCurState;
+	}
+
 }
 
 void CPlayer::Create_Particle(const _vec3& vPoistion)
@@ -1955,6 +2019,65 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 		m_IsParticle = false;
 	}
 
+}
+
+void CPlayer::SkillClear()
+{
+	//CServer_Manager* server = CServer_Manager::GetInstance();
+	//if (nullptr == server)
+	//	return;
+	//server->AddRef();
+	///
+
+	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
+	{}
+	else
+	{
+		if (m_IsFire)
+		{
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
+			fire->GetIsDead() = true;
+		}
+		if (m_IsTeleport)
+		{
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+			int numver = lst.size();
+			CGameObject* tele = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+			tele->GetIsDead() = true;
+		}
+	}
+
+	m_DeffendOnce = false;
+	m_IsDeffend = false;
+
+	m_InvisibleOnce = false;
+	m_IsInvisible = false;
+	m_IsInvisibleON = false;
+	//server->send_invisible_packet(false);
+
+	m_GetFire = false;
+	m_IsFire = false;
+
+	m_GetTeleport = false;
+	m_IsTeleport = false;
+	m_OneORTwo = false;
+
+	CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetSkillActive(false);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetActive(false);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetStime(false);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime());
+
+	CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetSkillActive(false);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetActive(false);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetStime(false);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
+
+	///
+	//Safe_Release(server);
 }
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
@@ -2043,7 +2166,6 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
 			BRUSHINFO bPos = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
 
-
 			*iter0_Pos = _vec3(bPos.vBrushPos.x, bPos.vBrushPos.y, bPos.vBrushPos.z);
 		}
 	}
@@ -2084,6 +2206,7 @@ void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 		}
 	}
 }
+
 
 //if (m_IsTeleport)
 //{

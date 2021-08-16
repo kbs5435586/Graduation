@@ -60,6 +60,7 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	//10ÀÌ ²ËÂù »óÅÂ
 	CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 	pClass = (tOne)->GetClass();
+
 	if ( pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY || 
 		pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
 	{
@@ -97,7 +98,12 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
 		}
-		else if(pClass == CLASS::CLASS_ARCHER || pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
+		else if (pClass == CLASS::CLASS_ARCHER && pArgTemp.z == 1)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		else if(pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
@@ -150,15 +156,15 @@ void CUI_Skill::Render_GameObject()
 	}
 	else if (pClass == CLASS::CLASS_ARCHER)
 	{
-		if (pArgTemp.z == 0)
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t0);
+		//if (pArgTemp.z == 0)
+		//	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t0);
 		if (pArgTemp.z == 1)
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
 	}
 	else if (pClass == CLASS::CLASS_WORKER)
 	{
 		if (pArgTemp.z == 1)
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
+			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(4), TEXTURE_REGISTER::t0);
 	}
 	
 	CDevice::GetInstance()->UpdateTable();
@@ -329,32 +335,33 @@ void CUI_Skill::sArcher(const _float& fTimeDelta)
 	}
 	else
 	{
-		if (pArgTemp.z == 0)
-		{
-			if (CManagement::GetInstance()->Key_Down(KEY_Z))
-			{
-
-				m_fSizeX = m_fSizeX - 10.f;
-				m_fSizeY = m_fSizeY - 10.f;
-				IsDown = true;
-
-			}
-
-			if (IsDown)
-			{
-				if (CManagement::GetInstance()->Key_Up(KEY_Z))
-				{
-					m_fSizeX = m_fSizeX + 10.f;
-					m_fSizeY = m_fSizeY + 10.f;
-
-					m_CoolTime = 0.f;
-					m_Active = true;
-					m_SkillActive = true;
-					IsDown = false;
-				}
-			}
-		}
-		else if (pArgTemp.z == 1)
+		//if (pArgTemp.z == 0)
+		//{
+		//	if (CManagement::GetInstance()->Key_Down(KEY_Z))
+		//	{
+		//
+		//		m_fSizeX = m_fSizeX - 10.f;
+		//		m_fSizeY = m_fSizeY - 10.f;
+		//		IsDown = true;
+		//
+		//	}
+		//
+		//	if (IsDown)
+		//	{
+		//		if (CManagement::GetInstance()->Key_Up(KEY_Z))
+		//		{
+		//			m_fSizeX = m_fSizeX + 10.f;
+		//			m_fSizeY = m_fSizeY + 10.f;
+		//
+		//			m_CoolTime = 0.f;
+		//			m_Active = true;
+		//			m_SkillActive = true;
+		//			IsDown = false;
+		//		}
+		//	}
+		//}
+		//else if (pArgTemp.z == 1)
+		if (pArgTemp.z == 1)
 		{
 			if (CManagement::GetInstance()->Key_Down(KEY_X))
 			{
@@ -385,6 +392,8 @@ void CUI_Skill::sArcher(const _float& fTimeDelta)
 
 void CUI_Skill::sMages(const _float& fTimeDelta)
 {
+	
+
 	if (m_Active)
 	{
 		if (StartTime)
@@ -403,55 +412,69 @@ void CUI_Skill::sMages(const _float& fTimeDelta)
 	}
 	else
 	{
+
+
 		if (pArgTemp.z == 0)
 		{
-			if (CManagement::GetInstance()->Key_Down(KEY_Z))
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+			_bool AnotherSUI = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
+			if (!AnotherSUI)
 			{
-
-				m_fSizeX = m_fSizeX - 10.f;
-				m_fSizeY = m_fSizeY - 10.f;
-				IsDown = true;
-
-			}
-
-			if (IsDown)
-			{
-				if (CManagement::GetInstance()->Key_Up(KEY_Z))
+				if (CManagement::GetInstance()->Key_Down(KEY_Z))
 				{
-					m_fSizeX = m_fSizeX + 10.f;
-					m_fSizeY = m_fSizeY + 10.f;
 
-					m_CoolTime = 0.f;
-					m_Active = true;
-					m_SkillActive = true;
-					IsDown = false;
+					m_fSizeX = m_fSizeX - 10.f;
+					m_fSizeY = m_fSizeY - 10.f;
+					IsDown = true;
+
+				}
+
+				if (IsDown)
+				{
+					if (CManagement::GetInstance()->Key_Up(KEY_Z))
+					{
+						m_fSizeX = m_fSizeX + 10.f;
+						m_fSizeY = m_fSizeY + 10.f;
+
+						m_CoolTime = 0.f;
+						m_Active = true;
+						m_SkillActive = true;
+						IsDown = false;
+					}
 				}
 			}
+			
 		}
 		else if (pArgTemp.z == 1)
 		{
-			if (CManagement::GetInstance()->Key_Down(KEY_X))
+			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+			_bool AnotherSUI = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
+			if (!AnotherSUI)
 			{
-
-				m_fSizeX = m_fSizeX - 10.f;
-				m_fSizeY = m_fSizeY - 10.f;
-				IsDown = true;
-
-			}
-
-			if (IsDown)
-			{
-				if (CManagement::GetInstance()->Key_Up(KEY_X))
+				if (CManagement::GetInstance()->Key_Down(KEY_X))
 				{
-					m_fSizeX = m_fSizeX + 10.f;
-					m_fSizeY = m_fSizeY + 10.f;
 
-					m_CoolTime = 0.f;
-					m_Active = true;
-					m_SkillActive = true;
-					IsDown = false;
+					m_fSizeX = m_fSizeX - 10.f;
+					m_fSizeY = m_fSizeY - 10.f;
+					IsDown = true;
+
+				}
+
+				if (IsDown)
+				{
+					if (CManagement::GetInstance()->Key_Up(KEY_X))
+					{
+						m_fSizeX = m_fSizeX + 10.f;
+						m_fSizeY = m_fSizeY + 10.f;
+
+						m_CoolTime = 0.f;
+						m_Active = true;
+						m_SkillActive = true;
+						IsDown = false;
+					}
 				}
 			}
+			
 		}
 	}
 }

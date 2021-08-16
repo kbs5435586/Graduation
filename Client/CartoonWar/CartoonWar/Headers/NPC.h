@@ -51,6 +51,7 @@ private:
 	void									Combat(const _float& fTimeDelta);
 	void									SetSpeed();
 	void									Resurrection();
+	void									Play_Sound(const _float& fTimeDelta);
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;

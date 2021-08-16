@@ -82,6 +82,8 @@ protected:
 	_bool									m_IsTree = false;
 	_bool									m_IsHit_PostEffect = false;
 	_bool									m_IsFrustum = false;
+	_bool									m_IsCheck_FlagRange = false;
+	_bool									m_IsShow = false;
 	_vec3									m_vColShpereSize = {};
 protected:
 	_tchar*									m_pComponentTag = nullptr;
@@ -92,10 +94,14 @@ protected:
 	CLASS									m_eCurClass = CLASS::CLASS_END;
 	CLASS									m_ePreClass = CLASS::CLASS_END;
 	UNIT									m_tUnit = {};
-	_bool									m_IsCheck_FlagRange = false;
-	_bool									m_IsShow = false;
+	STATE									m_eCurState = STATE::STATE_END;
+	STATE									m_ePreState = STATE::STATE_END;
 protected:
-	_float									m_fRunSoundTime = 0.f;
+	_float									m_fHorseRunSoundTime = 6.f;
+	_float									m_fRunSoundTime = 1.f;
+protected:
+	_float									m_fHorseWalkSoundTime = 24.f;
+	_float									m_fWalkSoundTime = 0.5f;
 protected:
 	_uint									m_iBlurCnt = 0;
 protected:

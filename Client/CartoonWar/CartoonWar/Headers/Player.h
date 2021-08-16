@@ -53,6 +53,7 @@ private:
 	void									Combat(const _float& fTimeDelta);
 	void									SetSpeed();
 	void									Resurrection();
+	void									Play_Sound(const _float& fTimeDelta);
 public:
 	void									Create_Particle(const _vec3& vPoistion);
 
@@ -109,7 +110,8 @@ private:
 private:
 	_bool	m_IsActive = {};
 
-
+private:
+	void SkillClear();
 private:
 	void Skill_Deffend(const _float& fTimeDelta);
 
@@ -139,7 +141,6 @@ private:
 	_bool m_IsTeleport = {};
 	_bool m_OneORTwo = {};
 	
-
 	_float m_fTeleportCoolTImeMax{};
 public:
 	void setTeleportMaxTime(_float _t) { m_fTeleportCoolTImeMax = _t; }

@@ -184,6 +184,24 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ARROW:
     {
         cs_packet_arrow* packet = reinterpret_cast<cs_packet_arrow*>(buf);
+      /*  for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            send_fire_packet(i, packet->x, packet->z);
+        }
+        for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+            {
+                _vec3 temp = { packet->x, 0.f,packet->z };
+                g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &temp);
+                g_clients[i].m_team = g_clients[user_id].m_team;
+                g_clients[i].m_count = 0;
+                do_dot_damage(i);
+                break;
+            }
+        }*/
     }
     break;
     case CS_PACKET_TELEPORT:
@@ -2217,6 +2235,15 @@ void Server::do_attack(int npc_id)
                         {
                             if (n.m_isHit)
                             {
+                                for (int i = 0; i < NPC_START; ++i)
+                                {
+                                    if (ST_ACTIVE != g_clients[i].m_status)
+                                        continue;
+                                    if (!is_near(i, npc_id))
+                                        continue;
+
+                                    send_fix_packet(i, npc_id);
+                                }
                                 g_clients[n.m_attack_target].m_isOBB = true;
                                 g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
                                 n.m_isHit = false;
