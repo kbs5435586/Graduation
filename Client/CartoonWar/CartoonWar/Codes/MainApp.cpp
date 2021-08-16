@@ -82,7 +82,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 	if (g_iGold >= 9)
 		g_iGold = 9;
-	if (g_iTotalTime >= 60.f)
+	if (g_iTotalTime >= 300.f)
 	{
 		g_IsEnd = true;
 		if (g_iRedNum >= g_iBlueNum)
