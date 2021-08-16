@@ -118,7 +118,6 @@ private:
 	_bool m_InvisibleOnce = {};
 	_bool m_IsInvisible = {};
 	_bool m_IsInvisibleON = {};
-	_bool m_IsInvisibleSkillActive = {};
 	
 private:
 	void Skill_CastFire(const _float& fTimeDelta, _float fY);	

@@ -94,16 +94,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		return NO_EVENT;
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-
-	//if ((m_IsFly_START == true))
-	//{}
-	//else if (m_IsFly_START == false)
 	m_pTransformCom->Set_PositionY(fY);
-
-	
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
+
 	if (m_iLayerIdx == 0)
 	{
 		if (!m_IsActive)
@@ -212,8 +207,8 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
-		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		//	return -1;
+		m_IsFrustum = true;
+
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 			return -1;
 		if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsRun())
@@ -228,8 +223,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 		}
 		else
-		{
-			m_IsFrustum = true;
+		{	
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
 		}
@@ -1281,7 +1275,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
 				int numver = lst.size();
 				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
-				//dynamic_cast<CFire*>(fire)->SetSCheck(true);
+				dynamic_cast<CFire*>(fire)->SetSCheck(true);
 
 				// 파이어 좌표 
 				_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
@@ -1312,7 +1306,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_IsOnce = true;
 			m_IsHit = true;
 			m_IsCombat = true;
-
 		}
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
@@ -1353,7 +1346,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{
-			m_IsDash = true;
 			if (!m_IsCombat)
 				m_iCurAnimIdx = 2;
 			else
@@ -1410,7 +1402,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-		m_IsDash = false;
 		if (!m_IsCombat)
 			m_iCurAnimIdx = 1;
 		else
@@ -1871,7 +1862,6 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 {
-	
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 	m_IsDeffend = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 
@@ -1916,7 +1906,6 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 	if (m_IsInvisible && m_InvisibleOnce)
 	{
 		m_InvisibleOnce = false;
-		m_IsInvisibleSkillActive = true;
 			//클라에서 서버로 쏴주는 함수
 	}
 	
