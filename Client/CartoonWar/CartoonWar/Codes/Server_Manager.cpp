@@ -3,6 +3,7 @@
 #include "Management.h"
 #include "Layer.h"
 #include "MyRect.h"
+#include "Fire.h"
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)
@@ -189,6 +190,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		XMFLOAT2 fTemp = { my_packet->x, my_packet->z };
 		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
 			return;
+
+		list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
+		int numver = lst.size();
+		CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
+		dynamic_cast<CFire*>(fire)->SetSCheck(true);
 	}
 	break;
 	case SC_PACKET_HIT:
