@@ -184,7 +184,6 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ARROW:
     {
         cs_packet_arrow* packet = reinterpret_cast<cs_packet_arrow*>(buf);
-        
     }
     break;
     case CS_PACKET_TELEPORT:
@@ -207,7 +206,17 @@ void Server::process_packet(int user_id, char* buf)
                 continue;
             send_fire_packet(i, packet->x, packet->z);
         }
-        //add_timer();
+        for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+            {
+                _vec3 temp = { packet->x, 0.f,packet->z };
+                g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &temp);
+                g_clients[i].m_team = g_clients[user_id].m_team;
+                g_clients[i].m_count = 0;
+                do_dot_damage(i);
+            }
+        } 
     }
     break;
     case CS_PACKET_INVISIBLE:
@@ -1644,6 +1653,7 @@ void Server::do_timer()
             case FUNC_NPC_ATTACK:
             case FUNC_NPC_HOLD:
             case FUNC_BATTLE:
+            case FUNC_DOT_DAMAGE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
             case FUNC_PLAYER_STRAIGHT:
@@ -2471,6 +2481,30 @@ void Server::set_starting_pos(int user_id)
     //∞ˆ«œ±‚ 7.5πË / ∏ ªÁ¿Ã¡Ó  3750 - 3750
 }
 
+void Server::do_dot_damage(int id)
+{
+    SESSION& f = g_clients[id];
+    for (int i = 0; i < OBJECT_START; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+        if (g_clients[i].m_team == f.m_team)
+            continue;
+        if (dist_between(id, i) > 50.f)
+            continue;
+
+        g_clients[i].m_hp -= DOT_DAMAGE;
+    }
+    f.m_count++;
+
+    if (f.m_count < 10)
+        add_timer(id, FUNC_DOT_DAMAGE, 1000);
+    else
+    {
+        ST_SLEEP == g_clients[id].m_status;
+    }
+}
+
 void Server::do_battle(int npc_id)
 {
     SESSION& n = g_clients[npc_id];
@@ -2665,6 +2699,10 @@ void Server::worker_thread()
             break;
         case FUNC_BATTLE:
             do_battle(id);
+            delete overEx;
+            break;
+        case FUNC_DOT_DAMAGE:
+            do_dot_damage(id);
             delete overEx;
             break;
        /* case FUNC_DEAD:

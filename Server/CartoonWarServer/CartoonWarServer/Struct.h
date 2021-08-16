@@ -3,7 +3,7 @@ enum ENUM_FUNCTION
 {
 	FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_PLAYER_MOVE_FOR_NPC,
 	FUNC_NPC_START, FUNC_NPC_ATTACK, FUNC_NPC_HOLD, FUNC_NPC_FOLLOW, 
-	FUNC_CHECK_FLAG, FUNC_CHECK_TIME, FUNC_BATTLE, 
+	FUNC_CHECK_FLAG, FUNC_CHECK_TIME, FUNC_BATTLE, FUNC_DOT_DAMAGE,
 	FUNC_PLAYER_IDLE, FUNC_PLAYER_STRAIGHT, FUNC_PLAYER_BACK, FUNC_PLAYER_LEFT,
 	FUNC_PLAYER_RIGHT, FUNC_PLAYER_RUN, FUNC_END
 };
@@ -54,6 +54,13 @@ struct Flag
 	_vec3 pos;
 };
 
+struct Teleport
+{
+	_vec3 telOne = {};
+	_vec3 telTwo = {};
+	int count = 0;
+};
+
 typedef struct tagOBB
 {
 	Vector3			vPoint[8];
@@ -86,6 +93,7 @@ struct SESSION // 클라이언트 정보
 	// 공통
 	mutex m_cLock;
 	int m_id;
+	int m_count;
 	short m_hp;
 	short m_team;
 	unsigned char m_troop;
@@ -130,6 +138,7 @@ struct SESSION // 클라이언트 정보
 	char m_formation;
 	char m_name[MAX_ID_LEN + 1];
 	char m_message[MAX_CHAT_LEN];
+	Teleport m_tel;
 
 	// NPC
 	short m_owner_id;

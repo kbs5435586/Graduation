@@ -38,7 +38,7 @@ constexpr int FLAG_START = 450;
 constexpr int MAX_FLAG = 454;
 
 constexpr int OBJECT_START = 450;
-constexpr int MAX_OBJECT = 454;
+constexpr int MAX_OBJECT = 500;
 
 constexpr int CL_TEST_PLAYERS = 4;
 constexpr int CL_TEST_NPCS = 36;

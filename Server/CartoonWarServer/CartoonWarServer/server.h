@@ -31,6 +31,7 @@ private:
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
+	int DOT_DAMAGE = 5;
 	int SET_HP = 100;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
@@ -85,6 +86,7 @@ public:
 	void do_change_formation(int player_id);
 	void do_change_npc_act(int player_id, unsigned char act);
 	void do_npc_rotate(int user_id, char con);
+	void do_dot_damage(int id);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
