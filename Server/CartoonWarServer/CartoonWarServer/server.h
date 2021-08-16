@@ -77,7 +77,7 @@ public:
 	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
 	void do_attack(int npc_id);
-	void do_battle(int id);
+	void do_battle(int npc_id);
 	void do_dead(int id);
 	void do_change_formation(int player_id);
 	void do_change_npc_act(int player_id, unsigned char act);

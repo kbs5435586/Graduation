@@ -2641,6 +2641,14 @@ void Server::worker_thread()
             dead_reckoning(id, FUNC_PLAYER_BACK);
             delete overEx;
             break;
+        case FUNC_PLAYER_M_IDLE:
+            dead_reckoning(id, FUNC_PLAYER_M_IDLE);
+            delete overEx;
+            break;
+        case FUNC_PLAYER_R_IDLE:
+            dead_reckoning(id, FUNC_PLAYER_R_IDLE);
+            delete overEx;
+            break;
         case FUNC_PLAYER_STRAIGHT:
             dead_reckoning(id, FUNC_PLAYER_STRAIGHT);
             delete overEx;

@@ -185,7 +185,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		if (m_IsHit)
 		{
 			m_IsHit = false; // ¼öÁ¤
-			server->Set_AnimPL(m_iLayerIdx, 0);
+			//server->Set_AnimPL(m_iLayerIdx, 0);
 			server->Set_isHitPL(m_iLayerIdx, m_IsHit);
 		}
 	}
