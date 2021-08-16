@@ -190,17 +190,17 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 					if (MouseMove = m_pInput_Device->Get_DIMouseMove(CInput::DIM_X))
 					{
 
-						if (nTemp.x < 0)
+						if (nTemp.x < 10)
 						{
-							_vec3 aaa = { 10,nTemp.y,nTemp.z };
+							_vec3 aaa = { 15,nTemp.y,nTemp.z };
 							m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &aaa);
 						}
-						if (nTemp.x > 1000)
+						if (nTemp.x > 990)
 						{
-							_vec3 aaa = { 990,nTemp.y,nTemp.z };
+							_vec3 aaa = { 985,nTemp.y,nTemp.z };
 							m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &aaa);
 						}
-						if(nTemp.x >= 0 && nTemp.x <= 1000)
+						if(nTemp.x >= 10 && nTemp.x <= 990)
 						{
 							m_pTransform->Go_MouseMoveLR(-MouseMove * fTimeDelta * 0.5f);
 						}
@@ -209,27 +209,21 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 					}
 					if (MouseMove = CInput::GetInstance()->Get_DIMouseMove(CInput::DIM_Y))
 					{
-						if (nTemp.x < 10)
+						if (nTemp.z < 20)
 						{
-							_vec3 aaa = { 20,nTemp.y,nTemp.z };
+							_vec3 aaa = { nTemp.x, nTemp.y, 30 };
 							m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &aaa);
 						}
-						if (nTemp.x > 990)
+						if (nTemp.z > 980)
 						{
-							_vec3 aaa = { 980,nTemp.y,nTemp.z };
+							_vec3 aaa = { nTemp.x, nTemp.y, 970 };
 							m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &aaa);
 						}
-						if (nTemp.x >= 0 && nTemp.x <= 990)
+						if (nTemp.z >= 20 && nTemp.z <= 980)
 						{
 							m_pTransform->Go_MouseMoveUD(MouseMove * fTimeDelta * 0.5f);
 						}
-						//if (nTemp.z > 10 && nTemp.z < 950)
-						//	m_pTransform->Go_MouseMoveUD(MouseMove * fTimeDelta * 0.5f);
-						//else
-						//{
-						//	_vec3 aaa = { nTemp.x ,nTemp.y, 20 };
-						//	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &aaa);
-						//}
+					
 					}
 
 					m_IsMove = false;
