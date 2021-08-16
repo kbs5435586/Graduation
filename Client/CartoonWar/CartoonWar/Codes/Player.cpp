@@ -222,7 +222,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 		}
 
-		if (m_IsInvisible)
+		if (m_IsInvisibleON)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 				return -1;
