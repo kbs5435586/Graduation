@@ -529,6 +529,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain">
       <UniqueIdentifier>{b99bf50c-61d0-418f-95f4-e97fdf643d0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\92. UI_End">
+      <UniqueIdentifier>{bb1bf9be-d73a-443d-a330-07224651a31f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -991,6 +994,9 @@
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Gold.h" />
+    <ClInclude Include="..\Headers\UI_End.h">
+      <Filter>02. GameObject\97. UI\92. UI_End</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1423,6 +1429,9 @@
     <ClCompile Include="..\Codes\Map_Terrain.cpp">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_End.cpp">
+      <Filter>02. GameObject\97. UI\92. UI_End</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1561,6 +1570,9 @@
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_Interface.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
   </ItemGroup>

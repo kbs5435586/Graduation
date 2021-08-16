@@ -57,6 +57,7 @@ public:
     void send_fire_packet(float mx, float mz);
     void send_teleport_packet(float mx, float mz);
     void send_arrow_packet();
+    void send_invisible_packet(bool isinvi);
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);
@@ -92,6 +93,7 @@ public:
     short Get_TroopClass();
     bool Get_isHitPL(int id);
     bool Get_isHitNPC(int id);
+    bool Get_isInvisible(int id);
 
     void Set_TroopClass(short mclass);
     void Set_AnimPL(int id, short anim);

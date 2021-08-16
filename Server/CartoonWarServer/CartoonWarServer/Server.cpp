@@ -184,19 +184,36 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ARROW:
     {
         cs_packet_arrow* packet = reinterpret_cast<cs_packet_arrow*>(buf);
-        do_animation(user_id, packet->anim);
+        
     }
     break;
     case CS_PACKET_TELEPORT:
     {
-        cs_packet_animation* packet = reinterpret_cast<cs_packet_animation*>(buf);
-        do_animation(user_id, packet->anim);
+        cs_packet_teleport* packet = reinterpret_cast<cs_packet_teleport*>(buf);
+        //do_animation(user_id, packet->anim);
     }
     break;
     case CS_PACKET_FIRE:
     {
-        cs_packet_animation* packet = reinterpret_cast<cs_packet_animation*>(buf);
-        do_animation(user_id, packet->anim);
+        cs_packet_fire* packet = reinterpret_cast<cs_packet_fire*>(buf);
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            send_fire_packet(i, packet->x, packet->z);
+        }
+        //add_timer();
+    }
+    break;
+    case CS_PACKET_INVISIBLE:
+    {
+        cs_packet_invisible* packet = reinterpret_cast<cs_packet_invisible*>(buf);
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            send_invisible_packet(i, user_id, packet->invisable);
+        }
     }
     break;
     case CS_PACKET_POSITION:
@@ -1965,6 +1982,26 @@ void Server::send_dead_packet(int user_id, int other_id)
     packet.anim = A_DEAD;
     //cout << user_id << " saw " << other_id << " dead\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_invisible_packet(int user_id, int other_id, bool invi)
+{
+    sc_packet_invisible packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_INVISIBLE;
+    packet.id = other_id;
+    packet.invisable = invi;
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_fire_packet(int id, float mx, float mz)
+{
+    sc_packet_fire packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_FIRE;
+    packet.x = mx;
+    packet.z = mz;
+    send_packet(id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
 void Server::send_leave_packet(int user_id, int other_id)

@@ -121,6 +121,7 @@ private:
 
 	_bool m_InvisibleOnce = {};
 	_bool m_IsInvisible = {};
+	_bool m_IsInvisibleON = {};
 	_bool m_IsInvisibleSkillActive = {};
 	
 private:

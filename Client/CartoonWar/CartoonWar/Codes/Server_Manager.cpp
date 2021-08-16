@@ -183,11 +183,26 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		my_npc = my_packet->npc_size;
 	}
 	break;
+	case SC_PACKET_FIRE:
+	{
+		sc_packet_fire* my_packet = reinterpret_cast<sc_packet_fire*>(ptr);
+		XMFLOAT2 fTemp = { my_packet->x, my_packet->z };
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
+			return;
+	}
+	break;
 	case SC_PACKET_HIT:
 	{
 		sc_packet_hit* my_packet = reinterpret_cast<sc_packet_hit*>(ptr);
 		int recv_id = my_packet->id;
 		m_objects[recv_id].isHit = my_packet->ishit;
+	}
+	break;
+	case SC_PACKET_INVISIBLE:
+	{
+		sc_packet_invisible* my_packet = reinterpret_cast<sc_packet_invisible*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].isInvisible = my_packet->invisable;
 	}
 	break;
 	case SC_PACKET_FIX:
@@ -505,11 +520,12 @@ void CServer_Manager::send_arrow_packet()
 	send_packet(&l_packet);
 }
 
-void CServer_Manager::send_change_formation_packet()
+void CServer_Manager::send_invisible_packet(bool isinvi)
 {
-	cs_packet_change_formation l_packet;
+	cs_packet_invisible l_packet;
 	l_packet.size = sizeof(l_packet);
-	l_packet.type = CS_PACKET_CHANGE_FORMATION;
+	l_packet.type = CS_PACKET_INVISIBLE;
+	l_packet.invisable = isinvi;
 	send_packet(&l_packet);
 }
 
@@ -1012,6 +1028,11 @@ void CServer_Manager::Set_AnimNPC(int id, short anim)
 bool CServer_Manager::Get_isHitPL(int id)
 {
 	return m_objects[id].isHit;
+}
+
+bool CServer_Manager::Get_isInvisible(int id)
+{
+	return m_objects[id].isInvisible;
 }
 
 bool CServer_Manager::Get_isHitNPC(int id)

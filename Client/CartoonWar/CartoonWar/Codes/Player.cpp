@@ -92,6 +92,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
+
 	m_IsHit = server->Get_isHitPL(m_iLayerIdx);
 	m_IsOnce = server->Get_isHitPL(m_iLayerIdx);
 	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
@@ -264,7 +265,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			}
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-			if (m_IsInvisible) //  server->Get_PlayerInvisible(m_iLayerIdx)
+			if (m_IsInvisibleON) //  server->Get_PlayerInvisible(m_iLayerIdx)
 			{
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 					return -1;
@@ -1585,15 +1586,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 	}
 
-	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
-	{
-		if (m_eCurClass == CLASS::CLASS_ARCHER)
-		{
-			m_IsInvisible = !m_IsInvisible;
-			//send invisible packet;
-		}
-	}
-
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))
 	{
 		for (auto& iter : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_UI_Select"))
@@ -1647,17 +1639,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Down(KEY_1))
 	{
-		//m_iCurMeshNum++;
-		//if (m_iCurMeshNum > (_uint)CLASS::CLASS_END - 1)
-		//	m_iCurMeshNum = 0;
-		//m_iCurAnimIdx = 0;
-		//m_eCurClass = (CLASS)m_iCurMeshNum;
 		server->send_npc_act_packet(DO_FOLLOW);
-
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		//m_IsHit_PostEffect = true;
 		server->send_npc_act_packet(DO_ATTACK);
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_3))
@@ -1992,16 +1977,22 @@ void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 
 void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return;
+	server->AddRef();
+
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);	
-	m_IsInvisible = server->GetPlayerInvisible(m_layeridx); //dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
-	
+	m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
+	m_IsInvisibleON = server->Get_isInvisible(m_iLayerIdx);
 
 	if (!m_IsInvisible)
 	{
 		if (!m_InvisibleOnce)
 		{				
 			m_IsInvisible = false;
-			m_InvisibleOnce = true;				
+			m_InvisibleOnce = true;			
+			server->send_invisible_packet(false);
 		}		
 	}
 	
@@ -2010,9 +2001,10 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 	{
 		m_InvisibleOnce = false;
 		m_IsInvisibleSkillActive = true;
-		server->send_invisible_packet();
+		server->send_invisible_packet(true);
 	}
-	
+
+	Safe_Release(server);
 }
 
 void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)

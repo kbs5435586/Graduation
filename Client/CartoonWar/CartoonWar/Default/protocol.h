@@ -69,6 +69,7 @@ constexpr char CS_PACKET_TROOP_CHANGE = 10;
 constexpr char CS_PACKET_TELEPORT = 11;
 constexpr char CS_PACKET_FIRE = 12;
 constexpr char CS_PACKET_ARROW = 13;
+constexpr char CS_PACKET_INVISIBLE = 14;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
@@ -86,6 +87,8 @@ constexpr char SC_PACKET_TIME = 13;
 constexpr char SC_PACKET_FIX = 14;
 constexpr char SC_PACKET_NPC_SIZE = 15;
 constexpr char SC_PACKET_HIT = 16;
+constexpr char SC_PACKET_INVISIBLE = 17;
+constexpr char SC_PACKET_FIRE = 18;
 
 #pragma pack(push ,1)
 
@@ -149,6 +152,14 @@ struct sc_packet_time
 	char size;
 	char type;
 	float time;
+};
+
+struct sc_packet_fire
+{
+	char size;
+	char type;
+	float x;
+	float z;
 };
 
 struct sc_packet_hit
@@ -273,6 +284,14 @@ struct sc_packet_class_change
 	short p_class;
 };
 
+struct sc_packet_invisible
+{
+	char	size;
+	char	type;
+	int		id;
+	bool	invisable;
+};
+
 struct cs_packet_class_change
 {
 	char size;
@@ -350,6 +369,13 @@ struct cs_packet_arrow
 {
 	char	size;
 	char	type;
+};
+
+struct cs_packet_invisible
+{
+	char	size;
+	char	type;
+	bool	invisable;
 };
 
 struct cs_packet_position
