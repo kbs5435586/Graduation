@@ -217,8 +217,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 		}
 
-		//if (m_IsInvisibleON)
-		if (m_IsInvisible)
+		if (m_IsInvisibleON)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 				return -1;
@@ -873,38 +872,7 @@ void CPlayer::Change_Class()
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
 
-		///
-		m_DeffendOnce = false;
-		m_IsDeffend = false;
-
-		m_InvisibleOnce = false;
-		m_IsInvisible = false;
-		m_IsInvisibleON = false;
-		//클라에서 서버로 쏴주는 함수
-
-		m_GetFire = false;
-		m_IsFire = false;
-
-		m_GetTeleport = false;
-		m_IsTeleport = false;
-		m_OneORTwo = false;
-
-		CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
-		dynamic_cast<CUI_Skill*>(zTemp)->SetSkillActive(false);
-		dynamic_cast<CUI_Skill*>(zTemp)->SetActive(false);
-		dynamic_cast<CUI_Skill*>(zTemp)->SetStime(false);
-		dynamic_cast<CUI_Skill*>(zTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime());
-
-		CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
-		dynamic_cast<CUI_Skill*>(xTemp)->SetSkillActive(false);
-		dynamic_cast<CUI_Skill*>(xTemp)->SetActive(false);
-		dynamic_cast<CUI_Skill*>(xTemp)->SetStime(false);
-		dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
-
-		///
-	
-
-
+		SkillClear();
 
 		DeathMontion_Init();
 		AnimVectorClear();
@@ -1893,6 +1861,39 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 		m_IsParticle = false;
 	}
 
+}
+
+void CPlayer::SkillClear()
+{
+	///
+	m_DeffendOnce = false;
+	m_IsDeffend = false;
+
+	m_InvisibleOnce = false;
+	m_IsInvisible = false;
+	m_IsInvisibleON = false;
+	//클라에서 서버로 쏴주는 함수
+
+	m_GetFire = false;
+	m_IsFire = false;
+
+	m_GetTeleport = false;
+	m_IsTeleport = false;
+	m_OneORTwo = false;
+
+	CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetSkillActive(false);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetActive(false);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetStime(false);
+	dynamic_cast<CUI_Skill*>(zTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime());
+
+	CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetSkillActive(false);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetActive(false);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetStime(false);
+	dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
+
+	///
 }
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)

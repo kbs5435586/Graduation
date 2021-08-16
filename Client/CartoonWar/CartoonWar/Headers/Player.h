@@ -105,7 +105,8 @@ private:
 private:
 	_bool	m_IsActive = {};
 
-
+private:
+	void SkillClear();
 private:
 	void Skill_Deffend(const _float& fTimeDelta);
 
