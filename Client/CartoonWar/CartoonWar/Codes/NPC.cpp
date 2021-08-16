@@ -113,8 +113,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-	//if (m_IsDead)
-	//	Resurrection();
 	if (m_IsDead)
 		return DEAD_OBJ;
 

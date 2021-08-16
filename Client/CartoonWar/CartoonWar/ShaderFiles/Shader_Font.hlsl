@@ -36,7 +36,7 @@ VS_OUT VS_Main(VS_IN vIn)
 float4 PS_Main(VS_OUT vIn) :SV_TARGET
 {
 	float4 vOut = g_texture0.Sample(Sampler0, vIn.vTexUV);
-
+	float4 vBlack = float4(0.f,0.f,0.f,0.f);
 	if (vOut.r == 0.0f)
 	{
 		vOut.a = 0.0f;
@@ -47,6 +47,6 @@ float4 PS_Main(VS_OUT vIn) :SV_TARGET
 		vOut.a = 1.0f;
 		vOut = vOut;
 	}
-
+	vOut.rgb = vOut.rgb * 0.f;
 	return vOut;
 }

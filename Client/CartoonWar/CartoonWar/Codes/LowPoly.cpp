@@ -90,13 +90,13 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
-			else
-			{
-				m_matOldWorld = m_pTransformCom->Get_Matrix();;
-				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-			}
-
 		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
+
 
 	}
 	else
@@ -213,7 +213,7 @@ void CLowPoly::Render_Blur()
 		m_pMeshCom->Render_Mesh(i);
 	}
 	m_iBlurCnt++;
-	if (m_iBlurCnt >= 50)
+	if (m_iBlurCnt >= 10)
 	{
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_matOldWorld = m_pTransformCom->Get_Matrix();

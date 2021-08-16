@@ -63,9 +63,11 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Blend();
 	Render_Priority();
 	Render_Alpha();
-	pManagement->Render_Font();
 	Render_Post_Effect();
+	pManagement->Render_Font();
 	Render_UI();
+	Render_UI_Back();
+
 
 	Safe_Release(pManagement);
 	return S_OK;

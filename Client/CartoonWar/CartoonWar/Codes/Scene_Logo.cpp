@@ -137,7 +137,6 @@ _int CScene_Logo::LastUpdate_Scene(const _float& fTimeDelta)
 {
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
-
 		CManagement* pManagement = CManagement::GetInstance();
 		if (nullptr == pManagement)
 			return -1;
