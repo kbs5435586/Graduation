@@ -79,9 +79,6 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta)
 
 				if (server->Get_NpcSize() < MAX_OWN_NPC)
 				{
-					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-					UNIT tPlayerInfo = pTemp->GetPlayerInfo();
-
 					duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 						- server->Get_AddNPC_Cooltime());
 					if (cool_time.count() > 0)

@@ -2493,8 +2493,38 @@ void Server::do_dot_damage(int id)
         if (dist_between(id, i) > 50.f)
             continue;
 
-        g_clients[i].m_hp -= DOT_DAMAGE;
+        if (g_clients[i].m_hp > 0)
+        {
+            g_clients[i].m_hp -= DOT_DAMAGE;
+            for (int j = 0; j < NPC_START; ++j)
+            {
+                if (ST_ACTIVE != g_clients[j].m_status)
+                    continue;
+                if (!is_near(i, j))
+                    continue;
+                send_attacked_packet(j, i); // 남은 체력 브로드캐스팅
+            }
+        }
+        else
+        {
+            if (ST_DEAD == g_clients[i].m_status)
+                return;
+            g_clients[i].m_hp = 0;
+            //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
+            g_clients[i].m_status = ST_DEAD;
+            cout << i << " is dead\n";
+            for (int j = 0; j < NPC_START; ++j)
+            {
+                if (ST_ACTIVE != g_clients[j].m_status)
+                    continue;
+                if (!is_near(j, i))
+                    continue;
+                // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+                send_leave_packet(j, i); // 남은 체력 브로드캐스팅
+            }
+        }
     }
+
     f.m_count++;
 
     if (f.m_count < 10)
