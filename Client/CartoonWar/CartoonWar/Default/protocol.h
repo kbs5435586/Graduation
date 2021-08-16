@@ -89,6 +89,7 @@ constexpr char SC_PACKET_NPC_SIZE = 15;
 constexpr char SC_PACKET_HIT = 16;
 constexpr char SC_PACKET_INVISIBLE = 17;
 constexpr char SC_PACKET_FIRE = 18;
+constexpr char SC_PACKET_TELEPORT = 19;
 
 #pragma pack(push ,1)
 
@@ -161,6 +162,18 @@ struct sc_packet_fire
 	float x;
 	float z;
 };
+
+struct sc_packet_teleport
+{
+	char size;
+	char type;
+	char mode;
+	float x;
+	float z;
+};
+
+constexpr unsigned char M_ADD = 0;
+constexpr unsigned char M_DEL = 1;
 
 struct sc_packet_hit
 {

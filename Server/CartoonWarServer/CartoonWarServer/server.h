@@ -63,6 +63,7 @@ public:
 	void send_hit_packet(int user_id, int other_id);
 	void send_invisible_packet(int user_id, int other_id, bool invi);
 	void send_fire_packet(int id, float mx, float mz);
+	void send_teleport_packet(int id, float mx, float mz, unsigned char m);
 
 	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);

@@ -197,6 +197,29 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		dynamic_cast<CFire*>(fire)->SetSCheck(true);
 	}
 	break;
+	case SC_PACKET_TELEPORT:
+	{
+		sc_packet_teleport* my_packet = reinterpret_cast<sc_packet_teleport*>(ptr);
+
+		if (M_ADD == my_packet->mode)
+		{
+			XMFLOAT2 fTemp = { my_packet->x,my_packet->z };
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Teleport", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", nullptr, (void*)&fTemp)))
+				return;
+		}
+		else
+		{
+			for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport"))
+			{
+				_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+				if ((iter0_Pos.x == my_packet->x) && (iter0_Pos.y == my_packet->z))
+				{
+					iter0->GetIsDead();
+				}
+			}
+		}
+	}
+	break;
 	case SC_PACKET_HIT:
 	{
 		sc_packet_hit* my_packet = reinterpret_cast<sc_packet_hit*>(ptr);

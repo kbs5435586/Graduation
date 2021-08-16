@@ -190,7 +190,12 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_TELEPORT:
     {
         cs_packet_teleport* packet = reinterpret_cast<cs_packet_teleport*>(buf);
-        //do_animation(user_id, packet->anim);
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            send_teleport_packet(i, packet->x, packet->z, M_ADD);
+        }
     }
     break;
     case CS_PACKET_FIRE:
@@ -1998,6 +2003,17 @@ void Server::send_fire_packet(int id, float mx, float mz)
     sc_packet_fire packet;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_FIRE;
+    packet.x = mx;
+    packet.z = mz;
+    send_packet(id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_teleport_packet(int id, float mx, float mz, unsigned char m)
+{
+    sc_packet_teleport packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_TELEPORT;
+    packet.mode = m;
     packet.x = mx;
     packet.z = mz;
     send_packet(id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
