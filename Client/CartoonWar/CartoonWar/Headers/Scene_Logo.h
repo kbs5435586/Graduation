@@ -30,7 +30,7 @@ private:
 	HRESULT					Ready_Layer_Logo(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManagement);
 private:
-	void					Input_ID_IP();
+	void					Input_ID_IP(const _float& fTimeDelta);
 public:
 	CRITICAL_SECTION		m_tCritical_Section_Shader = {};
 	HANDLE					m_hThread_Handle_Shader = {};
@@ -53,5 +53,7 @@ public:
 	static CScene_Logo* Create();
 protected:
 	virtual void			Free();
+private:
+	_float					m_fInputTime = 0.1f;
 };
 

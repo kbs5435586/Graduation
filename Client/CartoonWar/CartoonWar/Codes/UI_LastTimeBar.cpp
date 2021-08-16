@@ -82,7 +82,7 @@ void CUI_LastTimeBar::Render_GameObject()
 	matWorld._42 = -m_fY + (WINCY >> 1);
 
 	REP tRep = {};
-	tRep.m_arrInt[0] = m_iTimeCnt;
+	tRep.m_arrInt[0] = g_iTotalTime;
 
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);

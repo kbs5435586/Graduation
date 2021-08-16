@@ -38,6 +38,8 @@ bool        g_IsWin = false;
 bool        g_IsCollisionBox = false;
 bool        g_IsNaviMesh = false;
 bool        g_IsEnd = false;
+bool        g_IsFix = false;
+string      g_strIP = {};
 
 
 _vec3 g_vEyePt = _vec3(30.f, 100.0f, -20.0f);
