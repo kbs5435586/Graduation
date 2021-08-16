@@ -126,6 +126,22 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ATTACK:
     {
         cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
+        g_clients[user_id].m_isHit = true;
+        g_clients[user_id].m_cLock.lock();
+        unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
+        // 복사본 뷰리스트에 다른 쓰레드가 접근하면 어쩌냐? 그 정도는 감수해야함
+        g_clients[user_id].m_cLock.unlock();
+        send_fix_packet(user_id, user_id);
+        send_hit_packet(user_id, user_id);
+        for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
+        {
+            if (is_player(cpy_vl))
+            {
+                send_fix_packet(cpy_vl, user_id);
+                send_hit_packet(cpy_vl, user_id);
+            }
+        }
+
         for (int i = 0; i < OBJECT_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
@@ -136,10 +152,26 @@ void Server::process_packet(int user_id, char* buf)
                 continue;
             if (g_clients[i].m_team == g_clients[user_id].m_team)
                 continue;
-
-            //check_obb_collision(user_id, i);
-            g_clients[user_id].m_attack_target = i;
-            do_battle(user_id);
+            if (dist_between(user_id, i) >= 5.f)
+                continue;
+            if (check_obb_collision(user_id, i))
+            {
+                if (g_clients[user_id].m_isHit)
+                {
+                    g_clients[i].m_isOBB = true;
+                    g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
+                    g_clients[user_id].m_isHit = false;
+                    g_clients[i].m_hp -= ATTACK_DAMAGE;
+                    send_attacked_packet(user_id, i);
+                    for (auto cpy_vl : copy_viewlist)
+                    {
+                        if (is_player(cpy_vl))
+                        {
+                            send_attacked_packet(cpy_vl, i);
+                        }
+                    }
+                }
+            }
         }
     }
     break;
@@ -288,20 +320,25 @@ void Server::do_rotate(int user_id, char con)
     if (CON_IDLE == con)
     {
         c.m_cLock.lock();
-        c.m_curr_rotate = FUNC_PLAYER_IDLE;
+        c.m_curr_rotate = FUNC_PLAYER_R_IDLE;
         c.m_cLock.unlock();
         c.m_Rcondition = CON_IDLE;
+        add_timer(user_id, FUNC_PLAYER_R_IDLE, FRAME_TIME);
     }
     else if (CON_RIGHT == con)
     {
+        c.m_cLock.lock();
         c.m_curr_rotate = FUNC_PLAYER_RIGHT;
+        c.m_cLock.unlock();
         c.m_Rcondition = CON_RIGHT;
         //c.m_transform.Rotation_Y(ROTATE_SPEED);
         add_timer(user_id, FUNC_PLAYER_RIGHT, FRAME_TIME);
     }
     else if (CON_LEFT == con)
     {
+        c.m_cLock.lock();
         c.m_curr_rotate = FUNC_PLAYER_LEFT;
+        c.m_cLock.unlock();
         c.m_Rcondition = CON_LEFT;
         //c.m_transform.Rotation_Y(-ROTATE_SPEED);
         add_timer(user_id, FUNC_PLAYER_LEFT, FRAME_TIME);
@@ -331,11 +368,11 @@ void Server::update_npc_troop(int npc_id)
     if (C_WORKER == c.m_class)
         c.m_troop = T_INFT;
     if (C_CAVALRY == c.m_class)
-        c.m_troop = T_INFT;
+        c.m_troop = T_HORSE;
     if (C_TWO == c.m_class)
         c.m_troop = T_INFT;
     if (C_INFANTRY == c.m_class)
-        c.m_troop = T_HORSE;
+        c.m_troop = T_INFT;
     if (C_FOUR == c.m_class)
         c.m_troop = T_HORSE;
     if (C_SPEARMAN == c.m_class)
@@ -420,35 +457,36 @@ void Server::do_move(int user_id, char con)
     case CON_IDLE:
     {
         c.m_cLock.lock();
-        c.m_curr_move = FUNC_PLAYER_IDLE;
+        c.m_curr_move = FUNC_PLAYER_M_IDLE;
         c.m_cLock.unlock();
         c.m_Mcondition = CON_IDLE;
+        add_timer(user_id, FUNC_PLAYER_M_IDLE, FRAME_TIME);
     }
     break;
     case CON_STRAIGHT:
-        //if (newpos->z >= 0 || newpos->x >= 0)
     {
+        c.m_cLock.lock();
         c.m_curr_move = FUNC_PLAYER_STRAIGHT;
+        c.m_cLock.unlock();
         c.m_Mcondition = CON_STRAIGHT;
-        //c.m_transform.BackWard(MOVE_SPEED_PLAYER);
         add_timer(user_id, FUNC_PLAYER_STRAIGHT, FRAME_TIME);
     }
     break;
     case CON_RUN:
-        //if (newpos->z >= 0 || newpos->x >= 0)
     {
+        c.m_cLock.lock();
         c.m_curr_move = FUNC_PLAYER_RUN;
+        c.m_cLock.unlock();
         c.m_Mcondition = CON_RUN;
-        //c.m_transform.BackWard(MOVE_SPEED_PLAYER * 2.f);
         add_timer(user_id, FUNC_PLAYER_RUN, FRAME_TIME);
     }
     break;
     case CON_BACK:
-        //if (newpos->z < WORLD_VERTICAL || newpos->x < WORLD_HORIZONTAL)
     {
+        c.m_cLock.lock();
         c.m_curr_move = FUNC_PLAYER_BACK;
+        c.m_cLock.unlock();
         c.m_Mcondition = CON_BACK;
-        //c.m_transform.Go_Straight(MOVE_SPEED_PLAYER);
         add_timer(user_id, FUNC_PLAYER_BACK, FRAME_TIME);
     }
     break;
@@ -1140,13 +1178,13 @@ void Server::do_npc_rotate(int user_id, char con)
 
 float Server::dist_between(int user_id, int other_id)
 {
-    _vec3* pos1 = g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* pos2 = g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 pos1 = *g_clients[user_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    _vec3 pos2 = *g_clients[other_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
-    float dist = sqrt((pos1->x - pos2->x) * (pos1->x - pos2->x) + (pos1->y - pos2->y) * (pos1->y - pos2->y)
-        + (pos1->z - pos2->z) * (pos1->z - pos2->z));
+    _vec3 vLenTemp = Vector3_::Subtract(pos1, pos2);
+    _float fLen = vLenTemp.Length();
 
-    return dist;
+    return fLen;
 }
 
 float Server::dist_between_finalPos(int user_id, int i)
@@ -1238,7 +1276,9 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
         }
     }
 
-    Update_Collider(npc_id, n.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_OBB);
+    Update_Collider(npc_id, n.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
+    Update_Collider(npc_id, n.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
+    Obb_Collision(npc_id);
 
     for (auto& c : g_clients) // aabb 충돌체크
     {
@@ -1337,6 +1377,12 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
     {
         switch (func_id)
         {
+        case FUNC_PLAYER_M_IDLE:
+        {
+            isMove = true;
+            c.m_last_move = FUNC_PLAYER_M_IDLE;
+        }
+        break;
         case FUNC_PLAYER_STRAIGHT:
         {
             isMove = true;
@@ -1356,6 +1402,11 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             isMove = true;
             c.m_last_move = FUNC_PLAYER_BACK;
             c.m_transform.Go_Straight(MOVE_TIME_ELAPSE);
+        }
+        break;
+        case FUNC_PLAYER_R_IDLE:
+        {
+            c.m_last_rotate = FUNC_PLAYER_R_IDLE;
         }
         break;
         case FUNC_PLAYER_LEFT:
@@ -1394,6 +1445,8 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         newpos->z = 0;
 
     Update_Collider(player_id, c.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
+    Update_Collider(player_id, c.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
+    Obb_Collision(player_id);
 
     for (auto& o : g_clients) // aabb 충돌체크
     {
@@ -1505,7 +1558,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
             }
         }
     }
-    ;
+
     if (isMove)
     {
         if (c.m_last_move == c.m_curr_move)
@@ -1567,7 +1620,8 @@ void Server::do_timer()
             case FUNC_BATTLE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
-            case FUNC_PLAYER_IDLE:
+            case FUNC_PLAYER_M_IDLE:
+            case FUNC_PLAYER_R_IDLE:
             case FUNC_PLAYER_STRAIGHT:
             case FUNC_PLAYER_BACK:
             case FUNC_PLAYER_LEFT:
@@ -1731,7 +1785,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_cLock.lock();
             g_clients[npc_id].m_status = ST_SLEEP;
             g_clients[npc_id].m_cLock.unlock();
-            g_clients[npc_id].m_hp = 200;
+            g_clients[npc_id].m_hp = SET_HP;
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_UP,
                 g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_UP));
             g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_LOOK,
@@ -1852,6 +1906,17 @@ void Server::send_enter_packet(int user_id, int other_id)
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_view_list.insert(other_id);
     g_clients[user_id].m_cLock.unlock();
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_hit_packet(int user_id, int other_id)
+{
+    sc_packet_hit packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_HIT;
+    packet.id = other_id;
+    packet.ishit = g_clients[other_id].m_isHit;
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -2079,9 +2144,7 @@ void Server::do_attack(int npc_id)
             {
                 if(!n.m_isFighting)
                     add_timer(npc_id, FUNC_BATTLE, 1);
-                n.m_Mcondition = CON_IDLE;
-                n.m_Rcondition = CON_IDLE;
-                n.m_anim = A_ATTACK;
+
                 n.m_isFighting = true;
             }
             else
@@ -2351,44 +2414,64 @@ void Server::set_starting_pos(int user_id)
     //곱하기 7.5배 / 맵사이즈  3750 - 3750
 }
 
-void Server::do_battle(int id)
+void Server::do_battle(int npc_id)
 {
-    g_clients[id].m_isHit = true;
-    SESSION& att = g_clients[id];
-    g_clients[att.m_attack_target].m_hp -= ATTACK_DAMAGE;
-    if (g_clients[att.m_attack_target].m_hp <= 0) // 죽은 상태면
+    SESSION& n = g_clients[npc_id];
+    n.m_isHit = true;
+
+    for (int i = 0; i < NPC_START; ++i)
     {
-        if (ST_DEAD == g_clients[att.m_attack_target].m_status)
-            return;
-        g_clients[att.m_attack_target].m_hp = 0;
-        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
-        g_clients[att.m_attack_target].m_status = ST_DEAD;
-        cout << att.m_attack_target << " is dead\n";
-        send_leave_packet(att.m_attack_target, att.m_attack_target);
-        for (int i = 0; i < NPC_START; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status)
-                continue;
-            if (!is_near(i, att.m_attack_target))
-                continue;
-            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-            send_leave_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
-        }
-        att.m_attack_target = -1;
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+        if (!is_near(i, npc_id))
+            continue;
+
+        send_fix_packet(i, npc_id);
+        send_hit_packet(i, npc_id);
     }
-    else // 맞은 이후에 체력이 남아있는 상태면
+
+    if (g_clients[n.m_attack_target].m_hp > 0)
     {
+        if (check_obb_collision(npc_id, n.m_attack_target))
+        {
+            if (n.m_isHit)
+            {
+                g_clients[n.m_attack_target].m_isOBB = true;
+                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                n.m_isHit = false;
+                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+
+                for (int i = 0; i < NPC_START; ++i)
+                {
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+                    if (!is_near(i, n.m_attack_target))
+                        continue;
+                    // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+                    send_attacked_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                }
+            }
+        }
+        add_timer(npc_id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
+    }
+    else
+    {
+        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
+            return;
+        g_clients[n.m_attack_target].m_hp = 0;
+        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
+        g_clients[n.m_attack_target].m_status = ST_DEAD;
+        cout << n.m_attack_target << " is dead\n";
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
                 continue;
-            if (!is_near(i, att.m_attack_target))
+            if (!is_near(i, n.m_attack_target))
                 continue;
             // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-            send_attacked_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
+            send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
         }
-        if (!is_player(id))
-            add_timer(id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
+        n.m_attack_target = -1;
     }
 }
 
@@ -2473,7 +2556,7 @@ void Server::worker_thread()
 
                 g_clients[user_id].m_owner_id = user_id;
                 g_clients[user_id].m_type = TP_PLAYER;
-                g_clients[user_id].m_hp = 200;
+                g_clients[user_id].m_hp = SET_HP;
                 g_clients[user_id].m_total_angle = -90.f;
                 g_clients[user_id].m_Mcondition = CON_IDLE;
                 g_clients[user_id].m_Rcondition = CON_IDLE;
@@ -2965,7 +3048,7 @@ void Server::Obb_Collision(int id)
     {
         if (!o.m_isBazier)
         {
-            _vec3 vTargetPos = *g_clients[o.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
             _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 vTemp = { vPos - vTargetPos };
             vTemp *= 5.f;

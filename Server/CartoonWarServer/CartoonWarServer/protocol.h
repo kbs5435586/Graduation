@@ -82,6 +82,7 @@ constexpr char SC_PACKET_FLAG_BOOL = 12;
 constexpr char SC_PACKET_TIME = 13;
 constexpr char SC_PACKET_FIX = 14;
 constexpr char SC_PACKET_NPC_SIZE = 15;
+constexpr char SC_PACKET_HIT = 16;
 
 #pragma pack(push ,1)
 
@@ -145,6 +146,14 @@ struct sc_packet_time
 	char size;
 	char type;
 	float time;
+};
+
+struct sc_packet_hit
+{
+	char size;
+	char type;
+	int id;
+	bool ishit;
 };
 
 constexpr unsigned char O_PLAYER = 0;

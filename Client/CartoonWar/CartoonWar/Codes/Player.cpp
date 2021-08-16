@@ -92,7 +92,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 	server->AddRef();
-
+	m_IsHit = server->Get_isHitPL(m_iLayerIdx);
 	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
 	m_IsShow = server->Get_ShowOtherPlayer(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
@@ -185,8 +185,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		if (m_IsHit)
 		{
 			m_IsHit = false; // ¼öÁ¤
-			server->Set_AnimNPC(m_iLayerIdx, 0);
-			server->Set_isHitNPC(m_iLayerIdx, m_IsHit);
+			server->Set_AnimPL(m_iLayerIdx, 0);
+			server->Set_isHitPL(m_iLayerIdx, m_IsHit);
 		}
 	}
 	
@@ -269,7 +269,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			}
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
-			if (m_IsInvisible)
+			if (m_IsInvisible) //  server->Get_PlayerInvisible(m_iLayerIdx)
 			{
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 					return -1;
@@ -1608,7 +1608,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Up(KEY_SPACE))
 	{
-		m_IsInvisible = !m_IsInvisible;
+		if (m_eCurClass == CLASS::CLASS_ARCHER)
+		{
+			m_IsInvisible = !m_IsInvisible;
+			//send invisible packet;
+		}
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))

@@ -183,6 +183,13 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		my_npc = my_packet->npc_size;
 	}
 	break;
+	case SC_PACKET_HIT:
+	{
+		sc_packet_hit* my_packet = reinterpret_cast<sc_packet_hit*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].isHit = my_packet->ishit;
+	}
+	break;
 	case SC_PACKET_FIX:
 	{
 		managment = CManagement::GetInstance();

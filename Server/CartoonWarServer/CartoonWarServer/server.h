@@ -31,6 +31,7 @@ private:
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
+	int SET_HP = 100;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 300;
@@ -59,6 +60,7 @@ public:
 	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_size_packet(int user_id);
 	void send_class_change_packet(int user_id, int other_id);
+	void send_hit_packet(int user_id, int other_id);
 
 	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);
