@@ -115,6 +115,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsShow)
 	{
 		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		m_pTransformCom->Set_PositionY(fY);
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 		{
 			//Z
