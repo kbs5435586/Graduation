@@ -35,8 +35,9 @@ public:
 	void					Go_Straight(const _float& fTimeDelta);
 	void					Go_Left(const _float& fTimeDelta);
 	void					Go_Right(const _float& fTimeDelta);
-	void					Go_Up(const _float& fTimeDelta);
 	void					Go_There(const _vec3& vPos);
+	void					Go_MouseMoveLR(const _float& fTimeDelta);
+	void					Go_MouseMoveUD(const _float& fTimeDelta);
 	void					BackWard(const _float& fTimeDelta);
 	void					UP(const _float& fTimeDelta);
 	void					Fallen(const _float& fTimeDelta);

@@ -24,7 +24,6 @@ public:
 public:
 	_bool&									GetOBBCollision(){return m_IsOBB_Collision;}
 	_bool&									GetIsHit(){return m_IsHit;}
-	_bool&									GetIsDash() { return m_IsDash; }
 	_bool&									GetIsDead(){return m_IsDead;}
 	_bool&									GetIsParticle(){return m_IsParticle;}
 	_bool&									GetIsBack() {return m_IsBack;}
@@ -71,7 +70,6 @@ protected:
 	_bool									m_IsClone = false;
 	_bool									m_IsOBB_Collision = false; 
 	_bool									m_IsBazier = false;
-	_bool									m_IsDash = false;
 	_bool									m_IsDead = false;
 	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;

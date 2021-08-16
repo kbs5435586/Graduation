@@ -1958,7 +1958,6 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 {
-	
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 	m_IsDeffend = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 
