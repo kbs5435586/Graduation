@@ -215,6 +215,7 @@ void Server::process_packet(int user_id, char* buf)
                 g_clients[i].m_team = g_clients[user_id].m_team;
                 g_clients[i].m_count = 0;
                 do_dot_damage(i);
+                break;
             }
         } 
     }
