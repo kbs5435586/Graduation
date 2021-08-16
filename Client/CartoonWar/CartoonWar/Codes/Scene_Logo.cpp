@@ -75,8 +75,6 @@ CScene_Logo::CScene_Logo()
 HRESULT CScene_Logo::Ready_Scene()
 {
 	m_eSceneID = SCENEID::SCENE_LOGO;
-
-
 	InitializeCriticalSection(&m_tCritical_Section_Mesh);
 	m_hThread_Handle_Mesh = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
 	InitializeCriticalSection(&m_tCritical_Section_Shader);
@@ -127,7 +125,7 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(const _float& fTimeDelta)
 {
-	Input_ID_IP();
+	Input_ID_IP(fTimeDelta);
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -135,6 +133,7 @@ _int CScene_Logo::LastUpdate_Scene(const _float& fTimeDelta)
 {
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
+		g_strIP = m_strIP;
 		CManagement* pManagement = CManagement::GetInstance();
 		if (nullptr == pManagement)
 			return -1;
@@ -234,428 +233,460 @@ HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManag
 	return S_OK;
 }
 
-void CScene_Logo::Input_ID_IP()
+void CScene_Logo::Input_ID_IP(const _float& fTimeDelta)
 {
 	if (m_pInput->Get_DIKeyState(DIK_RETURN) & 0x80)
 		m_IsIP = false;
 
-
-	if (m_pInput->Get_DIKeyState(DIK_1) & 0x8000)
+	m_fInputTime += fTimeDelta;
+	if (m_fInputTime >= 0.2f)
 	{
-
-		if (m_IsIP)
+		if (m_pInput->Get_DIKeyState(DIK_1) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "1";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
-				return;
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "1";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "1";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
 		}
-		else
+		else if (m_pInput->Get_DIKeyState(DIK_2) & 0x8000)
 		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "2";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "2";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_3) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "3";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "3";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_4) & 0x8000)
+		{
+
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "4";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "4";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_5) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "5";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "5";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_6) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "6";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "6";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_7) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "7";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "7";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_8) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "8";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "8";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_9) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "9";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "9";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_0) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += "0";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += "0";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_RCONTROL) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP += ".";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}
+			else
+			{
+				CManagement::GetInstance()->Delete_Font(L"ID");
+				m_strID += ".";
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+					return;
+			}
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_BACKSPACE) & 0x8000)
+		{
+			if (m_IsIP)
+			{
+				CManagement::GetInstance()->Delete_Font(L"IP");
+				m_strIP.pop_back();
+				if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+					return;
+			}	
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_Q) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "1";
+			m_strID += "Q";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_2) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_W) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "2";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "2";
+			m_strID += "W";
+			float drawX = (float)((((_float)WINCX / 2) * -1) + 30);
+			float drawY = (float)(((_float)WINCY / 2) - 30);
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_3) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_E) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "3";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "3";
+			m_strID += "E";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_4) & 0x80)
-	{
-
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_R) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "4";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "4";
+			m_strID += "R";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_5) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_T) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "5";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "5";
+			m_strID += "T";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_6) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_Y) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "6";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "6";
+			m_strID += "Y";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_7) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_U) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "7";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "7";
+			m_strID += "U";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_8) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_I) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "8";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "8";
+			m_strID += "I";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_9) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_O) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "9";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "9";
+			m_strID += "O";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_0) & 0x80)
-	{
-		if (m_IsIP)
+		else if (m_pInput->Get_DIKeyState(DIK_P) & 0x8000)
 		{
-			CManagement::GetInstance()->Delete_Font(L"IP");
-			m_strIP += "0";
-			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"IP", m_strIP.c_str(), -60, -70)))
+			if (m_IsIP)
 				return;
-		}
-		else
-		{
 			CManagement::GetInstance()->Delete_Font(L"ID");
-			m_strID += "0";
+			m_strID += "P";
 			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
 				return;
 		}
-	}
 
-	else if (m_pInput->Get_DIKeyState(DIK_Q) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "Q";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_W) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "W";
-		float drawX = (float)((((_float)WINCX / 2) * -1) + 30);
-		float drawY = (float)(((_float)WINCY / 2) - 30);
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_E) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "E";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_R) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "R";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_T) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "T";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_Y) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "Y";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_U) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "U";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_I) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "I";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_O) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "O";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_P) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "P";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
+		else if (m_pInput->Get_DIKeyState(DIK_A) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "A";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_S) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "S";
 
-	else if (m_pInput->Get_DIKeyState(DIK_A) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "A";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_S) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "S";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_D) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "D";
 
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_D) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "D";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_F) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "F";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_G) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "G";
 
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_F) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "F";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_G) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "G";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_H) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "H";
 
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_H) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "H";
-
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_J) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "J";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_K) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "K";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_L) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "L";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_J) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "J";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_K) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "K";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_L) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "L";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
 
 
-	else if (m_pInput->Get_DIKeyState(DIK_Z) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "Z";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
+		else if (m_pInput->Get_DIKeyState(DIK_Z) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "Z";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_X) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "X";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_C) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "C";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_V) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "V";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_B) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "B";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_N) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "N";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+		else if (m_pInput->Get_DIKeyState(DIK_N) & 0x8000)
+		{
+			if (m_IsIP)
+				return;
+			CManagement::GetInstance()->Delete_Font(L"ID");
+			m_strID += "N";
+			if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
+				return;
+		}
+
+		m_fInputTime = 0.f;
 	}
-	else if (m_pInput->Get_DIKeyState(DIK_X) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "X";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_C) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "C";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_V) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "V";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_B) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "B";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_N) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "N";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
-	else if (m_pInput->Get_DIKeyState(DIK_N) & 0x80)
-	{
-		if (m_IsIP)
-			return;
-		CManagement::GetInstance()->Delete_Font(L"ID");
-		m_strID += "N";
-		if (FAILED(CManagement::GetInstance()->Create_Font_Buffer(L"ID", m_strID.c_str(), -60, -110)))
-			return;
-	}
+	
+
 }
 
 
@@ -666,7 +697,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_RectTex",
 		CBuffer_RectTex::Create())))
-		return E_FAIL; 
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeCol",
 		CBuffer_CubeCol::Create())))
 		return E_FAIL;
@@ -974,7 +1005,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 
 
 
-	
+
 	}
 
 
@@ -1300,7 +1331,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Mantlet0.fbx", L"../Data/MeshData/Deffend.dat"))))
 		//	return E_FAIL;
-		
+
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Brazier/Brazier01.fbx", L"../Data/MeshData/Brazier01.dat"))))
 		//	return E_FAIL;
@@ -1337,7 +1368,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_WaterNor",
 			CTexture::Create(L"../Bin/Resource/Texture/Water/WaterNormal%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 			return E_FAIL;
-	
+
 	}
 
 	//PNGJPG
@@ -1436,7 +1467,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/Terrain/NGround%d.tga", 3, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Flag",
-			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga",1, TEXTURE_TYPE::TEXTURE_TGA))))
+			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 	}
 
