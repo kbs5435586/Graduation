@@ -284,6 +284,7 @@
     <ClInclude Include="..\Headers\UI_Aim.h" />
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
+    <ClInclude Include="..\Headers\UI_End.h" />
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_GoldIcon.h" />
     <ClInclude Include="..\Headers\UI_LastTime.h" />
@@ -435,6 +436,7 @@
     <ClCompile Include="..\Codes\UI_Aim.cpp" />
     <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
+    <ClCompile Include="..\Codes\UI_End.cpp" />
     <ClCompile Include="..\Codes\UI_Gold.cpp" />
     <ClCompile Include="..\Codes\UI_GoldIcon.cpp" />
     <ClCompile Include="..\Codes\UI_LastTime.cpp" />
@@ -631,6 +633,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
+      <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
       <FileType>Document</FileType>
