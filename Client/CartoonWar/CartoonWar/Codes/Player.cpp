@@ -170,7 +170,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 10.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		m_IsFrustum = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -1375,7 +1375,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		m_tInfo.fHP -= 1.f;
+		m_eCurTeam = TEAM::TEAM_BLUE;
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))

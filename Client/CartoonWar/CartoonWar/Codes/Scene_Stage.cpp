@@ -37,6 +37,7 @@
 #include "UI_Mul.h"
 #include "UI_LastTimeBar.h"
 #include "UI_Gold.h"
+#include "UI_End.h"
 
 // Environment
 #include "Fire.h"
@@ -163,6 +164,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_LastTimeBar", CUI_LastTimeBar::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Gold", CUI_Gold::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_End", CUI_End::Create())))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
@@ -376,6 +379,8 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_LastTime", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_LastTimeBar", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
+		return E_FAIL;	
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_End", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))

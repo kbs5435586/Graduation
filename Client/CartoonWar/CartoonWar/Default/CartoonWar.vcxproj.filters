@@ -493,6 +493,9 @@
     <Filter Include="02. GameObject\97. UI\93. UI_Gold">
       <UniqueIdentifier>{6918c0cd-ba06-43af-9546-44d7a4172453}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\92. UI_End">
+      <UniqueIdentifier>{bb1bf9be-d73a-443d-a330-07224651a31f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -918,6 +921,9 @@
     <ClInclude Include="..\Headers\UI_Gold.h">
       <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_End.h">
+      <Filter>02. GameObject\97. UI\92. UI_End</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1314,6 +1320,9 @@
     <ClCompile Include="..\Codes\UI_Gold.cpp">
       <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_End.cpp">
+      <Filter>02. GameObject\97. UI\92. UI_End</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1443,6 +1452,9 @@
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_LastTime.hlsl">
+      <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
   </ItemGroup>

@@ -19,6 +19,8 @@ private://Range
     void                    Range();
 private: //OBB
     void                    Player_to_NPC_Attack_Collision();
+    void                    Player_to_Player_Attack_Collision();
+    void                    NPC_to_NPC_Attack_Collision();
     void                    Player_to_Deffend_Attack_Collision();
     void                    NPC_to_Deffend_Attack_Collision();
 private:
