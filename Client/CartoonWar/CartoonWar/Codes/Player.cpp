@@ -1428,7 +1428,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_IsActioning = true;
 			m_IsOnce = true;
 			m_IsHit = true;
-			m_IsCombat = true;
+			//m_IsCombat = true;
 		}
 	}
 
@@ -2007,7 +2007,6 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 	if (m_IsInvisible && m_InvisibleOnce)
 	{
 		m_InvisibleOnce = false;
-		m_IsInvisibleSkillActive = true;
 		server->send_invisible_packet(true);
 	}
 
