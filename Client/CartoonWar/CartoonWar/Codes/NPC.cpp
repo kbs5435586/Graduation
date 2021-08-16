@@ -110,10 +110,8 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 
 	}
-	//if (m_IsDead)
-	//	Resurrection();
 	if (m_IsDead)
-		return DEAD_OBJ;
+		Resurrection();
 	Play_Sound(fTimeDelta);
 	return NO_EVENT;
 }

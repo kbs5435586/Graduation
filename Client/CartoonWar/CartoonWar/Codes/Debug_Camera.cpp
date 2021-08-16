@@ -196,65 +196,65 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 
 
-	//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	//if (nullptr == pTerrainBuffer)
-	//	return NO_EVENT;
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return NO_EVENT;
 
-	//_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransform);
-	//_float		fThisY = m_pTransform->Get_Matrix()._42;
-	//if (fThisY <= fY)
-	//{
-	//	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-	//		L"Layer_Player", L"Com_Transform", 0);
-	//	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
-
-	//	_vec3 vPos, vRight, vUp, vLook;
-	//	vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	//	vRight = {};
-	//	vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
-	//	vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
-
-	//		if (m_IsFix)
-	//	{
-	//		if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-	//			dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
-	//		{
-	//			vPos.y += 5.f;
-	//			vUp *= 20.f;
-	//			vLook *= -5.f;
-	//		}
-	//		else
-	//		{
-	//			vPos.y += 5.f;
-	//			vUp *= 40.f;
-	//			vLook *= -5.f;
-	//		}
-
-	//	}
-	//	else
-	//	{
-	//		vPos.y += 5.f;
-	//		vUp *= 50.f;
-	//		vLook *= -20.f;
-	//	}
-	//	_vec3 vTemp = vUp - vLook;
-	//	vPos = vPos + vTemp;
-	//	vRight = Vector3_::CrossProduct(vUp, vLook);
-	//	vUp = Vector3_::Normalize(vUp);
-	//	vLook = Vector3_::Normalize(vLook);
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransform);
+	_float		fThisY = m_pTransform->Get_Matrix()._42;
+	if (fThisY <= fY)
+	{
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Player", L"Com_Transform", 0);
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
 
-	//	_long	MouseMove = 0;
-	//	m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	//	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-	//	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	//	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	//}
+		_vec3 vPos, vRight, vUp, vLook;
+		vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		vRight = {};
+		vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
+		vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
+
+			if (m_IsFix)
+		{
+			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
+				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+			{
+				vPos.y += 5.f;
+				vUp *= 20.f;
+				vLook *= -5.f;
+			}
+			else
+			{
+				vPos.y += 5.f;
+				vUp *= 40.f;
+				vLook *= -5.f;
+			}
+
+		}
+		else
+		{
+			vPos.y += 5.f;
+			vUp *= 50.f;
+			vLook *= -20.f;
+		}
+		_vec3 vTemp = vUp - vLook;
+		vPos = vPos + vTemp;
+		vRight = Vector3_::CrossProduct(vUp, vLook);
+		vUp = Vector3_::Normalize(vUp);
+		vLook = Vector3_::Normalize(vLook);
+
+
+		_long	MouseMove = 0;
+		m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
+		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	}
 
 
 

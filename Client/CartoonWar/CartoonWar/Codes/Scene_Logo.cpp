@@ -116,7 +116,7 @@ HRESULT CScene_Logo::Ready_Scene()
 		return E_FAIL;
 	drawX = (float)((((_float)WINCX / 2) * -1) + 30);
 	drawY = (float)(((_float)WINCY / 2) - 30);
-	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strIP.c_str(), 100, 100)))
+	if (FAILED(pManagement->Create_Font_Buffer(L"ID", m_strID.c_str(), 100, 100)))
 		return E_FAIL;
 
 	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, LOGO, 0.f, FMOD_LOOP_NORMAL);
@@ -135,7 +135,6 @@ _int CScene_Logo::LastUpdate_Scene(const _float& fTimeDelta)
 {
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
-
 		CManagement* pManagement = CManagement::GetInstance();
 		if (nullptr == pManagement)
 			return -1;

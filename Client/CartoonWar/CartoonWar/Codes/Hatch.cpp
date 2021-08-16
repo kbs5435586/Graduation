@@ -43,7 +43,12 @@ HRESULT CHatch::Ready_GameObject(void* pArg)
 
 _int CHatch::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
+	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	if (nullptr == pTerrainBuffer)
+		return -1;
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY);
 	return _int();
 }
 

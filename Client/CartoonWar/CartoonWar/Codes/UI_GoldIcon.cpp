@@ -46,7 +46,7 @@ _int CUI_GoldIcon::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI_BACK, this)))
 			return E_FAIL;
 	}
 
