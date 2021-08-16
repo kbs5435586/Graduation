@@ -234,8 +234,8 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		}
 	}
 
-		Safe_Release(server);
-		return _int();
+	Safe_Release(server);
+	return _int();
 }
 
 void CNPC::Render_GameObject()
