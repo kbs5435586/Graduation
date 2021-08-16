@@ -497,12 +497,48 @@ void CServer_Manager::send_change_formation_packet()
 	send_packet(&l_packet);
 }
 
+void CServer_Manager::send_arrow_packet()
+{
+	cs_packet_arrow l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_ARROW;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_change_formation_packet()
+{
+	cs_packet_change_formation l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_CHANGE_FORMATION;
+	send_packet(&l_packet);
+}
+
 void CServer_Manager::send_animation_packet(unsigned char anim)
 {
 	cs_packet_animation l_packet;
 	l_packet.size = sizeof(l_packet);
 	l_packet.type = CS_PACKET_ANIMATION;
 	l_packet.anim = anim;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_fire_packet(float mx, float mz)
+{
+	cs_packet_fire l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_FIRE;
+	l_packet.x = mx;
+	l_packet.z = mz;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_teleport_packet(float mx, float mz)
+{
+	cs_packet_teleport l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_TELEPORT;
+	l_packet.x = mx;
+	l_packet.z = mz;
 	send_packet(&l_packet);
 }
 

@@ -66,6 +66,9 @@ constexpr char CS_PACKET_ANIMATION = 7;
 constexpr char CS_PACKET_POSITION = 8;
 constexpr char CS_PACKET_CLASS_CHANGE = 9;
 constexpr char CS_PACKET_TROOP_CHANGE = 10;
+constexpr char CS_PACKET_TELEPORT = 11;
+constexpr char CS_PACKET_FIRE = 12;
+constexpr char CS_PACKET_ARROW = 13;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
@@ -303,6 +306,22 @@ struct cs_packet_login
 	char	name[MAX_ID_LEN];
 };
 
+struct cs_packet_fire
+{
+	char	size;
+	char	type;
+	float	x;
+	float	z;
+};
+
+struct cs_packet_teleport
+{
+	char	size;
+	char	type;
+	float	x;
+	float	z;
+};
+
 struct cs_packet_condition
 {
 	char	size;
@@ -322,6 +341,12 @@ constexpr unsigned char GO_FAST_FORWARD = 6;
 constexpr unsigned char GO_COLLIDE = 9;
 
 struct cs_packet_attack
+{
+	char	size;
+	char	type;
+};
+
+struct cs_packet_arrow
 {
 	char	size;
 	char	type;

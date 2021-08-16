@@ -54,6 +54,9 @@ public:
     void send_position_packet(_vec3* pos);
     void send_class_change_packet(int idx, char type);
     void send_change_troop();
+    void send_fire_packet(float mx, float mz);
+    void send_teleport_packet(float mx, float mz);
+    void send_arrow_packet();
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);

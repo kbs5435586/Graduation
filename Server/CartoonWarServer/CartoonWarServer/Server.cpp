@@ -181,6 +181,24 @@ void Server::process_packet(int user_id, char* buf)
         do_animation(user_id, packet->anim);
     }
     break;
+    case CS_PACKET_ARROW:
+    {
+        cs_packet_arrow* packet = reinterpret_cast<cs_packet_arrow*>(buf);
+        do_animation(user_id, packet->anim);
+    }
+    break;
+    case CS_PACKET_TELEPORT:
+    {
+        cs_packet_animation* packet = reinterpret_cast<cs_packet_animation*>(buf);
+        do_animation(user_id, packet->anim);
+    }
+    break;
+    case CS_PACKET_FIRE:
+    {
+        cs_packet_animation* packet = reinterpret_cast<cs_packet_animation*>(buf);
+        do_animation(user_id, packet->anim);
+    }
+    break;
     case CS_PACKET_POSITION:
     {
         cs_packet_position* packet = reinterpret_cast<cs_packet_position*>(buf);
