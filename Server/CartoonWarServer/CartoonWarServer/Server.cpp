@@ -1412,7 +1412,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     if (n.m_LastAnim != n.m_anim)
         do_animation(npc_id, n.m_anim);
 
-    if (ST_ACTIVE == g_clients[npc_id].m_status)
+    if (ST_ACTIVE == g_clients[npc_id].m_status && !g_clients[npc_id].m_isOBB)
         add_timer(npc_id, g_clients[npc_id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
 }
 
@@ -3201,7 +3201,6 @@ void Server::Obb_Collision(int id)
         o.m_fBazierCnt = 0.f;
         o.m_isOBB = false;
         o.m_isBazier = false;
-
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
@@ -3210,6 +3209,8 @@ void Server::Obb_Collision(int id)
                 continue;
             send_fix_packet(i, id);
         }
+        if (!is_player(id) && is_object(id))
+            add_timer(id, g_clients[id].m_last_order, FRAME_TIME); // 생성 이후 반복 간격
     }
 }
 
