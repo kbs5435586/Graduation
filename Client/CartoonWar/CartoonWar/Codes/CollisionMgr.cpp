@@ -533,30 +533,8 @@ void CCollisionMgr::NPC_to_NPC_Collision()
 			_float fLen = vLenTemp.Length();
 			if (fLen >= 4.f)
 				continue;
-			//dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_AABB"))
-			//	->Collision_AABB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_AABB")), pIter0Transform, pIter1Transform);
-			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_Attack"))
-				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_Attack"))))
-			{
-				if (iter0->GetIsHit())
-				{
-					(iter1)->GetIsBack() = true;
-					(iter1)->GetOBBCollision() = true;
-					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-					iter1->GetIsParticle() = true;
-					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
-				}
-				else if (iter1->GetIsHit())
-				{
-					(iter0)->GetIsBack() = true;
-					(iter0)->GetOBBCollision() = true;
-					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
-					iter0->GetIsParticle() = true;
-					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
-				}
-			}
+			dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_AABB"))
+				->Collision_AABB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_AABB")), pIter0Transform, pIter1Transform);
 		}
 	}
 }

@@ -2544,7 +2544,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_owner_id = user_id;
                 g_clients[user_id].m_type = TP_PLAYER;
                 g_clients[user_id].m_hp = SET_HP;
-                g_clients[user_id].m_total_angle = -90.f;
+                g_clients[user_id].m_total_angle = -90.f; // ¼öÁ¤
                 g_clients[user_id].m_Mcondition = CON_IDLE;
                 g_clients[user_id].m_Rcondition = CON_IDLE;
                 g_clients[user_id].m_LastMcondition = CON_IDLE;
