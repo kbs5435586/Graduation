@@ -98,7 +98,12 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
 		}
-		else if(pClass == CLASS::CLASS_ARCHER || pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
+		else if (pClass == CLASS::CLASS_ARCHER && pArgTemp.z == 1)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+				return E_FAIL;
+		}
+		else if(pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
@@ -151,8 +156,8 @@ void CUI_Skill::Render_GameObject()
 	}
 	else if (pClass == CLASS::CLASS_ARCHER)
 	{
-		if (pArgTemp.z == 0)
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t0);
+		//if (pArgTemp.z == 0)
+		//	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(3), TEXTURE_REGISTER::t0);
 		if (pArgTemp.z == 1)
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
 	}
@@ -330,32 +335,33 @@ void CUI_Skill::sArcher(const _float& fTimeDelta)
 	}
 	else
 	{
-		if (pArgTemp.z == 0)
-		{
-			if (CManagement::GetInstance()->Key_Down(KEY_Z))
-			{
-
-				m_fSizeX = m_fSizeX - 10.f;
-				m_fSizeY = m_fSizeY - 10.f;
-				IsDown = true;
-
-			}
-
-			if (IsDown)
-			{
-				if (CManagement::GetInstance()->Key_Up(KEY_Z))
-				{
-					m_fSizeX = m_fSizeX + 10.f;
-					m_fSizeY = m_fSizeY + 10.f;
-
-					m_CoolTime = 0.f;
-					m_Active = true;
-					m_SkillActive = true;
-					IsDown = false;
-				}
-			}
-		}
-		else if (pArgTemp.z == 1)
+		//if (pArgTemp.z == 0)
+		//{
+		//	if (CManagement::GetInstance()->Key_Down(KEY_Z))
+		//	{
+		//
+		//		m_fSizeX = m_fSizeX - 10.f;
+		//		m_fSizeY = m_fSizeY - 10.f;
+		//		IsDown = true;
+		//
+		//	}
+		//
+		//	if (IsDown)
+		//	{
+		//		if (CManagement::GetInstance()->Key_Up(KEY_Z))
+		//		{
+		//			m_fSizeX = m_fSizeX + 10.f;
+		//			m_fSizeY = m_fSizeY + 10.f;
+		//
+		//			m_CoolTime = 0.f;
+		//			m_Active = true;
+		//			m_SkillActive = true;
+		//			IsDown = false;
+		//		}
+		//	}
+		//}
+		//else if (pArgTemp.z == 1)
+		if (pArgTemp.z == 1)
 		{
 			if (CManagement::GetInstance()->Key_Down(KEY_X))
 			{

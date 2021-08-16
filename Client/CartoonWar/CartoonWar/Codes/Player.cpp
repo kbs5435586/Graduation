@@ -1865,18 +1865,39 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 void CPlayer::SkillClear()
 {
-	CServer_Manager* server = CServer_Manager::GetInstance();
-	if (nullptr == server)
-		return;
-	server->AddRef();
-	///
+	//CServer_Manager* server = CServer_Manager::GetInstance();
+	//if (nullptr == server)
+	//	return;
+	//server->AddRef();
+	/////
+
+	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
+	{}
+	else
+	{
+		if (m_IsFire)
+		{
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
+			int numver = lst.size();
+			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
+			fire->GetIsDead() = true;
+		}
+		if (m_IsTeleport)
+		{
+			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+			int numver = lst.size();
+			CGameObject* tele = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+			tele->GetIsDead() = true;
+		}
+	}
+
 	m_DeffendOnce = false;
 	m_IsDeffend = false;
 
 	m_InvisibleOnce = false;
 	m_IsInvisible = false;
 	m_IsInvisibleON = false;
-	server->send_invisible_packet(false);
+	//server->send_invisible_packet(false);
 
 	m_GetFire = false;
 	m_IsFire = false;
@@ -1898,7 +1919,7 @@ void CPlayer::SkillClear()
 	dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
 
 	///
-	Safe_Release(server);
+	//Safe_Release(server);
 }
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
@@ -1980,7 +2001,6 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 
 			CGameObject* buffercom = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", 0);
 			BRUSHINFO bPos = dynamic_cast<CTerrain_Height*>(buffercom)->GetBrushINFO();
-
 
 			*iter0_Pos = _vec3(bPos.vBrushPos.x, bPos.vBrushPos.y, bPos.vBrushPos.z);
 		}
