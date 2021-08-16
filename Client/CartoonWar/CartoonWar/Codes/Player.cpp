@@ -179,12 +179,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			server->send_animation_packet(A_IDLE);
 		}
 		m_IsOnce = false;
-		if (m_IsHit)
-		{
-			m_IsHit = false; // 수정
-			//server->Set_AnimPL(m_iLayerIdx, 0);
-			server->Set_isHitPL(m_iLayerIdx, m_IsHit);
-		}
+		m_IsHit = false; // 수정
+		//server->Set_AnimPL(m_iLayerIdx, 0);
+		server->Set_isHitPL(m_iLayerIdx, m_IsHit);
+		m_IsActioning = false;
 	}
 	
 	Obb_Collision();
@@ -1300,6 +1298,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 	{
@@ -1315,6 +1314,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
 	{
@@ -1330,6 +1330,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
@@ -1346,85 +1347,89 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsRun = false;
+		m_IsActioning = false;
 	}
 
-	if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
+	if (!m_IsActioning)
 	{
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_Attack_Cooltime());
-		if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
 		{
-			server->send_attack_packet();
-			server->Set_Attack_CoolTime(high_resolution_clock::now());
-			server->send_animation_packet(A_ATTACK);
-			CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-				return;
+			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+				- server->Get_Attack_Cooltime());
+			if (cool_time.count() > 2) // ↑ 쿨타임 2초 계산해주는 식
+			{
+				server->send_attack_packet();
+				server->Set_Attack_CoolTime(high_resolution_clock::now());
+				server->send_animation_packet(A_ATTACK);
+				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+					return;
+			}
+
+			if (m_eCurClass == CLASS::CLASS_ARCHER)
+			{
+				CGameObject* pOwnPlayer = nullptr;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+					return;
+				server->send_arrow_packet();
+				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+			}
+			else if (m_eCurClass == CLASS::CLASS_WORKER)
+			{
+				//_matrix matTemp = m_pTransformCom->Get_Matrix();
+				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
+				//	return;
+			}
+			else
+			{
+				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
+				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
+				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
+				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
+			}
+
+			if (m_IsFire)
+			{
+				m_IsFire = false;
+
+				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
+				int numver = lst.size();
+				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
+				dynamic_cast<CFire*>(fire)->SetSCheck(true);
+
+				// 파이어 좌표 
+				_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+				XMFLOAT2 fPos = { vPos.x, vPos.y };
+
+				server->send_fire_packet(vPos.x, vPos.y);
+
+				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
+			}
+			if (m_IsTeleport)
+			{
+				m_IsTeleport = false;
+
+				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
+				int numver = lst.size();
+				CGameObject* tele = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
+
+				// 텔레포트 좌표 
+				_vec3 vPos = *dynamic_cast<CTransform*>(tele->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+				XMFLOAT2 fPos = { vPos.x, vPos.y };
+
+				server->send_teleport_packet(vPos.x, vPos.y);
+
+				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
+				dynamic_cast<CUI_Skill*>(pTemp)->SetStime(true);
+			}
+
+			m_IsActioning = true;
+			m_IsOnce = true;
+			m_IsHit = true;
+			m_IsCombat = true;
 		}
-
-		if (m_eCurClass == CLASS::CLASS_ARCHER)
-		{
-			CGameObject* pOwnPlayer = nullptr;
-			_matrix matTemp = m_pTransformCom->Get_Matrix();
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
-				return;
-			server->send_arrow_packet();
-			dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
-		}
-		else if (m_eCurClass == CLASS::CLASS_WORKER)
-		{
-			//_matrix matTemp = m_pTransformCom->Get_Matrix();
-			//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-			//	return;
-		}
-		else
-		{
-			//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-			//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-			//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-			//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-		}
-
-		if (m_IsFire)
-		{
-			m_IsFire = false;
-
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
-			int numver = lst.size();
-			CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
-			dynamic_cast<CFire*>(fire)->SetSCheck(true);
-
-			// 파이어 좌표 
-			_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-			XMFLOAT2 fPos = { vPos.x, vPos.y };
-
-			server->send_fire_packet(vPos.x, vPos.y);
-
-			CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
-			dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
-		}
-		if (m_IsTeleport)
-		{
-			m_IsTeleport = false;
-
-			list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport");
-			int numver = lst.size();
-			CGameObject* tele = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillTeleport", numver - 1);
-
-			// 텔레포트 좌표 
-			_vec3 vPos = *dynamic_cast<CTransform*>(tele->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-			XMFLOAT2 fPos = { vPos.x, vPos.y };
-
-			server->send_teleport_packet(vPos.x, vPos.y);
-
-			CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
-			dynamic_cast<CUI_Skill*>(pTemp)->SetStime(true);
-		}
-
-		//m_IsActioning = true;
-		m_IsOnce = true;
-		m_IsHit = true;
-		m_IsCombat = true;
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))
@@ -1440,6 +1445,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_condition_packet(CON_TYPE_MOVE, CON_BACK);
 			m_cLastMoveCondition = m_cMoveCondition;
 		}
+		m_IsActioning = true;
 	}
 	if (CManagement::GetInstance()->Key_Pressing(KEY_LEFT))
 	{
@@ -1454,6 +1460,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_condition_packet(CON_TYPE_ROTATE, CON_LEFT);
 			m_cLastRotateCondition = m_cRotateCondition;
 		}
+		m_IsActioning = true;
 	}
 	
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
@@ -1469,6 +1476,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			server->send_condition_packet(CON_TYPE_ROTATE, CON_RIGHT);
 			m_cLastRotateCondition = m_cRotateCondition;
 		}
+		m_IsActioning = true;
 	}
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
@@ -1502,7 +1510,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 
 		m_IsRun = true;
-		//m_IsActioning = true;
+		m_IsActioning = true;
 		m_IsParticleRun = true;
 
 		m_fRunSoundTime += fTimeDelta;
@@ -1564,7 +1572,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 			m_IsSlide = false;
 		}
-
+		m_IsActioning = true;
 		m_IsRun = false;
 
 		m_fRunSoundTime += fTimeDelta;

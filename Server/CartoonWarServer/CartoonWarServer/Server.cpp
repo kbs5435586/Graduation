@@ -84,22 +84,22 @@ void Server::process_packet(int user_id, char* buf)
         // g_clients[user_id].m_move_time = packet->move_time; // 스트레스 테스트
         if (CON_TYPE_MOVE == packet->con_type)
         {
-            //if (CON_IDLE == packet->con)
-            //    cout << user_id << " send move condition : CON_IDLE\n";
-            //else if (CON_STRAIGHT == packet->con)
-            //    cout << user_id << " send condition : CON_STRAIGHT\n";
-            //else if (CON_BACK == packet->con)
-            //    cout << user_id << " send condition : CON_BACK\n";
+            if (CON_IDLE == packet->con)
+                cout << user_id << " send move condition : CON_IDLE\n";
+            else if (CON_STRAIGHT == packet->con)
+                cout << user_id << " send condition : CON_STRAIGHT\n";
+            else if (CON_BACK == packet->con)
+                cout << user_id << " send condition : CON_BACK\n";
             do_move(user_id, packet->con);
         }
         else if (CON_TYPE_ROTATE == packet->con_type)
         {
-            //if (CON_IDLE == packet->con)
-            //    cout << user_id << " send rote condition : CON_IDLE\n";
-            //else if (CON_LEFT == packet->con)
-            //    cout << user_id << " send condition : CON_LEFT\n";
-            //else if (CON_RIGHT == packet->con)
-            //    cout << user_id << " send condition : CON_RIGHT\n";
+            if (CON_IDLE == packet->con)
+                cout << user_id << " send rote condition : CON_IDLE\n";
+            else if (CON_LEFT == packet->con)
+                cout << user_id << " send condition : CON_LEFT\n";
+            else if (CON_RIGHT == packet->con)
+                cout << user_id << " send condition : CON_RIGHT\n";
             do_rotate(user_id, packet->con);
         }
     }
