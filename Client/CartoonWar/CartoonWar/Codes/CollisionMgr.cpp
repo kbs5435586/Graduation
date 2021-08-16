@@ -46,6 +46,8 @@ void CCollisionMgr::Range()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_float fLength = 0.f;
 
 			_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Arrow
@@ -68,6 +70,8 @@ void CCollisionMgr::Range()
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_float fLength = 0.f;
 
 			_vec3 iter0_Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);// Arrow
@@ -90,6 +94,8 @@ void CCollisionMgr::Range()
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			if (dynamic_cast<CThrow_Arrow*>(iter0)->GetOwnPlayer() == iter1)
 				continue;
 
@@ -169,6 +175,8 @@ void CCollisionMgr::Player_to_Deffend_Attack_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -211,7 +219,8 @@ void CCollisionMgr::NPC_to_Deffend_Attack_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
-
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
 
@@ -348,6 +357,8 @@ void CCollisionMgr::Deffend()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			if (iter0 == iter1)
 				continue;
 			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
@@ -365,6 +376,8 @@ void CCollisionMgr::Deffend()
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			if (iter0 == iter1)
 				continue;
 			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
@@ -382,6 +395,8 @@ void CCollisionMgr::Deffend()
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			if (iter0 == iter1)
 				continue;
 			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
@@ -405,6 +420,8 @@ void CCollisionMgr::Enviroment_to_Player_Or_NPC()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			//if (iter0->GetEnviType() == ENVITYPE::ENVI_FLOWER || iter0->GetEnviType() == ENVITYPE::ENVI_PLANT)
 			//	continue;
 
@@ -425,6 +442,8 @@ void CCollisionMgr::Enviroment_to_Player_Or_NPC()
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			//if (iter0->GetEnviType() == ENVITYPE::ENVI_FLOWER || iter0->GetEnviType() == ENVITYPE::ENVI_PLANT)
 			//	continue;
 
@@ -451,6 +470,8 @@ void CCollisionMgr::Player_to_NPC_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
 			CTransform* pIter1Transform = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"));
 
@@ -470,6 +491,8 @@ void CCollisionMgr::Player_to_NPC_Collision()
 		{
 			for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 			{
+				if (!iter0->GetIsShow() || !iter1->GetIsShow())
+					continue;
 				if (iter0 == iter1)
 					continue;
 				CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
@@ -496,6 +519,8 @@ void CCollisionMgr::NPC_to_NPC_Collision()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
+			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+				continue;
 			if (iter0 == iter1)
 				continue;
 			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));

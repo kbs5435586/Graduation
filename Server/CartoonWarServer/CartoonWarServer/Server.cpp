@@ -2129,7 +2129,9 @@ void Server::do_attack(int npc_id)
             {
                 if(!n.m_isFighting)
                     add_timer(npc_id, FUNC_BATTLE, 1);
-
+                n.m_Mcondition = CON_IDLE;
+                n.m_Rcondition = CON_IDLE;
+                n.m_anim = A_ATTACK;
                 n.m_isFighting = true;
             }
             else
@@ -2963,7 +2965,7 @@ bool Server::check_obb_collision(int a, int b)
 
 
 			if (fDistance[1] + fDistance[2] < fDistance[0])
-				return false;
+				return true;
 
 		}
 	}
@@ -3042,14 +3044,33 @@ void Server::Obb_Collision(int id)
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
             o.m_vMidPoint.y += 10.f;
             o.m_isBazier = true;
+
+            for (int i = 0; i < NPC_START; ++i)
+            {
+                if (ST_ACTIVE != g_clients[i].m_status)
+                    continue;
+                if (!is_near(i, id))
+                    continue;
+                send_fix_packet(i, id);
+            }
         }
         Hit_Object(id, o.m_fBazierCnt, o.m_vStartPoint, o.m_vEndPoint, o.m_vMidPoint);
     }
     if (o.m_fBazierCnt >= 1.f)
     {
+
         o.m_fBazierCnt = 0.f;
         o.m_isOBB = false;
         o.m_isBazier = false;
+
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (!is_near(i, id))
+                continue;
+            send_fix_packet(i, id);
+        }
     }
 }
 
