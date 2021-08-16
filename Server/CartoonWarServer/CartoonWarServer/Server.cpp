@@ -3197,7 +3197,6 @@ void Server::Obb_Collision(int id)
     }
     if (o.m_fBazierCnt >= 1.f)
     {
-
         o.m_fBazierCnt = 0.f;
         o.m_isOBB = false;
         o.m_isBazier = false;

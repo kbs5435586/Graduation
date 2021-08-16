@@ -32,7 +32,7 @@ private:
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
 	int DOT_DAMAGE = 5;
-	int SET_HP = 100;
+	int SET_HP = 10000;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 0;
