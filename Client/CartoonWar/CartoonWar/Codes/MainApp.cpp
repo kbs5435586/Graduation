@@ -177,29 +177,29 @@ HRESULT CMainApp::Ready_Sound()
 {
 	if (FAILED(m_pManagement->Ready_Channel()))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Tittle.mp3", 0.2f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Tittle.mp3", 2.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, BG, "../Bin/Resource/Sounds/BattleHighLand.mp3", 0.1f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, BG, "../Bin/Resource/Sounds/BattleHighLand.mp3", 1.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HIT, "../Bin/Resource/Sounds/Hit.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HIT, "../Bin/Resource/Sounds/Hit.wav", 5.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, DIE, "../Bin/Resource/Sounds/Orc_Death.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, DIE, "../Bin/Resource/Sounds/Orc_Death.wav", 5.f)))
 		return E_FAIL;	
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HITTED, "../Bin/Resource/Sounds/Orc_Hitted.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HITTED, "../Bin/Resource/Sounds/Orc_Hitted.wav", 5.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, ATTACK, "../Bin/Resource/Sounds/Sword_Whoosh_Attack_1.wav", 0.3f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, ATTACK, "../Bin/Resource/Sounds/Sword_Whoosh_Attack_1.wav", 3.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/WR1.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, WALK, "../Bin/Resource/Sounds/WR1.wav", 5.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, RUN, "../Bin/Resource/Sounds/Walk_Run.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, RUN, "../Bin/Resource/Sounds/Walk_Run.wav", 5.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HORSE_RUN, "../Bin/Resource/Sounds/RunHorse.mp3", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HORSE_RUN, "../Bin/Resource/Sounds/RunHorse.mp3", 5.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HORSE_WALK, "../Bin/Resource/Sounds/WalkHorse.mp3", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HORSE_WALK, "../Bin/Resource/Sounds/WalkHorse.mp3", 5.f)))
 		return E_FAIL;	
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, IDLE, "../Bin/Resource/Sounds/Idle_Orc_Breath.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, IDLE, "../Bin/Resource/Sounds/Idle_Orc_Breath.wav", 5.f)))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, SHOOT, "../Bin/Resource/Sounds/Arrow.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, SHOOT, "../Bin/Resource/Sounds/Arrow.wav", 5.f)))
 		return E_FAIL;
 	return S_OK;
 }

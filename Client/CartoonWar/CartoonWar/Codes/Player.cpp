@@ -1587,24 +1587,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		m_IsActioning = true;
 		m_IsRun = false;
-
-		m_fRunSoundTime += fTimeDelta;
-		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
-		{
-			if (m_fRunSoundTime >= 24.f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
-				m_fRunSoundTime = 0.f;
-			}
-		}
-		else
-		{
-			if (m_fRunSoundTime >= 0.5f)
-			{
-				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK);
-				m_fRunSoundTime = 0.f;
-			}
-		}
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))
