@@ -1031,11 +1031,11 @@ void CNPC::Obb_Collision()
 				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 				_vec3 vTemp = { vPos - vTargetPos };
-				vTemp *= 5.f;
+				// *= 2.f;
 				m_vStartPoint = vPos;
 				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-				m_vMidPoint.y += 10.f;
+				m_vMidPoint.y += 5.f;
 				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 				m_eCurState = STATE::STATE_HITTED;
 				m_IsBazier = true;
@@ -1391,11 +1391,15 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 {
 	if (m_ePreState != m_eCurState)
 	{
-		CManagement::GetInstance()->Pause_Sound();
+		if (m_IsSoundPause)
+		{
+			CManagement::GetInstance()->Pause_Sound();
+		}
+		m_IsSoundPause = true;
 		switch (m_eCurState)
 		{
 		case STATE::STATE_IDLE:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
+			//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f);
 			break;
 		case STATE::STATE_WALK:
 		{
