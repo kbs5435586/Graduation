@@ -154,22 +154,14 @@ void Server::process_packet(int user_id, char* buf)
                 continue;
             if (dist_between(user_id, i) >= 5.f)
                 continue;
-            if (check_obb_collision(user_id, i))
+
+            g_clients[i].m_hp -= ATTACK_DAMAGE;
+            send_attacked_packet(user_id, i);
+            for (auto cpy_vl : copy_viewlist)
             {
-                if (g_clients[user_id].m_isHit)
+                if (is_player(cpy_vl))
                 {
-                    g_clients[i].m_isOBB = true;
-                    g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
-                    g_clients[user_id].m_isHit = false;
-                    g_clients[i].m_hp -= ATTACK_DAMAGE;
-                    send_attacked_packet(user_id, i);
-                    for (auto cpy_vl : copy_viewlist)
-                    {
-                        if (is_player(cpy_vl))
-                        {
-                            send_attacked_packet(cpy_vl, i);
-                        }
-                    }
+                    send_attacked_packet(cpy_vl, i);
                 }
             }
         }
@@ -459,55 +451,46 @@ void Server::update_speed_and_collider(int user_id)
     {
         c.m_move_speed = 10.f;
         c.m_col.aabb_size = { 20.f ,80.f,20.f }; // aabb
-        c.m_col.obb_size = { 30.f ,80.f,30.f }; // obb
     }
     if (C_CAVALRY == c.m_class)
     {
         c.m_move_speed = 20.f;
         c.m_col.aabb_size = { 40.f ,80.f,40.f };
-        c.m_col.obb_size = { 80.f ,80.f,80.f };
     }
     if (C_TWO == c.m_class)
     {
         c.m_move_speed = 20.f;
         c.m_col.aabb_size = { 40.f ,80.f,40.f };
-        c.m_col.obb_size = { 80.f ,80.f,80.f };
     }
     if (C_INFANTRY == c.m_class)
     {
         c.m_move_speed = 10.f;
         c.m_col.aabb_size = { 10.f ,80.f,10.f };
-        c.m_col.obb_size = { 30.f ,80.f,30.f };
     }
     if (C_FOUR == c.m_class)
     {
         c.m_move_speed = 10.f;
         c.m_col.aabb_size = { 10.f ,80.f,10.f };
-        c.m_col.obb_size = { 30.f ,80.f,30.f };
     }
     if (C_SPEARMAN == c.m_class)
     {
         c.m_move_speed = 10.f;
         c.m_col.aabb_size = { 20.f ,80.f,20.f };
-        c.m_col.obb_size = { 100.f ,80.f,100.f };
     }
     if (C_MAGE == c.m_class)
     {
         c.m_move_speed = 10.f;
         c.m_col.aabb_size = { 20.f ,80.f,20.f };
-        c.m_col.obb_size = { 30.f ,80.f,30.f };
     }
     if (C_MMAGE == c.m_class)
     {
         c.m_move_speed = 20.f;
         c.m_col.aabb_size = { 20.f ,80.f,60.f };
-        c.m_col.obb_size = { 80.f ,80.f,80.f };
     }
     if (C_ARCHER == c.m_class)
     {
         c.m_move_speed = 15.f;
         c.m_col.aabb_size = { 20.f ,80.f,20.f };
-        c.m_col.obb_size = { 20.f ,80.f,20.f };
     }
 }
 
@@ -1342,8 +1325,6 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     }
 
     Update_Collider(npc_id, n.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
-    Update_Collider(npc_id, n.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
-    Obb_Collision(npc_id);
 
     for (auto& c : g_clients) // aabb 충돌체크
     {
@@ -1499,8 +1480,6 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         newpos->z = 0;
 
     Update_Collider(player_id, c.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
-    Update_Collider(player_id, c.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
-    Obb_Collision(player_id);
 
     for (auto& o : g_clients) // aabb 충돌체크
     {
@@ -1848,7 +1827,6 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_class = C_WORKER;
             update_speed_and_collider(npc_id);
             Ready_Collider_AABB_BOX(npc_id, g_clients[npc_id].m_col.aabb_size);
-            Ready_Collider_OBB_BOX(npc_id, g_clients[npc_id].m_col.obb_size);
             g_clients[npc_id].m_rotate_speed = XMConvertToRadians(90.f);
             g_clients[npc_id].m_transform.SetUp_Speed(g_clients[npc_id].m_move_speed, g_clients[npc_id].m_rotate_speed);
             g_clients[npc_id].m_troop = T_INFT;
@@ -1861,7 +1839,6 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_isFormSet = true;
             g_clients[npc_id].m_attack_target = -1;
             g_clients[npc_id].m_isHit = false;
-            g_clients[npc_id].m_isOBB = false;
 
             FormationInfo formTemp;
             formTemp.id = npc_id, formTemp.final_pos = {}, formTemp.angle = 0.f, formTemp.radius = 0.f;
@@ -2122,72 +2099,38 @@ void Server::do_attack(int npc_id)
     n_look = -1.f * Vector3_::Normalize(n_look);
     _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
-    if (!n.m_isOBB)
+    if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
     {
-        if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
+        for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
         {
-            for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
-            {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
-                if (ST_DEAD == g_clients[i].m_status)
-                    continue;
-                if (g_clients[i].m_team == n.m_team)
-                    continue;
-                if (!is_attack_detect(i, n.m_id))
-                    continue;
-
-                n.m_attack_target = i;
-                break;
-            }
-
-            if (n.m_attack_target >= 0)
-                return;
-            else // 주변에 적이 없으면 탐색 움직임 시작
-            {
-                _vec3 t_look = g_clients[npc_id].m_target_look;
-                t_look = -1.f * Vector3_::Normalize(t_look);
-
-                float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
-                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-                if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-                    radian *= -1.f;
-
-                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-                if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
-                {
-                    n.m_Mcondition = CON_STRAIGHT;
-                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                    n.m_anim = A_WALK;
-                    if (NPCangle > 1.f)
-                    {
-                        n.m_Rcondition = CON_LEFT;
-                        n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                    }
-                    else if (NPCangle < -1.f)
-                    {
-                        n.m_Rcondition = CON_RIGHT;
-                        n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-                    }
-                }
-                else // npc가 바라보는 방향이 플레이어랑 일치할때
-                {
-                    n.m_Mcondition = CON_STRAIGHT;
-                    n.m_Rcondition = CON_IDLE;
-                    n.m_anim = A_WALK;
-                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                }
-            }
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (ST_DEAD == g_clients[i].m_status)
+                continue;
+            if (g_clients[i].m_team == n.m_team)
+                continue;
+            if (!is_attack_detect(i, n.m_id))
+                continue;
+            // 활성화 상태이고 내 팀이 아니고 공격범위 안에 있는 상대일때
+            n.m_attack_target = i;
+            //for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
+            //{
+            //    if (ST_ACTIVE != g_clients[i].m_status)
+            //        continue;
+            //    if (true == is_near(npc_id, i))
+            //    {
+            //        send_fix_packet(i, npc_id);
+            //    }
+            //}
+            break;
         }
-        else // 공격할 대상이 지정이 되었을때
+
+        if (n.m_attack_target >= 0) // 주변에 적이 있으면 탐색 멈추고 바로 전투
+            return;
+        else // 주변에 적이 없으면 탐색 움직임 시작
         {
-            _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 t_look = *t_pos - *n_pos;
-            t_look = Vector3_::Normalize(t_look);
+            _vec3 t_look = g_clients[npc_id].m_target_look;
+            t_look = -1.f * Vector3_::Normalize(t_look);
 
             float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
             float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
@@ -2198,99 +2141,127 @@ void Server::do_attack(int npc_id)
 
             float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
 
-            if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
+            if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
             {
-                n.m_Mcondition = CON_IDLE;
+                n.m_Mcondition = CON_STRAIGHT;
+                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
                 n.m_anim = A_WALK;
-                if (NPCangle > 1.5f)
+                if (NPCangle > 1.f)
                 {
                     n.m_Rcondition = CON_LEFT;
                     n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
                 }
-                else if (NPCangle < -1.5f)
+                else if (NPCangle < -1.f)
                 {
                     n.m_Rcondition = CON_RIGHT;
                     n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
                 }
             }
-            else // npc가 공격할 대상을 바라볼때
+            else // npc가 바라보는 방향이 플레이어랑 일치할때
             {
-                if (dist_between(n.m_id, n.m_attack_target) <= 4.f) // OBB 공격 범위 안에 들어왔을때
-                {
-                    n.m_isHit = true;
-                    for (int i = 0; i < NPC_START; ++i)
-                    {
-                        if (ST_ACTIVE != g_clients[i].m_status)
-                            continue;
-                        if (!is_near(i, npc_id))
-                            continue;
-
-                        send_fix_packet(i, npc_id);
-                        send_hit_packet(i, npc_id);
-                    }
-
-                    if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
-                    {
-                        if (check_obb_collision(npc_id, n.m_attack_target))
-                        {
-                            if (n.m_isHit)
-                            {
-                                for (int i = 0; i < NPC_START; ++i)
-                                {
-                                    if (ST_ACTIVE != g_clients[i].m_status)
-                                        continue;
-                                    if (!is_near(i, npc_id))
-                                        continue;
-
-                                    send_fix_packet(i, npc_id);
-                                }
-                                g_clients[n.m_attack_target].m_isOBB = true;
-                                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                                n.m_isHit = false;
-                                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-
-                                for (int i = 0; i < NPC_START; ++i)
-                                {
-                                    if (ST_ACTIVE != g_clients[i].m_status)
-                                        continue;
-                                    if (!is_near(i, n.m_attack_target))
-                                        continue;
-                                    // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-                                    send_attacked_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                }
-                            }
-                        }
-                    }
-                    else // 상대방이 죽었을때
-                    {
-                        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
-                            return;
-                        g_clients[n.m_attack_target].m_hp = 0;
-                        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
-                        g_clients[n.m_attack_target].m_status = ST_DEAD;
-                        cout << n.m_attack_target << " is dead\n";
-                        for (int i = 0; i < NPC_START; ++i)
-                        {
-                            if (ST_ACTIVE != g_clients[i].m_status)
-                                continue;
-                            if (!is_near(i, n.m_attack_target))
-                                continue;
-                            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-                            send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                        }
-                        n.m_attack_target = -1;
-                    }
-                    n.m_Mcondition = CON_IDLE;
-                    n.m_Rcondition = CON_IDLE;
-                    n.m_anim = A_ATTACK;
-                }
-                else // OBB 공격범위 밖일때
-                {
-                    n.m_Mcondition = CON_STRAIGHT;
-                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                    n.m_Rcondition = CON_IDLE;
-                }
+                n.m_Mcondition = CON_STRAIGHT;
+                n.m_Rcondition = CON_IDLE;
+                n.m_anim = A_WALK;
+                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
             }
+        }
+    }
+    else // 공격할 대상이 지정이 되었을때
+    {
+        _vec3 t_pos = *g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+        _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+        _vec3 t_look = t_pos - n_pos;
+        t_look = Vector3_::Normalize(t_look);
+
+        float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+        float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+        if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+            radian *= -1.f;
+
+        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+        if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
+        {
+            n.m_Mcondition = CON_IDLE;
+            n.m_anim = A_WALK;
+            if (NPCangle > 1.5f)
+            {
+                n.m_Rcondition = CON_LEFT;
+                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
+            }
+            else if (NPCangle < -1.5f)
+            {
+                n.m_Rcondition = CON_RIGHT;
+                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
+            }
+        }
+        else // npc가 공격할 대상을 바라볼때
+        {
+            if (is_attackable(n.m_id, n.m_attack_target)) // 전투 범위 안에 들어왔을때
+            {
+                if (!n.m_isFighting)
+                    add_timer(npc_id, FUNC_BATTLE, 1);
+                n.m_Mcondition = CON_IDLE;
+                n.m_Rcondition = CON_IDLE;
+                n.m_anim = A_ATTACK;
+                n.m_isFighting = true;
+            }
+            else
+            {
+                n.m_isFighting = false;
+                n.m_Mcondition = CON_STRAIGHT;
+                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
+                n.m_Rcondition = CON_IDLE;
+            }
+        }
+    }
+}
+
+void Server::do_battle(int id)
+{
+    SESSION& att = g_clients[id];
+
+    if (-1 == att.m_attack_target)
+        return;
+
+    if (dist_between(id, att.m_attack_target) <= 4.f)
+    {
+        g_clients[att.m_attack_target].m_hp -= ATTACK_DAMAGE;
+        if (g_clients[att.m_attack_target].m_hp <= 0) // 죽은 상태면
+        {
+            if (ST_DEAD == g_clients[att.m_attack_target].m_status)
+                return;
+            g_clients[att.m_attack_target].m_hp = 0;
+            //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
+            g_clients[att.m_attack_target].m_status = ST_DEAD;
+            cout << att.m_attack_target << " is dead\n";
+            send_leave_packet(att.m_attack_target, att.m_attack_target);
+            for (int i = 0; i < NPC_START; ++i)
+            {
+                if (ST_ACTIVE != g_clients[i].m_status)
+                    continue;
+                if (!is_near(i, att.m_attack_target))
+                    continue;
+                // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+                send_leave_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
+            }
+            att.m_attack_target = -1;
+        }
+        else // 맞은 이후에 체력이 남아있는 상태면
+        {
+            for (int i = 0; i < NPC_START; ++i)
+            {
+                if (ST_ACTIVE != g_clients[i].m_status)
+                    continue;
+                if (!is_near(i, att.m_attack_target))
+                    continue;
+                // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
+                send_attacked_packet(i, att.m_attack_target); // 남은 체력 브로드캐스팅
+            }
+            if (!is_player(id))
+                add_timer(id, FUNC_BATTLE, 1000); // 1초뒤에 또 공격
         }
     }
 }
@@ -2679,7 +2650,6 @@ void Server::worker_thread()
                 g_clients[user_id].m_class = C_WORKER;
                 update_speed_and_collider(user_id);
                 Ready_Collider_AABB_BOX(user_id, g_clients[user_id].m_col.aabb_size);
-                Ready_Collider_OBB_BOX(user_id, g_clients[user_id].m_col.obb_size);
                 g_clients[user_id].m_rotate_speed = XMConvertToRadians(90.f);
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = F_SQUARE;
@@ -2698,7 +2668,6 @@ void Server::worker_thread()
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
                 g_clients[user_id].m_isHit = false;
-                g_clients[user_id].m_isOBB = false;
                 set_starting_pos(user_id);
 
                 DWORD flags = 0;
@@ -2737,6 +2706,10 @@ void Server::worker_thread()
             break;
         case FUNC_DOT_DAMAGE:
             do_dot_damage(id);
+            delete overEx;
+            break;
+        case FUNC_BATTLE:
+            do_battle(id);
             delete overEx;
             break;
        /* case FUNC_DEAD:
@@ -2902,38 +2875,6 @@ void Server::Update_Collider(int id, _vec3 vSize, COLLIDER_TYPE eType)
         c.m_ABvMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
     }
     break;
-    case COLLIDER_TYPE::COLLIDER_OBB:
-    {
-
-        _matrix matTemp_Rotate = pTarget_matrix;
-        _matrix matTemp;
-        matTemp.m[0][0] *= vSize.x;
-        matTemp.m[1][1] *= vSize.y;
-        matTemp.m[2][2] *= vSize.z;
-
-        matTemp = matTemp * matTemp_Rotate;
-        if (g_clients[id].m_class == C_MMAGE || g_clients[id].m_class == C_CAVALRY || g_clients[id].m_class == C_TWO)
-        {
-            matTemp.m[3][1] += 5.f;
-        }
-        else
-        {
-            matTemp.m[3][1] += 3.f;
-        }
-       c.m_OBvMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
-       c.m_OBvMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
-
-       c.m_pOBB.vPoint[0] = _vec3(c.m_OBvMin.x, c.m_OBvMax.y, c.m_OBvMin.z);
-       c.m_pOBB.vPoint[1] = _vec3(c.m_OBvMax.x, c.m_OBvMax.y, c.m_OBvMin.z);
-       c.m_pOBB.vPoint[2] = _vec3(c.m_OBvMax.x, c.m_OBvMin.y, c.m_OBvMin.z);
-       c.m_pOBB.vPoint[3] = _vec3(c.m_OBvMin.x, c.m_OBvMin.y, c.m_OBvMin.z);
-                                      
-       c.m_pOBB.vPoint[4] = _vec3(c.m_OBvMin.x, c.m_OBvMax.y, c.m_OBvMax.z);
-       c.m_pOBB.vPoint[5] = _vec3(c.m_OBvMax.x, c.m_OBvMax.y, c.m_OBvMax.z);
-       c.m_pOBB.vPoint[6] = _vec3(c.m_OBvMax.x, c.m_OBvMin.y, c.m_OBvMax.z);
-       c.m_pOBB.vPoint[7] = _vec3(c.m_OBvMin.x, c.m_OBvMin.y, c.m_OBvMax.z);
-    }                                          
-    break;
     default:
         break;
     }
@@ -2950,32 +2891,6 @@ void Server::Ready_Collider_AABB_BOX(int id, const _vec3 vSize)
 
     g_clients[id].m_col.m_ABvMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
     g_clients[id].m_col.m_ABvMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
-}
-
-void Server::Ready_Collider_OBB_BOX(int id, const _vec3 vSize)
-{
-    CTransform* pTarget_Transform = &g_clients[id].m_transform;
-    Collider& c = g_clients[id].m_col;
-    _vec3		vDir[3];
-
-    for (size_t i = 0; i < 3; ++i)
-    {
-        vDir[i] = *pTarget_Transform->Get_StateInfo(CTransform::STATE(i));
-        vDir[i] = Vector3_::Normalize(vDir[i]);
-    }
-
-    c.m_OBvMin = { -vSize.x / 2.f, 0.f, -vSize.z / 2.f };
-    c.m_OBvMax = { vSize.x / 2.f, vSize.y, vSize.z / 2.f };
-
-    c.m_pOBB.vPoint[0] = _vec3(c.m_OBvMin.x, c.m_OBvMax.y, c.m_OBvMin.z);
-    c.m_pOBB.vPoint[1] = _vec3(c.m_OBvMax.x, c.m_OBvMax.y, c.m_OBvMin.z);
-    c.m_pOBB.vPoint[2] = _vec3(c.m_OBvMax.x, c.m_OBvMin.y, c.m_OBvMin.z);
-    c.m_pOBB.vPoint[3] = _vec3(c.m_OBvMin.x, c.m_OBvMin.y, c.m_OBvMin.z);
-                                   
-    c.m_pOBB.vPoint[4] = _vec3(c.m_OBvMin.x, c.m_OBvMax.y, c.m_OBvMax.z);
-    c.m_pOBB.vPoint[5] = _vec3(c.m_OBvMax.x, c.m_OBvMax.y, c.m_OBvMax.z);
-    c.m_pOBB.vPoint[6] = _vec3(c.m_OBvMax.x, c.m_OBvMin.y, c.m_OBvMax.z);
-    c.m_pOBB.vPoint[7] = _vec3(c.m_OBvMin.x, c.m_OBvMin.y, c.m_OBvMax.z);
 }
 
 void Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
@@ -3042,185 +2957,10 @@ void Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, 
     }
 }
 
-bool Server::check_obb_collision(int a, int b)
-{
-    OBB* pTargetOBB = &g_clients[b].m_col.m_pOBB;
-	if (nullptr == pTargetOBB)
-		return false;
-
-	OBB			tOBB[2];
-	ZeroMemory(tOBB, sizeof(OBB) * 2);
-
-	for (size_t i = 0; i < 8; ++i)
-	{
-        _matrix		matWorld = Compute_WorldTransform(a);
-        _matrix		matTargetWorld = Compute_WorldTransform(b);
-
-		tOBB[0].vPoint[i] = _vec3::Transform(g_clients[a].m_col.m_pOBB.vPoint[i], matWorld);
-		tOBB[1].vPoint[i] = _vec3::Transform(pTargetOBB->vPoint[i], matTargetWorld);
-
-	}
-
-	tOBB[0].vCenter = (tOBB[0].vPoint[0] + tOBB[0].vPoint[6]) * 0.5f;
-	tOBB[1].vCenter = (tOBB[1].vPoint[0] + tOBB[1].vPoint[6]) * 0.5f;
-
-	for (size_t i = 0; i < 2; ++i)
-	{
-		Compute_AlignAxis(&tOBB[i]);
-		Compute_ProjAxis(&tOBB[i]);
-	}
-
-	_vec3	vAlignAxis[9];
-
-	for (size_t i = 0; i < 3; ++i)
-	{
-		for (size_t j = 0; j < 3; ++j)
-		{
-			_uint		iIndex = i * 3 + j;
-			vAlignAxis[iIndex] = Vector3_::CrossProduct(tOBB[0].vAlignAxis[i], tOBB[1].vAlignAxis[j], false);
-		}
-	}
-
-	_float		fDistance[3] = {};
-	for (size_t i = 0; i < 2; ++i)
-	{
-		for (size_t j = 0; j < 3; ++j)
-		{
-			_vec3		vCenterDir = tOBB[1].vCenter - tOBB[0].vCenter;
-
-			fDistance[0] = fabs(vCenterDir.Dot(tOBB[i].vAlignAxis[j]));
-
-
-			fDistance[1] =
-				fabs(tOBB[0].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
-				fabs(tOBB[0].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
-				fabs(tOBB[0].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
-
-
-			fDistance[2] =
-				fabs(tOBB[1].vProjAxis[0].Dot(tOBB[i].vAlignAxis[j])) +
-				fabs(tOBB[1].vProjAxis[1].Dot(tOBB[i].vAlignAxis[j])) +
-				fabs(tOBB[1].vProjAxis[2].Dot(tOBB[i].vAlignAxis[j]));
-
-
-			if (fDistance[1] + fDistance[2] < fDistance[0])
-				return true;
-
-		}
-	}
-
-	for (size_t i = 0; i < 9; ++i)
-	{
-		_vec3		vCenterDir = tOBB[1].vCenter - tOBB[0].vCenter;
-		fDistance[0] = fabs(vCenterDir.Dot(vAlignAxis[i]));
-
-		fDistance[1] =
-			fabs(tOBB[0].vProjAxis[0].Dot(vAlignAxis[i])) +
-			fabs(tOBB[0].vProjAxis[1].Dot(vAlignAxis[i])) +
-			fabs(tOBB[0].vProjAxis[2].Dot(vAlignAxis[i]));
-
-		fDistance[2] =
-			fabs(tOBB[1].vProjAxis[0].Dot(vAlignAxis[i])) +
-			fabs(tOBB[1].vProjAxis[1].Dot(vAlignAxis[i])) +
-			fabs(tOBB[1].vProjAxis[2].Dot(vAlignAxis[i]));
-
-		if (fDistance[1] + fDistance[2] < fDistance[0])
-			return false;
-	}
-	return true;
-}
-
 bool Server::is_object(int id)
 {
     if (id >= OBJECT_START)
         return true;
     else
         return false;
-}
-
-void Server::Compute_AlignAxis(OBB* pOBB)
-{
-    pOBB->vAlignAxis[0] = (pOBB->vPoint[2] - pOBB->vPoint[3]);
-    pOBB->vAlignAxis[1] = (pOBB->vPoint[0] - pOBB->vPoint[3]);
-    pOBB->vAlignAxis[2] = (pOBB->vPoint[7] - pOBB->vPoint[3]);
-
-    for (size_t i = 0; i < 3; ++i)
-    {
-        pOBB->vAlignAxis[i] = Vector3_::Normalize(pOBB->vAlignAxis[i]);
-    }
-}
-
-void Server::Compute_ProjAxis(OBB* pOBB)
-{
-    _vec3 vAdd[3];
-    vAdd[0] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[2]);
-    vAdd[1] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[0]);
-    vAdd[2] = Vector3_::Add(pOBB->vPoint[5], pOBB->vPoint[7]);
-
-    _vec3 vProd[3];
-    vProd[0] = Vector3_::ScalarProduct(vAdd[0], 0.5f, false);
-    vProd[1] = Vector3_::ScalarProduct(vAdd[1], 0.5f, false);
-    vProd[2] = Vector3_::ScalarProduct(vAdd[2], 0.5f, false);
-
-    pOBB->vProjAxis[0] = (vProd[0] - pOBB->vCenter);
-    pOBB->vProjAxis[1] = (vProd[1] - pOBB->vCenter);
-    pOBB->vProjAxis[2] = (vProd[2] - pOBB->vCenter);
-}
-
-void Server::Obb_Collision(int id)
-{
-    SESSION& o = g_clients[id];
-    if (o.m_isOBB && o.m_fBazierCnt <= 1.f)
-    {
-        if (!o.m_isBazier)
-        {
-            _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
-            _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 vTemp = { vPos - vTargetPos };
-            vTemp *= 5.f;
-            o.m_vStartPoint = vPos;
-            o.m_vEndPoint = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
-            o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
-            o.m_vMidPoint.y += 10.f;
-            o.m_isBazier = true;
-
-            for (int i = 0; i < NPC_START; ++i)
-            {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
-                if (!is_near(i, id))
-                    continue;
-                send_fix_packet(i, id);
-            }
-        }
-        Hit_Object(id, o.m_fBazierCnt, o.m_vStartPoint, o.m_vEndPoint, o.m_vMidPoint);
-    }
-    if (o.m_fBazierCnt >= 1.f)
-    {
-        o.m_fBazierCnt = 0.f;
-        o.m_isOBB = false;
-        o.m_isBazier = false;
-        o.m_attack_target = -1;
-        o.m_Mcondition = CON_IDLE;
-        o.m_Rcondition = CON_IDLE;
-        for (int i = 0; i < NPC_START; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status)
-                continue;
-            if (!is_near(i, id))
-                continue;
-            send_fix_packet(i, id);
-        }
-    }
-}
-
-void Server::Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid)
-{
-    _float fX = (pow((1.f - fCnt), 2) * vStart.x) + (2 * fCnt * (1.f - fCnt) * vMid.x) + (pow(fCnt, 2) * vEnd.x);
-    _float fY = (pow((1.f - fCnt), 2) * vStart.y) + (2 * fCnt * (1.f - fCnt) * vMid.y) + (pow(fCnt, 2) * vEnd.y);
-    _float fZ = (pow((1.f - fCnt), 2) * vStart.z) + (2 * fCnt * (1.f - fCnt) * vMid.z) + (pow(fCnt, 2) * vEnd.z);
-
-    _vec3 vPos = { fX, fY, fZ };
-    g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-    fCnt += 0.02f;
 }

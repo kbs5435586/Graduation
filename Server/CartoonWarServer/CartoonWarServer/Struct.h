@@ -3,7 +3,7 @@ enum ENUM_FUNCTION
 {
 	FUNC_RECV, FUNC_SEND, FUNC_ACCEPT, FUNC_PLAYER_MOVE_FOR_NPC,
 	FUNC_NPC_START, FUNC_NPC_ATTACK, FUNC_NPC_HOLD, FUNC_NPC_FOLLOW, 
-	FUNC_CHECK_FLAG, FUNC_CHECK_TIME, FUNC_DOT_DAMAGE,
+	FUNC_CHECK_FLAG, FUNC_CHECK_TIME, FUNC_DOT_DAMAGE, FUNC_BATTLE,
 	FUNC_PLAYER_IDLE, FUNC_PLAYER_STRAIGHT, FUNC_PLAYER_BACK, FUNC_PLAYER_LEFT,
 	FUNC_PLAYER_RIGHT, FUNC_PLAYER_RUN, FUNC_END
 };
@@ -61,23 +61,11 @@ struct Teleport
 	int count = 0;
 };
 
-typedef struct tagOBB
-{
-	Vector3			vPoint[8];
-	Vector3			vCenter;
-	Vector3			vAlignAxis[3];
-	Vector3			vProjAxis[3];
-}OBB;
-
 struct Collider
 {
 	_vec3	aabb_size;
-	_vec3	obb_size;
 	_vec3	m_ABvMin;
 	_vec3	m_ABvMax;
-	_vec3	m_OBvMin;
-	_vec3	m_OBvMax;
-	OBB		m_pOBB;
 };
 
 struct SESSION // 클라이언트 정보
@@ -112,7 +100,7 @@ struct SESSION // 클라이언트 정보
 	float m_move_speed;
 	float m_rotate_speed;
 	float m_total_angle;
-	float m_fBazierCnt;
+	bool m_isFighting;
 
 	Collider m_col;
 	_matrix m_matAttackedTarget;
@@ -125,12 +113,6 @@ struct SESSION // 클라이언트 정보
 	CTransform m_transform;
 
 	bool m_isHit; // 트루면 공격 한거
-	bool m_isOBB; // 트루면 공격 당한거
-	bool m_isBazier;
-
-	_vec3	m_vStartPoint = {};
-	_vec3	m_vEndPoint = {};
-	_vec3	m_vMidPoint = {};
 
 	// 플레이어
 	vector <FormationInfo> m_boid;

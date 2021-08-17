@@ -111,13 +111,7 @@ public:
 	_matrix Compute_WorldTransform(int id);
 	_matrix Remove_Rotation(_matrix matWorld);
 	void check_aabb_collision(int a, int b);
-	bool check_obb_collision(int a, int b);
 	void Ready_Collider_AABB_BOX(int id, const _vec3 vSize);
-	void Ready_Collider_OBB_BOX(int id, const _vec3 vSize);
-	void Compute_AlignAxis(OBB* pOBB);
-	void Compute_ProjAxis(OBB* pOBB);
-	void Obb_Collision(int id);
-	void Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 
 public:
 	void get_player_pos();
