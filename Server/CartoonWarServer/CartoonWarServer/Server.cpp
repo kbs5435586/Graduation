@@ -2224,10 +2224,19 @@ void Server::do_battle(int id)
 
     if (-1 == att.m_attack_target)
         return;
-
+    att.m_isHit = true;
     if (dist_between(id, att.m_attack_target) <= 4.f)
     {
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (!is_near(i, id))
+                continue;
+            send_hit_packet(i, id);
+        }
         g_clients[att.m_attack_target].m_hp -= ATTACK_DAMAGE;
+        att.m_isHit = false;
         if (g_clients[att.m_attack_target].m_hp <= 0) // Á×Àº »óÅÂ¸é
         {
             if (ST_DEAD == g_clients[att.m_attack_target].m_status)
