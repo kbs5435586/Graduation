@@ -110,22 +110,30 @@ void CCollisionMgr::Range()
 			_vec3 vDistance = iter1_Pos - iter0_Pos;
 
 			fLength = vDistance.Length();
-
-
 			if (fLength <= 10.f)
 			{
 				(iter1)->GetOBBCollision() = true;
-				_vec3 vTargetPos = *dynamic_cast<CTransform*>(iter1)->Get_StateInfo(CTransform::STATE_POSITION);
-				_vec3 vPos = *dynamic_cast<CTransform*>(iter0)->Get_StateInfo(CTransform::STATE_POSITION);
-				_vec3 vTemp = { vPos - vTargetPos };
-				iter1->GetAttackedObject_Matrix()._41 = vTemp.x;
-				iter1->GetAttackedObject_Matrix()._42 = vTemp.y;
-				iter1->GetAttackedObject_Matrix()._43 = vTemp.z;
-				//iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
 				iter1->GetInfo().fHP -= 1.f;
 			}
+
+			//if (fLength <= 10.f)
+			//{
+			//	(iter1)->GetOBBCollision() = true;
+			//	_vec3 vTargetPos = *dynamic_cast<CTransform*>(iter1)->Get_StateInfo(CTransform::STATE_POSITION);
+
+			//	_vec3 vPos = *dynamic_cast<CTransform*>(iter0)->Get_StateInfo(CTransform::STATE_POSITION);
+			//	_vec3 vTemp = { vPos - vTargetPos };
+			//	iter1->GetAttackedObject_Matrix()._41 = vTemp.x;
+			//	iter1->GetAttackedObject_Matrix()._42 = vTemp.y;
+			//	iter1->GetAttackedObject_Matrix()._43 = vTemp.z;
+			//	//iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+			//	iter1->GetIsParticle() = true;
+			//	iter0->GetIsDead() = true;
+			//	iter1->GetInfo().fHP -= 1.f;
+			//}
 		}
 	}
 }
