@@ -176,24 +176,14 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ARROW:
     {
         cs_packet_arrow* packet = reinterpret_cast<cs_packet_arrow*>(buf);
-      /*  for (int i = 0; i < NPC_START; ++i)
+        for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
                 continue;
-            send_fire_packet(i, packet->x, packet->z);
+            if (i == user_id)
+                continue;
+            send_arrow_packet(i, user_id);
         }
-        for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status)
-            {
-                _vec3 temp = { packet->x, 0.f,packet->z };
-                g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &temp);
-                g_clients[i].m_team = g_clients[user_id].m_team;
-                g_clients[i].m_count = 0;
-                do_dot_damage(i);
-                break;
-            }
-        }*/
     }
     break;
     case CS_PACKET_TELEPORT:
@@ -2021,6 +2011,15 @@ void Server::send_teleport_packet(int id, float mx, float mz, unsigned char m)
     packet.x = mx;
     packet.z = mz;
     send_packet(id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_arrow_packet(int user_id, int other_id)
+{
+    sc_packet_arrow packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ARROW;
+    packet.id = other_id;
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
 void Server::send_leave_packet(int user_id, int other_id)

@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "MyRect.h"
 #include "Fire.h"
+#include "Throw_Arrow.h"
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)
@@ -218,6 +219,22 @@ void CServer_Manager::ProcessPacket(char* ptr)
 				}
 			}
 		}
+	}
+	break;
+	case SC_PACKET_ARROW:
+	{
+		sc_packet_arrow* my_packet = reinterpret_cast<sc_packet_arrow*>(ptr);
+
+		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", my_packet->id);
+
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Player", L"Com_Transform", my_packet->id);
+
+		CGameObject* pOwnPlayer = nullptr;
+		_matrix matTemp = pTransform->Get_Matrix();
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+			return;
+		dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = (CPlayer*)pGameObject;
 	}
 	break;
 	case SC_PACKET_HIT:
