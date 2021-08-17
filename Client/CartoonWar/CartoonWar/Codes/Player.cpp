@@ -1263,10 +1263,18 @@ void CPlayer::Obb_Collision()
 		}
 		if (m_fBazierCnt >= 1.f)
 		{
+			CServer_Manager* server = CServer_Manager::GetInstance();
+			if (nullptr == server)
+				return;
+			server->AddRef();
+
 			m_pTransformCom->Get_Matrix();
 			m_fBazierCnt = 0.f;
 			m_IsOBB_Collision = false;
 			m_IsBazier = false;
+
+			server->send_fix_packet(&m_pTransformCom->Get_Matrix(), m_iLayerIdx, O_PLAYER);
+			Safe_Release(server);
 		}
 	}
 

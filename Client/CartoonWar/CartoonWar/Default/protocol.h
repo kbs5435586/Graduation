@@ -70,6 +70,7 @@ constexpr char CS_PACKET_TELEPORT = 11;
 constexpr char CS_PACKET_FIRE = 12;
 constexpr char CS_PACKET_ARROW = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
+constexpr char CS_PACKET_FIX = 15;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_CONDITION = 2;
@@ -319,6 +320,18 @@ struct cs_packet_class_change
 	char type;
 	int id;
 	short p_class;
+};
+
+struct cs_packet_fix
+{
+	char size;
+	char type;
+	int id;
+	char oType;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
+	float p_x, p_z;
 };
 
 struct cs_packet_animation

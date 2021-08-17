@@ -1196,3 +1196,21 @@ void CServer_Manager::init_client()
 	isRed = false;
 	isBlue = false;
 }
+
+void CServer_Manager::send_fix_packet(_matrix& mat, int id, unsigned char mtype)
+{
+	cs_packet_fix l_packet;
+	l_packet.type = CS_PACKET_FIX;
+	l_packet.oType = mtype;
+	l_packet.id = id;
+	l_packet.r_x = mat._11, l_packet.r_y = mat._12, l_packet.r_z = mat._13;
+	l_packet.u_x = mat._21, l_packet.u_y = mat._22, l_packet.u_z = mat._23;
+	l_packet.l_x = mat._31, l_packet.l_y = mat._32, l_packet.l_z = mat._33;
+	l_packet.p_x = mat._41; l_packet.p_z = mat._43;
+	
+	send_packet(&l_packet);
+}
+
+
+
+

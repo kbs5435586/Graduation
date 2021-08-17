@@ -241,6 +241,26 @@ void Server::process_packet(int user_id, char* buf)
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     }
     break;
+    case CS_PACKET_FIX:
+    {
+        cs_packet_fix* packet = reinterpret_cast<cs_packet_fix*>(buf);
+        int id;
+        if (O_PLAYER == packet->oType)
+            id = packet->id;
+        else
+            id = packet->id + 30;
+
+        _vec3 look = { packet->l_x, packet->l_y, packet->l_z };
+        _vec3 right = { packet->r_x, packet->r_y, packet->r_z };
+        _vec3 up = { packet->u_x, packet->u_y, packet->u_z };
+        _vec3 pos = { packet->p_x, 0, packet->p_z };
+
+        g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_LOOK, &look);
+        g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_RIGHT, &right);
+        g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_UP, &up);
+    }
+    break;
     case CS_PACKET_TROOP_CHANGE:
     {
         cs_packet_change_troop* packet = reinterpret_cast<cs_packet_change_troop*>(buf);
