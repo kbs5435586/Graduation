@@ -1312,6 +1312,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
 	{
@@ -1328,6 +1329,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
 	{
@@ -1344,6 +1346,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_UP))
 	{
@@ -1359,6 +1362,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 		else
 			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_eCurState = STATE::STATE_IDLE;
 		m_IsRun = false;
 		m_IsActioning = false;
 	}
