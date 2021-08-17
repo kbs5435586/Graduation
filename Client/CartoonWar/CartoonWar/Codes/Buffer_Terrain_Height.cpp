@@ -281,6 +281,8 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 	const _vec3* pTargetPos = pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 
 	_uint		iCurrentIdx = _uint(pTargetPos->z / m_fInterval) * m_iNumVerticesX + _uint(pTargetPos->x / m_fInterval);
+	if (m_iNumVertices <= iCurrentIdx)
+		return _float(0.f);
 
 	_float		fRatioX = (pTargetPos->x - m_pPosition[iCurrentIdx + m_iNumVerticesX].x) / m_fInterval;
 	_float		fRatioZ = (m_pPosition[iCurrentIdx + m_iNumVerticesX].z - pTargetPos->z) / m_fInterval;

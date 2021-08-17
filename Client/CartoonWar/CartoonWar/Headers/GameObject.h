@@ -76,6 +76,7 @@ protected:
 	_bool									m_IsTree = false;
 	_bool									m_IsHit_PostEffect = false;
 	_bool									m_IsFrustum = false;
+	_bool									m_IsSoundPause = false;
 	_bool									m_IsCheck_FlagRange = false;
 	_vec3									m_vColShpereSize = {};
 protected:

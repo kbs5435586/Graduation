@@ -1166,6 +1166,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
 				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
 				m_eCurState = STATE::STATE_ATTACK;
+				if(g_IsFix)
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 					return;
 			}
@@ -1238,7 +1239,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		vLook = Vector3_::Normalize(vLook);
 
 
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
 		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
 		_vec3 vSlide = {};
 		if (!m_IsSlide)
@@ -1687,11 +1688,15 @@ void CPlayer::Play_Sound(const _float& fTimeDelta)
 {
 	if (m_ePreState != m_eCurState)
 	{
-		CManagement::GetInstance()->Pause_Sound();
+		if (m_IsSoundPause)
+		{
+			CManagement::GetInstance()->Pause_Sound();
+		}
+		m_IsSoundPause = true;
 		switch (m_eCurState)
 		{
 		case STATE::STATE_IDLE:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
+			//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
 			break;
 		case STATE::STATE_WALK:
 		{
