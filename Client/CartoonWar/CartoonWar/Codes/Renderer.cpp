@@ -63,9 +63,13 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Priority();
 	Render_Alpha();
 <<<<<<< HEAD
+<<<<<<< HEAD
 	pManagement->Render_Font();
 	Render_Post_Effect();
 
+=======
+	Render_Post_Effect();
+>>>>>>> parent of b0ac7044 (quit post effect)
 =======
 	Render_Post_Effect();
 >>>>>>> parent of b0ac7044 (quit post effect)
