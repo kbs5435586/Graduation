@@ -978,228 +978,16 @@ void Server::do_follow(int npc_id)
             _vec3* p_look = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             if (*n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
             {
-                if (dist_between(npc_id, n.m_owner_id) > dist_between_finalPos(n.m_owner_id, i) + 0.1f
-                    || dist_between(npc_id, n.m_owner_id) < dist_between_finalPos(n.m_owner_id, i) - 0.1f)// 자신의 포메이션 반지름 밖일때
-                {
-                    n.m_anim = A_WALK;
-                    n.m_Mcondition = CON_STRAIGHT;
-                    n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                    _vec3 finalLookAt = g_clients[n.m_owner_id].m_boid[i].final_pos - *n_pos;
-                    finalLookAt = Vector3_::Normalize(finalLookAt);
-                    _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look);
-
-                    _vec3 set_pos = {};
-
-                    float PdotProduct = (npcLookAt.x * finalLookAt.x) + (npcLookAt.y * finalLookAt.y) + (npcLookAt.z * finalLookAt.z); // 내각
-                    _vec3 PoutProduct;
-                    PoutProduct.x = (finalLookAt.y * npcLookAt.z) - (finalLookAt.z * npcLookAt.y); // 외각
-                    PoutProduct.y = (finalLookAt.z * npcLookAt.x) - (finalLookAt.x * npcLookAt.z);
-                    PoutProduct.z = (finalLookAt.x * npcLookAt.y) - (finalLookAt.y * npcLookAt.x);
-
-                    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                    if (PoutProduct.y < 0)
-                        radian *= -1.f;
-                    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                    if (NPCangle > 0)
-                    {
-                        n.m_Rcondition = CON_LEFT;
-                        n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                    }
-                    else if (NPCangle < 0)
-                    {
-                        n.m_Rcondition = CON_RIGHT;
-                        n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-                    }
-                    else
-                    {
-                        n.m_Rcondition = CON_IDLE;
-                    }
-                    n.m_isOut = true;
-                    n.m_isFormSet = false;
-                }
-                else // 자신의 포메이션 반지름과 같거나 이내일때
-                {
-                    if (n.m_isOut) // 최초로 반지름 범위에 들어왔을때
-                    {
-                        n.m_isOut = false;
-                        n.m_Mcondition = CON_IDLE;
-                        n.m_Rcondition = CON_IDLE;
-                        _vec3 standard = -1.f * Vector3_::Normalize(*p_look);
-                        _vec3 toNpc = *n_pos - *p_pos;
-                        toNpc = Vector3_::Normalize(toNpc);
-
-                        _vec3 set_pos = {};
-
-                        float PdotProduct = (toNpc.x * standard.x) + (toNpc.y * standard.y) + (toNpc.z * standard.z); // 내각
-                        _vec3 PoutProduct;
-                        PoutProduct.x = (standard.y * toNpc.z) - (standard.z * toNpc.y); // 외각
-                        PoutProduct.y = (standard.z * toNpc.x) - (standard.x * toNpc.z);
-                        PoutProduct.z = (standard.x * toNpc.y) - (standard.y * toNpc.x);
-
-                        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                        if (PoutProduct.y < 0)
-                            radian *= -1.f;
-                        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                        if (NPCangle > 0)  NPCangle += 3.f;
-                        else if (NPCangle < 0) NPCangle -= 3.f;
-                        n.m_total_angle = g_clients[n.m_owner_id].m_total_angle + NPCangle;
-                        n_pos->x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos->x;
-                        n_pos->z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos->z;
-                        {
-                            for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                            {
-                                if (ST_ACTIVE != g_clients[i].m_status)
-                                    continue;
-                                if (true == is_near(npc_id, i))
-                                {
-                                    send_fix_packet(i, npc_id);
-                                }
-                            }
-                        }
-                    }
-                    else if (!n.m_isOut && !n.m_isFormSet) // 최초로 반지름 들어온건 아닌데 방향셋팅 안되어있을때
-                    {
-                        n.m_Mcondition = CON_IDLE;
-                        _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look); // npc가 바라보는 방향
-
-                        _vec3 toNpc = *n_pos - *p_pos; // 플레이어에서 npc 바라보는 방향
-                        toNpc = Vector3_::Normalize(toNpc);
-
-                        float PdotProduct = (npcLookAt.x * toNpc.x) + (npcLookAt.y * toNpc.y) + (npcLookAt.z * toNpc.z); // 내각
-                        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                        float PoutProduct = (toNpc.x * npcLookAt.z) - (toNpc.z * npcLookAt.x); // 앞에 x 벡터 기준 각도 차이
-                        if (PoutProduct > 0) // 양수이면 npcLookAt는 toNpc로 부터 반시계
-                            radian *= -1.f;
-
-                        float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                        if (-0.03f > PdotProduct || 0.03f < PdotProduct) // 나아가야할 수직 방향을 안바라볼때
-                        {
-                            if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
-                            {
-                                n.m_Rcondition = CON_LEFT;
-                                n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE); // 왼쪽회전
-                            }
-                            else //차이가 마이너스
-                            {
-                                n.m_Rcondition = CON_RIGHT;
-                                n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE); // 오른쪽
-                            }
-                        }
-                        else // 나아가야할 수직 방향을 바라볼때
-                        {
-                            n.m_Rcondition = CON_IDLE;
-                            n.m_isFormSet = true;
-                            for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
-                            {
-                                if (ST_ACTIVE != g_clients[i].m_status)
-                                    continue;
-                                if (true == is_near(npc_id, i))
-                                {
-                                    send_fix_packet(i, npc_id);
-                                }
-                            }
-                        }
-                    }
-                    else // 방향 셋팅까지 다 완료 되었을때
-                    {
-                        if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle
-                            || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle) // 자기가 있어야할 각도 위치가 아닐경우
-                        {
-                            _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look); // npc가 바라보는 방향
-
-                            _vec3 toNpc = *n_pos - *p_pos; // 플레이어에서 npc 바라보는 방향
-                            toNpc = Vector3_::Normalize(toNpc);
-
-
-
-                            float PdotProduct = (npcLookAt.x * toNpc.x) + (npcLookAt.y * toNpc.y) + (npcLookAt.z * toNpc.z); // 내각
-                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                            float PoutProduct = (toNpc.x * npcLookAt.z) - (toNpc.z * npcLookAt.x); // 앞에 x 벡터 기준 각도 차이
-                            if (PoutProduct > 0) // 양수이면 npcLookAt는 toNpc로 부터 반시계
-                                radian *= -1.f;
-
-                            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                            if (-0.03f > PdotProduct || 0.03f < PdotProduct) // 나아가야할 수직 방향을 안바라볼때
-                            {
-                                n.m_anim = A_WALK;
-                                n.m_Mcondition = CON_IDLE;
-                                if (g_clients[n.m_owner_id].m_boid[i].angle < n.m_total_angle) // 현재 npc 각도보다 가야할 포메이션 각도가 더 클때, 차이가 플러스
-                                {
-                                    n.m_Rcondition = CON_LEFT;
-                                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE); // 왼쪽회전
-                                }
-                                else //차이가 마이너스
-                                {
-                                    n.m_Rcondition = CON_RIGHT;
-                                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE); // 오른쪽
-                                }
-                            }
-                            else
-                            {
-                                _vec3 lastPos = *n_pos; // 한발자국 나아가기 전에 마지막 위치 계산
-                                n.m_Mcondition = CON_STRAIGHT;
-                                n.m_Rcondition = CON_IDLE;
-                                n.m_transform.BackWard(MOVE_TIME_ELAPSE); // 한 발자국 앞으로 나아감
-                                 // 각도 비교후 바뀐 각도만큼 토탈 앵글 계산
-
-                                _vec3 newLook = *n_pos - *p_pos;
-                                newLook = Vector3_::Normalize(newLook);
-                                _vec3 oldLook = lastPos - *p_pos;
-                                oldLook = Vector3_::Normalize(oldLook);
-
-                                PdotProduct = (newLook.x * oldLook.x) + (newLook.y * oldLook.y) + (newLook.z * oldLook.z); // 내각
-                                _vec3 PoutProduct;
-                                PoutProduct.x = (oldLook.y * newLook.z) - (oldLook.z * newLook.y); // 외각
-                                PoutProduct.y = (oldLook.z * newLook.x) - (oldLook.x * newLook.z);
-                                PoutProduct.z = (oldLook.x * newLook.y) - (oldLook.y * newLook.x);
-                                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-                                if (PoutProduct.y < 0)
-                                    radian *= -1.f;
-                                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-                                n.m_total_angle += NPCangle;
-                            }
-                        }
-                        else // 자기가 있어야할 최종 위치일때
-                        {
-                            n.m_Mcondition = CON_IDLE;
-                            _vec3 standard = -1.f * Vector3_::Normalize(*p_look);
-                            _vec3 npcLookAt = -1.f * Vector3_::Normalize(*n_look);
-
-                            float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z); // 내각
-                            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-                            float PoutProduct = (standard.x * npcLookAt.z) - (standard.z * npcLookAt.x); // 앞에 x 벡터 기준 각도 차이
-                            if (PoutProduct > 0) // 양수이면 npcLookAt는 standard로 부터 반시계
-                                radian *= -1.f;
-
-                            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-                            if (NPCangle > 2.f || NPCangle < -2.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
-                            {
-                                n.m_anim = A_WALK;
-                                if (NPCangle > 2.f)
-                                {
-                                    n.m_Rcondition = CON_LEFT;
-                                    n.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
-                                }
-                                else if (NPCangle < -2.f)
-                                {
-                                    n.m_Rcondition = CON_RIGHT;
-                                    n.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
-                                }
-                            }
-                            else
-                            {
-                                n.m_Rcondition = CON_IDLE;
-                                n.m_anim = A_IDLE;
-                            }
-                        }
-                    }
-                }
+                n.m_anim = A_WALK;
+                _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
+                _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+                _vec3 new_pos = *pos + Dir;
+                if (*pos != new_pos)
+                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
             }
         }
+        else
+            n.m_anim = A_IDLE;
     }
 }
 
@@ -1228,15 +1016,14 @@ void Server::do_npc_rotate(int user_id, char con)
             else if (CON_RIGHT == con)
                 g_clients[i].m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
 
-            //for (int player = 0; player < NPC_START; ++player)
-            //{
-            //    if (ST_ACTIVE != g_clients[player].m_status)
-            //        continue;
-            //    if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
-            //        continue;
-
-            //    send_rotate_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
-            //}
+            for (int player = 0; player < NPC_START; ++player)
+            {
+                if (ST_ACTIVE != g_clients[player].m_status)
+                    continue;
+                if (false == is_near(player, i)) // 근처에 없는애면 보내지도 마라
+                    continue;
+                send_fix_packet(player, i); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
+            }
         }
     }
 }
@@ -1466,7 +1253,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         case FUNC_PLAYER_LEFT:
         {
             c.m_last_rotate = FUNC_PLAYER_LEFT;
-            //do_npc_rotate(player_id, CON_LEFT);
+            do_npc_rotate(player_id, CON_LEFT);
             c.m_transform.Rotation_Y(-ROTATE_TIME_ELAPSE);
             c.m_total_angle += (-ROTATE_TIME_ELAPSE * c.m_rotate_speed) * 180.f / PIE;
         }
@@ -1474,7 +1261,7 @@ void Server::dead_reckoning(int player_id, ENUM_FUNCTION func_id)
         case FUNC_PLAYER_RIGHT:
         {
             c.m_last_rotate = FUNC_PLAYER_RIGHT;
-            //do_npc_rotate(player_id, CON_RIGHT);
+            do_npc_rotate(player_id, CON_RIGHT);
             c.m_transform.Rotation_Y(ROTATE_TIME_ELAPSE);
             c.m_total_angle += ROTATE_TIME_ELAPSE * c.m_rotate_speed * 180.f / PIE;
         }
