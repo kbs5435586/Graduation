@@ -1197,7 +1197,7 @@ void CServer_Manager::init_client()
 	isBlue = false;
 }
 
-void CServer_Manager::send_fix_packet(_matrix& mat, int id, unsigned char mtype)
+void CServer_Manager::send_fix_packet(_matrix mat, int id, unsigned char mtype)
 {
 	cs_packet_fix l_packet;
 	l_packet.type = CS_PACKET_FIX;

@@ -1116,7 +1116,7 @@ void CNPC::Obb_Collision()
 			m_IsBazier = false;
 			m_eCurState = STATE::STATE_IDLE;
 
-			server->send_fix_packet(&m_pTransformCom->Get_Matrix(), m_iLayerIdx, O_NPC);
+			server->send_fix_packet(m_pTransformCom->Get_Matrix(), m_iLayerIdx, O_NPC);
 			Safe_Release(server);
 		}
 	}

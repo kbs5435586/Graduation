@@ -58,7 +58,7 @@ public:
     void send_teleport_packet(float mx, float mz);
     void send_arrow_packet();
     void send_invisible_packet(bool isinvi);
-    void send_fix_packet(_matrix& mat, int id, unsigned char mtype);
+    void send_fix_packet(_matrix mat, int id, unsigned char mtype);
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);

@@ -1273,7 +1273,7 @@ void CPlayer::Obb_Collision()
 			m_IsOBB_Collision = false;
 			m_IsBazier = false;
 
-			server->send_fix_packet(&m_pTransformCom->Get_Matrix(), m_iLayerIdx, O_PLAYER);
+			server->send_fix_packet(m_pTransformCom->Get_Matrix(), m_iLayerIdx, O_PLAYER);
 			Safe_Release(server);
 		}
 	}
