@@ -118,6 +118,7 @@ HRESULT CScene_Stage::Ready_Scene()
 	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 10.f, FMOD_LOOP_NORMAL);
 
 	Safe_Release(pManagement);
+	g_IsStageStart = true;
 	return S_OK;
 }
 
@@ -682,7 +683,8 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 18; ++i)
+	//for (int i = 0; i < 18; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();

@@ -89,147 +89,243 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 				m_fSizeX = 50.f;
 				m_fSizeY = 50.f;
 
-				//_bool GetSTime() { return StartTime; }
-			//void SetStime(_bool _t) { StartTime = _t; }
-			//
-			//_bool GetActive() { return m_Active; }
-			//void SetActive(_bool _t) { m_Active = _t; }
-			//
-			//_bool GetSkillActive() { return m_SkillActive; }
-			//void SetSkillActive(_bool _t) { m_SkillActive = _t; }
-			//
-			//_float& GetCoolTime() { return m_CoolTime; }
-			//void SetCoolTime(_float _t) { m_CoolTime = _t; }
+				//if (g_iGold > 0)
+				//{
+					CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+					CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 
-				CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
-				CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
-			
-				dynamic_cast<CUI_Skill*>(zTemp)->GetSTime() = false;
-				dynamic_cast<CUI_Skill*>(zTemp)->GetActive() = false;
-				dynamic_cast<CUI_Skill*>(zTemp)->GetSkillActive() = false;
-				dynamic_cast<CUI_Skill*>(zTemp)->GetCoolTime() = dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime();
+					dynamic_cast<CUI_Skill*>(zTemp)->GetSTime() = false;
+					dynamic_cast<CUI_Skill*>(zTemp)->GetActive() = false;
+					dynamic_cast<CUI_Skill*>(zTemp)->GetSkillActive() = false;
+					dynamic_cast<CUI_Skill*>(zTemp)->GetCoolTime() = dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime();
 
-				dynamic_cast<CUI_Skill*>(xTemp)->GetSTime() = false;
-				dynamic_cast<CUI_Skill*>(xTemp)->GetActive() = false;
-				dynamic_cast<CUI_Skill*>(xTemp)->GetSkillActive() = false;
-				dynamic_cast<CUI_Skill*>(xTemp)->GetCoolTime() = dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime();
+					dynamic_cast<CUI_Skill*>(xTemp)->GetSTime() = false;
+					dynamic_cast<CUI_Skill*>(xTemp)->GetActive() = false;
+					dynamic_cast<CUI_Skill*>(xTemp)->GetSkillActive() = false;
+					dynamic_cast<CUI_Skill*>(xTemp)->GetCoolTime() = dynamic_cast<CUI_Skill*>(zTemp)->GetMaxCoolTime();
 
-				CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
-				_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+					CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
+					_int whichnum = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
 
-				CLASS cTemp{};
+					CLASS cTemp{};
 
-				if (whichnum == 0)
-				{
-					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-					cTemp = pTemp->GetClass();
-				}
-				else
-				{
-					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-					cTemp = pTemp->GetClass();
-				}
-
-
-				if (cTemp == CLASS::CLASS_WORKER)
-				{
-					if (m_ButtonClass == CLASS(2) || m_ButtonClass == CLASS(4) || m_ButtonClass == CLASS::CLASS_MMAGE)
+					if (whichnum == 0)
 					{
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+						cTemp = pTemp->GetClass();
 					}
 					else
 					{
-						if (whichnum == 0)
-						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);				
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
-						else
-						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
+						CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+						cTemp = pTemp->GetClass();
 					}
-				}
-				else if (cTemp == CLASS::CLASS_CAVALRY || cTemp == CLASS(2))
-				{
-					if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_CAVALRY || m_ButtonClass == CLASS(2))
+
+
+					if (cTemp == CLASS::CLASS_WORKER)
 					{
-						if (whichnum == 0)
+						if (g_iGold > 0)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
-						else
-						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
+							if (m_ButtonClass == CLASS(2) || m_ButtonClass == CLASS(4) || m_ButtonClass == CLASS::CLASS_MMAGE)
+							{
+							}
+							else
+							{
+								if (whichnum == 0)
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								else
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								g_iGold -= 1;
+							}
+						}	
 					}
-				}
-				else if (cTemp == CLASS::CLASS_INFANTRY || cTemp == CLASS(4))
-				{
-					if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_INFANTRY || m_ButtonClass == CLASS(4))
+					else if (cTemp == CLASS::CLASS_CAVALRY)
 					{
-						if (whichnum == 0)
+						if (m_ButtonClass == CLASS::CLASS_WORKER)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-							pTemp->SetClass(CLASS(m_ButtonClass));
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
 						}
-						else
+						if (g_iGold > 0)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
+							if (m_ButtonClass == CLASS(2))
+							{
+								if (whichnum == 0)
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								else
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								g_iGold -= 1;
+							}
+						}	
 					}
-				}
-				else if (cTemp == CLASS::CLASS_SPEARMAN)
-				{
-					if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_SPEARMAN)
+					else if (cTemp == CLASS(2))
 					{
-						if (whichnum == 0)
+						if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_CAVALRY)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
-						else
-						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-							pTemp->SetClass(CLASS(m_ButtonClass));
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
 						}
 					}
-				}
-				else if (cTemp == CLASS::CLASS_MAGE || cTemp == CLASS::CLASS_MMAGE)
-				{
-					if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_MAGE || m_ButtonClass == CLASS::CLASS_MMAGE)
+					else if (cTemp == CLASS::CLASS_INFANTRY)
 					{
-						if (whichnum == 0)
+						if (m_ButtonClass == CLASS::CLASS_WORKER)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-							pTemp->SetClass(CLASS(m_ButtonClass));
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
 						}
-						else
+						if (g_iGold > 0)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-							pTemp->SetClass(CLASS(m_ButtonClass));
+							if (m_ButtonClass == CLASS(4))
+							{
+								if (whichnum == 0)
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								else
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								g_iGold -= 1;
+							}
 						}
+						
 					}
-				}
-				else if (cTemp == CLASS::CLASS_ARCHER)
-				{
-					if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_ARCHER)
+					else if (cTemp == CLASS(4))
 					{
-						if (whichnum == 0)
+						if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_INFANTRY)
 						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
-							pTemp->SetClass(CLASS(m_ButtonClass));
-						}
-						else
-						{
-							CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
-							pTemp->SetClass(CLASS(m_ButtonClass));
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
 						}
 					}
-				}
+					else if (cTemp == CLASS::CLASS_SPEARMAN)
+					{
+						if (m_ButtonClass == CLASS::CLASS_WORKER)
+						{
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+						}
+					}
+					else if (cTemp == CLASS::CLASS_MAGE)
+					{
+						if (m_ButtonClass == CLASS::CLASS_WORKER)
+						{
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+						}
+						if (g_iGold > 0)
+						{
+							if (m_ButtonClass == CLASS::CLASS_MMAGE)
+							{
+								if (whichnum == 0)
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								else
+								{
+									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+									pTemp->SetClass(CLASS(m_ButtonClass));
+								}
+								g_iGold -= 1;
+							}
+						}
+						
+					}
+					else if (cTemp == CLASS::CLASS_MMAGE)
+					{
+						if (m_ButtonClass == CLASS::CLASS_WORKER || m_ButtonClass == CLASS::CLASS_MAGE)
+						{
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+						}
+					}
+					else if (cTemp == CLASS::CLASS_ARCHER)
+					{
+						if (m_ButtonClass == CLASS::CLASS_WORKER)
+						{
+							if (whichnum == 0)
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", whichnum);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+							else
+							{
+								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1);
+								pTemp->SetClass(CLASS(m_ButtonClass));
+							}
+						}
+					}
+				//}
 
 				IsDown = false;
 			}

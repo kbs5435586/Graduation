@@ -1459,7 +1459,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/Gold/Gold%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_GoldNum",
-			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 10, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_PopUp",
 			CTexture::Create(L"../Bin/Resource/Texture/UI/popup%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))

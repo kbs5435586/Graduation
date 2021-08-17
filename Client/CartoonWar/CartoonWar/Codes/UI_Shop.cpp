@@ -76,13 +76,15 @@ _int CUI_Shop::Update_GameObject(const _float& fTimeDelta)
 				list<CGameObject*> LstTemp = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC");
 				npcNum = LstTemp.size();
 
-				if (npcNum < 9)
+				if (npcNum < 9 && g_iGold > 0)
 				{
 					CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", 0);
 					UNIT tPlayerInfo = pTemp->GetPlayerInfo();
 
 					if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", nullptr, (void*)&tPlayerInfo)))
 						return E_FAIL;
+
+					g_iGold -= 1;
 				}
 
 				IsDown = false;
