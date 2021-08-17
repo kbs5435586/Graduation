@@ -1070,7 +1070,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
             float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
 
             Dir = Dir / hyp; // 여기가 노멀값
-            Dir = Dir * 0.1f; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * g_clients[id].m_move_speed / 100.f; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
@@ -1171,26 +1171,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
             if (0 != g_clients[i].m_view_list.count(npc_id))
             {
                 g_clients[i].m_cLock.unlock();
-                if (n.m_LastMcondition != n.m_Mcondition)
-                {
-                    send_condition_packet(i, npc_id, CON_TYPE_MOVE);
-                    //if (CON_IDLE == n.m_Mcondition)
-                    //    cout << npc_id << " send move condition : CON_IDLE\n";
-                    //else if (CON_STRAIGHT == n.m_Mcondition)
-                    //    cout << npc_id << " send condition : CON_STRAIGHT\n";
-                    //else if (CON_BACK == n.m_Mcondition)
-                    //    cout << npc_id << " send condition : CON_BACK\n";
-                }
-                if (n.m_LastRcondition != n.m_Rcondition)
-                {
-                    send_condition_packet(i, npc_id, CON_TYPE_ROTATE);
-                    //if (CON_IDLE == n.m_Rcondition)
-                    //    cout << npc_id << " send rote condition : CON_IDLE\n";
-                    //else if (CON_LEFT == n.m_Rcondition)
-                    //    cout << npc_id << " send condition : CON_LEFT\n";
-                    //else if (CON_RIGHT == n.m_Rcondition)
-                    //    cout << npc_id << " send condition : CON_RIGHT\n";
-                }
+                send_fix_packet(i, npc_id);
             }
             else
             {
