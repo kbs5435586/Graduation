@@ -103,6 +103,7 @@ HRESULT CScene_Stage::Ready_Scene()
 	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 10.f, FMOD_LOOP_NORMAL);
 
 	Safe_Release(pManagement);
+	g_IsStageStart = true;
 	return S_OK;
 }
 

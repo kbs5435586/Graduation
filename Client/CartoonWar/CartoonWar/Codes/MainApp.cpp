@@ -79,6 +79,16 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return - 1;
+	if (g_IsStageStart)
+	{
+		m_fGoldTime += fTimeDelta;
+		if (m_fGoldTime >= 10.f)
+		{
+			g_iGold++;
+			m_fGoldTime = 0.f;
+		}
+
+	}
 
 	if (g_iGold >= 9)
 		g_iGold = 9;
@@ -98,7 +108,9 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	}
 
 	if (GetAsyncKeyState('O'))
-		g_DefferedUIRender = true;
+	{
+		g_iTotalTime = 300.f;
+	}
 	if (GetAsyncKeyState('P'))
 	{
 		if (g_DefferedRender == 0)

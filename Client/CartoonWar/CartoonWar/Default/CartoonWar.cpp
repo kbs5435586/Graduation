@@ -39,6 +39,7 @@ bool        g_IsCollisionBox = false;
 bool        g_IsNaviMesh = false;
 bool        g_IsEnd = false;
 bool        g_IsFix = false;
+bool        g_IsStageStart = false;
 string      g_strIP = {};
 
 
