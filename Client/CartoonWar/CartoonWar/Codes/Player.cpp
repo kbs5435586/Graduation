@@ -129,10 +129,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		//X
 		Skill_Invisible(fTimeDelta);
 	}
-	else if (m_eCurClass == CLASS::CLASS_WORKER)
-	{
-		Skill_Deffend(fTimeDelta);
-	}
+	//else if (m_eCurClass == CLASS::CLASS_WORKER)
+	//{
+	//	Skill_Deffend(fTimeDelta);
+	//}
 
 	
 
