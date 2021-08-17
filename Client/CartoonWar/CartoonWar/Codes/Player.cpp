@@ -1263,6 +1263,7 @@ void CPlayer::Obb_Collision()
 		}
 		if (m_fBazierCnt >= 1.f)
 		{
+			m_pTransformCom->Get_Matrix();
 			m_fBazierCnt = 0.f;
 			m_IsOBB_Collision = false;
 			m_IsBazier = false;
