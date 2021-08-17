@@ -48,7 +48,7 @@ void CCollisionMgr::Range()
 	{
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
 		{
-			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+			if (!iter1->GetIsShow())
 				continue;
 			_float fLength = 0.f;
 
@@ -96,7 +96,7 @@ void CCollisionMgr::Range()
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
 		{
-			if (!iter0->GetIsShow() || !iter1->GetIsShow())
+			if (!iter1->GetIsShow())
 				continue;
 			if (dynamic_cast<CThrow_Arrow*>(iter0)->GetOwnPlayer() == iter1)
 				continue;
