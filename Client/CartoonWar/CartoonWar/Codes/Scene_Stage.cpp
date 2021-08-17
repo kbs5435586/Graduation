@@ -683,8 +683,7 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	//for (int i = 0; i < 18; ++i)
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 18; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();
