@@ -38,12 +38,10 @@ _int CUI_LastTimeBar::Update_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	g_iTotalTime = server->Get_GameTime();
 	m_iTimeCnt = server->Get_GameTime();
 
-	Safe_Release(server);
 	return _int();
 }
 

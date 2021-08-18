@@ -48,7 +48,6 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	/*CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	int id = server->get_my_id();
 	CTransform* pTransform;
@@ -122,7 +121,6 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
@@ -200,7 +198,6 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//	}
 	//}
 	}
-	Safe_Release(server);
 	return _int();
 }
 

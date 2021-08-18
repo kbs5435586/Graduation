@@ -92,7 +92,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	m_IsHit = server->Get_isHitPL(m_iLayerIdx);
 	m_IsOnce = server->Get_isHitPL(m_iLayerIdx);
@@ -243,7 +242,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	Set_Animation(fTimeDelta);
-	Safe_Release(server);
 	return NO_EVENT;
 }
 
@@ -252,7 +250,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -292,8 +289,6 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_IsFrustum = false;
 		}
 	}
-
-	Safe_Release(server);
 	return _int();
 }
 
@@ -1292,7 +1287,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return;
-	server->AddRef();
 
 	if (0 >= m_tInfo.fHP)
 		return;
@@ -1670,8 +1664,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	{
 		server->send_npc_act_packet(DO_HOLD);
 	}
-
-	Safe_Release(server);
 }
 
 void CPlayer::Compute_Matrix_Z()
@@ -2027,12 +2019,6 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 
 void CPlayer::SkillClear()
 {
-	//CServer_Manager* server = CServer_Manager::GetInstance();
-	//if (nullptr == server)
-	//	return;
-	//server->AddRef();
-	///
-
 	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 	{}
 	else
@@ -2079,9 +2065,6 @@ void CPlayer::SkillClear()
 	dynamic_cast<CUI_Skill*>(xTemp)->SetActive(false);
 	dynamic_cast<CUI_Skill*>(xTemp)->SetStime(false);
 	dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
-
-	///
-	//Safe_Release(server);
 }
 
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
@@ -2115,7 +2098,6 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return;
-	server->AddRef();
 
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);	
 	m_IsInvisible = dynamic_cast<CUI_Skill*>(pTemp)->GetSkillActive();
@@ -2137,8 +2119,6 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 		m_InvisibleOnce = false;
 		server->send_invisible_packet(true);
 	}
-
-	Safe_Release(server);
 }
 
 void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)

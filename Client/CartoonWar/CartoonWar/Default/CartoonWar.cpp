@@ -79,7 +79,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     CServer_Manager* server = CServer_Manager::GetInstance();
     NULL_CHECK_VAL(server, FALSE);
-    server->AddRef();
 
     if (FAILED(pSystem->Add_Timer(L"Timer_Default")))
         return FALSE;
@@ -122,7 +121,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
     _ulong		dwRefCnt = 0;
-    Safe_Release(server);
     Safe_Release(pSystem);
 
     if (dwRefCnt = Safe_Release(pMainApp))
@@ -188,19 +186,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    //case WM_ACTIVATE:
-    //{
-    //    CServer_Manager* server = CServer_Manager::GetInstance();
-    //    if (nullptr == server)
-    //        break;
-    //    server->AddRef();
-    //    if (LOWORD(wParam) != WA_INACTIVE) // 창 활성화 되어있을때
-    //        server->Set_wParam(wParam);
-    //    else
-    //        server->Set_wParam(wParam);
-    //    Safe_Release(server);
-    //}
-    break;
     case WM_KEYDOWN:
         switch (wParam)
         {

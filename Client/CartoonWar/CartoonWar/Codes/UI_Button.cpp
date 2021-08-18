@@ -67,7 +67,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 		CServer_Manager* server = CServer_Manager::GetInstance();
 		if (nullptr == server)
 			return -1;
-		server->AddRef();
 
 		if (pManagement->Key_Pressing(KEY_LBUTTON))
 		{
@@ -261,8 +260,6 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 				IsDown = false;
 			}
 		}
-
-		Safe_Release(server);
 		Safe_Release(pManagement);
 		return _int();
 	}
@@ -293,7 +290,6 @@ void CUI_Button::Render_GameObject()
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return;
-	server->AddRef();
 
 	REP tRep = {};
 
@@ -387,7 +383,6 @@ void CUI_Button::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
-	Safe_Release(server);
 	Safe_Release(pManagement);
 }
 

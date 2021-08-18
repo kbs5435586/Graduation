@@ -115,10 +115,8 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (nullptr == server)
 		return E_FAIL;
 
-	server->AddRef();
 	server->InitServer(g_hWnd);
 
-	Safe_Release(server);
 	g_IsCollisionStart = true;
 	CManagement::GetInstance()->Stop_Sound(CHANNEL_BG);
 	pManagement->Play_Sound(CHANNEL_BG, SOUND_BG, BG, 10.f, FMOD_LOOP_NORMAL);

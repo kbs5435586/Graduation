@@ -80,7 +80,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	m_IsShow = server->Get_ShowNPC(m_iLayerIdx);
 	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
@@ -97,7 +96,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_PositionY(fY);
 	}
 
-	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+	//m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 	m_IsHit = server->Get_isHitNPC(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
@@ -182,9 +181,11 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsActioning = false;
 		}
 	}
+	if (m_IsDead)
+		return DEAD_OBJ;
+
 
 	Play_Sound(fTimeDelta);
-	Safe_Release(server);
 	return NO_EVENT;
 }
 
@@ -193,7 +194,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -245,8 +245,6 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_IsFrustum = false;
 		}
 	}
-
-	Safe_Release(server);
 	return _int();
 }
 

@@ -53,7 +53,6 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	if (pManagement->Key_Up(KEY_I))
 		m_cansee = !m_cansee;
@@ -88,7 +87,6 @@ _int CUI_ClassTap::Update_GameObject(const _float& fTimeDelta)
 	//m_shop->Update_GameObject(fTimeDelta);
 
 	Safe_Release(pManagement);
-	Safe_Release(server);
 	return _int();
 }
 

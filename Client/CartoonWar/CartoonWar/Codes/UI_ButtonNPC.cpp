@@ -69,7 +69,6 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		CServer_Manager* server = CServer_Manager::GetInstance();
 		if (nullptr == server)
 			return -1;
-		server->AddRef();
 
 		if (m_ButtonNow == 0)
 		{
@@ -119,9 +118,6 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 				}
 			}
 		}
-
-		
-		Safe_Release(server);
 		Safe_Release(pManagement);
 	}
 	
@@ -154,7 +150,6 @@ void CUI_ButtonNPC::Render_GameObject()
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return;
-	server->AddRef();
 
 	_uint now{};
 	if (m_ButtonNow == 0)
@@ -210,9 +205,7 @@ void CUI_ButtonNPC::Render_GameObject()
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();
 
-	Safe_Release(pManagement);
-	Safe_Release(server);
-	
+	Safe_Release(pManagement);	
 }
 
 HRESULT CUI_ButtonNPC::CreateInputLayout()

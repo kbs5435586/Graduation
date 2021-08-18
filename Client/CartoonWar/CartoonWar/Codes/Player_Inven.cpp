@@ -73,7 +73,6 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 	CServer_Manager* server = CServer_Manager::GetInstance();
 	if (nullptr == server)
 		return -1;
-	server->AddRef();
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
@@ -99,8 +98,6 @@ _int CPlayer_Inven::Update_GameObject(const _float& fTimeDelta)
 			m_IsOnce = false;
 		}
 	}
-	
-	Safe_Release(server);
 	return NO_EVENT;
 }
 
