@@ -8,6 +8,11 @@ public:
 	~Server();
 
 private:
+	LARGE_INTEGER   m_frameTime;
+	LARGE_INTEGER   m_lastTime;
+	LARGE_INTEGER   m_fixTime;
+	LARGE_INTEGER   m_CPUTick;
+
 	unordered_map <int, SESSION> g_clients;
 	priority_queue<event_type> timer_queue;
 	mutex timer_lock;
@@ -40,7 +45,8 @@ private:
 public:
 	void mainServer(); // 메인 서버
 	void error_display(const char* msg, int err_no);
-	void start_game();
+	const float time_delta();
+	void ready_timer();
 
 	void recv_packet_construct(int user_id, int io_byte); // 수신한 패킷이 커서 짤려서 온 경우 재조립 함수
 	void process_packet(int user_id, char* buf); // 패킷 처리 루틴

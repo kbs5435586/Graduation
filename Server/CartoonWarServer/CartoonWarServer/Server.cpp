@@ -22,8 +22,29 @@ void Server::error_display(const char* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
-void Server::start_game()
+const float Server::time_delta()
 {
+	QueryPerformanceCounter(&m_frameTime);
+
+	float m_fTimeDelta = float(m_frameTime.QuadPart - m_lastTime.QuadPart) / m_CPUTick.QuadPart;
+
+	m_lastTime = m_frameTime;
+
+	if (m_frameTime.QuadPart - m_fixTime.QuadPart >= m_CPUTick.QuadPart)
+	{
+		QueryPerformanceFrequency(&m_CPUTick);
+		m_fixTime = m_frameTime;
+	}
+
+	return m_fTimeDelta;
+}
+
+void Server::ready_timer()
+{
+    QueryPerformanceCounter(&m_frameTime);
+    QueryPerformanceCounter(&m_fixTime);
+    QueryPerformanceCounter(&m_lastTime);
+    QueryPerformanceFrequency(&m_CPUTick);
 }
 
 void Server::recv_packet_construct(int user_id, int io_byte)
@@ -2582,6 +2603,7 @@ void Server::mainServer()
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initialize_clients(); // 클라이언트 정보들 초기화
     initialize_objects(); // 오브젝트 정보들 초기화
+    ready_timer();
     isGameStart = false;
 
     // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
