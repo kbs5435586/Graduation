@@ -106,7 +106,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-        server->EventManager();
+         server->EventManager();
         _float		fTimeDelta_Default = 0.f;
         if (server->Get_Connected())
             fTimeDelta_Default = server->Get_TimeDelta();
