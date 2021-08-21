@@ -98,9 +98,9 @@ void CSoundMgr::SetVolume(SoundChannel eChannel, const _float& fVolume)
 }
 void CSoundMgr::Pause_Sound(SoundChannel eChannel)
 {
-	if (FMOD_OK != m_pCh[eChannel]->setPaused(false))
+	if (FMOD_OK != m_pCh[eChannel]->setPaused(true))
 	{
-		_MSG_BOX("Sound Pause Failed!");
+		//_MSG_BOX("Sound Pause Failed!");
 		return;
 	}
 }
@@ -116,6 +116,15 @@ void CSoundMgr::Stop_Sound(SoundChannel eChannel)
 void CSoundMgr::Update_Sound()
 {
 	m_pFmod->update();
+}
+_bool CSoundMgr::IsPlaying(SoundChannel eChannel, _bool IsPlaying)
+{
+	FMOD_RESULT i = FMOD_OK;
+	if (FMOD_OK != (i = m_pCh[eChannel]->stop()))
+	{
+		return false;
+	}
+	return true;
 }
 CSoundMgr* CSoundMgr::Create()
 {

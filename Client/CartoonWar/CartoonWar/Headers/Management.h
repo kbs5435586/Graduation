@@ -48,6 +48,7 @@ public://LightManager
 	void						SetUp_OnShader_Light();
 	void						Update();
 	void						Render();
+	void						Update_DiffuseLight(const _float& fTimeDelata);
 public://ConstantBuffer_Mananger
 	HRESULT						Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal = false);
 	CConstant_Buffer*			GetConstantBuffer(_uint iIdx) { return m_pConstant_Buffer_Manager->GetConstantBuffer(iIdx); }
@@ -100,6 +101,7 @@ public://SoundMgr
 	void						SetVolume(SoundChannel eChannel, const _float& fVolume);
 	void						Pause_Sound(SoundChannel eChannel);
 	void						Stop_Sound(SoundChannel eChannel);
+	_bool						IsPlaying_Sound(SoundChannel eChannel, _bool IsPlaying);
 	void						Update_Sound();
 public://m_pEvent_Manager
 	void						Update_Event_Manager();
@@ -128,7 +130,5 @@ private:
 	CFontMgr*					m_pFont_Manager = nullptr;
 	CSoundMgr*					m_pSound_Manager = nullptr;
 	CEventMgr*					m_pEvent_Manager = nullptr;
-	
-	//CServer_Manager*			m_pServer_Manager = nullptr;
 };
 

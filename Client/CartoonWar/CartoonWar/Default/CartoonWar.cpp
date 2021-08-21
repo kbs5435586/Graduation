@@ -34,6 +34,7 @@ bool        g_IsCollisionStart = false;
 int         g_iPlayerIdx = 0;
 int         g_iGold = 0;
 int         g_iTotalTime = 0;
+float         g_iDiffusePer = 1;
 bool        g_IsWin = false;
 bool        g_IsCollisionBox = false;
 bool        g_IsNaviMesh = false;

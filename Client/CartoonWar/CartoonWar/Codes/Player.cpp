@@ -1688,15 +1688,19 @@ void CPlayer::Play_Sound(const _float& fTimeDelta)
 {
 	if (m_ePreState != m_eCurState)
 	{
+	
 		if (m_IsSoundPause)
 		{
-			CManagement::GetInstance()->Pause_Sound();
+			if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_EFEECT, false))
+			{
+				CManagement::GetInstance()->Pause_Sound(CHANNEL_EFEECT);
+			}
 		}
 		m_IsSoundPause = true;
 		switch (m_eCurState)
 		{
 		case STATE::STATE_IDLE:
-			//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
+			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
 			break;
 		case STATE::STATE_WALK:
 		{
@@ -1730,10 +1734,10 @@ void CPlayer::Play_Sound(const _float& fTimeDelta)
 			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, SHOOT, 0.2f);
 			break;
 		case STATE::STATE_DEAD:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, DIE, 0.2f);
+			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, DIE, 0.2f);
 			break;
 		case STATE::STATE_HITTED:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, HITTED, 0.2f);
+			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, HITTED, 0.2f);
 			break;
 		}
 

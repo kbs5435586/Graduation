@@ -27,6 +27,8 @@ public:
 	void						Pause_Sound(SoundChannel eChannel);
 	void						Stop_Sound(SoundChannel eChannel);
 	void						Update_Sound();
+public:
+	_bool						IsPlaying(SoundChannel eChannel, _bool IsPlaying);
 protected:
 	FMOD::System*				m_pFmod = nullptr;
 	FMOD::Channel*				m_pCh[CHANNEL_END];

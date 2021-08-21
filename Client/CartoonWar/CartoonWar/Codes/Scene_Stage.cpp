@@ -114,6 +114,7 @@ _int CScene_Stage::Update_Scene(const _float& fTimeDelta)
 	if (CManagement::GetInstance()->Key_Down(KEY_F7))
 		g_IsNaviMesh ^= true;
 
+	CManagement::GetInstance()->Update_DiffuseLight(fTimeDelta); 
 	return CScene::Update_Scene(fTimeDelta);
 }
 
@@ -234,12 +235,13 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
-	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vDiffuse = _vec4(0.5f, 0.5f, 0.5f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 1.f,0.f);
+	//tLightInfo.vLightDir = _vec4(-1.f, -1.f, -1.f,0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f,0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
-	tLightInfo.fRange = 100000.f;
+	tLightInfo.fRange = 1.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
@@ -286,8 +288,10 @@ HRESULT CScene_Stage::Ready_Layer_Light_Camera(const _tchar* pLayerTag, CManagem
 
 	CAMERADESC		tCameraDesc;
 	ZeroMemory(&tCameraDesc, sizeof(CAMERADESC));
-	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, -1000.f);
-	tCameraDesc.vAt = _vec3(1.f, -1.f, 1.f);
+	//tCameraDesc.vEye = _vec3(1000.f, 1000.f, 1000.f);
+	//tCameraDesc.vAt = _vec3(-1.f, -1.f, -1.f);
+	tCameraDesc.vEye = _vec3(-1000.f, 1000.f, 0.f);
+	tCameraDesc.vAt = _vec3(1.f, -1.f, 0.f);
 	tCameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
 	PROJDESC		tProjDesc;

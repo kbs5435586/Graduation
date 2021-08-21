@@ -34,8 +34,6 @@ void CLight_Manager::SetUp_OnShader()
 {
 	LIGHTINFO tInfo = {};
 
-
-
 	for (int i = 0; i < m_vecLightInfo.size(); ++i)
 	{
 		LIGHT tLight = m_vecLightInfo[i]->Get_LightInfo();
@@ -46,8 +44,29 @@ void CLight_Manager::SetUp_OnShader()
 	_uint iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b2)->SetData(&tInfo);
 	CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b2)->GetCBV().Get(),
 		iOffset, CONST_REGISTER::b2);
+}
 
+void CLight_Manager::Update_DiffuseLight(const _float& fTimeDelata)
+{
+	m_vecLightInfo[0]->Get_LightInfo().vLightDir.x = g_iDiffusePer;
 
+	if (g_iDiffusePer <= 1.f && g_iDiffusePer >= 0.75f)
+	{
+		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vDiffuse = _vec4(0.5f, 0.5f, 0.5f, 0.f);
+	}
+	else if (g_iDiffusePer <= 0.75f && g_iDiffusePer >= -0.75f)
+	{
+		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vDiffuse = _vec4(1.f, 1.f, 1.f, 0.f);
+	}
+	else if (g_iDiffusePer <= -0.75f && g_iDiffusePer >= -1.f)
+	{
+		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vDiffuse = _vec4(1.f, 0.75f, 0.75f, 0.f);
+	}
+	else if (g_iDiffusePer <= -1.f)
+	{
+		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vDiffuse = _vec4(0.f, 0.f, 0.f,0.f);
+		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vSpecular = _vec4(0.f, 0.f, 0.f, 0.f);
+	}
 }
 
 void CLight_Manager::Update()

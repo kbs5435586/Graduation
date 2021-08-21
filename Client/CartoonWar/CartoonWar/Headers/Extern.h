@@ -25,6 +25,7 @@ extern bool			g_IsWin;
 extern int			g_iPlayerIdx;
 extern int			g_iGold;
 extern int			g_iTotalTime;
+extern float		g_iDiffusePer;
 extern bool			g_IsCollisionBox;
 extern bool			g_IsNaviMesh;
 extern bool			g_IsEnd;

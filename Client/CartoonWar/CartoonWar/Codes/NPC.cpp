@@ -1379,7 +1379,18 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 	{
 		if (m_IsSoundPause)
 		{
-			CManagement::GetInstance()->Pause_Sound();
+			if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_EFEECT, true))
+			{
+				CManagement::GetInstance()->Pause_Sound(CHANNEL_EFEECT);
+			}
+			//if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_FLASH, true))
+			//{
+			//	CManagement::GetInstance()->Pause_Sound(CHANNEL_FLASH);
+			//}
+			//if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_KILL, true))
+			//{
+			//	CManagement::GetInstance()->Pause_Sound(CHANNEL_KILL);
+			//}
 		}
 		m_IsSoundPause = true;
 		switch (m_eCurState)
