@@ -31,6 +31,7 @@ private:
     string m_client_IP; // Å¬¶ó IP
     short PORT = 3500;
     int game_time = 0;
+    float time_delta = 0.f;
     WPARAM m_wparam;
     high_resolution_clock::time_point add_npc_ct;
     high_resolution_clock::time_point attack_ct;
@@ -93,6 +94,7 @@ public:
     bool Get_isHitPL(int id);
     bool Get_isHitNPC(int id);
     bool Get_isInvisible(int id);
+    float Get_TimeDelta();
 
     void Set_TroopClass(short mclass);
     void Set_AnimPL(int id, short anim);

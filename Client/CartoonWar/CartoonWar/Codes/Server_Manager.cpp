@@ -32,7 +32,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, "192.168.218.130", &server_a.sin_addr); //SERVER_IP.c_str() // 192.168.218.157 / 255.255.255.0 / 192.168.218.181
+	inet_pton(AF_INET, "192.168.0.2", &server_a.sin_addr); //SERVER_IP.c_str() // 192.168.218.157 / 255.255.255.0 / 192.168.218.181
 	server_a.sin_port = htons(SERVER_PORT);
 
 	init_client();
@@ -373,6 +373,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_time* my_packet = reinterpret_cast<sc_packet_time*>(ptr);
 		game_time = my_packet->time;
+	}
+	break;
+	case SC_PACKET_TIMEDELTA:
+	{
+		sc_packet_timedelta* my_packet = reinterpret_cast<sc_packet_timedelta*>(ptr);
+		time_delta = my_packet->time;
 	}
 	break;
 	case SC_PACKET_CLASS_CHANGE:
@@ -1026,6 +1032,11 @@ short CServer_Manager::Get_NpcHP(int id)
 {
 	short npc_index = npc_idx_to_id(id);
 	return m_objects[npc_index].hp;
+}
+
+float CServer_Manager::Get_TimeDelta()
+{
+	return time_delta;
 }
 
 short CServer_Manager::Get_ShowOtherPlayer(int id)

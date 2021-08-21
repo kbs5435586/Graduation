@@ -107,12 +107,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             }
         }
         server->EventManager();
-        _float		fTimeDelta_Default = server->Get_TimeDelta();
-            pSystem->Get_TimeDelta(L"Timer_Default");
+        _float		fTimeDelta_Default = 0.f;
+        if (server->Get_Connected())
+            fTimeDelta_Default = server->Get_TimeDelta();
+        else
+            fTimeDelta_Default = pSystem->Get_TimeDelta(L"Timer_Default");
 
         if (true == pSystem->Permit_Call(L"Frame_60", fTimeDelta_Default))
         {
-            _float		fTimeDelta_60 = server->Get_TimeDelta();
+            _float		fTimeDelta_60 = fTimeDelta_Default; //server->Get_TimeDelta();
                 //pSystem->Get_TimeDelta(L"Timer_60");
            
             pMainApp->Update_MainApp(fTimeDelta_60);

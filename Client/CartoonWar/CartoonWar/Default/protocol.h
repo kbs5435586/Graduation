@@ -38,7 +38,7 @@ constexpr int FLAG_START = 450;
 constexpr int MAX_FLAG = 454;
 
 constexpr int OBJECT_START = 450;
-constexpr int MAX_OBJECT = 454;
+constexpr int MAX_OBJECT = 500;
 
 constexpr int CL_TEST_PLAYERS = 4;
 constexpr int CL_TEST_NPCS = 36;
@@ -90,6 +90,7 @@ constexpr char SC_PACKET_HIT = 16;
 constexpr char SC_PACKET_INVISIBLE = 17;
 constexpr char SC_PACKET_FIRE = 18;
 constexpr char SC_PACKET_TELEPORT = 19;
+constexpr char SC_PACKET_TIMEDELTA = 20;
 
 #pragma pack(push ,1)
 
@@ -149,6 +150,13 @@ struct sc_packet_flag_bool
 };
 
 struct sc_packet_time
+{
+	char size;
+	char type;
+	float time;
+};
+
+struct sc_packet_timedelta
 {
 	char size;
 	char type;

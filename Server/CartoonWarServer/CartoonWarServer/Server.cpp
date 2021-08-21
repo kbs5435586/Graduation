@@ -384,6 +384,16 @@ void Server::send_time_packet()
     }
 }
 
+void Server::send_time_delta(int user_id, float time)
+{
+    sc_packet_timedelta packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_TIMEDELTA;
+    packet.time = time;
+
+    send_packet(user_id, &packet);
+}
+
 void Server::send_packet(int user_id, void* packet)
 {
     char* buf = reinterpret_cast<char*>(packet);
@@ -1437,6 +1447,14 @@ void Server::do_timer()
         this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1밀리초마다 검사해라, 계속 하고있지 말고
         while (true) // 실행 시간이 된게 있으면 계속 실행해주는 용
         {
+            float time = time_delta();
+            for (int i = 0; i < NPC_START; ++i)
+            {
+                if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+                    continue;
+
+                send_time_delta(i, time);
+            }
             timer_lock.lock();
             if (true == timer_queue.empty()) // 타이머 큐에 아무것도 없으면
             {
