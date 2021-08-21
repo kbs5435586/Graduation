@@ -29,10 +29,8 @@ private:
 	float DETECT_RADIUS = 20.f; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
+	float TIME_DELTA = 0.f;
 
-	float MOVE_TIME_ELAPSE = 0.0310692995f;
-	float ROTATE_TIME_ELAPSE = 0.0286692995f;
-	float MOVE_SPEED_NPC = 50.f;
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
@@ -56,9 +54,8 @@ public:
 	void send_login_ok_packet(int user_id); // 클라로 부터 accept 확인 시 클라 초기화 패킷 설정
 	void send_flag_info_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
 	void send_flag_bool_packet(int object_id, int user_id); // 모든 깃발 위치값 전송
-	void send_fix_packet(int user_id, int other_id);
 	void send_time_packet(); // 모든 깃발 위치값 전송
-	void send_condition_packet(int user_id, int other_id, unsigned char type); // 변경된 위치값 설정
+	void send_move_packet(int user_id, int other_id); // 변경된 위치값 설정
 	void send_animation_packet(int user_id, int idler, unsigned char anim); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
 	void send_attacked_packet(int user_id, int other_id);
@@ -73,10 +70,8 @@ public:
 	void send_teleport_packet(int id, float mx, float mz, unsigned char m);
 	void send_time_delta(int user_id, float time);
 
-	void dead_reckoning(int player_id, ENUM_FUNCTION func_id); // 플레이어 데드레커닝
 	void do_animation(int user_id, unsigned char anim);
 	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
-	void do_rotate(int user_id, char con);
 	void set_formation(int user_id);
 	void set_starting_pos(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림

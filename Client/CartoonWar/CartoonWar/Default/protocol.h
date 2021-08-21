@@ -57,7 +57,6 @@ constexpr float BASIC_FORM_RAD = 10.f;
 constexpr float PIE = 3.141592f;
 
 constexpr char CS_PACKET_LOGIN = 1;
-constexpr char CS_PACKET_CONDITION = 2;
 constexpr char CS_PACKET_ADD_NPC = 3;
 constexpr char CS_PACKET_NPC_ACT = 4;
 constexpr char CS_PACKET_CHANGE_FORMATION = 5;
@@ -72,7 +71,6 @@ constexpr char CS_PACKET_ARROW = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
-constexpr char SC_PACKET_CONDITION = 2;
 constexpr char SC_PACKET_ENTER = 3;
 constexpr char SC_PACKET_LEAVE = 4;
 constexpr char SC_PACKET_CHAT = 5;
@@ -235,15 +233,6 @@ struct sc_packet_attacked
 	bool ishit;
 };
 
-struct sc_packet_condition
-{
-	char size;
-	char type;
-	char con_type;
-	int id;
-	char condition;
-};
-
 struct sc_packet_fix
 {
 	char size;
@@ -360,15 +349,6 @@ struct cs_packet_teleport
 	char	type;
 	float	x;
 	float	z;
-};
-
-struct cs_packet_condition
-{
-	char	size;
-	char	type;
-	char	con_type;
-	char	con;
-	//unsigned move_time; // 스트레스 테스트
 };
 
 constexpr unsigned char GO_UP = 0;
