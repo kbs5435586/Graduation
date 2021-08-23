@@ -94,10 +94,6 @@ private:
 	_float									m_fSpeed = 0.f;
 	_float									m_fArrSpeed[(_uint)CLASS::CLASS_END] = {};
 	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
-	_ubyte									m_cMoveCondition;
-	_ubyte									m_cLastMoveCondition;
-	_ubyte									m_cRotateCondition;
-	_ubyte									m_cLastRotateCondition;
 private:
 	_float									m_fParticleRunTime = 0.f;
 	_bool									m_IsParticleRun = false;

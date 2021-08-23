@@ -111,11 +111,6 @@ struct SESSION // 클라이언트 정보
 	Collider m_col;
 	_matrix m_matAttackedTarget;
 	unordered_set <int> m_view_list;
-
-	char m_LastMcondition;
-	char m_LastRcondition;
-	char m_Mcondition;
-	char m_Rcondition;
 	CTransform m_transform;
 
 	bool m_isHit; // 트루면 공격 한거

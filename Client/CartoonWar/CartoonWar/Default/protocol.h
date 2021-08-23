@@ -57,6 +57,7 @@ constexpr float BASIC_FORM_RAD = 10.f;
 constexpr float PIE = 3.141592f;
 
 constexpr char CS_PACKET_LOGIN = 1;
+constexpr char CS_PACKET_MOVE = 2;
 constexpr char CS_PACKET_ADD_NPC = 3;
 constexpr char CS_PACKET_NPC_ACT = 4;
 constexpr char CS_PACKET_CHANGE_FORMATION = 5;
@@ -71,6 +72,7 @@ constexpr char CS_PACKET_ARROW = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
+constexpr char SC_PACKET_MOVE = 2;
 constexpr char SC_PACKET_ENTER = 3;
 constexpr char SC_PACKET_LEAVE = 4;
 constexpr char SC_PACKET_CHAT = 5;
@@ -82,13 +84,12 @@ constexpr char SC_PACKET_ATTACK = 10;
 constexpr char SC_PACKET_FLAG_INFO = 11;
 constexpr char SC_PACKET_FLAG_BOOL = 12;
 constexpr char SC_PACKET_TIME = 13;
-constexpr char SC_PACKET_FIX = 14;
-constexpr char SC_PACKET_NPC_SIZE = 15;
-constexpr char SC_PACKET_HIT = 16;
-constexpr char SC_PACKET_INVISIBLE = 17;
-constexpr char SC_PACKET_FIRE = 18;
-constexpr char SC_PACKET_TELEPORT = 19;
-constexpr char SC_PACKET_TIMEDELTA = 20;
+constexpr char SC_PACKET_NPC_SIZE = 14;
+constexpr char SC_PACKET_HIT = 15;
+constexpr char SC_PACKET_INVISIBLE = 16;
+constexpr char SC_PACKET_FIRE = 17;
+constexpr char SC_PACKET_TELEPORT = 18;
+constexpr char SC_PACKET_TIMEDELTA = 19;
 
 #pragma pack(push ,1)
 
@@ -200,8 +201,6 @@ struct sc_packet_enter
 	int id;
 	short hp;
 	char name[MAX_ID_LEN];
-	char con_move;
-	char con_rotate;
 	float p_x, p_y, p_z;
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
@@ -233,7 +232,7 @@ struct sc_packet_attacked
 	bool ishit;
 };
 
-struct sc_packet_fix
+struct sc_packet_move
 {
 	char size;
 	char type;
@@ -243,16 +242,6 @@ struct sc_packet_fix
 	float l_x, l_y, l_z;
 	float p_x, p_z;
 };
-
-constexpr unsigned char CON_TYPE_MOVE = 0;
-constexpr unsigned char CON_TYPE_ROTATE = 1;
-
-constexpr unsigned char CON_IDLE = 0;
-constexpr unsigned char CON_STRAIGHT = 1;
-constexpr unsigned char CON_BACK = 2;
-constexpr unsigned char CON_LEFT = 3;
-constexpr unsigned char CON_RIGHT = 4;
-constexpr unsigned char CON_RUN = 5;
 
 struct sc_packet_dead
 {
@@ -349,6 +338,13 @@ struct cs_packet_teleport
 	char	type;
 	float	x;
 	float	z;
+};
+
+struct cs_packet_move
+{
+	char	size;
+	char	type;
+	char	dir;
 };
 
 constexpr unsigned char GO_UP = 0;

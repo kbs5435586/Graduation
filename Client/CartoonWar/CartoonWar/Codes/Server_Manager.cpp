@@ -159,23 +159,9 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].hp = my_packet->hp;
-		m_objects[recv_id].con_move = my_packet->con_move;
-		m_objects[recv_id].con_rotate = my_packet->con_rotate;
 		m_objects[recv_id].m_class = my_packet->p_class;
 
 		Safe_Release(managment);
-	}
-	break;
-	case SC_PACKET_CONDITION:
-	{
-		sc_packet_condition* my_packet = reinterpret_cast<sc_packet_condition*>(ptr);
-		int recv_id = my_packet->id;
-		char con = my_packet->condition;
-
-		if (CON_TYPE_MOVE == my_packet->con_type)
-			m_objects[recv_id].con_move = con;
-		else if (CON_TYPE_ROTATE == my_packet->con_type)
-			m_objects[recv_id].con_rotate = con;
 	}
 	break;
 	case SC_PACKET_NPC_SIZE:
@@ -234,7 +220,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].isInvisible = my_packet->invisable;
 	}
 	break;
-	case SC_PACKET_FIX:
+	case SC_PACKET_MOVE:
 	{
 		managment = CManagement::GetInstance();
 		if (nullptr == managment)
@@ -242,7 +228,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		managment->AddRef();
 		CTransform* pTransform;
 
-		sc_packet_fix* my_packet = reinterpret_cast<sc_packet_fix*>(ptr);
+		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
 		if (is_player(recv_id))
 		{
@@ -465,13 +451,12 @@ void CServer_Manager::send_packet(void* packet)
 	//g_socket.send(p, p[0], sent);
 }
 
-void CServer_Manager::send_condition_packet(unsigned char con_type, unsigned char con)
+void CServer_Manager::send_move_packet(unsigned char dir)
 {
-	cs_packet_condition m_packet;
-	m_packet.type = CS_PACKET_CONDITION;
+	cs_packet_move m_packet;
+	m_packet.type = CS_PACKET_MOVE;
 	m_packet.size = sizeof(m_packet);
-	m_packet.con_type = con_type;
-	m_packet.con = con;
+	m_packet.dir = dir;
 	send_packet(&m_packet);
 }
 
@@ -977,16 +962,6 @@ short CServer_Manager::Get_PlayerHP(int id)
 	return m_objects[id].hp;
 }
 
-char CServer_Manager::Get_PlayerMCon(int id)
-{
-	return m_objects[id].con_move;
-}
-
-char CServer_Manager::Get_PlayerRCon(int id)
-{
-	return m_objects[id].con_rotate;
-}
-
 int CServer_Manager::Get_PlayerClass(int id)
 {
 	return m_objects[id].m_class;
@@ -1004,28 +979,6 @@ int CServer_Manager::Get_NpcClass(int id)
 {
 	short npc_index = npc_idx_to_id(id);
 	return m_objects[npc_index].m_class;
-}
-
-char CServer_Manager::Get_NpcMCon(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].con_move;
-}
-
-char CServer_Manager::Get_NpcRCon(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].con_rotate;
-}
-
-void CServer_Manager::Set_PlayerMCon(char cond)
-{
-	m_objects[my_id].con_move = cond;
-}
-
-void CServer_Manager::Set_PlayerRCon(char cond)
-{
-	m_objects[my_id].con_rotate = cond;
 }
 
 short CServer_Manager::Get_NpcHP(int id)

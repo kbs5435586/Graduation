@@ -101,24 +101,19 @@ void Server::do_move(int user_id, char direction)
             pos->y++;
         break;
     case GO_LEFT:
-        if (pos->x >= 0)
-            p.m_transform.Go_Left(TIME_DELTA);
+        p.m_transform.Rotation_Y(-TIME_DELTA);
         break;
     case GO_RIGHT:
-        if (pos->x < WORLD_HORIZONTAL)
-            p.m_transform.Go_Right(TIME_DELTA);
+        p.m_transform.Rotation_Y(TIME_DELTA);
         break;
     case GO_FORWARD:
-        if (pos->z >= 0)
-            p.m_transform.BackWard(TIME_DELTA);
+        p.m_transform.BackWard(TIME_DELTA);
         break;
     case GO_FAST_FORWARD:
-        if (pos->z >= 0)
-            p.m_transform.BackWard(2.f * TIME_DELTA);
+        p.m_transform.BackWard(2.f * TIME_DELTA);
         break;
     case GO_BACK:
-        if (pos->z < WORLD_VERTICAL)
-            p.m_transform.Go_Straight(TIME_DELTA);
+        p.m_transform.Go_Straight(TIME_DELTA);
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
@@ -310,13 +305,13 @@ void Server::process_packet(int user_id, char* buf)
         g_clients[user_id].m_cLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
         g_clients[user_id].m_cLock.unlock();
-        send_fix_packet(user_id, user_id);
+        //send_fix_packet(user_id, user_id); 수정
         send_hit_packet(user_id, user_id);
         for (auto cpy_vl : copy_viewlist)
         {
             if (is_player(cpy_vl))
             {
-                send_fix_packet(cpy_vl, user_id);
+                //send_fix_packet(cpy_vl, user_id); 수정
                 send_hit_packet(cpy_vl, user_id);
             }
         }
@@ -436,6 +431,12 @@ void Server::process_packet(int user_id, char* buf)
         pos.y = packet->y;
         pos.z = packet->z;
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    }
+    break;
+    case CS_PACKET_MOVE:
+    {
+        cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+        do_move(user_id, packet->dir);
     }
     break;
     case CS_PACKET_TROOP_CHANGE:
@@ -1272,7 +1273,7 @@ void Server::do_timer()
                 if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
                     continue;
 
-                send_time_delta(i, time);
+                send_time_delta(i, TIME_DELTA);
             }
             timer_lock.lock();
             if (true == timer_queue.empty()) // 타이머 큐에 아무것도 없으면
@@ -1300,11 +1301,6 @@ void Server::do_timer()
             case FUNC_DOT_DAMAGE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
-            case FUNC_PLAYER_STRAIGHT:
-            case FUNC_PLAYER_BACK:
-            case FUNC_PLAYER_LEFT:
-            case FUNC_PLAYER_RIGHT:
-            case FUNC_PLAYER_RUN:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -1321,7 +1317,7 @@ void Server::send_move_packet(int user_id, int other_id)
     sc_packet_move packet;
     packet.id = other_id;
     packet.size = sizeof(packet);
-    packet.type = SC_PACKET_FIX;
+    packet.type = SC_PACKET_MOVE;
 
     _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
@@ -1459,10 +1455,6 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_rotate_speed = XMConvertToRadians(90.f);
             g_clients[npc_id].m_transform.SetUp_Speed(g_clients[npc_id].m_move_speed, g_clients[npc_id].m_rotate_speed);
             g_clients[npc_id].m_troop = T_INFT;
-            g_clients[npc_id].m_Mcondition = CON_IDLE;
-            g_clients[npc_id].m_Rcondition = CON_IDLE;
-            g_clients[npc_id].m_LastMcondition = CON_IDLE;
-            g_clients[npc_id].m_LastRcondition = CON_IDLE;
 
             g_clients[npc_id].m_isOut = false;
             g_clients[npc_id].m_isFormSet = true;
@@ -1556,8 +1548,6 @@ void Server::send_enter_packet(int user_id, int other_id)
     packet.p_x = pos._41;
     packet.p_y = pos._42;
     packet.p_z = pos._43;
-    packet.con_move = g_clients[other_id].m_Mcondition;
-    packet.con_rotate = g_clients[other_id].m_Rcondition;
 
     strcpy_s(packet.name, g_clients[other_id].m_name);
 
@@ -1766,24 +1756,19 @@ void Server::do_attack(int npc_id)
 
             if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
             {
-                n.m_Mcondition = CON_STRAIGHT;
                 n.m_transform.BackWard(TIME_DELTA);
                 n.m_anim = A_WALK;
                 if (NPCangle > 1.f)
                 {
-                    n.m_Rcondition = CON_LEFT;
                     n.m_transform.Rotation_Y(-TIME_DELTA);
                 }
                 else if (NPCangle < -1.f)
                 {
-                    n.m_Rcondition = CON_RIGHT;
                     n.m_transform.Rotation_Y(TIME_DELTA);
                 }
             }
             else // npc가 바라보는 방향이 플레이어랑 일치할때
             {
-                n.m_Mcondition = CON_STRAIGHT;
-                n.m_Rcondition = CON_IDLE;
                 n.m_anim = A_WALK;
                 n.m_transform.BackWard(TIME_DELTA);
             }
@@ -1807,16 +1792,13 @@ void Server::do_attack(int npc_id)
 
         if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
         {
-            n.m_Mcondition = CON_IDLE;
             n.m_anim = A_WALK;
             if (NPCangle > 1.5f)
             {
-                n.m_Rcondition = CON_LEFT;
                 n.m_transform.Rotation_Y(-TIME_DELTA);
             }
             else if (NPCangle < -1.5f)
             {
-                n.m_Rcondition = CON_RIGHT;
                 n.m_transform.Rotation_Y(TIME_DELTA);
             }
         }
@@ -1832,7 +1814,7 @@ void Server::do_attack(int npc_id)
                     if (!is_near(i, npc_id))
                         continue;
 
-                    send_fix_packet(i, npc_id);
+                    //send_fix_packet(i, npc_id); 수정
                     send_hit_packet(i, npc_id);
                 }
 
@@ -1849,7 +1831,7 @@ void Server::do_attack(int npc_id)
                                 if (!is_near(i, npc_id))
                                     continue;
 
-                                send_fix_packet(i, npc_id);
+                                //send_fix_packet(i, npc_id); 수정
                             }
                             g_clients[n.m_attack_target].m_isOBB = true;
                             g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
@@ -1887,15 +1869,11 @@ void Server::do_attack(int npc_id)
                     }
                     n.m_attack_target = -1;
                 }
-                n.m_Mcondition = CON_IDLE;
-                n.m_Rcondition = CON_IDLE;
                 n.m_anim = A_ATTACK;
             }
             else // OBB 공격범위 밖일때
             {
-                n.m_Mcondition = CON_STRAIGHT;
-                n.m_transform.BackWard(MOVE_TIME_ELAPSE);
-                n.m_Rcondition = CON_IDLE;
+                n.m_transform.BackWard(TIME_DELTA);
             }
         }
     }
@@ -2288,6 +2266,7 @@ void Server::worker_thread()
                 Ready_Collider_AABB_BOX(user_id, g_clients[user_id].m_col.aabb_size);
                 Ready_Collider_OBB_BOX(user_id, g_clients[user_id].m_col.obb_size);
                 g_clients[user_id].m_rotate_speed = XMConvertToRadians(90.f);
+                g_clients[user_id].m_transform.SetUp_Speed(g_clients[user_id].m_move_speed, g_clients[user_id].m_rotate_speed);
                 g_clients[user_id].m_last_order = FUNC_END;
                 g_clients[user_id].m_formation = F_SQUARE;
 
@@ -2295,10 +2274,6 @@ void Server::worker_thread()
                 g_clients[user_id].m_type = TP_PLAYER;
                 g_clients[user_id].m_hp = SET_HP;
                 g_clients[user_id].m_total_angle = -90.f; // 수정
-                g_clients[user_id].m_Mcondition = CON_IDLE;
-                g_clients[user_id].m_Rcondition = CON_IDLE;
-                g_clients[user_id].m_LastMcondition = CON_IDLE;
-                g_clients[user_id].m_LastRcondition = CON_IDLE;
                 g_clients[user_id].m_LastAnim = A_IDLE;
                 g_clients[user_id].m_anim = A_IDLE;
                 g_clients[user_id].m_troop = T_ALL;
@@ -2778,7 +2753,6 @@ void Server::Obb_Collision(int id)
                     continue;
                 if (!is_near(i, id))
                     continue;
-                send_fix_packet(i, id);
             }
         }
         Hit_Object(id, o.m_fBazierCnt, o.m_vStartPoint, o.m_vEndPoint, o.m_vMidPoint);
@@ -2789,15 +2763,12 @@ void Server::Obb_Collision(int id)
         o.m_isOBB = false;
         o.m_isBazier = false;
         o.m_attack_target = -1;
-        o.m_Mcondition = CON_IDLE;
-        o.m_Rcondition = CON_IDLE;
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
                 continue;
             if (!is_near(i, id))
                 continue;
-            send_fix_packet(i, id);
         }
     }
 }
@@ -2810,5 +2781,13 @@ void Server::Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vM
 
     _vec3 vPos = { fX, fY, fZ };
     g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+    for (int i = 0; i < NPC_START; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+            continue;
+        if (!is_near(i, id))
+            continue;
+        send_move_packet(i, id);
+    }
     fCnt += 0.02f;
 }

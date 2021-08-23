@@ -559,8 +559,6 @@ struct Session
 	bool			isHit = false;
 	bool			isInvisible = false;
 	unsigned int	m_class;
-	char			con_rotate = CON_IDLE;
-	char			con_move = CON_IDLE;
 };
 
 

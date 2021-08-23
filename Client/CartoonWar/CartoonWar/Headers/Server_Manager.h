@@ -45,7 +45,7 @@ public:
     HRESULT EventManager();
 
     void send_packet(void* packet);
-    void send_condition_packet(unsigned char con_type, unsigned char con);
+    void send_move_packet(unsigned char dir);
     void send_login_ok_packet();
     void send_add_npc_packet();
     void send_npc_act_packet(unsigned char act);
@@ -78,12 +78,6 @@ public:
     int Get_PlayerClass(int id);
     int Get_NpcClass(int id);
 
-    char Get_PlayerMCon(int id);
-    char Get_NpcMCon(int id);
-    void Set_PlayerMCon(char cond);
-    char Get_PlayerRCon(int id);
-    char Get_NpcRCon(int id);
-
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
@@ -111,7 +105,6 @@ public:
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();
     WPARAM Get_wParam();
 
-    void Set_PlayerRCon(char cond);
     void Set_Class(int mclass, int id, char type);
     void Set_AddNPC_CoolTime(high_resolution_clock::time_point ct);
     void Set_Attack_CoolTime(high_resolution_clock::time_point ct);

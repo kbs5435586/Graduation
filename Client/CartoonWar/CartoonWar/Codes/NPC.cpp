@@ -60,8 +60,6 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
-	m_cMoveCondition = CON_IDLE;
-	m_cRotateCondition = CON_IDLE;
 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
@@ -109,9 +107,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->SetSpeed(m_fSpeedUp);
 	else m_pTransformCom->SetSpeed(m_fSpeed);
 
-	m_cMoveCondition = server->Get_NpcMCon(m_iLayerIdx);
-	m_cRotateCondition = server->Get_NpcRCon(m_iLayerIdx);
-
 	_vec3 vLook = {};
 	vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 	vLook = Vector3_::Normalize(vLook);
@@ -120,28 +115,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	_vec3 vSlide = {};
 	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 	{
-		switch (m_cMoveCondition)
-		{
-		case CON_STRAIGHT:
-			m_pTransformCom->BackWard(fTimeDelta);
-			break;
-		case CON_RUN:
-			m_pTransformCom->BackWard(fTimeDelta * 2.f);
-			break;
-		case CON_BACK:
-			m_pTransformCom->Go_Straight(fTimeDelta);
-			break;
-		}
-
-		switch (m_cRotateCondition)
-		{
-		case CON_LEFT:
-			m_pTransformCom->Rotation_Y(-fTimeDelta);
-			break;
-		case CON_RIGHT:
-			m_pTransformCom->Rotation_Y(fTimeDelta);
-			break;
-		}
+		// ¼öÁ¤
 	}
 	else
 	{

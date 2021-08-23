@@ -87,8 +87,6 @@ private:
 	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
 	_float									m_fSpeed = 0.f;
 	_float									m_fSpeedUp = 0.f;
-	_ubyte									m_cMoveCondition;
-	_ubyte									m_cRotateCondition;
 	_vec3									m_vOBB_Range[2] = {};
 private:
 	_matrix									m_matLeft = {};
