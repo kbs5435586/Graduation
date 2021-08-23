@@ -364,9 +364,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\01. NPC">
       <UniqueIdentifier>{acf20eeb-b0aa-4a51-918e-720b10e0edeb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Scene_Stage\03. SkyBox">
-      <UniqueIdentifier>{3f5cec16-69a6-460b-b3e3-fa91565b0c21}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain">
       <UniqueIdentifier>{af068f15-8efa-46b8-8e82-3e5b3d4f98e0}</UniqueIdentifier>
     </Filter>
@@ -495,6 +492,12 @@
     </Filter>
     <Filter Include="02. GameObject\97. UI\92. UI_End">
       <UniqueIdentifier>{bb1bf9be-d73a-443d-a330-07224651a31f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\04. Terrain\03. SkyBox">
+      <UniqueIdentifier>{3f5cec16-69a6-460b-b3e3-fa91565b0c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\97. UI\93. Bloom">
+      <UniqueIdentifier>{92e49205-142a-48b7-bdb5-4144a54e60a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -634,7 +637,7 @@
       <Filter>01. Scene\02. Stage</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\SkyBox.h">
-      <Filter>02. GameObject\01. Scene_Stage\03. SkyBox</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\03. SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_CubeTex.h">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
@@ -924,6 +927,9 @@
     <ClInclude Include="..\Headers\UI_End.h">
       <Filter>02. GameObject\97. UI\92. UI_End</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Bloom.h">
+      <Filter>02. GameObject\97. UI\93. Bloom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1045,7 +1051,7 @@
       <Filter>01. Scene\02. Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\SkyBox.cpp">
-      <Filter>02. GameObject\01. Scene_Stage\03. SkyBox</Filter>
+      <Filter>02. GameObject\01. Scene_Stage\04. Terrain\03. SkyBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp">
       <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
@@ -1323,6 +1329,9 @@
     <ClCompile Include="..\Codes\UI_End.cpp">
       <Filter>02. GameObject\97. UI\92. UI_End</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Bloom.cpp">
+      <Filter>02. GameObject\97. UI\93. Bloom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1436,9 +1445,6 @@
     <None Include="..\ShaderFiles\Shader_Water.hlsl">
       <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Font.hlsl">
-      <Filter>96. ShaderFiles\05. Mesh</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_Terrain_Tess.hlsl">
       <Filter>96. ShaderFiles\04. Default</Filter>
     </None>
@@ -1456,6 +1462,12 @@
     </None>
     <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Bloom.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Font.hlsl">
+      <Filter>96. ShaderFiles\03. Tool</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

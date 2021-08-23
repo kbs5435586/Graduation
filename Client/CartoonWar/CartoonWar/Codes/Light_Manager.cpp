@@ -60,7 +60,7 @@ void CLight_Manager::Update_DiffuseLight(const _float& fTimeDelata)
 	}
 	else if (g_iDiffusePer <= -0.75f && g_iDiffusePer >= -1.f)
 	{
-		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vDiffuse = _vec4(1.f, 0.75f, 0.75f, 0.f);
+		m_vecLightInfo[0]->Get_LightInfo().tLightColor.vDiffuse = _vec4(1.f, 0.5f, 0.f, 0.f);
 	}
 	else if (g_iDiffusePer <= -1.f)
 	{

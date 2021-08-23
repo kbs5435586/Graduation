@@ -157,11 +157,12 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	float4 hatchColor = vHatvhTex0 + vHatvhTex1 + vHatvhTex2 + vHatvhTex3 + vHatvhTex4 + vHatvhTex5;
 
+	float	fDepth = vIn.vWorldPos.z / 450.f;
+
 	vOut.vDiffuseTex = hatchColor;
-	//vOut.vTarget1 = hatchColor;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
-	vOut.vDepthTex = float4(1.f,1.f,1.f,1.f);
+	vOut.vDepthTex = float4(fDepth, fDepth, fDepth, 1.f);
 
 	return vOut;
 }

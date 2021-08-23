@@ -2,7 +2,7 @@
 #include "Function.hlsl"
 
 float	g_fRadius = 0.001f;
-float	g_fFar = 300.f;
+float	g_fFar = 450.f;
 float	g_fFallOff = 0.000002f;
 float	g_fStrength = 0.0007;
 float	g_fTotStrength = 1.38f;
@@ -186,6 +186,7 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 	}
 
 
+
 	vOut.vDiffuse = tCurCol.vDiffuse + tCurCol.vAmbient;
 	vOut.vSpecular = tCurCol.vSpecular;
 	vOut.vPointLight = tPointCurCol.vDiffuse;
@@ -203,8 +204,6 @@ VS_OUT	VS_PointLight(VS_IN vIn)
 	vOut.vTexUV = vIn.vTexUV;
 	return vOut;
 }
-
-
 PS_OUT	PS_PointLight(VS_OUT vIn)
 {
 	PS_OUT vOut = (PS_OUT)0;

@@ -1539,6 +1539,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_End",
 		CShader::Create(L"../ShaderFiles/Shader_UI_End.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Bloom",
+		CShader::Create(L"../ShaderFiles/Shader_Bloom.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	//Compute_Shader_Compile
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Compute_Default",

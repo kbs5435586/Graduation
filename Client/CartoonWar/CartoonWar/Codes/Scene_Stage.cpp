@@ -39,6 +39,9 @@
 #include "UI_Gold.h"
 #include "UI_End.h"
 
+// Bloom
+#include "Bloom.h"
+
 // Environment
 #include "Fire.h"
 //Particle
@@ -168,6 +171,9 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_End", CUI_End::Create())))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Bloom", CBloom::Create())))
+		return E_FAIL;
+
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Fire", CFire::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_Default", CParticle_Default::Create())))
@@ -217,8 +223,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;	
-	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -226,6 +232,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_UI_Select(L"Layer_UI_Select", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
+		return E_FAIL;	
+	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -242,6 +250,18 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f,0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 1.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	//tLightInfo.vLightDir = _vec4(-1.f, -1.f, -1.f,0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
+	tLightInfo.fRange = 100.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
 
@@ -386,12 +406,6 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_End", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_MP", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;	
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_WoL_Red", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_WoL_Blue", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -489,6 +503,13 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 	}
 
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Bloom(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Bloom", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 

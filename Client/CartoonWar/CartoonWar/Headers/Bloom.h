@@ -4,15 +4,14 @@ class CTransform;
 class CRenderer;
 class CBuffer_RectTex;
 class CShader;
-class CTexture;
 
-class CUI_Select :
-	public CUI
+class CBloom :
+    public CUI
 {
 private:
-	CUI_Select();
-	CUI_Select(const CUI_Select& rhs);
-	virtual ~CUI_Select() = default;
+    CBloom();
+    CBloom(const CBloom& rhs);
+    virtual ~CBloom() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
@@ -22,9 +21,7 @@ public:
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	_bool&									Get_IsCheck(){return m_IsCheck;}
-public:
-	static CUI_Select*						Create();
+	static CBloom*							Create();
 	virtual CGameObject*					Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
@@ -34,9 +31,5 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
-private:
-	SelectType								m_tSelectType = {};
-	_bool									m_IsCheck = false;
 };
 

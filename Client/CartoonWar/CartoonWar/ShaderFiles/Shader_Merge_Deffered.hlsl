@@ -33,6 +33,9 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	float4	vLightTex		= g_texture1.Sample(Sampler0, vIn.vTexUV);
 	float4	vSpecularTex	= g_texture2.Sample(Sampler0, vIn.vTexUV);
 	float4	vVelocityTex	= g_texture3.Sample(Sampler0, vIn.vTexUV);
+	float4	vPointTex		= g_texture4.Sample(Sampler0, vIn.vTexUV);
+	float4	vBloomTex		= g_texture5.Sample(Sampler0, vIn.vTexUV);
+
 	float4	vTexMerge		= (float4)0;
 	int		iNumBlurSample	= 25;
 
@@ -50,7 +53,10 @@ float4	PS_Main(VS_OUT vIn) : SV_Target
 	vDiffuseTex /= (float)iCnt;
 
 
-	vTexMerge = vDiffuseTex * vLightTex + vSpecularTex;
+
+
+	 //vTexMerge = vDiffuseTex * (vLightTex + vPointTex + vBloomTex) + vSpecularTex ;
+	vTexMerge = vDiffuseTex * (vLightTex + vPointTex ) + vSpecularTex ;
 	return  vTexMerge;
 }
 

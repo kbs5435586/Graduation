@@ -113,13 +113,13 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		m_tPipeline.RTVFormats[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		break;
 	case SHADER_TYPE::SHADER_LIGHT:
-		m_tPipeline.NumRenderTargets = 3;
-		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_tPipeline.NumRenderTargets = 4;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		break;
 	case SHADER_TYPE::SHADER_COMPUTE:
 		m_tPipeline.NumRenderTargets = 0;
@@ -140,10 +140,11 @@ HRESULT CShader::Create_Shader(vector< D3D12_INPUT_ELEMENT_DESC> vecDesc, RS_TYP
 		m_tPipeline.NumRenderTargets = 1;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		break;
-	case SHADER_TYPE::SHADER_REF:
-		m_tPipeline.NumRenderTargets = 2;
-		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	case SHADER_TYPE::SHADER_BLOOM:
+		m_tPipeline.NumRenderTargets = 3;
+		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		break;
 	}
 

@@ -19,7 +19,7 @@ struct VS_OUT
 	float2	vTexUV				: TEXCOORD0;
 	float4	vWorldPos			: TEXCOORD1;
 	float4	vBinormal			: BINORMAL;
-	float4	vTangent				: TANGENT;
+	float4	vTangent			: TANGENT;
 	float4	vProjPos			: TEXCOORD2;
 };
 
@@ -62,12 +62,12 @@ PS_OUT PS_Main(VS_OUT vIn)
 	float4	vFillterTex = g_texture8.Sample(Sampler1, vIn.vTexUV);
 	if (vFillterTex.r == 1.f)
 	{
-		vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV * 300.f);
+		vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV );
 
 	}
 	else if (vFillterTex.g == 0.f)
 	{
-		vDiffuse = g_texture1.Sample(Sampler0, vIn.vTexUV * 300.f);
+		vDiffuse = g_texture1.Sample(Sampler0, vIn.vTexUV );
 
 	}
 	
@@ -112,24 +112,10 @@ PS_OUT PS_Main(VS_OUT vIn)
 	float	fRim = saturate(dot(vNormal, vView));
 	float	fRimPower = 30.f;
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
+	float	fDepth = vIn.vWorldPos.z / 450.f;
 
 
-
-	float	fDepth = vIn.vWorldPos.z / 300.f;
-
-
-
-	if (g_int_2)
-	{
-		vOut.vDiffuseTex = vDiffuse;
-	}
-	else
-	{
-		
-		//vOut.vDiffuseTex = vDiffuse + vBrushTex;
-		vOut.vDiffuseTex = (vDiffuse +  vMtrlEmiv) + vBrushTex;
-	}
-
+	vOut.vDiffuseTex = (vDiffuse + vMtrlEmiv) + vBrushTex;
 	vOut.vNormalTex = vViewNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vDepthTex = float4(fDepth, fDepth, fDepth, 1.f);

@@ -28,7 +28,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(100.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(20.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -145,7 +145,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_tProjDesc.fFovY = XMConvertToRadians(30.f);
 		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
 		m_tProjDesc.fNear = g_Near;
-		m_tProjDesc.fFar = 600.f;
+		m_tProjDesc.fFar = 450.f;
 
 
 		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
@@ -161,7 +161,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_tProjDesc.fFovY = XMConvertToRadians(60.f);
 		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
 		m_tProjDesc.fNear = g_Near;
-		m_tProjDesc.fFar = 600.f;
+		m_tProjDesc.fFar = 450.f;
 
 
 		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;

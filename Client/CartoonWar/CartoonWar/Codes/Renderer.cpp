@@ -47,11 +47,13 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_BLOOM)->Clear();
 
 	Render_Shadow(pManagement);
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
 	Render_Blur();
+	Render_Bloom();
 
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
@@ -71,7 +73,6 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 void CRenderer::CopySwapToPosteffect()
 {
-
 	static ComPtr<ID3D12Resource>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetTex2D().Get();
 	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
 
@@ -229,6 +230,23 @@ void CRenderer::Render_Blur()
 
 }
 
+void CRenderer::Render_Bloom()
+{
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLOOM)->OM_Set();
+	for (auto& pGameObject : m_RenderList[RENDER_BLOOM]) 
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_BLOOM].clear();
+
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLOOM)->TargetToResBarrier();
+
+}
+
 void CRenderer::Render_Shadow(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->OM_Set();
@@ -258,6 +276,7 @@ void CRenderer::Render_Light(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->OM_Set();
 
+	pManagement->Update();
 	pManagement->Render();
 
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->TargetToResBarrier();
