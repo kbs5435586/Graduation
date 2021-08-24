@@ -18,8 +18,7 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
-	virtual void							Render_PostEffect();
-	virtual void							Render_GameObject_Map();
+
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -33,12 +32,10 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CShader*								m_pShaderCom_PostEffect = nullptr;
-	CTexture*								m_pTextureCom = nullptr;
+	CTexture*								m_pTextureCom[3] = { nullptr };
 private:
 	TEXINFO									m_tTexInfo = {};
-private:
-	_float									m_fPostEffectTime = 0.f;
+
 };
 
 

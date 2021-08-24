@@ -132,17 +132,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 							{
 								if (whichnum == 0)
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-									server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+									//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 								}
 								else
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-									server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 								}
 								g_iGold -= 1;
 							}
@@ -154,17 +154,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 						if (g_iGold > 0)
@@ -173,17 +173,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 							{
 								if (whichnum == 0)
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-									server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+									//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 								}
 								else
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-									server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 								}
 								g_iGold -= 1;
 							}
@@ -195,17 +195,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 					}
@@ -215,17 +215,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 						if (g_iGold > 0)
@@ -234,17 +234,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 							{
 								if (whichnum == 0)
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-									server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+									//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 								}
 								else
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-									server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 								}
 								g_iGold -= 1;
 							}
@@ -257,17 +257,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 					}
@@ -277,17 +277,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 					}
@@ -297,17 +297,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 						if (g_iGold > 0)
@@ -316,17 +316,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 							{
 								if (whichnum == 0)
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-									server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+									//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 								}
 								else
 								{
-									CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-									pTemp->SetClass(CLASS(m_ButtonClass));
-									server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-									server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+									//pTemp->SetClass(CLASS(m_ButtonClass));
+									//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+									//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 								}
 								g_iGold -= 1;
 							}
@@ -339,17 +339,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 					}
@@ -359,17 +359,17 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						{
 							if (whichnum == 0)
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
+								//server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
 							}
 							else
 							{
-								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
-								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+								//pTemp->SetClass(CLASS(m_ButtonClass));
+								//server->Set_Class((int)m_ButtonClass, whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+								//server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
 					}

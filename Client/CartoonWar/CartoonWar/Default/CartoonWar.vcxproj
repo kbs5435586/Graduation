@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Buffer_Cone.h" />
     <ClInclude Include="..\Headers\Map_Terrain.h" />
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Animals.h" />
@@ -328,6 +329,7 @@
     <ClCompile Include="..\Codes\Animator.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Buffer_Circle.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Cone.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_Point.cpp" />

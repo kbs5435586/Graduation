@@ -532,6 +532,9 @@
     <Filter Include="02. GameObject\97. UI\92. UI_End">
       <UniqueIdentifier>{bb1bf9be-d73a-443d-a330-07224651a31f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\98. Test\NewFilter1">
+      <UniqueIdentifier>{81445e90-0484-456f-8390-835a3906ded6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -997,6 +1000,10 @@
     <ClInclude Include="..\Headers\UI_End.h">
       <Filter>02. GameObject\97. UI\92. UI_End</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Gold.h" />
+    <ClInclude Include="..\Headers\Buffer_Cone.h">
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1431,6 +1438,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_End.cpp">
       <Filter>02. GameObject\97. UI\92. UI_End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Cone.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
