@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "MyRect.h"
 #include "Fire.h"
+#include <iostream>
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)
@@ -251,6 +252,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
 		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
 		pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
+		cout << "recved " << recv_id << " has moved\n";
 		Safe_Release(managment);
 	}
 	break;
