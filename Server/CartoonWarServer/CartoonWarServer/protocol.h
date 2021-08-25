@@ -241,6 +241,7 @@ struct sc_packet_move
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
 	float p_x, p_z;
+	int move_time;
 };
 
 struct sc_packet_dead
@@ -345,6 +346,7 @@ struct cs_packet_move
 	char	size;
 	char	type;
 	char	dir;
+	int move_time;
 };
 
 constexpr unsigned char GO_UP = 0;
