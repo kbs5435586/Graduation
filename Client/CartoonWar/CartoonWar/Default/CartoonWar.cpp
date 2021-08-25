@@ -24,9 +24,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
-void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
-
 _float      g_MaxTime = 60.f;
 int			g_iRedNum=0;
 int			g_iBlueNum=0;
@@ -42,7 +39,6 @@ bool        g_IsCollisionBox = false;
 bool        g_IsNaviMesh = false;
 bool        g_IsEnd = false;
 bool        g_IsFix = false;
-SOCKET      g_socket = 0;
 string      g_strIP = {};
 
 
@@ -71,6 +67,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
+    WSADATA WSAData;
+    WSAStartup(MAKEWORD(2, 2), &WSAData);
+
     CSystem* pSystem = CSystem::GetInstance();
     NULL_CHECK_VAL(pSystem, FALSE);
     pSystem->AddRef();
@@ -80,16 +79,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     CServer_Manager* server = CServer_Manager::GetInstance();
     NULL_CHECK_VAL(server, FALSE);
-
-    WSADATA WSAData;
-    WSAStartup(MAKEWORD(2, 2), &WSAData);
-    g_socket = WSASocket(AF_INET, SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
-    SOCKADDR_IN svr_addr;
-    memset(&svr_addr, 0, sizeof(svr_addr));
-    svr_addr.sin_family = AF_INET;
-    svr_addr.sin_port = htons(SERVER_PORT);
-    inet_pton(AF_INET, "192.168.0.2", &svr_addr.sin_addr);
-    WSAConnect(g_socket, reinterpret_cast<sockaddr*>(&svr_addr), sizeof(svr_addr), 0, 0, 0, 0);
 
     if (FAILED(pSystem->Add_Timer(L"Timer_Default")))
         return FALSE;
@@ -261,17 +250,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
-}
-
-void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags)
-{
-    cout << "Server Sent: " << s_buf << endl;
-    do_send_message();
-}
-void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags)
-{
-    s_wsabuf[0].len = BUF_SIZE;
-    DWORD r_flag = 0; // 리시브는 무조건 플레그 필요함, 포인터로 연결해줘야해서
-    memset(over, 0, sizeof(*over));
-    WSARecv(s_socket, s_wsabuf, 1, 0, &r_flag, over, recv_callback);
 }
