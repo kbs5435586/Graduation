@@ -20,6 +20,7 @@ public:
 	virtual _int							Update_GameObject(const _float & fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_GameObject_Shadow();
 private:
 	virtual HRESULT							CreateInputLayout();
 	void									SetUp_Anim();
@@ -37,12 +38,13 @@ private:
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
+	CShader*								m_pShaderCom_Shadow = nullptr;
 	CAnimator*								m_pAnimCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pColiider[2]={nullptr};
+	CTexture*								m_pTextureCom = nullptr;
+	CTexture*								m_pTextureCom_Normal = nullptr;
 private:
-	CTexture*								m_pTextureCom_Human = nullptr;
-	CTexture*								m_pTextureCom_Horse = nullptr;
 	vector<AnimCtrl>						m_vecAnimCtrl;
 private:
 	_uint									m_iCurAnimIdx = 0;

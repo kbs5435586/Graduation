@@ -205,6 +205,11 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
 		return E_FAIL;
 
+
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestAnimMesh", CTestAnimMesh::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -234,6 +239,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment", pManagement)))
 		return E_FAIL;	
 	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -494,13 +501,8 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 
 HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestBuffer", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	for (int i = 0; i < 100; ++i)
-	{
-		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestMesh", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-	}
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestAnimMesh", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 
 	return S_OK;

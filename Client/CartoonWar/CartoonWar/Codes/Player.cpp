@@ -151,20 +151,20 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
-	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	{
-		if (m_IsCombat)
-		{
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		}
-		else
-		{
-			m_iCurAnimIdx = 0;
-		}
-		m_IsOnce = false;
-		m_IsHit = false;
-		m_IsActioning = false;
-	}
+	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	//{
+	//	if (m_IsCombat)
+	//	{
+	//		m_iCurAnimIdx = m_iCombatMotion[0];
+	//	}
+	//	else
+	//	{
+	//		m_iCurAnimIdx = 0;
+	//	}
+	//	m_IsOnce = false;
+	//	m_IsHit = false;
+	//	m_IsActioning = false;
+	//}
 
 
 	return NO_EVENT;
@@ -175,7 +175,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		m_IsFrustum = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -191,12 +191,12 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
-	//else
-	//{
-	//	m_matOldWorld = m_pTransformCom->Get_Matrix();;
-	//	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	//	m_IsFrustum = false;
-	//}
+	else
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();;
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_IsFrustum = false;
+	}
 
 
 	Set_Animation(fTimeDelta);

@@ -24,6 +24,8 @@ public:
     CStructedBuffer*                GetMatix() {  return m_pBoneMat;}
 public:
     int&                            GetCurClip() { return m_iCurClip; }
+public:
+    void                            SetFrameCnt(_uint iCnt = 30) { m_iFrameCount = iCnt; }
 private:
     vector<_float>                  m_vecClipUpdateTime;
     vector<_matrix>                 m_vecFinalBoneMat;
@@ -39,6 +41,8 @@ private:
     bool						    m_IsFinalMatUpdate = false; // 최종행렬 연산 수행여부
 private:
     CStructedBuffer*                m_pBoneMat = nullptr;
+private:
+    _float                          m_fTimeDelta = 0.f;
     
 public:
     void                            SetBones(const vector<tMTBone>* _vecBones);

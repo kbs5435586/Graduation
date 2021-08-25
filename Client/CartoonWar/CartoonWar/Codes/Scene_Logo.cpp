@@ -1340,9 +1340,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		//	return E_FAIL;
 	}
 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/test_castle.fbx"))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animal_Deer",
+		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Animal/Deer.FBX", L"../Data/Animal/Deer.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animal_Wolf",
+		CMesh::Create(L"../Bin/Resource/Mesh/Dynamic/Animal/Wolf.fbx", L"../Data/Animal/Wolf.dat"))))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -1468,6 +1471,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Flag",
 			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Deer_Normal",
+			CTexture::Create(L"../Bin/Resource/Texture/Animal/Deer%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 	}
 
