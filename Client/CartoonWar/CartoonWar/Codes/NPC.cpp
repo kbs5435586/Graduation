@@ -36,8 +36,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	
 	
 	//Compute_Matrix();
-	_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
-	//_vec3 vPos = {70.f,0.f,70.f };
+	//_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
+	_vec3 vPos = {170.f,0.f,170.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -1393,7 +1393,18 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 	{
 		if (m_IsSoundPause)
 		{
-			CManagement::GetInstance()->Pause_Sound();
+			if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_EFEECT, true))
+			{
+				CManagement::GetInstance()->Pause_Sound(CHANNEL_EFEECT);
+			}
+			//if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_FLASH, true))
+			//{
+			//	CManagement::GetInstance()->Pause_Sound(CHANNEL_FLASH);
+			//}
+			//if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_KILL, true))
+			//{
+			//	CManagement::GetInstance()->Pause_Sound(CHANNEL_KILL);
+			//}
 		}
 		m_IsSoundPause = true;
 		switch (m_eCurState)

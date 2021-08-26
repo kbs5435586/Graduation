@@ -111,6 +111,11 @@ void CManagement::Render()
 	return m_pLight_Manager->Render();
 }
 
+void CManagement::Update_DiffuseLight(const _float& fTimeDelata)
+{
+	return m_pLight_Manager->Update_DiffuseLight(fTimeDelata);
+}
+
 
 
 HRESULT CManagement::Create_Constant_Buffer(_uint iBufferSize, _uint iMaxCnt, CONST_REGISTER eType, _bool IsGlobal)
@@ -312,6 +317,11 @@ void CManagement::Pause_Sound(SoundChannel eChannel)
 void CManagement::Stop_Sound(SoundChannel eChannel)
 {
 	return m_pSound_Manager->Stop_Sound(eChannel);
+}
+
+_bool CManagement::IsPlaying_Sound(SoundChannel eChannel, _bool IsPlaying)
+{
+	return m_pSound_Manager->IsPlaying(eChannel, IsPlaying);
 }
 
 void CManagement::Update_Sound()

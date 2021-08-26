@@ -2,6 +2,7 @@
 #include "Function.hlsl"
 
 
+
 struct VS_IN
 {
 	float3	vPosition	: POSITION;
@@ -70,7 +71,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vView = normalize(vCamPos - vPosition);
 	float	fRim = saturate(dot(vNormal, vView));
 
-	float	fDepth = vIn.vWorldPos.z/300.f;
+	float	fDepth = vIn.vWorldPos.z/450.f;
 
 
 	if (fRim > 0.3f)
@@ -80,19 +81,12 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float	fRimPower = 2.f;
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
 
-	if (g_int_2)
-	{
-		vOut.vDiffuseTex = vDiffuse;
-	}
-	else
-	{
-		//vOut.vDiffuseTex = vDiffuse;
-		vOut.vDiffuseTex = vDiffuse * (vMtrlDif+ vMtrlAmb + vMtrlEmiv);
-	}
 
+	vOut.vDiffuseTex = vDiffuse * (vMtrlDif + vMtrlAmb + vMtrlEmiv);
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vDepthTex = float4(fDepth, fDepth, fDepth,1.f);
+
 	return vOut;
 }
 

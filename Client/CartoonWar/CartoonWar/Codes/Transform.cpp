@@ -27,14 +27,14 @@ void CTransform::SetLook(const _vec3& vLook_)
 	this->Set_StateInfo(STATE::STATE_RIGHT, &vRight);
 	this->Set_StateInfo(STATE::STATE_UP, &vUp);
 	this->Set_StateInfo(STATE::STATE_LOOK, &vLook);
-
-
+	this->Scaling(m_vScale);
 }
 
 void CTransform::SetSpeed(const _float& fSpeed)
 {
 	m_fSpeed_Move = fSpeed;
 }
+
 
 HRESULT CTransform::Ready_Transform()
 {
@@ -423,6 +423,8 @@ void CTransform::Scaling(const _vec3& vScale)
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
 	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+
+	m_vScale = vScale;
 }
 
 void CTransform::Scaling(const _float& fx, const _float& fy, const _float& fz)
@@ -444,6 +446,7 @@ void CTransform::Scaling(const _float& fx, const _float& fy, const _float& fz)
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
 	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+	m_vScale = vScale;
 }
 
 void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)
@@ -457,6 +460,7 @@ void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)
 	vPosition = Vector3_::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
+
 
 CTransform* CTransform::Create()
 {

@@ -32,5 +32,7 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 	CBuffer_CubeTex*						m_pBufferCom = nullptr;
+private:
+	_uint									m_iSkyBoxIdx = 0;
 };
 

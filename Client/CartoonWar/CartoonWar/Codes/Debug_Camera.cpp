@@ -30,24 +30,8 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	//m_targetTransform = CTransform::Create();
-	//if (nullptr == m_targetTransform)
-	//	return E_FAIL;
-	//
-	//
-	//if (FAILED(Add_Component(L"Com_TargetTransform", m_targetTransform)))
-	//	return E_FAIL;
-	//m_targetTransform->AddRef();
-	//
-	//
-	//m_pTransform->SetUp_Speed(1000.f, XMConvertToRadians(90.f));
-	//
-	//_vec3 vPos = { 130.f,100.f,300.f };
-	//m_pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransform->SetUp_Speed(20.f, XMConvertToRadians(90.f));
 
-
-	m_pTransform->SetUp_Speed(300.f, XMConvertToRadians(90.f));
-	
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
 	ClientToScreen(g_hWnd, &m_ptMouse);
@@ -63,31 +47,6 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 	m_Active = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 	if (!m_Active)
 		SetCursorPos(m_ptMouse.x, m_ptMouse.y);
-
-	/*CServer_Manager* server = CServer_Manager::GetInstance();
-	if (nullptr == server)
-		return -1;
-	server->AddRef();
-
-	int id = server->get_my_id();
-	CTransform* pTransform;
-	if (ENUM_PLAYER1 == id)
-	{
-		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc02", L"Com_Transform", 0);
-	}
-	else if (ENUM_PLAYER2 == id)
-	{
-		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc04", L"Com_Transform", 0);
-	}
-	...
-	else if (ENUM_PLAYER30 == id)
-	{
-		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_Orc30", L"Com_Transform", 0);
-	}
-	읽은 pTransform 값 카메라에 이용*/
 
 	if (nullptr == m_pInput_Device)
 		return -1;
@@ -245,7 +204,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 
-		CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+		//CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
 
 			_vec3 vPos, vRight, vUp, vLook;
@@ -254,35 +213,35 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 			vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
 
-		if (g_IsFix)
-		{
-			if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-				dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
-			{
-				vPos.y += 3.f;
-				//vPos.y += 5.f;
-				vUp *= 20.f;
-				vLook *= -5.f;
-				//vLook *= -5.f;
-			}
-			else
-			{
-				vPos.y += 5.f;
-				vUp *= 20.f;
-				//vUp *= 49.f;
-				vLook *= -2.f;
-			}
-		}
-		else
-		{
-			vPos.y += 5.f;
-			vUp *= 100.f;
-			vLook *= -250.f;
-		}
+		//if (g_IsFix)
+		//{
+		//	if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
+		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
+		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
+		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
+		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
+		//		dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+		//	{
+		//		vPos.y += 3.f;
+		//		//vPos.y += 5.f;
+		//		vUp *= 20.f;
+		//		vLook *= -5.f;
+		//		//vLook *= -5.f;
+		//	}
+		//	else
+		//	{
+		//		vPos.y += 5.f;
+		//		vUp *= 20.f;
+		//		//vUp *= 49.f;
+		//		vLook *= -2.f;
+		//	}
+		//}
+		//else
+		//{
+		//	vPos.y += 5.f;
+		//	vUp *= 100.f;
+		//	vLook *= -250.f;
+		//}
 
 
 			_vec3 vTemp = vUp - vLook;
@@ -386,7 +345,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_tProjDesc.fFovY = XMConvertToRadians(30.f);
 		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
 		m_tProjDesc.fNear = g_Near;
-		m_tProjDesc.fFar = 600.f;
+		m_tProjDesc.fFar = 450.f;
 
 
 		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
@@ -402,7 +361,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_tProjDesc.fFovY = XMConvertToRadians(60.f);
 		m_tProjDesc.fAspect = _float(WINCX) / WINCY;
 		m_tProjDesc.fNear = g_Near;
-		m_tProjDesc.fFar = 600.f;
+		m_tProjDesc.fFar = 450.f;
 
 
 		m_matProj._11 = (float)(1.f / tan((double)(m_tProjDesc.fFovY * 0.5f))) / m_tProjDesc.fAspect;
@@ -415,7 +374,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 
 
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	/*CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
@@ -473,7 +432,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	}
+	}*/
 
 
 

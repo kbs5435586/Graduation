@@ -128,6 +128,8 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
 	m_pManagement->Update_Sound();
+
+	SetTime(fTimeDelta);
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
@@ -243,6 +245,22 @@ void CMainApp::Compute_Frame()
 	SetWindowText(g_hWnd, m_szFPS);
 }
 
+void CMainApp::SetTime(const _float& fTimeDelta)
+{
+	if (m_fDatePer >= 1.f)
+	{
+		m_fDatePer = 0.f;
+		m_fDateTime = 0.f;
+		return;
+	}
+
+	m_fDateTime += fTimeDelta;
+	m_fDatePer = m_fDateTime / 60.f;
+
+	_float fTemp = Lerp(1.f, -1.2f, m_fDatePer);
+	g_iDiffusePer = fTemp;
+}
+
 HRESULT CMainApp::Create_FbxManager()
 {
 	FbxIOSettings* pIOSetting = nullptr;
@@ -284,6 +302,13 @@ HRESULT CMainApp::Ready_Prototype_Component()
 HRESULT CMainApp::Ready_Prototype_GameObject()
 {
 	return S_OK;
+}
+
+_float CMainApp::Lerp(_float a, _float b, _float val)
+{
+	_float fTemp = a * (1.f - val);
+	_float fTemp_= b * val;
+	return fTemp + fTemp_;
 }
 
 CMainApp* CMainApp::Create()
