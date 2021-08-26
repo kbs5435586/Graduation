@@ -290,7 +290,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//if (FAILED(Ready_Layer_Map(L"Layer_Map", pManagement)))
 	//	return E_FAIL;
 
-		return E_FAIL;	
+		
 	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))

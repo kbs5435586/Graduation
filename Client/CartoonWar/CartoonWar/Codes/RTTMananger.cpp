@@ -145,8 +145,8 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			return E_FAIL;
 
 		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsInvenTex);
-		m_vecMRT.push_back(pMRT);
-
+		//m_vecMRT.push_back(pMRT);
+		m_vecMRT[(_uint)MRT::MRT_INVEN] = pMRT;
 	}
 
 	// PostEffectTex

@@ -264,18 +264,18 @@ void CRenderer::Render_Bloom()
 
 }
 
-void CRenderer::Render_Map()
-{	
-	for (auto& pGameObject : m_RenderList[RENDER_MAP])
-	{
-		if (nullptr != pGameObject)
-		{
-			pGameObject->Render_GameObject_Map();
-			Safe_Release(pGameObject);
-		}
-	}
-	m_RenderList[RENDER_MAP].clear();
-}
+//void CRenderer::Render_Map()
+//{	
+//	for (auto& pGameObject : m_RenderList[RENDER_MAP])
+//	{
+//		if (nullptr != pGameObject)
+//		{
+//			pGameObject->Render_GameObject_Map();
+//			Safe_Release(pGameObject);
+//		}
+//	}
+//	m_RenderList[RENDER_MAP].clear();
+//}
 
 void CRenderer::Render_Shadow(CManagement* pManagement)
 {
@@ -302,20 +302,20 @@ void CRenderer::Render_Deffered(CManagement* pManagement)
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }
 
-void CRenderer::Render_Deffered_Map(CManagement* pManagement)
-{
-	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->OM_Set();
-	for (auto& pGameObject : m_RenderList[RENDER_MAP])
-	{
-		if (nullptr != pGameObject)
-		{
-			pGameObject->Render_GameObject_Map();
-			Safe_Release(pGameObject);
-		}
-	}
-	m_RenderList[RENDER_MAP].clear();
-	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->TargetToResBarrier();
-}
+//void CRenderer::Render_Deffered_Map(CManagement* pManagement)
+//{
+//	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->OM_Set();
+//	for (auto& pGameObject : m_RenderList[RENDER_MAP])
+//	{
+//		if (nullptr != pGameObject)
+//		{
+//			pGameObject->Render_GameObject_Map();
+//			Safe_Release(pGameObject);
+//		}
+//	}
+//	m_RenderList[RENDER_MAP].clear();
+//	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->TargetToResBarrier();
+//}
 
 void CRenderer::Render_Light(CManagement* pManagement)
 {
