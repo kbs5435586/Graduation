@@ -51,8 +51,8 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 	float4	vFireColor;
 	float4	vAlphaColor;
 	
-	vNoise1 = g_texture2.Sample(Sampler0, vIn.vTexCoord1);
-	vNoise2 = g_texture2.Sample(Sampler0, vIn.vTexCoord2);
+	vNoise1 = g_texture0.Sample(Sampler0, vIn.vTexCoord1);
+	vNoise2 = g_texture1.Sample(Sampler0, vIn.vTexCoord2);
 	vNoise3 = g_texture2.Sample(Sampler0, vIn.vTexCoord3);
 
 	vNoise1.xy = vNoise1.xy * fDistortion1.xy;
@@ -70,7 +70,7 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 	vAlphaColor = g_texture0.Sample(Sampler1, vNoiseCoord.xy);
 
 	vFireColor.a = vAlphaColor;
-
+	//vFireColor = float4(1.f, 0, 0, 1.f);
 	return vFireColor;
 }
 

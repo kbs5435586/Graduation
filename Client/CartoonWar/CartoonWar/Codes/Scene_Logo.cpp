@@ -10,11 +10,13 @@
 #include "UI_Position.h"
 #include "UI_Shade.h"
 #include "UI_PointLight.h"
+
+
 // New Scene
 #include "Scene_Stage.h"
 
 #include "Buffer_Terrain.h"
-
+#include "Buffer_Cone.h"
 
 
 unsigned __stdcall ResourceLoadThread(void* pArguments)
@@ -705,6 +707,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex",
 		CBuffer_CubeTex::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Cone",
+		CBuffer_Cone::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain",
 		CBuffer_Terrain::Create(100, 100))))

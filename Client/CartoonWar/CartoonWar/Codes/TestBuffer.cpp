@@ -117,7 +117,7 @@ void CTestBuffer::Render_GameObject()
 	}
 
 	m_tTexInfo.vScrollSpeed = _vec3(1.3f, 2.1f, 2.3f);
-	m_tTexInfo.vScale = _vec3(1.f, 2.f, 3.f);
+	m_tTexInfo.vScale = _vec3(1.f, 1.f, 1.f);
 
 	DISTORTION	tDistortion = {};
 	tDistortion.fDistortion1 = _vec2(0.1f, 0.2f);
@@ -155,6 +155,10 @@ HRESULT CTestBuffer::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
+
+	//SHADER_FORWARD
+	// if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
+	//return E_FAIL;
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 	
@@ -208,7 +212,7 @@ HRESULT CTestBuffer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
 		return E_FAIL;
 
-	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex");
+	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Cone");
 	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;

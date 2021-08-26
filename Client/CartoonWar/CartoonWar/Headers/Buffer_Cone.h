@@ -18,6 +18,19 @@ public:
 private:
     virtual void                Free();
 
+private:
+    _float topRadius{};
+    _float botRadius{};
+
+    _float height{};
+
+    _uint sliceCount{};
+    _uint stackCount{};
+
+private:
+    void BuildTopCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices);
+    void BuildBotCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices);
+
 };
 
 

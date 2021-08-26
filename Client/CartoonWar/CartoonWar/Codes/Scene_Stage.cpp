@@ -594,6 +594,10 @@ HRESULT CScene_Stage::Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&fTemp)))
 		return E_FAIL;
 
+	// fTemp = { 30,30 };
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&fTemp)))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 

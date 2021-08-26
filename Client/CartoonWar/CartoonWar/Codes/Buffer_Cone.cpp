@@ -1,5 +1,8 @@
 #include "framework.h"
 #include "Buffer_Cone.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 CBuffer_Cone::CBuffer_Cone()
 	: CVIBuffer()
@@ -13,46 +16,151 @@ CBuffer_Cone::CBuffer_Cone(const CBuffer_Cone& rhs)
 
 HRESULT CBuffer_Cone::Ready_VIBuffer()
 {
+	topRadius = 1.f;
+	botRadius = 1.f;
 
+	height = 1.f;
+
+	sliceCount = 30;
+	stackCount = 1;
+
+	vector<VTXTEXCUBE> vecVertices;
+
+	float stackHeight = height / (float)stackCount;
+
+	float radiusStep = (topRadius - botRadius) / (float)stackCount;
+
+	_uint ringCount = stackCount + 1;
+
+	for (_uint i = 0; i < ringCount; ++i)
+	{
+		float y = -0.5f * height + i * stackHeight;
+		float r = botRadius + i * radiusStep;
+
+		float phi = 2.f *  M_PI / (float)sliceCount;
+
+
+		for (_uint k = 0; k <= sliceCount; ++k)
+		{
+			float x = r * cosf(k * phi);
+			float z = r * sinf(k * phi);
+
+			VTXTEXCUBE vertex;
+			vertex.vPosition = _vec3(x, y, z);
+			vertex.vTex = vertex.vPosition;
+			//_vec3 tangent = _vec3(-z, 0.f, x);
+			//
+			//float dr = botRadius - topRadius;
+			//_vec3 biTangent = _vec3(dr * x, -height, dr * z);
+			//
+			//vertex.vTex = Vector3_::CrossProduct(tangent, biTangent);
+			//vertex.vTex = Vector3_::Normalize(vertex.vTex);
+
+			vecVertices.push_back(vertex);
+		}
+	}
+
+	vector<_uint> indices;
+	_uint ringVertexCount = sliceCount + 1;
+
+	for (_uint y = 0; y < stackCount; ++y)
+	{
+		for (_uint x = 0; x < sliceCount; ++x)
+		{
+			indices.push_back(y * ringVertexCount + x);
+			indices.push_back((y+1) * ringVertexCount + x);
+			indices.push_back((y+1) * ringVertexCount + (x+1));
+
+			indices.push_back(y * ringVertexCount + x);
+			indices.push_back((y+1) * ringVertexCount + x + 1);
+			indices.push_back(y * ringVertexCount + x + 1);
+		}
+	}
+
+	//BuildTopCap(vecVertices, indices);
+	//BuildBotCap(vecVertices, indices);
+
+	{
+		float y = 0.5f * height;
+
+		float phi = 2.f * M_PI / (float)sliceCount;
+
+		for (_uint i = 0; i <= sliceCount; ++i)
+		{
+			float x = topRadius * cosf(i * phi);
+			float z = topRadius * sinf(i * phi);
+
+			float u = x / height + 0.5f;
+			float v = z / height + 0.5f;
+
+			vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
+			//vertices.push_back(VTXTEXCUBE(x, y, z, 0, 1, 0));
+		}
+		vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
+		//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, 1, 0));
+
+
+		_uint baseIndex = vecVertices.size() - sliceCount - 2;
+
+		_uint centerIndex = vecVertices.size() - 1;
+
+		for (_uint i = 0; i < sliceCount; ++i)
+		{
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i + 1);
+			indices.push_back(baseIndex + i);
+		}
+	}
+	
+	{
+		float y = 0.5f * height;
+
+		float phi = 2.f * M_PI / (float)sliceCount;
+
+		for (_uint i = 0; i <= sliceCount; ++i)
+		{
+			float x = topRadius * cosf(i * phi);
+			float z = topRadius * sinf(i * phi);
+
+			float u = x / height + 0.5f;
+			float v = z / height + 0.5f;
+
+			vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
+			//vertices.push_back(VTXTEXCUBE(x, y, z, 0, -1, 0));
+		}
+		vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
+		//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, -1, 0));
+
+
+		_uint baseIndex = vecVertices.size() - sliceCount - 2;
+
+		_uint centerIndex = vecVertices.size() - 1;
+
+		for (_uint i = 0; i < sliceCount; ++i)
+		{
+			indices.push_back(centerIndex);
+			indices.push_back(baseIndex + i + 1);
+			indices.push_back(baseIndex + i);
+		}
+	}
+
+	_uint aaa = vecVertices.size();
 
 	//정점 개수
-	m_iNumVertices = 11;
+	m_iNumVertices = aaa;
 
 	float rad = 1.f;
 	//한 정점 벡터의 크기?
-	m_iStride = sizeof(VTXCOL);
+	m_iStride = sizeof(VTXTEXCUBE);
 
-	//VTXCOL을 담는 벡터
-	vector<VTXCOL>	vecVertices;
-	vecVertices.resize(m_iNumVertices);
 
-	//정점 초기화
-
-	for (int i = 0; i < 10; ++i)
-	{
-		float angle = 36 * i * 3.141592 / 180;
-		float x = rad * cos(angle);
-		float y = rad * sin(angle);
-
-		vecVertices[i] = VTXCOL(_vec3(x, y, 0.f), _vec4(0.0f, 0.0f, 0.0f, 1.f), _vec3());
-	}
-	vecVertices[10] = VTXCOL(_vec3(0.f, 0.f, 0.f), _vec4(0.0f, 0.0f, 0.0f, 1.f), _vec3());
-
+	_uint bbb = indices.size();
 	//인덱스
 	//시계방향
-	m_iNumIndices = 30;
-	vector<_uint>	vecIndices;
-	vecIndices.resize(m_iNumIndices);
+	m_iNumIndices = bbb;
+	
 
-	for (int i = 0; i < 10; ++i)
-	{
-		vecIndices[3 * i] = 10;
-		vecIndices[3 * i + 1] = i;
-		if (i == 9)
-			vecIndices[3 * i + 2] = 0;
-		else
-			vecIndices[3 * i + 2] = i + 1;
-	}
+
 
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Default = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_HEAP_PROPERTIES tHeap_Pro_Upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
@@ -99,7 +207,7 @@ HRESULT CBuffer_Cone::Ready_VIBuffer()
 			return E_FAIL;
 
 		D3D12_SUBRESOURCE_DATA indexData = {};
-		indexData.pData = (void*)(vecIndices.data());
+		indexData.pData = (void*)(indices.data());
 		indexData.RowPitch = sizeof(_uint) * m_iNumIndices;
 		indexData.SlicePitch = sizeof(_uint) * m_iNumIndices;
 
@@ -143,5 +251,71 @@ CComponent* CBuffer_Cone::Clone_Component(void* pArg)
 void CBuffer_Cone::Free()
 {
 	CVIBuffer::Free();
+}
+
+void CBuffer_Cone::BuildTopCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices)
+{
+	float y = 0.5f * height;
+
+	float phi = 2.f * M_PI / (float)sliceCount;
+
+	for (_uint i = 0; i <= sliceCount; ++i)
+	{
+		float x = topRadius * cosf(i * phi);
+		float z = topRadius * sinf(i * phi);
+
+		float u = x / height + 0.5f;
+		float v = z / height + 0.5f;
+		
+		vertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
+		//vertices.push_back(VTXTEXCUBE(x, y, z, 0, 1, 0));
+	}
+	vertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
+	//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, 1, 0));
+
+
+	_uint baseIndex = vertices.size() - sliceCount - 2;
+
+	_uint centerIndex = vertices.size() - 1;
+
+	for (_uint i = 0; i < sliceCount; ++i)
+	{
+		indices.push_back(centerIndex);
+		indices.push_back(baseIndex + i + 1);
+		indices.push_back(baseIndex + i);
+	}
+}
+
+void CBuffer_Cone::BuildBotCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices)
+{
+	float y = 0.5f * height;
+
+	float phi = 2.f * M_PI / (float)sliceCount;
+
+	for (_uint i = 0; i <= sliceCount; ++i)
+	{
+		float x = topRadius * cosf(i * phi);
+		float z = topRadius * sinf(i * phi);
+
+		float u = x / height + 0.5f;
+		float v = z / height + 0.5f;
+
+		vertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
+		//vertices.push_back(VTXTEXCUBE(x, y, z, 0, -1, 0));
+	}
+	vertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
+	//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, -1, 0));
+
+
+	_uint baseIndex = vertices.size() - sliceCount - 2;
+
+	_uint centerIndex = vertices.size() - 1;
+
+	for (_uint i = 0; i < sliceCount; ++i)
+	{
+		indices.push_back(centerIndex);
+		indices.push_back(baseIndex + i + 1);
+		indices.push_back(baseIndex + i);
+	}
 }
 
