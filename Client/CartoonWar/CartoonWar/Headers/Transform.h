@@ -48,9 +48,14 @@ public:
 	void					Rotation_Axis(const _float& fTimeDelta,const _vec3* pAxis);
 private:
 	_matrix					m_matWorld={}; // 객체의 상태.
+	_vec3					m_vScale = {};
 	_float					m_fSpeed_Move = 0.f;
 	_float					m_fSpeed_Rotation=0.f;
 	_float					m_fAdd_PosY = 0.f;
+private:
+	_float					m_fLerpCnt = 0.f;
+	_float					m_fLerpTime = 0.f;
+	_bool					m_IsLerp = false;
 public:
 	static CTransform*		Create();
 	virtual CComponent*		Clone_Component(void* pArg = nullptr);

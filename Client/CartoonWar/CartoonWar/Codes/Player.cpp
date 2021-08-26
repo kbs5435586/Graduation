@@ -82,6 +82,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
 
+
+
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
@@ -151,20 +153,20 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
-	//if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-	//{
-	//	if (m_IsCombat)
-	//	{
-	//		m_iCurAnimIdx = m_iCombatMotion[0];
-	//	}
-	//	else
-	//	{
-	//		m_iCurAnimIdx = 0;
-	//	}
-	//	m_IsOnce = false;
-	//	m_IsHit = false;
-	//	m_IsActioning = false;
-	//}
+	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+	{
+		if (m_IsCombat)
+		{
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		}
+		else
+		{
+			m_iCurAnimIdx = 0;
+		}
+		m_IsOnce = false;
+		m_IsHit = false;
+		m_IsActioning = false;
+	}
 
 
 	return NO_EVENT;
@@ -175,7 +177,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
+	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		m_IsFrustum = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
@@ -191,12 +193,12 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		m_IsFrustum = false;
-	}
+	//else
+	//{
+	//	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	//	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	//	m_IsFrustum = false;
+	//}
 
 
 	Set_Animation(fTimeDelta);
@@ -222,7 +224,7 @@ void CPlayer::Render_GameObject()
 		tRep.m_arrInt[0] = 1;
 		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
 		tRep.m_arrInt[2] = g_DefferedRender;
-
+		
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -1350,16 +1352,38 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_eCurClass = (CLASS)m_iCurMeshNum;
 
 	}
-	if (CManagement::GetInstance()->Key_Down(KEY_2))
+	if (CManagement::GetInstance()->Key_Pressing(KEY_2))
 	{
-		m_tInfo.fHP -= 1;
-		m_eCurState = STATE::STATE_HITTED;
-	
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 1;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[1];
+
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_NPC", L"Com_Transform", 0);
+
+		_matrix matTemp = pTransform->Get_Matrix();	//얘가 서버에서 받은 Matrix값이라 생각하셈
+		_vec3	vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+
+		_vec3	vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
+		_vec3	vLook = {};
+		vLen.Normalize(vLook);
+
+		_float	fLen = vLen.Length();
+
+		m_pTransformCom->SetLook(vLook);
+		if (fLen >3.f)
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		m_eCurState = STATE::STATE_WALK;
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_2))
 	{
-		m_eCurState = STATE::STATE_IDLE;
+		if (!m_IsCombat)
+			m_iCurAnimIdx = 0;
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
 
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))

@@ -228,8 +228,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;	
-	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -240,8 +240,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;	
 	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -450,10 +450,8 @@ HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManageme
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -503,8 +501,6 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_TestAnimMesh", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
-
 	return S_OK;
 }
 
@@ -543,14 +539,12 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	//	return E_FAIL;
 	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 	//	return E_FAIL;
-
-
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 18; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();
