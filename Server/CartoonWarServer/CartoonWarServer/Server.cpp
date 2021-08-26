@@ -1259,7 +1259,7 @@ void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
     timer_lock.unlock();
 }
 
-void Server::do_timer()
+void Server::do_event_timer()
 {
     while (true)
     {
@@ -1267,15 +1267,6 @@ void Server::do_timer()
         this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1밀리초마다 검사해라, 계속 하고있지 말고
         while (true) // 실행 시간이 된게 있으면 계속 실행해주는 용
         {
-            TIME_DELTA = time_delta();
-            for (int i = 0; i < NPC_START; ++i)
-            {
-                if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
-                    continue;
-
-                send_time_delta(i, TIME_DELTA);
-            }
-            timer_lock.lock();
             if (true == timer_queue.empty()) // 타이머 큐에 아무것도 없으면
             {
                 timer_lock.unlock();
@@ -1309,6 +1300,22 @@ void Server::do_timer()
             }
             }
         }
+    }
+}
+
+void Server::do_frame_timer()
+{
+    while (true)
+    {
+        TIME_DELTA = time_delta();
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+                continue;
+
+            send_time_delta(i, TIME_DELTA);
+        }
+        timer_lock.lock();
     }
 }
 
@@ -2357,8 +2364,6 @@ void Server::worker_thread()
 
 void Server::mainServer()
 {
-    wcout.imbue(std::locale("korean"));
-
     WSADATA WSAData;
     WSAStartup(MAKEWORD(2, 2), &WSAData);
 
@@ -2399,7 +2404,8 @@ void Server::mainServer()
     //thread AI_thread([this]() {this->do_AI(); });
     //AI_thread.join();
 
-    thread timer_thread([this]() {this->do_timer(); });
+    thread event_timer_thread([this]() {this->do_event_timer(); });
+    thread frame_timer_thread([this]() {this->do_frame_timer(); });
 
     for (auto& t : worker_threads)
     {
