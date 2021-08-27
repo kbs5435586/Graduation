@@ -1432,7 +1432,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- server->Get_AddNPC_Cooltime());
-		if (move_time.count() >= 0.1) // ↑ 쿨타임 2초 계산해주는 식
+		if (move_time.count() >= 0.033) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			server->send_move_packet(GO_BACK);
 			server->Set_AddNPC_CoolTime(high_resolution_clock::now());

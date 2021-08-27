@@ -475,7 +475,7 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.type = CS_PACKET_MOVE;
 	m_packet.size = sizeof(m_packet);
 	m_packet.dir = dir;
-	cout << "send move\n";
+	//cout << "send move\n";
 	send_packet(&m_packet);
 }
 
@@ -986,16 +986,16 @@ int CServer_Manager::Get_PlayerClass(int id)
 	return m_objects[id].m_class;
 }
 
-_matrix CServer_Manager::Get_PlayerMat(int id)
-{
-	return m_objects[id].m_transform.Get_Matrix();
-}
+//_matrix CServer_Manager::Get_PlayerMat(int id)
+//{
+//	return m_objects[id].m_transform.Get_Matrix();
+//}
 
-_matrix CServer_Manager::Get_NpcMat(int index)
-{
-	short npc_id = npc_idx_to_id(index);
-	return m_objects[npc_id].m_transform.Get_Matrix();
-}
+//_matrix CServer_Manager::Get_NpcMat(int index)
+//{
+//	short npc_id = npc_idx_to_id(index);
+//	return m_objects[npc_id].m_transform.Get_Matrix();
+//}
 
 void CServer_Manager::Set_Class(int mclass, int id, char type)
 {
