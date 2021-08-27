@@ -230,43 +230,43 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
-		if (is_player(recv_id))
-		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
-		}
-		else if (is_npc(recv_id))
-		{
-			short npc_id = npc_id_to_idx(recv_id);
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_NPC", L"Com_Transform", npc_id);
-		}
-		_vec3* vPos = pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3 rPos, uPos, lPos;
-		rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-		uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-		lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-		vPos->x = my_packet->p_x; vPos->z = my_packet->p_z;
-		pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-		pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
-		pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
-		pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
+		//if (is_player(recv_id))
+		//{
+		//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		//		L"Layer_Player", L"Com_Transform", recv_id);
+		//}
+		//else if (is_npc(recv_id))
+		//{
+		//	short npc_id = npc_id_to_idx(recv_id);
+		//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		//		L"Layer_NPC", L"Com_Transform", npc_id);
+		//}
+		//_vec3* vPos = pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		//_vec3 rPos, uPos, lPos;
+		//rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
+		//uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
+		//lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
+		//vPos->x = my_packet->p_x; vPos->z = my_packet->p_z;
+		//pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
+		//pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
+		//pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
+		//pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
 
-		//_matrix temp;
+		_matrix temp;
 
-		//temp._11 = my_packet->r_x;
-		//temp._12 = my_packet->r_y;
-		//temp._13 = my_packet->r_z;
-		//temp._21 = my_packet->u_x;
-		//temp._22 = my_packet->u_y;
-		//temp._23 = my_packet->u_z;
-		//temp._31 = my_packet->l_x;
-		//temp._32 = my_packet->l_y;
-		//temp._33 = my_packet->l_z;
-		//temp._41 = my_packet->p_x;
-		//temp._43 = my_packet->p_z;
+		temp._11 = my_packet->r_x;
+		temp._12 = my_packet->r_y;
+		temp._13 = my_packet->r_z;
+		temp._21 = my_packet->u_x;
+		temp._22 = my_packet->u_y;
+		temp._23 = my_packet->u_z;
+		temp._31 = my_packet->l_x;
+		temp._32 = my_packet->l_y;
+		temp._33 = my_packet->l_z;
+		temp._41 = my_packet->p_x;
+		temp._43 = my_packet->p_z;
 
-		//m_objects[recv_id].m_transform.Set_Matrix(temp);
+		m_objects[recv_id].m_transform->Set_Matrix(temp);
 
 		//cout << "recved " << recv_id << " has moved\n";
 		Safe_Release(managment);
@@ -986,16 +986,16 @@ int CServer_Manager::Get_PlayerClass(int id)
 	return m_objects[id].m_class;
 }
 
-//_matrix CServer_Manager::Get_PlayerMat(int id)
-//{
-//	return m_objects[id].m_transform.Get_Matrix();
-//}
+_matrix CServer_Manager::Get_PlayerMat(int id)
+{
+	return m_objects[id].m_transform->Get_Matrix();
+}
 
-//_matrix CServer_Manager::Get_NpcMat(int index)
-//{
-//	short npc_id = npc_idx_to_id(index);
-//	return m_objects[npc_id].m_transform.Get_Matrix();
-//}
+_matrix CServer_Manager::Get_NpcMat(int index)
+{
+	short npc_id = npc_idx_to_id(index);
+	return m_objects[npc_id].m_transform->Get_Matrix();
+}
 
 void CServer_Manager::Set_Class(int mclass, int id, char type)
 {

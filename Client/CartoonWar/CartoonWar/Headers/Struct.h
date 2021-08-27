@@ -1,5 +1,5 @@
 #pragma once
-//#include "Transform.h"
+#include "Transform.h"
 
 typedef struct tagVertexCol
 {
@@ -560,7 +560,7 @@ struct Session
 	bool			isHit = false;
 	bool			isInvisible = false;
 	unsigned int	m_class;
-	//CTransform*		m_transform;
+	CTransform*		m_transform = nullptr;
 };
 
 
