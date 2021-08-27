@@ -1427,6 +1427,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			cout << "1 second\n";
 			server->Set_Attack_CoolTime(high_resolution_clock::now());
 		}
+		cout << "press down\n";
 		server->send_move_packet(GO_BACK);
 
 		m_IsActioning = true;
