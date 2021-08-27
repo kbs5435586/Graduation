@@ -1010,6 +1010,7 @@
     <ClInclude Include="..\Headers\Buffer_Cone.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_Gold.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1596,6 +1597,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <Filter>96. ShaderFiles\03. Tool</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

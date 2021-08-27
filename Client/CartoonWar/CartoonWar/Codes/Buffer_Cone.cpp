@@ -80,69 +80,71 @@ HRESULT CBuffer_Cone::Ready_VIBuffer()
 	//BuildTopCap(vecVertices, indices);
 	//BuildBotCap(vecVertices, indices);
 
-	{
-		float y = 0.5f * height;
+	//{
+	//	float y = 0.5f * height;
 
-		float phi = 2.f * M_PI / (float)sliceCount;
+	//	float phi = 2.f * M_PI / (float)sliceCount;
 
-		for (_uint i = 0; i <= sliceCount; ++i)
-		{
-			float x = topRadius * cosf(i * phi);
-			float z = topRadius * sinf(i * phi);
+	//	for (_uint i = 0; i <= sliceCount; ++i)
+	//	{
+	//		float x = topRadius * cosf(i * phi);
+	//		float z = topRadius * sinf(i * phi);
 
-			float u = x / height + 0.5f;
-			float v = z / height + 0.5f;
+	//		float u = x / height + 0.5f;
+	//		float v = z / height + 0.5f;
 
-			vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
-			//vertices.push_back(VTXTEXCUBE(x, y, z, 0, 1, 0));
-		}
-		vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
-		//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, 1, 0));
+	//		vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
+	//		//vertices.push_back(VTXTEXCUBE(x, y, z, 0, -1, 0));
+	//	}
+	//	vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
+	//	//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, -1, 0));
 
 
-		_uint baseIndex = vecVertices.size() - sliceCount - 2;
+	//	_uint baseIndex = vecVertices.size() - sliceCount - 2;
 
-		_uint centerIndex = vecVertices.size() - 1;
+	//	_uint centerIndex = vecVertices.size() - 1;
 
-		for (_uint i = 0; i < sliceCount; ++i)
-		{
-			indices.push_back(centerIndex);
-			indices.push_back(baseIndex + i + 1);
-			indices.push_back(baseIndex + i);
-		}
-	}
+	//	for (_uint i = 0; i < sliceCount; ++i)
+	//	{
+	//		indices.push_back(centerIndex);
+	//		indices.push_back(baseIndex + i + 1);
+	//		indices.push_back(baseIndex + i);
+	//	}
+	//}
+
+	//{
+	//	float y = 0.5f * height;
+
+	//	float phi = 2.f * M_PI / (float)sliceCount;
+
+	//	for (_uint i = 0; i <= sliceCount; ++i)
+	//	{
+	//		float x = topRadius * cosf(i * phi);
+	//		float z = topRadius * sinf(i * phi);
+
+	//		float u = x / height + 0.5f;
+	//		float v = z / height + 0.5f;
+
+	//		vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
+	//		//vertices.push_back(VTXTEXCUBE(x, y, z, 0, 1, 0));
+	//	}
+	//	vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
+	//	//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, 1, 0));
+
+
+	//	_uint baseIndex = vecVertices.size() - sliceCount - 2;
+
+	//	_uint centerIndex = vecVertices.size() - 1;
+
+	//	for (_uint i = 0; i < sliceCount; ++i)
+	//	{
+	//		indices.push_back(centerIndex);
+	//		indices.push_back(baseIndex + i + 1);
+	//		indices.push_back(baseIndex + i);
+	//	}
+	//}
 	
-	{
-		float y = 0.5f * height;
-
-		float phi = 2.f * M_PI / (float)sliceCount;
-
-		for (_uint i = 0; i <= sliceCount; ++i)
-		{
-			float x = topRadius * cosf(i * phi);
-			float z = topRadius * sinf(i * phi);
-
-			float u = x / height + 0.5f;
-			float v = z / height + 0.5f;
-
-			vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(x, y, z), XMFLOAT3(x, y, z)));
-			//vertices.push_back(VTXTEXCUBE(x, y, z, 0, -1, 0));
-		}
-		vecVertices.push_back(VTXTEXCUBE(XMFLOAT3(0, y, 0), XMFLOAT3(0, y, 0)));
-		//vertices.push_back(VTXTEXCUBE(0, y, 0, 0, -1, 0));
-
-
-		_uint baseIndex = vecVertices.size() - sliceCount - 2;
-
-		_uint centerIndex = vecVertices.size() - 1;
-
-		for (_uint i = 0; i < sliceCount; ++i)
-		{
-			indices.push_back(centerIndex);
-			indices.push_back(baseIndex + i + 1);
-			indices.push_back(baseIndex + i);
-		}
-	}
+	
 
 	_uint aaa = vecVertices.size();
 

@@ -644,6 +644,9 @@
     <None Include="..\ShaderFiles\Shader_Bloom.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>

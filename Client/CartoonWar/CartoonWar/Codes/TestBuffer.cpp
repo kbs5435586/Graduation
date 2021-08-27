@@ -26,7 +26,7 @@ HRESULT CTestBuffer::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	_vec3 vPos = { 50.f, 0.f, 50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(50.f, 50.f, 50.f);
+	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
 	return S_OK;
 
 }
@@ -72,7 +72,7 @@ _int CTestBuffer::Update_GameObject(const _float& fTimeDelta)
 		return NO_EVENT;
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY + 10.f);
+	m_pTransformCom->Set_PositionY(fY);
 
 
 	
@@ -123,7 +123,7 @@ void CTestBuffer::Render_GameObject()
 	tDistortion.fDistortion1 = _vec2(0.1f, 0.2f);
 	tDistortion.fDistortion2 = _vec2(0.1f, 0.3f);
 	tDistortion.fDistortion3 = _vec2(0.1f, 0.1f);
-	tDistortion.fDistortionScale = 0.8f;
+	tDistortion.fDistortionScale = 0;
 	tDistortion.fDistortionBias = 0.5f;
 
 
@@ -159,7 +159,7 @@ HRESULT CTestBuffer::CreateInputLayout()
 	//SHADER_FORWARD
 	// if (FAILED(m_pShaderCom->Create_Shader(vecDesc)))
 	//return E_FAIL;
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 	
 	return S_OK;
@@ -217,14 +217,14 @@ HRESULT CTestBuffer::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
 		return E_FAIL;
 
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Fire");
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_FireWall");
 	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
 
 
-	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha");
+	m_pTextureCom[0] = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireWallAlpha");
 	NULL_CHECK_VAL(m_pTextureCom[0], E_FAIL);
 	if (FAILED(Add_Component(L"Com_Texture_0", m_pTextureCom[0])))
 		return E_FAIL;
