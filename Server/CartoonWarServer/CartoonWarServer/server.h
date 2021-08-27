@@ -100,7 +100,6 @@ public:
 
 	void add_timer(int obj_id, ENUM_FUNCTION op_type, int duration);
 	void do_event_timer();
-	void do_frame_timer();
 
 	bool is_near(int a, int b);
 	bool is_attackable(int a, int b);

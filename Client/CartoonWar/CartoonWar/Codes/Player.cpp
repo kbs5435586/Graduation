@@ -11,6 +11,7 @@
 #include "Terrain_Height.h"
 #include "Fire.h"
 #include "Teleport.h"
+#include <iostream>
 
 #include "Throw_Arrow.h"
 CPlayer::CPlayer()
@@ -104,6 +105,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_NPC", L"Com_Transform", 0);
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
@@ -111,6 +114,19 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow)
 	{
+		//_matrix matTemp = server->Get_Matrix(m_iLayerIdx);   //얘가 서버에서 받은 Matrix값이라 생각하셈
+		//_vec3   vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+
+		//_vec3   vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
+		//_vec3   vLook = {};
+		//vLen.Normalize(vLook);
+
+		//_float   fLen = vLen.Length();
+
+		//m_pTransformCom->SetLook(vLook);
+		//if (fLen > 3.f)
+		//	m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+
 		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 		m_pTransformCom->Set_PositionY(fY);
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
@@ -1404,6 +1420,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
+		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_Attack_Cooltime());
+		if (cool_time.count() >= 1) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			cout << "1 second\n";
+			server->Set_Attack_CoolTime(high_resolution_clock::now());
+		}
 		server->send_move_packet(GO_BACK);
 
 		m_IsActioning = true;

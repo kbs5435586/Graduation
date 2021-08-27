@@ -5,7 +5,7 @@
 #include "System.h"
 #include "MainApp.h"
 
-//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 #define MAX_LOADSTRING 100
 
@@ -88,7 +88,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
 
     // For.Frame_60
-    if (FAILED(pSystem->Add_Frame(L"Frame_60", 100000.f)))
+    if (FAILED(pSystem->Add_Frame(L"Frame_60", 60.f)))
         return FALSE;
 
 

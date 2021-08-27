@@ -436,6 +436,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_MOVE:
     {
         cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
+        cout << "recv move\n";
         do_move(user_id, packet->dir);
     }
     break;
@@ -1267,6 +1268,7 @@ void Server::do_event_timer()
         this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1밀리초마다 검사해라, 계속 하고있지 말고
         while (true) // 실행 시간이 된게 있으면 계속 실행해주는 용
         {
+            timer_lock.lock();
             if (true == timer_queue.empty()) // 타이머 큐에 아무것도 없으면
             {
                 timer_lock.unlock();
@@ -1300,22 +1302,6 @@ void Server::do_event_timer()
             }
             }
         }
-    }
-}
-
-void Server::do_frame_timer()
-{
-    while (true)
-    {
-        TIME_DELTA = time_delta();
-        for (int i = 0; i < NPC_START; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
-                continue;
-
-            send_time_delta(i, TIME_DELTA);
-        }
-        timer_lock.lock();
     }
 }
 
@@ -1902,7 +1888,7 @@ void Server::do_dead(int id)
 
 void Server::disconnect(int user_id)
 {
-    send_leave_packet(user_id, user_id); // 나 자신
+    //send_leave_packet(user_id, user_id); // 나 자신
     cout << user_id << "is disconnect\n";
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
@@ -2405,7 +2391,29 @@ void Server::mainServer()
     //AI_thread.join();
 
     thread event_timer_thread([this]() {this->do_event_timer(); });
-    thread frame_timer_thread([this]() {this->do_frame_timer(); });
+
+    float total_check = 0.f;
+    high_resolution_clock::time_point check = high_resolution_clock::now();
+    while (true)
+    {
+        duration<double> sec = high_resolution_clock::now() - check;
+        if (sec >= seconds(1))
+        {
+            cout << total_check << endl;
+            check = high_resolution_clock::now();
+            total_check = 0.f;
+        }
+        this_thread::sleep_for(1ms);
+        TIME_DELTA = time_delta();
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+                continue;
+
+            send_time_delta(i, TIME_DELTA);
+        }
+        total_check += TIME_DELTA;
+    }
 
     for (auto& t : worker_threads)
     {

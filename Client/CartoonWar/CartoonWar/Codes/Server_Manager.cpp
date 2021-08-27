@@ -459,6 +459,7 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.type = CS_PACKET_MOVE;
 	m_packet.size = sizeof(m_packet);
 	m_packet.dir = dir;
+	cout << "send move\n";
 	send_packet(&m_packet);
 }
 
