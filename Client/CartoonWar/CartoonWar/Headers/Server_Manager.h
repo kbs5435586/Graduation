@@ -62,6 +62,7 @@ public:
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);
+    void Set_Server_Mat(int id, _matrix* mat);
 
     short npc_idx_to_id(unsigned short id);
     short npc_id_to_idx(unsigned short id);

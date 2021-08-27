@@ -115,17 +115,29 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_IsShow)
 	{
 		_matrix matTemp = server->Get_PlayerMat(m_iLayerIdx);
-		_vec3   vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
 
-		_vec3   vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
-		_vec3   vLook = {};
-		vLen.Normalize(vLook);
+		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
+		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
+		_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
+		_vec3   vLook = _vec3(matTemp._31, matTemp._32, matTemp._33);
+
+		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3	calPos = { pPos.x, 0.f, pPos.z };
+
+		_vec3   vLen = calPos - vPos;
+		_vec3   vDir = {};
+		vLen.Normalize(vDir);
 
 		_float   fLen = vLen.Length();
+		
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-		m_pTransformCom->SetLook(vLook);
-		if (fLen > 3.f)
+		if (fLen > 0.f)
+		{
 			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		}
 
 		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 		m_pTransformCom->Set_PositionY(fY);

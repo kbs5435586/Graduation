@@ -103,8 +103,9 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		mat._41 = my_packet->p_x;
 		mat._42 = my_packet->p_y;
 		mat._43 = my_packet->p_z;
-		pTransform->Set_Matrix(mat);
 
+		pTransform->Set_Matrix(mat);
+		Set_Server_Mat(recv_id, &mat);
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
@@ -141,22 +142,24 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		{
 
 		}
-		_matrix Pos;
+		_matrix mat;
 		strcpy_s(m_objects[recv_id].name, my_packet->name);
-		Pos._11 = my_packet->r_x;
-		Pos._12 = my_packet->r_y;
-		Pos._13 = my_packet->r_z;
-		Pos._21 = my_packet->u_x;
-		Pos._22 = my_packet->u_y;
-		Pos._23 = my_packet->u_z;
-		Pos._31 = my_packet->l_x;
-		Pos._32 = my_packet->l_y;
-		Pos._33 = my_packet->l_z;
-		Pos._41 = my_packet->p_x;
-		Pos._42 = my_packet->p_y;
-		Pos._43 = my_packet->p_z;
-		pTransform->Set_Matrix(Pos);
+		mat._11 = my_packet->r_x;
+		mat._12 = my_packet->r_y;
+		mat._13 = my_packet->r_z;
+		mat._21 = my_packet->u_x;
+		mat._22 = my_packet->u_y;
+		mat._23 = my_packet->u_z;
+		mat._31 = my_packet->l_x;
+		mat._32 = my_packet->l_y;
+		mat._33 = my_packet->l_z;
+		mat._41 = my_packet->p_x;
+		mat._42 = my_packet->p_y;
+		mat._43 = my_packet->p_z;
 
+		pTransform->Set_Matrix(mat);
+
+		Set_Server_Mat(recv_id, &mat);
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].m_class = my_packet->p_class;
@@ -266,7 +269,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		temp._41 = my_packet->p_x;
 		temp._43 = my_packet->p_z;
 
-		m_objects[recv_id].m_transform->Set_Matrix(temp);
+		Set_Server_Mat(recv_id, &temp);
 
 		//cout << "recved " << recv_id << " has moved\n";
 		Safe_Release(managment);
@@ -906,6 +909,22 @@ short CServer_Manager::npc_id_to_idx(unsigned short id)
 	return id - NPC_START;
 }
 
+void CServer_Manager::Set_Server_Mat(int id, _matrix* mat)
+{
+	m_objects[id].m_mat._11 = mat->_11;
+	m_objects[id].m_mat._12 = mat->_12;
+	m_objects[id].m_mat._13 = mat->_13;
+	m_objects[id].m_mat._21 = mat->_21;
+	m_objects[id].m_mat._22 = mat->_22;
+	m_objects[id].m_mat._23 = mat->_23;
+	m_objects[id].m_mat._31 = mat->_31;
+	m_objects[id].m_mat._32 = mat->_32;
+	m_objects[id].m_mat._33 = mat->_33;
+	m_objects[id].m_mat._41 = mat->_41;
+	m_objects[id].m_mat._42 = mat->_42;
+	m_objects[id].m_mat._43 = mat->_43;
+}
+
 short CServer_Manager::object_idx_to_id(unsigned short id)
 {
 	return id + OBJECT_START;
@@ -988,13 +1007,13 @@ int CServer_Manager::Get_PlayerClass(int id)
 
 _matrix CServer_Manager::Get_PlayerMat(int id)
 {
-	return m_objects[id].m_transform->Get_Matrix();
+	return m_objects[id].m_mat;
 }
 
 _matrix CServer_Manager::Get_NpcMat(int index)
 {
 	short npc_id = npc_idx_to_id(index);
-	return m_objects[npc_id].m_transform->Get_Matrix();
+	return m_objects[npc_id].m_mat;
 }
 
 void CServer_Manager::Set_Class(int mclass, int id, char type)
