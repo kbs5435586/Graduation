@@ -166,7 +166,6 @@ void Server::do_move(int user_id, char direction)
             }
         }
     }
-    set_formation(user_id);
 
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
     set_formation(user_id);
@@ -436,7 +435,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_MOVE:
     {
         cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
-        cout << "recv move\n";
+        //cout << "recv move\n";
         do_move(user_id, packet->dir);
     }
     break;
@@ -2392,27 +2391,36 @@ void Server::mainServer()
 
     thread event_timer_thread([this]() {this->do_event_timer(); });
 
-    float total_check = 0.f;
-    high_resolution_clock::time_point check = high_resolution_clock::now();
+   /* float total_check = 0.f;
+    high_resolution_clock::time_point check = high_resolution_clock::now();*/
     while (true)
     {
-        duration<double> sec = high_resolution_clock::now() - check;
+       /* duration<double> sec = high_resolution_clock::now() - check;
         if (sec >= seconds(1))
         {
             cout << total_check << endl;
             check = high_resolution_clock::now();
             total_check = 0.f;
-        }
+        }*/
         this_thread::sleep_for(1ms);
         TIME_DELTA = time_delta();
-        for (int i = 0; i < NPC_START; ++i)
-        {
-            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
-                continue;
+        //for (int player_id = 0; player_id < NPC_START; ++player_id)
+        //{
+        //    if (ST_ACTIVE != g_clients[player_id].m_status && ST_DEAD != g_clients[player_id].m_status)
+        //        continue;
 
-            send_time_delta(i, TIME_DELTA);
-        }
-        total_check += TIME_DELTA;
+        //    //send_time_delta(player_id, TIME_DELTA);
+        //    for (int other_id = 0; other_id < NPC_START; ++other_id)
+        //    {
+        //        if (ST_ACTIVE != g_clients[other_id].m_status && ST_DEAD != g_clients[other_id].m_status)
+        //            continue;
+        //        if (!is_near(player_id, other_id))
+        //            continue;
+        //        send_move_packet(player_id, other_id);
+        //    }
+        //}
+       
+        //total_check += TIME_DELTA;
     }
 
     for (auto& t : worker_threads)

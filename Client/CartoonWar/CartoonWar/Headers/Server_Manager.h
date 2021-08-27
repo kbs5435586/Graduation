@@ -77,6 +77,8 @@ public:
     short Get_PlayerHP(int id);
     int Get_PlayerClass(int id);
     int Get_NpcClass(int id);
+    _matrix Get_PlayerMat(int id);
+    _matrix Get_NpcMat(int index);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);

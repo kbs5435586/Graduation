@@ -114,18 +114,20 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow)
 	{
-		//_matrix matTemp = server->Get_Matrix(m_iLayerIdx);   //얘가 서버에서 받은 Matrix값이라 생각하셈
-		//_vec3   vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+		_matrix matTemp = server->Get_PlayerMat(m_iLayerIdx);
+		_vec3   vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
 
-		//_vec3   vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
-		//_vec3   vLook = {};
-		//vLen.Normalize(vLook);
+		_vec3   vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
+		_vec3   vLook = {};
+		vLen.Normalize(vLook);
 
-		//_float   fLen = vLen.Length();
+		_float   fLen = vLen.Length();
 
-		//m_pTransformCom->SetLook(vLook);
-		//if (fLen > 3.f)
-		//	m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		m_pTransformCom->SetLook(vLook);
+		if (fLen > 3.f)
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+
+
 
 		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 		m_pTransformCom->Set_PositionY(fY);
@@ -1420,14 +1422,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_Attack_Cooltime());
-		if (cool_time.count() >= 1) // ↑ 쿨타임 2초 계산해주는 식
-		{
-			cout << "1 second\n";
-			server->Set_Attack_CoolTime(high_resolution_clock::now());
-		}
-		cout << "press down\n";
+		//duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
+		//	- server->Get_Attack_Cooltime());
+		//if (cool_time.count() >= 1) // ↑ 쿨타임 2초 계산해주는 식
+		//{
+		//	cout << "1 second\n";
+		//	server->Set_Attack_CoolTime(high_resolution_clock::now());
+		//}
+		//cout << "press down\n";
 		server->send_move_packet(GO_BACK);
 
 		m_IsActioning = true;

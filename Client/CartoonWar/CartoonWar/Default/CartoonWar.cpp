@@ -5,7 +5,7 @@
 #include "System.h"
 #include "MainApp.h"
 
-#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 #define MAX_LOADSTRING 100
 
@@ -88,7 +88,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
 
     // For.Frame_60
-    if (FAILED(pSystem->Add_Frame(L"Frame_60", 60.f)))
+    if (FAILED(pSystem->Add_Frame(L"Frame_60", 10000.f)))
         return FALSE;
 
 
@@ -106,24 +106,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-         server->EventManager();
+         
         _float		fTimeDelta_Default = 0.f;
-        if (server->Get_Connected())
+       /* if (server->Get_Connected())
             fTimeDelta_Default = server->Get_TimeDelta();
-        else
+        else*/
             fTimeDelta_Default = pSystem->Get_TimeDelta(L"Timer_Default");
 
         if (true == pSystem->Permit_Call(L"Frame_60", fTimeDelta_Default))
         {
             _float		fTimeDelta_60 = fTimeDelta_Default; //server->Get_TimeDelta();
                 //pSystem->Get_TimeDelta(L"Timer_60");
-           
+            server->EventManager();
             pMainApp->Update_MainApp(fTimeDelta_60);
             pMainApp->Render_MainApp();
         }
     }
-
-
 
     _ulong		dwRefCnt = 0;
     Safe_Release(pSystem);

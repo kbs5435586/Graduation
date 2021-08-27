@@ -559,6 +559,7 @@ struct Session
 	bool			isHit = false;
 	bool			isInvisible = false;
 	unsigned int	m_class;
+	CTransform		m_transform;
 };
 
 
