@@ -36,7 +36,7 @@ HRESULT CFireWall::Ready_GameObject(void* pArg)
 		First = true;
 	}
 	else
-		m_pTransformCom->Scaling(10.f, 10.f, 10.f);
+		m_pTransformCom->Scaling(25.f, 25.f, 25.f);
 	m_range = 50.f;
 
 	//_vec3 vPos = { 50.f, 0.f, 50.f };
