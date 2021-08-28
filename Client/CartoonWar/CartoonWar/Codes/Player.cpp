@@ -9,7 +9,7 @@
 #include "UI_Skill.h"
 #include "Inventory_Camera.h"
 #include "Terrain_Height.h"
-#include "Fire.h"
+#include "FireWall.h"
 #include "Teleport.h"
 
 #include "Throw_Arrow.h"
@@ -65,8 +65,8 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	}
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
-
-	m_eCurClass = CLASS::CLASS_WORKER;
+	m_eCurClass = CLASS::CLASS_MAGE;
+	//m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 
@@ -1292,7 +1292,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
 				int numver = lst.size();
 				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
-				dynamic_cast<CFire*>(fire)->SetSCheck(true);
+				dynamic_cast<CFireWall*>(fire)->SetSCheck(true);
 
 				// ÆÄÀÌ¾î ÁÂÇ¥ 
 				_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
@@ -2055,7 +2055,7 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 		if (m_GetFire && !bStart)
 		{
 			XMFLOAT2 fTemp = { 0,0 };
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_FireWall", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
 				return;
 
 			m_IsFire = true;	//true				

@@ -538,6 +538,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\98. Test\NewFilter1">
       <UniqueIdentifier>{81445e90-0484-456f-8390-835a3906ded6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\08. FireWall">
+      <UniqueIdentifier>{c1fbae03-9593-429c-b221-c2690c338812}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -1007,10 +1010,15 @@
       <Filter>02. GameObject\97. UI\93. Bloom</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Gold.h" />
-    <ClInclude Include="..\Headers\Buffer_Cone.h">
+    <ClInclude Include="..\Headers\Buffer_Cylinder.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Gold.h" />
+    <ClInclude Include="..\Headers\UI_Gold.h" />
+    <ClInclude Include="..\Headers\UI_Gold.h" />
+    <ClInclude Include="..\Headers\FireWall.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1449,8 +1457,11 @@
     <ClCompile Include="..\Codes\Bloom.cpp">
       <Filter>02. GameObject\97. UI\93. Bloom</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Buffer_Cone.cpp">
+    <ClCompile Include="..\Codes\Buffer_Cylinder.cpp">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireWall.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

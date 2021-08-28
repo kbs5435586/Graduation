@@ -161,7 +161,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Headers\Buffer_Cone.h" />
+    <ClInclude Include="..\Headers\Buffer_Cylinder.h" />
+    <ClInclude Include="..\Headers\FireWall.h" />
     <ClInclude Include="..\Headers\Map_Terrain.h" />
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Animals.h" />
@@ -331,7 +332,7 @@
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Bloom.cpp" />
     <ClCompile Include="..\Codes\Buffer_Circle.cpp" />
-    <ClCompile Include="..\Codes\Buffer_Cone.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Cylinder.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_Point.cpp" />
@@ -364,6 +365,7 @@
     <ClCompile Include="..\Codes\EventMgr.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
+    <ClCompile Include="..\Codes\FireWall.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
     <ClCompile Include="..\Codes\Font.cpp" />
     <ClCompile Include="..\Codes\FontMgr.cpp" />

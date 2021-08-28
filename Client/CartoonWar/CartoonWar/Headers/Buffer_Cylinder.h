@@ -1,18 +1,18 @@
 #pragma once
 #include "VIBuffer.h"
-class CBuffer_Cone :
+class CBuffer_Cylinder :
     public CVIBuffer
 {
 private:
-    CBuffer_Cone();
-    CBuffer_Cone(const CBuffer_Cone& rhs);
-    virtual ~CBuffer_Cone() = default;
+    CBuffer_Cylinder();
+    CBuffer_Cylinder(const CBuffer_Cylinder& rhs);
+    virtual ~CBuffer_Cylinder() = default;
 
 public:
     HRESULT                     Ready_VIBuffer();
 
 public:
-    static  CBuffer_Cone* Create();
+    static  CBuffer_Cylinder* Create();
     virtual CComponent* Clone_Component(void* pArg = nullptr);
 
 private:

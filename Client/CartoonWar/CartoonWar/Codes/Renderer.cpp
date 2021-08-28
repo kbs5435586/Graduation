@@ -49,7 +49,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear();
 	//pManagement->Get_RTT((_uint)MRT::MRT_MAP)->Clear();
-	//
+	
 	Render_Inventory(pManagement);
 	//Render_Deffered_Map(pManagement);
 

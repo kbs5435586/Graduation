@@ -1,20 +1,20 @@
 #include "framework.h"
-#include "Buffer_Cone.h"
+#include "Buffer_Cylinder.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 
-CBuffer_Cone::CBuffer_Cone()
+CBuffer_Cylinder::CBuffer_Cylinder()
 	: CVIBuffer()
 {
 }
 
-CBuffer_Cone::CBuffer_Cone(const CBuffer_Cone& rhs)
+CBuffer_Cylinder::CBuffer_Cylinder(const CBuffer_Cylinder& rhs)
 	: CVIBuffer(rhs)
 {
 }
 
-HRESULT CBuffer_Cone::Ready_VIBuffer()
+HRESULT CBuffer_Cylinder::Ready_VIBuffer()
 {
 	topRadius = 1.f;
 	botRadius = 1.f;
@@ -233,29 +233,29 @@ HRESULT CBuffer_Cone::Ready_VIBuffer()
 	return S_OK;
 }
 
-CBuffer_Cone* CBuffer_Cone::Create()
+CBuffer_Cylinder* CBuffer_Cylinder::Create()
 {
-	CBuffer_Cone* pInstance = new CBuffer_Cone();
+	CBuffer_Cylinder* pInstance = new CBuffer_Cylinder();
 
 	if (FAILED(pInstance->Ready_VIBuffer()))
 	{
-		MessageBox(0, L"CBuffer_Cone Created Failed", L"System Error", MB_OK);
+		MessageBox(0, L"CBuffer_Cylinder Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CComponent* CBuffer_Cone::Clone_Component(void* pArg)
+CComponent* CBuffer_Cylinder::Clone_Component(void* pArg)
 {
-	return new CBuffer_Cone(*this);
+	return new CBuffer_Cylinder(*this);
 }
 
-void CBuffer_Cone::Free()
+void CBuffer_Cylinder::Free()
 {
 	CVIBuffer::Free();
 }
 
-void CBuffer_Cone::BuildTopCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices)
+void CBuffer_Cylinder::BuildTopCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices)
 {
 	float y = 0.5f * height;
 
@@ -288,7 +288,7 @@ void CBuffer_Cone::BuildTopCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indi
 	}
 }
 
-void CBuffer_Cone::BuildBotCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices)
+void CBuffer_Cylinder::BuildBotCap(vector<VTXTEXCUBE>& vertices, vector<_uint>& indices)
 {
 	float y = 0.5f * height;
 
