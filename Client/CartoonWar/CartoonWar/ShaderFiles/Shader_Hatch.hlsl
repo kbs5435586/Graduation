@@ -167,12 +167,12 @@ PS_OUT	PS_Main(VS_OUT vIn)
 		vViewNormal = normalize(mul(vTSNormal, matTBN));
 	}
 
-	float4 vHatvhTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV) * vIn.vWeight123.x;
-	float4 vHatvhTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV) * vIn.vWeight123.y;
-	float4 vHatvhTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV) * vIn.vWeight123.z;
-	float4 vHatvhTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV) * vIn.vWeight456.x;
-	float4 vHatvhTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV) * vIn.vWeight456.y;
-	float4 vHatvhTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV) * vIn.vWeight456.z;
+	float4 vHatvhTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight123.x;
+	float4 vHatvhTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight123.y;
+	float4 vHatvhTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight123.z;
+	float4 vHatvhTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight456.x;
+	float4 vHatvhTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight456.y;
+	float4 vHatvhTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight456.z;
 
 	float4 hatchColor = vHatvhTex0 + vHatvhTex1 + vHatvhTex2 + vHatvhTex3 + vHatvhTex4 + vHatvhTex5;
 
@@ -180,7 +180,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	float4 vDiffuse = g_texture9.Sample(Sampler0, vIn.vTexUV);
 	//vOut.vDiffuseTex = hatchColor;
-	vOut.vDiffuseTex = vDiffuse + hatchColor;
+	vOut.vDiffuseTex = vDiffuse*0.5f + hatchColor * 0.5f;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vDepthTex = float4(fDepth, fDepth, fDepth, 1.f);

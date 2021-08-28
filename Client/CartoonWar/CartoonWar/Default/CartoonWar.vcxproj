@@ -164,7 +164,6 @@
     <ClInclude Include="..\Headers\Buffer_Cylinder.h" />
     <ClInclude Include="..\Headers\FireWall.h" />
     <ClInclude Include="..\Headers\Map_Terrain.h" />
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Animals.h" />
     <ClInclude Include="..\Headers\Animator.h" />
     <ClInclude Include="..\Headers\Base.h" />
@@ -288,7 +287,6 @@
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_End.h" />
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_GoldIcon.h" />
     <ClInclude Include="..\Headers\UI_LastTime.h" />
     <ClInclude Include="..\Headers\UI_LastTimeBar.h" />

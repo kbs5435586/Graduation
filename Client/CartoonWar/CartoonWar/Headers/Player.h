@@ -82,12 +82,12 @@ private:
 private:
 	_bool									m_IsOnce = false;
 	_bool									m_IsCombat = false;
-	_bool									m_IsSlide = false;
+
 	_uint									m_iCurAnimIdx = 0;
 	_uint									m_iPreAnimIdx =0;
 	_uint									m_iAttackMotion[2] = {};
 	_uint									m_iDeathMotion[2] = {};
-	_float									m_fDeathTime = 0.f;
+
 	_float									m_fCombatTime =   0.f;
 	_uint									m_iCombatMotion[3] = {};
 	_vec3									m_vOBB_Range[2] = {};

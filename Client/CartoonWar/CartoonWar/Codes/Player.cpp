@@ -65,11 +65,11 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	}
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
-	m_eCurClass = CLASS::CLASS_MAGE;
-	//m_eCurClass = CLASS::CLASS_WORKER;
+
+	m_eCurClass = CLASS::CLASS_CAVALRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
-
+	 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
@@ -188,6 +188,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_fParticleRunTime = 0.f;
 		m_IsParticleRun = false;
 	}
+
+
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
@@ -212,7 +214,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		m_IsFrustum = true;
 
@@ -238,12 +240,12 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
-	//else
-	//{
-	//	m_matOldWorld = m_pTransformCom->Get_Matrix();;
-	//	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	//	m_IsFrustum = false;
-	//}
+	else
+	{
+		m_matOldWorld = m_pTransformCom->Get_Matrix();;
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_IsFrustum = false;
+	}
 
 
 	Set_Animation(fTimeDelta);
@@ -1992,7 +1994,6 @@ void CPlayer::SkillClear()
 	///
 	//Safe_Release(server);
 }
-
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 {
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
@@ -2017,8 +2018,6 @@ void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 			return;	
 	}
 }
-
-
 void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);	
@@ -2043,7 +2042,6 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 	}
 	
 }
-
 void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 {
 	if (!m_IsFire)
@@ -2077,7 +2075,6 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 		}
 	}
 }
-
 void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 {
 	if (!m_IsTeleport)

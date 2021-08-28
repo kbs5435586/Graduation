@@ -191,7 +191,7 @@ HRESULT CMainApp::Ready_Sound()
 {
 	if (FAILED(m_pManagement->Ready_Channel()))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Tittle.mp3", 0.2f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Tittle.mp3", 0.1f)))
 		return E_FAIL;
 	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, BG, "../Bin/Resource/Sounds/BattleHighLand.mp3", 0.1f)))
 		return E_FAIL;
@@ -255,7 +255,7 @@ void CMainApp::SetTime(const _float& fTimeDelta)
 	}
 
 	m_fDateTime += fTimeDelta;
-	m_fDatePer = m_fDateTime / 60.f;
+	m_fDatePer = m_fDateTime / 300.f;
 
 	_float fTemp = Lerp(1.f, -1.2f, m_fDatePer);
 	g_iDiffusePer = fTemp;

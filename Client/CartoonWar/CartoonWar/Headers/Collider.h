@@ -30,6 +30,8 @@ public:
 public:
     _bool                       Collision_AABB(CCollider* pTargetCollider);
     void				        Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform);
+    _bool				        Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform, _bool IsAABB);
+public:
     _bool                       Collision_OBB(CCollider* pTargetCollider);
 public:
     void                        Update_Collider(CTransform* pTransform, _vec3 vSize ,CLASS eCurClass = CLASS::CLASS_END);

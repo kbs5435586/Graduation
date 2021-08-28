@@ -34,13 +34,14 @@ private:
 	HRESULT					Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pManagement);
 private:
 	HRESULT					Ready_Layer_Bloom(const _tchar* pLayerTag, CManagement* pManagement);
 private:
 	HRESULT					Ready_Layer_Player(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement);
-	HRESULT					Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Animals(const _tchar* pLayerTag, CManagement* pManagement);
 public:
 	static CScene_Stage*	Create();
 protected:

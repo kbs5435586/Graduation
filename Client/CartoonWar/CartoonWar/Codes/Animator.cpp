@@ -82,11 +82,12 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta, bool IsFrm)
 	m_fCurTime = 0.f;
 
 	//tCtrl.iCurFrm += fTimeDelta;
-	m_fTimeDelta += fTimeDelta * 30.f;
+	m_fTimeDelta += fTimeDelta * 24.f;
 
 	if (m_fTimeDelta >= tCtrl.iEndFrm - tCtrl.iStartFrm)
 	{
 		m_fTimeDelta = 0;
+		tCtrl.iCurFrm = 0;
 		return true;
 	}
 

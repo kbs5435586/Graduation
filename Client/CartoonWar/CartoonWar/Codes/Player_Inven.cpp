@@ -4,7 +4,7 @@
 #include "Inventory_Camera.h"
 #include "Player.h"
 #include "NPC.h"
-#include "UI_ClassTap.h";
+#include "UI_ClassTap.h"
 
 CPlayer_Inven::CPlayer_Inven()
 {

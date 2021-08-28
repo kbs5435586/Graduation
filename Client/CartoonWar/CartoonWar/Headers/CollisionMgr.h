@@ -13,9 +13,13 @@ public:
     //void                    Update_CollisionManager(const _float& fTimeDelta);
 private: //AABB
     void                    Player_to_NPC_Collision();
+    void                    Player_to_Player();
     void                    NPC_to_NPC_Collision();
     void                    Enviroment_to_Player_Or_NPC();
     void                    Deffend();
+    void                    Enviroment_to_Animals();
+    void                    Animals_to_Animals();
+    void                    Player_Or_NPC_Animals();
 private://Range
     void                    Range();
 private: //OBB
@@ -24,8 +28,7 @@ private: //OBB
     void                    NPC_to_NPC_Attack_Collision();
     void                    Player_to_Deffend_Attack_Collision();
     void                    NPC_to_Deffend_Attack_Collision();
-    void                    Skill_to_NPC_Collision();
-    void                    Teleport_to_NPC_Collision();
+    void                    Player_to_Animals_AttackCollision();
 private:
     void                    AABB();
     void                    OBB();

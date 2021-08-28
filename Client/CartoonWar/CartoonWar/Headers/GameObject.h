@@ -66,9 +66,11 @@ public:
 	_bool&									GetIsHit_PostEffect(){return m_IsHit_PostEffect; }
 protected:
 	_float									m_fBazierCnt = 0.f;
+	_float									m_fDeathTime = 0.f;
 	_bool									m_IsClone = false;
 	_bool									m_IsOBB_Collision = false; 
 	_bool									m_IsBazier = false;
+	_bool									m_IsSlide = false;
 	_bool									m_IsDead = false;
 	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;

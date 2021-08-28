@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Player_Inven.h"
 #include "NPC.h"
+#include "Animals.h"
 #include "Throw_Arrow.h"
 
 
@@ -234,8 +235,11 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Deffend", CDeffend::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Animals", CAnimals::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Teleport", CTeleport::Create())))
 		return E_FAIL;
+
 
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Water", CWater::Create())))
@@ -295,6 +299,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 		
 	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
 		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
@@ -736,6 +742,18 @@ HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pMan
 	//	return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Map_Terrain", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Animals(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	ANIMALS tAnimals = ANIMALS::ANIMALS_DEER;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
+		return E_FAIL;
+	//tAnimals = ANIMALS::ANIMALS_WOLF;
+	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

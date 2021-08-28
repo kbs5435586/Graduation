@@ -62,12 +62,12 @@ PS_OUT PS_Main(VS_OUT vIn)
 	float4	vFillterTex = g_texture8.Sample(Sampler1, vIn.vTexUV);
 	if (vFillterTex.r == 1.f)
 	{
-		vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV );
+		vDiffuse = g_texture0.Sample(Sampler0, vIn.vTexUV * 30.f);
 
 	}
 	else if (vFillterTex.g == 0.f)
 	{
-		vDiffuse = g_texture1.Sample(Sampler0, vIn.vTexUV );
+		vDiffuse = g_texture1.Sample(Sampler0, vIn.vTexUV * 30.f);
 
 	}
 	
