@@ -134,7 +134,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-		if (fLen > 0.f)
+		if (fLen > 2.f)
 		{
 			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
