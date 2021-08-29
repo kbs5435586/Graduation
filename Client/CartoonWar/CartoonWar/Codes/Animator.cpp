@@ -80,17 +80,20 @@ _bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta)
 _bool CAnimator::Update(AnimCtrl& tCtrl, const _float& fTimeDelta, bool IsFrm)
 {
 	m_fCurTime = 0.f;
-	tCtrl.iCurFrm += fTimeDelta;
 
-	if (tCtrl.iCurFrm >= tCtrl.iEndFrm - tCtrl.iStartFrm)
+	//tCtrl.iCurFrm += fTimeDelta;
+	m_fTimeDelta += fTimeDelta * 24.f;
+
+	if (m_fTimeDelta >= tCtrl.iEndFrm - tCtrl.iStartFrm)
 	{
-		tCtrl.iCurFrm = 0.f;
+		m_fTimeDelta = 0;
+		tCtrl.iCurFrm = 0;
 		return true;
 	}
 
-	m_fCurTime = tCtrl.iStartFrm + tCtrl.iCurFrm;
+	m_fCurTime = tCtrl.iStartFrm + (_uint)m_fTimeDelta;
 
-	double dFrameIdx = m_fCurTime * (double)m_iFrameCount;
+	double dFrameIdx = m_fCurTime;
 	//double dFrameIdx = m_fCurTime;
 	tCtrl.iCurFrm = (int)(dFrameIdx);
 

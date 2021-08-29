@@ -70,7 +70,7 @@ float4 PS_Main(VS_OUT vIn) : SV_TARGET
 	vAlphaColor = g_texture0.Sample(Sampler1, vNoiseCoord.xy);
 
 	vFireColor.a = vAlphaColor;
-
+	
 	return vFireColor;
 }
 

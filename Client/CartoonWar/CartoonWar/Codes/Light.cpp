@@ -4,6 +4,9 @@
 #include "Transform.h"
 #include "Management.h"
 #include "Debug_Camera.h"
+#include "Terrain_Height.h"
+
+
 CLight::CLight()
 {
 
@@ -26,13 +29,20 @@ HRESULT CLight::Ready_Light(LIGHT& tLightInfo)
 
 void CLight::Update()
 {
+	if (this->m_tLight.iLightType == 1)
+	{
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return;
+
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		m_tLight.vLightPos.y = fY;
+	}
 
 }
 
 void CLight::Render()
 {
-	if (this->m_tLight.iLightType == 0)
-	{
 		MAINPASS tMainPass = {};
 
 		_matrix matShadowView = CCamera_Manager::GetInstance()->GetShadowView();
@@ -64,10 +74,11 @@ void CLight::Render()
 		ComPtr<ID3D12DescriptorHeap>	pShadowTex = CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_SHADOW)->Get_RTT(0)->pRtt->GetSRV().Get();
 		CDevice::GetInstance()->SetTextureToShader(pShadowTex.Get(), TEXTURE_REGISTER::t2);
 
+		ComPtr<ID3D12DescriptorHeap>	pDepthTex = CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(3)->pRtt->GetSRV().Get();
+		CDevice::GetInstance()->SetTextureToShader(pDepthTex.Get(), TEXTURE_REGISTER::t3);
+
 		CDevice::GetInstance()->UpdateTable();
 		m_pBufferCom_Dir->Render_VIBuffer();
-	}
-
 }
 
 
@@ -79,7 +90,7 @@ HRESULT CLight::CreateInputLayout(_uint iType)
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (iType == 0)
+	//if (iType == 0)
 	{
 		if (FAILED(m_pShader_Dir->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_LIGHT)))
 			return E_FAIL;

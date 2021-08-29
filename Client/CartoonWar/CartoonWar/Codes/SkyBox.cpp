@@ -43,6 +43,23 @@ _int CSkyBox::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
 		return -1;
+	if (g_iDiffusePer <= 1.f && g_iDiffusePer >= 0.75f)
+	{
+		m_iSkyBoxIdx = 0;
+	}
+	else if (g_iDiffusePer <= 0.75f && g_iDiffusePer >= -0.75f)
+	{
+		m_iSkyBoxIdx = 1;
+	}
+	else if (g_iDiffusePer <= -0.75f && g_iDiffusePer >= -1.f)
+	{
+		m_iSkyBoxIdx = 2;
+	}
+	else if (g_iDiffusePer <= -1.f)
+	{
+		m_iSkyBoxIdx = 3;
+	}
+
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_INVEN, this)))
 		return -1;
 	return _int();
@@ -66,7 +83,7 @@ void CSkyBox::Render_GameObject()
 
 	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,  TEXTURE_REGISTER::t6, 1);
+	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom,  TEXTURE_REGISTER::t6, m_iSkyBoxIdx);
 	CDevice::GetInstance()->UpdateTable();
 
 

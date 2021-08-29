@@ -36,8 +36,8 @@ HRESULT CNPC::Ready_GameObject(void* pArg)
 	
 	
 	//Compute_Matrix();
-	_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
-	//_vec3 vPos = {70.f,0.f,70.f };
+	//_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
+	_vec3 vPos = {170.f,0.f,170.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -1035,11 +1035,11 @@ void CNPC::Obb_Collision()
 				_vec3 vTargetPos = { m_matAttackedTarget.m[3][0], m_matAttackedTarget.m[3][1], m_matAttackedTarget.m[3][2] };
 				_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 				_vec3 vTemp = { vPos - vTargetPos };
-				vTemp *= 5.f;
+				// *= 2.f;
 				m_vStartPoint = vPos;
 				m_vEndPoint = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
 				m_vMidPoint = (m_vStartPoint + m_vEndPoint) / 2;
-				m_vMidPoint.y += 10.f;
+				m_vMidPoint.y += 5.f;
 				Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
 				m_eCurState = STATE::STATE_HITTED;
 				m_IsBazier = true;
@@ -1395,11 +1395,26 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 {
 	if (m_ePreState != m_eCurState)
 	{
-		CManagement::GetInstance()->Pause_Sound();
+		if (m_IsSoundPause)
+		{
+			if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_EFEECT, true))
+			{
+				CManagement::GetInstance()->Pause_Sound(CHANNEL_EFEECT);
+			}
+			//if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_FLASH, true))
+			//{
+			//	CManagement::GetInstance()->Pause_Sound(CHANNEL_FLASH);
+			//}
+			//if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_KILL, true))
+			//{
+			//	CManagement::GetInstance()->Pause_Sound(CHANNEL_KILL);
+			//}
+		}
+		m_IsSoundPause = true;
 		switch (m_eCurState)
 		{
 		case STATE::STATE_IDLE:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f, FMOD_LOOP_NORMAL);
+			//CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, IDLE, 0.2f);
 			break;
 		case STATE::STATE_WALK:
 		{

@@ -22,10 +22,13 @@ private:
     HRESULT                     SetUp_OnShader(const _float& fTimeDelta);
 private:
     void                        Compute_Frame();
+    void                        SetTime(const _float& fTimeDelta);
 private:
     HRESULT                     Create_FbxManager();
     HRESULT                     Ready_Prototype_Component();
     HRESULT                     Ready_Prototype_GameObject();
+private:
+    _float                        Lerp(_float a, _float b, _float val);
 private: 
 	_tchar				        m_szFPS[MAX_PATH] = L"";
 	_ulong				        m_dwRenderCnt = 0;
@@ -37,9 +40,13 @@ private:
     GLOBAL                      m_tGlobal;
 private:
     _float                      m_fTimeDelta=0.f;
+    _float                      m_fGoldTime = 0.f;
 public:
     static				        CMainApp* Create();
 private:
     virtual void                Free(); 
+private:
+    _float                      m_fDateTime = 0.f;
+    _float                      m_fDatePer = 0.f;
 };
 

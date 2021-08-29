@@ -161,11 +161,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Buffer_Cylinder.h" />
+    <ClInclude Include="..\Headers\FireWall.h" />
     <ClInclude Include="..\Headers\Map_Terrain.h" />
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Animals.h" />
     <ClInclude Include="..\Headers\Animator.h" />
     <ClInclude Include="..\Headers\Base.h" />
+    <ClInclude Include="..\Headers\Bloom.h" />
     <ClInclude Include="..\Headers\Buffer_Circle.h" />
     <ClInclude Include="..\Headers\Buffer_CubeCol.h" />
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
@@ -285,7 +287,6 @@
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_End.h" />
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_GoldIcon.h" />
     <ClInclude Include="..\Headers\UI_LastTime.h" />
     <ClInclude Include="..\Headers\UI_LastTimeBar.h" />
@@ -327,7 +328,9 @@
     <ClCompile Include="..\Codes\Animals.cpp" />
     <ClCompile Include="..\Codes\Animator.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
+    <ClCompile Include="..\Codes\Bloom.cpp" />
     <ClCompile Include="..\Codes\Buffer_Circle.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Cylinder.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_Point.cpp" />
@@ -360,6 +363,7 @@
     <ClCompile Include="..\Codes\EventMgr.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
+    <ClCompile Include="..\Codes\FireWall.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
     <ClCompile Include="..\Codes\Font.cpp" />
     <ClCompile Include="..\Codes\FontMgr.cpp" />
@@ -635,6 +639,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </None>
     <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Bloom.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

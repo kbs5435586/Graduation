@@ -19,13 +19,6 @@ struct VS_OUT
 	float4	vTangent				: TANGENT;
 };
 
-struct PS_OUT
-{
-	float4 vDiffuseTex			: SV_TARGET0;
-	float4 vNormalTex			: SV_TARGET1;
-	float4 vPositionTex			: SV_TARGET2;
-	float4 vDepthTex			: SV_TARGET3;
-};
 
 VS_OUT VS_Main(VS_IN vIn)
 {

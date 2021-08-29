@@ -66,10 +66,6 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	{
 
 	}
-	else if (pClass == CLASS::CLASS_WORKER)
-	{
-		sWorker(fTimeDelta);
-	}
 	else if (pClass == CLASS::CLASS_ARCHER)
 	{
 		sArcher(fTimeDelta);
@@ -78,6 +74,10 @@ _int CUI_Skill::Update_GameObject(const _float& fTimeDelta)
 	{
 		sMages(fTimeDelta);
 	}
+	//else if (pClass == CLASS::CLASS_WORKER)
+	//{
+	//	sWorker(fTimeDelta);
+	//}
 	
 
 	Safe_Release(pManagement);
@@ -88,15 +88,10 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (m_pRendererCom != nullptr)
 	{
-		if ( pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
+		if (pClass == CLASS::CLASS_WORKER ||pClass == CLASS::CLASS_CAVALRY || pClass == CLASS::CLASS_INFANTRY ||
 			pClass == CLASS::CLASS_SPEARMAN || pClass == CLASS(2) || pClass == CLASS(4))
 		{
 
-		}
-		else if (pClass == CLASS::CLASS_WORKER && pArgTemp.z == 1)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-				return E_FAIL;
 		}
 		else if (pClass == CLASS::CLASS_ARCHER && pArgTemp.z == 1)
 		{
@@ -108,6 +103,11 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
 		}
+		//else if (pClass == CLASS::CLASS_WORKER && pArgTemp.z == 1)
+		//{
+		//	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+		//		return E_FAIL;
+		//}
 		
 	}
 	return _int();
@@ -161,11 +161,11 @@ void CUI_Skill::Render_GameObject()
 		if (pArgTemp.z == 1)
 			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(1), TEXTURE_REGISTER::t0);
 	}
-	else if (pClass == CLASS::CLASS_WORKER)
-	{
-		if (pArgTemp.z == 1)
-			CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(4), TEXTURE_REGISTER::t0);
-	}
+	//else if (pClass == CLASS::CLASS_WORKER)
+	//{
+	//	if (pArgTemp.z == 1)
+	//		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom->GetSRV(4), TEXTURE_REGISTER::t0);
+	//}
 	
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();

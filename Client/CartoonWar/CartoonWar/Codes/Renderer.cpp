@@ -45,10 +45,11 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
  	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Clear();
  	pManagement->Get_RTT((_uint)MRT::MRT_SHADOW)->Clear();
 	pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Clear();
+	pManagement->Get_RTT((_uint)MRT::MRT_BLOOM)->Clear();
 
 	pManagement->Get_RTT((_uint)MRT::MRT_INVEN)->Clear();
 	//pManagement->Get_RTT((_uint)MRT::MRT_MAP)->Clear();
-	//
+	
 	Render_Inventory(pManagement);
 	//Render_Deffered_Map(pManagement);
 
@@ -56,6 +57,7 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 	Render_Deffered(pManagement);
 	Render_Light(pManagement);
 	Render_Blur();
+	Render_Bloom();
 
 	iSwapChainIdx = CDevice::GetInstance()->GetSwapChainIdx();
 	pManagement->Get_RTT((_uint)MRT::MRT_SWAPCHAIN)->OM_Set(1, iSwapChainIdx);
@@ -75,7 +77,6 @@ HRESULT CRenderer::Render_RenderGroup()//106 104
 
 void CRenderer::CopySwapToPosteffect()
 {
-
 	static ComPtr<ID3D12Resource>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetTex2D().Get();
 	_uint iIdx = CDevice::GetInstance()->GetSwapChainIdx();
 
@@ -246,18 +247,35 @@ void CRenderer::Render_Blur()
 
 }
 
-void CRenderer::Render_Map()
-{	
-	for (auto& pGameObject : m_RenderList[RENDER_MAP])
+void CRenderer::Render_Bloom()
+{
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLOOM)->OM_Set();
+	for (auto& pGameObject : m_RenderList[RENDER_BLOOM]) 
 	{
 		if (nullptr != pGameObject)
 		{
-			pGameObject->Render_GameObject_Map();
+			pGameObject->Render_GameObject();
 			Safe_Release(pGameObject);
 		}
 	}
-	m_RenderList[RENDER_MAP].clear();
+	m_RenderList[RENDER_BLOOM].clear();
+
+	CManagement::GetInstance()->Get_RTT((_uint)MRT::MRT_BLOOM)->TargetToResBarrier();
+
 }
+
+//void CRenderer::Render_Map()
+//{	
+//	for (auto& pGameObject : m_RenderList[RENDER_MAP])
+//	{
+//		if (nullptr != pGameObject)
+//		{
+//			pGameObject->Render_GameObject_Map();
+//			Safe_Release(pGameObject);
+//		}
+//	}
+//	m_RenderList[RENDER_MAP].clear();
+//}
 
 void CRenderer::Render_Shadow(CManagement* pManagement)
 {
@@ -284,25 +302,26 @@ void CRenderer::Render_Deffered(CManagement* pManagement)
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }
 
-void CRenderer::Render_Deffered_Map(CManagement* pManagement)
-{
-	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->OM_Set();
-	for (auto& pGameObject : m_RenderList[RENDER_MAP])
-	{
-		if (nullptr != pGameObject)
-		{
-			pGameObject->Render_GameObject_Map();
-			Safe_Release(pGameObject);
-		}
-	}
-	m_RenderList[RENDER_MAP].clear();
-	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->TargetToResBarrier();
-}
+//void CRenderer::Render_Deffered_Map(CManagement* pManagement)
+//{
+//	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->OM_Set();
+//	for (auto& pGameObject : m_RenderList[RENDER_MAP])
+//	{
+//		if (nullptr != pGameObject)
+//		{
+//			pGameObject->Render_GameObject_Map();
+//			Safe_Release(pGameObject);
+//		}
+//	}
+//	m_RenderList[RENDER_MAP].clear();
+//	pManagement->Get_RTT((_uint)MRT::MRT_MAP)->TargetToResBarrier();
+//}
 
 void CRenderer::Render_Light(CManagement* pManagement)
 {
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->OM_Set();
 
+	pManagement->Update();
 	pManagement->Render();
 
 	pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->TargetToResBarrier();

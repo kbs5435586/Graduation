@@ -184,4 +184,11 @@ cbuffer BRUSHINFO: register(b10)
 	float4		vBrushPos;
 	float		fBrushRange;
 }
+const static float Weight[13] =
+{
+	0.0561, 0.1353, 0.278, 0.4868, 0.7261, 0.9231,
+	1, 0.9231, 0.7261, 0.4868, 0.278, 0.1353, 0.0561
+};
+const static float Total = 6.2108;
+
 #endif

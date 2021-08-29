@@ -12,10 +12,14 @@ _int CUI_ButtonNPC::tempNum = 0;
 
 CUI_ButtonNPC::CUI_ButtonNPC()
 {
+	now = 0;
+	MousePos = { 0, 0 };
 }
 
 CUI_ButtonNPC::CUI_ButtonNPC(const CUI_ButtonNPC& rhs)
 {
+	now = 0;
+	MousePos = { 0, 0 };
 }
 
 HRESULT CUI_ButtonNPC::Ready_Prototype()
@@ -151,7 +155,7 @@ void CUI_ButtonNPC::Render_GameObject()
 	if (nullptr == server)
 		return;
 
-	_uint now{};
+	//_uint now{};
 	if (m_ButtonNow == 0)
 	{
 		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());

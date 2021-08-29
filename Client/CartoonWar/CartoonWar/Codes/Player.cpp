@@ -9,7 +9,7 @@
 #include "UI_Skill.h"
 #include "Inventory_Camera.h"
 #include "Terrain_Height.h"
-#include "Fire.h"
+#include "FireWall.h"
 #include "Teleport.h"
 #include <iostream>
 
@@ -66,10 +66,10 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
 
-	m_eCurClass = CLASS::CLASS_WORKER;
+	m_eCurClass = CLASS::CLASS_CAVALRY;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
-
+	 
 	m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 	m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 
@@ -107,6 +107,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_NPC", L"Com_Transform", 0);
+
+
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
@@ -308,7 +310,7 @@ void CPlayer::Render_GameObject()
 		tRep.m_arrInt[0] = 1;
 		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
 		tRep.m_arrInt[2] = g_DefferedRender;
-
+		
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
@@ -1374,6 +1376,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
 				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
 				m_eCurState = STATE::STATE_ATTACK;
+				if(g_IsFix)
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 					return;
 			}
@@ -1385,7 +1388,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				list<CGameObject*> lst = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire");
 				int numver = lst.size();
 				CGameObject* fire = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", numver - 1);
-				dynamic_cast<CFire*>(fire)->SetSCheck(true);
+				dynamic_cast<CFireWall*>(fire)->SetSCheck(true);
 
 				// ÆÄÀÌ¾î ÁÂÇ¥ 
 				_vec3 vPos = *dynamic_cast<CTransform*>(fire->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
@@ -1895,7 +1898,15 @@ void CPlayer::Play_Sound(const _float& fTimeDelta)
 {
 	if (m_ePreState != m_eCurState)
 	{
-		CManagement::GetInstance()->Pause_Sound();
+	
+		if (m_IsSoundPause)
+		{
+			if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_EFEECT, false))
+			{
+				CManagement::GetInstance()->Pause_Sound(CHANNEL_EFEECT);
+			}
+		}
+		m_IsSoundPause = true;
 		switch (m_eCurState)
 		{
 		case STATE::STATE_IDLE:
@@ -1933,10 +1944,10 @@ void CPlayer::Play_Sound(const _float& fTimeDelta)
 			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, SHOOT, 0.2f);
 			break;
 		case STATE::STATE_DEAD:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, DIE, 0.2f);
+			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, DIE, 0.2f);
 			break;
 		case STATE::STATE_HITTED:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, HITTED, 0.2f);
+			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, HITTED, 0.2f);
 			break;
 		}
 
@@ -2018,7 +2029,6 @@ void CPlayer::SkillClear()
 	dynamic_cast<CUI_Skill*>(xTemp)->SetStime(false);
 	dynamic_cast<CUI_Skill*>(xTemp)->SetCoolTime(dynamic_cast<CUI_Skill*>(xTemp)->GetMaxCoolTime());
 }
-
 void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 {
 	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
@@ -2043,8 +2053,6 @@ void CPlayer::Skill_Deffend(const _float& fTimeDelta)
 			return;	
 	}
 }
-
-
 void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 {
 	CServer_Manager* server = CServer_Manager::GetInstance();
@@ -2072,7 +2080,6 @@ void CPlayer::Skill_Invisible(const _float& fTimeDelta)
 		server->send_invisible_packet(true);
 	}
 }
-
 void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 {
 	if (!m_IsFire)
@@ -2084,7 +2091,7 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 		if (m_GetFire && !bStart)
 		{
 			XMFLOAT2 fTemp = { 0,0 };
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_FireWall", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
 				return;
 
 			m_IsFire = true;	//true				
@@ -2106,7 +2113,6 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 		}
 	}
 }
-
 void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 {
 	if (!m_IsTeleport)

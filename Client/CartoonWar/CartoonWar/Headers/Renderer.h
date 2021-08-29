@@ -7,8 +7,7 @@ class CRenderer :
 {
 public:
 	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA_PRO, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA, RENDER_UI, 
-		RENDER_UI_BACK, RENDER_BLEND, RENDER_SHADOW, RENDER_INVEN, RENDER_POST, RENDER_BLUR, RENDER_REF, RENDER_MAP, RENDER_UI_MAP, RENDER_END
-		};
+		RENDER_UI_BACK, RENDER_BLEND, RENDER_SHADOW, RENDER_INVEN, RENDER_POST, RENDER_BLUR, RENDER_REF, RENDER_MAP, RENDER_UI_MAP, RENDER_BLOOM ,RENDER_END	};
 private:
 	explicit						CRenderer();
 	virtual							~CRenderer() = default;
@@ -30,11 +29,12 @@ private:
 	void							Render_Blend();
 	void							Render_Post_Effect();
 	void							Render_Blur();
-	void							Render_Reflection();
-	void							Render_Map();
+	void							Render_Bloom();
+	//void							Render_Reflection();
+	//void							Render_Map();
 private:
 	void							Render_Deffered(CManagement* pManagement);
-	void							Render_Deffered_Map(CManagement* pManagement);
+	//void							Render_Deffered_Map(CManagement* pManagement);
 	void							Render_Shadow(CManagement* pManagement);
 	void							Render_Light(CManagement* pManagement);
 	void							Render_Inventory(CManagement* pManagement);

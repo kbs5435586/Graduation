@@ -67,9 +67,11 @@ public:
 	_bool&									GetIsShow() { return m_IsShow; }
 protected:
 	_float									m_fBazierCnt = 0.f;
+	_float									m_fDeathTime = 0.f;
 	_bool									m_IsClone = false;
 	_bool									m_IsOBB_Collision = false; 
 	_bool									m_IsBazier = false;
+	_bool									m_IsSlide = false;
 	_bool									m_IsDead = false;
 	_bool									m_IsDeadMotion = false;
 	_bool									m_IsParticle = false;
@@ -82,6 +84,7 @@ protected:
 	_bool									m_IsTree = false;
 	_bool									m_IsHit_PostEffect = false;
 	_bool									m_IsFrustum = false;
+	_bool									m_IsSoundPause = false;
 	_bool									m_IsCheck_FlagRange = false;
 	_bool									m_IsShow = false;
 	_vec3									m_vColShpereSize = {};

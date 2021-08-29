@@ -5,7 +5,6 @@ class CRenderer;
 class CBuffer_RectTex;
 class CShader;
 class CTexture;
-class CObserver;
 
 class CUI_Select :
 	public CUI

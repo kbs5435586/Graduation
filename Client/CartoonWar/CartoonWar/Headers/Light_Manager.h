@@ -13,6 +13,8 @@ public:
     HRESULT                     Add_LightInfo(LIGHT& tLightInfo);
     void                        SetUp_OnShader();
 public:
+    void                        Update_DiffuseLight(const _float& fTimeDelata);
+public:
     void                        Update();
     void                        Render();
 private:

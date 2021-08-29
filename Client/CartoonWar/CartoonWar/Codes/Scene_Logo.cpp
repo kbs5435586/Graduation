@@ -10,11 +10,13 @@
 #include "UI_Position.h"
 #include "UI_Shade.h"
 #include "UI_PointLight.h"
+
+
 // New Scene
 #include "Scene_Stage.h"
 
 #include "Buffer_Terrain.h"
-
+#include "Buffer_Cylinder.h"
 
 
 unsigned __stdcall ResourceLoadThread(void* pArguments)
@@ -222,16 +224,6 @@ HRESULT CScene_Logo::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-	//	return E_FAIL;	
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_LOGO, pLayerTag)))
-	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -241,7 +233,7 @@ void CScene_Logo::Input_ID_IP(const _float& fTimeDelta)
 		m_IsIP = false;
 
 	m_fInputTime += fTimeDelta;
-	if (m_fInputTime >= 0.2f)
+	if (m_fInputTime >= 0.1f)
 	{
 		if (m_pInput->Get_DIKeyState(DIK_1) & 0x8000)
 		{
@@ -705,6 +697,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_CubeTex",
 		CBuffer_CubeTex::Create())))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Cylinder",
+		CBuffer_Cylinder::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Terrain",
 		CBuffer_Terrain::Create(100, 100))))
@@ -1336,7 +1331,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Deffend",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Mantlet0.fbx", L"../Data/MeshData/Deffend.dat"))))
 		//	return E_FAIL;
-
 		//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
 		//	CMesh::Create(L"../Bin/Resource/Mesh/Static/Brazier/Brazier01.fbx", L"../Data/MeshData/Brazier01.dat"))))
 		//	return E_FAIL;
@@ -1345,9 +1339,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		//	return E_FAIL;
 	}
 
-	//if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Test",
-	//	CMesh::Create(L"../Bin/Resource/Mesh/Static/test_castle.fbx"))))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animal_Deer",
+		CMesh::Create_Load(L"../Data/Animal/Deer.dat"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animal_Wolf",
+		CMesh::Create_Load(L"../Data/Animal/Wolf.dat"))))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -1360,6 +1357,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireAlpha",
 			CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_FireWallAlpha",
+			CTexture::Create(L"../Bin/Resource/Texture/Fire/FireWall_alpha%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Firefire",
 			CTexture::Create(L"../Bin/Resource/Texture/Fire/Fire_fire%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
@@ -1459,7 +1459,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/Gold/Gold%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_GoldNum",
-			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			CTexture::Create(L"../Bin/Resource/Texture/num/num%d.png", 10, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_PopUp",
 			CTexture::Create(L"../Bin/Resource/Texture/UI/popup%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
@@ -1512,6 +1512,12 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Flag",
 			CTexture::Create(L"../Bin/Resource/Texture/Flag/Flag%d.tga", 1, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Deer",
+			CTexture::Create(L"../Bin/Resource/Texture/Animal/Deer%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Wolf",
+			CTexture::Create(L"../Bin/Resource/Texture/Animal/Wolf%d.tga", 2, TEXTURE_TYPE::TEXTURE_TGA))))
 			return E_FAIL;
 	}
 
@@ -1568,6 +1574,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Fire",
 		CShader::Create(L"../ShaderFiles/Shader_Fire.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_FireWall",
+		CShader::Create(L"../ShaderFiles/Shader_FireWall.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Hatching",
 		CShader::Create(L"../ShaderFiles/Shader_Hatch.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
@@ -1594,6 +1603,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_End",
 		CShader::Create(L"../ShaderFiles/Shader_UI_End.hlsl", "VS_Main", "PS_Main"))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Bloom",
+		CShader::Create(L"../ShaderFiles/Shader_Bloom.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	//Compute_Shader_Compile
 	{

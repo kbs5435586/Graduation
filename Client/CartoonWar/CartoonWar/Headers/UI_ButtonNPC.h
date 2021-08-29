@@ -38,8 +38,6 @@ private:
 	void setSize(_float x, _float y) { m_fSizeX = x; m_fSizeY = y; };
 	void setPos(_float x, _float y) { m_fX = x; m_fY = y; };
 	
-	void setWhich(_int* _num) { which = _num; }
-	void setActive(_bool* _a) { m_Active = _a; }
 	
 	list<void*>* lstTemp = {};
 
@@ -47,14 +45,16 @@ private:
 	_bool m_cansee = {};
 	_bool IsDown = {};
 	_bool UnitActive{};
-	POINT MousePos;
+	POINT MousePos = {};
 
-	_int m_ButtonNow{};
-	static _int tempNum;
+	_uint m_ButtonNow{};
+	
 	_uint npcnumm{};
-	_bool* m_Active{};
-	_int* which{};
-	int* now;
-	_uint nowNum{};
+	_uint now{};
+	
+	
+	
+
+	static _int tempNum;
 };
 

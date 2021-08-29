@@ -80,6 +80,16 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return - 1;
+	if (g_IsStageStart)
+	{
+		m_fGoldTime += fTimeDelta;
+		if (m_fGoldTime >= 10.f)
+		{
+			g_iGold++;
+			m_fGoldTime = 0.f;
+		}
+
+	}
 
 	//CServer_Manager* server = CServer_Manager::GetInstance();
 	//NULL_CHECK_VAL(server, FALSE);
@@ -111,7 +121,9 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	}
 
 	if (GetAsyncKeyState('O'))
-		g_DefferedUIRender = true;
+	{
+		g_iTotalTime = 300.f;
+	}
 	if (GetAsyncKeyState('P'))
 	{
 		if (g_DefferedRender == 0)
@@ -129,6 +141,8 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	m_fTimeDelta = fTimeDelta;
 	m_pFrustum->Transform_ToWorld();
 	m_pManagement->Update_Sound();
+
+	SetTime(fTimeDelta);
 	return m_pManagement->Update_Management(fTimeDelta);
 }
 
@@ -190,7 +204,7 @@ HRESULT CMainApp::Ready_Sound()
 {
 	if (FAILED(m_pManagement->Ready_Channel()))
 		return E_FAIL;
-	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Tittle.mp3", 0.2f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, LOGO, "../Bin/Resource/Sounds/Tittle.mp3", 0.1f)))
 		return E_FAIL;
 	if (FAILED(m_pManagement->Add_Sound(SOUND_BG, BG, "../Bin/Resource/Sounds/BattleHighLand.mp3", 0.1f)))
 		return E_FAIL;
@@ -300,6 +314,22 @@ void CMainApp::Compute_Frame()
 	SetWindowText(g_hWnd, m_szFPS);*/
 }
 
+void CMainApp::SetTime(const _float& fTimeDelta)
+{
+	if (m_fDatePer >= 1.f)
+	{
+		m_fDatePer = 0.f;
+		m_fDateTime = 0.f;
+		return;
+	}
+
+	m_fDateTime += fTimeDelta;
+	m_fDatePer = m_fDateTime / 300.f;
+
+	_float fTemp = Lerp(1.f, -1.2f, m_fDatePer);
+	g_iDiffusePer = fTemp;
+}
+
 HRESULT CMainApp::Create_FbxManager()
 {
 	FbxIOSettings* pIOSetting = nullptr;
@@ -341,6 +371,13 @@ HRESULT CMainApp::Ready_Prototype_Component()
 HRESULT CMainApp::Ready_Prototype_GameObject()
 {
 	return S_OK;
+}
+
+_float CMainApp::Lerp(_float a, _float b, _float val)
+{
+	_float fTemp = a * (1.f - val);
+	_float fTemp_= b * val;
+	return fTemp + fTemp_;
 }
 
 CMainApp* CMainApp::Create()

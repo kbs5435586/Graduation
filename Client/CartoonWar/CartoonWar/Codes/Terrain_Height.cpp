@@ -56,10 +56,11 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	//if (GetKeyState(VK_LBUTTON) < 0)
 	//{
+	
 	CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
 	_bool m_IsSkill_Z_ON = dynamic_cast<CUI_Skill*>(zTemp)->GetActive();
 	_bool m_IsSkill_Z_Start = dynamic_cast<CUI_Skill*>(zTemp)->GetSTime();
-	
+
 
 	CGameObject* xTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 	_bool m_IsSkill_X_ON = dynamic_cast<CUI_Skill*>(xTemp)->GetActive();
@@ -68,10 +69,12 @@ _int CTerrain_Height::LastUpdate_GameObject(const _float& fTimeDelta)
 	_bool a = (m_IsSkill_Z_ON && !m_IsSkill_Z_Start);
 	_bool b = (m_IsSkill_X_ON && !m_IsSkill_X_Start);
 
-	if(a)
+	if (a)
 		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
 	if (b)
 		m_IsPick = m_pBufferCom->Picking_ToBuffer(&m_tBrush.vBrushPos, m_pTransformCom, m_pPickingCom);
+	
+	
 	//}
 
 	return _int();
@@ -131,7 +134,8 @@ void CTerrain_Height::Render_GameObject()
 
 
 	CDevice::GetInstance()->SetTextureToShader(m_pTextureCom_Fillter->GetSRV(), TEXTURE_REGISTER::t8);
-	CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(),  TEXTURE_REGISTER::t9);
+	if (a || b)
+		CDevice::GetInstance()->SetTextureToShader(m_pBrushTextureCom->GetSRV(),  TEXTURE_REGISTER::t9);
 
 	CDevice::GetInstance()->UpdateTable();
 	m_pBufferCom->Render_VIBuffer();

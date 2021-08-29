@@ -360,6 +360,75 @@ void CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTran
 
 }
 
+_bool CCollider::Collision_AABB(CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform, _bool IsAABB)
+{
+	_matrix		matSour = Compute_WorldTransform();
+	_matrix		matDest = pTargetCollider->Compute_WorldTransform();
+
+	_vec3		vSourMin, vSourMax;
+	_vec3		vDestMin, vDestMax;
+
+	XMMATRIX	xmMatSour = XMLoadFloat4x4(&matSour);
+	XMMATRIX	xmMatDest = XMLoadFloat4x4(&matDest);
+	//XMLoadFloat4x4
+	vSourMin = Vector3_::TransformCoord(m_vMin, xmMatSour);
+	vSourMax = Vector3_::TransformCoord(m_vMax, xmMatSour);
+
+	vDestMin = Vector3_::TransformCoord(pTargetCollider->m_vMin, xmMatDest);
+	vDestMax = Vector3_::TransformCoord(pTargetCollider->m_vMax, xmMatDest);
+
+	_vec3 vSourPos = *pSourTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vDestPos = *pDestTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+	_float	fMoveX = (min(vSourMax.x, vDestMax.x) - max(vSourMin.x, vDestMin.x));
+	_float	fMoveZ = (min(vSourMax.z, vDestMax.z) - max(vSourMin.z, vDestMin.z));
+	if (max(vSourMin.x, vDestMin.x) < min(vSourMax.x, vDestMax.x) &&
+		max(vSourMin.z, vDestMin.z) < min(vSourMax.z, vDestMax.z))
+	{
+		if (abs(fMoveX) < abs(fMoveZ))
+		{
+			if (vSourPos.x < vDestPos.x)
+			{
+				_vec3	vTemp = { pDestTransform->Get_Matrix()._41 + fMoveX,
+								  pDestTransform->Get_Matrix()._42,
+								  pDestTransform->Get_Matrix()._43 };
+				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+				return true;
+			}
+			else
+			{
+				_vec3	vTemp = { pDestTransform->Get_Matrix()._41 - fMoveX,
+								  pDestTransform->Get_Matrix()._42,
+								  pDestTransform->Get_Matrix()._43 };
+				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+				return true;
+			}
+			
+		}
+		else
+		{
+			if (vSourPos.z < vDestPos.z)
+			{
+				_vec3	vTemp = { pDestTransform->Get_Matrix()._41,
+								  pDestTransform->Get_Matrix()._42,
+								  pDestTransform->Get_Matrix()._43 + fMoveZ };
+				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+				return true;
+			}
+			else
+			{
+				_vec3	vTemp = { pDestTransform->Get_Matrix()._41 ,
+								  pDestTransform->Get_Matrix()._42,
+								  pDestTransform->Get_Matrix()._43 - fMoveZ };
+				pDestTransform->Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 _bool CCollider::Collision_OBB(CCollider* pTargetCollider)
 {
  	OBB* pTargetOBB = pTargetCollider->m_pOBB;
