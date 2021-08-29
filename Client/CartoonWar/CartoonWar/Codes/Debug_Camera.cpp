@@ -191,6 +191,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			}
 
 		}
+
 		if ((m_IsSkill_Z_ON && !m_IsSkill_Z_Start))
 		{
 
@@ -285,7 +286,6 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 							m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 						}*/
 		}
-
 		{
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
@@ -299,7 +299,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 			vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
 
-			if (m_IsFix)
+			if (g_IsFix)
 			{
 				if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
 					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||

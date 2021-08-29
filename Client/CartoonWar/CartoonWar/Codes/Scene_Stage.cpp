@@ -106,8 +106,6 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 	if (FAILED(Ready_Layer(pManagement)))
 		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Map/TestHatch2.dat")))
-		return E_FAIL;
 
 	if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
 		return E_FAIL;
@@ -235,8 +233,6 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Deffend", CDeffend::Create())))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Animals", CAnimals::Create())))
-		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Teleport", CTeleport::Create())))
 		return E_FAIL;
 
@@ -289,19 +285,19 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
-	
 	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map(L"Layer_Map", pManagement)))
 	//	return E_FAIL;
 
 		
-	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
+	//	return E_FAIL;
+
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	return S_OK;
@@ -594,16 +590,16 @@ HRESULT CScene_Stage::Ready_Layer_UI_Select(const _tchar* pLayerTag, CManagement
 HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	//GameObject_UI_Diffuse
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
@@ -688,14 +684,32 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 		return E_FAIL;
 
-	//tOrder = ORDER();
-	//tOrder.IsPlayer = true;
-	//tOrder.iIdx = 1;
-	//tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-	//	return E_FAIL;
+	tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx = 1;
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
+
+	tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx =2;
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
+
+	tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx = 3;
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
 
 	//tOrder = ORDER();
 	//tOrder.IsPlayer = true;
@@ -722,7 +736,7 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 18; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();
@@ -734,6 +748,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 			return E_FAIL;
 	}
+	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pManagement)

@@ -19,32 +19,16 @@ HRESULT CUI_Main::Ready_Prototype()
 
 HRESULT CUI_Main::Ready_GameObject(void* pArg)
 {
-	if (pArg)
-	{
-		m = *(_bool*)pArg;
-	}
-
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	if (m)
-	{
-		m_fX = WINCX / 2;
-		m_fY = WINCY / 2;
+	m_fX = WINCX / 2;
+	m_fY = WINCY / 2;
 
-		m_fSizeX = 900;
-		m_fSizeY = 900;
-	}
-	else
-	{
-		m_fX = WINCX / 2;
-		m_fY = WINCY / 2;
-
-		m_fSizeX = WINCX;
-		m_fSizeY = WINCY;
-	}
+	m_fSizeX = WINCX;
+	m_fSizeY = WINCY;
 	
 	return S_OK;
 }
@@ -61,14 +45,6 @@ _int CUI_Main::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLEND, this)))
 			return E_FAIL;
 	}
-	if (GetAsyncKeyState('7'))
-		m_iTemp = 0;
-	if (GetAsyncKeyState('8'))
-		m_iTemp = 1;
-	if (GetAsyncKeyState('9'))
-		m_iTemp = 2;
-	if (GetAsyncKeyState('0'))
-		m_iTemp = 3;
 	return _int();
 }
 
@@ -86,18 +62,10 @@ void CUI_Main::Render_GameObject()
 	_matrix matView = Matrix_::Identity();
 	_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 
-	REP		tRep = {};
-	tRep.m_arrInt[0] = m_iTemp;
-
-
 	m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 	_uint iOffset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-
-
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
-	iOffset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffset, CONST_REGISTER::b8);
-
+	
 	ComPtr<ID3D12DescriptorHeap>	pDiffuseTex = pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->Get_RTT(0)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pShadeTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(0)->pRtt->GetSRV().Get();
 	ComPtr<ID3D12DescriptorHeap>	pSpecularTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(1)->pRtt->GetSRV().Get();
@@ -111,8 +79,6 @@ void CUI_Main::Render_GameObject()
 	CDevice::GetInstance()->SetTextureToShader(pBlurTex.Get(), TEXTURE_REGISTER::t3);
 	CDevice::GetInstance()->SetTextureToShader(pPointTex.Get(), TEXTURE_REGISTER::t4);
 	CDevice::GetInstance()->SetTextureToShader(pBloomTex.Get(), TEXTURE_REGISTER::t5);
-
-
 
 	CDevice::GetInstance()->UpdateTable();
 
