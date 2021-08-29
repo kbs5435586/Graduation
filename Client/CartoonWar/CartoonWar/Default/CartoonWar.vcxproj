@@ -243,6 +243,7 @@
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\Player_Inven.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
+    <ClInclude Include="..\Headers\Range.h" />
     <ClInclude Include="..\Headers\Reflection_Camera.h" />
     <ClInclude Include="..\Headers\RTT.h" />
     <ClInclude Include="..\Headers\RTTMananger.h" />
@@ -400,6 +401,7 @@
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\Player_Inven.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\Range.cpp" />
     <ClCompile Include="..\Codes\Reflection_Camera.cpp" />
     <ClCompile Include="..\Codes\RTT.cpp" />
     <ClCompile Include="..\Codes\RTTMananger.cpp" />
@@ -645,6 +647,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Range.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="..\ShaderFiles\Value.hlsl">

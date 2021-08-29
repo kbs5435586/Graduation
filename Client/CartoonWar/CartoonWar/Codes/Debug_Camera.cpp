@@ -299,7 +299,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 			vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
 
-			if (m_IsFix)
+			if (g_IsFix)
 			{
 				if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
 					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||

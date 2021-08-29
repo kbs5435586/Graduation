@@ -541,6 +541,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\08. FireWall">
       <UniqueIdentifier>{c1fbae03-9593-429c-b221-c2690c338812}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\09. Range">
+      <UniqueIdentifier>{43b52ccd-964d-4156-87e3-b80fdcac180d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -984,9 +987,6 @@
     <ClInclude Include="..\Headers\UI_LastTimeBar.h">
       <Filter>02. GameObject\97. UI\94. UI_LastTimeBar</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Gold.h">
-      <Filter>02. GameObject\97. UI\93. UI_Gold</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Map_Camera.h">
       <Filter>02. GameObject\98. Camera\04. Map_Camera</Filter>
     </ClInclude>
@@ -1018,6 +1018,9 @@
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\FireWall.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Range.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. Range</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1463,6 +1466,9 @@
     <ClCompile Include="..\Codes\FireWall.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Range.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. Range</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1610,6 +1616,9 @@
       <Filter>96. ShaderFiles\03. Tool</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
+      <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_Range.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
     </None>
   </ItemGroup>
