@@ -87,8 +87,8 @@ _int CAnimals::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsDead)
 	{
-		if(g_iGold<9)
-			g_iGold++;
+		//if(g_iGold<9)
+		//	g_iGold++;
 		return DEAD_OBJ;
 	}
 

@@ -31,6 +31,9 @@ private:
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 	float TIME_DELTA = 0.f;
 
+	int TIER_ONE_PRICE = 1;
+	int TIER_TWO_PRICE = 2;
+
 	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
@@ -69,6 +72,7 @@ public:
 	void send_fire_packet(int id, float mx, float mz);
 	void send_teleport_packet(int id, float mx, float mz, unsigned char m);
 	void send_time_delta(int user_id, float time);
+	void send_gold_packet(int user_id);
 
 	void do_animation(int user_id, unsigned char anim);
 	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
@@ -121,8 +125,6 @@ public:
 	void Obb_Collision(int id);
 	void Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
 
-public:
-	void get_player_pos();
-	void calculate_next_pos();
+	void cal_change_class_gold(int id, short m_class);
 };
 

@@ -90,6 +90,7 @@ constexpr char SC_PACKET_INVISIBLE = 16;
 constexpr char SC_PACKET_FIRE = 17;
 constexpr char SC_PACKET_TELEPORT = 18;
 constexpr char SC_PACKET_TIMEDELTA = 19;
+constexpr char SC_PACKET_GOLD = 20;
 
 #pragma pack(push ,1)
 
@@ -137,6 +138,13 @@ struct sc_packet_flag_info
 	bool isRed;
 	bool isBlue;
 	float p_x, p_y, p_z;
+};
+
+struct sc_packet_gold
+{
+	char size;
+	char type;
+	int	 gold;
 };
 
 struct sc_packet_flag_bool

@@ -452,7 +452,13 @@ void Server::process_packet(int user_id, char* buf)
         g_clients[recv_id].m_class = packet->p_class;
         
         if (!is_player(recv_id))
+        {
+            cal_change_class_gold(g_clients[recv_id].m_owner_id, packet->p_class);
             update_npc_troop(recv_id);
+        }
+        else
+            cal_change_class_gold(recv_id, packet->p_class);
+
         update_speed_and_collider(recv_id);
 
         for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
@@ -1293,6 +1299,7 @@ void Server::do_event_timer()
             case FUNC_DOT_DAMAGE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
+            case FUNC_CHECK_GOLD:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -1326,6 +1333,16 @@ void Server::send_move_packet(int user_id, int other_id)
 
     //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+}
+
+void Server::send_gold_packet(int user_id)
+{
+    sc_packet_gold packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_GOLD;
+    packet.gold = g_clients[user_id].m_gold;
+
+    send_packet(user_id, &packet);
 }
 
 void Server::enter_game(int user_id, char name[])
@@ -1374,10 +1391,11 @@ void Server::enter_game(int user_id, char name[])
                 count++;
             }
 
-            if (StartGame_PlayerCount < count)
+            if (0 < count)
             {
                 //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
-                add_timer(-1, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
+                add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
+                add_timer(PURE_EVENT, FUNC_CHECK_GOLD, 1000);// 게임 플레이 시간 돌리는 함수
                 isGameStart = true;
                 cout << "Game Routine Start!\n";
                 break;
@@ -2336,7 +2354,24 @@ void Server::worker_thread()
             {
                 play_time += 1;
                 send_time_packet();
-                add_timer(-1, FUNC_CHECK_TIME, 1000);
+                add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);
+            }
+            delete overEx;
+            break;
+        case FUNC_CHECK_GOLD:
+            if (isGameStart)
+            {
+                for (int p_i = 0; p_i < NPC_START; ++p_i)
+                {
+                    if (ST_ACTIVE != g_clients[p_i].m_status && ST_DEAD != g_clients[p_i].m_status)
+                        continue;
+                    if (g_clients[p_i].m_gold >= 9)
+                        continue;
+
+                    g_clients[p_i].m_gold += 1;
+                    send_gold_packet(p_i);
+                }
+                add_timer(PURE_EVENT, FUNC_CHECK_GOLD, 1500);
             }
             delete overEx;
             break;
@@ -2812,4 +2847,46 @@ void Server::Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vM
         send_move_packet(i, id);
     }
     fCnt += 0.02f;
+}
+
+void Server::cal_change_class_gold(int id, short m_class)
+{
+    if (C_WORKER == m_class)
+    {
+        g_clients[id].m_gold -= TIER_ONE_PRICE;
+    }
+    if (C_CAVALRY == m_class)
+    {
+        g_clients[id].m_gold -= TIER_ONE_PRICE;
+    }
+    if (C_TWO == m_class)
+    {
+        g_clients[id].m_gold -= TIER_TWO_PRICE;
+    }
+    if (C_INFANTRY == m_class)
+    {
+        g_clients[id].m_gold -= TIER_ONE_PRICE;
+    }
+    if (C_FOUR == m_class)
+    {
+        g_clients[id].m_gold -= TIER_TWO_PRICE;
+    }
+    if (C_SPEARMAN == m_class)
+    {
+        g_clients[id].m_gold -= TIER_ONE_PRICE;
+    }
+    if (C_MAGE == m_class)
+    {
+        g_clients[id].m_gold -= TIER_ONE_PRICE;
+    }
+    if (C_MMAGE == m_class)
+    {
+        g_clients[id].m_gold -= TIER_TWO_PRICE;
+    }
+    if (C_ARCHER == m_class)
+    {
+        g_clients[id].m_gold -= TIER_ONE_PRICE;
+    }
+
+    send_gold_packet(id);
 }

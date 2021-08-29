@@ -284,6 +284,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			m_objects[other_id].showObject = false;
 	}
 	break;
+	case SC_PACKET_GOLD:
+	{
+		sc_packet_gold* my_packet = reinterpret_cast<sc_packet_gold*>(ptr);
+		g_iGold = my_packet->gold;
+	}
+	break;
 	case SC_PACKET_ANIMATION:
 	{
 		sc_packet_animation* my_packet = reinterpret_cast<sc_packet_animation*>(ptr);
