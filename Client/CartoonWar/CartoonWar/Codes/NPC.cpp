@@ -90,6 +90,28 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow)
 	{
+		_matrix matTemp = server->Get_NpcMat(m_iLayerIdx);
+
+		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
+		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
+		_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
+		_vec3   vLook = _vec3(matTemp._31, matTemp._32, matTemp._33);
+
+		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3	calPos = { pPos.x, 0.f, pPos.z };
+
+		_vec3   vLen = calPos - vPos;
+		_float   fLen = vLen.Length();
+
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+
+		if (fLen > 1.f)
+		{
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		}
+
 		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 		m_pTransformCom->Set_PositionY(fY);
 	}
@@ -122,7 +144,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Go_There(vSlide);
 	}
 
-	Obb_Collision();
+	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 	if (m_tInfo.fHP <= 0.f)

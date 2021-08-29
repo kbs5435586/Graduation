@@ -182,7 +182,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsActioning = false;
 	}
 	
-	Obb_Collision();
+	//Obb_Collision();
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 
