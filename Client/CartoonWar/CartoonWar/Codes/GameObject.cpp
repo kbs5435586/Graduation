@@ -47,6 +47,10 @@ void CGameObject::Render_GameObject_Shadow()
 {
 }
 
+void CGameObject::Render_GameObject_Range()
+{
+}
+
 void CGameObject::Render_PostEffect()
 {
 }

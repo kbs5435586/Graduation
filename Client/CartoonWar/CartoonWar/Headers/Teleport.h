@@ -5,6 +5,7 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CMesh;
+class CBuffer_RectTex;
 class CFrustum;
 class CTexture;
 class CTeleport :
@@ -21,6 +22,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float & fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_GameObject_Range();
 	virtual void							Render_Blur();
 private:
 	HRESULT									Ready_Component();
@@ -32,11 +34,14 @@ private:
 	virtual void							Free();
 private:
 	CTransform* m_pTransformCom = nullptr;
+	CTransform* m_pTransformCom_Range = nullptr;
 	CRenderer* m_pRendererCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
 	CMesh* m_pMeshCom = nullptr;
+	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom_Shadow = nullptr;
 	CShader* m_pShaderCom_Blur = nullptr;
+	CShader* m_pShaderCom_Range = nullptr;
 	CFrustum* m_pFrustumCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;
 public:
@@ -64,6 +69,8 @@ public:
 
 	_uint& GetID() { return m_MyID; };
 	void SetID(_uint _f) { m_MyID = _f; };
+
+	static _bool First;
 	//
 	//_uint& GetFriend() { return m_FriendID; };
 	//void SetFriend(_uint _f) { m_FriendID = _f; };

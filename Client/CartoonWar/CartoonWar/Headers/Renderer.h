@@ -6,7 +6,7 @@ class CRenderer :
 	public CComponent
 {
 public:
-	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA_PRO, RENDER_NONEALPHA, RENDER_LIGHT, RENDER_ALPHA, RENDER_UI, 
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONEALPHA_PRO, RENDER_NONEALPHA, RENDER_RANGE, RENDER_LIGHT, RENDER_ALPHA, RENDER_UI, 
 		RENDER_UI_BACK, RENDER_BLEND, RENDER_SHADOW, RENDER_INVEN, RENDER_POST, RENDER_BLUR, RENDER_REF, RENDER_MAP, RENDER_UI_MAP, RENDER_BLOOM ,RENDER_END	};
 private:
 	explicit						CRenderer();
@@ -22,6 +22,7 @@ private:
 	void							Render_Priority();
 	void							Render_NoneAlpha();
 	void							Render_NoneAlpha_PRO();
+	void							Render_Range();
 	void							Render_Alpha();
 	void							Render_UI();
 	void							Render_UI_Back();

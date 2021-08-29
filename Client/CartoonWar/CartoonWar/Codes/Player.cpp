@@ -1322,10 +1322,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				dynamic_cast<CUI_Skill*>(pTemp)->SetStime(true);
 
 
-				_float abc = dynamic_cast<CTeleport*>(tele)->GetID();
-				XMFLOAT3 fffPOS = { vPos.x, vPos.z , abc };
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Range", (_uint)SCENEID::SCENE_STAGE, L"Layer_Range", nullptr, (void*)&fffPOS)))
-					return;
+				//_float abc = dynamic_cast<CTeleport*>(tele)->GetID();
+				//XMFLOAT3 fffPOS = { vPos.x, vPos.z , abc };
+				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Range", (_uint)SCENEID::SCENE_STAGE, L"Layer_Range", nullptr, (void*)&fffPOS)))
+				//	return;
 
 			}
 

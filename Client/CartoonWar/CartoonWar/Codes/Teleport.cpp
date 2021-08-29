@@ -4,6 +4,8 @@
 #include "random"
 #include "Range.h"
 
+_bool CTeleport::First = false;
+
 CTeleport::CTeleport()
 	: CGameObject()
 {
@@ -21,6 +23,12 @@ HRESULT CTeleport::Ready_Prototype()
 
 HRESULT CTeleport::Ready_GameObject(void* pArg)
 {
+	//if (!First)
+	//{
+	//	First = true;
+	//	m_IsDead = true;
+	//}
+
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
@@ -31,6 +39,8 @@ HRESULT CTeleport::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+
+	m_pTransformCom_Range->Scaling(_vec3(15.f, 5.f, 15.f));
 
 	uniform_int_distribution<> uid(0, 10000);
 	default_random_engine dre(random_device{}());
@@ -56,7 +66,9 @@ _int CTeleport::Update_GameObject(const _float& fTimeDelta)
 
 	m_pTransformCom->Set_PositionY(fY + 0.5f);
 	m_pTransformCom->Rotation_Y(fTimeDelta);
-
+	_vec3* vTemp = m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	m_pTransformCom_Range->Set_StateInfo(CTransform::STATE_POSITION, vTemp);
+	m_pTransformCom_Range->Set_PositionY(fY + 0.5f);
 
 
 	if (m_IsDead)
@@ -86,6 +98,8 @@ _int CTeleport::LastUpdate_GameObject(const _float& fTimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_RANGE, this)))
 			return -1;
 	}
 	else
@@ -150,6 +164,31 @@ void CTeleport::Render_GameObject_Shadow()
 	Safe_Release(pManagement);
 }
 
+void CTeleport::Render_GameObject_Range()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom_Range->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+	m_pShaderCom_Range->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
+	Safe_Release(pManagement);
+}
+
 void CTeleport::Render_Blur()
 {
 	CManagement* pManagement = CManagement::GetInstance();
@@ -206,6 +245,11 @@ HRESULT CTeleport::Ready_Component()
 	NULL_CHECK_VAL(m_pTransformCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Transform", m_pTransformCom)))
 		return E_FAIL;
+	
+	m_pTransformCom_Range = (CTransform*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Transform");
+	NULL_CHECK_VAL(m_pTransformCom_Range, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Transform_Range", m_pTransformCom_Range)))
+		return E_FAIL;
 
 	m_pRendererCom = (CRenderer*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer");
 	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
@@ -216,6 +260,11 @@ HRESULT CTeleport::Ready_Component()
 	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
 		return E_FAIL;
+	m_pBufferCom = (CBuffer_RectTex*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Buffer_Cylinder");
+	NULL_CHECK_VAL(m_pBufferCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Buffer", m_pBufferCom)))
+		return E_FAIL;
+
 	m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
@@ -224,6 +273,11 @@ HRESULT CTeleport::Ready_Component()
 	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
 	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Shader_Blur", m_pShaderCom_Blur)))
+		return E_FAIL;
+
+	m_pShaderCom_Range = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Range");
+	NULL_CHECK_VAL(m_pShaderCom_Range, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader_Range", m_pShaderCom_Range)))
 		return E_FAIL;
 
 
@@ -267,6 +321,13 @@ HRESULT CTeleport::CreateInputLayout()
 	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
 
+	vector<D3D12_INPUT_ELEMENT_DESC>  vecRangeDesc;
+	vecRangeDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+	vecRangeDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
+
+	if (FAILED(m_pShaderCom_Range->Create_Shader(vecRangeDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ONEBLEND)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -296,11 +357,14 @@ CGameObject* CTeleport::Clone_GameObject(void* pArg, _uint iIdx)
 void CTeleport::Free()
 {
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pTransformCom_Range);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pShaderCom_Blur);
+	Safe_Release(m_pShaderCom_Range);
 	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();

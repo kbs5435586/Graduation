@@ -150,6 +150,19 @@ void CRenderer::Render_NoneAlpha_PRO()
 	m_RenderList[RENDER_NONEALPHA_PRO].clear();
 }
 
+void CRenderer::Render_Range()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_RANGE])
+	{
+		if (nullptr != pGameObject)
+		{
+			pGameObject->Render_GameObject_Range();
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_RANGE].clear();
+}
+
 void CRenderer::Render_Alpha()
 {
 	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
@@ -298,7 +311,7 @@ void CRenderer::Render_Deffered(CManagement* pManagement)
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->OM_Set();
 	Render_NoneAlpha_PRO();
 	Render_NoneAlpha();
-	
+	Render_Range();
 	pManagement->Get_RTT((_uint)MRT::MRT_DEFFERD)->TargetToResBarrier();
 }
 

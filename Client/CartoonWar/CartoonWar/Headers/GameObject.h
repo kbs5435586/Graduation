@@ -17,6 +17,7 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_GameObject_Range();
 	virtual void							Render_PostEffect();
 	virtual void							Render_Blur();
 	virtual void							Render_Ref();
