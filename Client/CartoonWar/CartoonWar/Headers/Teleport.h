@@ -62,8 +62,8 @@ public:
 	_float& GetRange() { return m_range; };
 	void SetRange(_bool _b) { m_range = _b; };
 
-	//_uint& GetID() { return m_MyID; };
-	//void SetID(_uint _f) { m_MyID = _f; };
+	_uint& GetID() { return m_MyID; };
+	void SetID(_uint _f) { m_MyID = _f; };
 	//
 	//_uint& GetFriend() { return m_FriendID; };
 	//void SetFriend(_uint _f) { m_FriendID = _f; };

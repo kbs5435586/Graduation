@@ -32,7 +32,7 @@ HRESULT CFireWall::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	if (!First)
 	{
-		m_pTransformCom->Scaling(1.f, 1.f, 1.f);
+		m_pTransformCom->Scaling(0.f, 0.f, 0.f);
 		First = true;
 	}
 	else

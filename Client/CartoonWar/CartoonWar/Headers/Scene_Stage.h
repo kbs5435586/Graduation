@@ -31,6 +31,7 @@ private:
 	HRESULT					Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Environment(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement* pManagement);
+	HRESULT					Ready_Layer_Range(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Particle(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pManagement);
 	HRESULT					Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pManagement);

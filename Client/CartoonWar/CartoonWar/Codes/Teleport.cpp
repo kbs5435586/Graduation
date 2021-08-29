@@ -2,6 +2,7 @@
 #include "Management.h"
 #include "Teleport.h"
 #include "random"
+#include "Range.h"
 
 CTeleport::CTeleport()
 	: CGameObject()
@@ -31,6 +32,9 @@ HRESULT CTeleport::Ready_GameObject(void* pArg)
 	m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 
+	uniform_int_distribution<> uid(0, 10000);
+	default_random_engine dre(random_device{}());
+	m_MyID = uid(dre);
 
 	m_range = 30.f;
 	
@@ -54,8 +58,21 @@ _int CTeleport::Update_GameObject(const _float& fTimeDelta)
 	m_pTransformCom->Rotation_Y(fTimeDelta);
 
 
+
 	if (m_IsDead)
+	{
+
+		for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Range"))
+		{
+			_uint iTemp = dynamic_cast<CRange*>(iter0)->GetID();
+			if (iTemp == m_MyID)
+			{
+				iter0->GetIsDead() = true;
+			}
+		}
 		return DEAD_OBJ;
+	}
+		
 
 	return _int();
 }

@@ -33,11 +33,21 @@ private:
 	CRenderer* m_pRendererCom = nullptr;
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom = nullptr;
+
 	//CTexture* m_pTextureCom[3] = { nullptr };
 private:
 	TEXINFO									m_tTexInfo = {};
 
 private:
 	_float									m_range = {};
+	_uint MasterID{};
+
+
+
+	static _bool First;
+public:
+	_uint& GetID() { return MasterID; };
+	void SetID(_uint _f) { MasterID = _f; };
+	//_bool IsMaster(CGameObject* iter);
 };
 

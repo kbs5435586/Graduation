@@ -1,8 +1,9 @@
 #include"framework.h"
 #include "Range.h"
 #include "Management.h"
+#include "Teleport.h"
 
-
+_bool CRange::First = false;
 
 CRange::CRange()
 	: CGameObject()
@@ -27,42 +28,33 @@ HRESULT CRange::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-
+	
 	//_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
 	//m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	
-
-	_vec3 vPos = { 50.f, 0.f, 50.f };
+	_vec3 vPos = { (*(XMFLOAT3*)pArg).x,  0, (*(XMFLOAT3*)pArg).y };
+	MasterID = (*(XMFLOAT3*)pArg).z;
+	//_vec3 vPos = { 50.f, 0.f, 50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	m_pTransformCom->Scaling(50.f, 5.f, 50.f);
+	if (!First)
+	{
+		m_pTransformCom->Scaling(0.f, 0.f, 0.f);
+		First = true;
+	}
+	else
+		m_pTransformCom->Scaling(50.f, 5.f, 50.f);
 	return S_OK;
 
 }
 
 _int CRange::Update_GameObject(const _float& fTimeDelta)
 {
-
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY + 5.f);
-
-	//if (startCheck)
-	//{
-	//	endTime += fTimeDelta;
-	//	if (endTime > 10.f)
-	//		m_IsDead = true;
-	//
-	//	if (damageCheck)
-	//	{
-	//		damageTime += fTimeDelta;
-	//
-	//		if (damageTime > 0.1f)
-	//			IsGetDamage = true;
-	//	}
-	//}
 
 
 	if (m_IsDead)
@@ -75,8 +67,6 @@ _int CRange::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-
-
 
 	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 		return -1;
@@ -121,6 +111,7 @@ HRESULT CRange::CreateInputLayout()
 
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ONEBLEND)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -184,3 +175,10 @@ HRESULT CRange::Ready_Component()
 	Safe_Release(pManagement);
 	return S_OK;
 }
+
+//_bool CRange::IsMaster(CGameObject* iter)
+//{
+//	if (MasterID == dynamic_cast<CTeleport*>(iter)->GetID());
+//		
+//	return _bool();
+//}

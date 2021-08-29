@@ -290,6 +290,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Range(L"Layer_Range", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
 	
@@ -616,8 +618,7 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Range", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	
 	
 	return S_OK;
 }
@@ -628,6 +629,14 @@ HRESULT CScene_Stage::Ready_Layer_SkillFire(const _tchar* pLayerTag, CManagement
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_FireWall", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&fTemp)))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Range(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	XMFLOAT3 fTemp = { 50.f, 50.f , 0};
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Range", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&fTemp)))
+		return E_FAIL;
 	return S_OK;
 }
 

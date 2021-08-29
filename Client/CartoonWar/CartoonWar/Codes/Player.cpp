@@ -10,6 +10,7 @@
 #include "Inventory_Camera.h"
 #include "Terrain_Height.h"
 #include "FireWall.h"
+#include "Range.h"
 #include "Teleport.h"
 
 #include "Throw_Arrow.h"
@@ -66,7 +67,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
 
-	m_eCurClass = CLASS::CLASS_CAVALRY;
+	m_eCurClass = CLASS::CLASS_MAGE;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 	 
@@ -1302,6 +1303,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);	
 				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
+				
 	
 			}
 			if (m_IsTeleport)
@@ -1318,6 +1320,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 				dynamic_cast<CUI_Skill*>(pTemp)->SetStime(true);
+
+
+				_float abc = dynamic_cast<CTeleport*>(tele)->GetID();
+				XMFLOAT3 fffPOS = { vPos.x, vPos.z , abc };
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Range", (_uint)SCENEID::SCENE_STAGE, L"Layer_Range", nullptr, (void*)&fffPOS)))
+					return;
 
 			}
 
