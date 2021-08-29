@@ -40,7 +40,6 @@ private:
     GLOBAL                      m_tGlobal;
 private:
     _float                      m_fTimeDelta=0.f;
-    _float                      m_fGoldTime = 0.f;
 public:
     static				        CMainApp* Create();
 private:

@@ -455,40 +455,12 @@ void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
 	vLook = Vector3_::Subtract(*pTargetPos, vPosition);
-	vLook = Vector3_::Normalize(vLook);
 	vLook.y = 0.f;
-	vLook = vLook * m_fSpeed_Move * fTimeDelta * 4.5f;
-	//if (vLook.x > 0.f)vLook.x = 1.f;
-	//if (vLook.x < 0.f)vLook.x = -1.f;
-	//if (vLook.z > 0.f)vLook.z = 1.f;
-	//if (vLook.z < 0.f)vLook.z = -1.f;
-	//vLook = Vector3_::ScalarProduct(vLook, m_fSpeed_Move * fTimeDelta, false);
+	vLook = Vector3_::Normalize(vLook);
+	vLook = vLook * m_fSpeed_Move * fTimeDelta;
+
 	vPosition = Vector3_::Add(vPosition, vLook);
 	Set_StateInfo(STATE_POSITION, &vPosition);
-
-	//_vec3		vLook, vPosition;
-	//vPosition = *Get_StateInfo(STATE_POSITION);
-
-	//vLook = Vector3_::Subtract(*pTargetPos, vPosition);
-
-	//float distance_square = vLook.x * vLook.x + vLook.y * vLook.y + vLook.z * vLook.z;
-	//if (0 != distance_square)
-	//{
-	//	float hyp = sqrtf(vLook.x * vLook.x + vLook.y * vLook.y + vLook.z * vLook.z);
-
-	//	vLook = vLook / hyp; // 여기가 노멀값
-	//	vLook = vLook * m_fSpeed_Move * fTimeDelta * 4.f; // 노멀값 방향으로 얼만큼 갈지 계산
-	//}
-
-	////vLook = Vector3_::Normalize(vLook);
-	////if (vLook.x > 0.f)vLook.x = 1.f;
-	////if (vLook.x < 0.f)vLook.x = -1.f;
-	////if (vLook.z > 0.f)vLook.z = 1.f;
-	////if (vLook.z < 0.f)vLook.z = -1.f;
-	//vLook.y = 0.f;
-	////vLook = Vector3_::ScalarProduct(vLook, m_fSpeed_Move * fTimeDelta, false);
-	//vPosition = Vector3_::Add(vPosition, vLook);
-	//Set_StateInfo(STATE_POSITION, &vPosition);
 }
 
 

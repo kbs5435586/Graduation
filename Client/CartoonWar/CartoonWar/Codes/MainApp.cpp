@@ -80,31 +80,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	if (nullptr == m_pManagement)
 		return - 1;
-	if (g_IsStageStart)
-	{
-		m_fGoldTime += fTimeDelta;
-		if (m_fGoldTime >= 10.f)
-		{
-			g_iGold++;
-			m_fGoldTime = 0.f;
-		}
 
-	}
-
-	//CServer_Manager* server = CServer_Manager::GetInstance();
-	//NULL_CHECK_VAL(server, FALSE);
-
-	//duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
-	//	- server->Get_Attack_Cooltime());
-	//if (cool_time.count() >= 1) // ↑ 쿨타임 2초 계산해주는 식
-	//{
-	//	cout << "1 second\n";
-	//	server->Set_Attack_CoolTime(high_resolution_clock::now());
-	//}
-	//cout << "do update\n";
-
-	if (g_iGold >= 9)
-		g_iGold = 9;
 	if (g_iTotalTime >= 300.f)
 	{
 		g_IsEnd = true;

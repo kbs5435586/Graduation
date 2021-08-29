@@ -127,16 +127,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		_vec3	calPos = { pPos.x, 0.f, pPos.z };
 
 		_vec3   vLen = calPos - vPos;
-		_vec3   vDir = {};
-		vLen.Normalize(vDir);
-
 		_float   fLen = vLen.Length();
 		
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-		if (fLen > 2.f)
+		if (fLen > 1.f)
 		{
 			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
