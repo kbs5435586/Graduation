@@ -1051,22 +1051,79 @@ void Server::do_follow(int npc_id)
     {
         if (g_clients[n.m_owner_id].m_boid[i].id == n.m_id)
         {
-            _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3* n_look = n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-            _vec3* p_pos = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3* p_look = g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-            if (*n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 만약 자신의 최종 위치가 아닐때
+            _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 자신이 마지막 위치가 아닐때
             {
-                n.m_anim = A_WALK;
-                _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
-                _vec3* pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-                _vec3 new_pos = *pos + Dir;
-                if (*pos != new_pos)
-                    g_clients[npc_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
+                    || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f)
+                {
+                    _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
+                    _vec3 new_pos = n_pos + Dir;
+                    n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                    n.m_isOut = true;
+                }
+                else
+                {
+                    if (n.m_isOut) // 이제 막 처음 반지름 반경에 들어왔을때
+                    {
+                        n.m_isOut = false;
+                        _vec3 p_look = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+                        _vec3 standard = -1.f * Vector3_::Normalize(p_look);
+                        _vec3 npcLookAt = n_pos - p_pos;
+                        npcLookAt = Vector3_::Normalize(npcLookAt);
+
+                        _vec3 set_pos = {};
+
+                        float PdotProduct = (npcLookAt.x * standard.x) + (npcLookAt.y * standard.y) + (npcLookAt.z * standard.z);
+                        _vec3 PoutProduct;
+                        PoutProduct.x = (standard.y * npcLookAt.z) - (standard.z * npcLookAt.y);
+                        PoutProduct.y = (standard.z * npcLookAt.x) - (standard.x * npcLookAt.z);
+                        PoutProduct.z = (standard.x * npcLookAt.y) - (standard.y * npcLookAt.x);
+
+                        float radian = acosf(PdotProduct);
+                        if (PoutProduct.y < 0)
+                            radian *= -1.f;
+                        float NPCangle = radian * 180.f / PIE;
+                        int rotate_count = g_clients[n.m_owner_id].m_total_angle / 360;
+                        n.m_total_angle = rotate_count * 360 + NPCangle;
+                        n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                        n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                        n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                    }
+                    else // 이미 반지름 반경에 있던 애일때
+                    {
+                        if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle // 포지션 회전각도가 아닐때
+                            || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle)
+                        {
+                            if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle)
+                            {
+                                n.m_total_angle += 1.5f;
+                                n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                                n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                                n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                            }
+                            else
+                            {
+                                n.m_total_angle -= 1.5f;
+                                n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
+                                n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
+                                n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
+                            }
+                        }
+                        else // 포지션 회전각도 일때
+                        {
+                            _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
+                            _vec3 new_pos = n_pos + Dir;
+                            n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+                        }
+                    }
+
+                }
             }
+            else // 자신의 마지막 위치일때
+                n.m_anim = A_IDLE;
         }
-        else
-            n.m_anim = A_IDLE;
     }
 }
 
