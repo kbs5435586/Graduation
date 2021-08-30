@@ -176,7 +176,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 	else
 	{
-		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 5.f)
 		{
 			m_IsFrustum = true;
 			m_IsOldMatrix = true;
@@ -184,12 +184,13 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 			if (fLen <= 250.f)
 			{
-				m_iBlurCnt += fTimeDelta;
+	
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 					return -1;
 			}
 			if (fLen <= 30.f && pPlayer->GetIsRun())
 			{
+				m_iBlurCnt += fTimeDelta;
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 					return -1;
 			}

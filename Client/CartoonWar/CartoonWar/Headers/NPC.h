@@ -57,10 +57,10 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CMesh*									m_pMeshCom[(_uint)CLASS::CLASS_END] = { nullptr };
 	CShader*								m_pShaderCom = nullptr;
-	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pComputeShaderCom = nullptr;
 	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+	CShader*								m_pShaderCom_Shadow = nullptr;
 	CAnimator*								m_pAnimCom[(_uint)CLASS::CLASS_END] = { nullptr };
 	CNavigation*							m_pNaviCom = nullptr;
 	CCollider*								m_pCollider_OBB = nullptr;

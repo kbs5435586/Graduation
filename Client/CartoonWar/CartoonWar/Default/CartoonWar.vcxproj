@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\BoneFire.h" />
     <ClInclude Include="..\Headers\Buffer_Cylinder.h" />
     <ClInclude Include="..\Headers\FireWall.h" />
     <ClInclude Include="..\Headers\Map_Terrain.h" />
@@ -329,6 +330,7 @@
     <ClCompile Include="..\Codes\Animator.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Bloom.cpp" />
+    <ClCompile Include="..\Codes\BoneFire.cpp" />
     <ClCompile Include="..\Codes\Buffer_Circle.cpp" />
     <ClCompile Include="..\Codes\Buffer_Cylinder.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp" />

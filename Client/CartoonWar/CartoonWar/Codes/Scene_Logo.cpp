@@ -1019,7 +1019,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier01",
 			CMesh::Create_Load(L"../Data/MeshData/Brazier01.dat"))))
 			return E_FAIL;
-		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Brazier02",
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Bonfire",
 			CMesh::Create_Load(L"../Data/MeshData/Brazier02.dat"))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Castle",
@@ -1345,6 +1345,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Animal_Wolf",
 		CMesh::Create_Load(L"../Data/Animal/Wolf.dat"))))
 		return E_FAIL;
+
 	return S_OK;
 }
 

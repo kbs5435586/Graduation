@@ -1,94 +1,81 @@
-#include "framework.h"
+#include"framework.h"
+#include "BoneFire.h"
 #include "Management.h"
-#include "LowPoly.h"
 
-CLowPoly::CLowPoly()
+CBoneFire::CBoneFire()
 	: CGameObject()
 {
 }
 
-CLowPoly::CLowPoly(const CLowPoly& rhs)
+CBoneFire::CBoneFire(const CBoneFire& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CLowPoly::Ready_Prototype()
+HRESULT CBoneFire::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CLowPoly::Ready_GameObject(void* pArg)
+HRESULT CBoneFire::Ready_GameObject(void* pArg)
 {
-	m_IsClone = true;
-	if (nullptr == pArg)
-	{
+	if (FAILED(Ready_Component()))
 		return E_FAIL;
-	}
-	_tchar pTempStr[128] = {};
-	lstrcpy(pTempStr, (const _tchar*)pArg);
-	_uint iLen = lstrlen(pTempStr);
-	m_pComponentTag = new _tchar[iLen + 1];
-	lstrcpy(m_pComponentTag, pTempStr);
-	if (FAILED(Ready_Component(m_pComponentTag)))
-		return E_FAIL;
+
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	//
-	//
-	m_matOldWorld = m_pTransformCom->Get_Matrix();;
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	_vec3 vColliderSize = { 40.f ,160.f,40.f };
-	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+
+
+	_vec3 vPos = *(_vec3*)pArg;
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+	m_pTransformCom->Scaling(_vec3(0.05f, 0.05f, 0.05f));
 	return S_OK;
+
 }
 
-_int CLowPoly::Update_GameObject(const _float& fTimeDelta)
+_int CBoneFire::Update_GameObject(const _float& fTimeDelta)
 {
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
-		return -1;
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	_float		fSize = m_pTransformCom->Get_Scale().x;
+		return NO_EVENT;
 
-	if (m_eEnviType == ENVITYPE::ENVI_ROCK)
-	{
-		m_vColliderSize_Rock = { 2.5f,3.f,2.5f };
-		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Rock);
-		m_pTransformCom->Set_PositionY(fY);
-	}
-	else if (m_eEnviType == ENVITYPE::ENVI_TREE)
-	{
-		m_vColliderSize_Tree = { 0.5f,3.f,0.5f };
-		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Tree);
-		m_pTransformCom->Set_PositionY(fY);
-	}
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY);
+
+
+
+	if (m_IsDead)
+		return DEAD_OBJ;
 
 	return _int();
 }
 
-_int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CBoneFire::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+	if (nullptr == m_pRendererCom)
+		return -1;
+
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform",g_iPlayerIdx);
+		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
+	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 	_vec3 vLen = vPlayerPos - vPos;
 	_float fLen = vLen.Length();
-	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 6.f))
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
-		
+		m_IsFrustum = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (fLen <= 250.f)
 		{
+
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
 		}
-		if (fLen <= 60.f && pPlayer->GetIsRun())
+		if (fLen <= 30.f && pPlayer->GetIsRun())
 		{
-			m_iBlurCnt+=fTimeDelta;
+			m_iBlurCnt += fTimeDelta;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
 		}
@@ -97,26 +84,26 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_matOldWorld = m_pTransformCom->Get_Matrix();;
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
-
-
 	}
 	else
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();;
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_IsFrustum = false;
 	}
+
+
 
 
 	return _int();
 }
 
-void CLowPoly::Render_GameObject()
+void CBoneFire::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
-
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
@@ -126,43 +113,33 @@ void CLowPoly::Render_GameObject()
 		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
 
-		REP tRep = {};
-		tRep.m_arrInt[2] = g_DefferedRender;
-
 		m_pShaderCom->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
-		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
 		CDevice::GetInstance()->SetTextureToShader(m_pTextureCom, TEXTURE_REGISTER::t0);
-
 		CDevice::GetInstance()->UpdateTable();
+
+
 		m_pMeshCom->Render_Mesh(i);
 	}
-
-	if (g_IsCollisionBox)
-		m_pCollider_AABB->Render_Collider();
-
 	if (m_iBlurCnt >= 0.1f)
 	{
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
 	}
 	Safe_Release(pManagement);
 }
 
-void CLowPoly::Render_GameObject_Shadow()
+void CBoneFire::Render_GameObject_Shadow()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
 		return;
 	pManagement->AddRef();
+
 
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
@@ -175,16 +152,16 @@ void CLowPoly::Render_GameObject_Shadow()
 		m_pShaderCom_Shadow->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
 
 		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
 	Safe_Release(pManagement);
 }
 
-void CLowPoly::Render_Blur()
+void CBoneFire::Render_Blur()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -202,6 +179,7 @@ void CLowPoly::Render_Blur()
 
 
 		REP tRep = {};
+
 		tRep.m_arrMat[0] = m_matOldWorld;//OldWorld
 		tRep.m_arrMat[1] = m_matOldView;//OldView
 
@@ -215,75 +193,15 @@ void CLowPoly::Render_Blur()
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
 
-
-
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-
 	Safe_Release(pManagement);
 }
 
-HRESULT CLowPoly::Ready_Component(const _tchar* pComTag)
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	NULL_CHECK_VAL(pManagement, E_FAIL);
-	pManagement->AddRef();
 
-	m_pTransformCom = (CTransform*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Transform");
-	NULL_CHECK_VAL(m_pTransformCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Transform", m_pTransformCom)))
-		return E_FAIL;
-
-	m_pRendererCom = (CRenderer*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer");
-	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
-		return E_FAIL;
-
-	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, pComTag);
-	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
-		return E_FAIL;
-
-
-	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
-	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
-		return E_FAIL;
-	m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
-	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
-	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
-		return E_FAIL;
-
-	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
-	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Shader_Blur", m_pShaderCom_Blur)))
-		return E_FAIL;
-	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_LowPolyTex");
-	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Text ure", m_pTextureCom)))
-		return E_FAIL;
-	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
-	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
-		return E_FAIL;
-
-	m_pCollider_Obb = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
-	NULL_CHECK_VAL(m_pCollider_Obb, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_OBB", m_pCollider_Obb)))
-		return E_FAIL;
-
-	m_pCollider_AABB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB");
-	NULL_CHECK_VAL(m_pCollider_AABB, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Collider_AABB", m_pCollider_AABB)))
-		return E_FAIL;
-
-	Safe_Release(pManagement);
-	return S_OK;
-}
-
-HRESULT CLowPoly::CreateInputLayout()
+HRESULT CBoneFire::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -304,49 +222,84 @@ HRESULT CLowPoly::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
 		return E_FAIL;
-
 	return S_OK;
 }
 
-CLowPoly* CLowPoly::Create()
+CBoneFire* CBoneFire::Create()
 {
-	CLowPoly* pInstance = new CLowPoly();
+	CBoneFire* pInstance = new CBoneFire();
 	if (FAILED(pInstance->Ready_Prototype()))
-	{
-		MessageBox(0, L"CLowPoly Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
-	}
 	return pInstance;
 }
 
-CGameObject* CLowPoly::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* CBoneFire::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CLowPoly* pInstance = new CLowPoly(*this);
+	CBoneFire* pInstance = new CBoneFire();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
-	{
-		MessageBox(0, L"CLowPoly Created Failed", L"System Error", MB_OK);
 		Safe_Release(pInstance);
-	}
-	m_iLayerIdx = iIdx;
-	m_IsTree = iIdx;
+
 	return pInstance;
 }
 
-void CLowPoly::Free()
+void CBoneFire::Free()
 {
-	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pShaderCom_Blur);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
-	Safe_Release(m_pCollider_Obb);
-	Safe_Release(m_pCollider_AABB);
-
-	if (m_IsClone)
-		Safe_Delete_Array(m_pComponentTag);
-
+	Safe_Release(m_pFrustumCom);
+	Safe_Release(m_pTextureCom);
 	CGameObject::Free();
+}
+
+HRESULT CBoneFire::Ready_Component()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (pManagement == nullptr)
+		return E_FAIL;
+	pManagement->AddRef();
+
+	m_pTransformCom = (CTransform*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Transform");
+	NULL_CHECK_VAL(m_pTransformCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Transform", m_pTransformCom)))
+		return E_FAIL;
+
+	m_pRendererCom = (CRenderer*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Renderer");
+	NULL_CHECK_VAL(m_pRendererCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Renderer", m_pRendererCom)))
+		return E_FAIL;
+
+	m_pMeshCom = (CMesh*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Mesh_Bonfire");
+	NULL_CHECK_VAL(m_pMeshCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Mesh", m_pMeshCom)))
+		return E_FAIL;
+
+	m_pShaderCom = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Toon");
+	NULL_CHECK_VAL(m_pShaderCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
+		return E_FAIL;
+	m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
+	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
+	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
+		return E_FAIL;
+
+	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
+	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
+	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
+		return E_FAIL;
+
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Grass");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Texture", m_pTextureCom)))
+		return E_FAIL;
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+	return S_OK;
 }

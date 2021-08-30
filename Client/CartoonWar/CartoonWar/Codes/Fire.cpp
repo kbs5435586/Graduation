@@ -2,8 +2,6 @@
 #include "Fire.h"
 #include "Management.h"
 
-_bool CFire::First = false;
-
 CFire::CFire()
 	: CGameObject()
 {
@@ -27,16 +25,9 @@ HRESULT CFire::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
+	_vec3 vPos = *(_vec3*)pArg;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	if (!First)
-	{
-		m_pTransformCom->Scaling(1.f, 1.f, 1.f);
-		First = true;
-	}
-	else
-		m_pTransformCom->Scaling(100.f, 100.f, 100.f);
-	m_range = 50.f;
+	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
 
 	return S_OK;
 }
@@ -67,24 +58,8 @@ _int CFire::Update_GameObject(const _float& fTimeDelta)
 
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	m_pTransformCom->Set_PositionY(fY + 0.8f);
+	m_pTransformCom->Set_PositionY(fY + 7.f);
 	
-
-	
-	if (startCheck)
-	{
-		endTime += fTimeDelta;
-		if (endTime > 10.f)
-			m_IsDead = true;
-
-		if (damageCheck)
-		{
-			damageTime += fTimeDelta;
-
-			if (damageTime > 0.1f)
-				IsGetDamage = true;
-		}
-	}
 
 	Safe_Release(pManagement);
 
@@ -97,9 +72,12 @@ _int CFire::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
+	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+			return -1;
+	}
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-		return -1;
 	return _int();
 }
 
@@ -195,6 +173,7 @@ void CFire::Free()
 	Safe_Release(m_pTextureCom[0]);
 	Safe_Release(m_pTextureCom[1]);
 	Safe_Release(m_pTextureCom[2]);
+	Safe_Release(m_pFrustumCom);
 
 	CGameObject::Free();
 }
@@ -242,7 +221,10 @@ HRESULT CFire::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Texture_2", m_pTextureCom[2])))
 		return E_FAIL;
 
-
+	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
+	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
+		return E_FAIL;
 	Safe_Release(pManagement);
 	return S_OK;
 }

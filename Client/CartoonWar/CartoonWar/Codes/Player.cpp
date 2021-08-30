@@ -66,7 +66,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
 
-	m_eCurClass = CLASS::CLASS_CAVALRY;
+	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 	 
@@ -97,8 +97,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY);
+	m_fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(m_fY);
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
@@ -119,9 +119,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 	{
 		//Z
-		Skill_CastFire(fTimeDelta, fY);
+		Skill_CastFire(fTimeDelta, m_fY);
 		//X
-		Skill_CastTeleport(fTimeDelta, fY);
+		Skill_CastTeleport(fTimeDelta, m_fY);
 		
 	}
 	else if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -214,7 +214,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
+	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		m_IsFrustum = true;
 
@@ -241,12 +241,12 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		m_IsFrustum = false;
-	}
+	//else
+	//{
+	//	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	//	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	//	m_IsFrustum = false;
+	//}
 
 
 	Set_Animation(fTimeDelta);
@@ -1506,7 +1506,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_eCurClass = (CLASS)m_iCurMeshNum;
 		m_tInfo.fHP -= 10;
 	}
-	if (CManagement::GetInstance()->Key_Pressing(KEY_2))
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
 		//if (!m_IsCombat)
 		//	m_iCurAnimIdx = 1;
@@ -1530,7 +1530,9 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		//	m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		//m_eCurState = STATE::STATE_WALK;
 
-		m_tInfo.fHP -= m_tInfo.fAtt;
+		m_tInfo.fHP -= 1.f;
+		m_IsOBB_Collision = true;
+		m_matAttackedTarget = m_pTransformCom->Get_Matrix();
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_2))
 	{
