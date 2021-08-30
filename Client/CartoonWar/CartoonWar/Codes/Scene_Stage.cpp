@@ -696,23 +696,23 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 		return E_FAIL;
 
-	//tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_BLUE };
-	//tOrder = ORDER();
-	//tOrder.IsPlayer = true;
-	//tOrder.iIdx = 2;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-	//	return E_FAIL;
+	tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_BLUE };
+	tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx = 2;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
 
-	//tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
-	//tOrder = ORDER();
-	//tOrder.IsPlayer = true;
-	//tOrder.iIdx = 3;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-	//	return E_FAIL;
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
+	tOrder = ORDER();
+	tOrder.IsPlayer = true;
+	tOrder.iIdx = 3;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -746,7 +746,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
 				return E_FAIL;
 		}
-		/*else if (i >= CL_NPC_TEAM2 && i < CL_NPC_TEAM3)
+		else if (i >= CL_NPC_TEAM2 && i < CL_NPC_TEAM3)
 		{
 			UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_BLUE };
 			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
@@ -757,7 +757,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 			UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_WHITE };
 			if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_NPC", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
 				return E_FAIL;
-		}*/
+		}
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 			return E_FAIL;
 	}

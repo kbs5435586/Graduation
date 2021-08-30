@@ -34,7 +34,7 @@ private:
 	int TIER_ONE_PRICE = 1;
 	int TIER_TWO_PRICE = 2;
 
-	int FRAME_TIME = 16; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
+	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
 	int DOT_DAMAGE = 5;

@@ -101,11 +101,43 @@ void Server::do_move(int user_id, char direction)
             pos->y++;
         break;
     case GO_LEFT:
+    {
+        _vec3 oldLook = *p.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+        oldLook = Vector3_::Normalize(oldLook);
         p.m_transform.Rotation_Y(-TIME_DELTA);
-        break;
+        _vec3 newLook = *p.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+        newLook = Vector3_::Normalize(newLook);
+
+        float PdotProduct = Vector3_::DotProduct(oldLook, newLook); // 내각
+        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+        float PoutProduct = (oldLook.x * newLook.z) - (oldLook.z * newLook.x); // 앞에 x 벡터 기준 각도 차이
+        if (PoutProduct > 0) // 양수이면 newLook는 oldLook로 부터 반시계
+            radian *= -1.f;
+
+        float angle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+        p.m_total_angle += angle;
+    }
+    break;
     case GO_RIGHT:
+    {
+        _vec3 oldLook = *p.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+        oldLook = Vector3_::Normalize(oldLook);
         p.m_transform.Rotation_Y(TIME_DELTA);
-        break;
+        _vec3 newLook = *p.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+        newLook = Vector3_::Normalize(newLook);
+
+        float PdotProduct = Vector3_::DotProduct(oldLook, newLook); // 내각
+        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+        float PoutProduct = (oldLook.x * newLook.z) - (oldLook.z * newLook.x); // 앞에 x 벡터 기준 각도 차이
+        if (PoutProduct > 0) // 양수이면 newLook는 oldLook로 부터 반시계
+            radian *= -1.f;
+
+        float angle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+        p.m_total_angle += angle;
+    }
+    break;
     case GO_FORWARD:
         p.m_transform.BackWard(TIME_DELTA);
         break;
@@ -1056,7 +1088,7 @@ void Server::do_follow(int npc_id)
             if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 자신이 마지막 위치가 아닐때
             {
                 if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
-                    || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f)
+                    || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f) // 반지름 반경 안이나 밖일때
                 {
                     _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
                     _vec3 new_pos = n_pos + Dir;
@@ -1180,10 +1212,8 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
         float distance_square = Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z;
         if (0 != distance_square)
         {
-            float hyp = sqrtf(Dir.x * Dir.x + Dir.y * Dir.y + Dir.z * Dir.z);
-
-            Dir = Dir / hyp; // 여기가 노멀값
-            Dir = Dir * g_clients[id].m_move_speed / 100.f; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Vector3_::Normalize(Dir);
+            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
@@ -2407,7 +2437,7 @@ void Server::worker_thread()
             delete overEx;
             break;
         case FUNC_CHECK_TIME:
-            if (play_time < 300)
+            if (play_time < 600)
             {
                 play_time += 1;
                 send_time_packet();
