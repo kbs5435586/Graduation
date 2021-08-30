@@ -124,8 +124,8 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 	}
 	
 	m_fTimeAcc += fTimeDelta;
-	CInput::GetInstance()->SetUp_InputState();
 	m_fTimeDelta = fTimeDelta;
+	CInput::GetInstance()->SetUp_InputState();
 	m_pFrustum->Transform_ToWorld();
 	m_pManagement->Update_Sound();
 
