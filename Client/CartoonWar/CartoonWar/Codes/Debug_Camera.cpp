@@ -58,6 +58,39 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	CGameObject* tOne = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 	CLASS pClass = (tOne)->GetClass();
+
+	_float	fPlayerY = dynamic_cast<CPlayer*>(tOne)->GetfY()*0.01f;
+	m_IsRot = tOne->GetOBBCollision();
+	//Shake_Camera(fTimeDelta, m_IsRot);
+	_float fRand = 0;//rand() % +2;
+	_float fTemp = 0.f;
+
+	if (m_IsRot)
+	{
+		_uint iTemp = rand() % +2;
+		fRand = iTemp * 0.1f;
+	}
+	if (tOne->GetIsRun())
+	{
+		if (dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_WORKER ||
+			dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_ARCHER ||
+			dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_INFANTRY ||
+			dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS(4) ||
+			dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_SPEARMAN ||
+			dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_MAGE)
+		{
+			_uint iTemp = rand() % +2;
+			fTemp = iTemp * 0.1f;
+		}
+		else
+		{
+			_uint iTemp = rand() % +2;
+			fTemp = iTemp * 0.3f;
+		}
+
+	}
+	
+
 	if (pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
 	{
 		CGameObject* zTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
@@ -191,6 +224,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			}
 
 		}
+
 		if ((m_IsSkill_Z_ON && !m_IsSkill_Z_Start))
 		{
 
@@ -204,9 +238,6 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 
-			CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
-
 			_vec3 vPos, vRight, vUp, vLook;
 			vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 			vRight = {};
@@ -215,30 +246,27 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 
 			if (g_IsFix)
 			{
-				if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+				if (dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_WORKER ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_ARCHER ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_INFANTRY ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS(4) ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_SPEARMAN ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_MAGE)
 				{
 					vPos.y += 3.f;
-					//vPos.y += 5.f;
 					vUp *= 20.f;
 					vLook *= -5.f;
-					//vLook *= -5.f;
 				}
 				else
 				{
 					vPos.y += 5.f;
 					vUp *= 20.f;
-					//vUp *= 49.f;
 					vLook *= -2.f;
 				}
 			}
 			else
 			{
-				vPos.y += 5.f;
+				vPos.y += (5.f+ fPlayerY);
 				vUp *= 100.f;
 				vLook *= -250.f;
 			}
@@ -285,13 +313,9 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			//	m_pTransform->Rotation_Axis(XMConvertToRadians((_float)MouseMove) * -fTimeDelta * 30.f, m_pTransform->Get_StateInfo(CTransform::STATE_RIGHT));
 			//}
 		}
-
 		{
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
-
-			CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
-
 
 			_vec3 vPos, vRight, vUp, vLook;
 			vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
@@ -299,32 +323,37 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 			vUp = *pTransform->Get_StateInfo(CTransform::STATE_UP);
 			vLook = *pTransform->Get_StateInfo(CTransform::STATE_LOOK);
 
-			if (m_IsFix)
+			if (g_IsFix)
 			{
-				if (dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_WORKER ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_ARCHER ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_INFANTRY ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS(4) ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_SPEARMAN ||
-					dynamic_cast<CPlayer*>(pGameObject)->GetClass() == CLASS::CLASS_MAGE)
+				if (dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_WORKER ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_ARCHER ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_INFANTRY ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS(4) ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_SPEARMAN ||
+					dynamic_cast<CPlayer*>(tOne)->GetClass() == CLASS::CLASS_MAGE)
 				{
-					vPos.y += 5.f;
+					vPos.y += (5.f + fPlayerY);
 					vUp *= 20.f;
 					vLook *= -5.f;
 				}
 				else
 				{
-					vPos.y += 5.f;
+					vPos.y += (5.f + fPlayerY);
 					vUp *= 49.f;
 					vLook *= -2.f;
 				}
 			}
 			else
 			{
-				vPos.y += 5.f;
+				vPos.y += (5.f + fPlayerY);
 				vUp *= 100.f;
 				vLook *= -250.f;
 			}
+			
+
+			
+			vPos.x += fRand;
+			vPos.y += fTemp;
 
 			_vec3 vTemp = vUp - vLook;
 			vPos = vPos + vTemp;
@@ -449,6 +478,8 @@ _int CDebug_Camera::LastUpdate_GameObject(const _float& fTimeDelta)
 void CDebug_Camera::Render_GameObject()
 {
 }
+
+
 
 CDebug_Camera* CDebug_Camera::Create()
 {

@@ -81,6 +81,7 @@
 #include "Deffend.h"
 #include "Animals.h"
 #include "EffectBox.h"
+#include "BoneFire.h"
 
 
 
@@ -103,8 +104,6 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Light(pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer(pManagement)))
-		return E_FAIL;
-	if (FAILED(pManagement->Load_File_Hatch(L"../Data/Map/TestHatch2.dat")))
 		return E_FAIL;
 
 	if (FAILED(pManagement->Load_File(L"../Data/Map/LittleFence_Test1.dat")))
@@ -255,6 +254,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestBuffer", CTestBuffer::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_BoneFire", CBoneFire::Create())))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -290,6 +291,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
@@ -298,10 +301,9 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 
 		
-	if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
+	//	return E_FAIL;
+
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	return S_OK;
@@ -327,7 +329,6 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
-	//tLightInfo.vLightDir = _vec4(-1.f, -1.f, -1.f,0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
 	tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
 	tLightInfo.fRange = 100.f;
@@ -592,16 +593,16 @@ HRESULT CScene_Stage::Ready_Layer_UI_Select(const _tchar* pLayerTag, CManagement
 HRESULT CScene_Stage::Ready_Layer_Deffered_UI(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	//GameObject_UI_Diffuse
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Diffuse", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Normal", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Shade", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Position", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_PointLight", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Main", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
@@ -612,7 +613,12 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	
+	//GameObject_BoneFire tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
+	_vec3 vLightPos = _vec3(100.f,0.f,100.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
 	return S_OK;
 }
 

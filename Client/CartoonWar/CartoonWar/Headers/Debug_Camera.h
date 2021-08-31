@@ -25,7 +25,6 @@ private:
 	CNavigation*				m_pNaviCom = nullptr;
 private:
 	_bool						m_IsTrue = false;
-	_bool						m_IsFix = false;
 	_bool						m_IsChangeIn = false;
 
 	_bool						m_Active = false;
@@ -39,6 +38,13 @@ private:
 	_bool						m_IsXTurn = false;
 	_bool						m_IsCameraMove = false;
 	void						Move_Camera(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+private:
+	_float						m_fLeftRotTime = 0.f;
+	_float						m_fRightRotTime = 0.f;
+	_float						m_fUpRotTime = 0.f;
+	_float						m_fDownRotTime = 0.f;
+private:
+	_bool						m_IsRot = false;
 
 };
 

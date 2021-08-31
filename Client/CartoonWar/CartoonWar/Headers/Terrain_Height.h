@@ -22,6 +22,7 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_Blur();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -35,6 +36,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_Terrain_Height*					m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pShaderCom_Blur = nullptr;
 	CTexture*								m_pBrushTextureCom = nullptr;
 	CNavigation*							m_pNaviCom = nullptr;
 	CPicking*								m_pPickingCom = nullptr;

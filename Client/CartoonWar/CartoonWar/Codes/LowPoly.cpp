@@ -86,8 +86,9 @@ _int CLowPoly::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
 		}
-		if (fLen <= 50.f && pPlayer->GetIsRun())
+		if (fLen <= 60.f && pPlayer->GetIsRun())
 		{
+			m_iBlurCnt+=fTimeDelta;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
 		}
@@ -146,6 +147,13 @@ void CLowPoly::Render_GameObject()
 
 	if (g_IsCollisionBox)
 		m_pCollider_AABB->Render_Collider();
+
+	if (m_iBlurCnt >= 0.1f)
+	{
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		m_matOldWorld = m_pTransformCom->Get_Matrix();
+		m_iBlurCnt = 0;
+	}
 	Safe_Release(pManagement);
 }
 
@@ -212,13 +220,8 @@ void CLowPoly::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= 10)
-	{
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_iBlurCnt = 0;
-	}
+
+
 	Safe_Release(pManagement);
 }
 

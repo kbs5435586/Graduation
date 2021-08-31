@@ -63,7 +63,6 @@ _int CBuilding::LastUpdate_GameObject(const _float& fTimeDelta)
 
 	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 	{
-
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
 		if (fLen <= 250.f)
@@ -71,16 +70,16 @@ _int CBuilding::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
 		}
-		if (fLen <= 50.f && pPlayer->GetIsRun())
+		if (fLen <= 30.f && pPlayer->GetIsRun())
 		{
+			m_iBlurCnt += fTimeDelta;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
-			else
-			{
-				m_matOldWorld = m_pTransformCom->Get_Matrix();;
-				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-			}
-
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
 
 	}
@@ -130,8 +129,8 @@ void CBuilding::Render_GameObject()
 		m_pMeshCom->Render_Mesh(i);
 	}
 
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= 10)
+
+	if (m_iBlurCnt >= 0.2f)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
@@ -203,10 +202,6 @@ void CBuilding::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-
-	//m_matOldWorld = m_pTransformCom->Get_Matrix();
-	//m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-
 	Safe_Release(pManagement);
 }
 

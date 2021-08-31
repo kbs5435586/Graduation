@@ -73,7 +73,7 @@ void CCollisionMgr::Range()
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
-				iter1->GetInfo().fHP -= 1.f;
+				iter1->GetInfo().fHP -= 10.f;
 			}
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
@@ -97,7 +97,7 @@ void CCollisionMgr::Range()
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
-				iter1->GetInfo().fHP -= 1.f;
+				iter1->GetInfo().fHP -= 10.f;
 			}
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
@@ -130,7 +130,7 @@ void CCollisionMgr::Range()
 				//iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
-				iter1->GetInfo().fHP -= 1.f;
+				iter1->GetInfo().fHP -= 10.f;
 			}
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Animals"))
@@ -142,7 +142,6 @@ void CCollisionMgr::Range()
 
 
 			_vec3 vDistance = iter1_Pos - iter0_Pos;
-
 			fLength = vDistance.Length();
 
 
@@ -152,7 +151,7 @@ void CCollisionMgr::Range()
 				(iter1)->GetOBBCollision() = true;
 				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
-				iter1->GetInfo().fHP -= 1.f;
+				iter1->GetInfo().fHP -= 10.f;
 				
 			}
 		}
@@ -185,7 +184,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
 				}
 				else if (iter1->GetIsHit())
 				{
@@ -194,7 +193,7 @@ void CCollisionMgr::Player_to_NPC_Attack_Collision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
+					iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
 				}
 			}
 		}
@@ -228,7 +227,7 @@ void CCollisionMgr::Player_to_Player_Attack_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
 				}
 				else if (iter1->GetIsHit())
 				{
@@ -237,7 +236,7 @@ void CCollisionMgr::Player_to_Player_Attack_Collision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
+					iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
 				}
 
 
@@ -274,7 +273,7 @@ void CCollisionMgr::NPC_to_NPC_Attack_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
 				}
 				else if (iter1->GetIsHit())
 				{
@@ -283,7 +282,7 @@ void CCollisionMgr::NPC_to_NPC_Attack_Collision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
+					iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
 				}
 
 
@@ -318,7 +317,7 @@ void CCollisionMgr::Player_to_Deffend_Attack_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
 				}
 				else if (iter1->GetIsHit())
 				{
@@ -327,7 +326,7 @@ void CCollisionMgr::Player_to_Deffend_Attack_Collision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
+					iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
 				}
 
 
@@ -362,7 +361,7 @@ void CCollisionMgr::NPC_to_Deffend_Attack_Collision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
 				}
 				else if (iter1->GetIsHit())
 				{
@@ -371,7 +370,7 @@ void CCollisionMgr::NPC_to_Deffend_Attack_Collision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
+					iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
 				}
 
 
@@ -381,7 +380,6 @@ void CCollisionMgr::NPC_to_Deffend_Attack_Collision()
 	}
 
 }
-
 void CCollisionMgr::Player_to_Animals_AttackCollision()
 {
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
@@ -407,7 +405,7 @@ void CCollisionMgr::Player_to_Animals_AttackCollision()
 					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter1->GetIsParticle() = true;
 					iter0->GetIsHit() = false;
-					iter1->GetInfo().fHP -= 1;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
 				}
 				else if (iter1->GetIsHit())
 				{
@@ -416,7 +414,7 @@ void CCollisionMgr::Player_to_Animals_AttackCollision()
 					iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 					iter0->GetIsParticle() = true;
 					iter1->GetIsHit() = false;
-					iter0->GetInfo().fHP -= 1;
+					iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
 				}
 
 
@@ -426,9 +424,7 @@ void CCollisionMgr::Player_to_Animals_AttackCollision()
 	}
 }
 
-
 //AABB
-
 void CCollisionMgr::Deffend()
 {
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend"))
@@ -691,7 +687,6 @@ void CCollisionMgr::Player_to_Player()
 		}
 	}
 }
-
 void CCollisionMgr::NPC_to_NPC_Collision()
 {
 	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC"))
@@ -727,7 +722,6 @@ CCollisionMgr* CCollisionMgr::Create()
 	}
 	return pInstance;
 }
-
 void CCollisionMgr::Free()
 {
 }
