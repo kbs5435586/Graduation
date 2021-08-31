@@ -1350,6 +1350,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_eCurState = STATE::STATE_IDLE;
 		m_IsRun = false;
 		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (!m_IsActioning)
@@ -1438,10 +1439,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			m_IsHit = true;
 			//m_IsCombat = true;
 		}
-		if (CManagement::GetInstance()->Key_Up(KEY_LBUTTON))
-		{
-			m_eCurState = STATE::STATE_IDLE;
-		}
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LBUTTON))
+	{
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Pressing(KEY_DOWN))

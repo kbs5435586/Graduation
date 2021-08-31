@@ -1080,8 +1080,7 @@ void Server::do_follow(int npc_id)
                         if (PoutProduct.y < 0)
                             radian *= -1.f;
                         float NPCangle = radian * 180.f / PIE;
-                        int rotate_count = g_clients[n.m_owner_id].m_total_angle / 360;
-                        n.m_total_angle = rotate_count * 360 + NPCangle;
+                        n.m_total_angle = g_clients[n.m_owner_id].m_total_angle + NPCangle;
                         n_pos.x = g_clients[n.m_owner_id].m_boid[i].radius * sinf((n.m_total_angle) * (PIE / 180.f)) + p_pos.x;
                         n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
                         n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
@@ -1219,6 +1218,17 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     Update_Collider(npc_id, n.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
     Update_Collider(npc_id, n.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
     Obb_Collision(npc_id);
+
+    for (auto& o : g_clients) // aabb 충돌체크
+    {
+        if (o.second.m_id == npc_id)
+            continue;
+        if (ST_ACTIVE != o.second.m_status)
+            continue;
+        if (ST_DEAD == o.second.m_status)
+            continue;
+        check_aabb_collision(npc_id, o.second.m_id);
+    }
 
     for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
     {
