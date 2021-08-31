@@ -93,6 +93,8 @@ public:
 	void do_change_npc_act(int player_id, unsigned char act);
 	void do_npc_rotate(int user_id, char con);
 	void do_dot_damage(int id);
+	void do_aabb(int o_mv, int o_ht);
+	void do_obb(int o_mv, int o_ht);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);

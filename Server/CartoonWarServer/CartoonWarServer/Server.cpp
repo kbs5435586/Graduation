@@ -88,17 +88,12 @@ void Server::recv_packet_construct(int user_id, int io_byte)
 void Server::do_move(int user_id, char direction)
 {
     SESSION& p = g_clients[user_id];
-    _vec3* pos = p.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
 
     switch (direction)
     {
     case GO_UP:
-        if (pos->y >= 0)
-            pos->y--;
         break;
     case GO_DOWN:
-        if (pos->y < WORLD_HEIGHT)
-            pos->y++;
         break;
     case GO_LEFT:
     {
@@ -153,6 +148,7 @@ void Server::do_move(int user_id, char direction)
         exit(-1);
     }
 
+    _vec3* pos = p.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
     if (pos->y < 0)
         pos->y = 0;
     if (pos->y >= (WORLD_HEIGHT - 1))
@@ -171,35 +167,34 @@ void Server::do_move(int user_id, char direction)
     Obb_Collision(user_id);
 
     for (auto& o : g_clients) // aabb 충돌체크
-    {
-        if (o.second.m_id == user_id)
-            continue;
-        if (ST_ACTIVE != o.second.m_status)
-            continue;
-        if (ST_DEAD == o.second.m_status)
-            continue;
+{
+    if (o.second.m_id == user_id)
+        continue;
+    if (ST_ACTIVE != o.second.m_status)
+        continue;
+    if (ST_DEAD == o.second.m_status)
+        continue;
 
-        if (!is_object(o.second.m_id))
+    if (!is_object(o.second.m_id))
+    {
+        if (dist_between(o.second.m_id, user_id) <= 4.f)
+            check_aabb_collision(user_id, o.second.m_id);
+    }
+    else
+    {
+        if (TP_NATURE == o.second.m_type)
         {
-            if (dist_between(o.second.m_id, user_id) <= 4.f)
+            if (dist_between(o.second.m_id, user_id) <= 50.f)
                 check_aabb_collision(user_id, o.second.m_id);
         }
-        else
+        else if (TP_DEFFEND == o.second.m_type)
         {
-            if (TP_NATURE == o.second.m_type)
-            {
-                if (dist_between(o.second.m_id, user_id) <= 50.f)
-                    check_aabb_collision(user_id, o.second.m_id);
-            }
-            else if (TP_DEFFEND == o.second.m_type)
-            {
-                if (dist_between(o.second.m_id, user_id) <= 10.f)
-                    check_aabb_collision(user_id, o.second.m_id);
-            }
+            if (dist_between(o.second.m_id, user_id) <= 10.f)
+                check_aabb_collision(user_id, o.second.m_id);
         }
     }
+}
 
-    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
     set_formation(user_id);
 
     g_clients[user_id].m_cLock.lock();
@@ -1275,35 +1270,6 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
     Update_Collider(npc_id, n.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
     Obb_Collision(npc_id);
 
-    for (auto& c : g_clients) // aabb 충돌체크
-    {
-        if (c.second.m_id == npc_id)
-            continue;
-        if (ST_ACTIVE != c.second.m_status)
-            continue;
-        if (ST_DEAD == c.second.m_status)
-            continue;
-
-        if (!is_object(c.second.m_id))
-        {
-            if (dist_between(c.second.m_id, npc_id) <= 4.f)
-                check_aabb_collision(npc_id, c.second.m_id);
-        }
-        else
-        {
-            if (TP_NATURE == c.second.m_type)
-            {
-                if (dist_between(c.second.m_id, npc_id) <= 50.f)
-                    check_aabb_collision(npc_id, c.second.m_id);
-            }
-            else if (TP_DEFFEND == c.second.m_type)
-            {
-                if (dist_between(c.second.m_id, npc_id) <= 10.f)
-                    check_aabb_collision(npc_id, c.second.m_id);
-            }
-        }
-    }
-
     for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
     {
         if (ST_ACTIVE != g_clients[i].m_status)
@@ -1386,6 +1352,7 @@ void Server::do_event_timer()
             case FUNC_DOT_DAMAGE:
             case FUNC_CHECK_FLAG:
             case FUNC_CHECK_TIME:
+            case FUNC_CHECK_COLLISION:
             case FUNC_CHECK_GOLD:
             {
                 OverEx* over = new OverEx;
@@ -1483,6 +1450,7 @@ void Server::enter_game(int user_id, char name[])
                 //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
                 add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
                 add_timer(PURE_EVENT, FUNC_CHECK_GOLD, 1000);// 게임 플레이 시간 돌리는 함수
+                //add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);// 게임 플레이 시간 돌리는 함수
                 isGameStart = true;
                 cout << "Game Routine Start!\n";
                 break;
@@ -2445,6 +2413,28 @@ void Server::worker_thread()
             }
             delete overEx;
             break;
+        case FUNC_CHECK_COLLISION:
+            if (isGameStart)
+            {
+                for (auto& it_mv : g_clients)
+                {
+                    if (ST_ACTIVE != it_mv.second.m_status && ST_DEAD != it_mv.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
+                        continue;
+                    for (auto& it_ht : g_clients)
+                    {
+                        if (ST_ACTIVE != it_ht.second.m_status && ST_DEAD != it_ht.second.m_status)// 활성화 된놈, 죽어있는놈은 제외
+                            continue;
+                        if (it_mv.first == it_ht.first) // 객체 피객체가 동일하면 제외
+                            continue;
+
+                        check_aabb_collision(it_mv.first, it_ht.first);
+                        //do_obb(it_mv.first, it_ht.first);
+                    }
+                }
+                add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);
+            }
+            delete overEx;
+            break;
         case FUNC_CHECK_GOLD:
             if (isGameStart)
             {
@@ -2467,6 +2457,33 @@ void Server::worker_thread()
             while (true);
         }
     }
+}
+
+void Server::check_aabb_collision(int o_mv,int o_ht)
+{
+    if (!is_object(o_ht))
+    {
+        if (dist_between(o_ht, o_mv) <= 4.f)
+            do_aabb(o_mv, o_ht);
+    }
+    else
+    {
+        if (TP_NATURE == g_clients[o_ht].m_type)
+        {
+            if (dist_between(o_ht, o_mv) <= 50.f)
+                do_aabb(o_mv, o_ht);
+        }
+        else if (TP_DEFFEND == g_clients[o_ht].m_type)
+        {
+            if (dist_between(o_ht, o_mv) <= 10.f)
+                do_aabb(o_mv, o_ht);
+        }
+    }
+}
+
+void Server::do_obb(int o_mv, int o_ht)
+{
+
 }
 
 void Server::mainServer()
@@ -2685,7 +2702,7 @@ void Server::Ready_Collider_OBB_BOX(int id, const _vec3 vSize)
     c.m_pOBB.vPoint[7] = _vec3(c.m_OBvMin.x, c.m_OBvMin.y, c.m_OBvMax.z);
 }
 
-void Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
+void Server::do_aabb(int a, int b) // (CCollider* pTargetCollider, CTransform* pSourTransform, CTransform* pDestTransform)
 {
     _matrix		matSour = Compute_WorldTransform(a);
     _matrix		matDest = Compute_WorldTransform(b);
@@ -2726,7 +2743,6 @@ void Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, 
                                   g_clients[b].m_transform.Get_Matrix()._43 };
                 g_clients[b].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
             }
-            return;
         }
         else
         {
@@ -2744,7 +2760,18 @@ void Server::check_aabb_collision(int a, int b) // (CCollider* pTargetCollider, 
                                   g_clients[b].m_transform.Get_Matrix()._43 - fMoveZ };
                 g_clients[b].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &vTemp);
             }
-            return;
+        }
+
+        Update_Collider(b, g_clients[b].m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
+        Update_Collider(b, g_clients[b].m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
+
+        for (int i = 0; i < NPC_START; ++i) // 밀림 당한애 좌표값 업데이트
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            if (!is_near(i, b))
+                continue;
+            send_move_packet(i, b);
         }
     }
 }
