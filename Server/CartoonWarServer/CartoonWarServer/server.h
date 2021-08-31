@@ -37,11 +37,17 @@ private:
 	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
+	float FLAME_RANGE = 50.f;
 	int DOT_DAMAGE = 5;
 	int SET_HP = 10000;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 0;
+
+	float OBB_DIST = 5.f;
+	float AABB_PN = 4.f;
+	float AABB_NAT = 50.f;
+	float AABB_DEF = 10.f;
 
 public:
 	void mainServer(); // 메인 서버
@@ -64,7 +70,6 @@ public:
 	void send_attacked_packet(int user_id, int other_id);
 	void send_dead_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
-	void send_chat_packet(int lisn_id, int chat_id, char mess[]);
 	void send_npc_size_packet(int user_id);
 	void send_class_change_packet(int user_id, int other_id);
 	void send_hit_packet(int user_id, int other_id);
@@ -94,9 +99,7 @@ public:
 	void do_npc_rotate(int user_id, char con);
 	void do_dot_damage(int id);
 	void do_aabb(int o_mv, int o_ht);
-	void do_obb(int o_mv, int o_ht);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
-	void event_player_move(int player_id, int npc_id);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
 	_vec3 move_to_spot(int id, _vec3* goto_pos);
 	float dist_between(int user_id, int other_id);

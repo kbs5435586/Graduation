@@ -174,25 +174,7 @@ void Server::do_move(int user_id, char direction)
         continue;
     if (ST_DEAD == o.second.m_status)
         continue;
-
-    if (!is_object(o.second.m_id))
-    {
-        if (dist_between(o.second.m_id, user_id) <= 4.f)
-            check_aabb_collision(user_id, o.second.m_id);
-    }
-    else
-    {
-        if (TP_NATURE == o.second.m_type)
-        {
-            if (dist_between(o.second.m_id, user_id) <= 50.f)
-                check_aabb_collision(user_id, o.second.m_id);
-        }
-        else if (TP_DEFFEND == o.second.m_type)
-        {
-            if (dist_between(o.second.m_id, user_id) <= 10.f)
-                check_aabb_collision(user_id, o.second.m_id);
-        }
-    }
+    check_aabb_collision(user_id, o.second.m_id);
 }
 
     set_formation(user_id);
@@ -206,24 +188,10 @@ void Server::do_move(int user_id, char direction)
     {
         if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        //if (ST_SLEEP == c.second.m_status) // 근처에 있는 npc이면 깨워라
-        //    activate_npc(c.second.m_id, c.second.m_last_order);
         if (ST_ACTIVE != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
             continue;
-        //if (true == check_collision(c.second.m_id, user_id)) // 충돌을 한 놈이 있다면
-        //{
-
-        //}
-        if (false == is_player(c.second.m_id)) // g_clients 객체가 플레이어가 아닌 npc이면
-        {
-            OverEx* overEx = new OverEx;
-            overEx->function = FUNC_PLAYER_MOVE_FOR_NPC; // NPC에게 주변 플레이어가 움직였다는걸 알림
-            overEx->player_id = user_id;
-            PostQueuedCompletionStatus(g_iocp, 1, c.second.m_id, &overEx->over);
-        }
-
         new_viewlist.insert(c.second.m_id); // 내 시야 범위안에 들어오는 다른 객체들의 아이디를 주입
     }
 
@@ -327,7 +295,7 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ATTACK:
     {
         cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
-        g_clients[user_id].m_isHit = true;
+        g_clients[user_id].m_isAttack = true;
         g_clients[user_id].m_cLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
         g_clients[user_id].m_cLock.unlock();
@@ -352,15 +320,15 @@ void Server::process_packet(int user_id, char* buf)
                 continue;
             if (g_clients[i].m_team == g_clients[user_id].m_team)
                 continue;
-            if (dist_between(user_id, i) >= 5.f)
+            if (dist_between(user_id, i) >= OBB_DIST)
                 continue;
             if (check_obb_collision(user_id, i))
             {
-                if (g_clients[user_id].m_isHit)
+                if (g_clients[user_id].m_isAttack)
                 {
                     g_clients[i].m_isOBB = true;
                     g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
-                    g_clients[user_id].m_isHit = false;
+                    g_clients[user_id].m_isAttack = false;
                     g_clients[i].m_hp -= ATTACK_DAMAGE;
                     send_attacked_packet(user_id, i);
                     for (auto cpy_vl : copy_viewlist)
@@ -1222,24 +1190,6 @@ void Server::activate_npc(int npc_id, ENUM_FUNCTION op_type)
         add_timer(npc_id, op_type, FRAME_TIME);
 }
 
-void Server::event_player_move(int player_id, int npc_id)
-{
-    _vec3* p_pos = g_clients[player_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    _vec3* n_pos = g_clients[npc_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-
-    if (p_pos->x == n_pos->x)
-    {
-        if (p_pos->y == n_pos->y)
-        {
-            if (p_pos->z == n_pos->z)
-            {
-                char m[10] = "HELLO";
-                send_chat_packet(player_id, npc_id, m);
-            }
-        }
-    }
-}
-
 void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 {
     SESSION& n = g_clients[npc_id];
@@ -1450,7 +1400,7 @@ void Server::enter_game(int user_id, char name[])
                 //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
                 add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
                 add_timer(PURE_EVENT, FUNC_CHECK_GOLD, 1000);// 게임 플레이 시간 돌리는 함수
-                //add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);// 게임 플레이 시간 돌리는 함수
+                add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);// 게임 플레이 시간 돌리는 함수
                 isGameStart = true;
                 cout << "Game Routine Start!\n";
                 break;
@@ -1524,7 +1474,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_isOut = false;
             g_clients[npc_id].m_isFormSet = true;
             g_clients[npc_id].m_attack_target = -1;
-            g_clients[npc_id].m_isHit = false;
+            g_clients[npc_id].m_isAttack = false;
             g_clients[npc_id].m_isOBB = false;
 
             FormationInfo formTemp;
@@ -1629,7 +1579,7 @@ void Server::send_hit_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_HIT;
     packet.id = other_id;
-    packet.ishit = g_clients[other_id].m_isHit;
+    packet.ishit = g_clients[other_id].m_isAttack;
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -1723,17 +1673,6 @@ void Server::send_leave_packet(int user_id, int other_id)
     }
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
-}
-
-void Server::send_chat_packet(int listen_id, int chatter_id, char mess[])
-{
-    sc_packet_chat packet;
-    packet.id = chatter_id; // 채팅 보내는 사람들의
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_CHAT;
-    strcpy_s(packet.message, mess);
-
-    send_packet(listen_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
 void Server::do_animation(int user_id, unsigned char anim)
@@ -1869,9 +1808,9 @@ void Server::do_attack(int npc_id)
             }
             else // npc가 공격할 대상을 바라볼때
             {
-                if (dist_between(n.m_id, n.m_attack_target) <= 4.f) // OBB 공격 범위 안에 들어왔을때
+                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST) //OBB 공격 범위 안에 들어왔을때
                 {
-                    n.m_isHit = true;
+                    n.m_isAttack = true;
                     for (int i = 0; i < NPC_START; ++i)
                     {
                         if (ST_ACTIVE != g_clients[i].m_status)
@@ -1887,7 +1826,7 @@ void Server::do_attack(int npc_id)
                     {
                         if (check_obb_collision(npc_id, n.m_attack_target))
                         {
-                            if (n.m_isHit)
+                            if (n.m_isAttack)
                             {
                                 for (int i = 0; i < NPC_START; ++i)
                                 {
@@ -1900,7 +1839,7 @@ void Server::do_attack(int npc_id)
                                 }
                                 g_clients[n.m_attack_target].m_isOBB = true;
                                 g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                                n.m_isHit = false;
+                                n.m_isAttack = false;
                                 g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
 
                                 for (int i = 0; i < NPC_START; ++i)
@@ -2210,7 +2149,7 @@ void Server::do_dot_damage(int id)
             continue;
         if (g_clients[i].m_team == f.m_team)
             continue;
-        if (dist_between(id, i) > 50.f)
+        if (dist_between(id, i) > FLAME_RANGE)
             continue;
 
         if (g_clients[i].m_hp > 0)
@@ -2344,7 +2283,7 @@ void Server::worker_thread()
                 g_clients[user_id].m_troop = T_ALL;
                 g_clients[user_id].m_owner_id = user_id; // 유저 등록
                 g_clients[user_id].m_view_list.clear(); // 이전 뷰리스트 가지고 있으면 안되니 초기화
-                g_clients[user_id].m_isHit = false;
+                g_clients[user_id].m_isAttack = false;
                 g_clients[user_id].m_isOBB = false;
                 set_starting_pos(user_id);
 
@@ -2359,15 +2298,6 @@ void Server::worker_thread()
             // accept가 완료된 다음에 다시 accept 받는 부분이므로 overEx 다시 사용해도됨, 중복해서 불릴 일 없음
             AcceptEx(listenSocket, clientSocket, overEx->io_buf, NULL,
                 sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &overEx->over);
-        }
-        break;
-        case FUNC_PLAYER_MOVE_FOR_NPC: // API_Send_message 호출용
-        {
-            int npc_id = id;
-            int player_id = overEx->player_id;
-            event_player_move(player_id, npc_id);
-
-            delete overEx;
         }
         break;
         case FUNC_NPC_ATTACK:
@@ -2416,20 +2346,13 @@ void Server::worker_thread()
         case FUNC_CHECK_COLLISION:
             if (isGameStart)
             {
-                for (auto& it_mv : g_clients)
+                for (auto& it : g_clients)
                 {
-                    if (ST_ACTIVE != it_mv.second.m_status && ST_DEAD != it_mv.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
+                    if (ST_ACTIVE != it.second.m_status && ST_DEAD != it.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
                         continue;
-                    for (auto& it_ht : g_clients)
-                    {
-                        if (ST_ACTIVE != it_ht.second.m_status && ST_DEAD != it_ht.second.m_status)// 활성화 된놈, 죽어있는놈은 제외
-                            continue;
-                        if (it_mv.first == it_ht.first) // 객체 피객체가 동일하면 제외
-                            continue;
-
-                        check_aabb_collision(it_mv.first, it_ht.first);
-                        //do_obb(it_mv.first, it_ht.first);
-                    }
+                    if(!it.second.m_isOBB)
+                        continue;
+                    Obb_Collision(it.first);
                 }
                 add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);
             }
@@ -2463,27 +2386,22 @@ void Server::check_aabb_collision(int o_mv,int o_ht)
 {
     if (!is_object(o_ht))
     {
-        if (dist_between(o_ht, o_mv) <= 4.f)
+        if (dist_between(o_ht, o_mv) <= AABB_PN) // 4.f
             do_aabb(o_mv, o_ht);
     }
     else
     {
         if (TP_NATURE == g_clients[o_ht].m_type)
         {
-            if (dist_between(o_ht, o_mv) <= 50.f)
+            if (dist_between(o_ht, o_mv) <= AABB_NAT) // 50.f 
                 do_aabb(o_mv, o_ht);
         }
         else if (TP_DEFFEND == g_clients[o_ht].m_type)
         {
-            if (dist_between(o_ht, o_mv) <= 10.f)
+            if (dist_between(o_ht, o_mv) <= AABB_DEF) // 10.f 
                 do_aabb(o_mv, o_ht);
         }
     }
-}
-
-void Server::do_obb(int o_mv, int o_ht)
-{
-
 }
 
 void Server::mainServer()
@@ -2917,14 +2835,6 @@ void Server::Obb_Collision(int id)
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
             o.m_vMidPoint.y += 10.f;
             o.m_isBazier = true;
-
-            for (int i = 0; i < NPC_START; ++i)
-            {
-                if (ST_ACTIVE != g_clients[i].m_status)
-                    continue;
-                if (!is_near(i, id))
-                    continue;
-            }
         }
         Hit_Object(id, o.m_fBazierCnt, o.m_vStartPoint, o.m_vEndPoint, o.m_vMidPoint);
     }
@@ -2940,6 +2850,7 @@ void Server::Obb_Collision(int id)
                 continue;
             if (!is_near(i, id))
                 continue;
+            send_move_packet(i, id);
         }
     }
 }
