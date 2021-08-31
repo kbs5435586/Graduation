@@ -1175,7 +1175,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
         if (0 != distance_square)
         {
             Dir = Vector3_::Normalize(Dir);
-            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA * 3.f; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
