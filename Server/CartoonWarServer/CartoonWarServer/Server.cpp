@@ -1047,15 +1047,45 @@ void Server::do_follow(int npc_id)
         if (g_clients[n.m_owner_id].m_boid[i].id == n.m_id)
         {
             _vec3 p_pos = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 p_look = *g_clients[n.m_owner_id].m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             _vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            _vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
             if (n_pos != g_clients[n.m_owner_id].m_boid[i].final_pos) // 자신이 마지막 위치가 아닐때
             {
-                if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + 0.5f
-                    || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - 0.5f) // 반지름 반경 안이나 밖일때
+                n.m_anim = A_IDLE;
+                if (dist_between(npc_id, n.m_owner_id) > g_clients[n.m_owner_id].m_boid[i].radius + NEAR_APPROACH
+                    || dist_between(npc_id, n.m_owner_id) < g_clients[n.m_owner_id].m_boid[i].radius - NEAR_APPROACH) // 반지름 반경 안이나 밖일때
                 {
+                    n.m_anim = A_WALK;
                     _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
                     _vec3 new_pos = n_pos + Dir;
                     n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
+
+                    _vec3 t_pos = g_clients[n.m_owner_id].m_boid[i].final_pos; // 자기가 가야할 목표위치를 안바라볼때
+                    _vec3 t_look = Vector3_::Subtract(t_pos, n_pos);
+                    t_look = Vector3_::Normalize(t_look);
+
+                    float PdotProduct = Vector3_::DotProduct(n_look, t_look);
+                    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+                    float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+                    if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                        radian *= -1.f;
+
+                    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 목표위치 기준 몇도 차이나는지
+
+                    if (NPCangle > 2.0f || NPCangle < -2.0f) // npc가 목표위치를 안바라볼때
+                    {
+                        n.m_anim = A_WALK;
+                        if (NPCangle > 2.f)
+                        {
+                            n.m_transform.Rotation_Y(TIME_DELTA * 2.f);
+                        }
+                        else if (NPCangle < -2.f)
+                        {
+                            n.m_transform.Rotation_Y(-TIME_DELTA * 2.f);
+                        }
+                    }
                     n.m_isOut = true;
                 }
                 else
@@ -1090,6 +1120,7 @@ void Server::do_follow(int npc_id)
                         if (g_clients[n.m_owner_id].m_boid[i].angle + 3.f < n.m_total_angle // 포지션 회전각도가 아닐때
                             || g_clients[n.m_owner_id].m_boid[i].angle - 3.f > n.m_total_angle)
                         {
+                            n.m_anim = A_WALK;
                             if (g_clients[n.m_owner_id].m_boid[i].angle > n.m_total_angle)
                             {
                                 n.m_total_angle += 1.5f;
@@ -1111,8 +1142,31 @@ void Server::do_follow(int npc_id)
                             _vec3 new_pos = n_pos + Dir;
                             n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
                         }
-                    }
 
+                        n_look = Vector3_::Normalize(n_look);
+                        p_look = Vector3_::Normalize(p_look);
+                        float PdotProduct = Vector3_::DotProduct(n_look, p_look);
+                        float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+                        float PoutProduct = (p_look.x * n_look.z) - (p_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+                        if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                            radian *= -1.f;
+
+                        float NPCangle = radian * 180.f / PIE; // 현재 npc look이 player look 기준 몇도 차이나는지
+
+                        if (NPCangle > 2.f || NPCangle < -2.f) // npc가 look를 안바라볼때
+                        {
+                            n.m_anim = A_WALK;
+                            if (NPCangle > 2.f)
+                            {
+                                n.m_transform.Rotation_Y(-TIME_DELTA * 2.f);
+                            }
+                            else if (NPCangle < -2.f)
+                            {
+                                n.m_transform.Rotation_Y(TIME_DELTA * 2.f);
+                            }
+                        }
+                    }
                 }
             }
             else // 자신의 마지막 위치일때
@@ -1175,7 +1229,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
         if (0 != distance_square)
         {
             Dir = Vector3_::Normalize(Dir);
-            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA * 3.f; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA * 2.f; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
