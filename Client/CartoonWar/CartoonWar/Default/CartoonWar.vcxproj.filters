@@ -541,6 +541,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\08. FireWall">
       <UniqueIdentifier>{c1fbae03-9593-429c-b221-c2690c338812}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\09. BoneFire">
+      <UniqueIdentifier>{a47344a5-8584-4362-9121-9848fa142843}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\09. Range">
       <UniqueIdentifier>{43b52ccd-964d-4156-87e3-b80fdcac180d}</UniqueIdentifier>
     </Filter>
@@ -1019,6 +1022,9 @@
     <ClInclude Include="..\Headers\FireWall.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BoneFire.h">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. BoneFire</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Range.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. Range</Filter>
     </ClInclude>
@@ -1465,6 +1471,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FireWall.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BoneFire.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. BoneFire</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Range.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. Range</Filter>

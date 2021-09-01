@@ -55,6 +55,8 @@ private:
 	void									Resurrection();
 	void									Play_Sound(const _float& fTimeDelta);
 public:
+	_float									GetfY() { return m_fY; }
+public:
 	void									Create_Particle(const _vec3& vPoistion);
 
 private:
@@ -94,6 +96,7 @@ private:
 	_float									m_fSpeed = 0.f;
 	_float									m_fArrSpeed[(_uint)CLASS::CLASS_END] = {};
 	_float									m_fArrSpeedUP[(_uint)CLASS::CLASS_END] = {};
+	_float									m_fY = 0.f;
 private:
 	_float									m_fParticleRunTime = 0.f;
 	_bool									m_IsParticleRun = false;

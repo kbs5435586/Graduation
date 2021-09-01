@@ -132,6 +132,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 {
+
 	if (nullptr == m_pRendererCom)
 		return -1;
 
@@ -175,7 +176,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 	}
 	else
 	{
-		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 5.f)
 		{
 			m_IsFrustum = true;
 			m_IsOldMatrix = true;
@@ -183,13 +184,15 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 				return -1;
 			if (fLen <= 250.f)
 			{
+	
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 					return -1;
-				if (pPlayer->GetIsRun())
-				{
-					if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-						return -1;
-				}
+			}
+			if (fLen <= 30.f && pPlayer->GetIsRun())
+			{
+				m_iBlurCnt += fTimeDelta;
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
 			}
 			else
 			{
@@ -273,10 +276,9 @@ void CNPC::Render_GameObject()
 		m_pCollider_Attack->Render_Collider(1);
 		m_pCollider_AABB->Render_Collider();
 	}
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= MAX_BLURCNT)
-	{
 
+	if (m_iBlurCnt >= 0.1f)
+	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_iBlurCnt = 0;
@@ -407,9 +409,6 @@ void CNPC::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pCurMeshCom->Render_Mesh(i);
 	}
-
-	//m_matOldWorld = m_pTransformCom->Get_Matrix();
-	//m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 
 	Safe_Release(pManagement);
 }
@@ -735,6 +734,7 @@ void CNPC::Change_Class()
 		m_pCurAnimCom = m_pAnimCom[(_uint)m_eCurClass];
 		m_pCurMeshCom = m_pMeshCom[(_uint)m_eCurClass];
 		m_iCurAnimIdx = 0;
+
 		DeathMontion_Init();
 		AnimVectorClear();
 		switch (m_eCurClass)
@@ -760,6 +760,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
+			m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -791,6 +792,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 20.f, 0);
 		}
 		break;
 		case CLASS::CLASS_CAVALRY:
@@ -822,6 +824,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 30.f, 0);
 		}
 		break;
 		case CLASS(2):
@@ -853,6 +856,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 40.f, 0);
 		}
 		break;
 		case CLASS(4):
@@ -884,6 +888,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 50.f, 0);
 		}
 		break;
 		case CLASS::CLASS_SPEARMAN:
@@ -913,6 +918,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 20.f, 0);
 		}
 		break;
 		case CLASS::CLASS_MAGE:
@@ -950,6 +956,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 		}
 		break;
 		case CLASS::CLASS_MMAGE:
@@ -975,11 +982,12 @@ void CNPC::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(351, 391, 11.699f, 13.033f));
 			m_vecAnimCtrl.push_back(AnimCtrl(392, 432, 13.066f, 14.400f));
 			m_vecAnimCtrl.push_back(AnimCtrl(433, 493, 14.433f, 16.433f));
-			m_vOBB_Range[0] = { 20.f ,120.f,60.f };
-			m_vOBB_Range[1] = { 30.f ,120.f,70.f };
+			m_vOBB_Range[0] = { 20.f ,80.f,60.f };
+			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
+			m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -1007,6 +1015,7 @@ void CNPC::Change_Class()
 			m_iCombatMotion[0] = 3;
 			m_iCombatMotion[1] = 4;
 			m_iCombatMotion[2] = 2;
+			m_tInfo = INFO(100.f, 1.f, 15.f, 0.f);
 		}
 		break;
 		}
@@ -1381,7 +1390,7 @@ void CNPC::Resurrection()
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(1, 1, 1, 0);
+	m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 	m_IsDead = false;
 	m_IsDeadMotion = false;
 	m_eCurState = STATE::STATE_IDLE;

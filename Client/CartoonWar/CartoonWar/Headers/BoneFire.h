@@ -1,42 +1,45 @@
 #pragma once
 #include "GameObject.h"
+
 class CTransform;
 class CRenderer;
-class CBuffer_RectTex;
+class CMesh;
 class CTexture;
 class CShader;
 class CFrustum;
-class CFire :
+class CBoneFire :
 	public CGameObject
 {
 private:
-	CFire();
-	CFire(const CFire& rhs);
-	virtual ~CFire() = default;
+	CBoneFire();
+	CBoneFire(const CBoneFire& rhs);
+	virtual ~CBoneFire() = default;
 public:
 	virtual HRESULT							Ready_Prototype();
 	virtual HRESULT							Ready_GameObject(void* pArg = nullptr);
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_GameObject_Shadow();
+	virtual void							Render_Blur();
+
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
-	static	CFire*							Create();
-	virtual CGameObject*					Clone_GameObject(void* pArg, _uint iIdx = 0) override;
+	static CBoneFire* Create();
+	virtual CGameObject* Clone_GameObject(void* pArg = nullptr, _uint iIdx = 0) override;
 private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
-
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CTexture*								m_pTextureCom[3] = { nullptr };
+	CShader*								m_pShaderCom_Blur = nullptr;
+	CShader*								m_pShaderCom_Shadow = nullptr;
+	CTexture*								m_pTextureCom =  nullptr ;
 	CFrustum*								m_pFrustumCom = nullptr;
-private:
-	TEXINFO									m_tTexInfo = {};
-
 };
+
 

@@ -58,7 +58,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 	
 	float4	vDiffuse;
 	float3	vTSNormal;
-	float4 vViewNormal = vIn.vNormal;
+	float4	vViewNormal = vIn.vNormal;
 	float4	vFillterTex = g_texture8.Sample(Sampler1, vIn.vTexUV);
 	if (vFillterTex.r == 1.f)
 	{
@@ -101,7 +101,6 @@ PS_OUT PS_Main(VS_OUT vIn)
 	}
 
 
-
 	float4	vLightDir = -normalize(tLight[0].vLightDir);
 	float	fDot = saturate(dot(vNormal, vLightDir));
 	fDot = (ceil(fDot * 3.f) / 3.f);
@@ -116,6 +115,7 @@ PS_OUT PS_Main(VS_OUT vIn)
 
 
 	vOut.vDiffuseTex = (vDiffuse + vMtrlEmiv) + vBrushTex;
+	//vOut.vDiffuseTex = (vDiffuse ) + vBrushTex;
 	vOut.vNormalTex = vViewNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vDepthTex = float4(fDepth, fDepth, fDepth, 1.f);

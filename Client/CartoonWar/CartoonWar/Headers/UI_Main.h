@@ -31,7 +31,5 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-private:
-	_uint									m_iTemp = 0;
 };
 

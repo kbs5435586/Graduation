@@ -55,7 +55,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(2.f, 1, 1, 0);
+	m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 	for (_uint i = 0; i < (_uint)CLASS::CLASS_END; ++i)
 	{
 		if (m_pAnimCom[i] == nullptr)
@@ -67,7 +67,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
 
-	m_eCurClass = CLASS::CLASS_MAGE;
+	m_eCurClass = CLASS::CLASS_WORKER;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 	 
@@ -98,8 +98,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY);
+	m_fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(m_fY);
 
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
@@ -120,9 +120,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 	{
 		//Z
-		Skill_CastFire(fTimeDelta, fY);
+		Skill_CastFire(fTimeDelta, m_fY);
 		//X
-		Skill_CastTeleport(fTimeDelta, fY);
+		Skill_CastTeleport(fTimeDelta, m_fY);
 		
 	}
 	else if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -215,7 +215,7 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (nullptr == m_pRendererCom)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
+	//if (m_pFrustumCom->Culling_Frustum(m_pTransformCom, 20.f))
 	{
 		m_IsFrustum = true;
 
@@ -223,10 +223,15 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx)->GetIsRun())
 		{
+			m_iBlurCnt += fTimeDelta;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
 				return -1;
 		}
-
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
 		if (m_IsInvisibleON)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
@@ -241,12 +246,12 @@ _int CPlayer::LastUpdate_GameObject(const _float& fTimeDelta)
 		//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		//	return -1;
 	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-		m_IsFrustum = false;
-	}
+	//else
+	//{
+	//	m_matOldWorld = m_pTransformCom->Get_Matrix();;
+	//	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+	//	m_IsFrustum = false;
+	//}
 
 
 	Set_Animation(fTimeDelta);
@@ -309,10 +314,10 @@ void CPlayer::Render_GameObject()
 	}
 
 
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	m_iBlurCnt++;
-	if (m_iBlurCnt >= MAX_BLURCNT)
+
+	if (m_iBlurCnt >= 0.1f)
 	{
+		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_iBlurCnt = 0;
 	}
@@ -777,43 +782,45 @@ HRESULT CPlayer::Ready_Component()
 		return E_FAIL;
 
 
+	{
+		m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim0", m_pAnimCom[(_uint)CLASS::CLASS_WORKER])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim1", m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY + 1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY + 1], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim2", m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY + 1])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim3", m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY + 1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY + 1], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim4", m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY + 1])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim5", m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_MAGE] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_MAGE], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim6", m_pAnimCom[(_uint)CLASS::CLASS_MAGE])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_MMAGE] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_MMAGE], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim7", m_pAnimCom[(_uint)CLASS::CLASS_MMAGE])))
+			return E_FAIL;
+		m_pAnimCom[(_uint)CLASS::CLASS_ARCHER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
+		NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
+		if (FAILED(Add_Component(L"Com_Anim8", m_pAnimCom[(_uint)CLASS::CLASS_ARCHER])))
+			return E_FAIL;
+	}
 
-	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_WORKER], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim0", m_pAnimCom[(_uint)CLASS::CLASS_WORKER])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim1", m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY + 1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY + 1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim2", m_pAnimCom[(_uint)CLASS::CLASS_CAVALRY + 1])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim3", m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY + 1] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY + 1], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim4", m_pAnimCom[(_uint)CLASS::CLASS_INFANTRY + 1])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim5", m_pAnimCom[(_uint)CLASS::CLASS_SPEARMAN])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_MAGE] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_MAGE], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim6", m_pAnimCom[(_uint)CLASS::CLASS_MAGE])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_MMAGE] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_MMAGE], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim7", m_pAnimCom[(_uint)CLASS::CLASS_MMAGE])))
-		return E_FAIL;
-	m_pAnimCom[(_uint)CLASS::CLASS_ARCHER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
-	NULL_CHECK_VAL(m_pAnimCom[(_uint)CLASS::CLASS_ARCHER], E_FAIL);
-	if (FAILED(Add_Component(L"Com_Anim8", m_pAnimCom[(_uint)CLASS::CLASS_ARCHER])))
-		return E_FAIL;
 
 
 	m_pCollider_OBB = (CCollider*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_OBB");
@@ -909,6 +916,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
+			m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 		}
 		break;
 		case CLASS::CLASS_INFANTRY:
@@ -940,6 +948,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 20.f, 0);
 		}
 		break;
 		case CLASS::CLASS_CAVALRY:
@@ -971,6 +980,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 30.f, 0);
 		}
 		break;
 		case CLASS(2):
@@ -1002,6 +1012,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 40.f, 0);
 		}
 		break;
 		case CLASS(4):
@@ -1033,6 +1044,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 50.f, 0);
 		}
 		break;
 		case CLASS::CLASS_SPEARMAN:
@@ -1062,6 +1074,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 20.f, 0);
 		}
 		break;
 		case CLASS::CLASS_MAGE:
@@ -1099,6 +1112,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
+			m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 		}
 		break;
 		case CLASS::CLASS_MMAGE:
@@ -1129,6 +1143,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
+			m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 		}
 		break;
 		case CLASS::CLASS_ARCHER:
@@ -1156,6 +1171,7 @@ void CPlayer::Change_Class()
 			m_iCombatMotion[0] = 3;
 			m_iCombatMotion[1] = 4;
 			m_iCombatMotion[2] = 2;
+			m_tInfo = INFO(100.f, 1.f, 15.f, 0.f);
 		}
 		break;
 		}
@@ -1502,29 +1518,33 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		m_eCurClass = (CLASS)m_iCurMeshNum;
 		m_tInfo.fHP -= 10;
 	}
-	if (CManagement::GetInstance()->Key_Pressing(KEY_2))
+	if (CManagement::GetInstance()->Key_Down(KEY_2))
 	{
-		if (!m_IsCombat)
-			m_iCurAnimIdx = 1;
-		else
-			m_iCurAnimIdx = m_iCombatMotion[1];
+		//if (!m_IsCombat)
+		//	m_iCurAnimIdx = 1;
+		//else
+		//	m_iCurAnimIdx = m_iCombatMotion[1];
 
-		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-			L"Layer_NPC", L"Com_Transform", 0);
+		//CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		//	L"Layer_NPC", L"Com_Transform", 0);
 
-		_matrix matTemp = pTransform->Get_Matrix();	//얘가 서버에서 받은 Matrix값이라 생각하셈
-		_vec3	vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+		//_matrix matTemp = pTransform->Get_Matrix();	//얘가 서버에서 받은 Matrix값이라 생각하셈
+		//_vec3	vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
 
-		_vec3	vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
-		_vec3	vLook = {};
-		vLen.Normalize(vLook);
+		//_vec3	vLen = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION) - vPos;
+		//_vec3	vLook = {};
+		//vLen.Normalize(vLook);
 
-		_float	fLen = vLen.Length();
+		//_float	fLen = vLen.Length();
 
-		m_pTransformCom->SetLook(vLook);
-		if (fLen >3.f)
-			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
-		m_eCurState = STATE::STATE_WALK;
+		//m_pTransformCom->SetLook(vLook);
+		//if (fLen >3.f)
+		//	m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		//m_eCurState = STATE::STATE_WALK;
+
+		m_tInfo.fHP -= 1.f;
+		m_IsOBB_Collision = true;
+		m_matAttackedTarget = m_pTransformCom->Get_Matrix();
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_2))
 	{
@@ -1852,7 +1872,7 @@ void CPlayer::Resurrection()
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(180.f));
-	m_tInfo = INFO(1, 1, 1, 0);
+	m_tInfo = INFO(100.f, 1.f, 10.f, 0);
 	m_IsDead = false;
 	m_IsDeadMotion = false;
 	m_eCurState = STATE::STATE_IDLE;

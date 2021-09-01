@@ -105,7 +105,7 @@ protected:
 	_float									m_fHorseWalkSoundTime = 24.f;
 	_float									m_fWalkSoundTime = 0.5f;
 protected:
-	_uint									m_iBlurCnt = 0;
+	_float									m_iBlurCnt = 0;
 protected:
 	_matrix									m_matOldWorld;
 	_matrix									m_matOldView;
