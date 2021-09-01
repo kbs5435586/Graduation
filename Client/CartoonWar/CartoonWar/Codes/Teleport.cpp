@@ -23,17 +23,13 @@ HRESULT CTeleport::Ready_Prototype()
 
 HRESULT CTeleport::Ready_GameObject(void* pArg)
 {
-	//if (!First)
-	//{
-	//	First = true;
-	//	m_IsDead = true;
-	//}
+	
 
 	if (FAILED(Ready_Component()))
 		return E_FAIL;
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
-	//_vec3 vPos = *(XMFLOAT2*)pArg;
+	
 	_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
 
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
@@ -189,52 +185,6 @@ void CTeleport::Render_GameObject_Range()
 	Safe_Release(pManagement);
 }
 
-void CTeleport::Render_Blur()
-{
-	CManagement* pManagement = CManagement::GetInstance();
-	if (nullptr == pManagement)
-		return;
-	pManagement->AddRef();
-
-
-	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
-	for (_uint i = 0; i < iSubsetNum; ++i)
-	{
-		MAINPASS tMainPass = {};
-		_matrix matWorld = m_pTransformCom->Get_Matrix();
-		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
-		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
-
-
-		REP tRep = {};
-		tRep.m_arrMat[0] = m_matOldWorld;//OldWorld
-		tRep.m_arrMat[1] = m_matOldView;//OldView
-
-		m_pShaderCom_Blur->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
-		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
-
-		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
-		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
-			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
-
-		CDevice::GetInstance()->UpdateTable();
-		m_pMeshCom->Render_Mesh(i);
-	}
-	m_iBlurCnt++;
-	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	if (m_iBlurCnt >= 100)
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();
-		m_iBlurCnt = 0;
-	}
-	Safe_Release(pManagement);
-}
-
 HRESULT CTeleport::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
@@ -268,11 +218,6 @@ HRESULT CTeleport::Ready_Component()
 	m_pShaderCom_Shadow = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Shadow");
 	NULL_CHECK_VAL(m_pShaderCom_Shadow, E_FAIL);
 	if (FAILED(Add_Component(L"Com_ShadowShader", m_pShaderCom_Shadow)))
-		return E_FAIL;
-
-	m_pShaderCom_Blur = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Blur");
-	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
-	if (FAILED(Add_Component(L"Com_Shader_Blur", m_pShaderCom_Blur)))
 		return E_FAIL;
 
 	m_pShaderCom_Range = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Range");
@@ -318,9 +263,7 @@ HRESULT CTeleport::CreateInputLayout()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
-		return E_FAIL;
-
+	
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecRangeDesc;
 	vecRangeDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecRangeDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
@@ -363,7 +306,6 @@ void CTeleport::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom_Shadow);
-	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pShaderCom_Range);
 	Safe_Release(m_pFrustumCom);
 

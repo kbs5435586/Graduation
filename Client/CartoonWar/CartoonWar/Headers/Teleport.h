@@ -23,7 +23,6 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_GameObject_Range();
-	virtual void							Render_Blur();
 private:
 	HRESULT									Ready_Component();
 	virtual HRESULT							CreateInputLayout();
@@ -40,7 +39,6 @@ private:
 	CMesh* m_pMeshCom = nullptr;
 	CBuffer_RectTex* m_pBufferCom = nullptr;
 	CShader* m_pShaderCom_Shadow = nullptr;
-	CShader* m_pShaderCom_Blur = nullptr;
 	CShader* m_pShaderCom_Range = nullptr;
 	CFrustum* m_pFrustumCom = nullptr;
 	CTexture* m_pTextureCom = nullptr;

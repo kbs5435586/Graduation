@@ -290,8 +290,7 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_Range(L"Layer_SkillTeleport", pManagement)))
-	//	return E_FAIL;
+	
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
 	
