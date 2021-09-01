@@ -47,9 +47,12 @@ constexpr int CL_NPC_TEAM2 = 18;
 constexpr int CL_NPC_TEAM3 = 27;
 constexpr int CL_NPC_TEAM4 = 36;
 
-constexpr int WORLD_HORIZONTAL = 500; // 월드 가로 x
-constexpr int WORLD_HEIGHT = 400; // 월드 높이 y
-constexpr int WORLD_VERTICAL = 500; // 월드 세로 z
+constexpr int TIER_ONE_PRICE = 1;
+constexpr int TIER_TWO_PRICE = 2;
+
+constexpr int WORLD_HORIZONTAL = 1000; // 월드 가로 x
+constexpr int WORLD_HEIGHT = 1000; // 월드 높이 y
+constexpr int WORLD_VERTICAL = 1000; // 월드 세로 z
 
 constexpr int SERVER_PORT = 9000;
 

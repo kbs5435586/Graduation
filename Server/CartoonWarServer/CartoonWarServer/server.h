@@ -31,9 +31,6 @@ private:
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 	float TIME_DELTA = 0.f;
 
-	int TIER_ONE_PRICE = 1;
-	int TIER_TWO_PRICE = 2;
-
 	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 20;
