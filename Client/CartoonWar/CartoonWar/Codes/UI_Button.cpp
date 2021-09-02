@@ -125,13 +125,9 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 
 				if (cTemp == CLASS::CLASS_WORKER)
 				{
-					if (m_ButtonClass == CLASS(2) || m_ButtonClass == CLASS(4) || m_ButtonClass == CLASS::CLASS_MMAGE)
+					if (m_ButtonClass == CLASS::CLASS_CAVALRY || m_ButtonClass == CLASS::CLASS_INFANTRY || m_ButtonClass == CLASS::CLASS_MAGE ||
+						m_ButtonClass == CLASS::CLASS_SPEARMAN || m_ButtonClass == CLASS::CLASS_ARCHER)
 					{
-						// 일꾼일때 제일 상위계급 > 접근 X
-					}
-					else
-					{
-						// 일꾼일때 윗 계급
 						if (g_iGold >= TIER_ONE_PRICE)
 						{
 							if (whichnum == 0)
@@ -139,7 +135,7 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
 								pTemp->SetClass(CLASS(m_ButtonClass));
 								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER); 
 							}
 							else
 							{
@@ -149,9 +145,7 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 								server->send_class_change_packet(whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 							}
 						}
-
 					}
-
 				}
 				else if (cTemp == CLASS::CLASS_CAVALRY)
 				{
@@ -160,14 +154,14 @@ _int CUI_Button::Update_GameObject(const _float& fTimeDelta)
 						if (m_ButtonClass == CLASS::CLASS_WORKER)
 						{
 							// CAVALRY 일때 다시 일꾼
-							if (whichnum == 0)
+							if (whichnum == 0) 
 							{
 								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
-								pTemp->SetClass(CLASS(m_ButtonClass));
-								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER);
-								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER);
+								pTemp->SetClass(CLASS(m_ButtonClass)); 
+								server->Set_Class((int)m_ButtonClass, server->Get_PlayerID(), O_PLAYER); 
+								server->send_class_change_packet(server->Get_PlayerID(), O_PLAYER); 
 							}
-							else
+							else 
 							{
 								CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", whichnum - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
 								pTemp->SetClass(CLASS(m_ButtonClass));
