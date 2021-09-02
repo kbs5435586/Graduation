@@ -204,11 +204,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		}
 	}
 	break;
-	case SC_PACKET_HIT:
+	case SC_PACKET_HP:
 	{
-		sc_packet_hit* my_packet = reinterpret_cast<sc_packet_hit*>(ptr);
+		sc_packet_hp* my_packet = reinterpret_cast<sc_packet_hp*>(ptr);
 		int recv_id = my_packet->id;
-		m_objects[recv_id].isHit = my_packet->ishit;
+		m_objects[recv_id].hp = my_packet->hp;
 	}
 	break;
 	case SC_PACKET_INVISIBLE:
@@ -289,14 +289,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_animation* my_packet = reinterpret_cast<sc_packet_animation*>(ptr);
 		update_anim(my_packet->id, my_packet->anim);
-	}
-	break;
-	case SC_PACKET_ATTACKED:
-	{
-		sc_packet_attacked* my_packet = reinterpret_cast<sc_packet_attacked*>(ptr);
-		int recv_id = my_packet->id;
-		short recv_hp = my_packet->hp;
-		m_objects[recv_id].hp = recv_hp;
 	}
 	break;
 	case SC_PACKET_DEAD:

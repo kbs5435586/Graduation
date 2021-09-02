@@ -81,19 +81,17 @@ constexpr char SC_PACKET_LEAVE = 4;
 constexpr char SC_PACKET_CHAT = 5;
 constexpr char SC_PACKET_CLASS_CHANGE = 6;
 constexpr char SC_PACKET_ANIMATION = 7;
-constexpr char SC_PACKET_ATTACKED = 8;
-constexpr char SC_PACKET_DEAD = 9;
-constexpr char SC_PACKET_ATTACK = 10;
-constexpr char SC_PACKET_FLAG_INFO = 11;
-constexpr char SC_PACKET_FLAG_BOOL = 12;
-constexpr char SC_PACKET_TIME = 13;
-constexpr char SC_PACKET_NPC_SIZE = 14;
-constexpr char SC_PACKET_HIT = 15;
-constexpr char SC_PACKET_INVISIBLE = 16;
-constexpr char SC_PACKET_FIRE = 17;
-constexpr char SC_PACKET_TELEPORT = 18;
-constexpr char SC_PACKET_TIMEDELTA = 19;
-constexpr char SC_PACKET_GOLD = 20;
+constexpr char SC_PACKET_DEAD = 8;
+constexpr char SC_PACKET_FLAG_INFO = 9;
+constexpr char SC_PACKET_FLAG_BOOL = 10;
+constexpr char SC_PACKET_TIME = 11;
+constexpr char SC_PACKET_NPC_SIZE = 12;
+constexpr char SC_PACKET_INVISIBLE = 13;
+constexpr char SC_PACKET_FIRE = 14;
+constexpr char SC_PACKET_TELEPORT = 15;
+constexpr char SC_PACKET_TIMEDELTA = 16;
+constexpr char SC_PACKET_GOLD = 17;
+constexpr char SC_PACKET_HP = 18;
 
 #pragma pack(push ,1)
 
@@ -193,12 +191,12 @@ struct sc_packet_teleport
 constexpr unsigned char M_ADD = 0;
 constexpr unsigned char M_DEL = 1;
 
-struct sc_packet_hit
+struct sc_packet_hp
 {
 	char size;
 	char type;
 	int id;
-	bool ishit;
+	int hp;
 };
 
 constexpr unsigned char O_PLAYER = 0;
@@ -232,15 +230,6 @@ struct sc_packet_leave
 	char size;
 	char type;
 	int id;
-};
-
-struct sc_packet_attacked
-{
-	char size;
-	char type;
-	int id;
-	short hp;
-	bool ishit;
 };
 
 struct sc_packet_move

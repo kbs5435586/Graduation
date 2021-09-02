@@ -300,16 +300,6 @@ void Server::process_packet(int user_id, char* buf)
         g_clients[user_id].m_cLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
         g_clients[user_id].m_cLock.unlock();
-        //send_fix_packet(user_id, user_id); 수정
-        send_hit_packet(user_id, user_id);
-        for (auto cpy_vl : copy_viewlist)
-        {
-            if (is_player(cpy_vl))
-            {
-                //send_fix_packet(cpy_vl, user_id); 수정
-                send_hit_packet(cpy_vl, user_id);
-            }
-        }
 
         for (int i = 0; i < OBJECT_START; ++i)
         {
@@ -331,12 +321,11 @@ void Server::process_packet(int user_id, char* buf)
                     g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
                     g_clients[user_id].m_isAttack = false;
                     g_clients[i].m_hp -= ATTACK_DAMAGE;
-                    send_attacked_packet(user_id, i);
                     for (auto cpy_vl : copy_viewlist)
                     {
                         if (is_player(cpy_vl))
                         {
-                            send_attacked_packet(cpy_vl, i);
+                            send_hp_packet(cpy_vl, i);
                         }
                     }
                 }
@@ -1641,26 +1630,14 @@ void Server::send_enter_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
-void Server::send_hit_packet(int user_id, int other_id)
+void Server::send_hp_packet(int user_id, int other_id)
 {
-    sc_packet_hit packet;
+    sc_packet_hp packet;
     packet.size = sizeof(packet);
-    packet.type = SC_PACKET_HIT;
-    packet.id = other_id;
-    packet.ishit = g_clients[other_id].m_isAttack;
-
-    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
-}
-
-void Server::send_attacked_packet(int user_id, int other_id)
-{
-    sc_packet_attacked packet;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_ATTACKED;
+    packet.type = SC_PACKET_HP;
     packet.id = other_id;
     packet.hp = g_clients[other_id].m_hp;
-    //packet.ishit = g_clients[other_id].m_isHit;
-    //cout << user_id << " saw " << other_id << " attacked\n";
+
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -1879,45 +1856,23 @@ void Server::do_attack(int npc_id)
                 if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST) //OBB 공격 범위 안에 들어왔을때
                 {
                     n.m_isAttack = true;
-                    for (int i = 0; i < NPC_START; ++i)
-                    {
-                        if (ST_ACTIVE != g_clients[i].m_status)
-                            continue;
-                        if (!is_near(i, npc_id))
-                            continue;
-
-                        //send_fix_packet(i, npc_id); 수정
-                        send_hit_packet(i, npc_id);
-                    }
-
                     if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
                     {
                         if (check_obb_collision(npc_id, n.m_attack_target))
                         {
                             if (n.m_isAttack)
                             {
-                                for (int i = 0; i < NPC_START; ++i)
-                                {
-                                    if (ST_ACTIVE != g_clients[i].m_status)
-                                        continue;
-                                    if (!is_near(i, npc_id))
-                                        continue;
-
-                                    //send_fix_packet(i, npc_id); 수정
-                                }
                                 g_clients[n.m_attack_target].m_isOBB = true;
                                 g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
                                 n.m_isAttack = false;
                                 g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-
                                 for (int i = 0; i < NPC_START; ++i)
                                 {
                                     if (ST_ACTIVE != g_clients[i].m_status)
                                         continue;
                                     if (!is_near(i, n.m_attack_target))
                                         continue;
-                                    // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-                                    send_attacked_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                    send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
                                 }
                             }
                         }
@@ -2229,7 +2184,7 @@ void Server::do_dot_damage(int id)
                     continue;
                 if (!is_near(i, j))
                     continue;
-                send_attacked_packet(j, i); // 남은 체력 브로드캐스팅
+                send_hp_packet(j, i); // 남은 체력 브로드캐스팅
             }
         }
         else

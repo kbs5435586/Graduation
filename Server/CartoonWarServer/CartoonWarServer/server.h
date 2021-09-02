@@ -33,10 +33,10 @@ private:
 
 	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
-	int ATTACK_DAMAGE = 20;
+	int ATTACK_DAMAGE = 25;
 	float FLAME_RANGE = 50.f;
 	int DOT_DAMAGE = 5;
-	int SET_HP = 10000;
+	int SET_HP = 100;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 0;
@@ -64,17 +64,16 @@ public:
 	void send_move_packet(int user_id, int other_id); // 변경된 위치값 설정
 	void send_animation_packet(int user_id, int idler, unsigned char anim); // 변경된 위치값 설정
 	void send_enter_packet(int user_id, int other_id);
-	void send_attacked_packet(int user_id, int other_id);
 	void send_dead_packet(int user_id, int other_id);
 	void send_leave_packet(int user_id, int other_id);
 	void send_npc_size_packet(int user_id);
 	void send_class_change_packet(int user_id, int other_id);
-	void send_hit_packet(int user_id, int other_id);
 	void send_invisible_packet(int user_id, int other_id, bool invi);
 	void send_fire_packet(int id, float mx, float mz);
 	void send_teleport_packet(int id, float mx, float mz, unsigned char m);
 	void send_time_delta(int user_id, float time);
 	void send_gold_packet(int user_id);
+	void send_hp_packet(int user_id, int other_id);
 
 	void do_animation(int user_id, unsigned char anim);
 	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
@@ -86,14 +85,11 @@ public:
 	void disconnect(int user_id);
 
 	void initialize_NPC(int player_id);
-	void do_random_move(int npc_id);
 	void do_follow(int npc_id);
 	void do_attack(int npc_id);
-	void do_battle(int npc_id);
 	void do_dead(int id);
 	void do_change_formation(int player_id);
 	void do_change_npc_act(int player_id, unsigned char act);
-	void do_npc_rotate(int user_id, char con);
 	void do_dot_damage(int id);
 	void do_aabb(int o_mv, int o_ht);
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);

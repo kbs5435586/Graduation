@@ -108,8 +108,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_NPC", L"Com_Transform", 0);
 
-
-
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
