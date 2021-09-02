@@ -74,6 +74,7 @@ public:
 	void send_time_delta(int user_id, float time);
 	void send_gold_packet(int user_id);
 	void send_hp_packet(int user_id, int other_id);
+	void send_do_particle_packet(int user_id, int other_id);
 
 	void do_animation(int user_id, unsigned char anim);
 	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때

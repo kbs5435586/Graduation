@@ -211,6 +211,13 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].hp = my_packet->hp;
 	}
 	break;
+	case SC_PACKET_DO_PARTICLE:
+	{
+		sc_packet_do_particle* my_packet = reinterpret_cast<sc_packet_do_particle*>(ptr);
+		int recv_id = my_packet->id;
+		m_objects[recv_id].isParticle = true;
+	}
+	break;
 	case SC_PACKET_INVISIBLE:
 	{
 		sc_packet_invisible* my_packet = reinterpret_cast<sc_packet_invisible*>(ptr);
@@ -228,27 +235,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		sc_packet_move* my_packet = reinterpret_cast<sc_packet_move*>(ptr);
 		int recv_id = my_packet->id;
-		//if (is_player(recv_id))
-		//{
-		//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//		L"Layer_Player", L"Com_Transform", recv_id);
-		//}
-		//else if (is_npc(recv_id))
-		//{
-		//	short npc_id = npc_id_to_idx(recv_id);
-		//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//		L"Layer_NPC", L"Com_Transform", npc_id);
-		//}
-		//_vec3* vPos = pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		//_vec3 rPos, uPos, lPos;
-		//rPos.x = my_packet->r_x, rPos.y = my_packet->r_y, rPos.z = my_packet->r_z;
-		//uPos.x = my_packet->u_x, uPos.y = my_packet->u_y, uPos.z = my_packet->u_z;
-		//lPos.x = my_packet->l_x, lPos.y = my_packet->l_y, lPos.z = my_packet->l_z;
-		//vPos->x = my_packet->p_x; vPos->z = my_packet->p_z;
-		//pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &rPos);
-		//pTransform->Set_StateInfo(CTransform::STATE_UP, &uPos);
-		//pTransform->Set_StateInfo(CTransform::STATE_LOOK, &lPos);
-		//pTransform->Set_StateInfo(CTransform::STATE_POSITION, vPos);
 
 		_matrix temp;
 
@@ -265,8 +251,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		temp._43 = my_packet->p_z;
 
 		Set_Server_Mat(recv_id, &temp);
-
-		//cout << "recved " << recv_id << " has moved\n";
 		Safe_Release(managment);
 	}
 	break;
@@ -274,9 +258,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_leave* my_packet = reinterpret_cast<sc_packet_leave*>(ptr);
 		int other_id = my_packet->id;
-
-		if (0 != m_objects.count(other_id))
-			m_objects[other_id].showObject = false;
+		m_objects[other_id].showObject = false;
 	}
 	break;
 	case SC_PACKET_GOLD:
@@ -1027,6 +1009,22 @@ short CServer_Manager::Get_NpcHP(int id)
 {
 	short npc_index = npc_idx_to_id(id);
 	return m_objects[npc_index].hp;
+}
+
+bool CServer_Manager::Get_Particle(int id, char type)
+{
+	if (type == O_PLAYER)
+		return m_objects[id].isParticle;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].isParticle = stat;
+}
+
+void CServer_Manager::Set_Particle(int id, bool stat, char type)
+{
+	if (type == O_PLAYER)
+		m_objects[id].isParticle = stat;
+	else if (type == O_NPC)
+		m_objects[npc_idx_to_id(id)].isParticle = stat;
 }
 
 float CServer_Manager::Get_TimeDelta()

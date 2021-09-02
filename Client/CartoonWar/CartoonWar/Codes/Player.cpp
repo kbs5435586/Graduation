@@ -183,8 +183,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		server->Set_isHitPL(m_iLayerIdx, m_IsHit);
 		m_IsActioning = false;
 	}
-	
-	//Obb_Collision();
+
+	m_IsParticle = server->Get_Particle(m_iLayerIdx, O_PLAYER);
+	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+	server->Set_Particle(m_iLayerIdx, m_IsParticle, O_PLAYER);
+
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 
@@ -1992,7 +1995,6 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 			return;
 		m_IsParticle = false;
 	}
-
 }
 
 void CPlayer::SkillClear()

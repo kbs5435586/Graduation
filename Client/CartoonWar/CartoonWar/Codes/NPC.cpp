@@ -144,7 +144,10 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Go_There(vSlide);
 	}
 
-	//Obb_Collision();
+	m_IsParticle = server->Get_Particle(m_iLayerIdx, O_NPC);
+	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+	server->Set_Particle(m_iLayerIdx, m_IsParticle, O_NPC);
+
 	Combat(fTimeDelta);
 	Death(fTimeDelta);
 	if (m_tInfo.fHP <= 0.f)
@@ -199,19 +202,19 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
-	_vec3 vLook = {};
-	vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-	vLook = Vector3_::Normalize(vLook);
-	_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-	_vec3 vSlide = {};
-
-	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vLen = vPlayerPos - vPos;
-	_float fLen = vLen.Length();
-
 	if (m_IsShow)
 	{
+		_vec3 vLook = {};
+		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+		vLook = Vector3_::Normalize(vLook);
+		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+		_vec3 vSlide = {};
+
+		_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vLen = vPlayerPos - vPos;
+		_float fLen = vLen.Length();
+
 		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom), 5.f)
 		{
 			m_IsFrustum = true;

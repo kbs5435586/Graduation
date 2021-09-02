@@ -92,6 +92,7 @@ constexpr char SC_PACKET_TELEPORT = 15;
 constexpr char SC_PACKET_TIMEDELTA = 16;
 constexpr char SC_PACKET_GOLD = 17;
 constexpr char SC_PACKET_HP = 18;
+constexpr char SC_PACKET_DO_PARTICLE = 19;
 
 #pragma pack(push ,1)
 
@@ -251,6 +252,13 @@ struct sc_packet_dead
 	int id;
 	char anim;
 	short hp;
+};
+
+struct sc_packet_do_particle
+{
+	char size;
+	char type;
+	int  id;
 };
 
 struct sc_packet_chat

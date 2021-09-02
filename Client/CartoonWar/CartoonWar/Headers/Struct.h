@@ -558,6 +558,7 @@ struct Session
 	bool			showObject = false;
 	bool			isHit = false;
 	bool			isInvisible = false;
+	bool			isParticle = false;
 	unsigned int	m_class;
 	_matrix			m_mat;
 };

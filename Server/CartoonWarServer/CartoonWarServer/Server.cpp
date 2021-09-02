@@ -321,10 +321,13 @@ void Server::process_packet(int user_id, char* buf)
                     g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
                     g_clients[user_id].m_isAttack = false;
                     g_clients[i].m_hp -= ATTACK_DAMAGE;
+                    send_do_particle_packet(user_id, i); // 남은 체력 브로드캐스팅
+                    send_hp_packet(user_id, i);
                     for (auto cpy_vl : copy_viewlist)
                     {
                         if (is_player(cpy_vl))
                         {
+                            send_do_particle_packet(cpy_vl, i); // 남은 체력 브로드캐스팅
                             send_hp_packet(cpy_vl, i);
                         }
                     }
@@ -1641,6 +1644,16 @@ void Server::send_hp_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
+void Server::send_do_particle_packet(int user_id, int other_id)
+{
+    sc_packet_do_particle packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_DO_PARTICLE;
+    packet.id = other_id;
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
 void Server::send_npc_size_packet(int user_id)
 {
     sc_packet_npc_size packet;
@@ -1757,7 +1770,6 @@ void Server::send_animation_packet(int user_id, int idler, unsigned char anim)
     packet.size = sizeof(packet);
     packet.anim = anim;
     packet.type = SC_PACKET_ANIMATION;
-    //cout << idler << " do idle\n";
     send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 }
 
@@ -1803,28 +1815,33 @@ void Server::do_attack(int npc_id)
 
                 float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
 
-                if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+                if (NPCangle > 3.f || NPCangle < -3.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
                 {
-                    n.m_transform.BackWard(TIME_DELTA);
+                    n.m_transform.BackWard(TIME_DELTA * 2.f);
                     n.m_anim = A_WALK;
-                    if (NPCangle > 1.f)
+                    if (NPCangle > 3.f)
                     {
-                        n.m_transform.Rotation_Y(-TIME_DELTA);
+                        n.m_transform.Rotation_Y(-TIME_DELTA * 2.f);
                     }
-                    else if (NPCangle < -1.f)
+                    else if (NPCangle < -3.f)
                     {
-                        n.m_transform.Rotation_Y(TIME_DELTA);
+                        n.m_transform.Rotation_Y(TIME_DELTA * 2.f);
                     }
                 }
                 else // npc가 바라보는 방향이 플레이어랑 일치할때
                 {
                     n.m_anim = A_WALK;
-                    n.m_transform.BackWard(TIME_DELTA);
+                    n.m_transform.BackWard(TIME_DELTA * 2.f);
                 }
             }
         }
         else // 공격할 대상이 지정이 되었을때
         {
+            if (ST_DEAD == g_clients[n.m_attack_target].m_status)
+            {
+                n.m_attack_target = -1;
+                return;
+            }
             _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 t_look = *t_pos - *n_pos;
@@ -1839,68 +1856,67 @@ void Server::do_attack(int npc_id)
 
             float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
 
-            if (NPCangle > 1.5f || NPCangle < -1.5f) // npc가 공격할 대상을 안바라볼때
+            if (NPCangle > 3.f || NPCangle < -3.f) // npc가 공격할 대상을 안바라볼때
             {
                 n.m_anim = A_WALK;
-                if (NPCangle > 1.5f)
+                if (NPCangle > 3.f)
                 {
-                    n.m_transform.Rotation_Y(-TIME_DELTA);
+                    n.m_transform.Rotation_Y(-TIME_DELTA * 2.f);
                 }
-                else if (NPCangle < -1.5f)
+                else if (NPCangle < -3.f)
                 {
-                    n.m_transform.Rotation_Y(TIME_DELTA);
+                    n.m_transform.Rotation_Y(TIME_DELTA * 2.f);
                 }
             }
             else // npc가 공격할 대상을 바라볼때
             {
-                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST) //OBB 공격 범위 안에 들어왔을때
+                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
+                    check_obb_collision(npc_id, n.m_attack_target))
                 {
                     n.m_isAttack = true;
-                    if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                    if (n.m_isAttack)
                     {
-                        if (check_obb_collision(npc_id, n.m_attack_target))
+                        g_clients[n.m_attack_target].m_isOBB = true;
+                        g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                        n.m_isAttack = false;
+                        g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+                        if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
                         {
-                            if (n.m_isAttack)
+                            for (int i = 0; i < NPC_START; ++i)
                             {
-                                g_clients[n.m_attack_target].m_isOBB = true;
-                                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                                n.m_isAttack = false;
-                                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-                                for (int i = 0; i < NPC_START; ++i)
-                                {
-                                    if (ST_ACTIVE != g_clients[i].m_status)
-                                        continue;
-                                    if (!is_near(i, n.m_attack_target))
-                                        continue;
-                                    send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                }
+                                if (ST_ACTIVE != g_clients[i].m_status)
+                                    continue;
+                                if (!is_near(i, n.m_attack_target))
+                                    continue;
+                                send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
                             }
                         }
-                    }
-                    else // 상대방이 죽었을때
-                    {
-                        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
-                            return;
-                        g_clients[n.m_attack_target].m_hp = 0;
-                        //lock_guard <mutex> guardLock{ g_clients[att.m_attack_target].m_cLock };
-                        g_clients[n.m_attack_target].m_status = ST_DEAD;
-                        cout << n.m_attack_target << " is dead\n";
-                        for (int i = 0; i < NPC_START; ++i)
+                        else // 상대방이 죽었을때
                         {
-                            if (ST_ACTIVE != g_clients[i].m_status)
-                                continue;
-                            if (!is_near(i, n.m_attack_target))
-                                continue;
-                            // 활성화 되어있고 맞은애 시야범위 안에 있는 유저일때
-                            send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                            g_clients[n.m_attack_target].m_hp = 0;
+                            g_clients[n.m_attack_target].m_cLock.lock();
+                            g_clients[n.m_attack_target].m_status = ST_DEAD;
+                            g_clients[n.m_attack_target].m_cLock.unlock();
+                            cout << n.m_attack_target << " is dead\n";
+                            for (int i = 0; i < NPC_START; ++i)
+                            {
+                                if (ST_ACTIVE != g_clients[i].m_status)
+                                    continue;
+                                if (!is_near(i, n.m_attack_target))
+                                    continue;
+                                send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                            }
+                            n.m_attack_target = -1;
                         }
-                        n.m_attack_target = -1;
                     }
                     n.m_anim = A_ATTACK;
                 }
                 else // OBB 공격범위 밖일때
                 {
-                    n.m_transform.BackWard(TIME_DELTA);
+                    n.m_transform.BackWard(TIME_DELTA * 2.f);
                 }
             }
         }

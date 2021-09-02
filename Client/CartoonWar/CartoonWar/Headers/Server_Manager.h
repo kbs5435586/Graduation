@@ -69,6 +69,7 @@ public:
     short object_idx_to_id(unsigned short id);
     short object_id_to_idx(unsigned short id);
 
+    bool Get_Particle(int id, char type);
     bool Get_ShowPlayer();
     bool Get_ShowNPC(int npc_index);
     bool Get_Blue(int id);
@@ -114,6 +115,7 @@ public:
     void Set_ChangeFormation_CoolTime(high_resolution_clock::time_point ct);
     void Set_wParam(WPARAM p);
     void Set_Anim(unsigned short anim);
+    void Set_Particle(int id, bool stat, char type);
 
     void init_client();
 
