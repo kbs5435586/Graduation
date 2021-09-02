@@ -276,7 +276,8 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ADD_NPC:
     {
         cs_packet_add_npc* packet = reinterpret_cast<cs_packet_add_npc*>(buf);
-        initialize_NPC(user_id);
+        if (g_clients[user_id].m_gold > 0)
+            initialize_NPC(user_id);
     }
     break;
     case CS_PACKET_NPC_ACT:
@@ -1508,6 +1509,9 @@ void Server::initialize_NPC(int player_id)
     {
         if (ST_ACTIVE != g_clients[npc_id].m_status)
         {
+            g_clients[player_id].m_gold -= 1;
+            send_gold_packet(player_id);
+            
             cout << npc_id << " is intit\n";
             g_clients[npc_id].m_socket = 0;
             g_clients[npc_id].m_id = npc_id;
