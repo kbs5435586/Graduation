@@ -1304,53 +1304,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	if (0 >= m_tInfo.fHP)
 		return;
 
-	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
-	{
-		if (!m_IsCombat)
-		{
-			server->send_animation_packet(A_IDLE);
-		}
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		m_IsActioning = false;
-		m_eCurState = STATE::STATE_IDLE;
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
-	{
-		if (!m_IsCombat)
-		{
-			server->send_animation_packet(A_IDLE);
-		}
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		m_IsActioning = false;
-		m_eCurState = STATE::STATE_IDLE;
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
-	{
-		if (!m_IsCombat)
-		{
-			server->send_animation_packet(A_IDLE);
-		}
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		m_IsActioning = false;
-		m_eCurState = STATE::STATE_IDLE;
-	}
-	if (CManagement::GetInstance()->Key_Up(KEY_UP))
-	{
-		if (!m_IsCombat)
-		{
-			server->send_animation_packet(A_IDLE);
-		}
-		else
-			m_iCurAnimIdx = m_iCombatMotion[0];
-		m_eCurState = STATE::STATE_IDLE;
-		m_IsRun = false;
-		m_IsActioning = false;
-		m_eCurState = STATE::STATE_IDLE;
-	}
-
 	if (!m_IsActioning)
 	{
 		if (CManagement::GetInstance()->Key_Down(KEY_LBUTTON))
@@ -1479,7 +1432,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		server->send_move_packet(GO_LEFT);
 
 		m_IsActioning = true;
-		m_eCurState = STATE::STATE_IDLE;
+		m_eCurState = STATE::STATE_WALK;
 	}
 	
 	if (CManagement::GetInstance()->Key_Pressing(KEY_RIGHT))
@@ -1569,6 +1522,53 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				m_fRunSoundTime = 0.f;
 			}
 		}
+		//m_eCurState = STATE::STATE_WALK;
+	}
+
+	if (CManagement::GetInstance()->Key_Up(KEY_DOWN))
+	{
+		if (!m_IsCombat)
+		{
+			server->send_animation_packet(A_IDLE);
+		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_LEFT))
+	{
+		if (!m_IsCombat)
+		{
+			server->send_animation_packet(A_IDLE);
+		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_RIGHT))
+	{
+		if (!m_IsCombat)
+		{
+			server->send_animation_packet(A_IDLE);
+		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_UP))
+	{
+		if (!m_IsCombat)
+		{
+			server->send_animation_packet(A_IDLE);
+		}
+		else
+			m_iCurAnimIdx = m_iCombatMotion[0];
+		m_IsRun = false;
+		m_IsActioning = false;
+		m_eCurState = STATE::STATE_IDLE;
 	}
 
 	if (CManagement::GetInstance()->Key_Down(KEY_F1))

@@ -116,7 +116,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_PositionY(fY);
 	}
 
-	//m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
 	m_IsHit = server->Get_isHitNPC(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
@@ -178,8 +178,9 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	if (m_IsDead)
-		return DEAD_OBJ;
-
+	{
+		Resurrection();
+	}
 
 	Play_Sound(fTimeDelta);
 	return NO_EVENT;
@@ -1448,7 +1449,7 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 			break;
 		case STATE::STATE_WALK:
 		{
-			if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
+			/*if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
 			{
 				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
 			}
@@ -1456,7 +1457,7 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 			else
 			{
 				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
-			}
+			}*/
 		}
 		break;
 		case STATE::STATE_RUN:
@@ -1478,7 +1479,7 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 			CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, SHOOT, 0.2f);
 			break;
 		case STATE::STATE_DEAD:
-			CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, DIE, 0.2f);
+			//CManagement::GetInstance()->Play_Sound(CHANNEL_KILL, SOUND_OBJECT, DIE, 0.2f);
 			break;
 		case STATE::STATE_HITTED:
 			CManagement::GetInstance()->Play_Sound(CHANNEL_FLASH, SOUND_OBJECT, HITTED, 0.2f);
