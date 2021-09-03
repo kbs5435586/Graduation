@@ -90,7 +90,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow)
 	{
-		_matrix matTemp = server->Get_NpcMat(m_iLayerIdx);
+		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_NPC);
 
 		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
 		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);

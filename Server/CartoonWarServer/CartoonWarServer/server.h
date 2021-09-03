@@ -30,6 +30,10 @@ private:
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 	float TIME_DELTA = 0.f;
+	int ARROW_COUNT = 0;
+	float ARROW_ENDTIME = 10.f;
+	float ARROW_DIST = 10.f;
+	float ARROW_DAMAGE = 10.f;
 
 	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
@@ -75,17 +79,15 @@ public:
 	void send_gold_packet(int user_id);
 	void send_hp_packet(int user_id, int other_id);
 	void send_do_particle_packet(int user_id, int other_id);
+	void send_arrow_packet(int arrow_id, int user_id, int other_id);
 
-	void do_animation(int user_id, unsigned char anim);
-	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void set_formation(int user_id);
 	void set_starting_pos(int user_id);
 	void enter_game(int user_id, char name[]); // 다른 클라들 입장 알림
-	void initialize_clients(); // 플레이어 기본 초기화
-	void initialize_objects(); // 객체 초기화
 	void disconnect(int user_id);
 
-	void initialize_NPC(int player_id);
+	void do_animation(int user_id, unsigned char anim);
+	void do_move(int user_id, char con); // 클라에서 키 입력 받고 객체 움직이게 할때
 	void do_follow(int npc_id);
 	void do_attack(int npc_id);
 	void do_dead(int id);
@@ -93,6 +95,11 @@ public:
 	void do_change_npc_act(int player_id, unsigned char act);
 	void do_dot_damage(int id);
 	void do_aabb(int o_mv, int o_ht);
+
+	void do_arrow(int arrow_id);
+	void delete_arrow(int arrow_id);
+	void do_arrow_collision(int arrow_id);
+
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
 	_vec3 move_to_spot(int id, _vec3* goto_pos);
@@ -123,6 +130,10 @@ public:
 	void Compute_ProjAxis(OBB* pOBB);
 	void Obb_Collision(int id);
 	void Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
+
+	void initialize_objects(); // 객체 초기화
+	void initialize_NPC(int player_id);
+	int init_arrow(int shoot_id);
 
 	void cal_change_class_gold(int id, short m_class);
 };

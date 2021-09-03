@@ -85,6 +85,30 @@ void Server::recv_packet_construct(int user_id, int io_byte)
     }
 }
 
+int Server::init_arrow(int shoot_id)
+{
+    for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status)
+        {
+            g_clients[i].m_cLock.lock();
+            g_clients[i].m_status = ST_ACTIVE;
+            g_clients[i].m_cLock.unlock();
+            _vec3* pos = g_clients[shoot_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
+            g_clients[i].m_transform.SetUp_RotationY(XMConvertToRadians(-90.f));
+            g_clients[i].m_transform.SetUp_Speed(100.f, XMConvertToRadians(90.f));
+            g_clients[i].m_type = TP_ARROW;
+            g_clients[i].m_owner_id = shoot_id;
+            g_clients[i].m_lifetime = high_resolution_clock::now();
+            ARROW_COUNT++;
+            add_timer(i, FUNC_ARROW, 1);
+            return i;
+        }
+    }
+    return -1;
+}
+
 void Server::do_move(int user_id, char direction)
 {
     SESSION& p = g_clients[user_id];
@@ -345,24 +369,21 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_ARROW:
     {
         cs_packet_arrow* packet = reinterpret_cast<cs_packet_arrow*>(buf);
-      /*  for (int i = 0; i < NPC_START; ++i)
+        int arrow_id = init_arrow(user_id);
+        if (-1 == arrow_id)
         {
-            if (ST_ACTIVE != g_clients[i].m_status)
-                continue;
-            send_fire_packet(i, packet->x, packet->z);
+            cout << "no available arrow container\n";
+            break;
         }
-        for (int i = OBJECT_START; i < MAX_OBJECT; ++i)
+        else
         {
-            if (ST_ACTIVE != g_clients[i].m_status)
+            for (int i = 0; i < NPC_START; ++i)
             {
-                _vec3 temp = { packet->x, 0.f,packet->z };
-                g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &temp);
-                g_clients[i].m_team = g_clients[user_id].m_team;
-                g_clients[i].m_count = 0;
-                do_dot_damage(i);
-                break;
+                if (ST_ACTIVE != g_clients[i].m_status)
+                    continue;
+                send_arrow_packet(arrow_id, i, user_id);
             }
-        }*/
+        }
     }
     break;
     case CS_PACKET_TELEPORT:
@@ -389,6 +410,9 @@ void Server::process_packet(int user_id, char* buf)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
             {
+                g_clients[i].m_cLock.lock();
+                g_clients[i].m_status = ST_ACTIVE;
+                g_clients[i].m_cLock.unlock();
                 _vec3 temp = { packet->x, 0.f,packet->z };
                 g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &temp);
                 g_clients[i].m_team = g_clients[user_id].m_team;
@@ -1361,6 +1385,7 @@ void Server::do_event_timer()
             case FUNC_CHECK_TIME:
             case FUNC_CHECK_COLLISION:
             case FUNC_CHECK_GOLD:
+            case FUNC_ARROW:
             {
                 OverEx* over = new OverEx;
                 over->function = (ENUM_FUNCTION)event.event_id;
@@ -1466,21 +1491,13 @@ void Server::enter_game(int user_id, char name[])
     }
 }
 
-void Server::initialize_clients()
-{
-    for (int i = 0; i <= MAX_USER; ++i)
-    {
-        g_clients[i].m_id = i; // 유저 등록
-        g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
-    }
-}
-
 void Server::initialize_objects()
 {
-    for (int i = NPC_START; i < MAX_OBJECT; ++i)
+    for (int i = 0; i < MAX_OBJECT; ++i)
     {
         g_clients[i].m_id = i; // 유저 등록
         g_clients[i].m_status = ST_FREE; // 여기는 멀티스레드 하기전에 싱글스레드일때 사용하는 함수, 락 불필요
+        g_clients[i].m_type = TP_END;
     }
 
     for (int i = 0; i < 5; ++i)
@@ -1493,6 +1510,8 @@ void Server::initialize_objects()
     flags[2].pos = { 250.f, 0.2f, 250.f };
     flags[3].pos = { 450.f, 0.2f, 400.f };
     flags[4].pos = { 450.f, 0.2f, 100.f };
+
+    ARROW_COUNT = 0;
 }
 
 void Server::initialize_NPC(int player_id)
@@ -1640,6 +1659,17 @@ void Server::send_hp_packet(int user_id, int other_id)
     packet.type = SC_PACKET_HP;
     packet.id = other_id;
     packet.hp = g_clients[other_id].m_hp;
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_arrow_packet(int arrow_id, int user_id, int other_id)
+{
+    sc_packet_arrow packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_ARROW;
+    packet.shoot_id = other_id;
+    packet.arrow_id = arrow_id;
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -2229,7 +2259,9 @@ void Server::do_dot_damage(int id)
         add_timer(id, FUNC_DOT_DAMAGE, 1000);
     else
     {
-        ST_SLEEP == g_clients[id].m_status;
+        g_clients[id].m_cLock.lock();
+        g_clients[id].m_status = ST_SLEEP;
+        g_clients[id].m_cLock.unlock();
     }
 }
 
@@ -2355,6 +2387,10 @@ void Server::worker_thread()
             do_dot_damage(id);
             delete overEx;
             break;
+        case FUNC_ARROW:
+            do_arrow(id);
+            delete overEx;
+            break;
        /* case FUNC_DEAD:
             cout << id << "is dead\n";
             if (is_player(id))
@@ -2385,7 +2421,7 @@ void Server::worker_thread()
         case FUNC_CHECK_COLLISION:
             if (isGameStart)
             {
-                for (auto& it : g_clients)
+                for (auto& it : g_clients) // OBB 작동한놈 OBB시키기
                 {
                     if (ST_ACTIVE != it.second.m_status && ST_DEAD != it.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
                         continue;
@@ -2460,7 +2496,6 @@ void Server::mainServer()
     listen(listenSocket, SOMAXCONN);
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
-    initialize_clients(); // 클라이언트 정보들 초기화
     initialize_objects(); // 오브젝트 정보들 초기화
     ready_timer();
     isGameStart = false;
@@ -2733,6 +2768,98 @@ void Server::do_aabb(int a, int b) // (CCollider* pTargetCollider, CTransform* p
     }
 }
 
+void Server::do_arrow(int arrow_id)
+{
+    duration<double> arrow_life = duration_cast<duration<double>>(high_resolution_clock::now()
+        - g_clients[arrow_id].m_lifetime);
+    if (arrow_life.count() < ARROW_ENDTIME) // 아직 화살 유지시간 남아있을때
+    {
+        g_clients[arrow_id].m_transform.Go_Right(TIME_DELTA);
+        do_arrow_collision(arrow_id);
+        if (ST_ACTIVE == g_clients[arrow_id].m_status)
+            add_timer(arrow_id, FUNC_ARROW, FRAME_TIME);
+    }
+    else // 화살 유지시간 끝났을때
+        delete_arrow(arrow_id);
+}
+
+void Server::delete_arrow(int arrow_id)
+{
+    g_clients[arrow_id].m_cLock.lock();
+    g_clients[arrow_id].m_status = ST_SLEEP;
+    g_clients[arrow_id].m_cLock.unlock();
+    g_clients[arrow_id].m_transform.SetUp_RotationY(XMConvertToRadians(90.f));
+    ARROW_COUNT--;
+}
+
+void Server::do_arrow_collision(int arrow_id)
+{
+    for (int arrow = OBJECT_START; arrow < MAX_OBJECT; ++arrow)
+    {
+        for (auto& iter : g_clients)
+        {
+            if (ST_ACTIVE != iter.second.m_status)
+                continue;
+            if (arrow == iter.first) // 자기 자신 제외
+                continue;
+            if (g_clients[arrow].m_owner_id == iter.first) // 화살 쏜 주인 제외
+                continue;
+            if (TP_ARROW == iter.second.m_type || TP_SKILL == iter.second.m_type) // 화살, 스킬이랑 충돌 제외
+                continue;
+
+            // 나머지 플레이어, npc, 자연물, deffend 상대로 충돌
+            _float fLength = 0.f;
+            _vec3 arrow_Pos = *g_clients[arrow].m_transform.Get_StateInfo(CTransform::STATE_POSITION); // Arrow
+            _vec3 gothit_Pos = *iter.second.m_transform.Get_StateInfo(CTransform::STATE_POSITION); // other
+
+            _vec3 vDistance = gothit_Pos - arrow_Pos;
+            fLength = vDistance.Length();
+
+            if (fLength <= ARROW_DIST)
+            {
+                if (iter.second.m_type == TP_NATURE || iter.second.m_type == TP_DEFFEND) // 화살 맞은애가 밀리면 안됨
+                {
+                    iter.second.m_hp -= ARROW_DAMAGE;
+                    for (int i = 0; i < NPC_START; ++i)
+                    {
+                        if (ST_ACTIVE != g_clients[i].m_status)
+                            continue;
+                        if (!is_near(i, iter.first))
+                            continue;
+                        send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        send_leave_packet(i, arrow_id);
+                    }
+                    delete_arrow(arrow_id);
+                }
+                else // 플레이어,npc,동물은 맞으면 obb 밀려야함
+                {
+                    iter.second.m_isOBB = true;
+                    _vec3 vTargetPos = gothit_Pos;
+                    _vec3 vPos = arrow_Pos;
+                    _vec3 vTemp = { vPos - vTargetPos };
+                    iter.second.m_matAttackedTarget._41 = vTemp.x;
+                    iter.second.m_matAttackedTarget._42 = vTemp.y;
+                    iter.second.m_matAttackedTarget._43 = vTemp.z;
+                    iter.second.m_hp -= ARROW_DAMAGE;
+
+                    for (int i = 0; i < NPC_START; ++i)
+                    {
+                        if (ST_ACTIVE != g_clients[i].m_status)
+                            continue;
+                        if (!is_near(i, iter.first))
+                            continue;
+                        send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        send_leave_packet(i, arrow_id);
+                    }
+                    delete_arrow(arrow_id);
+                }
+            }
+        }
+    }
+}
+
 bool Server::check_obb_collision(int a, int b)
 {
     OBB* pTargetOBB = &g_clients[b].m_col.m_pOBB;
@@ -2868,7 +2995,7 @@ void Server::Obb_Collision(int id)
             _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
             _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 vTemp = { vPos - vTargetPos };
-            vTemp *= 5.f;
+            vTemp *= 1.f;
             o.m_vStartPoint = vPos;
             o.m_vEndPoint = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;

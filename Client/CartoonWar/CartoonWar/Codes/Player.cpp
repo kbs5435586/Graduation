@@ -114,7 +114,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow)
 	{
-		_matrix matTemp = server->Get_PlayerMat(m_iLayerIdx);
+		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_PLAYER);
 
 		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
 		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
@@ -1323,12 +1323,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_eCurClass == CLASS::CLASS_ARCHER)
 			{
-				CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
-					return;
 				server->send_arrow_packet();
-				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
 				m_eCurState = STATE::STATE_ARROW;
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
@@ -1415,11 +1410,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		}
 
 		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
-			- server->Get_AddNPC_Cooltime());
-		if (move_time.count() >= 0.02) // ↑ 쿨타임 2초 계산해주는 식
+			- server->Get_Move_Cooltime());
+		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			server->send_move_packet(GO_BACK);
-			server->Set_AddNPC_CoolTime(high_resolution_clock::now());
+			server->Set_Move_CoolTime(high_resolution_clock::now());
 		}
 
 		m_IsActioning = true;
@@ -1432,7 +1427,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		server->send_move_packet(GO_LEFT);
+		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_Rotate_Cooltime());
+		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			server->send_move_packet(GO_LEFT);
+			server->Set_Rotate_CoolTime(high_resolution_clock::now());
+		}
 
 		m_IsActioning = true;
 		m_eCurState = STATE::STATE_WALK;
@@ -1445,7 +1446,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		server->send_move_packet(GO_RIGHT);
+		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_Rotate_Cooltime());
+		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			server->send_move_packet(GO_RIGHT);
+			server->Set_Rotate_CoolTime(high_resolution_clock::now());
+		}
 
 		m_IsActioning = true;
 		m_eCurState = STATE::STATE_WALK;
@@ -1459,17 +1466,23 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[2];
 
-		_vec3 vLook = {};
-		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		vLook = Vector3_::Normalize(vLook);
+		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_Move_Cooltime());
+		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
 
-		m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
-		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-		_vec3 vSlide = {};
-		if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-			server->send_move_packet(GO_FAST_FORWARD);
-		else
-			m_pTransformCom->Go_There(vSlide);
+			m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
+			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+			_vec3 vSlide = {};
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+				server->send_move_packet(GO_FAST_FORWARD);
+			else
+				m_pTransformCom->Go_There(vSlide);
+			server->Set_Move_CoolTime(high_resolution_clock::now());
+		}
 
 		m_IsRun = true;
 		m_IsActioning = true;
@@ -1485,24 +1498,30 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		else
 			m_iCurAnimIdx = m_iCombatMotion[1];
 
-		_vec3 vLook = {};
-		vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-		vLook = Vector3_::Normalize(vLook);
+		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
+			- server->Get_Move_Cooltime());
+		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
+		{
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
 
-		m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-		_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-		_vec3 vSlide = {};
-		if (!m_IsSlide)
-		{
-			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-				server->send_move_packet(GO_FORWARD);
+			m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
+			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+			_vec3 vSlide = {};
+			if (!m_IsSlide)
+			{
+				if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+					server->send_move_packet(GO_FORWARD);
+				else
+					m_pTransformCom->Go_There(vSlide);
+			}
 			else
-				m_pTransformCom->Go_There(vSlide);
-		}
-		else
-		{
-			server->send_move_packet(GO_FORWARD);
-			m_IsSlide = false;
+			{
+				server->send_move_packet(GO_FORWARD);
+				m_IsSlide = false;
+			}
+			server->Set_Move_CoolTime(high_resolution_clock::now());
 		}
 
 		m_IsActioning = true;

@@ -53,9 +53,13 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 
 _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+
 	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
 	m_pTransformCom->Go_Right(fTimeDelta);
-	m_fLifeTime += fTimeDelta;
+	/*m_fLifeTime += fTimeDelta;
 	if (m_fLifeTime >= 10.f)
 	{
 		m_fLifeTime = 0.f;
@@ -63,8 +67,29 @@ _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	if (m_IsDead)
-		return DEAD_OBJ;
+		return DEAD_OBJ;*/
 
+	_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_OBJECT);
+
+	_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
+	_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
+	_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
+	_vec3   vLook = _vec3(matTemp._31, matTemp._32, matTemp._33);
+
+	_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3	calPos = { pPos.x, 0.f, pPos.z };
+
+	_vec3   vLen = calPos - vPos;
+	_float   fLen = vLen.Length();
+
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
+	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+
+	if (fLen > 1.f)
+	{
+		m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+	}
 
 	return NO_EVENT;
 }

@@ -36,6 +36,8 @@ private:
     high_resolution_clock::time_point add_npc_ct;
     high_resolution_clock::time_point attack_ct;
     high_resolution_clock::time_point change_formation_ct;
+    high_resolution_clock::time_point move_ct;
+    high_resolution_clock::time_point rotate_ct;
 
 public:
     BOOL InitServer(HWND hWnd);
@@ -79,8 +81,7 @@ public:
     short Get_PlayerHP(int id);
     int Get_PlayerClass(int id);
     int Get_NpcClass(int id);
-    _matrix Get_PlayerMat(int id);
-    _matrix Get_NpcMat(int index);
+    _matrix Get_ServerMat(int id, char type);
 
     short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);
@@ -94,6 +95,8 @@ public:
     bool Get_isInvisible(int id);
     float Get_TimeDelta();
 
+    void Set_Move_CoolTime(high_resolution_clock::time_point ct);
+    void Set_Rotate_CoolTime(high_resolution_clock::time_point ct);
     void Set_TroopClass(short mclass);
     void Set_AnimPL(int id, short anim);
     void Set_AnimNPC(int id, short anim);
@@ -104,6 +107,8 @@ public:
     bool is_npc(int id);
     bool is_object(int id);
 
+    high_resolution_clock::time_point Get_Move_Cooltime();
+    high_resolution_clock::time_point Get_Rotate_Cooltime();
     high_resolution_clock::time_point Get_AddNPC_Cooltime();
     high_resolution_clock::time_point Get_Attack_Cooltime();
     high_resolution_clock::time_point Get_ChangeFormation_Cooltime();

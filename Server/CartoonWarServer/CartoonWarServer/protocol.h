@@ -38,7 +38,7 @@ constexpr int FLAG_START = 450;
 constexpr int MAX_FLAG = 454;
 
 constexpr int OBJECT_START = 450;
-constexpr int MAX_OBJECT = 500;
+constexpr int MAX_OBJECT = 600;
 
 constexpr int CL_TEST_PLAYERS = 4;
 constexpr int CL_TEST_NPCS = 36;
@@ -58,6 +58,7 @@ constexpr int SERVER_PORT = 9000;
 
 constexpr float BASIC_FORM_RAD = 10.f;
 constexpr float PIE = 3.141592f;
+constexpr float KEY_COOLTIME = 0.017f;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
@@ -93,6 +94,7 @@ constexpr char SC_PACKET_TIMEDELTA = 16;
 constexpr char SC_PACKET_GOLD = 17;
 constexpr char SC_PACKET_HP = 18;
 constexpr char SC_PACKET_DO_PARTICLE = 19;
+constexpr char SC_PACKET_ARROW = 20;
 
 #pragma pack(push ,1)
 
@@ -200,9 +202,17 @@ struct sc_packet_hp
 	int hp;
 };
 
+struct sc_packet_arrow
+{
+	char size;
+	char type;
+	int shoot_id;
+	int arrow_id;
+};
+
 constexpr unsigned char O_PLAYER = 0;
 constexpr unsigned char O_NPC = 1;
-constexpr unsigned char O_ENVIR = 2;
+constexpr unsigned char O_OBJECT = 2;
 
 struct sc_packet_enter
 {

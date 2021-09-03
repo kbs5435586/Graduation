@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "MyRect.h"
 #include "Fire.h"
+#include <iostream>
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)
@@ -111,8 +112,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].m_class = (int)my_packet->p_class;
 
-		add_npc_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
-		change_formation_ct = high_resolution_clock::now(); // 임시 NPC 소환 쿨타임 초기화
+		add_npc_ct = high_resolution_clock::now();
+		change_formation_ct = high_resolution_clock::now();
+		attack_ct = high_resolution_clock::now();
+		move_ct = high_resolution_clock::now();
+		rotate_ct = high_resolution_clock::now();
 		Safe_Release(managment);
 	}
 	break;
@@ -265,6 +269,30 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_gold* my_packet = reinterpret_cast<sc_packet_gold*>(ptr);
 		g_iGold = my_packet->gold;
+	}
+	break;
+	case SC_PACKET_ARROW:
+	{
+		sc_packet_arrow* my_packet = reinterpret_cast<sc_packet_arrow*>(ptr);
+		int recv_id = my_packet->shoot_id;
+		int arrow_idx = object_id_to_idx(my_packet->arrow_id);
+;
+		CTransform* pTransform = nullptr;
+		if (is_player(recv_id))
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+		}
+		else if (is_npc(recv_id))
+		{
+			short npc_id = npc_id_to_idx(recv_id);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_NPC", L"Com_Transform", npc_id);
+		}
+		_matrix matTemp = pTransform->Get_Matrix();
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp, arrow_idx)))
+			return;
+		m_objects[my_packet->arrow_id].showObject = true;
 	}
 	break;
 	case SC_PACKET_ANIMATION:
@@ -453,7 +481,7 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.type = CS_PACKET_MOVE;
 	m_packet.size = sizeof(m_packet);
 	m_packet.dir = dir;
-	//cout << "send move\n";
+	cout << "send move\n";
 	send_packet(&m_packet);
 }
 
@@ -980,15 +1008,14 @@ int CServer_Manager::Get_PlayerClass(int id)
 	return m_objects[id].m_class;
 }
 
-_matrix CServer_Manager::Get_PlayerMat(int id)
+_matrix CServer_Manager::Get_ServerMat(int id, char type)
 {
-	return m_objects[id].m_mat;
-}
-
-_matrix CServer_Manager::Get_NpcMat(int index)
-{
-	short npc_id = npc_idx_to_id(index);
-	return m_objects[npc_id].m_mat;
+	if (type == O_PLAYER)
+		return m_objects[id].m_mat;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].m_mat;
+	else if (type == O_OBJECT)
+		return m_objects[object_idx_to_id(id)].m_mat;
 }
 
 void CServer_Manager::Set_Class(int mclass, int id, char type)
@@ -1016,7 +1043,7 @@ bool CServer_Manager::Get_Particle(int id, char type)
 	if (type == O_PLAYER)
 		return m_objects[id].isParticle;
 	else if (type == O_NPC)
-		return m_objects[npc_idx_to_id(id)].isParticle = stat;
+		return m_objects[npc_idx_to_id(id)].isParticle;
 }
 
 void CServer_Manager::Set_Particle(int id, bool stat, char type)
@@ -1151,6 +1178,26 @@ high_resolution_clock::time_point CServer_Manager::Get_AddNPC_Cooltime()
 high_resolution_clock::time_point CServer_Manager::Get_Attack_Cooltime()
 {
 	return attack_ct;
+}
+
+high_resolution_clock::time_point CServer_Manager::Get_Move_Cooltime()
+{
+	return move_ct;
+}
+
+high_resolution_clock::time_point CServer_Manager::Get_Rotate_Cooltime()
+{
+	return rotate_ct;
+}
+
+void CServer_Manager::Set_Move_CoolTime(high_resolution_clock::time_point ct)
+{
+	move_ct = ct;
+}
+
+void CServer_Manager::Set_Rotate_CoolTime(high_resolution_clock::time_point ct)
+{
+	rotate_ct = ct;
 }
 
 void CServer_Manager::Set_Attack_CoolTime(high_resolution_clock::time_point ct)

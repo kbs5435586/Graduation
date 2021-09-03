@@ -4,8 +4,6 @@
 #include "Renderer.h"
 #include "Scene_Logo.h"
 #include "Scene_Stage.h"
-#include <iostream>
-
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::GetInstance())
