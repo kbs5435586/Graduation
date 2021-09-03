@@ -107,6 +107,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		pTransform->Set_Matrix(mat);
 		Set_Server_Mat(recv_id, &mat);
+		isInited = true;
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
@@ -1020,6 +1021,11 @@ bool CServer_Manager::Get_Red(int id)
 bool CServer_Manager::Get_Connected()
 {
 	return isConnected;
+}
+
+bool CServer_Manager::Get_Inited()
+{
+	return isInited;
 }
 
 short CServer_Manager::Get_PlayerID()

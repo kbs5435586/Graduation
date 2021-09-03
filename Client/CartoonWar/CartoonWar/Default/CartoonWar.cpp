@@ -119,8 +119,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             _float		fTimeDelta_60 = fTimeDelta_Default; //server->Get_TimeDelta();
                 //pSystem->Get_TimeDelta(L"Timer_60");
             server->EventManager();
-            pMainApp->Update_MainApp(fTimeDelta_60);
-            pMainApp->Render_MainApp();
+            if (server->Get_Inited())
+            {
+                pMainApp->Update_MainApp(fTimeDelta_60);
+                pMainApp->Render_MainApp();
+            }
         }
     }
 

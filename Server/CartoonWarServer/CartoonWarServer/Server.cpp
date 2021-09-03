@@ -407,9 +407,16 @@ void Server::process_packet(int user_id, char* buf)
                 g_clients[obj].m_id = obj;
                 g_clients[obj].m_type = TP_DEFFEND;
                 g_clients[obj].m_hp = SET_HP;
+
                 _matrix own = g_clients[user_id].m_transform.Get_Matrix();
+                
+                CTransform Temp;
+                Temp.Set_Matrix(&own);
+                Temp.BackWard(5.f);
+                Temp.Scaling(0.06f, 0.06f, 0.06f);
+                own = Temp.Get_Matrix();
                 g_clients[obj].m_transform.Set_Matrix(&own);
-                g_clients[obj].m_transform.Scaling(0.06f, 0.06f, 0.06f);
+                
                 //g_clients[obj].m_transform.SetUp_RotationY(XMConvertToRadians(-180.f));
                 //g_clients[obj].m_transform.SetUp_Speed(100.f, XMConvertToRadians(90.f));
                 g_clients[obj].m_col.aabb_size = { 250.f,250.f,250.f };

@@ -21,6 +21,7 @@ private:
     short my_last_troop;
     bool isSendOnePacket;
     bool isConnected = false;
+    bool isInited = false;
     bool isRed;
     bool isBlue;
     string m_ip;
@@ -84,6 +85,7 @@ public:
     int Get_NpcClass(int id);
     _matrix Get_ServerMat(int id, char type);
 
+    bool Get_Inited();
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
     short Get_AnimNPC(int id);

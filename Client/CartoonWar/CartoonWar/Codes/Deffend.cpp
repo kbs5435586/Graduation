@@ -61,6 +61,28 @@ _int CDeffend::Update_GameObject(const _float& fTimeDelta)
 	m_IsShow = server->Get_Show(m_iLayerIdx, O_OBJECT);
 	if (m_IsShow)
 	{
+		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_PLAYER);
+
+		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
+		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
+		_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
+		_vec3   vLook = _vec3(matTemp._31, matTemp._32, matTemp._33);
+
+		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3	calPos = { pPos.x, 0.f, pPos.z };
+
+		_vec3   vLen = calPos - vPos;
+		_float   fLen = vLen.Length();
+
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+
+		if (fLen > 1.f)
+		{
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		}
+
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 		if (nullptr == pTerrainBuffer)
 			return NO_EVENT;
