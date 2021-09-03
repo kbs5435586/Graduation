@@ -2918,11 +2918,9 @@ void Server::do_arrow_collision(int arrow_id)
                 else // 플레이어,npc,동물은 맞으면 obb 밀려야함
                 {
                     _vec3 arrow_Pos = *g_clients[arrow].m_transform.Get_StateInfo(CTransform::STATE_POSITION); // Arrow
-                    _vec3 gothit_Pos = *iter.second.m_transform.Get_StateInfo(CTransform::STATE_POSITION); // other
-                    _vec3 vTemp = { arrow_Pos - gothit_Pos };
-                    iter.second.m_matAttackedTarget._41 = vTemp.x;
-                    iter.second.m_matAttackedTarget._42 = vTemp.y;
-                    iter.second.m_matAttackedTarget._43 = vTemp.z;
+                    iter.second.m_matAttackedTarget._41 = arrow_Pos.x;
+                    iter.second.m_matAttackedTarget._42 = arrow_Pos.y;
+                    iter.second.m_matAttackedTarget._43 = arrow_Pos.z;
                     iter.second.m_hp -= ARROW_DAMAGE;
                     iter.second.m_isOBB = true;
                     for (int i = 0; i < NPC_START; ++i)
