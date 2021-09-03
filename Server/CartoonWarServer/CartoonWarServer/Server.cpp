@@ -412,7 +412,7 @@ void Server::process_packet(int user_id, char* buf)
                 
                 CTransform Temp;
                 Temp.Set_Matrix(&own);
-                Temp.BackWard(5.f);
+                Temp.BackWard(10.f);
                 Temp.Scaling(0.06f, 0.06f, 0.06f);
                 own = Temp.Get_Matrix();
                 g_clients[obj].m_transform.Set_Matrix(&own);
@@ -1729,8 +1729,19 @@ void Server::send_deffend_packet(int deffend_id, int user_id, int other_id)
     sc_packet_deffend packet;
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_DEFFEND;
-    packet.setter_id = other_id;
     packet.deffend_id = deffend_id;
+    _matrix mat = g_clients[deffend_id].m_transform.Get_Matrix();
+    packet.r_x = mat._11;
+    packet.r_y = mat._12;
+    packet.r_z = mat._13;
+    packet.u_x = mat._21;
+    packet.u_y = mat._22;
+    packet.u_z = mat._23;
+    packet.l_x = mat._31;
+    packet.l_y = mat._32;
+    packet.l_z = mat._33;
+    packet.p_x = mat._41;
+    packet.p_z = mat._43;
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }

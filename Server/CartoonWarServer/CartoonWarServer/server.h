@@ -24,7 +24,7 @@ private:
 	int LISTEN_KEY = 999;
 
 	float NEAR_APPROACH = 0.5f;
-	int VIEW_RADIUS = 200; // 데이터 보내줄 시야 범위
+	int VIEW_RADIUS = 500; // 데이터 보내줄 시야 범위
 	float ATTACK_RADIUS = 4.f; // 데이터 보내줄 시야 범위
 	float DETECT_RADIUS = 20.f; // 데이터 보내줄 시야 범위
 	int BOID_RADIUS = 6;  // 플레이어 기준 군집 범위

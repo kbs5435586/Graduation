@@ -33,9 +33,7 @@ HRESULT CDeffend::Ready_GameObject(void* pArg)
 
 	m_tInfo = INFO(20.f,0.f,0.f,0.f);
 	_matrix pTemp = *(_matrix*)pArg;
-	_matrix matWorld = m_pTransformCom->Get_Matrix();
 	m_pTransformCom->Set_Matrix(pTemp);
-	m_pTransformCom->Scaling(0.06f, 0.06f, 0.06f);
 
 	//_vec3 vColliderSize = { 50.f,50.f,50.f };
 	//m_pColliderCom_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
@@ -61,7 +59,7 @@ _int CDeffend::Update_GameObject(const _float& fTimeDelta)
 	m_IsShow = server->Get_Show(m_iLayerIdx, O_OBJECT);
 	if (m_IsShow)
 	{
-		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_PLAYER);
+		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_OBJECT);
 
 		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
 		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);

@@ -299,15 +299,23 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	case SC_PACKET_DEFFEND:
 	{
 		sc_packet_deffend* my_packet = reinterpret_cast<sc_packet_deffend*>(ptr);
-		int recv_id = my_packet->setter_id;
 		int deffend_idx = object_id_to_idx(my_packet->deffend_id);
-		
-		CTransform* pTransform = nullptr;
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
 
-		_matrix matTemp = pTransform->Get_Matrix();
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp, deffend_idx)))
+		_matrix temp;
+		temp._11 = my_packet->r_x;
+		temp._12 = my_packet->r_y;
+		temp._13 = my_packet->r_z;
+		temp._21 = my_packet->u_x;
+		temp._22 = my_packet->u_y;
+		temp._23 = my_packet->u_z;
+		temp._31 = my_packet->l_x;
+		temp._32 = my_packet->l_y;
+		temp._33 = my_packet->l_z;
+		temp._41 = my_packet->p_x;
+		temp._43 = my_packet->p_z;
+		Set_Server_Mat(my_packet->deffend_id, &temp);
+
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&temp, deffend_idx)))
 			return;
 		m_objects[my_packet->deffend_id].showObject = true;
 	}
