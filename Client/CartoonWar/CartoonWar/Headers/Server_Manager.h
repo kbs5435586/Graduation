@@ -14,14 +14,13 @@ private:
     CManagement* managment;
     unordered_map <int, Session> m_objects;
     Flag flags[5];
-    short my_id;
+    short my_id = 0;
     short my_npc;
     short my_hp;
     short my_troop;
     short my_last_troop;
     bool isSendOnePacket;
     bool isConnected = false;
-    bool isInited = false;
     bool isRed;
     bool isBlue;
     string m_ip;
@@ -85,7 +84,6 @@ public:
     int Get_NpcClass(int id);
     _matrix Get_ServerMat(int id, char type);
 
-    bool Get_Inited();
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
     short Get_AnimNPC(int id);
