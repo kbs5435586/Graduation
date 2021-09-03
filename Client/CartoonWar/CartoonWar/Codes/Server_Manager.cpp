@@ -131,21 +131,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		CTransform* pTransform;
 
-		if (is_player(recv_id)) // 플레이어 일때
-		{
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_Player", L"Com_Transform", recv_id);
-		}
-		else if (is_npc(recv_id)) // NPC 일때
-		{
-			short npc_id = npc_id_to_idx(recv_id);
-			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-				L"Layer_NPC", L"Com_Transform", npc_id);
-		}
-		else // 환경요소
-		{
-
-		}
 		_matrix mat;
 		strcpy_s(m_objects[recv_id].name, my_packet->name);
 		mat._11 = my_packet->r_x;
@@ -161,7 +146,23 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		mat._42 = my_packet->p_y;
 		mat._43 = my_packet->p_z;
 
-		pTransform->Set_Matrix(mat);
+		if (is_player(recv_id)) // 플레이어 일때
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+			pTransform->Set_Matrix(mat);
+		}
+		else if (is_npc(recv_id)) // NPC 일때
+		{
+			short npc_id = npc_id_to_idx(recv_id);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_NPC", L"Com_Transform", npc_id);
+			pTransform->Set_Matrix(mat);
+		}
+		else // 환경요소
+		{
+
+		}
 
 		Set_Server_Mat(recv_id, &mat);
 		m_objects[recv_id].showObject = true;
@@ -972,10 +973,14 @@ bool CServer_Manager::Get_ShowPlayer()
 	return m_objects[my_id].showObject;
 }
 
-bool CServer_Manager::Get_ShowNPC(int index)
+bool CServer_Manager::Get_Show(int index, char type)
 {
-	short npc_index = npc_idx_to_id(index);
-	return m_objects[npc_index].showObject;
+	if (type == O_PLAYER)
+		return m_objects[index].showObject;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(index)].showObject;
+	else if (type == O_OBJECT)
+		return m_objects[object_idx_to_id(index)].showObject;
 }
 
 bool CServer_Manager::Get_Blue(int id)

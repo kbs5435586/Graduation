@@ -31,7 +31,7 @@ private:
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 	float TIME_DELTA = 0.f;
 	int ARROW_COUNT = 0;
-	float ARROW_ENDTIME = 10.f;
+	float ARROW_ENDTIME = 3.f;
 	float ARROW_DIST = 10.f;
 	float ARROW_DAMAGE = 10.f;
 

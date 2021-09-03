@@ -213,6 +213,10 @@ struct sc_packet_arrow
 constexpr unsigned char O_PLAYER = 0;
 constexpr unsigned char O_NPC = 1;
 constexpr unsigned char O_OBJECT = 2;
+constexpr unsigned char O_DEFFEND = 3;
+constexpr unsigned char O_ARROW = 4;
+constexpr unsigned char O_FIRE = 5;
+constexpr unsigned char O_TELE = 6;
 
 struct sc_packet_enter
 {

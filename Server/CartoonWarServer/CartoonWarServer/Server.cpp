@@ -94,10 +94,16 @@ int Server::init_arrow(int shoot_id)
             g_clients[i].m_cLock.lock();
             g_clients[i].m_status = ST_ACTIVE;
             g_clients[i].m_cLock.unlock();
-            _vec3* pos = g_clients[shoot_id].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, pos);
+
+            g_clients[i].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
             g_clients[i].m_transform.SetUp_RotationY(XMConvertToRadians(-90.f));
+            g_clients[i].m_move_speed = 100.f;
             g_clients[i].m_transform.SetUp_Speed(100.f, XMConvertToRadians(90.f));
+
+            _matrix arrow = g_clients[i].m_transform.Get_Matrix();
+            arrow *= g_clients[shoot_id].m_transform.Get_Matrix();
+            g_clients[i].m_transform.Set_Matrix(&arrow);
+
             g_clients[i].m_type = TP_ARROW;
             g_clients[i].m_owner_id = shoot_id;
             g_clients[i].m_lifetime = high_resolution_clock::now();
@@ -2775,6 +2781,12 @@ void Server::do_arrow(int arrow_id)
     if (arrow_life.count() < ARROW_ENDTIME) // 아직 화살 유지시간 남아있을때
     {
         g_clients[arrow_id].m_transform.Go_Right(TIME_DELTA);
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status)
+                continue;
+            send_move_packet(i, arrow_id); // 남은 체력 브로드캐스팅
+        }
         do_arrow_collision(arrow_id);
         if (ST_ACTIVE == g_clients[arrow_id].m_status)
             add_timer(arrow_id, FUNC_ARROW, FRAME_TIME);
@@ -2788,7 +2800,13 @@ void Server::delete_arrow(int arrow_id)
     g_clients[arrow_id].m_cLock.lock();
     g_clients[arrow_id].m_status = ST_SLEEP;
     g_clients[arrow_id].m_cLock.unlock();
-    g_clients[arrow_id].m_transform.SetUp_RotationY(XMConvertToRadians(90.f));
+    g_clients[arrow_id].m_transform.Ready_Transform();
+    for (int i = 0; i < NPC_START; ++i)
+    {
+        if (ST_ACTIVE != g_clients[i].m_status)
+            continue;
+        send_leave_packet(i, arrow_id);
+    }
     ARROW_COUNT--;
 }
 
@@ -2828,7 +2846,6 @@ void Server::do_arrow_collision(int arrow_id)
                             continue;
                         send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
                         send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
-                        send_leave_packet(i, arrow_id);
                     }
                     delete_arrow(arrow_id);
                 }
@@ -2851,7 +2868,6 @@ void Server::do_arrow_collision(int arrow_id)
                             continue;
                         send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
                         send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
-                        send_leave_packet(i, arrow_id);
                     }
                     delete_arrow(arrow_id);
                 }

@@ -38,8 +38,6 @@ HRESULT CThrow_Arrow::Ready_GameObject(void* pArg)
 	matWorld *= pTemp;
 	m_pTransformCom->Set_Matrix(matWorld);
 
-
-
 	_vec3 vColliderSize = {50.f,5.f,5.f };
 	m_pColliderCom->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
@@ -57,38 +55,41 @@ _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 
-	m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
-	m_pTransformCom->Go_Right(fTimeDelta);
-	/*m_fLifeTime += fTimeDelta;
-	if (m_fLifeTime >= 10.f)
+	//m_pColliderCom->Update_Collider_Ex(m_pTransformCom);
+	//m_pTransformCom->Go_Right(fTimeDelta);
+	//m_fLifeTime += fTimeDelta;
+	//if (m_fLifeTime >= 10.f)
+	//{
+	//	m_fLifeTime = 0.f;
+	//	return DEAD_OBJ;
+	//}
+
+	//CGameObject* pOwnPlayer = nullptr;
+	//_matrix matTemp = m_pTransformCom->Get_Matrix();
+	//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+	//	return;
+	//server->send_arrow_packet();
+	//dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+	//m_eCurState = STATE::STATE_ARROW;
+
+	//if (m_IsDead)
+	//	return DEAD_OBJ;
+	m_IsShow = server->Get_Show(m_iLayerIdx, O_OBJECT);
+	if (m_IsShow)
 	{
-		m_fLifeTime = 0.f;
-		return DEAD_OBJ;
-	}
+		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_OBJECT);
 
-	if (m_IsDead)
-		return DEAD_OBJ;*/
+		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
+		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3	calPos = { pPos.x, 0.f, pPos.z };
 
-	_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_OBJECT);
+		_vec3   vLen = calPos - vPos;
+		_float   fLen = vLen.Length();
 
-	_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
-	_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
-	_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
-	_vec3   vLook = _vec3(matTemp._31, matTemp._32, matTemp._33);
-
-	_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3	calPos = { pPos.x, 0.f, pPos.z };
-
-	_vec3   vLen = calPos - vPos;
-	_float   fLen = vLen.Length();
-
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-
-	if (fLen > 1.f)
-	{
-		m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		if (fLen > 1.f)
+		{
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		}
 	}
 
 	return NO_EVENT;
@@ -98,40 +99,42 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Player", L"Com_Transform", 0);
-	_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-	_vec3 vLen = vPlayerPos - vPos;
-	_float fLen = vLen.Length();
-	CGameObject* pPlayer = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	if (m_IsShow)
 	{
-		m_IsOldMatrix = true;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-		if (fLen <= 250.f)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-				return -1;
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
-				return -1;
-		}
+		CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+			L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
+		_vec3 vPlayerPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3 vLen = vPlayerPos - vPos;
+		_float fLen = vLen.Length();
 
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		{
+			m_IsOldMatrix = true;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			if (fLen <= 250.f)
+			{
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+					return -1;
+				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
+					return -1;
+			}
+
+			else
+			{
+				m_matOldWorld = m_pTransformCom->Get_Matrix();;
+				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+			}
+
+		}
 		else
 		{
 			m_matOldWorld = m_pTransformCom->Get_Matrix();;
 			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		}
-
 	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	}
-
 	return _int();
 }
 

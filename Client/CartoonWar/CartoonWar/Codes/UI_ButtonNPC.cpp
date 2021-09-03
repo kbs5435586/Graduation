@@ -77,12 +77,12 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		if (m_ButtonNow == 0)
 		{
 			//플레이어
-			UnitActive = server->Get_ShowOtherPlayer(server->Get_PlayerID());
+			UnitActive = server->Get_Show(server->Get_PlayerID(), O_PLAYER);
 		}
 		else
 		{
 			//엔피씨
-			UnitActive = server->Get_ShowNPC(m_ButtonNow - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+			UnitActive = server->Get_Show(m_ButtonNow - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
 		}
 
 		if (UnitActive)

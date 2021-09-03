@@ -72,8 +72,8 @@ public:
     short object_id_to_idx(unsigned short id);
 
     bool Get_Particle(int id, char type);
+    bool Get_Show(int index, char type);
     bool Get_ShowPlayer();
-    bool Get_ShowNPC(int npc_index);
     bool Get_Blue(int id);
     bool Get_Red(int id);
     bool Get_Connected();
