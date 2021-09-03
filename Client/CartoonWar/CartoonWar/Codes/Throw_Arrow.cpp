@@ -72,8 +72,8 @@ _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 	//dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
 	//m_eCurState = STATE::STATE_ARROW;
 
-	//if (m_IsDead)
-	//	return DEAD_OBJ;
+	if (false == server->Get_Show(m_iLayerIdx, O_OBJECT))
+		return DEAD_OBJ;
 	m_IsShow = server->Get_Show(m_iLayerIdx, O_OBJECT);
 	if (m_IsShow)
 	{
@@ -213,7 +213,6 @@ void CThrow_Arrow::Render_Blur()
 		return;
 	pManagement->AddRef();
 
-
 	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
 	for (_uint i = 0; i < iSubsetNum; ++i)
 	{
@@ -236,8 +235,6 @@ void CThrow_Arrow::Render_Blur()
 		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
 		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
 			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
-
-
 
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
