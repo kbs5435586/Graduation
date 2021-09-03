@@ -296,6 +296,22 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[my_packet->arrow_id].showObject = true;
 	}
 	break;
+	case SC_PACKET_DEFFEND:
+	{
+		sc_packet_deffend* my_packet = reinterpret_cast<sc_packet_deffend*>(ptr);
+		int recv_id = my_packet->setter_id;
+		int deffend_idx = object_id_to_idx(my_packet->deffend_id);
+		
+		CTransform* pTransform = nullptr;
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+
+		_matrix matTemp = pTransform->Get_Matrix();
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp, deffend_idx)))
+			return;
+		m_objects[my_packet->deffend_id].showObject = true;
+	}
+	break;
 	case SC_PACKET_ANIMATION:
 	{
 		sc_packet_animation* my_packet = reinterpret_cast<sc_packet_animation*>(ptr);
@@ -563,6 +579,14 @@ void CServer_Manager::send_arrow_packet()
 	cs_packet_arrow l_packet;
 	l_packet.size = sizeof(l_packet);
 	l_packet.type = CS_PACKET_ARROW;
+	send_packet(&l_packet);
+}
+
+void CServer_Manager::send_deffend_packet()
+{
+	cs_packet_arrow l_packet;
+	l_packet.size = sizeof(l_packet);
+	l_packet.type = CS_PACKET_DEFFEND;
 	send_packet(&l_packet);
 }
 
@@ -1003,9 +1027,14 @@ short CServer_Manager::Get_PlayerID()
 	return my_id;
 }
 
-short CServer_Manager::Get_PlayerHP(int id)
+short CServer_Manager::Get_HP(int id, char type)
 {
-	return m_objects[id].hp;
+	if (type == O_PLAYER)
+		return m_objects[id].hp;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].hp;
+	else if (type == O_OBJECT)
+		return m_objects[object_idx_to_id(id)].hp;
 }
 
 int CServer_Manager::Get_PlayerClass(int id)
@@ -1035,12 +1064,6 @@ int CServer_Manager::Get_NpcClass(int id)
 {
 	short npc_index = npc_idx_to_id(id);
 	return m_objects[npc_index].m_class;
-}
-
-short CServer_Manager::Get_NpcHP(int id)
-{
-	short npc_index = npc_idx_to_id(id);
-	return m_objects[npc_index].hp;
 }
 
 bool CServer_Manager::Get_Particle(int id, char type)

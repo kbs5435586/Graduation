@@ -116,7 +116,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_PositionY(fY);
 	}
 
-	m_tInfo.fHP = server->Get_NpcHP(m_iLayerIdx);
+	m_tInfo.fHP = server->Get_HP(m_iLayerIdx,O_NPC);
 	m_IsHit = server->Get_isHitNPC(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;

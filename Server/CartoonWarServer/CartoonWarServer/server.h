@@ -80,6 +80,7 @@ public:
 	void send_hp_packet(int user_id, int other_id);
 	void send_do_particle_packet(int user_id, int other_id);
 	void send_arrow_packet(int arrow_id, int user_id, int other_id);
+	void send_deffend_packet(int deffend_id, int user_id, int other_id);
 
 	void set_formation(int user_id);
 	void set_starting_pos(int user_id);

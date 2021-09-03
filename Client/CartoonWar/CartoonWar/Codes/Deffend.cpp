@@ -37,33 +37,42 @@ HRESULT CDeffend::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_Matrix(pTemp);
 	m_pTransformCom->Scaling(0.06f, 0.06f, 0.06f);
 
-	_vec3 vColliderSize = { 50.f,50.f,50.f };
-	m_pColliderCom_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-	m_pColliderCom_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	//_vec3 vColliderSize = { 50.f,50.f,50.f };
+	//m_pColliderCom_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	//m_pColliderCom_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 	return S_OK;
 }
 
 _int CDeffend::Update_GameObject(const _float& fTimeDelta)
 {
-	m_pColliderCom_OBB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
-	m_pColliderCom_AABB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+
+	//m_pColliderCom_OBB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+	//m_pColliderCom_AABB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
 
 
-	Obb_Collision();
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return NO_EVENT;
-
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY+0.5f);
-
-	if (m_tInfo.fHP <= 0.f)
-		m_IsDead = true;
-
-
-	if (m_IsDead)
+	//Obb_Collision();
+	m_tInfo.fHP = server->Get_HP(m_iLayerIdx, O_OBJECT);
+	if (false == server->Get_Show(m_iLayerIdx, O_OBJECT))
 		return DEAD_OBJ;
+	m_IsShow = server->Get_Show(m_iLayerIdx, O_OBJECT);
+	if (m_IsShow)
+	{
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return NO_EVENT;
+
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		m_pTransformCom->Set_PositionY(fY + 0.5f);
+	}
+
+	//if (m_tInfo.fHP <= 0.f)
+	//	m_IsDead = true;
+	//if (m_IsDead)
+	//	return DEAD_OBJ;
 	return NO_EVENT;
 }
 
@@ -71,19 +80,22 @@ _int CDeffend::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
-	{
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
-			return -1;
-		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
-			return -1;
-	}
-	else
-	{
-		m_matOldWorld = m_pTransformCom->Get_Matrix();;
-		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	}
 
+	if (m_IsShow)
+	{
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+		{
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+				return -1;
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
+				return -1;
+		}
+		else
+		{
+			m_matOldWorld = m_pTransformCom->Get_Matrix();;
+			m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
+		}
+	}
 	return _int();
 }
 

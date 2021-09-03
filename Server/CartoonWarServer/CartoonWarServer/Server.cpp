@@ -392,6 +392,43 @@ void Server::process_packet(int user_id, char* buf)
         }
     }
     break;
+    case CS_PACKET_DEFFEND:
+    {
+        cs_packet_deffend* packet = reinterpret_cast<cs_packet_deffend*>(buf);
+        for (int obj = OBJECT_START; obj < MAX_OBJECT; ++obj)
+        {
+            if (ST_ACTIVE != g_clients[obj].m_status)
+            {
+                g_clients[user_id].m_gold -= DEFFEND_PRICE;
+                send_gold_packet(user_id);
+                g_clients[obj].m_cLock.lock();
+                g_clients[obj].m_status = ST_ACTIVE;
+                g_clients[obj].m_cLock.unlock();
+                g_clients[obj].m_id = obj;
+                g_clients[obj].m_type = TP_DEFFEND;
+                g_clients[obj].m_hp = SET_HP;
+                _matrix own = g_clients[user_id].m_transform.Get_Matrix();
+                g_clients[obj].m_transform.Set_Matrix(&own);
+                g_clients[obj].m_transform.Scaling(0.06f, 0.06f, 0.06f);
+                //g_clients[obj].m_transform.SetUp_RotationY(XMConvertToRadians(-180.f));
+                //g_clients[obj].m_transform.SetUp_Speed(100.f, XMConvertToRadians(90.f));
+                g_clients[obj].m_col.aabb_size = { 250.f,250.f,250.f };
+                g_clients[obj].m_col.obb_size = { 250.f,250.f,250.f };
+                Ready_Collider_AABB_BOX(obj, g_clients[obj].m_col.aabb_size);
+                Ready_Collider_OBB_BOX(obj, g_clients[obj].m_col.obb_size);
+                g_clients[obj].m_isOBB = false;
+
+                for (int i = 0; i < NPC_START; ++i)
+                {
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+                    send_deffend_packet(obj, i, user_id);
+                }
+                break;
+            }
+        }
+    }
+    break;
     case CS_PACKET_TELEPORT:
     {
         cs_packet_teleport* packet = reinterpret_cast<cs_packet_teleport*>(buf);
@@ -1680,6 +1717,17 @@ void Server::send_arrow_packet(int arrow_id, int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
+void Server::send_deffend_packet(int deffend_id, int user_id, int other_id)
+{
+    sc_packet_deffend packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_DEFFEND;
+    packet.setter_id = other_id;
+    packet.deffend_id = deffend_id;
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
 void Server::send_do_particle_packet(int user_id, int other_id)
 {
     sc_packet_do_particle packet;
@@ -2780,7 +2828,7 @@ void Server::do_arrow(int arrow_id)
         - g_clients[arrow_id].m_lifetime);
     if (arrow_life.count() < ARROW_ENDTIME) // 아직 화살 유지시간 남아있을때
     {
-        g_clients[arrow_id].m_transform.Go_Right(TIME_DELTA);
+        g_clients[arrow_id].m_transform.Go_Right(TIME_DELTA * 2.f);
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)

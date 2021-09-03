@@ -49,6 +49,7 @@ constexpr int CL_NPC_TEAM4 = 36;
 
 constexpr int TIER_ONE_PRICE = 1;
 constexpr int TIER_TWO_PRICE = 2;
+constexpr int DEFFEND_PRICE = 3;
 
 constexpr int WORLD_HORIZONTAL = 1000; // 월드 가로 x
 constexpr int WORLD_HEIGHT = 1000; // 월드 높이 y
@@ -58,7 +59,7 @@ constexpr int SERVER_PORT = 9000;
 
 constexpr float BASIC_FORM_RAD = 10.f;
 constexpr float PIE = 3.141592f;
-constexpr float KEY_COOLTIME = 0.017f;
+constexpr float KEY_COOLTIME = 0.013f;
 
 constexpr char CS_PACKET_LOGIN = 1;
 constexpr char CS_PACKET_MOVE = 2;
@@ -74,6 +75,7 @@ constexpr char CS_PACKET_TELEPORT = 11;
 constexpr char CS_PACKET_FIRE = 12;
 constexpr char CS_PACKET_ARROW = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
+constexpr char CS_PACKET_DEFFEND = 15;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -95,6 +97,7 @@ constexpr char SC_PACKET_GOLD = 17;
 constexpr char SC_PACKET_HP = 18;
 constexpr char SC_PACKET_DO_PARTICLE = 19;
 constexpr char SC_PACKET_ARROW = 20;
+constexpr char SC_PACKET_DEFFEND = 21;
 
 #pragma pack(push ,1)
 
@@ -210,12 +213,21 @@ struct sc_packet_arrow
 	int arrow_id;
 };
 
+struct sc_packet_deffend
+{
+	char size;
+	char type;
+	int setter_id;
+	int deffend_id;
+};
+
 constexpr unsigned char O_PLAYER = 0;
 constexpr unsigned char O_NPC = 1;
-constexpr unsigned char O_DEFFEND = 2;
-constexpr unsigned char O_ARROW = 3;
-constexpr unsigned char O_FIRE = 4;
-constexpr unsigned char O_TELE = 5;
+constexpr unsigned char O_OBJECT = 2;
+constexpr unsigned char O_DEFFEND = 3;
+constexpr unsigned char O_ARROW = 4;
+constexpr unsigned char O_FIRE = 5;
+constexpr unsigned char O_TELE = 6;
 
 struct sc_packet_enter
 {
@@ -386,6 +398,12 @@ struct cs_packet_attack
 };
 
 struct cs_packet_arrow
+{
+	char	size;
+	char	type;
+};
+
+struct cs_packet_deffend
 {
 	char	size;
 	char	type;

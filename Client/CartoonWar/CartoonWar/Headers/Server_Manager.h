@@ -61,6 +61,7 @@ public:
     void send_teleport_packet(float mx, float mz);
     void send_arrow_packet();
     void send_invisible_packet(bool isinvi);
+    void send_deffend_packet();
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);
@@ -78,12 +79,11 @@ public:
     bool Get_Red(int id);
     bool Get_Connected();
     short Get_PlayerID();
-    short Get_PlayerHP(int id);
+    short Get_HP(int id, char type);
     int Get_PlayerClass(int id);
     int Get_NpcClass(int id);
     _matrix Get_ServerMat(int id, char type);
 
-    short Get_NpcHP(int id);
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id);
     short Get_AnimNPC(int id);

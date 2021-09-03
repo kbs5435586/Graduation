@@ -49,6 +49,7 @@ constexpr int CL_NPC_TEAM4 = 36;
 
 constexpr int TIER_ONE_PRICE = 1;
 constexpr int TIER_TWO_PRICE = 2;
+constexpr int DEFFEND_PRICE = 3;
 
 constexpr int WORLD_HORIZONTAL = 1000; // 월드 가로 x
 constexpr int WORLD_HEIGHT = 1000; // 월드 높이 y
@@ -74,6 +75,7 @@ constexpr char CS_PACKET_TELEPORT = 11;
 constexpr char CS_PACKET_FIRE = 12;
 constexpr char CS_PACKET_ARROW = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
+constexpr char CS_PACKET_DEFFEND = 15;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -95,6 +97,7 @@ constexpr char SC_PACKET_GOLD = 17;
 constexpr char SC_PACKET_HP = 18;
 constexpr char SC_PACKET_DO_PARTICLE = 19;
 constexpr char SC_PACKET_ARROW = 20;
+constexpr char SC_PACKET_DEFFEND = 21;
 
 #pragma pack(push ,1)
 
@@ -208,6 +211,14 @@ struct sc_packet_arrow
 	char type;
 	int shoot_id;
 	int arrow_id;
+};
+
+struct sc_packet_deffend
+{
+	char size;
+	char type;
+	int setter_id;
+	int deffend_id;
 };
 
 constexpr unsigned char O_PLAYER = 0;
@@ -387,6 +398,12 @@ struct cs_packet_attack
 };
 
 struct cs_packet_arrow
+{
+	char	size;
+	char	type;
+};
+
+struct cs_packet_deffend
 {
 	char	size;
 	char	type;

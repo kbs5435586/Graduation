@@ -92,7 +92,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	m_IsHit = server->Get_isHitPL(m_iLayerIdx);
 	m_IsOnce = server->Get_isHitPL(m_iLayerIdx);
-	m_tInfo.fHP = server->Get_PlayerHP(m_iLayerIdx);
+	m_tInfo.fHP = server->Get_HP(m_iLayerIdx, O_PLAYER);
 	m_IsShow = server->Get_ShowOtherPlayer(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
@@ -1328,9 +1328,10 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)
 			{
-				//_matrix matTemp = m_pTransformCom->Get_Matrix();
-				//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Deffend", (_uint)SCENEID::SCENE_STAGE, L"Layer_Deffend", nullptr, (void*)&matTemp)))
-				//	return;
+				if (g_iGold >= DEFFEND_PRICE)
+				{
+					server->send_deffend_packet();
+				}
 				m_eCurState = STATE::STATE_ATTACK;
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 					return;

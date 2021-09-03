@@ -1001,13 +1001,7 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Mesh(CManagement* pManagement)
 				CMesh::Create_Load(L"../Data/MeshData/rpg_Rock4.dat"))))
 				return E_FAIL;
 				*/
-
-
-
-
-
 	}
-
 
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_StaticMesh_Flag_Blue",
