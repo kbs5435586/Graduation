@@ -359,6 +359,7 @@ void Server::process_packet(int user_id, char* buf)
                         {
                             send_do_particle_packet(cpy_vl, i); // 남은 체력 브로드캐스팅
                             send_hp_packet(cpy_vl, i);
+                            send_animation_packet(cpy_vl, i, A_HIT);
                         }
                     }
                 }

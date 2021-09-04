@@ -124,7 +124,6 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	}
 
 	m_tInfo.fHP = server->Get_HP(m_iLayerIdx,O_NPC);
-	m_IsHit = server->Get_isHitNPC(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_NpcClass(m_iLayerIdx);
 	m_eCurClass = (CLASS)m_iCurMeshNum;
 	Change_Class();
@@ -170,7 +169,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-
+	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_NPC);
 	Set_Animation(fTimeDelta);
 	if (fLen <= 175.f)
 	{
@@ -178,12 +177,8 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		{
 			m_iCurAnimIdx = 0;
 			m_IsOnce = false;
-			if (m_IsHit)
-			{
-				m_IsHit = false; // 수정
-				server->Set_AnimNPC(m_iLayerIdx, 0);
-				server->Set_isHitNPC(m_iLayerIdx, m_IsHit);
-			}
+			m_IsHit = false; // 수정
+			server->Set_Anim(0, m_iLayerIdx, O_NPC);
 			m_IsActioning = false;
 		}
 	}
@@ -245,7 +240,7 @@ _int CNPC::LastUpdate_GameObject(const _float& fTimeDelta)
 				m_matOldWorld = m_pTransformCom->Get_Matrix();;
 				m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 			}
-			m_iCurAnimIdx = server->Get_AnimNPC(m_iLayerIdx);
+			m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx,O_NPC);
 		}
 		else
 		{

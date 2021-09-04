@@ -85,13 +85,10 @@ public:
     _matrix Get_ServerMat(int id, char type);
 
     short Get_ShowOtherPlayer(int id);
-    short Get_Anim(int id);
-    short Get_AnimNPC(int id);
+    short Get_Anim(int id, char type);
     float Get_GameTime();
     short Get_NpcSize();
     short Get_TroopClass();
-    bool Get_isHitPL(int id);
-    bool Get_isHitNPC(int id);
     bool Get_isInvisible(int id);
     float Get_TimeDelta();
     bool Get_isFirst(int id, char type);
@@ -99,10 +96,7 @@ public:
     void Set_Move_CoolTime(high_resolution_clock::time_point ct);
     void Set_Rotate_CoolTime(high_resolution_clock::time_point ct);
     void Set_TroopClass(short mclass);
-    void Set_AnimPL(int id, short anim);
-    void Set_AnimNPC(int id, short anim);
-    void Set_isHitPL(int id, bool ishit);
-    void Set_isHitNPC(int id, bool ishit);
+    void Set_Anim(short anim, int id, char type);
     void Set_isFirst(bool first, int id, char type);
 
     bool is_player(int id);

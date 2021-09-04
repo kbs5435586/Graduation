@@ -90,8 +90,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 
-	m_IsHit = server->Get_isHitPL(m_iLayerIdx);
-	m_IsOnce = server->Get_isHitPL(m_iLayerIdx);
 	m_tInfo.fHP = server->Get_HP(m_iLayerIdx, O_PLAYER);
 	m_IsShow = server->Get_ShowOtherPlayer(m_iLayerIdx);
 	m_iCurMeshNum = server->Get_PlayerClass(m_iLayerIdx);
@@ -171,7 +169,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive && !m_IsDead)
 		Input_Key(fTimeDelta);
 
-	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx);
+	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_PLAYER);
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
@@ -185,8 +183,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		}
 		m_IsOnce = false;
 		m_IsHit = false; // ¼öÁ¤
-		//server->Set_AnimPL(m_iLayerIdx, 0);
-		server->Set_isHitPL(m_iLayerIdx, m_IsHit);
+		server->Set_Anim(0, m_iLayerIdx, O_PLAYER);
 		m_IsActioning = false;
 	}
 

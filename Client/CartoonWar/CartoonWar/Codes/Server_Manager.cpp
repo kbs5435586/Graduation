@@ -1148,51 +1148,25 @@ short CServer_Manager::Get_ShowOtherPlayer(int id)
 	return m_objects[id].showObject;
 }
 
-short CServer_Manager::Get_Anim(int id)
+short CServer_Manager::Get_Anim(int id, char type)
 {
-	return m_objects[id].anim;
+	if (type == O_PLAYER)
+		return m_objects[id].anim;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].anim;
 }
 
-short CServer_Manager::Get_AnimNPC(int id)
+void CServer_Manager::Set_Anim(short anim, int id, char type)
 {
-	int npc_id = npc_idx_to_id(id);
-	return m_objects[npc_id].anim;
-}
-
-void CServer_Manager::Set_AnimPL(int id, short anim)
-{
-	m_objects[id].anim = anim;
-}
-
-void CServer_Manager::Set_AnimNPC(int id, short anim)
-{
-	m_objects[npc_idx_to_id(id)].anim = anim;
-}
-
-bool CServer_Manager::Get_isHitPL(int id)
-{
-	return m_objects[id].isHit;
+	if (type == O_PLAYER)
+		m_objects[id].anim = anim;
+	else if (type == O_NPC)
+		m_objects[npc_idx_to_id(id)].anim = anim;
 }
 
 bool CServer_Manager::Get_isInvisible(int id)
 {
 	return m_objects[id].isInvisible;
-}
-
-bool CServer_Manager::Get_isHitNPC(int id)
-{
-	int npc_id = npc_idx_to_id(id);
-	return m_objects[npc_id].isHit;
-}
-
-void CServer_Manager::Set_isHitPL(int id, bool ishit)
-{
-	m_objects[id].isHit = ishit;
-}
-
-void CServer_Manager::Set_isHitNPC(int id, bool ishit)
-{
-	m_objects[npc_idx_to_id(id)].isHit = ishit;
 }
 
 short CServer_Manager::Get_NpcSize()

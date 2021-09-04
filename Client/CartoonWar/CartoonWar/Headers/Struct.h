@@ -557,7 +557,6 @@ struct Session
 	char			name[MAX_ID_LEN + 1];
 	bool			showObject = false;
 	bool			isFirst = false;
-	bool			isHit = false;
 	bool			isInvisible = false;
 	bool			isParticle = false;
 	unsigned int	m_class;
