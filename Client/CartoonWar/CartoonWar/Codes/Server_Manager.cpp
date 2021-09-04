@@ -167,20 +167,22 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", recv_id);
 			pTransform->Set_Matrix(mat);
+			Set_Server_Mat(recv_id, &mat);
 		}
-		else if (is_npc(recv_id)) // NPC 일때
+		else if (is_npc(recv_id)) // NPC 일때 // 화살 수정
+
 		{
 			short npc_id = npc_id_to_idx(recv_id);
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_NPC", L"Com_Transform", npc_id);
 			pTransform->Set_Matrix(mat);
+			Set_Server_Mat(recv_id, &mat);
 		}
 		else // 환경요소
 		{
 
 		}
 
-		Set_Server_Mat(recv_id, &mat);
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].isFirst = true;
 		m_objects[recv_id].hp = my_packet->hp;
@@ -666,6 +668,11 @@ void CServer_Manager::update_key_input()
 
 void CServer_Manager::update_anim(int id, unsigned char anim)
 {
+	if (A_HIT == anim || A_ATTACK == anim || A_DEAD == anim)
+		m_objects[id].isOnce = true;
+	else
+		m_objects[id].isOnce = false;
+
 	switch (m_objects[id].m_class)
 	{
 	case C_WORKER:
@@ -1074,6 +1081,16 @@ bool CServer_Manager::Get_isFirst(int id, char type)
 		return m_objects[object_idx_to_id(id)].isFirst;
 }
 
+bool CServer_Manager::Get_isOnce(int id, char type)
+{
+	if (type == O_PLAYER)
+		return m_objects[id].isOnce;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].isOnce;
+	else if (type == O_OBJECT)
+		return m_objects[object_idx_to_id(id)].isOnce;
+}
+
 void CServer_Manager::Set_isFirst(bool first, int id, char type)
 {
 	if (type == O_PLAYER)
@@ -1091,6 +1108,16 @@ void CServer_Manager::Set_isFirst(bool first, int id, char type)
 		m_objects[object_idx_to_id(id)].isFirst = first;
 		m_objects[object_idx_to_id(id)].m_mat._42 = 0.f;
 	}
+}
+
+void CServer_Manager::Set_isFirst(bool first, int id, char type)
+{
+	if (type == O_PLAYER)
+		m_objects[id].isOnce = first;
+	else if (type == O_NPC)
+		m_objects[npc_idx_to_id(id)].isOnce = first;
+	else if (type == O_OBJECT)
+		m_objects[object_idx_to_id(id)].isOnce = first;
 }
 
 int CServer_Manager::Get_PlayerClass(int id)

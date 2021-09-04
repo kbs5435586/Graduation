@@ -170,6 +170,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_NPC);
+	m_iCurAnimIdx = server->Get_isOnce(m_iLayerIdx, O_NPC);
 	Set_Animation(fTimeDelta);
 	if (fLen <= 175.f)
 	{
@@ -179,6 +180,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsOnce = false;
 			m_IsHit = false; // ¼öÁ¤
 			server->Set_Anim(0, m_iLayerIdx, O_NPC);
+			server->Set_isOnce(false, m_iLayerIdx, O_NPC);
 			m_IsActioning = false;
 		}
 	}
