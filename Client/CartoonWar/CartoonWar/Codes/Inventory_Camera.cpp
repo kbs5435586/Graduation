@@ -140,7 +140,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	if (which == 0)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID() % 2);
 		m_eCurClass = pTemp->GetClass();
 	}
 	else
