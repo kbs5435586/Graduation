@@ -170,7 +170,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		Input_Key(fTimeDelta);
 
 	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_PLAYER);
-	m_iCurAnimIdx = server->Get_isOnce(m_iLayerIdx, O_PLAYER);
+	m_IsOnce = server->Get_isOnce(m_iLayerIdx, O_PLAYER);
 	if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
 	{
 		if (m_IsCombat)
