@@ -1465,6 +1465,7 @@ void Server::send_move_packet(int user_id, int other_id)
     packet.l_y = pos._32;
     packet.l_z = pos._33;
     packet.p_x = pos._41;
+    packet.p_y = pos._42;
     packet.p_z = pos._43;
 
     //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
@@ -3074,7 +3075,7 @@ void Server::Obb_Collision(int id)
             _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
             _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 vTemp = { vPos - vTargetPos };
-            vTemp *= 1.f;
+            vTemp *= 3.f;
             o.m_vStartPoint = vPos;
             o.m_vEndPoint = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
@@ -3116,7 +3117,7 @@ void Server::Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vM
             continue;
         send_move_packet(i, id);
     }
-    fCnt += 0.02f;
+    fCnt += 0.04f;
 }
 
 void Server::cal_change_class_gold(int id, short m_class)

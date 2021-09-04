@@ -269,7 +269,7 @@ struct sc_packet_move
 	float r_x, r_y, r_z;
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
-	float p_x, p_z;
+	float p_x, p_y, p_z;
 	int move_time;
 };
 

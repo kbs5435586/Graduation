@@ -253,6 +253,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		temp._32 = my_packet->l_y;
 		temp._33 = my_packet->l_z;
 		temp._41 = my_packet->p_x;
+		temp._42 = my_packet->p_y;
 		temp._43 = my_packet->p_z;
 
 		Set_Server_Mat(recv_id, &temp);
