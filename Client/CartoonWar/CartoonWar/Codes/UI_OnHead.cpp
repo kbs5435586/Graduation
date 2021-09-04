@@ -43,11 +43,13 @@ _int CUI_OnHead::Update_GameObject(const _float& fTimeDelta)
 	{
 		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", m_tOrder.iIdx);
 		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", m_tOrder.iIdx);
+		m_IsShow = pGameObject->GetIsShow();
 	}
 	else
 	{
 		pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", L"Com_Transform", m_tOrder.iIdx);
 		pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx);
+		m_IsShow = pGameObject->GetIsShow();
 	}
 
 	if (pGameObject == nullptr)
@@ -81,22 +83,25 @@ _int CUI_OnHead::LastUpdate_GameObject(const _float& fTimeDelta)
 	if (m_pRendererCom == nullptr)
 		return -1;
 
-	if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
+	if (m_IsShow)
 	{
-		if (m_tOrder.IsPlayer)
+		if (m_pFrustumCom->Culling_Frustum(m_pTransformCom))
 		{
-			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
-				return E_FAIL;
-		}
-		else
-		{
-			if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx)->GetIsFrustum())
+			if (m_tOrder.IsPlayer)
 			{
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 					return E_FAIL;
 			}
+			else
+			{
+				if (CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", m_tOrder.iIdx)->GetIsFrustum())
+				{
+					if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
+						return E_FAIL;
+				}
+			}
+
 		}
-		
 	}
 	return _int();
 }

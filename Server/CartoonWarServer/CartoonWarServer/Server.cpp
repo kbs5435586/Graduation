@@ -2847,7 +2847,7 @@ void Server::do_arrow(int arrow_id)
         - g_clients[arrow_id].m_lifetime);
     if (arrow_life.count() < ARROW_ENDTIME) // 아직 화살 유지시간 남아있을때
     {
-        g_clients[arrow_id].m_transform.Go_Right(TIME_DELTA * 2.f);
+        g_clients[arrow_id].m_transform.Go_Right(TIME_DELTA);
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)

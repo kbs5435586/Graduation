@@ -198,7 +198,7 @@ HRESULT CMainApp::Ready_Sound()
 		return E_FAIL;
 	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, HORSE_WALK, "../Bin/Resource/Sounds/WalkHorse.mp3", 0.5f)))
 		return E_FAIL;	
-	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, IDLE, "../Bin/Resource/Sounds/Idle_Orc_Breath.wav", 0.5f)))
+	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, IDLE, "../Bin/Resource/Sounds/Idle_Orc_Breath.wav", 0.05f)))
 		return E_FAIL;
 	if (FAILED(m_pManagement->Add_Sound(SOUND_OBJECT, SHOOT, "../Bin/Resource/Sounds/Arrow.wav", 0.5f)))
 		return E_FAIL;
