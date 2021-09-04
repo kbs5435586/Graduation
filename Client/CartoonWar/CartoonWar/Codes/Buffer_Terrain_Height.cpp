@@ -307,6 +307,37 @@ _float CBuffer_Terrain_Height::Compute_HeightOnTerrain(CTransform* pTransform)
 	}
 }
 
+_float CBuffer_Terrain_Height::Compute_HeightOnTerrain(_vec3* pos)
+{
+	const _vec3* pTargetPos = pos;
+
+	_uint		iCurrentIdx = _uint(pTargetPos->z / m_fInterval) * m_iNumVerticesX + _uint(pTargetPos->x / m_fInterval);
+	if (m_iNumVertices <= iCurrentIdx)
+		return _float(0.f);
+
+	_float		fRatioX = (pTargetPos->x - m_pPosition[iCurrentIdx + m_iNumVerticesX].x) / m_fInterval;
+	_float		fRatioZ = (m_pPosition[iCurrentIdx + m_iNumVerticesX].z - pTargetPos->z) / m_fInterval;
+
+	_float		fHeight[4] =
+	{
+		m_pPosition[iCurrentIdx + m_iNumVerticesX].y,
+		m_pPosition[iCurrentIdx + m_iNumVerticesX + 1].y,
+		m_pPosition[iCurrentIdx + 1].y,
+		m_pPosition[iCurrentIdx].y
+	};
+
+	// 오른쪽위에있는삼각형
+	if (fRatioX >= fRatioZ)
+	{
+		return fHeight[0] + (fHeight[1] - fHeight[0]) * fRatioX + (fHeight[2] - fHeight[1]) * fRatioZ;
+	}
+	// 왼쪽 아래에있는삼각형
+	else
+	{
+		return fHeight[0] + (fHeight[3] - fHeight[0]) * fRatioZ + (fHeight[2] - fHeight[3]) * fRatioX;
+	}
+}
+
 HRESULT CBuffer_Terrain_Height::Culling_Frustum(CFrustum* pFrustum, const _matrix& matWorld)
 {
 	Plane	tPlane[6];

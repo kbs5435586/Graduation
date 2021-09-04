@@ -20,6 +20,7 @@ public:
     virtual CComponent*             Clone_Component(void* pArg = nullptr);
 public:
     _float                          Compute_HeightOnTerrain(CTransform* pTransform);
+    _float                          Compute_HeightOnTerrain(_vec3* pos);
     HRESULT                         Culling_Frustum(CFrustum* pFrustum, const _matrix& matWorld);
     _bool                           Picking_ToBuffer(_vec4* pOut, const CTransform* pTransformCOm, const CPicking* pPickingCom);
     virtual _bool                   IntersectTriangle(_vec3& v0, _vec3& v1, _vec3& v2, _vec3 vPos, _vec3 vDir, _float* t, _float* u, _float* v);

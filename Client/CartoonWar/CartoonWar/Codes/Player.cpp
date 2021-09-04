@@ -101,25 +101,29 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	Attack(fTimeDelta);
 	Play_Sound(fTimeDelta);
-	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
-	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
-	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
-
-	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_NPC", L"Com_Transform", 0);
-
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-	if (nullptr == pTerrainBuffer)
-		return NO_EVENT;
+	//m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	//m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
 	if (m_IsShow)
 	{
-		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-		m_pTransformCom->Set_PositionY(fY);
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return NO_EVENT;
+
+		_float fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		//m_pTransformCom->Set_PositionY(fY);
 
 		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_PLAYER);
+		_vec3   vPos = {};
+		if (server->Get_isFirst(m_iLayerIdx, O_PLAYER))
+		{
+			_vec3   vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+			server->Set_isFirst(false, m_iLayerIdx, O_PLAYER);
+		}
+		else
+			_vec3   vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43);
 
-		_vec3   vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43);
 		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
 		_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
 		_vec3   vLook = _vec3(matTemp._31, matTemp._32, matTemp._33);
@@ -130,15 +134,15 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		
 		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 		_vec3   vLen = pPos - vPos;
-		vLen.y = 0.f;
+		//vLen.y = 0.f;
 		_float   fLen = vLen.Length();
 
-		if (fLen > 1.f)
+		if (fLen > 0.1f)
 		{
 			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
 
-		m_pTransformCom->Set_PositionY(matTemp._42 + fY);
+		//m_pTransformCom->Set_PositionY(matTemp._42 + fY);
 
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 		{

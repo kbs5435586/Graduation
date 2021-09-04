@@ -94,6 +94,7 @@ public:
     bool Get_isHitNPC(int id);
     bool Get_isInvisible(int id);
     float Get_TimeDelta();
+    bool Get_isFirst(int id, char type);
 
     void Set_Move_CoolTime(high_resolution_clock::time_point ct);
     void Set_Rotate_CoolTime(high_resolution_clock::time_point ct);
@@ -102,6 +103,7 @@ public:
     void Set_AnimNPC(int id, short anim);
     void Set_isHitPL(int id, bool ishit);
     void Set_isHitNPC(int id, bool ishit);
+    void Set_isFirst(bool first, int id, char type);
 
     bool is_player(int id);
     bool is_npc(int id);

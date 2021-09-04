@@ -455,11 +455,12 @@ void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)
 	vPosition = *Get_StateInfo(STATE_POSITION);
 
 	vLook = Vector3_::Subtract(*pTargetPos, vPosition);
-	vLook.y = 0.f;
+	//vLook.y = 0.f;
 	vLook = Vector3_::Normalize(vLook);
 	vLook = vLook * m_fSpeed_Move * fTimeDelta;
 
 	vPosition = Vector3_::Add(vPosition, vLook);
+	//vPosition.y = pTargetPos->y;
 	Set_StateInfo(STATE_POSITION, &vPosition);
 }
 

@@ -3090,6 +3090,9 @@ void Server::Obb_Collision(int id)
         o.m_isOBB = false;
         o.m_isBazier = false;
         o.m_attack_target = -1;
+        _matrix temp = o.m_transform.Get_Matrix();
+        temp._42 = 0.f;
+        o.m_transform.Set_Matrix(&temp);
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE != g_clients[i].m_status)

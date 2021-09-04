@@ -105,9 +105,18 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		mat._42 = my_packet->p_y;
 		mat._43 = my_packet->p_z;
 
+		_vec3 pos = { mat._41, mat._42, mat._43 };
+
+		//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		//if (nullptr == pTerrainBuffer)
+		//	return;
+		//_float fY = pTerrainBuffer->Compute_HeightOnTerrain(&pos);
+		//mat._42 = fY;
+
 		pTransform->Set_Matrix(mat);
 		Set_Server_Mat(recv_id, &mat);
 		m_objects[recv_id].showObject = true;
+		m_objects[recv_id].isFirst = true;
 		m_objects[recv_id].anim = 0;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].m_class = (int)my_packet->p_class;
@@ -145,6 +154,13 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		mat._41 = my_packet->p_x;
 		mat._42 = my_packet->p_y;
 		mat._43 = my_packet->p_z;
+		_vec3 pos = { mat._41, mat._42, mat._43 };
+
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return;
+		_float fY = pTerrainBuffer->Compute_HeightOnTerrain(&pos);
+		mat._42 = fY;
 
 		if (is_player(recv_id)) // 플레이어 일때
 		{
@@ -166,6 +182,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		Set_Server_Mat(recv_id, &mat);
 		m_objects[recv_id].showObject = true;
+		m_objects[recv_id].isFirst = true;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].m_class = my_packet->p_class;
 
@@ -1044,6 +1061,26 @@ short CServer_Manager::Get_HP(int id, char type)
 		return m_objects[npc_idx_to_id(id)].hp;
 	else if (type == O_OBJECT)
 		return m_objects[object_idx_to_id(id)].hp;
+}
+
+bool CServer_Manager::Get_isFirst(int id, char type)
+{
+	if (type == O_PLAYER)
+		return m_objects[id].isFirst;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].isFirst;
+	else if (type == O_OBJECT)
+		return m_objects[object_idx_to_id(id)].isFirst;
+}
+
+void CServer_Manager::Set_isFirst(bool first, int id, char type)
+{
+	if (type == O_PLAYER)
+		m_objects[id].isFirst = first;
+	else if (type == O_NPC)
+		m_objects[npc_idx_to_id(id)].isFirst = first;
+	else if (type == O_OBJECT)
+		m_objects[object_idx_to_id(id)].isFirst = first;
 }
 
 int CServer_Manager::Get_PlayerClass(int id)
