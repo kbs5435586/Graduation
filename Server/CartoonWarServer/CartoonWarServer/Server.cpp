@@ -194,7 +194,7 @@ void Server::do_move(int user_id, char direction)
 
     Update_Collider(user_id, p.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
     Update_Collider(user_id, p.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
-    Obb_Collision(user_id);
+    //Obb_Collision(user_id);
 
     for (auto& o : g_clients) // aabb 충돌체크
 {
@@ -348,13 +348,20 @@ void Server::process_packet(int user_id, char* buf)
                     g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
                     g_clients[user_id].m_isAttack = false;
                     g_clients[i].m_hp -= ATTACK_DAMAGE;
-                    for (int player = 0; player < NPC_START; ++player)
+                    if (g_clients[i].m_hp > 0)
                     {
-                        if (!is_near(player, i))
-                            continue;
-                        send_do_particle_packet(player, i); // 남은 체력 브로드캐스팅
-                        send_hp_packet(player, i);
-                        send_animation_packet(player, i, A_HIT);
+                        for (int player = 0; player < NPC_START; ++player)
+                        {
+                            if (!is_near(player, i))
+                                continue;
+                            send_do_particle_packet(player, i); // 남은 체력 브로드캐스팅
+                            send_hp_packet(player, i);
+                            send_animation_packet(player, i, A_HIT);
+                        }
+                    }
+                    else
+                    {
+                        do_dead(i);
                     }
                 }
             }
@@ -540,7 +547,7 @@ void Server::send_login_ok_packet(int user_id)
 {
     sc_packet_login_ok packet;
     packet.exp = 0;
-    packet.hp = 100;
+    packet.hp = g_clients[user_id].m_hp;
     packet.id = user_id;
     packet.level = 0;
     packet.size = sizeof(packet);
@@ -1333,7 +1340,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 
     Update_Collider(npc_id, n.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
     Update_Collider(npc_id, n.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
-    Obb_Collision(npc_id);
+    //Obb_Collision(npc_id);
 
     for (auto& o : g_clients) // aabb 충돌체크
     {
@@ -1485,8 +1492,8 @@ void Server::enter_game(int user_id, char name[])
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
-    for (int i = 0; i < 5; ++i)
-        send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+    //for (int i = 0; i < 5; ++i)
+    //    send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     cout << "Player " << user_id << " login finish" << endl;
     for (int i = 0; i <= MAX_USER; ++i)
     {
@@ -1499,7 +1506,6 @@ void Server::enter_game(int user_id, char name[])
             if (ST_SLEEP == g_clients[i].m_status)
             {
                 g_clients[i].m_cLock.unlock();
-                activate_npc(i, FUNC_NPC_HOLD);
             }
             else if (ST_ACTIVE == g_clients[i].m_status) // 이미 연결 중인 클라들한테만, m_status도 락을 걸어야 정상임
             {
@@ -1779,7 +1785,6 @@ void Server::send_dead_packet(int user_id, int other_id)
     packet.id = g_clients[other_id].m_id;
     packet.hp = g_clients[other_id].m_hp;
     packet.anim = A_DEAD;
-    //cout << user_id << " saw " << other_id << " dead\n";
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
@@ -2021,9 +2026,7 @@ void Server::do_dead(int id)
         if (!is_near(i, id))
             continue;
         send_do_particle_packet(i, id); // 남은 체력 브로드캐스팅
-        send_hp_packet(i, id); // 남은 체력 브로드캐스팅
         send_dead_packet(i, id); // 깎이고 남은 체력 있으면
-        send_animation_packet(i, id, A_DEAD);
     }
     if (is_player(id))
     {
@@ -2492,7 +2495,7 @@ void Server::worker_thread()
             {
                 for (auto& it : g_clients) // OBB 작동한놈 OBB시키기
                 {
-                    if (ST_ACTIVE != it.second.m_status && ST_DEAD != it.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
+                    if (ST_ACTIVE != it.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
                         continue;
                     if(!it.second.m_isOBB)
                         continue;
@@ -3064,6 +3067,7 @@ void Server::Compute_ProjAxis(OBB* pOBB)
 void Server::Obb_Collision(int id)
 {
     SESSION& o = g_clients[id];
+
     if (o.m_isOBB && o.m_fBazierCnt <= 1.f)
     {
         if (!o.m_isBazier)

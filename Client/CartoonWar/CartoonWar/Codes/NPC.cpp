@@ -1260,7 +1260,6 @@ void CNPC::Death(const _float& fTimeDelta)
 	{
 		if (!m_IsDead)
 		{
-
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);

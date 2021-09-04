@@ -86,7 +86,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		my_troop = T_ALL;
 		my_last_troop = T_ALL;
 
-
 		CTransform* pTransform;
 		pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 			L"Layer_Player", L"Com_Transform", recv_id);
@@ -354,8 +353,9 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].hp = my_packet->hp;
 		update_anim(recv_id, my_packet->anim);
 
-		CGameObject* pGameObject = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", my_id);
-		m_IsShow = pGameObject->GetIsShow();
+		/*CGameObject* pGameObject = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", my_id);
+		pGameObject->
+		m_IsShow = pGameObject->GetIsShow();*/
 
 
 		//m_objects[recv_id].showObject = false;
@@ -674,7 +674,10 @@ void CServer_Manager::update_key_input()
 void CServer_Manager::update_anim(int id, unsigned char anim)
 {
 	if (A_HIT == anim || A_ATTACK == anim || A_DEAD == anim)
+	{
+		m_objects[id].anim_stat = anim;
 		m_objects[id].isOnce = true;
+	}
 	else
 		m_objects[id].isOnce = false;
 
@@ -1186,6 +1189,14 @@ short CServer_Manager::Get_Anim(int id, char type)
 		return m_objects[id].anim;
 	else if (type == O_NPC)
 		return m_objects[npc_idx_to_id(id)].anim;
+}
+
+short CServer_Manager::Get_AnimStat(int id, char type)
+{
+	if (type == O_PLAYER)
+		return m_objects[id].anim_stat;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].anim_stat;
 }
 
 void CServer_Manager::Set_Anim(short anim, int id, char type)

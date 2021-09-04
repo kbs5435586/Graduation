@@ -86,6 +86,7 @@ public:
 
     short Get_ShowOtherPlayer(int id);
     short Get_Anim(int id, char type);
+    short Get_AnimStat(int id, char type);
     float Get_GameTime();
     short Get_NpcSize();
     short Get_TroopClass();
