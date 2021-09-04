@@ -127,6 +127,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsShow && A_DEAD != server->Get_AnimStat(m_iLayerIdx, O_PLAYER))
 	{
+		if(A_DEAD == server->Get_AnimStat(m_iLayerIdx, O_PLAYER))
+			char a = server->Get_AnimStat(m_iLayerIdx, O_PLAYER); // 8ÀÌ dead
+
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 		if (nullptr == pTerrainBuffer)
 			return NO_EVENT;
@@ -1747,7 +1750,7 @@ void CPlayer::Death(const _float& fTimeDelta)
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);
-			if (m_fDeathTime >= 1.f)
+			if (m_fDeathTime >= 1.7f)
 			{
 				m_fDeathTime = 0.f;
 				m_IsDead = true;
@@ -1761,7 +1764,7 @@ void CPlayer::Death(const _float& fTimeDelta)
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);
-			if (m_fDeathTime >= 1.f)
+			if (m_fDeathTime >= 1.7f)
 			{
 				m_fDeathTime = 0.f;
 				m_IsDead = true;

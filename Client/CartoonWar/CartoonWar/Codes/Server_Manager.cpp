@@ -227,10 +227,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", recv_id);
 			pTransform->Set_Matrix(mat);
-
-			CGameObject* pGameObject = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", recv_id);
-			pGameObject->SetisDead(false);
-
 			Set_Server_Mat(recv_id, &mat);
 		}
 		else if (is_npc(recv_id)) // NPC 일때 // 화살 수정
@@ -248,6 +244,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].isFirst = true;
 		m_objects[recv_id].hp = my_packet->hp;
+		m_objects[recv_id].anim_stat == A_IDLE;
 		update_anim(my_packet->id, my_packet->anim);
 		Safe_Release(managment);
 	}
@@ -735,9 +732,11 @@ void CServer_Manager::update_key_input()
 
 void CServer_Manager::update_anim(int id, unsigned char anim)
 {
-	m_objects[id].anim_stat = anim;
 	if (A_HIT == anim || A_ATTACK == anim || A_DEAD == anim)
+	{
+		m_objects[id].anim_stat = anim;
 		m_objects[id].isOnce = true;
+	}
 	else
 		m_objects[id].isOnce = false;
 

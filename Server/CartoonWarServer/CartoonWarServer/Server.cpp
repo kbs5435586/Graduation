@@ -2056,7 +2056,7 @@ void Server::do_dead(int id)
     }
     if (is_player(id))
     {
-        add_timer(id, FUNC_REVIVE, 2000);
+        add_timer(id, FUNC_REVIVE, REVIVE_COOLTIME);
     }
     else
     {
