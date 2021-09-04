@@ -239,12 +239,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			Set_Server_Mat(recv_id, &mat);
 		}
 
-
-
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].isFirst = true;
 		m_objects[recv_id].hp = my_packet->hp;
-		m_objects[recv_id].anim_stat == A_IDLE;
+		m_objects[recv_id].anim_stat = A_IDLE;
 		update_anim(my_packet->id, my_packet->anim);
 		Safe_Release(managment);
 	}
