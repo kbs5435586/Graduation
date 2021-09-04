@@ -123,7 +123,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 		_vec3	calPos = { pPos.x, 0.f, pPos.z }; // 현재 자신 위치
-		_vec3   pPos =	{ vPos.x, 0.f, vPos.z }; // 가야할 목적지
+		pPos = { vPos.x, 0.f, vPos.z }; // 가야할 목적지
 
 
 		_vec3   vLen = calPos - pPos;
