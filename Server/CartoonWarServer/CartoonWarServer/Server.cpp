@@ -218,7 +218,7 @@ void Server::do_move(int user_id, char direction)
     {
         if (false == is_near(c.second.m_id, user_id)) // 근처에 없는애는 그냥 깨우지도 마라
             continue;
-        if (ST_ACTIVE != c.second.m_status)
+        if (ST_ACTIVE != c.second.m_status && ST_DEAD != c.second.m_status)
             continue;
         if (c.second.m_id == user_id)
             continue;
