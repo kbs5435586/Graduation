@@ -190,6 +190,63 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		Safe_Release(managment);
 	}
 	break;
+	case SC_PACKET_REVIVE:
+	{
+		managment = CManagement::GetInstance();
+		if (nullptr == managment)
+			return;
+		managment->AddRef();
+
+		sc_packet_revive* my_packet = reinterpret_cast<sc_packet_revive*>(ptr);
+		int recv_id = my_packet->id;
+		CTransform* pTransform;
+
+		_matrix mat;
+		mat._11 = my_packet->r_x;
+		mat._12 = my_packet->r_y;
+		mat._13 = my_packet->r_z;
+		mat._21 = my_packet->u_x;
+		mat._22 = my_packet->u_y;
+		mat._23 = my_packet->u_z;
+		mat._31 = my_packet->l_x;
+		mat._32 = my_packet->l_y;
+		mat._33 = my_packet->l_z;
+		mat._41 = my_packet->p_x;
+		mat._42 = my_packet->p_y;
+		mat._43 = my_packet->p_z;
+		_vec3 pos = { mat._41, mat._42, mat._43 };
+
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return;
+		_float fY = pTerrainBuffer->Compute_HeightOnTerrain(&pos);
+		mat._42 = fY;
+
+		if (is_player(recv_id)) // 플레이어 일때
+		{
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_Player", L"Com_Transform", recv_id);
+			pTransform->Set_Matrix(mat);
+			Set_Server_Mat(recv_id, &mat);
+		}
+		else if (is_npc(recv_id)) // NPC 일때 // 화살 수정
+
+		{
+			short npc_id = npc_id_to_idx(recv_id);
+			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+				L"Layer_NPC", L"Com_Transform", npc_id);
+			pTransform->Set_Matrix(mat);
+			Set_Server_Mat(recv_id, &mat);
+		}
+
+
+		m_objects[recv_id].showObject = true;
+		m_objects[recv_id].isFirst = true;
+		m_objects[recv_id].hp = my_packet->hp;
+		update_anim(my_packet->id, my_packet->anim);
+		Safe_Release(managment);
+	}
+	break;
 	case SC_PACKET_NPC_SIZE:
 	{
 		sc_packet_npc_size* my_packet = reinterpret_cast<sc_packet_npc_size*>(ptr);
@@ -673,11 +730,9 @@ void CServer_Manager::update_key_input()
 
 void CServer_Manager::update_anim(int id, unsigned char anim)
 {
+	m_objects[id].anim_stat = anim;
 	if (A_HIT == anim || A_ATTACK == anim || A_DEAD == anim)
-	{
-		m_objects[id].anim_stat = anim;
 		m_objects[id].isOnce = true;
-	}
 	else
 		m_objects[id].isOnce = false;
 

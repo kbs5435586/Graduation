@@ -98,6 +98,7 @@ constexpr char SC_PACKET_HP = 18;
 constexpr char SC_PACKET_DO_PARTICLE = 19;
 constexpr char SC_PACKET_ARROW = 20;
 constexpr char SC_PACKET_DEFFEND = 21;
+constexpr char SC_PACKET_REVIVE = 22;
 
 #pragma pack(push ,1)
 
@@ -244,6 +245,19 @@ struct sc_packet_enter
 	float u_x, u_y, u_z;
 	float l_x, l_y, l_z;
 	short p_class;
+};
+
+struct sc_packet_revive
+{
+	char size;
+	char type;
+	int id;
+	short hp;
+	unsigned char anim;
+	float p_x, p_y, p_z;
+	float r_x, r_y, r_z;
+	float u_x, u_y, u_z;
+	float l_x, l_y, l_z;
 };
 
 struct sc_packet_change_class

@@ -81,6 +81,7 @@ public:
 	void send_do_particle_packet(int user_id, int other_id);
 	void send_arrow_packet(int arrow_id, int user_id, int other_id);
 	void send_deffend_packet(int deffend_id, int user_id, int other_id);
+	void send_revive_packet(int user_id, int other_id);
 
 	void set_formation(int user_id);
 	void set_starting_pos(int user_id);
@@ -92,6 +93,7 @@ public:
 	void do_follow(int npc_id);
 	void do_attack(int npc_id);
 	void do_dead(int id);
+	void do_revive(int id);
 	void do_change_formation(int player_id);
 	void do_change_npc_act(int player_id, unsigned char act);
 	void do_dot_damage(int id);

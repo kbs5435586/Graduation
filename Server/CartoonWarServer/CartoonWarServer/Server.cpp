@@ -1705,6 +1705,30 @@ void Server::send_enter_packet(int user_id, int other_id)
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
 
+void Server::send_revive_packet(int user_id, int other_id)
+{
+    sc_packet_revive packet;
+    packet.id = other_id;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_REVIVE;
+    packet.hp = g_clients[other_id].m_hp;
+    _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
+    packet.r_x = pos._11;
+    packet.r_y = pos._12;
+    packet.r_z = pos._13;
+    packet.u_x = pos._21;
+    packet.u_y = pos._22;
+    packet.u_z = pos._23;
+    packet.l_x = pos._31;
+    packet.l_y = pos._32;
+    packet.l_z = pos._33;
+    packet.p_x = pos._41;
+    packet.p_y = pos._42;
+    packet.p_z = pos._43;
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
 void Server::send_hp_packet(int user_id, int other_id)
 {
     sc_packet_hp packet;
@@ -2039,6 +2063,25 @@ void Server::do_dead(int id)
     }
 }
 
+void Server::do_revive(int id)
+{
+    g_clients[id].m_cLock.lock();
+    g_clients[id].m_status = ST_ACTIVE;
+    g_clients[id].m_cLock.unlock();
+    g_clients[id].m_last_order = FUNC_END;
+    //g_clients[id].m_formation = F_SQUARE;
+    //g_clients[id].m_type = TP_PLAYER;
+    g_clients[id].m_hp = SET_HP;
+    //g_clients[id].m_total_angle = -90.f; // 수정
+    g_clients[id].m_LastAnim = A_IDLE;
+    g_clients[id].m_anim = A_IDLE;
+    g_clients[id].m_troop = T_ALL;
+    g_clients[id].m_isAttack = false;
+    g_clients[id].m_isOBB = false;
+    _vec3 pos = g_clients[id].m_vStartPos;
+    g_clients[id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+}
+
 void Server::disconnect(int user_id)
 {
     //send_leave_packet(user_id, user_id); // 나 자신
@@ -2257,18 +2300,20 @@ void Server::is_flag_near(int flag)
 
 void Server::set_starting_pos(int user_id)
 {
+    _vec3 pos = {};
     if (0 == user_id)
     {
         g_clients[user_id].m_team = TEAM_RED;
-        _vec3 pos = { 350.f, 0.f, 400.f };
+        pos = { 350.f, 0.f, 400.f };
     }
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
-        _vec3 pos = { 340.f, 0.f, 420.f };
+        pos = { 340.f, 0.f, 420.f };
     }
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     g_clients[user_id].m_vStartPos = pos;
+
     //{ // 스트레스 테스트
     //    _vec3 pos = { (float)(rand()%WORLD_HORIZONTAL), 0.f, (float)(rand() % WORLD_HORIZONTAL) };
     //    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
@@ -2492,6 +2537,7 @@ void Server::worker_thread()
             delete overEx;
             break;
         case FUNC_REVIVE:
+            do_revive(id);
             // 포문 해주기 전에 부활관련 데이터 처리 먼저
             for (int pl = 0; pl < NPC_START; ++pl)
             {
@@ -2500,7 +2546,7 @@ void Server::worker_thread()
                 
                 if (is_near(pl, id)) // 부활할 애 주변에 보일때
                 {
-
+                    send_revive_packet(pl, id); // 나 자신 포함 보내기
                 }
                 else // 부활한 애 주변에 안보일때
                 {
