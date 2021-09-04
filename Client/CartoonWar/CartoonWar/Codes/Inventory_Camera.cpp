@@ -121,12 +121,12 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
 
 
-	//CServer_Manager* server = CServer_Manager::GetInstance();
-	//if (nullptr == server)
-	//	return -1;
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Inventory_Player", L"Com_Transform", g_iPlayerIdx);
+		L"Layer_Inventory_Player", L"Com_Transform", server->Get_PlayerID());
 	_vec3 vTemp = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 
 	//1,2,7
@@ -140,20 +140,21 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	if (which == 0)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
 		m_eCurClass = pTemp->GetClass();
 	}
 	else
 	{
-		//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
-		//m_eCurClass = pTemp->GetClass();
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+
+		m_eCurClass = pTemp->GetClass();
 	}
 
 
 	if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
 	{
-		_vec3 eye(0.f, 8.5f, -12.f);
-		_vec3 at(0.f, 6.f, 0.f);
+		_vec3 eye(0.f, 6.5f, -7.f);
+		_vec3 at(0.f, 4.f, 0.f);
 		tICameraDesc.vEye = vTemp + eye;
 		tICameraDesc.vAt = vTemp + at;
 	}
