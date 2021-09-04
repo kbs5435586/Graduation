@@ -170,7 +170,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_NPC);
-	m_iCurAnimIdx = server->Get_isOnce(m_iLayerIdx, O_NPC);
+	m_IsOnce = server->Get_isOnce(m_iLayerIdx, O_NPC);
 	Set_Animation(fTimeDelta);
 	if (fLen <= 175.f)
 	{

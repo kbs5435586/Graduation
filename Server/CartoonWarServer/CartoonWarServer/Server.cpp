@@ -327,9 +327,6 @@ void Server::process_packet(int user_id, char* buf)
     {
         cs_packet_attack* packet = reinterpret_cast<cs_packet_attack*>(buf);
         g_clients[user_id].m_isAttack = true;
-        g_clients[user_id].m_cLock.lock();
-        unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
-        g_clients[user_id].m_cLock.unlock();
 
         for (int i = 0; i < OBJECT_START; ++i)
         {
@@ -351,16 +348,13 @@ void Server::process_packet(int user_id, char* buf)
                     g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
                     g_clients[user_id].m_isAttack = false;
                     g_clients[i].m_hp -= ATTACK_DAMAGE;
-                    send_do_particle_packet(user_id, i); // 남은 체력 브로드캐스팅
-                    send_hp_packet(user_id, i);
-                    for (auto cpy_vl : copy_viewlist)
+                    for (int player = 0; player < NPC_START; ++player)
                     {
-                        if (is_player(cpy_vl))
-                        {
-                            send_do_particle_packet(cpy_vl, i); // 남은 체력 브로드캐스팅
-                            send_hp_packet(cpy_vl, i);
-                            send_animation_packet(cpy_vl, i, A_HIT);
-                        }
+                        if (!is_near(player, i))
+                            continue;
+                        send_do_particle_packet(player, i); // 남은 체력 브로드캐스팅
+                        send_hp_packet(player, i);
+                        send_animation_packet(player, i, A_HIT);
                     }
                 }
             }
