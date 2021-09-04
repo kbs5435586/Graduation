@@ -3117,7 +3117,7 @@ void Server::Hit_Object(int id, _float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vM
             continue;
         send_move_packet(i, id);
     }
-    fCnt += 0.04f;
+    fCnt += 0.02f;
 }
 
 void Server::cal_change_class_gold(int id, short m_class)
