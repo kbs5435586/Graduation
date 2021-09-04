@@ -353,6 +353,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		m_objects[recv_id].hp = my_packet->hp;
 		update_anim(recv_id, my_packet->anim);
+
+		CGameObject* pGameObject = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", my_id);
+		m_IsShow = pGameObject->GetIsShow();
+
+
 		//m_objects[recv_id].showObject = false;
 
 		//managment = CManagement::GetInstance();  // 플레이어의 죽는 애니메이션이 끝났을때 실행되게

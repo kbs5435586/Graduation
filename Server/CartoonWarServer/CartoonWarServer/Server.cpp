@@ -1992,21 +1992,7 @@ void Server::do_attack(int npc_id)
                         }
                         else // 상대방이 죽었을때
                         {
-                            g_clients[n.m_attack_target].m_hp = 0;
-                            g_clients[n.m_attack_target].m_cLock.lock();
-                            g_clients[n.m_attack_target].m_status = ST_DEAD;
-                            g_clients[n.m_attack_target].m_cLock.unlock();
-                            cout << n.m_attack_target << " is dead\n";
-                            for (int i = 0; i < NPC_START; ++i)
-                            {
-                                if (ST_ACTIVE != g_clients[i].m_status)
-                                    continue;
-                                if (!is_near(i, n.m_attack_target))
-                                    continue;
-                                send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                send_leave_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                            }
+                            do_dead(n.m_attack_target);
                             n.m_attack_target = -1;
                         }
                     }
@@ -2023,14 +2009,29 @@ void Server::do_attack(int npc_id)
 
 void Server::do_dead(int id)
 {
-    //add_timer(id, FUNC_DEAD, 3000);
+    g_clients[id].m_cLock.lock();
+    g_clients[id].m_status = ST_DEAD;
+    g_clients[id].m_cLock.unlock();
+    cout << id << " is dead\n";
+    g_clients[id].m_hp = 0;
     for (int i = 0; i < NPC_START; ++i)
     {
-        if (is_near(id, i)) // 죽은애 주변에 있는 플레이어에게
-        {
-            send_dead_packet(i, id); // 깎이고 남은 체력 있으면
-            send_animation_packet(i, id, A_DEAD);
-        }
+        if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+            continue;
+        if (!is_near(i, id))
+            continue;
+        send_do_particle_packet(i, id); // 남은 체력 브로드캐스팅
+        send_hp_packet(i, id); // 남은 체력 브로드캐스팅
+        send_dead_packet(i, id); // 깎이고 남은 체력 있으면
+        send_animation_packet(i, id, A_DEAD);
+    }
+    if (is_player(id))
+    {
+        // 죽는 애니메이션 끝나면 플레이어는 클라 애니메이션 끝났을때 부활신호 보내서 부활
+    }
+    else
+    {
+        // 죽는 애니메이션 끝나면 npc는 send_leave_packet(i, id); // 남은 체력 브로드캐스팅
     }
 }
 

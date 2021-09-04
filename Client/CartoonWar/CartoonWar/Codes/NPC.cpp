@@ -178,9 +178,9 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		{
 			m_iCurAnimIdx = 0;
 			m_IsOnce = false;
+			server->Set_isOnce(false, m_iLayerIdx, O_NPC);
 			m_IsHit = false; // ¼öÁ¤
 			server->Set_Anim(0, m_iLayerIdx, O_NPC);
-			server->Set_isOnce(false, m_iLayerIdx, O_NPC);
 			m_IsActioning = false;
 		}
 	}
@@ -1270,7 +1270,6 @@ void CNPC::Death(const _float& fTimeDelta)
 				m_IsDead = true;
 			}
 		}
-
 	}
 	else if (m_iCurAnimIdx == m_iDeathMotion[0])
 	{
