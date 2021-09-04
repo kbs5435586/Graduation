@@ -126,7 +126,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 
 	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		L"Layer_Inventory_Player", L"Com_Transform", server->Get_PlayerID());
+		L"Layer_Inventory_Player", L"Com_Transform", server->Get_PlayerID() % 2);
 	_vec3 vTemp = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
 
 	//1,2,7
@@ -140,7 +140,7 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 
 	if (which == 0)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID() % 2);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", server->Get_PlayerID());
 		m_eCurClass = pTemp->GetClass();
 	}
 	else
