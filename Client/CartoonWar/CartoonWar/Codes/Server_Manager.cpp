@@ -227,6 +227,10 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 				L"Layer_Player", L"Com_Transform", recv_id);
 			pTransform->Set_Matrix(mat);
+
+			CGameObject* pGameObject = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", recv_id);
+			pGameObject->SetisDead(false);
+
 			Set_Server_Mat(recv_id, &mat);
 		}
 		else if (is_npc(recv_id)) // NPC 일때 // 화살 수정
@@ -238,6 +242,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			pTransform->Set_Matrix(mat);
 			Set_Server_Mat(recv_id, &mat);
 		}
+
 
 
 		m_objects[recv_id].showObject = true;

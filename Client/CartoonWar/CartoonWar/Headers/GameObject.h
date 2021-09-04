@@ -41,7 +41,7 @@ public:
 	ENVITYPE&								GetEnviType(){return m_eEnviType;}
 public:
 	void									SetClass(CLASS _c) { m_eCurClass = _c; }
-
+	void									SetisDead(bool _b) { m_IsDead = _b; }
 public:
 	_matrix&								GetAttackedObject_Matrix(){return m_matAttackedTarget;}
 public:
