@@ -1712,6 +1712,7 @@ void Server::send_revive_packet(int user_id, int other_id)
     packet.size = sizeof(packet);
     packet.type = SC_PACKET_REVIVE;
     packet.hp = g_clients[other_id].m_hp;
+    packet.anim = g_clients[other_id].m_anim;
     _matrix pos = g_clients[other_id].m_transform.Get_Matrix();
     packet.r_x = pos._11;
     packet.r_y = pos._12;

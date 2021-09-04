@@ -119,9 +119,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsOnce = false;
 		server->Set_isOnce(false, m_iLayerIdx, O_PLAYER);
 		m_IsHit = false; // ¼öÁ¤
-		server->Set_Anim(0, m_iLayerIdx, O_PLAYER);
+		//server->Set_Anim(0, m_iLayerIdx, O_PLAYER);
 		m_IsActioning = false;
 	}
+
+	char a = server->Get_AnimStat(m_iLayerIdx, O_PLAYER); // 8ÀÌ dead
 
 	if (m_IsShow && A_DEAD != server->Get_AnimStat(m_iLayerIdx, O_PLAYER))
 	{
@@ -209,10 +211,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-	//if (m_IsDead)
-	//{
-	//	Resurrection();
-	//}
+	if (m_IsDead)
+	{
+		int a = 0;
+		//Resurrection();
+	}
 
 	if (m_IsParticleRun)
 	{
@@ -1737,28 +1740,28 @@ void CPlayer::Compute_Matrix_X()
 void CPlayer::Death(const _float& fTimeDelta)
 {
 	DeathMontion_Init();
-	if (m_iCurAnimIdx == m_iDeathMotion[1])
+	if (m_iCurAnimIdx == m_iDeathMotion[1]) // 9
 	{
 		if (!m_IsDead)
 		{
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matLeft, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);
-			if (m_fDeathTime >= 1.7f)
+			if (m_fDeathTime >= 1.f)
 			{
 				m_fDeathTime = 0.f;
 				m_IsDead = true;
 			}
 		}
 	}
-	else if (m_iCurAnimIdx == m_iDeathMotion[0])
+	else if (m_iCurAnimIdx == m_iDeathMotion[0]) // 8
 	{
 		if (!m_IsDead)
 		{
 			m_fDeathTime += fTimeDelta * 1.2f;
 			_matrix matTemp = Matrix::Lerp(m_pTransformCom->Get_Matrix(), m_matRight, fTimeDelta * 1.2f);
 			m_pTransformCom->Set_Matrix(matTemp);
-			if (m_fDeathTime >= 1.7f)
+			if (m_fDeathTime >= 1.f)
 			{
 				m_fDeathTime = 0.f;
 				m_IsDead = true;
