@@ -1110,14 +1110,14 @@ void CServer_Manager::Set_isFirst(bool first, int id, char type)
 	}
 }
 
-void CServer_Manager::Set_isFirst(bool first, int id, char type)
+void CServer_Manager::Set_isOnce(bool once, int id, char type)
 {
 	if (type == O_PLAYER)
-		m_objects[id].isOnce = first;
+		m_objects[id].isOnce = once;
 	else if (type == O_NPC)
-		m_objects[npc_idx_to_id(id)].isOnce = first;
+		m_objects[npc_idx_to_id(id)].isOnce = once;
 	else if (type == O_OBJECT)
-		m_objects[object_idx_to_id(id)].isOnce = first;
+		m_objects[object_idx_to_id(id)].isOnce = once;
 }
 
 int CServer_Manager::Get_PlayerClass(int id)

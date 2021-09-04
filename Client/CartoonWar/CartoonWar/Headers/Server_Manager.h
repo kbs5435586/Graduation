@@ -99,7 +99,7 @@ public:
     void Set_TroopClass(short mclass);
     void Set_Anim(short anim, int id, char type);
     void Set_isFirst(bool first, int id, char type);
-    void Set_isOnce(bool first, int id, char type);
+    void Set_isOnce(bool once, int id, char type);
 
     bool is_player(int id);
     bool is_npc(int id);
