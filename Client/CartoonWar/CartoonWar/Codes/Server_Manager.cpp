@@ -107,11 +107,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		_vec3 pos = { mat._41, mat._42, mat._43 };
 
-		//CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
-		//if (nullptr == pTerrainBuffer)
-		//	return;
-		//_float fY = pTerrainBuffer->Compute_HeightOnTerrain(&pos);
-		//mat._42 = fY;
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return;
+		_float fY = pTerrainBuffer->Compute_HeightOnTerrain(&pos);
+		mat._42 = fY;
 
 		pTransform->Set_Matrix(mat);
 		Set_Server_Mat(recv_id, &mat);
@@ -1076,11 +1076,20 @@ bool CServer_Manager::Get_isFirst(int id, char type)
 void CServer_Manager::Set_isFirst(bool first, int id, char type)
 {
 	if (type == O_PLAYER)
+	{
 		m_objects[id].isFirst = first;
+		m_objects[id].m_mat._42 = 0.f;
+	}
 	else if (type == O_NPC)
+	{
 		m_objects[npc_idx_to_id(id)].isFirst = first;
+		m_objects[npc_idx_to_id(id)].m_mat._42 = 0.f;
+	}
 	else if (type == O_OBJECT)
+	{
 		m_objects[object_idx_to_id(id)].isFirst = first;
+		m_objects[object_idx_to_id(id)].m_mat._42 = 0.f;
+	}
 }
 
 int CServer_Manager::Get_PlayerClass(int id)

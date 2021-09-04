@@ -118,11 +118,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		_vec3   vPos = {};
 		if (server->Get_isFirst(m_iLayerIdx, O_PLAYER))
 		{
-			_vec3   vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+			vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
 			server->Set_isFirst(false, m_iLayerIdx, O_PLAYER);
 		}
 		else
-			_vec3   vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43);
+			vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43);
 
 		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
 		_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
