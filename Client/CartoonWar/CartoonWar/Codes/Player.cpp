@@ -155,7 +155,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		//vLen.y = 0.f;
 		_float   fLen = vLen.Length();
 
-		if (fLen > 0.1f)
+		if (fLen > 0.5f)
 		{
 			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
@@ -1748,10 +1748,8 @@ void CPlayer::Death(const _float& fTimeDelta)
 			{
 				m_fDeathTime = 0.f;
 				m_IsDead = true;
-
 			}
 		}
-
 	}
 	else if (m_iCurAnimIdx == m_iDeathMotion[0])
 	{
@@ -1767,7 +1765,6 @@ void CPlayer::Death(const _float& fTimeDelta)
 			}
 		}
 	}
-
 }
 
 void CPlayer::DeathMontion_Init()

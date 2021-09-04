@@ -349,9 +349,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 				vUp *= 100.f;
 				vLook *= -250.f;
 			}
-			
 
-			
 			vPos.x += fRand;
 			vPos.y += fTemp;
 
@@ -401,9 +399,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_matProj._44 = 0.0f;
 	}
 
-
-
-	/*CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return NO_EVENT;
 
@@ -461,7 +457,7 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-	}*/
+	}
 
 
 

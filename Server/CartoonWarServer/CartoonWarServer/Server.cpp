@@ -2903,7 +2903,7 @@ void Server::do_arrow_collision(int arrow_id)
             {
                 if (iter.second.m_type == TP_NATURE || iter.second.m_type == TP_DEFFEND) // 화살 맞은애가 밀리면 안됨
                 {
-                    iter.second.m_hp -= ARROW_DAMAGE;
+                    //iter.second.m_hp -= ARROW_DAMAGE;
                     for (int i = 0; i < NPC_START; ++i)
                     {
                         if (ST_ACTIVE != g_clients[i].m_status)
@@ -2911,7 +2911,7 @@ void Server::do_arrow_collision(int arrow_id)
                         if (!is_near(i, iter.first))
                             continue;
                         send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
-                        send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        //send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
                     }
                     delete_arrow(arrow_id);
                 }
@@ -2922,16 +2922,21 @@ void Server::do_arrow_collision(int arrow_id)
                     iter.second.m_matAttackedTarget._42 = arrow_Pos.y;
                     iter.second.m_matAttackedTarget._43 = arrow_Pos.z;
                     iter.second.m_hp -= ARROW_DAMAGE;
-                    iter.second.m_isOBB = true;
-                    for (int i = 0; i < NPC_START; ++i)
+                    if (iter.second.m_hp > 0)
                     {
-                        if (ST_ACTIVE != g_clients[i].m_status)
-                            continue;
-                        if (!is_near(i, iter.first))
-                            continue;
-                        send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
-                        send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        iter.second.m_isOBB = true;
+                        for (int i = 0; i < NPC_START; ++i)
+                        {
+                            if (ST_ACTIVE != g_clients[i].m_status)
+                                continue;
+                            if (!is_near(i, iter.first))
+                                continue;
+                            send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                            send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                        }
                     }
+                    else
+                        do_dead(iter.first);
                     delete_arrow(arrow_id);
                 }
             }
