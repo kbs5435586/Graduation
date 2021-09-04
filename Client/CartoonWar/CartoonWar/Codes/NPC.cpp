@@ -80,27 +80,13 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 
 	m_IsShow = server->Get_Show(m_iLayerIdx, O_NPC);
+	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_NPC);
+	m_IsOnce = server->Get_isOnce(m_iLayerIdx, O_NPC);
 	//m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	//m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
-	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_NPC);
-	m_IsOnce = server->Get_isOnce(m_iLayerIdx, O_NPC);
-	Set_Animation(fTimeDelta);
-	if (fLen <= 175.f)
-	{
-		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
-		{
-			m_iCurAnimIdx = 0;
-			m_IsOnce = false;
-			server->Set_isOnce(false, m_iLayerIdx, O_NPC);
-			m_IsHit = false; // 수정
-			server->Set_Anim(0, m_iLayerIdx, O_NPC);
-			m_IsActioning = false;
-		}
-	}
-
-	if (m_IsShow && A_DEAD != server->Get_AnimStat(m_iLayerIdx, O_NPC))
+	if (m_IsShow)
 	{
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 		if (nullptr == pTerrainBuffer)
@@ -185,7 +171,19 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-	
+	Set_Animation(fTimeDelta);
+	if (fLen <= 175.f)
+	{
+		if (m_pCurAnimCom->Update(m_vecAnimCtrl[m_iCurAnimIdx], fTimeDelta) && m_IsOnce)
+		{
+			m_iCurAnimIdx = 0;
+			m_IsOnce = false;
+			server->Set_isOnce(false, m_iLayerIdx, O_NPC);
+			m_IsHit = false; // 수정
+			server->Set_Anim(0, m_iLayerIdx, O_NPC);
+			m_IsActioning = false;
+		}
+	}
 	if (m_IsDead)
 	{
 		Resurrection();
