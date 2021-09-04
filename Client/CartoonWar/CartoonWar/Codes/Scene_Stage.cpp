@@ -747,9 +747,14 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 
 HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	UNIT tPlayerInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
+	UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
+		
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+		return E_FAIL;
 
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tPlayerInfo)))
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_RED };
+
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player_Inventory", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
 		return E_FAIL;
 
 	return S_OK;

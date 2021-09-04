@@ -121,38 +121,62 @@ _int CInventory_Camera::Update_GameObject(const _float& fTimeDelta)
 	//m_tCameraDesc.vAt = m_pObserverCom->GetVec3Info();
 
 
+	//CServer_Manager* server = CServer_Manager::GetInstance();
+	//if (nullptr == server)
+	//	return -1;
+
+	CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
+		L"Layer_Inventory_Player", L"Com_Transform", g_iPlayerIdx);
+	_vec3 vTemp = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
+
+	//1,2,7
+	CAMERADESC		tICameraDesc;
+	ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
+
+	//if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
+
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	_int which = dynamic_cast<CUI_ClassTap*>(UI)->GetWhich();
+
 	if (which == 0)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", which);
-		m_tCameraDesc.vAt = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
-		//m_tCameraDesc.vAt = dynamic_cast<CPlayer*>(pTemp).get;
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+		m_eCurClass = pTemp->GetClass();
 	}
 	else
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1);
-		m_tCameraDesc.vAt = *dynamic_cast<CTransform*>(pTemp->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+		//CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_NPC", which - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()));
+		//m_eCurClass = pTemp->GetClass();
 	}
 
 
-	m_tCameraDesc.vAt = m_tCameraDesc.vAt + XMFLOAT3(15.f, 0.f, 15.f);
-	_vec3		vLook;
-	_vec3		temp = *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-	vLook = Vector3_::Subtract(m_tCameraDesc.vAt, *m_pTransform->Get_StateInfo(CTransform::STATE_POSITION));
-	vLook = Vector3_::Normalize(vLook);
+	if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
+	{
+		_vec3 eye(0.f, 8.5f, -12.f);
+		_vec3 at(0.f, 6.f, 0.f);
+		tICameraDesc.vEye = vTemp + eye;
+		tICameraDesc.vAt = vTemp + at;
+	}
+	else
+	{
+		_vec3 eye(0.f, 6.5f, -7.f);
+		_vec3 at(0.f, 4.f, 0.f);
+		tICameraDesc.vEye = vTemp + eye;
+		tICameraDesc.vAt = vTemp + at;
+		//tICameraDesc.vEye = m + _vec3(0.f, 6.5f, -7.f);
+		//tICameraDesc.vAt = m + _vec3(0.f, 4.f, 0.f);
+	}
+	tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
 
-	_vec3		vRight;
-	vRight = Vector3_::CrossProduct(m_tCameraDesc.vAxisY, vLook, false);
-	vRight = Vector3_::Normalize(vRight);
+	PROJDESC		tIProjDesc;
+	ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
+	tIProjDesc.fFovY = XMConvertToRadians(30.f);
+	tIProjDesc.fAspect = _float(WINCX) / WINCY;
+	tIProjDesc.fNear = g_Near;
+	tIProjDesc.fFar = g_Far;
 
-	_vec3		vUp;
-	vUp = Vector3_::CrossProduct(vLook, vRight);
-	vUp = Vector3_::Normalize(vUp);
-
-	m_pTransform->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
-	m_pTransform->Set_StateInfo(CTransform::STATE_UP, &vUp);
-	m_pTransform->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
+	_float InvenCam = 1;
+	SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, InvenCam);
 
 	{
 		//{

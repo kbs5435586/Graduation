@@ -76,4 +76,6 @@ private:
 	_vec3									m = {};
 	_bool									m_IsActive = {};
 
+	static _float poss;
+
 };

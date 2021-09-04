@@ -67,7 +67,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
 
-	m_eCurClass = CLASS::CLASS_WORKER;
+	m_eCurClass = CLASS(2);
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 	 

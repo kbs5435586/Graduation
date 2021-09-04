@@ -6,6 +6,8 @@
 #include "NPC.h"
 #include "UI_ClassTap.h"
 
+_float CPlayer_Inven::poss = 25.f;
+
 CPlayer_Inven::CPlayer_Inven()
 {
 }
@@ -33,7 +35,8 @@ HRESULT CPlayer_Inven::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	//Compute_Matrix();
-	_vec3 vPos = { 10.f,0.f,10.f };
+	_vec3 vPos = { poss, 0.f,10.f };
+	poss += 20.f;
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(50.f, XMConvertToRadians(90.f));
 	m_pTransformCom->Scaling(0.1f, 0.1f, 0.1f);
@@ -118,44 +121,6 @@ _int CPlayer_Inven::LastUpdate_GameObject(const _float& fTimeDelta)
 
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_INVEN, this)))
 			return -1;
-	
-
-		CCamera* temp = dynamic_cast<CCamera*>(CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Inventory_Camera", 0));
-		m = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		
-		//1,2,7
-		CAMERADESC		tICameraDesc;
-		ZeroMemory(&tICameraDesc, sizeof(CAMERADESC));
-
-		//if (m_iCurMeshNum == 1 || m_iCurMeshNum == 2 || m_iCurMeshNum == 7)
-
-		if (m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2) || m_eCurClass == CLASS::CLASS_MMAGE)
-		{
-			tICameraDesc.vEye = m + _vec3(0.f, 8.5f, -12.f);
-			tICameraDesc.vAt = m + _vec3(0.f, 6.f, 0.f);
-		}
-		else
-		{
-			_vec3 eye(0.f, 6.5f, -7.f);
-			_vec3 at(0.f, 4.f, 0.f);
-			tICameraDesc.vEye = m + eye;
-			tICameraDesc.vAt = m + at;
-			//tICameraDesc.vEye = m + _vec3(0.f, 6.5f, -7.f);
-			//tICameraDesc.vAt = m + _vec3(0.f, 4.f, 0.f);
-		}
-		tICameraDesc.vAxisY = _vec3(0.f, 1.f, 0.f);
-
-		PROJDESC		tIProjDesc;
-		ZeroMemory(&tIProjDesc, sizeof(tIProjDesc));
-		tIProjDesc.fFovY = XMConvertToRadians(30.f);
-		tIProjDesc.fAspect = _float(WINCX) / WINCY;
-		tIProjDesc.fNear = g_Near;
-		tIProjDesc.fFar = g_Far;
-
-		_float aaa = 1;
-		temp->SetUp_CameraProjDesc(tICameraDesc, tIProjDesc, aaa);
-
-		
 	
 		Set_Animation(fTimeDelta);
 	}
