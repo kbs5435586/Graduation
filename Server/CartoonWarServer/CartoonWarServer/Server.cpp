@@ -1437,6 +1437,7 @@ void Server::do_event_timer()
             case FUNC_CHECK_TIME:
             case FUNC_CHECK_COLLISION:
             case FUNC_CHECK_GOLD:
+            case FUNC_REVIVE:
             case FUNC_ARROW:
             {
                 OverEx* over = new OverEx;
@@ -2030,7 +2031,7 @@ void Server::do_dead(int id)
     }
     if (is_player(id))
     {
-        // 죽는 애니메이션 끝나면 플레이어는 클라 애니메이션 끝났을때 부활신호 보내서 부활
+        add_timer(id, FUNC_REVIVE, 2000);
     }
     else
     {
@@ -2260,14 +2261,14 @@ void Server::set_starting_pos(int user_id)
     {
         g_clients[user_id].m_team = TEAM_RED;
         _vec3 pos = { 350.f, 0.f, 400.f };
-        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     }
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
         _vec3 pos = { 340.f, 0.f, 420.f };
-        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     }
+    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+    g_clients[user_id].m_vStartPos = pos;
     //{ // 스트레스 테스트
     //    _vec3 pos = { (float)(rand()%WORLD_HORIZONTAL), 0.f, (float)(rand() % WORLD_HORIZONTAL) };
     //    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
@@ -2487,6 +2488,24 @@ void Server::worker_thread()
                 play_time += 1;
                 send_time_packet();
                 add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);
+            }
+            delete overEx;
+            break;
+        case FUNC_REVIVE:
+            // 포문 해주기 전에 부활관련 데이터 처리 먼저
+            for (int pl = 0; pl < NPC_START; ++pl)
+            {
+                if (ST_ACTIVE != g_clients[pl].m_status && ST_DEAD != g_clients[pl].m_status) // 접속중이지 않은 유저 거른다
+                    continue;
+                
+                if (is_near(pl, id)) // 부활할 애 주변에 보일때
+                {
+
+                }
+                else // 부활한 애 주변에 안보일때
+                {
+                    send_leave_packet(pl, id);
+                }
             }
             delete overEx;
             break;
