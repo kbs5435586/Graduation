@@ -1134,27 +1134,47 @@ void Server::do_follow(int npc_id)
                     _vec3 t_look = Vector3_::Subtract(t_pos, n_pos);
                     t_look = Vector3_::Normalize(t_look);
 
-                    float PdotProduct = Vector3_::DotProduct(n_look, t_look);
-                    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+                    _vec3 vP_M = t_pos - n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
+                    float m_iDestLength = Vector3_::Length(vP_M);
+                    vP_M = Vector3_::Normalize(vP_M);
 
-                    float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-                    if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-                        radian *= -1.f;
+                    _vec3 vTemp = n_look;
+                    float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
 
-                    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 목표위치 기준 몇도 차이나는지
-
-                    if (NPCangle > 2.0f || NPCangle < -2.0f) // npc가 목표위치를 안바라볼때
+                    if (!n.m_IsRotateEnd)
                     {
-                        n.m_anim = A_WALK;
-                        if (NPCangle > 2.f)
+                        if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
                         {
-                            n.m_transform.Rotation_Y(TIME_DELTA * 2.f);
+                            if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos.x)
+                                n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                            else
+                                n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
                         }
-                        else if (NPCangle < -2.f)
+                        else
                         {
-                            n.m_transform.Rotation_Y(-TIME_DELTA * 2.f);
+                            if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos.z)
+                            {
+                                if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+                                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                                else
+                                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                            }
+                            else
+                            {
+                                if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+                                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                                else
+                                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                            }
                         }
                     }
+
+                    _float fAngle = XMConvertToDegrees(m_fDot);
+                    if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
+                        n.m_IsRotateEnd = true;
+                    else // 안마주볼때
+                        n.m_IsRotateEnd = false;
+
                     n.m_isOut = true;
                 }
                 else
@@ -1554,316 +1574,7 @@ void Server::initialize_objects()
         g_clients[i].m_type = TP_END;
     }
 
-    {
-        //1
-        _vec3 pos = { 607.4f, 0.5f, 604.1f };
-        g_clients[450].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[450].m_type = TP_NATURE;
-        //2
-        pos = { 579.f, 0.5f, 691.9f };
-        g_clients[451].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[451].m_type = TP_NATURE;
-        //3
-        pos = { 511.6, 0.5, 766.4 };
-        g_clients[452].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[452].m_type = TP_NATURE;
-        //4                   
-        pos = { 420.2, 0.5, 733.6 };
-        g_clients[453].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[453].m_type = TP_NATURE;
-        //5                   
-        pos = { 489.2, 0.5, 708.8 };
-        g_clients[454].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[454].m_type = TP_NATURE;
-        //6                   
-        pos = { 540.9, 0.5, 654.8 };
-        g_clients[455].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[455].m_type = TP_NATURE;
-        //7                   
-        pos = { 376.8  ,0.5 ,693.0 };
-        g_clients[456].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[456].m_type = TP_NATURE;
-        //8                   
-        pos = { 445.4, 0.5, 671.2 };
-        g_clients[457].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[457].m_type = TP_NATURE;
-        //9                   
-        pos = { 540.8, 0.5, 560.7 };
-        g_clients[458].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[458].m_type = TP_NATURE;
-        //10                
-        pos = { 488.5, 0.5, 470.6 };
-        g_clients[459].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[459].m_type = TP_NATURE;
-        //11                
-        pos = { 384.2, 0.5, 638.1 };
-        g_clients[460].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[460].m_type = TP_NATURE;
-        //12                
-        pos = { 373.6, 0.5, 543.0 };
-        g_clients[461].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[461].m_type = TP_NATURE;
-        //13                
-        pos = { 442.8, 0.5, 528.8 };
-        g_clients[462].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[462].m_type = TP_NATURE;
-        //14                
-        pos = { 545.5, 0.5, 727.9 };
-        g_clients[463].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[463].m_type = TP_NATURE;
-        //15                
-        pos = { 593.5, 0.5, 734.7 };
-        g_clients[464].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[464].m_type = TP_NATURE;
-        //16                
-        pos = { 629.0, 0.5, 710.7 };
-        g_clients[465].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[465].m_type = TP_NATURE;
-        //17                
-        pos = { 635.7, 0.5, 635.5 };
-        g_clients[466].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[466].m_type = TP_NATURE;
-        //18                
-        pos = { 477.6, 0.5, 664.7 };
-        g_clients[467].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[467].m_type = TP_NATURE;
-        //19                
-        pos = { 522.9, 0.5, 597.5 };
-        g_clients[468].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[468].m_type = TP_NATURE;
-        //20                
-        pos = { 395.5, 0.5, 594.5 };
-        g_clients[469].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[469].m_type = TP_NATURE;
-        //21                
-        pos = { 487.3, 0.5, 548.3 };
-        g_clients[470].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[470].m_type = TP_NATURE;
-        //22                
-        pos = { 422.6, 0.5, 575.8 };
-        g_clients[471].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[471].m_type = TP_NATURE;
-        //23                
-        pos = { 538.1, 0.5, 510.2 };
-        g_clients[472].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[472].m_type = TP_NATURE;
-        //24                
-        pos = { 344.6, 0.5, 600.4 };
-        g_clients[473].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[473].m_type = TP_NATURE;
-        //25                
-        pos = { 315.7, 0.5, 667.2 };
-        g_clients[474].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[474].m_type = TP_NATURE;
-        //26                
-        pos = { 633.7, 0.5, 764.4 };
-        g_clients[475].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[475].m_type = TP_NATURE;
-        //27                
-        pos = { 616.5, 0.5, 532.4 };
-        g_clients[476].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[476].m_type = TP_NATURE;
-        //28                
-        pos = { 317.4, 0.5, 627.8 };
-        g_clients[477].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[477].m_type = TP_NATURE;
-        //29                
-        pos = { 352.9, 0.5, 665.6 };
-        g_clients[478].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[478].m_type = TP_NATURE;
-        //30                
-        pos = { 667.7, 0.5, 579.5 };
-        g_clients[479].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[479].m_type = TP_NATURE;
-        //31                
-        pos = { 643.2, 0.5, 671.3 };
-        g_clients[480].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[480].m_type = TP_NATURE;
-        //32                
-        pos = { 452.1, 0.5, 408.5 };
-        g_clients[481].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[481].m_type = TP_NATURE;
-        //33                
-        pos = { 556.0, 0.5, 429.4 };
-        g_clients[482].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[482].m_type = TP_NATURE;
-        //34                
-        pos = { 574.8, 0.5, 319.2 };
-        g_clients[483].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[483].m_type = TP_NATURE;
-        //35                
-        pos = { 344.7, 0.5, 476.8 };
-        g_clients[484].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[484].m_type = TP_NATURE;
-        //36                
-        pos = { 366.0, 0.5, 373.9 };
-        g_clients[485].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[485].m_type = TP_NATURE;
-        //37                
-        pos = { 464.6, 0.5, 313.0 };
-        g_clients[486].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[486].m_type = TP_NATURE;
-        //38                
-        pos = { 598.2, 0.5, 656.4 };
-        g_clients[487].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[487].m_type = TP_NATURE;
-        //39                
-        pos = { 461.4, 0.5, 749.0 };
-        g_clients[488].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[488].m_type = TP_NATURE;
-        //40                
-        pos = { 413.8, 0.5, 683.8 };
-        g_clients[489].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[489].m_type = TP_NATURE;
-        //41                
-        pos = { 270.2, 0.5, 512.9 };
-        g_clients[490].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[490].m_type = TP_NATURE;
-        //42                
-        pos = { 411.6, 0.5, 466.7 };
-        g_clients[491].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[491].m_type = TP_NATURE;
-        //43                
-        pos = { 378.2, 0.5, 424.2 };
-        g_clients[492].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[492].m_type = TP_NATURE;
-        //44                
-        pos = { 495.5, 0.5, 369.6 };
-        g_clients[493].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[493].m_type = TP_NATURE;
-        //45                
-        pos = { 414.8, 0.5, 372.4 };
-        g_clients[494].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[494].m_type = TP_NATURE;
-        //46                
-        pos = { 304.9, 0.5, 558.3 };
-        g_clients[495].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[495].m_type = TP_NATURE;
-        //47                
-        pos = { 294.2, 0.5, 452.3 };
-        g_clients[496].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[496].m_type = TP_NATURE;
-        //48                
-        pos = { 505.8, 0.5, 693.5 };
-        g_clients[497].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[497].m_type = TP_NATURE;
-        //49                
-        pos = { 591.0, 0.5, 569.5 };
-        g_clients[498].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[498].m_type = TP_NATURE;
-        //50                
-        pos = { 560.5, 0.5, 768.4 };
-        g_clients[499].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[499].m_type = TP_NATURE;
-        //51                
-        pos = { 427.4, 0.5, 769.5 };
-        g_clients[500].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[500].m_type = TP_NATURE;
-        //52                
-        pos = { 381.6, 0.5, 732.9 };
-        g_clients[501].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[501].m_type = TP_NATURE;
-        //53                
-        pos = { 350.3, 0.5, 704.9 };
-        g_clients[502].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[502].m_type = TP_NATURE;
-        //54                
-        pos = { 305.8, 0.5, 644.3 };
-        g_clients[503].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[503].m_type = TP_NATURE;
-        //55                
-        pos = { 364.8, 0.5, 715.7 };
-        g_clients[504].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[504].m_type = TP_NATURE;
-        //56                
-        pos = { 322.4, 0.5, 696.6 };
-        g_clients[505].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[505].m_type = TP_NATURE;
-        //57                
-        pos = { 301.6, 0.5, 598.6 };
-        g_clients[506].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[506].m_type = TP_NATURE;
-        //58                
-        pos = { 323.1, 0.5, 511.3 };
-        g_clients[507].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[507].m_type = TP_NATURE;
-        //59                
-        pos = { 325.3, 0.5, 413.5 };
-        g_clients[508].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[508].m_type = TP_NATURE;
-        //60                
-        pos = { 508.3, 0.5, 427.9 };
-        g_clients[509].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[509].m_type = TP_NATURE;
-        //61                
-        pos = { 546.7, 0.5, 389.6 };
-        g_clients[510].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[510].m_type = TP_NATURE;
-        //62                
-        pos = { 586.8, 0.5, 518.4 };
-        g_clients[511].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[511].m_type = TP_NATURE;
-        //63                
-        pos = { 572.1, 0.5, 476.2 };
-        g_clients[512].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[512].m_type = TP_NATURE;
-        //64                
-        pos = { 577.6, 0.5, 380.4 };
-        g_clients[513].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[513].m_type = TP_NATURE;
-        //65                
-        pos = { 599.3, 0.5, 441.6 };
-        g_clients[514].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[514].m_type = TP_NATURE;
-        //66                
-        pos = { 554.3, 0.5, 606.2 };
-        g_clients[515].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[515].m_type = TP_NATURE;
-        //67                
-        pos = { 567.0, 0.5, 669.6 };
-        g_clients[516].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[516].m_type = TP_NATURE;
-        //68                
-        pos = { 400.8, 0.5, 525.8 };
-        g_clients[517].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[517].m_type = TP_NATURE;
-        //69                
-        pos = { 470.3, 0.5, 500.9 };
-        g_clients[518].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[518].m_type = TP_NATURE;
-        //70                
-        pos = { 383.2, 0.5, 166.7 };
-        g_clients[519].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[519].m_type = TP_NATURE;
-        //71                
-        pos = { 723.6, 0.5, 123.3 };
-        g_clients[520].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[520].m_type = TP_NATURE;
-        //72                
-        pos = { 633.8, 0.5, 738.3 };
-        g_clients[521].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[521].m_type = TP_NATURE;
-        //73                
-        pos = { 454.3, 0.5, 861.2 };
-        g_clients[522].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[522].m_type = TP_NATURE;
-        //74                
-        pos = { 817.1, 0.5, 547.9 };
-        g_clients[523].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[523].m_type = TP_NATURE;
-        //75                
-        pos = { 139.8, 0.5, 396.1 };
-        g_clients[524].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[524].m_type = TP_NATURE;
-        //76                
-        pos = { 159.9, 0.5, 654.5 };
-        g_clients[525].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[525].m_type = TP_NATURE;
-        //77                
-        pos = { 685.5, 0.5, 788.3 };
-        g_clients[526].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-        g_clients[526].m_type = TP_NATURE;
-    }
+    initialize_nature();
 
     for (int i = 0; i < 5; ++i)
     {
@@ -2296,7 +2007,7 @@ void Server::do_attack(int npc_id)
 
             _vec3 vP_M = *t_pos - *n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
             float m_iDestLength = Vector3_::Length(vP_M);
-            Vector3_::Normalize(vP_M);
+            vP_M = Vector3_::Normalize(vP_M);
 
             _vec3 vTemp = n_look;
             //vTemp *= -1.f;
@@ -2344,14 +2055,14 @@ void Server::do_attack(int npc_id)
                     }
                     _int i = 0;
                 }
-                n.m_IsRotateEnd = true;
+                //n.m_IsRotateEnd = true;
             }
 
 
             _float fAngle = XMConvertToDegrees(m_fDot);
-            if (fAngle >= 56.f && fAngle <= 57.f)
+            if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
             {
-                n.m_IsRotateEnd = false;
+                n.m_IsRotateEnd = true;
                 if (m_iDestLength >= 3.f) // 죽일 적 근처에 도달 못했을떄
                 {
                     n.m_transform.Go_ToTarget(t_pos, TIME_DELTA);
@@ -2395,6 +2106,10 @@ void Server::do_attack(int npc_id)
                         }
                     }
                 }
+            }
+            else // 안마주볼때
+            {
+                n.m_IsRotateEnd = false;
             }
         }
     }
@@ -2706,7 +2421,7 @@ void Server::do_fire_skill_damage(int id)
     {
         if (ST_ACTIVE != g_clients[i].m_status)
             continue;
-        if (TP_ARROW == g_clients[i].m_type || TP_NATURE == g_clients[i].m_type)
+        if (TP_ARROW == g_clients[i].m_type || TP_ROCK == g_clients[i].m_type || TP_TREE == g_clients[i].m_type)
             continue;
         if (g_clients[i].m_team == f.m_team)
             continue;
@@ -2985,7 +2700,7 @@ void Server::check_aabb_collision(int o_mv,int o_ht)
     }
     else
     {
-        if (TP_NATURE == g_clients[o_ht].m_type)
+        if (TP_ROCK == g_clients[o_ht].m_type || TP_TREE == g_clients[o_ht].m_type)
         {
             if (dist_between(o_ht, o_mv) <= AABB_NAT) // 50.f 
                 do_aabb(o_ht, o_mv);
@@ -3348,9 +3063,8 @@ void Server::do_arrow_collision(int arrow_id)
 
             if (fLength <= ARROW_DIST)
             {
-                if (iter.second.m_type == TP_NATURE || iter.second.m_type == TP_DEFFEND) // 화살 맞은애가 밀리면 안됨
+                if (iter.second.m_type == TP_ROCK || iter.second.m_type == TP_DEFFEND || iter.second.m_type == TP_TREE) // 화살 맞은애가 밀리면 안됨
                 {
-                    //iter.second.m_hp -= ARROW_DAMAGE;
                     for (int i = 0; i < NPC_START; ++i)
                     {
                         if (ST_ACTIVE != g_clients[i].m_status)
@@ -3358,7 +3072,6 @@ void Server::do_arrow_collision(int arrow_id)
                         if (!is_near(i, iter.first))
                             continue;
                         send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
-                        //send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
                     }
                     delete_arrow(arrow_id);
                 }
@@ -3629,4 +3342,329 @@ void Server::cal_change_class_gold(int id, short m_class)
     }
 
     send_gold_packet(id);
+}
+
+void Server::initialize_nature()
+{
+    {
+        //1
+        _vec3 pos = { 607.4f, 0.5f, 604.1f };
+        g_clients[450].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[450].m_type = TP_TREE;
+        //2
+        pos = { 579.0f, 0.5f, 691.9f };
+        g_clients[451].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[451].m_type = TP_TREE;
+        //3
+        pos = { 511.6f, 0.5f, 766.4f };
+        g_clients[452].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[452].m_type = TP_TREE;
+        //4                   
+        pos = { 420.2f, 0.5f, 733.6f };
+        g_clients[453].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[453].m_type = TP_TREE;
+        //5                   
+        pos = { 489.2f, 0.5f, 708.8f };
+        g_clients[454].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[454].m_type = TP_TREE;
+        //6                   
+        pos = { 540.9f, 0.5f, 654.8f };
+        g_clients[455].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[455].m_type = TP_TREE;
+        //7                   
+        pos = { 376.8f  ,0.5f ,693.0f };
+        g_clients[456].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[456].m_type = TP_TREE;
+        //8                   
+        pos = { 445.4f, 0.5f, 671.2f };
+        g_clients[457].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[457].m_type = TP_TREE;
+        //9                   
+        pos = { 540.8f, 0.5f, 560.7f };
+        g_clients[458].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[458].m_type = TP_TREE;
+        //10                
+        pos = { 488.5f, 0.5f, 470.6f };
+        g_clients[459].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[459].m_type = TP_TREE;
+        //11                
+        pos = { 384.2f, 0.5f, 638.1f };
+        g_clients[460].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[460].m_type = TP_TREE;
+        //12                
+        pos = { 373.6f, 0.5f, 543.0f };
+        g_clients[461].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[461].m_type = TP_TREE;
+        //13                
+        pos = { 442.8f, 0.5f, 528.8f };
+        g_clients[462].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[462].m_type = TP_TREE;
+        //14                
+        pos = { 545.5f, 0.5f, 727.9f };
+        g_clients[463].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[463].m_type = TP_TREE;
+        //15                
+        pos = { 593.5f, 0.5f, 734.7f };
+        g_clients[464].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[464].m_type = TP_TREE;
+        //16                
+        pos = { 629.0f, 0.5f, 710.7f };
+        g_clients[465].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[465].m_type = TP_TREE;
+        //17                
+        pos = { 635.7f, 0.5f, 635.5f };
+        g_clients[466].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[466].m_type = TP_TREE;
+        //18                
+        pos = { 477.6f, 0.5f, 664.7f };
+        g_clients[467].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[467].m_type = TP_TREE;
+        //19                
+        pos = { 522.9f, 0.5f, 597.5f };
+        g_clients[468].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[468].m_type = TP_TREE;
+        //20                
+        pos = { 395.5f, 0.5f, 594.5f };
+        g_clients[469].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[469].m_type = TP_TREE;
+        //21                
+        pos = { 487.3f, 0.5f, 548.3f };
+        g_clients[470].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[470].m_type = TP_TREE;
+        //22                
+        pos = { 422.6f, 0.5f, 575.8f };
+        g_clients[471].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[471].m_type = TP_TREE;
+        //23                
+        pos = { 538.1f, 0.5f, 510.2f };
+        g_clients[472].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[472].m_type = TP_TREE;
+        //24                
+        pos = { 344.6f, 0.5f, 600.4f };
+        g_clients[473].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[473].m_type = TP_TREE;
+        //25                
+        pos = { 315.7f, 0.5f, 667.2f };
+        g_clients[474].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[474].m_type = TP_TREE;
+        //26                
+        pos = { 633.7f, 0.5f, 764.4f };
+        g_clients[475].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[475].m_type = TP_TREE;
+        //27                
+        pos = { 616.5f, 0.5f, 532.4f };
+        g_clients[476].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[476].m_type = TP_TREE;
+        //28                
+        pos = { 317.4f, 0.5f, 627.8f };
+        g_clients[477].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[477].m_type = TP_TREE;
+        //29                
+        pos = { 352.9f, 0.5f, 665.6f };
+        g_clients[478].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[478].m_type = TP_TREE;
+        //30                
+        pos = { 667.7f, 0.5f, 579.5f };
+        g_clients[479].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[479].m_type = TP_TREE;
+        //31                
+        pos = { 643.2f, 0.5f, 671.3f };
+        g_clients[480].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[480].m_type = TP_TREE;
+        //32                
+        pos = { 452.1f, 0.5f, 408.5f };
+        g_clients[481].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[481].m_type = TP_TREE;
+        //33                
+        pos = { 556.0f, 0.5f, 429.4f };
+        g_clients[482].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[482].m_type = TP_TREE;
+        //34                
+        pos = { 574.8f, 0.5f, 319.2f };
+        g_clients[483].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[483].m_type = TP_TREE;
+        //35                
+        pos = { 344.7f, 0.5f, 476.8f };
+        g_clients[484].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[484].m_type = TP_TREE;
+        //36                
+        pos = { 366.0f, 0.5f, 373.9f };
+        g_clients[485].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[485].m_type = TP_TREE;
+        //37                
+        pos = { 464.6f, 0.5f, 313.0f };
+        g_clients[486].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[486].m_type = TP_TREE;
+        //38                
+        pos = { 598.2f, 0.5f, 656.4f };
+        g_clients[487].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[487].m_type = TP_TREE;
+        //39                
+        pos = { 461.4f, 0.5f, 749.0f };
+        g_clients[488].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[488].m_type = TP_TREE;
+        //40                
+        pos = { 413.8f, 0.5f, 683.8f };
+        g_clients[489].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[489].m_type = TP_TREE;
+        //41                
+        pos = { 270.2f, 0.5f, 512.9f };
+        g_clients[490].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[490].m_type = TP_TREE;
+        //42                
+        pos = { 411.6f, 0.5f, 466.7f };
+        g_clients[491].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[491].m_type = TP_TREE;
+        //43                
+        pos = { 378.2f, 0.5f, 424.2f };
+        g_clients[492].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[492].m_type = TP_TREE;
+        //44                
+        pos = { 495.5f, 0.5f, 369.6f };
+        g_clients[493].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[493].m_type = TP_TREE;
+        //45                
+        pos = { 414.8f, 0.5f, 372.4f };
+        g_clients[494].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[494].m_type = TP_TREE;
+        //46                
+        pos = { 304.9f, 0.5f, 558.3f };
+        g_clients[495].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[495].m_type = TP_TREE;
+        //47                
+        pos = { 294.2f, 0.5f, 452.3f };
+        g_clients[496].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[496].m_type = TP_TREE;
+        //48                
+        pos = { 505.8f, 0.5f, 693.5f };
+        g_clients[497].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[497].m_type = TP_TREE;
+        //49                
+        pos = { 591.0f, 0.5f, 569.5f };
+        g_clients[498].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[498].m_type = TP_TREE;
+        //50                
+        pos = { 560.5f, 0.5f, 768.4f };
+        g_clients[499].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[499].m_type = TP_TREE;
+        //51                
+        pos = { 427.4f, 0.5f, 769.5f };
+        g_clients[500].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[500].m_type = TP_TREE;
+        //52                
+        pos = { 381.6f, 0.5f, 732.9f };
+        g_clients[501].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[501].m_type = TP_TREE;
+        //53                
+        pos = { 350.3f, 0.5f, 704.9f };
+        g_clients[502].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[502].m_type = TP_TREE;
+        //54                
+        pos = { 305.8f, 0.5f, 644.3f };
+        g_clients[503].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[503].m_type = TP_TREE;
+        //55                
+        pos = { 364.8f, 0.5f, 715.7f };
+        g_clients[504].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[504].m_type = TP_TREE;
+        //56                
+        pos = { 322.4f, 0.5f, 696.6f };
+        g_clients[505].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[505].m_type = TP_TREE;
+        //57                
+        pos = { 301.6f, 0.5f, 598.6f };
+        g_clients[506].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[506].m_type = TP_TREE;
+        //58                
+        pos = { 323.1f, 0.5f, 511.3f };
+        g_clients[507].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[507].m_type = TP_TREE;
+        //59                
+        pos = { 325.3f, 0.5f, 413.5f };
+        g_clients[508].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[508].m_type = TP_TREE;
+        //60                
+        pos = { 508.3f, 0.5f, 427.9f };
+        g_clients[509].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[509].m_type = TP_TREE;
+        //61                
+        pos = { 546.7f, 0.5f, 389.6f };
+        g_clients[510].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[510].m_type = TP_TREE;
+        //62                
+        pos = { 586.8f, 0.5f, 518.4f };
+        g_clients[511].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[511].m_type = TP_TREE;
+        //63                
+        pos = { 572.1f, 0.5f, 476.2f };
+        g_clients[512].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[512].m_type = TP_TREE;
+        //64                
+        pos = { 577.6f, 0.5f, 380.4f };
+        g_clients[513].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[513].m_type = TP_TREE;
+        //65                
+        pos = { 599.3f, 0.5f, 441.6f };
+        g_clients[514].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[514].m_type = TP_TREE;
+        //66                
+        pos = { 554.3f, 0.5f, 606.2f };
+        g_clients[515].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[515].m_type = TP_TREE;
+        //67                
+        pos = { 567.0f, 0.5f, 669.6f };
+        g_clients[516].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[516].m_type = TP_TREE;
+        //68                
+        pos = { 400.8f, 0.5f, 525.8f };
+        g_clients[517].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[517].m_type = TP_TREE;
+        //69                
+        pos = { 470.3f, 0.5f, 500.9f };
+        g_clients[518].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[518].m_type = TP_TREE;
+        //70                
+        pos = { 383.2f, 0.5f, 166.7f };
+        g_clients[519].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[519].m_type = TP_ROCK;
+        //71                
+        pos = { 723.6f, 0.5f, 123.3f };
+        g_clients[520].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[520].m_type = TP_ROCK;
+        //72                
+        pos = { 633.8f, 0.5f, 738.3f };
+        g_clients[521].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[521].m_type = TP_ROCK;
+        //73                
+        pos = { 454.3f, 0.5f, 861.2f };
+        g_clients[522].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[522].m_type = TP_ROCK;
+        //74                
+        pos = { 817.1f, 0.5f, 547.9f };
+        g_clients[523].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[523].m_type = TP_ROCK;
+        //75                
+        pos = { 139.8f, 0.5f, 396.1f };
+        g_clients[524].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[524].m_type = TP_ROCK;
+        //76                
+        pos = { 159.9f, 0.5f, 654.5f };
+        g_clients[525].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[525].m_type = TP_ROCK;
+        //77                
+        pos = { 685.5f, 0.5f, 788.3f };
+        g_clients[526].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        g_clients[526].m_type = TP_ROCK;
+    }
+
+    for (int i = OBJECT_START; i <= 526; ++i)
+    {
+        _uint iSize = rand() % 20 + 5;
+        g_clients[i].m_transform.Scaling(iSize, iSize, iSize);
+        if (g_clients[i].m_type == TP_TREE)
+            g_clients[i].m_col.aabb_size = { 0.5f,3.f,0.5f };
+        else if (g_clients[i].m_type == TP_ROCK)
+            g_clients[i].m_col.aabb_size = { 2.5f,3.f,2.5f };
+        Update_Collider(i, g_clients[i].m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
+    }
 }

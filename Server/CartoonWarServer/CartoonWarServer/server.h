@@ -139,6 +139,7 @@ public:
 
 	void initialize_objects(); // ∞¥√º √ ±‚»≠
 	void initialize_NPC(int player_id);
+	void initialize_nature();
 	int init_arrow(int shoot_id);
 
 	void cal_change_class_gold(int id, short m_class);
