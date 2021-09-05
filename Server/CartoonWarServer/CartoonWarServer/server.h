@@ -40,10 +40,10 @@ private:
 
 	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
-	int ATTACK_DAMAGE = 25;
+	int ATTACK_DAMAGE = 20;
 	float FLAME_RANGE = 50.f;
 	int DOT_DAMAGE = 5;
-	int SET_HP = 50;
+	int SET_HP = 100;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 0;
