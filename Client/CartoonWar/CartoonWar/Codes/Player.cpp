@@ -189,7 +189,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	CGameObject* UI = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", TAPIDX);
 	m_IsActive = dynamic_cast<CUI_ClassTap*>(UI)->GetBool();
 
-	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive && !m_IsDead)
+	if (m_iLayerIdx == server->Get_PlayerID() && !m_IsActive && A_DEAD != server->Get_AnimStat(m_iLayerIdx, O_PLAYER))
 		Input_Key(fTimeDelta);
 
 	m_IsParticle = server->Get_Particle(m_iLayerIdx, O_PLAYER);
