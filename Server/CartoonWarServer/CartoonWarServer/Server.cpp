@@ -2885,7 +2885,7 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < 4; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < 6; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
