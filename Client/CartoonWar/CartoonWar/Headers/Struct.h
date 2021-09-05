@@ -553,7 +553,7 @@ struct Session
 	int				id;
 	short			hp;
 	short			anim;
-	float			scale;
+	float			scale = 1.f;
 	unsigned char	anim_stat;
 	char			name[MAX_ID_LEN + 1];
 	bool			showObject = false;
