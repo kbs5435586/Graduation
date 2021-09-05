@@ -184,6 +184,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].isFirst = true;
+		m_objects[recv_id].anim_stat = A_IDLE;
 		m_objects[recv_id].hp = my_packet->hp;
 		m_objects[recv_id].m_class = my_packet->p_class;
 
@@ -242,6 +243,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		m_objects[recv_id].showObject = true;
 		m_objects[recv_id].isFirst = true;
 		m_objects[recv_id].hp = my_packet->hp;
+		m_objects[recv_id].anim = my_packet->anim;
 		m_objects[recv_id].anim_stat = A_IDLE;
 		update_anim(my_packet->id, my_packet->anim);
 		Safe_Release(managment);

@@ -1623,6 +1623,7 @@ void Server::initialize_NPC(int player_id)
                     g_clients[npc_id].m_total_angle = g_clients[player_id].m_boid[j].angle;
                 }
             }
+            g_clients[npc_id].m_attacktime = high_resolution_clock::now();
             activate_npc(npc_id, g_clients[npc_id].m_last_order);
             for (int i = 0; i < NPC_START; ++i) // 다른 플레이어중에 시야범위 안에있는 플레이어에게 새로 생긴 npc 보이게하기
             {
@@ -1698,9 +1699,12 @@ void Server::send_enter_packet(int user_id, int other_id)
 
     strcpy_s(packet.name, g_clients[other_id].m_name);
 
-    g_clients[user_id].m_cLock.lock();
-    g_clients[user_id].m_view_list.insert(other_id);
-    g_clients[user_id].m_cLock.unlock();
+    if (0 == g_clients[user_id].m_view_list.count(other_id))
+    {
+        g_clients[user_id].m_cLock.lock();
+        g_clients[user_id].m_view_list.insert(other_id);
+        g_clients[user_id].m_cLock.unlock();
+    }
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }
@@ -2002,35 +2006,40 @@ void Server::do_attack(int npc_id)
                 if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
                     check_obb_collision(npc_id, n.m_attack_target))
                 {
-                    n.m_isAttack = true;
-                    if (n.m_isAttack)
+                    duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
+                    if (cooltime >= seconds(1))
                     {
-                        g_clients[n.m_attack_target].m_isOBB = true;
-                        g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                        n.m_isAttack = false;
-                        g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-                        if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                        n.m_isAttack = true;
+                        if (n.m_isAttack)
                         {
-                            for (int i = 0; i < NPC_START; ++i)
+                            g_clients[n.m_attack_target].m_isOBB = true;
+                            g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                            n.m_isAttack = false;
+                            g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+                            if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
                             {
-                                if (ST_ACTIVE != g_clients[i].m_status)
-                                    continue;
-                                if (!is_near(i, n.m_attack_target))
-                                    continue;
-                                send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                for (int i = 0; i < NPC_START; ++i)
+                                {
+                                    if (ST_ACTIVE != g_clients[i].m_status)
+                                        continue;
+                                    if (!is_near(i, n.m_attack_target))
+                                        continue;
+                                    send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                    send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                }
+                            }
+                            else // 상대방이 죽었을때
+                            {
+                                do_dead(n.m_attack_target);
+                                n.m_attack_target = -1;
                             }
                         }
-                        else // 상대방이 죽었을때
-                        {
-                            do_dead(n.m_attack_target);
-                            n.m_attack_target = -1;
-                        }
+                        n.m_anim = A_ATTACK;
                     }
-                    n.m_anim = A_ATTACK;
                 }
                 else // OBB 공격범위 밖일때
                 {
+                    n.m_anim = A_WALK;
                     n.m_transform.BackWard(TIME_DELTA * 2.f);
                 }
             }

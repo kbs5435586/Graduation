@@ -82,7 +82,10 @@ _int CUI_ButtonNPC::Update_GameObject(const _float& fTimeDelta)
 		else
 		{
 			//¿£ÇÇ¾¾
-			UnitActive = server->Get_Show(m_ButtonNow - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC);
+			if (A_DEAD == server->Get_AnimStat(m_ButtonNow - 1 + MY_NPC_START_CLIENT(server->Get_PlayerID()), O_NPC))
+				UnitActive = false;
+			else
+				UnitActive = true;
 		}
 
 		if (UnitActive)
