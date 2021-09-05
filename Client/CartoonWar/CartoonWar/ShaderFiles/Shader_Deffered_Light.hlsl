@@ -161,11 +161,15 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 
 	LIGHT tCurCol = Calculate_Light(0, vNormalTex.xyz, vPosition.xyz);
 	LIGHT tPointCurCol = Calculate_Light(1, vNormalTex.xyz, vPosition.xyz);
+	LIGHT tPointCurCol2 = Calculate_Light(2, vNormalTex.xyz, vPosition.xyz);
+	LIGHT tPointCurCol3 = Calculate_Light(3, vNormalTex.xyz, vPosition.xyz);
+	LIGHT tPointCurCol4 = Calculate_Light(4, vNormalTex.xyz, vPosition.xyz);
+
 
 
 	if (dot(tCurCol.vDiffuse, tCurCol.vDiffuse) != 0.f)
 	{
-		float4 vWorldPos = mul(vPosition, matViewInv); 
+		float4 vWorldPos = mul(vPosition, matViewInv);
 		float4 vShadowProj = mul(vWorldPos, g_mat_0);
 		float fDepth = vShadowProj.z / vShadowProj.w;
 		float2 vShadowUV = float2((vShadowProj.x / vShadowProj.w) * 0.5f + 0.5f
@@ -189,7 +193,7 @@ PS_OUT	PS_DirLight(VS_OUT vIn)
 
 	vOut.vDiffuse = tCurCol.vDiffuse + tCurCol.vAmbient;
 	vOut.vSpecular = tCurCol.vSpecular;
-	vOut.vPointLight = tPointCurCol.vDiffuse;
+	vOut.vPointLight = tPointCurCol.vDiffuse + tPointCurCol2.vDiffuse + tPointCurCol3.vDiffuse + tPointCurCol4.vDiffuse;
 
 	return vOut;
 }

@@ -311,14 +311,14 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
-	LIGHT	tLightInfo = {};
+	LIGHT   tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(0.5f, 0.5f, 0.5f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
 	//tLightInfo.vLightDir = _vec4(-1.f, -1.f, -1.f,0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f,0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 1.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
@@ -331,6 +331,40 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
 	tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(750.f, 0.f, 100.f, 1.f);
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(462.f, 0.2f, 590.f, 1.f);
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(100.f, 0.2f, 850.f, 1.f);
 	tLightInfo.fRange = 100.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
@@ -614,7 +648,25 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	//GameObject_BoneFire tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
-	_vec3 vLightPos = _vec3(100.f,0.f,100.f);
+
+	_vec3 vLightPos = _vec3(100.f, 0.f, 100.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+
+	vLightPos = _vec3(750.f, 0.f, 100.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+
+	vLightPos = _vec3(462.f, 0.2f, 590.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	vLightPos = _vec3(100.f, 0.2f, 850.f);
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
