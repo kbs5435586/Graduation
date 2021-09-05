@@ -1130,60 +1130,31 @@ void Server::do_follow(int npc_id)
                     _vec3 new_pos = n_pos + Dir;
                     n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-                    //_vec3 t_pos = g_clients[n.m_owner_id].m_boid[i].final_pos; // 자기가 가야할 목표위치를 안바라볼때
-                    //_vec3 t_look = Vector3_::Subtract(t_pos, n_pos);
-                    //t_look = Vector3_::Normalize(t_look);
+                    _vec3 t_pos = g_clients[n.m_owner_id].m_boid[i].final_pos; // 자기가 가야할 목표위치를 안바라볼때
+                    _vec3 t_look = Vector3_::Subtract(t_pos, n_pos);
+                    t_look = Vector3_::Normalize(t_look);
 
-                    //_vec3 vP_M = t_pos - n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
-                    //float m_iDestLength = Vector3_::Length(vP_M);
-                    //vP_M = Vector3_::Normalize(vP_M);
+                    float PdotProduct = Vector3_::DotProduct(n_look, t_look);
+                    float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
 
-                    //_vec3 vTemp = n_look;
-                    //float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
+                    float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+                    if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                        radian *= -1.f;
 
-                    //if (!n.m_IsRotateEnd)
-                    //{
-                    //    if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
-                    //    {
-                    //        if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos.x)
-                    //            n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                    //        else
-                    //            n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                    //    }
-                    //    else
-                    //    {
-                    //        if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos.z)
-                    //        {
-                    //            if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-                    //                n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                    //            else
-                    //                n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                    //        }
-                    //        else
-                    //        {
-                    //            if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-                    //                n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                    //            else
-                    //                n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                    //        }
-                    //    }
-                    //}
+                    float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 목표위치 기준 몇도 차이나는지
 
-                    //_float fAngle = XMConvertToDegrees(m_fDot);
-                    //if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
-                    //{
-                    //    n.m_IsRotateEnd = true;
-                    //    if (m_iDestLength >= 3.f) // 죽일 적 근처에 도달 못했을떄
-                    //    {
-                    //        n.m_transform.Go_ToTarget(&t_pos, TIME_DELTA);
-                    //        n.m_anim = A_WALK;
-                    //    }
-
-                    //}
-                    //else // 안마주볼때
-                    //{
-                    //    n.m_IsRotateEnd = false;
-                    //}
+                    if (NPCangle > 1.f || NPCangle < -1.f) // npc가 목표위치를 안바라볼때
+                    {
+                        n.m_anim = A_WALK;
+                        if (NPCangle > 1.f)
+                        {
+                            n.m_transform.Rotation_Y(TIME_DELTA * 2.f);
+                        }
+                        else if (NPCangle < -1.f)
+                        {
+                            n.m_transform.Rotation_Y(-TIME_DELTA * 2.f);
+                        }
+                    }
                     n.m_isOut = true;
                 }
                 else
@@ -1327,7 +1298,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
         if (0 != distance_square)
         {
             Dir = Vector3_::Normalize(Dir);
-            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA * 2.f; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
