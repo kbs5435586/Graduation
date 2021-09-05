@@ -734,7 +734,7 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < CL_TEST_NPCS; ++i)
+	for (int i = 0; i < CL_NPC_TEAM2; ++i) // CL_TEST_NPCS
 	{
 		ORDER tOrder = ORDER();
 		tOrder.IsPlayer = false;
