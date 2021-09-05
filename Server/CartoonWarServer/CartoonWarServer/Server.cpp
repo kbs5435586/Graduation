@@ -1541,7 +1541,7 @@ void Server::enter_game(int user_id, char name[])
 
     if (false == isGameStart)
     {
-        short count = 0;
+        int count = 0;
         for (int i = 0; i < NPC_START; ++i)
         {
             if (ST_ACTIVE == g_clients[i].m_status)
@@ -1549,7 +1549,7 @@ void Server::enter_game(int user_id, char name[])
                 count++;
             }
 
-            if (0 < count)
+            if (StartGame_PlayerCount <= count)
             {
                 //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
                 add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);// 게임 플레이 시간 돌리는 함수
@@ -2530,12 +2530,12 @@ void Server::set_starting_pos(int user_id)
     if (0 == user_id)
     {
         g_clients[user_id].m_team = TEAM_RED;
-        pos = { 350.f, 0.f, 400.f };
+        pos = { 900.f, 0.f, 150.f };
     }
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
-        pos = { 340.f, 0.f, 420.f };
+        pos = { 950.f, 0.f, 150.f };
     }
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     g_clients[user_id].m_vStartPos = pos;
