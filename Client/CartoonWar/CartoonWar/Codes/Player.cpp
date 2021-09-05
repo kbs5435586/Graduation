@@ -123,8 +123,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_IsActioning = false;
 	}
 
-	char a = server->Get_AnimStat(m_iLayerIdx, O_PLAYER); // 8ÀÌ dead
-
 	if (m_IsShow && A_DEAD != server->Get_AnimStat(m_iLayerIdx, O_PLAYER))
 	{
 		if(A_DEAD == server->Get_AnimStat(m_iLayerIdx, O_PLAYER))
@@ -214,11 +212,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			m_IsDeadMotion = true;
 		}
 	}
-	if (m_IsDead)
-	{
-		int a = 0;
-		//Resurrection();
-	}
+	//if (m_IsDead)
+	//{
+	//	Resurrection();
+	//}
 
 	if (m_IsParticleRun)
 	{

@@ -1298,7 +1298,7 @@ _vec3 Server::move_to_spot(int id, _vec3* goto_pos)
         if (0 != distance_square)
         {
             Dir = Vector3_::Normalize(Dir);
-            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA * 2.f; // 노멀값 방향으로 얼만큼 갈지 계산
+            Dir = Dir * g_clients[id].m_move_speed * TIME_DELTA; // 노멀값 방향으로 얼만큼 갈지 계산
         }
     }
     return Dir;
@@ -2056,6 +2056,15 @@ void Server::do_dead(int id)
     }
     if (is_player(id))
     {
+        for (int npc_id = MY_NPC_START_SERVER(id); npc_id <= MY_NPC_END_SERVER(id); npc_id++)
+        {
+            if (ST_ACTIVE == g_clients[npc_id].m_status)
+            {
+                do_dead(npc_id);
+            }
+            g_clients[id].m_boid.clear();
+            g_clients[id].m_boid.shrink_to_fit();
+        }
         add_timer(id, FUNC_REVIVE, REVIVE_COOLTIME);
     }
     else
@@ -2554,6 +2563,8 @@ void Server::worker_thread()
                     send_leave_packet(pl, id);
                 }
             }
+            g_clients[id].m_gold = 0;
+            send_gold_packet(id);
             delete overEx;
             break;
         case FUNC_CHECK_COLLISION:

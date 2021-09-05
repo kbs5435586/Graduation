@@ -86,7 +86,7 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
 	//m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
-	if (m_IsShow)
+	if (m_IsShow && A_DEAD != server->Get_AnimStat(m_iLayerIdx, O_NPC))
 	{
 		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 		if (nullptr == pTerrainBuffer)

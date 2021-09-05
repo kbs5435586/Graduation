@@ -41,7 +41,7 @@ private:
 	int ATTACK_DAMAGE = 25;
 	float FLAME_RANGE = 50.f;
 	int DOT_DAMAGE = 5;
-	int SET_HP = 10;
+	int SET_HP = 50;
 	bool isGameStart;
 	short StartGame_PlayerCount = 1;
 	float play_time = 0;
