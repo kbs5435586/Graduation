@@ -35,9 +35,9 @@ HRESULT CDeffend::Ready_GameObject(void* pArg)
 	_matrix pTemp = *(_matrix*)pArg;
 	m_pTransformCom->Set_Matrix(pTemp);
 
-	//_vec3 vColliderSize = { 50.f,50.f,50.f };
-	//m_pColliderCom_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
-	//m_pColliderCom_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	_vec3 vColliderSize = { 50.f,50.f,50.f };
+	m_pColliderCom_OBB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
+	m_pColliderCom_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
 	return S_OK;
 }
@@ -48,8 +48,8 @@ _int CDeffend::Update_GameObject(const _float& fTimeDelta)
 	if (nullptr == server)
 		return -1;
 
-	//m_pColliderCom_OBB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
-	//m_pColliderCom_AABB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+	m_pColliderCom_OBB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
+	m_pColliderCom_AABB->Update_Collider(m_pTransformCom, _vec3(250.f, 250.f, 250.f));
 
 
 	//Obb_Collision();

@@ -3676,7 +3676,7 @@ void Server::initialize_nature()
         _uint iSize = rand() % 20 + 5;
         g_clients[i].m_transform.Scaling(iSize, iSize, iSize);
         if (g_clients[i].m_type == TP_TREE)
-            g_clients[i].m_col.aabb_size = { 0.5f,3.f,0.5f };
+            g_clients[i].m_col.aabb_size = { 1.f,3.f,1.f };
         else if (g_clients[i].m_type == TP_ROCK)
             g_clients[i].m_col.aabb_size = { 2.5f,3.f,2.5f };
         Update_Collider(i, g_clients[i].m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);

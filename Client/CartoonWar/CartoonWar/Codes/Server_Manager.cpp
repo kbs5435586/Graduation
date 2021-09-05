@@ -1065,6 +1065,11 @@ short CServer_Manager::object_idx_to_id(unsigned short id)
 	return id + OBJECT_START;
 }
 
+short CServer_Manager::rock_idx_to_id(unsigned short id)
+{
+	return id + ROCK_START;
+}
+
 short CServer_Manager::object_id_to_idx(unsigned short id)
 {
 	return id - OBJECT_START;
@@ -1284,7 +1289,14 @@ short CServer_Manager::Get_NpcSize()
 
 float CServer_Manager::Get_Nature_Scale(int id)
 {
-	return m_objects[object_idx_to_id(id)].scale;
+	int index = object_idx_to_id(id);
+	return m_objects[index].scale;
+}
+
+float CServer_Manager::Get_Rock_Scale(int id)
+{
+	int index = rock_idx_to_id(id);
+	return m_objects[index].scale;
 }
 
 short CServer_Manager::Get_TroopClass()

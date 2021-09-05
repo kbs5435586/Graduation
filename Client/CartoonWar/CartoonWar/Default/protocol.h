@@ -41,6 +41,10 @@ constexpr int OBJECT_START = 450;
 constexpr int MAX_OBJECT = 700;
 
 constexpr int NATURE_START = 450;
+constexpr int TREE_START = 450;
+constexpr int MAX_TREE = 518;
+constexpr int ROCK_START = 519;
+constexpr int MAX_ROCK = 526;
 constexpr int MAX_NATURE = 526;
 
 constexpr int CL_TEST_PLAYERS = 4;
@@ -244,6 +248,8 @@ constexpr unsigned char O_DEFFEND = 3;
 constexpr unsigned char O_ARROW = 4;
 constexpr unsigned char O_FIRE = 5;
 constexpr unsigned char O_TELE = 6;
+constexpr unsigned char O_TREE = 7;
+constexpr unsigned char O_ROCK = 8;
 
 struct sc_packet_enter
 {

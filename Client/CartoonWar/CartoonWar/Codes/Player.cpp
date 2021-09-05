@@ -99,9 +99,9 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	Attack(fTimeDelta);
 	Play_Sound(fTimeDelta);
-	//m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
-	//m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
-	//m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
+	m_pCollider_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range[0], m_eCurClass);
+	m_pCollider_Attack->Update_Collider(m_pTransformCom, m_vOBB_Range[1], m_eCurClass);
 
 	m_iCurAnimIdx = server->Get_Anim(m_iLayerIdx, O_PLAYER);
 	m_IsOnce = server->Get_isOnce(m_iLayerIdx, O_PLAYER);

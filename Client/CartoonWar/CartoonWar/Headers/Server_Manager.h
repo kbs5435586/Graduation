@@ -71,6 +71,7 @@ public:
     short npc_id_to_idx(unsigned short id);
     short object_idx_to_id(unsigned short id);
     short object_id_to_idx(unsigned short id);
+    short rock_idx_to_id(unsigned short id);
 
     bool Get_Particle(int id, char type);
     bool Get_Show(int index, char type);
@@ -89,6 +90,7 @@ public:
     short Get_AnimStat(int id, char type);
     float Get_GameTime();
     float Get_Nature_Scale(int id);
+    float Get_Rock_Scale(int id);
     short Get_NpcSize();
     short Get_TroopClass();
     bool Get_isInvisible(int id);

@@ -98,6 +98,8 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 	int iLength_Layer = 0;
 	int iLength_Com = 0;
 
+	int iTempCnt = 0;
+
 	while (TRUE)
 	{
 		int iSize = 0;
@@ -116,14 +118,26 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
-
-
+			if (!lstrcmp(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_pine_01"))
+			{
+				//Component_StaticMesh_rpgpp_lt_tree_01
+				_uint iRand = rand() % 2;
+				if (iRand == 0)
+				{
+					lstrcpy(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_01");
+				}
+				else
+				{
+					lstrcpy(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_02");
+				}
+			}
 
 			CGameObject* pGameObject = nullptr;
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly", &pGameObject, szComTag)))
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_LowPoly", (_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly", &pGameObject, szComTag, iTempCnt)))
 			{
 				return E_FAIL;
 			}
+			iTempCnt++;
 			pGameObject->GetEnviType() = *(ENVITYPE*)pArg;
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly")->Get_ComponentPointer(L"Com_Transform");

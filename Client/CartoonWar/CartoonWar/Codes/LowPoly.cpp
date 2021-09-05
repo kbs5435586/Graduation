@@ -53,10 +53,24 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	if ((int)m_pTransformCom->Get_Scale().x != (int)server->Get_Nature_Scale(m_iLayerIdx))
+	int a = m_pTransformCom->Get_Scale().x;
+	int b = server->Get_Nature_Scale(m_iLayerIdx);
+
+	if (m_eEnviType == ENVITYPE::ENVI_TREE)
 	{
-		_uint iSize = server->Get_Nature_Scale(m_iLayerIdx);
-		m_pTransformCom->Scaling(iSize, iSize, iSize);
+		if ((int)m_pTransformCom->Get_Scale().x != (int)server->Get_Nature_Scale(m_iLayerIdx))
+		{
+			_uint iSize = server->Get_Nature_Scale(m_iLayerIdx);
+			m_pTransformCom->Scaling(iSize, iSize, iSize);
+		}
+	}
+	else if (m_eEnviType == ENVITYPE::ENVI_ROCK)
+	{
+		if ((int)m_pTransformCom->Get_Scale().x != (int)server->Get_Rock_Scale(m_iLayerIdx))
+		{
+			_uint iSize = server->Get_Nature_Scale(m_iLayerIdx);
+			m_pTransformCom->Scaling(iSize, iSize, iSize);
+		}
 	}
 
 	if (m_eEnviType == ENVITYPE::ENVI_ROCK)
@@ -67,7 +81,7 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 	}
 	else if (m_eEnviType == ENVITYPE::ENVI_TREE)
 	{
-		m_vColliderSize_Tree = { 0.5f,3.f,0.5f };
+		m_vColliderSize_Tree = { 1.f,3.f,1.f };
 		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Tree);
 		m_pTransformCom->Set_PositionY(fY);
 	}
