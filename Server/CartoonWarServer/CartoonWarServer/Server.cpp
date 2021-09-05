@@ -2650,13 +2650,13 @@ void Server::worker_thread()
         case FUNC_CHECK_COLLISION:
             if (isGameStart)
             {
-                for (auto& it : g_clients) // OBB 작동한놈 OBB시키기
+                for (int i = 0; i <= MY_NPC_END_SERVER(1); ++i) // OBB 작동한놈 OBB시키기
                 {
-                    if (ST_ACTIVE != it.second.m_status) // 활성화 된놈, 죽어있는놈은 제외
+                    if (ST_ACTIVE != g_clients[i].m_status) // 활성화 된놈, 죽어있는놈은 제외
                         continue;
-                    if(!it.second.m_isOBB)
+                    if(!g_clients[i].m_isOBB)
                         continue;
-                    Obb_Collision(it.first);
+                    Obb_Collision(i);
                 }
                 add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);
             }
