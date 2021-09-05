@@ -53,12 +53,9 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 
-	int a = m_pTransformCom->Get_Scale().x;
-	int b = server->Get_Nature_Scale(m_iLayerIdx);
-
 	if (m_eEnviType == ENVITYPE::ENVI_TREE)
 	{
-		if ((int)m_pTransformCom->Get_Scale().x != (int)server->Get_Nature_Scale(m_iLayerIdx))
+		if ((int)(m_pTransformCom->Get_Scale().x) != (int)(server->Get_Nature_Scale(m_iLayerIdx)))
 		{
 			_uint iSize = server->Get_Nature_Scale(m_iLayerIdx);
 			m_pTransformCom->Scaling(iSize, iSize, iSize);
@@ -66,7 +63,7 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 	}
 	else if (m_eEnviType == ENVITYPE::ENVI_ROCK)
 	{
-		if ((int)m_pTransformCom->Get_Scale().x != (int)server->Get_Rock_Scale(m_iLayerIdx))
+		if ((int)(m_pTransformCom->Get_Scale().x) != (int)(server->Get_Rock_Scale(m_iLayerIdx)))
 		{
 			_uint iSize = server->Get_Nature_Scale(m_iLayerIdx);
 			m_pTransformCom->Scaling(iSize, iSize, iSize);
