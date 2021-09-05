@@ -137,6 +137,7 @@ struct SESSION // 클라이언트 정보
 	short m_owner_id;
 	bool m_isOut;
 	bool m_isFormSet;
+	bool m_IsRotateEnd;
 	unsigned short m_boid_num;
 	_vec3 m_target_look;
 	high_resolution_clock::time_point m_attacktime;

@@ -2396,32 +2396,6 @@ void Server::do_attack(int npc_id)
                     }
                 }
             }
-
-            //float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
-            //float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-            //float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-            //if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-            //    radian *= -1.f;
-
-            //float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-            //if (NPCangle > 5.f || NPCangle < -5.f) // npc가 공격할 대상을 안바라볼때
-            //{
-            //    n.m_anim = A_WALK;
-            //    if (NPCangle > 5.f)
-            //    {
-            //        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-            //    }
-            //    else if (NPCangle < -5.f)
-            //    {
-            //        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-            //    }
-            //}
-            else // npc가 공격할 대상을 바라볼때
-            {
-
-            }
         }
     }
 }
