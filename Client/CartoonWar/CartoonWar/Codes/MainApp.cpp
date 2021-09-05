@@ -297,7 +297,7 @@ void CMainApp::SetTime(const _float& fTimeDelta)
 		return;
 	}
 
-	m_fDateTime += fTimeDelta;
+	m_fDateTime += g_iTotalTime;
 	m_fDatePer = m_fDateTime / 300.f;
 
 	_float fTemp = Lerp(1.f, -1.2f, m_fDatePer);
