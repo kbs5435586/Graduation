@@ -143,12 +143,12 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 
 				pTransform->Scaling(4.f, 4.f, 4.f);
 			}
-			else
-			{
-				_uint iSize = rand() % 20 + 5;
-				_uint iRot = rand() % 20;
-				pTransform->Scaling(iSize, iSize, iSize);
-			}
+			//else
+			//{
+			//	_uint iSize = rand() % 20 + 5;
+			//	_uint iRot = rand() % 20;
+			//	pTransform->Scaling(iSize, iSize, iSize);
+			//}
 
 			//pTransform->SetUp_RotationY(XMConvertToRadians(180));
 

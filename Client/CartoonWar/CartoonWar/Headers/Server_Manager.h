@@ -88,6 +88,7 @@ public:
     short Get_Anim(int id, char type);
     short Get_AnimStat(int id, char type);
     float Get_GameTime();
+    float Get_Nature_Scale(int id);
     short Get_NpcSize();
     short Get_TroopClass();
     bool Get_isInvisible(int id);

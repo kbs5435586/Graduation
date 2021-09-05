@@ -38,7 +38,10 @@ constexpr int FLAG_START = 450;
 constexpr int MAX_FLAG = 454;
 
 constexpr int OBJECT_START = 450;
-constexpr int MAX_OBJECT = 600;
+constexpr int MAX_OBJECT = 700;
+
+constexpr int NATURE_START = 450;
+constexpr int MAX_NATURE = 526;
 
 constexpr int CL_TEST_PLAYERS = 4;
 constexpr int CL_TEST_NPCS = 36;
@@ -99,6 +102,7 @@ constexpr char SC_PACKET_DO_PARTICLE = 19;
 constexpr char SC_PACKET_ARROW = 20;
 constexpr char SC_PACKET_DEFFEND = 21;
 constexpr char SC_PACKET_REVIVE = 22;
+constexpr char SC_PACKET_NATURE_SCALE = 23;
 
 #pragma pack(push ,1)
 
@@ -153,6 +157,14 @@ struct sc_packet_gold
 	char size;
 	char type;
 	int	 gold;
+};
+
+struct sc_packet_nature_scale
+{
+	char size;
+	char type;
+	int id;
+	float scale;
 };
 
 struct sc_packet_flag_bool

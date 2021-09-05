@@ -1506,6 +1506,17 @@ void Server::send_gold_packet(int user_id)
     send_packet(user_id, &packet);
 }
 
+void Server::send_nature_scale_packet(int user_id, int other_id)
+{
+    sc_packet_nature_scale packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_NATURE_SCALE;
+    packet.id = other_id;
+    packet.scale = g_clients[other_id].m_transform.Get_Scale().x;
+
+    send_packet(user_id, &packet);
+}
+
 void Server::enter_game(int user_id, char name[])
 {
     g_clients[user_id].m_cLock.lock(); // name, m_status 락
@@ -1514,6 +1525,8 @@ void Server::enter_game(int user_id, char name[])
     send_login_ok_packet(user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     g_clients[user_id].m_status = ST_ACTIVE; // 다른 클라들한테 정보 보낸 다음에 마지막에 ST_ACTIVE로 바꿔주기
     g_clients[user_id].m_cLock.unlock();
+    for (int nat = NATURE_START; nat <= MAX_NATURE; ++nat)
+        send_nature_scale_packet(user_id, nat);
     //for (int i = 0; i < 5; ++i)
     //    send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
     cout << "Player " << user_id << " login finish" << endl;
@@ -3340,7 +3353,6 @@ void Server::cal_change_class_gold(int id, short m_class)
     {
         g_clients[id].m_gold -= TIER_ONE_PRICE;
     }
-
     send_gold_packet(id);
 }
 
@@ -3659,6 +3671,8 @@ void Server::initialize_nature()
 
     for (int i = OBJECT_START; i <= 526; ++i)
     {
+        g_clients[i].m_id = i;
+        g_clients[i].m_status = ST_ACTIVE;
         _uint iSize = rand() % 20 + 5;
         g_clients[i].m_transform.Scaling(iSize, iSize, iSize);
         if (g_clients[i].m_type == TP_TREE)

@@ -274,6 +274,7 @@ void CTransform::Scaling(const _vec3& vScale)
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
 	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+	m_vScale = vScale;
 }
 
 void CTransform::Scaling(const _float& fX, const _float& fY, const _float& fZ)
@@ -286,7 +287,7 @@ void CTransform::Scaling(const _float& fX, const _float& fY, const _float& fZ)
 		vDir[i] = Vector3_::Normalize(vDir[i]);
 	}
 
-
+	_vec3 vScale = _vec3(fX, fY, fZ);
 	vDir[STATE_RIGHT] = Vector3_::ScalarProduct(vDir[STATE_RIGHT], fX, false);
 	vDir[STATE_UP] = Vector3_::ScalarProduct(vDir[STATE_UP], fY, false);
 	vDir[STATE_LOOK] = Vector3_::ScalarProduct(vDir[STATE_LOOK], fZ, false);
@@ -295,6 +296,7 @@ void CTransform::Scaling(const _float& fX, const _float& fY, const _float& fZ)
 	Set_StateInfo(STATE_RIGHT, &vDir[STATE_RIGHT]);
 	Set_StateInfo(STATE_UP, &vDir[STATE_UP]);
 	Set_StateInfo(STATE_LOOK, &vDir[STATE_LOOK]);
+	m_vScale = vScale;
 }
 
 void CTransform::Go_ToTarget(_vec3* pTargetPos, const _float& fTimeDelta)

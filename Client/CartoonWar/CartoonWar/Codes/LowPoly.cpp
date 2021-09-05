@@ -44,11 +44,20 @@ HRESULT CLowPoly::Ready_GameObject(void* pArg)
 
 _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 {
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
+
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	_float		fSize = m_pTransformCom->Get_Scale().x;
+
+	if ((int)m_pTransformCom->Get_Scale().x != (int)server->Get_Nature_Scale(m_iLayerIdx))
+	{
+		_uint iSize = server->Get_Nature_Scale(m_iLayerIdx);
+		m_pTransformCom->Scaling(iSize, iSize, iSize);
+	}
 
 	if (m_eEnviType == ENVITYPE::ENVI_ROCK)
 	{

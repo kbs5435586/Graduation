@@ -255,6 +255,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		my_npc = my_packet->npc_size;
 	}
 	break;
+	case SC_PACKET_NATURE_SCALE:
+	{
+		sc_packet_nature_scale* my_packet = reinterpret_cast<sc_packet_nature_scale*>(ptr);
+		m_objects[my_packet->id].scale = my_packet->scale;
+	}
+	break;
 	case SC_PACKET_FIRE:
 	{
 		sc_packet_fire* my_packet = reinterpret_cast<sc_packet_fire*>(ptr);
@@ -1274,6 +1280,11 @@ bool CServer_Manager::Get_isInvisible(int id)
 short CServer_Manager::Get_NpcSize()
 {
 	return my_npc;
+}
+
+float CServer_Manager::Get_Nature_Scale(int id)
+{
+	return m_objects[object_idx_to_id(id)].scale;
 }
 
 short CServer_Manager::Get_TroopClass()
