@@ -1999,115 +1999,256 @@ void Server::do_attack(int npc_id)
             _vec3 t_look = *t_pos - *n_pos;
             t_look = Vector3_::Normalize(t_look);
 
+            float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
 
-            _vec3 vP_M = *t_pos - *n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
-            float m_iDestLength = Vector3_::Length(vP_M);
-            vP_M = Vector3_::Normalize(vP_M);
+            float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+            if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                radian *= -1.f;
 
-            _vec3 vTemp = n_look;
-            //vTemp *= -1.f;
-            //D3DXVec3Normalize(&vTemp, &vTemp);
-            float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
-            //m_fDot = D3DXVec3Dot(&vTemp, &vP_M);
-            if (!n.m_IsRotateEnd)
+            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+            if (NPCangle > 7.f || NPCangle < -7.f) // npc가 공격할 대상을 안바라볼때
             {
-                if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
+                n.m_anim = A_WALK;
+                if (NPCangle > 7.f)
                 {
-                    if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos->x)
-                    {
-                        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                    }
-                    else
-                    {
-                        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                    }
-                    _int i = 0;
+                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
                 }
-                else
+                else if (NPCangle < -7.f)
                 {
-                    if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos->z)
-                    {
-                        if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-                        {
-                            n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                        }
-                        else
-                        {
-                            n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                        }
-
-                    }
-                    else
-                    {
-                        if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-                        {
-                            n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                        }
-                        else
-                        {
-                            n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                        }
-                    }
-                    _int i = 0;
+                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
                 }
-                //n.m_IsRotateEnd = true;
             }
-
-
-            _float fAngle = XMConvertToDegrees(m_fDot);
-            if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
+            else // npc가 공격할 대상을 바라볼때
             {
-                n.m_IsRotateEnd = true;
-                if (m_iDestLength >= 3.f) // 죽일 적 근처에 도달 못했을떄
+                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
+                    check_obb_collision(npc_id, n.m_attack_target))
                 {
-                    n.m_transform.Go_ToTarget(t_pos, TIME_DELTA);
-                    n.m_anim = A_WALK;
-                }
-                else // 죽일 적 근처에 도달했을떄
-                {
-                    if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
-                        check_obb_collision(npc_id, n.m_attack_target)) // 둘 사이 거리가 obb 가능한 거리일때
+                    duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
+                    if (cooltime >= seconds(1))
                     {
-                        duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
-                        if (cooltime >= seconds(1)) // 공격 쿨타임이 돌았을때
+                        n.m_isAttack = true;
+                        if (n.m_isAttack)
                         {
-                            n.m_isAttack = true;
-                            if (n.m_isAttack)
+                            g_clients[n.m_attack_target].m_isOBB = true;
+                            g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                            n.m_isAttack = false;
+                            g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+                            n.m_attacktime = high_resolution_clock::now();
+                            if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
                             {
-                                g_clients[n.m_attack_target].m_isOBB = true;
-                                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                                n.m_isAttack = false;
-                                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-                                n.m_attacktime = high_resolution_clock::now();
-                                if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                                for (int i = 0; i < NPC_START; ++i)
                                 {
-                                    for (int i = 0; i < NPC_START; ++i)
-                                    {
-                                        if (ST_ACTIVE != g_clients[i].m_status)
-                                            continue;
-                                        if (!is_near(i, n.m_attack_target))
-                                            continue;
-                                        send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                        send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                    }
-                                }
-                                else // 상대방이 죽었을때
-                                {
-                                    do_dead(n.m_attack_target);
-                                    n.m_attack_target = -1;
+                                    if (ST_ACTIVE != g_clients[i].m_status)
+                                        continue;
+                                    if (!is_near(i, n.m_attack_target))
+                                        continue;
+                                    send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                    send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
                                 }
                             }
-                            n.m_anim = A_ATTACK;
+                            else // 상대방이 죽었을때
+                            {
+                                do_dead(n.m_attack_target);
+                               
+                            }
+                            n.m_attack_target = -1;
                         }
+                        n.m_anim = A_ATTACK;
                     }
                 }
-            }
-            else // 안마주볼때
-            {
-                n.m_IsRotateEnd = false;
+                else // OBB 공격범위 밖일때
+                {
+                    n.m_anim = A_WALK;
+                    n.m_transform.BackWard(TIME_DELTA * 3.f);
+                }
             }
         }
     }
+
+
+    //SESSION& n = g_clients[npc_id];
+    //_vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
+    //n_look = -1.f * Vector3_::Normalize(n_look);
+    //_vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+
+    //if (!n.m_isOBB) // OBB 충돌당한 상태가 아닐때
+    //{
+    //    if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
+    //    {
+    //        for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
+    //        {
+    //            if (ST_ACTIVE != g_clients[i].m_status)
+    //                continue;
+    //            if (ST_DEAD == g_clients[i].m_status)
+    //                continue;
+    //            if (g_clients[i].m_team == n.m_team)
+    //                continue;
+    //            if (!is_attack_detect(i, n.m_id))
+    //                continue;
+
+    //            n.m_attack_target = i;
+    //            break;
+    //        }
+
+    //        if (n.m_attack_target >= 0)
+    //            return;
+    //        else // 주변에 적이 없으면 탐색 움직임 시작
+    //        {
+    //            _vec3 t_look = g_clients[npc_id].m_target_look;
+    //            t_look = -1.f * Vector3_::Normalize(t_look);
+
+    //            float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+    //            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+    //            float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+    //            if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+    //                radian *= -1.f;
+
+    //            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+    //            if (NPCangle > 3.f || NPCangle < -3.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
+    //            {
+    //                n.m_transform.BackWard(TIME_DELTA * 3.f);
+    //                n.m_anim = A_WALK;
+    //                if (NPCangle > 3.f)
+    //                {
+    //                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+    //                }
+    //                else if (NPCangle < -3.f)
+    //                {
+    //                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+    //                }
+    //            }
+    //            else // npc가 바라보는 방향이 플레이어랑 일치할때
+    //            {
+    //                n.m_anim = A_WALK;
+    //                n.m_transform.BackWard(TIME_DELTA * 3.f);
+    //            }
+    //        }
+    //    }
+    //    else // 공격할 대상이 지정이 되었을때
+    //    {
+    //        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
+    //        {
+    //            n.m_attack_target = -1;
+    //            return;
+    //        }
+    //        _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    //        _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+    //        _vec3 t_look = *t_pos - *n_pos;
+    //        t_look = Vector3_::Normalize(t_look);
+
+
+    //        _vec3 vP_M = *t_pos - *n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
+    //        float m_iDestLength = Vector3_::Length(vP_M);
+    //        vP_M = Vector3_::Normalize(vP_M);
+
+    //        _vec3 vTemp = n_look;
+    //        //vTemp *= -1.f;
+    //        //D3DXVec3Normalize(&vTemp, &vTemp);
+    //        float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
+    //        //m_fDot = D3DXVec3Dot(&vTemp, &vP_M);
+    //        if (!n.m_IsRotateEnd)
+    //        {
+    //            if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
+    //            {
+    //                if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos->x)
+    //                {
+    //                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+    //                }
+    //                else
+    //                {
+    //                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+    //                }
+    //                _int i = 0;
+    //            }
+    //            else
+    //            {
+    //                if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos->z)
+    //                {
+    //                    if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+    //                    {
+    //                        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+    //                    }
+    //                    else
+    //                    {
+    //                        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+    //                    }
+
+    //                }
+    //                else
+    //                {
+    //                    if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+    //                    {
+    //                        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+    //                    }
+    //                    else
+    //                    {
+    //                        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+    //                    }
+    //                }
+    //                _int i = 0;
+    //            }
+    //            //n.m_IsRotateEnd = true;
+    //        }
+
+
+    //        _float fAngle = XMConvertToDegrees(m_fDot);
+    //        if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
+    //        {
+    //            n.m_IsRotateEnd = true;
+    //            if (m_iDestLength >= 3.f) // 죽일 적 근처에 도달 못했을떄
+    //            {
+    //                n.m_transform.Go_ToTarget(t_pos, TIME_DELTA);
+    //                n.m_anim = A_WALK;
+    //            }
+    //            else // 죽일 적 근처에 도달했을떄
+    //            {
+    //                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
+    //                    check_obb_collision(npc_id, n.m_attack_target)) // 둘 사이 거리가 obb 가능한 거리일때
+    //                {
+    //                    duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
+    //                    if (cooltime >= seconds(1)) // 공격 쿨타임이 돌았을때
+    //                    {
+    //                        n.m_isAttack = true;
+    //                        if (n.m_isAttack)
+    //                        {
+    //                            g_clients[n.m_attack_target].m_isOBB = true;
+    //                            g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+    //                            n.m_isAttack = false;
+    //                            g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+    //                            n.m_attacktime = high_resolution_clock::now();
+    //                            if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+    //                            {
+    //                                for (int i = 0; i < NPC_START; ++i)
+    //                                {
+    //                                    if (ST_ACTIVE != g_clients[i].m_status)
+    //                                        continue;
+    //                                    if (!is_near(i, n.m_attack_target))
+    //                                        continue;
+    //                                    send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+    //                                    send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+    //                                }
+    //                            }
+    //                            else // 상대방이 죽었을때
+    //                            {
+    //                                do_dead(n.m_attack_target);
+    //                                n.m_attack_target = -1;
+    //                            }
+    //                        }
+    //                        n.m_anim = A_ATTACK;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        else // 안마주볼때
+    //        {
+    //            n.m_IsRotateEnd = false;
+    //        }
+    //    }
+    //}
 }
 
 void Server::do_dead(int id)
