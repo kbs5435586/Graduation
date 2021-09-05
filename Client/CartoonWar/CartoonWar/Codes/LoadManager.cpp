@@ -121,7 +121,7 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			if (!lstrcmp(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_pine_01"))
 			{
 				//Component_StaticMesh_rpgpp_lt_tree_01
-				_uint iRand = rand() % 2;
+				_uint iRand = iSize % 2;
 				if (iRand == 0)
 				{
 					lstrcpy(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_01");
