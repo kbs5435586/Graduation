@@ -139,6 +139,7 @@ struct SESSION // 클라이언트 정보
 	bool m_isFormSet;
 	unsigned short m_boid_num;
 	_vec3 m_target_look;
+	high_resolution_clock::time_point m_attacktime;
 
 	// 기타
 	high_resolution_clock::time_point m_lifetime;
