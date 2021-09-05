@@ -1355,7 +1355,7 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 
     for (int i = 0; i < NPC_START; ++i) // npc 시야범위 내 있는 플레이어들에게 신호 보내는 곳
     {
-        if (ST_ACTIVE != g_clients[i].m_status)
+        if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
             continue;
         if (true == is_near(i, npc_id))
         {
@@ -1438,6 +1438,7 @@ void Server::do_event_timer()
             case FUNC_CHECK_COLLISION:
             case FUNC_CHECK_GOLD:
             case FUNC_REVIVE:
+            case FUNC_NPC_LEAVE:
             case FUNC_ARROW:
             {
                 OverEx* over = new OverEx;
@@ -1888,7 +1889,7 @@ void Server::do_animation(int user_id, unsigned char anim)
         {
             if (false == is_near(i, user_id)) // 근처에 없는 유저면 보내지도 마라
                 continue;
-            if (ST_ACTIVE != g_clients[i].m_status) // 로그인 상태 아닌애면 보내지 마라
+            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status) // 로그인 상태 아닌애면 보내지 마라
                 continue;
 
             send_animation_packet(i, user_id, anim); // 내 시야범위 안에 있는 애들한테만 내가 돌아갔다는거 보냄
@@ -2016,6 +2017,7 @@ void Server::do_attack(int npc_id)
                             g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
                             n.m_isAttack = false;
                             g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+                            n.m_attacktime = high_resolution_clock::now();
                             if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
                             {
                                 for (int i = 0; i < NPC_START; ++i)
@@ -2078,7 +2080,7 @@ void Server::do_dead(int id)
     }
     else
     {
-        // 죽는 애니메이션 끝나면 npc는 send_leave_packet(i, id); // 남은 체력 브로드캐스팅
+        add_timer(id, FUNC_NPC_LEAVE, NPC_LEAVE_TIME);// 죽는 애니메이션 끝나면 npc는 send_leave_packet(i, id); // 남은 체력 브로드캐스팅
     }
 }
 
@@ -2552,6 +2554,16 @@ void Server::worker_thread()
                 play_time += 1;
                 send_time_packet();
                 add_timer(PURE_EVENT, FUNC_CHECK_TIME, 1000);
+            }
+            delete overEx;
+            break;
+        case FUNC_NPC_LEAVE:
+            for (int pl = 0; pl < NPC_START; ++pl)
+            {
+                if (ST_ACTIVE != g_clients[pl].m_status && ST_DEAD != g_clients[pl].m_status) // 접속중이지 않은 유저 거른다
+                    continue;
+
+                send_leave_packet(pl, id);
             }
             delete overEx;
             break;
