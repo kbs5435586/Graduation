@@ -36,8 +36,9 @@ private:
 	float ARROW_ENDTIME = 3.f;
 	float ARROW_DIST = 10.f;
 	float ARROW_DAMAGE = 10.f;
+	int FIRE_SKILL_TIME = 5;
 
-	int FRAME_TIME = 17; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
+	int FRAME_TIME = 33; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 25;
 	float FLAME_RANGE = 50.f;
@@ -98,7 +99,7 @@ public:
 	void do_revive(int id);
 	void do_change_formation(int player_id);
 	void do_change_npc_act(int player_id, unsigned char act);
-	void do_dot_damage(int id);
+	void do_fire_skill_damage(int id);
 	void do_aabb(int o_mv, int o_ht);
 
 	void do_arrow(int arrow_id);
