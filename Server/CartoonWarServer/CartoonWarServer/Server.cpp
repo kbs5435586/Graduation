@@ -196,16 +196,19 @@ void Server::do_move(int user_id, char direction)
     Update_Collider(user_id, p.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
     //Obb_Collision(user_id);
 
-    for (auto& o : g_clients) // aabb 面倒眉农
-{
-    if (o.second.m_id == user_id)
-        continue;
-    if (ST_ACTIVE != o.second.m_status)
-        continue;
-    if (ST_DEAD == o.second.m_status)
-        continue;
-    check_aabb_collision(user_id, o.second.m_id);
-}
+    if (GO_LEFT != direction && GO_RIGHT != direction)
+    {
+        for (auto& o : g_clients) // aabb 面倒眉农
+        {
+            if (o.second.m_id == user_id)
+                continue;
+            if (ST_ACTIVE != o.second.m_status)
+                continue;
+            if (ST_DEAD == o.second.m_status)
+                continue;
+            check_aabb_collision(user_id, o.second.m_id);
+        }
+    }
 
     set_formation(user_id);
 
