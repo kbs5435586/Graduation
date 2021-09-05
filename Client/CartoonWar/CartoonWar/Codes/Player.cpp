@@ -140,7 +140,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			server->Set_isFirst(false, m_iLayerIdx, O_PLAYER);
 		}
 		else
-			vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43);
+			vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43); // 클라가 실질적으로 가야하는 포지션값
 
 		_vec3   vRight = _vec3(matTemp._11, matTemp._12, matTemp._13);
 		_vec3   vUp = _vec3(matTemp._21, matTemp._22, matTemp._23);
@@ -149,18 +149,26 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_RIGHT, &vRight);
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
-		
-		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3   vLen = pPos - vPos;
-		//vLen.y = 0.f;
-		_float   fLen = vLen.Length();
 
-		if (fLen > 0.5f)
+		vLook = Vector3_::Normalize(vLook);
+		_vec3 vDirectionPerSec = (vLook * m_fArrSpeed[m_iCurMeshNum] * fTimeDelta);
+		_vec3 vSlide = {};
+		if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide)) // 클라가 최종적으로 가야하는 포지션이 내비메쉬 내부일때
 		{
-			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
-		}
+			_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION); // 현재 클라의 보여지는 포지션값
+			_vec3   vLen = pPos - vPos;
+			//vLen.y = 0.f;
+			_float   fLen = vLen.Length();
 
-		//m_pTransformCom->Set_PositionY(matTemp._42 + fY);
+			if (fLen > 0.5f)
+			{
+				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+			}
+		}
+		else  // 클라가 최종적으로 가야하는 포지션이 내비메쉬 밖일때
+		{
+			server->send_position_packet(&vSlide);
+		}
 
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 		{
@@ -1458,7 +1466,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 	if (CManagement::GetInstance()->Key_Combine(KEY_UP, KEY_SHIFT))
 	{
-		m_IsSlide = true;
 		if (!m_IsCombat)
 			server->send_animation_packet(A_RUN);
 		else
@@ -1468,17 +1475,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			- server->Get_Move_Cooltime());
 		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
 		{
-			_vec3 vLook = {};
-			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-			vLook = Vector3_::Normalize(vLook);
-
-			m_pTransformCom->SetSpeed(m_fArrSpeedUP[(_uint)m_eCurClass]);
-			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-			_vec3 vSlide = {};
-			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-				server->send_move_packet(GO_FAST_FORWARD);
-			else
-				m_pTransformCom->Go_There(vSlide);
+			server->send_move_packet(GO_FAST_FORWARD);
 			server->Set_Move_CoolTime(high_resolution_clock::now());
 		}
 
@@ -1490,7 +1487,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
-		m_IsSlide = true;
 		if (!m_IsCombat)
 			server->send_animation_packet(A_WALK);
 		else
@@ -1500,25 +1496,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			- server->Get_Move_Cooltime());
 		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
 		{
-			_vec3 vLook = {};
-			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
-			vLook = Vector3_::Normalize(vLook);
-
-			m_pTransformCom->SetSpeed(m_fArrSpeed[(_uint)m_eCurClass]);
-			_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
-			_vec3 vSlide = {};
-			if (!m_IsSlide)
-			{
-				if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
-					server->send_move_packet(GO_FORWARD);
-				else
-					m_pTransformCom->Go_There(vSlide);
-			}
-			else
-			{
-				server->send_move_packet(GO_FORWARD);
-				m_IsSlide = false;
-			}
+			server->send_move_packet(GO_FORWARD);
 			server->Set_Move_CoolTime(high_resolution_clock::now());
 		}
 

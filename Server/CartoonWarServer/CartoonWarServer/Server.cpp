@@ -499,6 +499,14 @@ void Server::process_packet(int user_id, char* buf)
         pos.y = packet->y;
         pos.z = packet->z;
         g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+                continue;
+            if (!is_near(i, user_id))
+                continue;
+            send_move_packet(i, user_id);
+        }
     }
     break;
     case CS_PACKET_MOVE:
