@@ -79,9 +79,9 @@ _int CThrow_Arrow::Update_GameObject(const _float& fTimeDelta)
 	{
 		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_OBJECT);
 
-		_vec3   vPos = _vec3(matTemp._41, 0.f, matTemp._43);
 		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-		_vec3	calPos = { pPos.x, 0.f, pPos.z };
+		_vec3   vPos = _vec3(matTemp._41, pPos.y, matTemp._43);
+		_vec3	calPos = { pPos.x, pPos.y, pPos.z };
 
 		_vec3   vLen = calPos - vPos;
 		_float   fLen = vLen.Length();
