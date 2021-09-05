@@ -137,11 +137,15 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->SetSpeed(m_fSpeedUp);
 	else m_pTransformCom->SetSpeed(m_fSpeed);
 
+
+
+
+
 	_vec3 vLook = {};
 	vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
 	vLook = Vector3_::Normalize(vLook);
 
-	_vec3 vDirectionPerSec = (vLook * 5.f * fTimeDelta);
+	_vec3 vDirectionPerSec = (vLook * m_fSpeedUp * fTimeDelta);
 	_vec3 vSlide = {};
 	if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
 	{
@@ -151,6 +155,10 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_pTransformCom->Go_There(vSlide);
 	}
+
+
+
+
 
 	m_IsParticle = server->Get_Particle(m_iLayerIdx, O_NPC);
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
