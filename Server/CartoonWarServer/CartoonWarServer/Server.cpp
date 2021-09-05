@@ -1130,51 +1130,60 @@ void Server::do_follow(int npc_id)
                     _vec3 new_pos = n_pos + Dir;
                     n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
 
-                    _vec3 t_pos = g_clients[n.m_owner_id].m_boid[i].final_pos; // 자기가 가야할 목표위치를 안바라볼때
-                    _vec3 t_look = Vector3_::Subtract(t_pos, n_pos);
-                    t_look = Vector3_::Normalize(t_look);
+                    //_vec3 t_pos = g_clients[n.m_owner_id].m_boid[i].final_pos; // 자기가 가야할 목표위치를 안바라볼때
+                    //_vec3 t_look = Vector3_::Subtract(t_pos, n_pos);
+                    //t_look = Vector3_::Normalize(t_look);
 
-                    _vec3 vP_M = t_pos - n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
-                    float m_iDestLength = Vector3_::Length(vP_M);
-                    vP_M = Vector3_::Normalize(vP_M);
+                    //_vec3 vP_M = t_pos - n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
+                    //float m_iDestLength = Vector3_::Length(vP_M);
+                    //vP_M = Vector3_::Normalize(vP_M);
 
-                    _vec3 vTemp = n_look;
-                    float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
+                    //_vec3 vTemp = n_look;
+                    //float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
 
-                    if (!n.m_IsRotateEnd)
-                    {
-                        if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
-                        {
-                            if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos.x)
-                                n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                            else
-                                n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                        }
-                        else
-                        {
-                            if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos.z)
-                            {
-                                if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-                                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                                else
-                                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                            }
-                            else
-                            {
-                                if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-                                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-                                else
-                                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-                            }
-                        }
-                    }
+                    //if (!n.m_IsRotateEnd)
+                    //{
+                    //    if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
+                    //    {
+                    //        if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos.x)
+                    //            n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                    //        else
+                    //            n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                    //    }
+                    //    else
+                    //    {
+                    //        if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos.z)
+                    //        {
+                    //            if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+                    //                n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                    //            else
+                    //                n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                    //        }
+                    //        else
+                    //        {
+                    //            if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
+                    //                n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                    //            else
+                    //                n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                    //        }
+                    //    }
+                    //}
 
-                    _float fAngle = XMConvertToDegrees(m_fDot);
-                    if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
-                        n.m_IsRotateEnd = true;
-                    else // 안마주볼때
-                        n.m_IsRotateEnd = false;
+                    //_float fAngle = XMConvertToDegrees(m_fDot);
+                    //if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
+                    //{
+                    //    n.m_IsRotateEnd = true;
+                    //    if (m_iDestLength >= 3.f) // 죽일 적 근처에 도달 못했을떄
+                    //    {
+                    //        n.m_transform.Go_ToTarget(&t_pos, TIME_DELTA);
+                    //        n.m_anim = A_WALK;
+                    //    }
 
+                    //}
+                    //else // 안마주볼때
+                    //{
+                    //    n.m_IsRotateEnd = false;
+                    //}
                     n.m_isOut = true;
                 }
                 else

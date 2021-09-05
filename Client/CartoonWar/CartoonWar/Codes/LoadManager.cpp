@@ -137,7 +137,6 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			{
 				return E_FAIL;
 			}
-			iTempCnt++;
 			pGameObject->GetEnviType() = *(ENVITYPE*)pArg;
 			ReadFile(hFile, &mat, sizeof(_matrix), &dwByte, nullptr);
 			CTransform* pTransform = (CTransform*)CManagement::GetInstance()->Get_BackObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Lowpoly")->Get_ComponentPointer(L"Com_Transform");
@@ -166,7 +165,7 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 
 			//pTransform->SetUp_RotationY(XMConvertToRadians(180));
 
-
+			iTempCnt++;
 			pTransform->Set_Add_PosY(fAdd_PosY);
 		}
 	}
