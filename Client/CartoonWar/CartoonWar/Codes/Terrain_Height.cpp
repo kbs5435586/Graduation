@@ -110,10 +110,16 @@ void CTerrain_Height::Render_GameObject()
 	_bool a = (m_IsSkill_Z_ON && !m_IsSkill_Z_Start);
 	_bool b = (m_IsSkill_X_ON && !m_IsSkill_X_Start);
 
-	if (a)
-		m_tBrush.fBrushRange = 50.f;
-	if (b)
-		m_tBrush.fBrushRange = 30.f;
+	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", g_iPlayerIdx);
+	CLASS cTemp = pTemp->GetClass();
+	if (cTemp == CLASS::CLASS_MAGE || cTemp == CLASS::CLASS_MMAGE)
+	{
+		if (b)
+			m_tBrush.fBrushRange = 50.f;
+	}
+	
+	//if (b)
+	//	m_tBrush.fBrushRange = 30.f;
 	//m_tBrush.vBrushPos.x -= 25.f;
 	//m_tBrush.vBrushPos.z -= 25.f;
 
