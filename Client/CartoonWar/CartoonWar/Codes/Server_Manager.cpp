@@ -620,6 +620,14 @@ void CServer_Manager::send_position_packet(_vec3* pos)
 	send_packet(&m_packet);
 }
 
+void CServer_Manager::send_time_end_packet()
+{
+	cs_packet_time_end m_packet;
+	m_packet.type = CS_PACKET_TIME_END;
+	m_packet.size = sizeof(m_packet);
+	send_packet(&m_packet);
+}
+
 void CServer_Manager::send_login_ok_packet()
 {
 	cs_packet_login l_packet;

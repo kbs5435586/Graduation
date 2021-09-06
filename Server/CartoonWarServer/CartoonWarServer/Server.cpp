@@ -167,7 +167,11 @@ void Server::do_move(int user_id, char direction)
         p.m_transform.BackWard(TIME_DELTA);
         break;
     case GO_FAST_FORWARD:
-        p.m_transform.BackWard(2.f * TIME_DELTA);
+    {
+        p.m_transform.SetUp_Speed(p.m_move_speed * 2.f,p.m_rotate_speed);
+        p.m_transform.BackWard(TIME_DELTA);
+        p.m_transform.SetUp_Speed(p.m_move_speed, p.m_rotate_speed);
+    }
         break;
     case GO_BACK:
         p.m_transform.Go_Straight(TIME_DELTA);
@@ -306,6 +310,12 @@ void Server::process_packet(int user_id, char* buf)
     {
         cs_packet_login* packet = reinterpret_cast<cs_packet_login*>(buf);
         enter_game(user_id, packet->name);
+    }
+    break;
+    case CS_PACKET_TIME_END:
+    {
+        cs_packet_time_end* packet = reinterpret_cast<cs_packet_time_end*>(buf);
+        play_time = 298;
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -2757,7 +2767,7 @@ void Server::worker_thread()
             delete overEx;
             break;
         case FUNC_CHECK_TIME:
-            if (play_time < 600)
+            if (play_time < 300)
             {
                 play_time += 1;
                 send_time_packet();

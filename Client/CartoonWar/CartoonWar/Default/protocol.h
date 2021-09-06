@@ -83,6 +83,7 @@ constexpr char CS_PACKET_FIRE = 12;
 constexpr char CS_PACKET_ARROW = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
 constexpr char CS_PACKET_DEFFEND = 15;
+constexpr char CS_PACKET_TIME_END = 16;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -458,6 +459,12 @@ struct cs_packet_position
 	float	x;
 	float	y;
 	float	z;
+};
+
+struct cs_packet_time_end
+{
+	char	size;
+	char	type;
 };
 
 struct cs_packet_add_npc

@@ -46,7 +46,7 @@ private:
 	int SET_HP = 100;
 	bool isGameStart;
 	int StartGame_PlayerCount = 1;
-	float play_time = 0;
+	int play_time = 0;
 
 	float OBB_DIST = 5.f;
 	float AABB_PN = 4.f;

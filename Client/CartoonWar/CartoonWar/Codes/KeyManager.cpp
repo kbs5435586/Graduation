@@ -56,6 +56,10 @@ void CKeyManager::Key_Update()
 
 	if (GetAsyncKeyState('I') & 0x8000)
 		m_dwKey |= KEY_I;
+	if (GetAsyncKeyState('O') & 0x8000)
+		m_dwKey |= KEY_O;
+	if (GetAsyncKeyState('P') & 0x8000)
+		m_dwKey |= KEY_P;
 	if (GetAsyncKeyState('Z') & 0x8000)
 		m_dwKey |= KEY_Z;
 	if (GetAsyncKeyState('X') & 0x8000)
