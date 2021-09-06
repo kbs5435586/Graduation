@@ -31,7 +31,7 @@ private:
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 	float TIME_DELTA = 0.f;
 	int ARROW_COUNT = 0;
-	int REVIVE_COOLTIME = 3000;
+	int REVIVE_COOLTIME = 5000;
 	int NPC_LEAVE_TIME = 1500;
 	float ARROW_ENDTIME = 3.f;
 	float ARROW_DIST = 5.f;
