@@ -45,7 +45,7 @@ private:
 	int DOT_DAMAGE = 5;
 	int SET_HP = 100;
 	bool isGameStart;
-	int StartGame_PlayerCount = 2;
+	int StartGame_PlayerCount = 1;
 	float play_time = 0;
 
 	float OBB_DIST = 5.f;
