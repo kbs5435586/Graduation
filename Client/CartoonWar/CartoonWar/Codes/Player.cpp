@@ -165,7 +165,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			//Z
 			Skill_CastFire(fTimeDelta, m_fY);
 			//X
-			Skill_CastTeleport(fTimeDelta, m_fY);
+			//Skill_CastTeleport(fTimeDelta, m_fY);
 
 		}
 		else if (m_eCurClass == CLASS::CLASS_ARCHER)
@@ -1366,7 +1366,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				server->send_fire_packet(vPos.x, vPos.z);
 
-				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+				CGameObject* sTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 				dynamic_cast<CUI_Skill*>(sTemp)->SetStime(true);
 			}
 			if (m_IsTeleport)
@@ -2128,7 +2128,7 @@ void CPlayer::Skill_CastFire(const _float& fTimeDelta, _float fY)
 {
 	if (!m_IsFire)
 	{
-		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
+		CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 23);
 		m_GetFire = dynamic_cast<CUI_Skill*>(pTemp)->GetActive();
 
 		_bool bStart = dynamic_cast<CUI_Skill*>(pTemp)->GetSTime();
