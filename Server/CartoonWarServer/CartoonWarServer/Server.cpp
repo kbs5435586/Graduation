@@ -3182,7 +3182,7 @@ void Server::do_arrow(int arrow_id)
         }
         do_arrow_collision(arrow_id);
         if (ST_ACTIVE == g_clients[arrow_id].m_status)
-            add_timer(arrow_id, FUNC_ARROW, 33);
+            add_timer(arrow_id, FUNC_ARROW, FRAME_TIME);
     }
     else // 화살 유지시간 끝났을때
         delete_arrow(arrow_id);

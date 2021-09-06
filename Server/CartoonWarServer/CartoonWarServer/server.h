@@ -34,7 +34,7 @@ private:
 	int REVIVE_COOLTIME = 3000;
 	int NPC_LEAVE_TIME = 1500;
 	float ARROW_ENDTIME = 3.f;
-	float ARROW_DIST = 10.f;
+	float ARROW_DIST = 5.f;
 	float ARROW_DAMAGE = 10.f;
 	int FIRE_SKILL_TIME = 5;
 
