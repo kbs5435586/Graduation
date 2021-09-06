@@ -318,6 +318,14 @@ void Server::process_packet(int user_id, char* buf)
         play_time = 298;
     }
     break;
+    case CS_PACKET_END_POS:
+    {
+        cs_packet_end_pos* packet = reinterpret_cast<cs_packet_end_pos*>(buf);
+        _vec3 pos = { 100.f,0.f,850.f };
+        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        send_enter_packet(user_id, user_id);
+    }
+    break;
     case CS_PACKET_ADD_NPC:
     {
         cs_packet_add_npc* packet = reinterpret_cast<cs_packet_add_npc*>(buf);

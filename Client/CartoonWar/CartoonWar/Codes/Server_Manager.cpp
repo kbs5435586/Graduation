@@ -628,6 +628,14 @@ void CServer_Manager::send_time_end_packet()
 	send_packet(&m_packet);
 }
 
+void CServer_Manager::send_end_pos_packet()
+{
+	cs_packet_end_pos m_packet;
+	m_packet.type = CS_PACKET_END_POS;
+	m_packet.size = sizeof(m_packet);
+	send_packet(&m_packet);
+}
+
 void CServer_Manager::send_login_ok_packet()
 {
 	cs_packet_login l_packet;

@@ -1673,8 +1673,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	}
 	if (CManagement::GetInstance()->Key_Up(KEY_P))
 	{
-		_vec3 pos = { 100.f,0.f,850.f };
-		server->send_position_packet(&pos);
+		server->send_end_pos_packet();
 	}
 }
 
