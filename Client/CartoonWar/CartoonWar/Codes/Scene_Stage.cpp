@@ -342,7 +342,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
-	tLightInfo.vLightPos = _vec4(750.f, 0.f, 100.f, 1.f);
+	tLightInfo.vLightPos = _vec4(900.f, 0.f, 450.f, 1.f);
 	tLightInfo.fRange = 100.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
@@ -655,7 +655,7 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
 		return E_FAIL;
 
-	vLightPos = _vec3(750.f, 0.f, 100.f);
+	vLightPos = _vec3(900.f, 0.f, 450.f);
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))

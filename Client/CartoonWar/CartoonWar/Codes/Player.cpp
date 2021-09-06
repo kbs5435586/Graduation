@@ -150,24 +150,14 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_UP, &vUp);
 		m_pTransformCom->Set_StateInfo(CTransform::STATE_LOOK, &vLook);
 
-		vLook = Vector3_::Normalize(vLook);
-		_vec3 vDirectionPerSec = (vLook * m_fArrSpeed[m_iCurMeshNum] * fTimeDelta);
-		_vec3 vSlide = {};
-		if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide)) // 클라가 최종적으로 가야하는 포지션이 내비메쉬 내부일때
-		{
-			_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION); // 현재 클라의 보여지는 포지션값
-			_vec3   vLen = pPos - vPos;
-			//vLen.y = 0.f;
-			_float   fLen = vLen.Length();
+		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION); // 현재 클라의 보여지는 포지션값
+		_vec3   vLen = pPos - vPos;
+		//vLen.y = 0.f;
+		_float   fLen = vLen.Length();
 
-			if (fLen > 0.5f)
-			{
-				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
-			}
-		}
-		else  // 클라가 최종적으로 가야하는 포지션이 내비메쉬 밖일때
+		if (fLen > 0.5f)
 		{
-			server->send_position_packet(&vSlide);
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
 
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
@@ -207,7 +197,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	if (m_tInfo.fHP <= 0.f)
 	{
 		if (!m_IsDeadMotion)
-		{		
+		{
 			m_eCurState = STATE::STATE_DEAD;
 			_uint iRand = rand() % 2;
 			if (iRand == 0)
@@ -1475,15 +1465,46 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			- server->Get_Move_Cooltime());
 		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
 		{
-			server->send_move_packet(GO_FAST_FORWARD);
-			server->Set_Move_CoolTime(high_resolution_clock::now());
+			CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+			if (nullptr == pTerrainBuffer)
+				return;
+
+			_float fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
+			_vec3 vDirectionPerSec = (vLook * m_fArrSpeedUP[m_iCurMeshNum] * fTimeDelta);
+			_vec3 vSlide = {};
+
+			_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_PLAYER);
+			_vec3   vPos = {};
+			if (server->Get_isFirst(m_iLayerIdx, O_PLAYER))
+			{
+				vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+				server->Set_isFirst(false, m_iLayerIdx, O_PLAYER);
+			}
+			else
+				vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43); // 클라가 실질적으로 가야하는 포지션값
+
+			if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide))
+			{
+				server->send_move_packet(GO_FAST_FORWARD);
+				server->Set_Move_CoolTime(high_resolution_clock::now());
+			}
+			else
+			{
+				vPos.x -= vSlide.x;
+				vPos.y = 0.f;
+				vPos.z -= vSlide.z;
+				server->send_position_packet(&vPos);
+			}
 		}
 
 		m_IsRun = true;
 		m_IsActioning = true;
 		m_IsParticleRun = true;
 		m_eCurState = STATE::STATE_RUN;
-
 	}
 	else if (CManagement::GetInstance()->Key_Pressing(KEY_UP))
 	{
@@ -1496,8 +1517,40 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 			- server->Get_Move_Cooltime());
 		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
 		{
-			server->send_move_packet(GO_FORWARD);
-			server->Set_Move_CoolTime(high_resolution_clock::now());
+			CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+			if (nullptr == pTerrainBuffer)
+				return;
+
+			_float fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+
+			_vec3 vLook = {};
+			vLook = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+			vLook = Vector3_::Normalize(vLook);
+			_vec3 vDirectionPerSec = (vLook * m_fArrSpeed[m_iCurMeshNum] * fTimeDelta);
+			_vec3 vSlide = {};
+
+			_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_PLAYER);
+			_vec3   vPos = {};
+			if (server->Get_isFirst(m_iLayerIdx, O_PLAYER))
+			{
+				vPos = _vec3(matTemp._41, matTemp._42, matTemp._43);
+				server->Set_isFirst(false, m_iLayerIdx, O_PLAYER);
+			}
+			else
+				vPos = _vec3(matTemp._41, matTemp._42 + fY, matTemp._43); // 클라가 실질적으로 가야하는 포지션값
+
+			if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide))
+			{
+				server->send_move_packet(GO_FORWARD);
+				server->Set_Move_CoolTime(high_resolution_clock::now());
+			}
+			else
+			{
+				vPos.x -= vSlide.x;
+				vPos.y = 0.f;
+				vPos.z -= vSlide.z;
+				server->send_position_packet(&vPos);
+			}
 		}
 
 		m_IsActioning = true;
