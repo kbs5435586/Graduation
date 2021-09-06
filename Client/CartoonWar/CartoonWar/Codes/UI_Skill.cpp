@@ -98,7 +98,7 @@ _int CUI_Skill::LastUpdate_GameObject(const _float& fTimeDelta)
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;
 		}
-		else if(pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE)
+		else if((pClass == CLASS::CLASS_MAGE || pClass == CLASS::CLASS_MMAGE) && pArgTemp.z == 1)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this)))
 				return E_FAIL;

@@ -1605,7 +1605,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[player_id].m_gold -= 1;
             send_gold_packet(player_id);
             
-            cout << npc_id << " is intit\n";
+            //cout << npc_id << " is intit\n";
             g_clients[npc_id].m_socket = 0;
             g_clients[npc_id].m_id = npc_id;
             g_clients[npc_id].m_type = TP_NPC;
@@ -1957,6 +1957,8 @@ void Server::do_attack(int npc_id)
                     continue;
                 if (!is_attack_detect(i, n.m_id))
                     continue;
+                if (g_clients[i].m_isOBB)
+                    continue;
 
                 n.m_attack_target = i;
                 break;
@@ -2033,7 +2035,13 @@ void Server::do_attack(int npc_id)
             }
             else // npc가 공격할 대상을 바라볼때
             {
-                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
+                float dist = 0.f;
+                if (T_HORSE == n.m_troop)
+                    dist == 8.f;
+                else
+                    dist = OBB_DIST;
+
+                if (dist_between(n.m_id, n.m_attack_target) <= dist &&
                     check_obb_collision(npc_id, n.m_attack_target))
                 {
                     duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
@@ -2267,7 +2275,7 @@ void Server::do_dead(int id)
     g_clients[id].m_cLock.lock();
     g_clients[id].m_status = ST_DEAD;
     g_clients[id].m_cLock.unlock();
-    cout << id << " is dead\n";
+    //cout << id << " is dead\n";
     g_clients[id].m_hp = 0;
     for (int i = 0; i < NPC_START; ++i)
     {
@@ -2319,7 +2327,7 @@ void Server::do_revive(int id)
 void Server::disconnect(int user_id)
 {
     //send_leave_packet(user_id, user_id); // 나 자신
-    cout << user_id << "is disconnect\n";
+    //cout << user_id << "is disconnect\n";
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
@@ -2810,7 +2818,7 @@ void Server::worker_thread()
                         continue;
                     Obb_Collision(i);
                 }
-                add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, FRAME_TIME);
+                add_timer(PURE_EVENT, FUNC_CHECK_COLLISION, 20);
             }
             delete overEx;
             break;
@@ -3164,7 +3172,7 @@ void Server::do_arrow(int arrow_id)
         }
         do_arrow_collision(arrow_id);
         if (ST_ACTIVE == g_clients[arrow_id].m_status)
-            add_timer(arrow_id, FUNC_ARROW, FRAME_TIME);
+            add_timer(arrow_id, FUNC_ARROW, 33);
     }
     else // 화살 유지시간 끝났을때
         delete_arrow(arrow_id);
@@ -3387,12 +3395,13 @@ void Server::Obb_Collision(int id)
             _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
             _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 vTemp = { vPos - vTargetPos };
-            vTemp *= 1.f;
+            vTemp *= 5.f;
             o.m_vStartPoint = vPos;
             o.m_vEndPoint = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
-            o.m_vMidPoint.y += 5.f;
+            o.m_vMidPoint.y += 7.f;
             o.m_isBazier = true;
+            o.m_attack_target = -1;
         }
         Hit_Object(id, o.m_fBazierCnt, o.m_vStartPoint, o.m_vEndPoint, o.m_vMidPoint);
     }

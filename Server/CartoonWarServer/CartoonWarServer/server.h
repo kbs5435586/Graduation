@@ -38,7 +38,7 @@ private:
 	float ARROW_DAMAGE = 10.f;
 	int FIRE_SKILL_TIME = 5;
 
-	int FRAME_TIME = 50; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
+	int FRAME_TIME = 40; // 1/4초에 1번전송, 60프레임은 1/60초에 1번 전송, 대략 16ms,17ms하면 될듯
 	_vec3 SCALE = { 0.1f,0.1f,0.1f };
 	int ATTACK_DAMAGE = 10;
 	float FLAME_RANGE = 50.f;
