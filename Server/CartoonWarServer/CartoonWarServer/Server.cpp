@@ -1605,7 +1605,7 @@ void Server::initialize_NPC(int player_id)
             g_clients[player_id].m_gold -= 1;
             send_gold_packet(player_id);
             
-            //cout << npc_id << " is intit\n";
+            cout << npc_id << " is intit\n";
             g_clients[npc_id].m_socket = 0;
             g_clients[npc_id].m_id = npc_id;
             g_clients[npc_id].m_type = TP_NPC;
@@ -2267,7 +2267,7 @@ void Server::do_dead(int id)
     g_clients[id].m_cLock.lock();
     g_clients[id].m_status = ST_DEAD;
     g_clients[id].m_cLock.unlock();
-    //cout << id << " is dead\n";
+    cout << id << " is dead\n";
     g_clients[id].m_hp = 0;
     for (int i = 0; i < NPC_START; ++i)
     {
@@ -2319,7 +2319,7 @@ void Server::do_revive(int id)
 void Server::disconnect(int user_id)
 {
     //send_leave_packet(user_id, user_id); // 나 자신
-    //cout << user_id << "is disconnect\n";
+    cout << user_id << "is disconnect\n";
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
@@ -2528,6 +2528,7 @@ void Server::is_flag_near(int flag)
                 send_flag_bool_packet(flag, j);
             }
         }
+
     }
 }
 
@@ -2892,7 +2893,7 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < 6; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < 4; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
