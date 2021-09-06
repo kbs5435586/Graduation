@@ -89,7 +89,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
 
     // For.Frame_60
-    if (FAILED(pSystem->Add_Frame(L"Frame_60", 60.f)))
+    if (FAILED(pSystem->Add_Frame(L"Frame_60", 10000.f)))
         return FALSE;
 
 
@@ -107,13 +107,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-         
-        _float		fTimeDelta_Default = 0.f;
-        fTimeDelta_Default = pSystem->Get_TimeDelta(L"Timer_Default");
+
+        _float		fTimeDelta_Default = pSystem->Get_TimeDelta(L"Timer_Default");
 
         if (true == pSystem->Permit_Call(L"Frame_60", fTimeDelta_Default))
         {
-            _float		fTimeDelta_60 = fTimeDelta_Default; //  pSystem->Get_TimeDelta(L"Timer_60")
+            _float		fTimeDelta_60 = pSystem->Get_TimeDelta(L"Timer_60");
             server->EventManager();
             pMainApp->Update_MainApp(fTimeDelta_60);
             pMainApp->Render_MainApp();
