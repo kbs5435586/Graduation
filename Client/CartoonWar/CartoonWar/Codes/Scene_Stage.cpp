@@ -52,6 +52,7 @@
 #include "UI_LastTimeBar.h"
 #include "UI_Gold.h"
 #include "UI_End.h"
+#include "UI_Energe.h"
 
 // Bloom
 #include "Bloom.h"
@@ -200,7 +201,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_End", CUI_End::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Energe", CUI_Energe::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Bloom", CBloom::Create())))
 		return E_FAIL;
 
@@ -328,6 +330,40 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
 	tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(750.f, 0.f, 100.f, 1.f);
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(462.f, 0.2f, 590.f, 1.f);
+	tLightInfo.fRange = 100.f;
+	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
+		return E_FAIL;
+
+	ZeroMemory(&tLightInfo, sizeof(LIGHT));
+	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_POINT;
+	tLightInfo.tLightColor.vDiffuse = _vec4(1.f, 0.f, 0.f, 0.f);
+	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightPos = _vec4(100.f, 0.2f, 850.f, 1.f);
 	tLightInfo.fRange = 100.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
@@ -557,6 +593,8 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Mul", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Gold", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Energe", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_LastTime", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
@@ -613,7 +651,26 @@ HRESULT CScene_Stage::Ready_Layer_Environment(const _tchar* pLayerTag, CManageme
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Water", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 	//GameObject_BoneFire tLightInfo.vLightPos = _vec4(100.f, 0.f, 100.f, 1.f);
+
+
 	_vec3 vLightPos = _vec3(100.f,0.f,100.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+
+	vLightPos = _vec3(750.f, 0.f, 100.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+
+	vLightPos = _vec3(462.f, 0.2f, 590.f);
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
+		return E_FAIL;
+	vLightPos = _vec3(100.f, 0.2f, 850.f);
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_BoneFire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&vLightPos)))
@@ -660,6 +717,7 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 		return E_FAIL;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -745,7 +803,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 {
 	for (int i = 0; i < 18; ++i)
 	{
-		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+		UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
 		ORDER tOrder = ORDER();
 		tOrder.IsPlayer = false;
 		tOrder.iIdx = i;
@@ -770,7 +828,7 @@ HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pMan
 
 HRESULT CScene_Stage::Ready_Layer_Animals(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	ANIMALS tAnimals = ANIMALS::ANIMALS_DEER;
+	ANIMALS tAnimals = ANIMALS::ANIMALS_WOLF;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
 		return E_FAIL;
 	//tAnimals = ANIMALS::ANIMALS_WOLF;

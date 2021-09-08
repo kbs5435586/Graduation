@@ -88,6 +88,7 @@ _int CThrow_Arrow::LastUpdate_GameObject(const _float& fTimeDelta)
 			return -1;
 		if (fLen <= 250.f)
 		{
+			m_iBlurCnt+=fTimeDelta;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
@@ -214,9 +215,9 @@ void CThrow_Arrow::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_iBlurCnt++;
+	
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	if (m_iBlurCnt >= 100)
+	if (m_iBlurCnt >= 1.f)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_iBlurCnt = 0;

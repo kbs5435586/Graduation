@@ -115,16 +115,22 @@ void CCollisionMgr::Range()
 			if (fLength <= 10.f)
 			{
 				(iter1)->GetOBBCollision() = true;
-				_vec3 vTargetPos = *dynamic_cast<CTransform*>(iter1)->Get_StateInfo(CTransform::STATE_POSITION);
-				_vec3 vPos = *dynamic_cast<CTransform*>(iter0)->Get_StateInfo(CTransform::STATE_POSITION);
-				_vec3 vTemp = { vPos - vTargetPos };
-				iter1->GetAttackedObject_Matrix()._41 = vTemp.x;
-				iter1->GetAttackedObject_Matrix()._42 = vTemp.y;
-				iter1->GetAttackedObject_Matrix()._43 = vTemp.z;
-				//iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+				iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
 				iter1->GetIsParticle() = true;
 				iter0->GetIsDead() = true;
 				iter1->GetInfo().fHP -= 10.f;
+
+				//(iter1)->GetOBBCollision() = true;
+				//_vec3 vTargetPos = *dynamic_cast<CTransform*>(iter1)->Get_StateInfo(CTransform::STATE_POSITION);
+				//_vec3 vPos = *dynamic_cast<CTransform*>(iter0)->Get_StateInfo(CTransform::STATE_POSITION);
+				//_vec3 vTemp = { vPos - vTargetPos };
+				//iter1->GetAttackedObject_Matrix()._41 = vTemp.x;
+				//iter1->GetAttackedObject_Matrix()._42 = vTemp.y;
+				//iter1->GetAttackedObject_Matrix()._43 = vTemp.z;
+				////iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+				//iter1->GetIsParticle() = true;
+				//iter0->GetIsDead() = true;
+				//iter1->GetInfo().fHP -= 10.f;
 			}
 		}
 		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Animals"))

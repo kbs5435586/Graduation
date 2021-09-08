@@ -58,7 +58,7 @@ _int CLowPoly::Update_GameObject(const _float& fTimeDelta)
 	}
 	else if (m_eEnviType == ENVITYPE::ENVI_TREE)
 	{
-		m_vColliderSize_Tree = { 0.5f,3.f,0.5f };
+		m_vColliderSize_Tree = { 1.f,3.f,1.f };
 		m_pCollider_AABB->Update_Collider(m_pTransformCom, m_vColliderSize_Tree);
 		m_pTransformCom->Set_PositionY(fY);
 	}

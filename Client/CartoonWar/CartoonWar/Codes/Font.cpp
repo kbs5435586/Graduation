@@ -14,17 +14,15 @@ HRESULT CFont::Create_Buffer(const char* pSentence, _float fDrawX, _float fDrawY
 {
 	int numLetters = (int)strlen(pSentence);
 
-	// 정점 배열에 대한 인덱스를 초기화합니다.
 	int index = 0;
 	int letter = 0;
 
 	m_vecFontInfo.resize(numLetters);
-	// 각 문자를 쿼드 위에 그립니다.
+
 	for (int i = 0; i < numLetters; i++)
 	{
 		letter = ((int)pSentence[i]) - 32;
 
-		// 문자가 공백이면 3 픽셀 위로 이동합니다.
 		if (letter == 0)
 		{
 			fDrawX = fDrawX + 3.0f;
@@ -136,21 +134,12 @@ void CFont::Render_Font(CShader* pShader, CTexture* pTexture)
 		_matrix matProj = CCamera_Manager::GetInstance()->GetMatOrtho();
 		matWorld._11 = m_fSizeX;
 		matWorld._22 = m_fSizeY;
-		//
-		//matWorld._41 = m_fX - (WINCX >> 1);
-		//matWorld._42 = -m_fY + (WINCY >> 1);
-
 
 		pShader->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
-
 
 		_uint iOffeset = CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
 		CDevice::GetInstance()->SetConstantBufferToShader(CManagement::GetInstance()->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
 		CDevice::GetInstance()->SetTextureToShader(pTexture, TEXTURE_REGISTER::t0);
-
-
-
-
 		CDevice::GetInstance()->UpdateTable();
 
 		CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(m_PrimitiveTopology);

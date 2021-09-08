@@ -29,8 +29,8 @@ HRESULT CAnimals::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_tInfo = INFO(1.f, 0.f, 0.f, 0.f);
-	//_vec3 vPos = { 500.f,0.f,500.f };
-	_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
+	_vec3 vPos = { 120.f,0.f,120.f };
+	//_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
@@ -71,7 +71,7 @@ _int CAnimals::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
-	MeaningLess_Moving(fTimeDelta);
+	//MeaningLess_Moving(fTimeDelta);
 	Set_State();
 
 	if (m_tInfo.fHP <= 0.f)

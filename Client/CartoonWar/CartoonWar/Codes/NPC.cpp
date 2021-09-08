@@ -113,7 +113,10 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		}
 	}
 	if (m_IsDead)
+	{
+		//Resurrection();
 		return DEAD_OBJ;
+	}
 
 	Set_Animation(fTimeDelta);
 	if (fLen <= 175.f)

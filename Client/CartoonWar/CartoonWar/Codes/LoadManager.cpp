@@ -116,7 +116,19 @@ HRESULT CLoadManager::Load_File_Low(const _tchar* pFilePath, void* pArg)
 			ReadFile(hFile, &iLength_Com, sizeof(int), &dwByte, nullptr);
 			ReadFile(hFile, szComTag, sizeof(TCHAR) * iLength_Com, &dwByte, nullptr);
 
-
+			if (!lstrcmp(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_pine_01"))
+			{
+				//Component_StaticMesh_rpgpp_lt_tree_01
+				_uint iRand = rand() % 2;
+				if (iRand == 0)
+				{
+					lstrcpy(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_01");
+				}
+				else
+				{
+					lstrcpy(szComTag, L"Component_StaticMesh_rpgpp_lt_tree_02"); 
+				}
+			}
 
 
 			CGameObject* pGameObject = nullptr;

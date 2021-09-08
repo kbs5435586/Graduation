@@ -21,7 +21,6 @@
 
 unsigned __stdcall ResourceLoadThread(void* pArguments)
 {
-	//Mesh Load Thread
 	CScene_Logo* pLogo = reinterpret_cast<CScene_Logo*>(pArguments);
 	EnterCriticalSection(&(pLogo->m_tCritical_Section_Mesh));
 
@@ -45,7 +44,6 @@ unsigned __stdcall ResourceLoadThread(void* pArguments)
 
 unsigned __stdcall ShaderCompileThread(void* pArguments)
 {
-	//Mesh Load Thread
 	CScene_Logo* pLogo = reinterpret_cast<CScene_Logo*>(pArguments);
 	EnterCriticalSection(&(pLogo->m_tCritical_Section_Shader));
 
@@ -78,22 +76,22 @@ CScene_Logo::CScene_Logo()
 HRESULT CScene_Logo::Ready_Scene()
 {
 	m_eSceneID = SCENEID::SCENE_LOGO;
+
 	InitializeCriticalSection(&m_tCritical_Section_Mesh);
 	m_hThread_Handle_Mesh = (HANDLE)_beginthreadex(nullptr, 0, ResourceLoadThread, this, 0, nullptr);
+
 	InitializeCriticalSection(&m_tCritical_Section_Shader);
 	m_hThread_Handle_Shader = (HANDLE)_beginthreadex(nullptr, 0, ShaderCompileThread, this, 0, nullptr);
-
 
 	WaitForSingleObject(m_hThread_Handle_Mesh, INFINITE);
 	CloseHandle(m_hThread_Handle_Mesh);
 	DeleteCriticalSection(&m_tCritical_Section_Mesh);
 
-
 	WaitForSingleObject(m_hThread_Handle_Shader, INFINITE);
 	CloseHandle(m_hThread_Handle_Shader);
 	DeleteCriticalSection(&m_tCritical_Section_Shader);
 
-	CManagement* pManagement = CManagement::GetInstance();
+	CManagement* pManagement = CManagement::GetInstance();  
 
 	if (nullptr == pManagement)
 		return E_FAIL;
@@ -725,7 +723,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Buffer(CManagement* pManagement)
 }
 HRESULT CScene_Logo::Ready_Add_Prototype_Function(CManagement* pManagement)
 {
-
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Collider_AABB",
 		CCollider::Create(COLLIDER_TYPE::COLLIDER_AABB))))
 		return E_FAIL;
