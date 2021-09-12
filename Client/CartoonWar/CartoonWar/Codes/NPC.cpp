@@ -3,6 +3,7 @@
 #include "NPC.h"
 #include "UI_OnHead.h"
 #include "UI_OnHeadBack.h"
+//#include <iostream>
 
 //_float CNPC::poss = 25.f;
 
@@ -118,8 +119,10 @@ _int CNPC::Update_GameObject(const _float& fTimeDelta)
 		//vLen.y = 0.f;
 		_float   fLen = vLen.Length();
 
-		if (fLen > 0.1f)
+		if (fLen > 1.f)
 		{
+			//cout << "final pos : " << vPos.x << ", " << vPos.y << ", " << vPos.z << endl;
+			//cout << "now pos : " << pPos.x << ", " << pPos.y << ", " << pPos.z << endl << endl;
 			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
 		//m_pTransformCom->Set_PositionY(matTemp._42 + fY);

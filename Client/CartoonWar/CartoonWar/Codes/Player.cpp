@@ -1316,7 +1316,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		{
 			duration<double> cool_time = duration_cast<duration<double>>(high_resolution_clock::now()
 				- server->Get_Attack_Cooltime());
-			if (cool_time.count() > 1.7) // ↑ 쿨타임 2초 계산해주는 식
+			if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
 			{
 				server->send_attack_packet();
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
@@ -1666,6 +1666,14 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 	if (CManagement::GetInstance()->Key_Down(KEY_3))
 	{
 		server->send_npc_act_packet(DO_HOLD);
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_O))
+	{
+		server->send_time_end_packet();
+	}
+	if (CManagement::GetInstance()->Key_Up(KEY_P))
+	{
+		server->send_end_pos_packet();
 	}
 }
 

@@ -33,7 +33,7 @@ BOOL CServer_Manager::InitServer(HWND hWnd)
 	SOCKADDR_IN server_a;
 	ZeroMemory(&server_a, sizeof(server_a));
 	server_a.sin_family = AF_INET;
-	inet_pton(AF_INET, "1.241.121.48", &server_a.sin_addr); //SERVER_IP.c_str() // 218.49.11.188 / 218.49.11.188 / 1.241.121.48
+	inet_pton(AF_INET, "192.168.0.2", &server_a.sin_addr); //SERVER_IP.c_str() // 218.49.11.188 / 218.49.11.188 / 1.241.121.48
 	server_a.sin_port = htons(SERVER_PORT);
 
 	init_client();
@@ -597,7 +597,7 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.type = CS_PACKET_MOVE;
 	m_packet.size = sizeof(m_packet);
 	m_packet.dir = dir;
-	cout << "send move\n";
+	//cout << "send move\n";
 	send_packet(&m_packet);
 }
 
@@ -617,6 +617,22 @@ void CServer_Manager::send_position_packet(_vec3* pos)
 	m_packet.x = pos->x;
 	m_packet.y = pos->y;
 	m_packet.z = pos->z;
+	send_packet(&m_packet);
+}
+
+void CServer_Manager::send_time_end_packet()
+{
+	cs_packet_time_end m_packet;
+	m_packet.type = CS_PACKET_TIME_END;
+	m_packet.size = sizeof(m_packet);
+	send_packet(&m_packet);
+}
+
+void CServer_Manager::send_end_pos_packet()
+{
+	cs_packet_end_pos m_packet;
+	m_packet.type = CS_PACKET_END_POS;
+	m_packet.size = sizeof(m_packet);
 	send_packet(&m_packet);
 }
 

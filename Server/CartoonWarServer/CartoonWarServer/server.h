@@ -31,10 +31,10 @@ private:
 	float FLAG_RADIUS = 10.f;  // 플레이어 기준 군집 범위
 	float TIME_DELTA = 0.f;
 	int ARROW_COUNT = 0;
-	int REVIVE_COOLTIME = 3000;
+	int REVIVE_COOLTIME = 5000;
 	int NPC_LEAVE_TIME = 1500;
 	float ARROW_ENDTIME = 3.f;
-	float ARROW_DIST = 10.f;
+	float ARROW_DIST = 5.f;
 	float ARROW_DAMAGE = 10.f;
 	int FIRE_SKILL_TIME = 5;
 
@@ -46,7 +46,7 @@ private:
 	int SET_HP = 100;
 	bool isGameStart;
 	int StartGame_PlayerCount = 1;
-	float play_time = 0;
+	int play_time = 0;
 
 	float OBB_DIST = 5.f;
 	float AABB_PN = 4.f;

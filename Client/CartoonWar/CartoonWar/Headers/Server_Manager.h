@@ -62,6 +62,8 @@ public:
     void send_arrow_packet();
     void send_invisible_packet(bool isinvi);
     void send_deffend_packet();
+    void send_time_end_packet();
+    void send_end_pos_packet();
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);

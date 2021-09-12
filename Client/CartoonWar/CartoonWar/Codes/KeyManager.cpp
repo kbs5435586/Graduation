@@ -27,13 +27,13 @@ void CKeyManager::Key_Update()
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 		m_dwKey |= KEY_SPACE;
 
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	if (GetAsyncKeyState('W') & 0x8000)
 		m_dwKey |= KEY_UP;
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	if (GetAsyncKeyState('S') & 0x8000)
 		m_dwKey |= KEY_DOWN;
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	if (GetAsyncKeyState('A') & 0x8000)
 		m_dwKey |= KEY_LEFT;
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	if (GetAsyncKeyState('D') & 0x8000)
 		m_dwKey |= KEY_RIGHT;
 	if (GetAsyncKeyState('E') & 0x8000)
 		m_dwKey |= KEY_E;
@@ -56,6 +56,10 @@ void CKeyManager::Key_Update()
 
 	if (GetAsyncKeyState('I') & 0x8000)
 		m_dwKey |= KEY_I;
+	if (GetAsyncKeyState('O') & 0x8000)
+		m_dwKey |= KEY_O;
+	if (GetAsyncKeyState('P') & 0x8000)
+		m_dwKey |= KEY_P;
 	if (GetAsyncKeyState('Z') & 0x8000)
 		m_dwKey |= KEY_Z;
 	if (GetAsyncKeyState('X') & 0x8000)
