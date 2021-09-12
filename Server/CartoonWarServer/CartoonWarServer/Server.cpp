@@ -167,7 +167,11 @@ void Server::do_move(int user_id, char direction)
         p.m_transform.BackWard(TIME_DELTA);
         break;
     case GO_FAST_FORWARD:
-        p.m_transform.BackWard(2.f * TIME_DELTA);
+    {
+        p.m_transform.SetUp_Speed(p.m_move_speed * 2.f,p.m_rotate_speed);
+        p.m_transform.BackWard(TIME_DELTA);
+        p.m_transform.SetUp_Speed(p.m_move_speed, p.m_rotate_speed);
+    }
         break;
     case GO_BACK:
         p.m_transform.Go_Straight(TIME_DELTA);
@@ -306,6 +310,20 @@ void Server::process_packet(int user_id, char* buf)
     {
         cs_packet_login* packet = reinterpret_cast<cs_packet_login*>(buf);
         enter_game(user_id, packet->name);
+    }
+    break;
+    case CS_PACKET_TIME_END:
+    {
+        cs_packet_time_end* packet = reinterpret_cast<cs_packet_time_end*>(buf);
+        play_time = 298;
+    }
+    break;
+    case CS_PACKET_END_POS:
+    {
+        cs_packet_end_pos* packet = reinterpret_cast<cs_packet_end_pos*>(buf);
+        _vec3 pos = { 100.f,0.f,850.f };
+        g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
+        send_enter_packet(user_id, user_id);
     }
     break;
     case CS_PACKET_ADD_NPC:
@@ -734,6 +752,8 @@ void Server::update_speed_and_collider(int user_id)
         c.m_col.aabb_size = { 20.f ,80.f,20.f };
         c.m_col.obb_size = { 20.f ,80.f,20.f };
     }
+
+   c.m_transform.SetUp_Speed(c.m_move_speed, c.m_rotate_speed);
 }
 
 void Server::set_formation(int user_id)
@@ -1217,12 +1237,6 @@ void Server::do_follow(int npc_id)
                                 n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
                                 n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                             }
-                        }
-                        else // 포지션 회전각도 일때
-                        {
-                            _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
-                            _vec3 new_pos = n_pos + Dir;
-                            n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
                         }
 
                         n_look = Vector3_::Normalize(n_look);
@@ -2757,7 +2771,7 @@ void Server::worker_thread()
             delete overEx;
             break;
         case FUNC_CHECK_TIME:
-            if (play_time < 600)
+            if (play_time < 300)
             {
                 play_time += 1;
                 send_time_packet();
@@ -3172,7 +3186,7 @@ void Server::do_arrow(int arrow_id)
         }
         do_arrow_collision(arrow_id);
         if (ST_ACTIVE == g_clients[arrow_id].m_status)
-            add_timer(arrow_id, FUNC_ARROW, 33);
+            add_timer(arrow_id, FUNC_ARROW, FRAME_TIME);
     }
     else // 화살 유지시간 끝났을때
         delete_arrow(arrow_id);
@@ -3395,11 +3409,11 @@ void Server::Obb_Collision(int id)
             _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
             _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 vTemp = { vPos - vTargetPos };
-            vTemp *= 5.f;
+            vTemp *= 7.f;
             o.m_vStartPoint = vPos;
             o.m_vEndPoint = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
-            o.m_vMidPoint.y += 7.f;
+            o.m_vMidPoint.y += 10.f;
             o.m_isBazier = true;
             o.m_attack_target = -1;
         }
