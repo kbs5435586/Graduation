@@ -752,6 +752,8 @@ void Server::update_speed_and_collider(int user_id)
         c.m_col.aabb_size = { 20.f ,80.f,20.f };
         c.m_col.obb_size = { 20.f ,80.f,20.f };
     }
+
+   c.m_transform.SetUp_Speed(c.m_move_speed, c.m_rotate_speed);
 }
 
 void Server::set_formation(int user_id)
@@ -1235,12 +1237,6 @@ void Server::do_follow(int npc_id)
                                 n_pos.z = g_clients[n.m_owner_id].m_boid[i].radius * cosf((n.m_total_angle) * (PIE / 180.f)) + p_pos.z;
                                 n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &n_pos);
                             }
-                        }
-                        else // 포지션 회전각도 일때
-                        {
-                            _vec3 Dir = move_to_spot(npc_id, &g_clients[n.m_owner_id].m_boid[i].final_pos);
-                            _vec3 new_pos = n_pos + Dir;
-                            n.m_transform.Set_StateInfo(CTransform::STATE_POSITION, &new_pos);
                         }
 
                         n_look = Vector3_::Normalize(n_look);
