@@ -4,7 +4,7 @@
 #include "Layer.h"
 #include "MyRect.h"
 #include "Fire.h"
-#include <iostream>
+//#include <iostream>
 
 _IMPLEMENT_SINGLETON(CServer_Manager)
 void CServer_Manager::err_quit(const char* msg)

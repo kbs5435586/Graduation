@@ -11,7 +11,7 @@
 #include "Terrain_Height.h"
 #include "FireWall.h"
 #include "Teleport.h"
-#include <iostream>
+//#include <iostream>
 
 #include "Throw_Arrow.h"
 CPlayer::CPlayer()
