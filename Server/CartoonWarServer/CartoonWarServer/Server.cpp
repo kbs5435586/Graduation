@@ -2049,8 +2049,7 @@ void Server::do_attack(int npc_id)
                 float dist = 0.f;
                 if (C_ARCHER == n.m_class) // 궁수의 공격패턴
                 {
-                    dist = DETECT_RADIUS;
-                    if (dist_between(n.m_id, n.m_attack_target) <= dist)
+                    if (dist_between(n.m_id, n.m_attack_target) <= ARCHER_RADIUS)
                     {
                         duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
                         if (cooltime >= seconds(2))
@@ -2072,6 +2071,7 @@ void Server::do_attack(int npc_id)
                                     return;
                                 }
                                 n.m_anim = A_ATTACK;
+                                n.m_attack_target = -1;
                             }
                         }
                     }
@@ -2112,7 +2112,9 @@ void Server::do_attack(int npc_id)
                                             continue;
                                         send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
                                         send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                        //send_animation_packet(i, n.m_attack_target, A_HIT);
                                     }
+                                    g_clients[n.m_attack_target].m_anim = A_HIT;
                                 }
                                 else // 상대방이 죽었을때
                                 {
@@ -2598,7 +2600,8 @@ void Server::set_starting_pos(int user_id)
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
-        pos = { 500.f, 0.f, 500.f };
+        //pos = { 500.f, 0.f, 500.f };
+        pos = { 950.f, 0.f, 550.f };
     }
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     g_clients[user_id].m_vStartPos = pos;
@@ -3295,7 +3298,9 @@ void Server::do_arrow_collision(int arrow_id)
                                 continue;
                             send_do_particle_packet(i, iter.first); // 남은 체력 브로드캐스팅
                             send_hp_packet(i, iter.first); // 남은 체력 브로드캐스팅
+                            send_animation_packet(i, iter.first, A_HIT);
                         }
+                        iter.second.m_anim = A_HIT;
                     }
                     else
                         do_dead(iter.first);
@@ -3442,11 +3447,11 @@ void Server::Obb_Collision(int id)
             _vec3 vTargetPos = { o.m_matAttackedTarget.m[3][0], o.m_matAttackedTarget.m[3][1], o.m_matAttackedTarget.m[3][2] };
             _vec3 vPos = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
             _vec3 vTemp = { vPos - vTargetPos };
-            vTemp *= 7.f;
+            vTemp *= 3.f;
             o.m_vStartPoint = vPos;
             o.m_vEndPoint = *o.m_transform.Get_StateInfo(CTransform::STATE_POSITION) + (vTemp);
             o.m_vMidPoint = (o.m_vStartPoint + o.m_vEndPoint) / 2;
-            o.m_vMidPoint.y += 10.f;
+            o.m_vMidPoint.y += 5.f;
             o.m_isBazier = true;
             o.m_attack_target = -1;
         }
