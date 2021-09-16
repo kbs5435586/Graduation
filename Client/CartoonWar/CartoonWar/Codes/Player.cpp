@@ -13,6 +13,7 @@
 #include "Teleport.h"
 
 #include "Throw_Arrow.h"
+#include "EffectBox.h"
 CPlayer::CPlayer()
 	: CGameObject()
 {
@@ -1269,11 +1270,18 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_eCurClass == CLASS::CLASS_ARCHER)
 			{
-				CGameObject* pOwnPlayer = nullptr;
+				/*CGameObject* pOwnPlayer = nullptr;
 				_matrix matTemp = m_pTransformCom->Get_Matrix();
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
 					return;
-				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
+				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;*/
+
+				CGameObject* pOwnPlayer = nullptr;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+					return;
+				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
+
 				m_eCurState = STATE::STATE_ARROW;
 			}
 			else if (m_eCurClass == CLASS::CLASS_WORKER)

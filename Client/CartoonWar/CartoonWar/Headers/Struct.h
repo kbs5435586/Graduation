@@ -609,6 +609,7 @@ typedef struct tagUint
 {
 	SPECIES		eSpecies;
 	COLOR		eColor;
+	int			iTemp;
 }UNIT;
 
 typedef struct tagOrder

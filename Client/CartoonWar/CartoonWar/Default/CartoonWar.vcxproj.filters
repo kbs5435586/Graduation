@@ -547,6 +547,9 @@
     <Filter Include="02. GameObject\97. UI\11. UI_Energe">
       <UniqueIdentifier>{a8e013f8-2608-4d75-9573-662524072d2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\02. Monster">
+      <UniqueIdentifier>{79f8ba86-e8b8-4394-bfc7-4b4df6dc3f94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -1011,7 +1014,6 @@
     <ClInclude Include="..\Headers\Bloom.h">
       <Filter>02. GameObject\97. UI\93. Bloom</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Buffer_Cylinder.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
     </ClInclude>
@@ -1026,6 +1028,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Energe.h">
       <Filter>02. GameObject\97. UI\11. UI_Energe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02. GameObject\01. Scene_Stage\02. Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1476,6 +1481,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Energe.cpp">
       <Filter>02. GameObject\97. UI\11. UI_Energe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Monster.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\02. Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

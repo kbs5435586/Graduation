@@ -24,9 +24,9 @@ HRESULT CCollisionMgr::Ready_CollsionManager()
 
 void CCollisionMgr::Update_CollisionManager()
 {	
-	AABB();
-	Range();
-	OBB();
+	//AABB();
+	//Range();
+	//OBB();
 }
 void CCollisionMgr::AABB()
 {

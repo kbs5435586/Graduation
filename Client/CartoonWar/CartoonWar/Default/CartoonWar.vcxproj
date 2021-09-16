@@ -232,6 +232,7 @@
     <ClInclude Include="..\Headers\MapUser.h" />
     <ClInclude Include="..\Headers\Map_Camera.h" />
     <ClInclude Include="..\Headers\Mesh.h" />
+    <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
@@ -391,6 +392,7 @@
     <ClCompile Include="..\Codes\Map_Camera.cpp" />
     <ClCompile Include="..\Codes\Map_Terrain.cpp" />
     <ClCompile Include="..\Codes\Mesh.cpp" />
+    <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />

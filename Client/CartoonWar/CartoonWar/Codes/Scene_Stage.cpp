@@ -83,6 +83,7 @@
 #include "Animals.h"
 #include "EffectBox.h"
 #include "BoneFire.h"
+#include "Monster.h"
 
 
 
@@ -255,7 +256,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_BoneFire", CBoneFire::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Monster", CMonster::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -288,10 +290,12 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Inventory_Camera(L"Layer_Inventory_Camera", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_SkillFire(L"Layer_SkillFire", pManagement)))
+	//	return E_FAIL;
+	
+
+	//if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
+	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
@@ -529,8 +533,6 @@ HRESULT CScene_Stage::Ready_Layer_Terrain_Height(const _tchar* pLayerTag, CManag
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Terrain_Height", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
-
 	return S_OK;
 }
 
@@ -730,7 +732,6 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 		return E_FAIL;
 	return S_OK;
 }
-
 HRESULT CScene_Stage::Ready_Layer_Bloom(const _tchar* pLayerTag, CManagement* pManagement)
 {
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Bloom", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
@@ -749,42 +750,6 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* p
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 		return E_FAIL;
 
-	tOrder = ORDER();
-	tOrder.IsPlayer = true;
-	tOrder.iIdx = 1;
-	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-		return E_FAIL;
-
-	tOrder = ORDER();
-	tOrder.IsPlayer = true;
-	tOrder.iIdx =2;
-	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-		return E_FAIL;
-
-	tOrder = ORDER();
-	tOrder.IsPlayer = true;
-	tOrder.iIdx = 3;
-	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-		return E_FAIL;
-
-	//tOrder = ORDER();
-	//tOrder.IsPlayer = true;
-	//tOrder.iIdx = 2;
-	//tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_GREEN };
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Player", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo, tOrder.iIdx)))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
-	//	return E_FAIL;
-	
 	
 	return S_OK;
 }
@@ -801,7 +766,7 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	for (int i = 0; i < 18; ++i)
+	/*for (int i = 0; i < 18; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
 		ORDER tOrder = ORDER();
@@ -812,7 +777,22 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 			return E_FAIL;
-	}
+	}*/
+	//GameObject_Monster
+	UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	tInfo.iTemp = 0;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+		return E_FAIL;
+
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	tInfo.iTemp = 0;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+		return E_FAIL;
+
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	tInfo.iTemp = 0;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -853,10 +833,8 @@ CScene_Stage* CScene_Stage::Create()
 void CScene_Stage::Free()
 {
 	CManagement* pManagement = CManagement::GetInstance();
-
 	if (nullptr == pManagement)
 		return;
-
 	pManagement->AddRef();
 
 	pManagement->Clear_Layers((_uint)SCENEID::SCENE_STAGE);

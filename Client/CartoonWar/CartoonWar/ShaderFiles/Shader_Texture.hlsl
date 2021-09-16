@@ -14,14 +14,6 @@ struct VS_OUT
 	float4 vWorldPos	: TEXCOORD1;
 };
 
-struct PS_OUT
-{
-	float4 vDiffuseTex		: SV_TARGET0;
-	float4 vNormalTex		: SV_TARGET1;
-	float4 vPositionTex		: SV_TARGET2;
-	float4 vDepthTex		: SV_TARGET3;
-};
-
 VS_OUT VS_Main(VS_IN vIn)
 {
 	VS_OUT vOut;
@@ -33,18 +25,11 @@ VS_OUT VS_Main(VS_IN vIn)
 	return vOut;
 }
 
-PS_OUT PS_Main(VS_OUT vIn)
+float4 PS_Main(VS_OUT vIn) : SV_TARGET0
 {
-	PS_OUT vOut = (PS_OUT)0;
+	float4 vOut = (float4)0;
 
-
-	//vOut.vDiffuseTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	//vOut.vNormalTex  = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	//vOut.vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
-	vOut.vDiffuseTex = float4(1.f,1.f,1.f,1.f);
-	vOut.vNormalTex = float4(1.f,1.f,1.f,1.f);
-	vOut.vNormalTex = float4(1.f,1.f,1.f,1.f);
-	vOut.vDepthTex = float4(1.f,1.f,1.f,1.f);
+	vOut = g_texture0.Sample(Sampler0, vIn.vTexUV);
 
 	return vOut;
 }

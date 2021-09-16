@@ -87,6 +87,9 @@ protected:
 	_bool									m_IsCheck_FlagRange = false;
 	_vec3									m_vColShpereSize = {};
 protected:
+	_bool									m_IsRotateEnd = false;
+	_float									m_fDot = 0.f;
+protected:
 	_tchar*									m_pComponentTag = nullptr;
 protected:
 	ENVITYPE								m_eEnviType = {};
@@ -97,6 +100,7 @@ protected:
 	UNIT									m_tUnit = {};
 	STATE									m_eCurState = STATE::STATE_END;
 	STATE									m_ePreState = STATE::STATE_END;
+	ROTATE_DIR								m_eRotate = ROTATE_DIR::DIR_END;
 protected:
 	_float									m_fHorseRunSoundTime = 6.f;
 	_float									m_fRunSoundTime = 1.f;
