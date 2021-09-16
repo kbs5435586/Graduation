@@ -213,37 +213,12 @@ PS_OUT	PS_PointLight(VS_OUT vIn)
 	PS_OUT vOut = (PS_OUT)0;
 
 	float4 vPosition = g_texture1.Sample(Sampler0, vIn.vTexUV);
-	if (vPosition.z <= 1.f)
-	{
-		clip(-1);
-	}
+
 	float4 vNormalTex = g_texture0.Sample(Sampler0, vIn.vTexUV);
 	float4 vDepth = g_texture3.Sample(Sampler0, vIn.vTexUV);
 	float4 vNormal = mul(vNormalTex, matViewInv);
 
 	LIGHT tCurCol = Calculate_Light(1, vNormalTex.xyz, vPosition.xyz);
-
-	if (dot(tCurCol.vDiffuse, tCurCol.vDiffuse) != 0.f)
-	{
-		float4 vWorldPos = mul(vPosition, matViewInv);
-		float4 vShadowProj = mul(vWorldPos, g_mat_0);
-		float fDepth = vShadowProj.z / vShadowProj.w;
-		float2 vShadowUV = float2((vShadowProj.x / vShadowProj.w) * 0.5f + 0.5f
-			, (vShadowProj.y / vShadowProj.w) * -0.5f + 0.5f);
-
-		if (0.01f < vShadowUV.x && vShadowUV.x < 0.99f && 0.01f < vShadowUV.y && vShadowUV.y < 0.99f)
-		{
-			float fShadowDepth = g_texture2.Sample(Sampler0, vShadowUV).r;
-
-			// 그림자인 경우 빛을 약화시킨다.
-			if (fShadowDepth && (fDepth > fShadowDepth + 0.00001f))
-			{
-				tCurCol.vDiffuse *= 0.01f;
-				tCurCol.vSpecular = 0.f;
-			}
-
-		}
-	}
 
 
 	vOut.vPointLight = tCurCol.vDiffuse;

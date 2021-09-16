@@ -24,11 +24,11 @@ HRESULT CUI_Normal::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 225.f;
-	m_fY = 75.f;
+	m_fX = 450.f;
+	m_fY = 150.f;
 
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
+	m_fSizeX = 300.f;
+	m_fSizeY = 300.f;
 	return S_OK;
 }
 

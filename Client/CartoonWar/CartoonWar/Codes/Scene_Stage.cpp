@@ -52,6 +52,7 @@
 #include "UI_LastTimeBar.h"
 #include "UI_Gold.h"
 #include "UI_End.h"
+#include "UI_Energe.h"
 
 // Bloom
 #include "Bloom.h"
@@ -203,7 +204,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_End", CUI_End::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_UI_Energe", CUI_Energe::Create())))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Bloom", CBloom::Create())))
 		return E_FAIL;
 
@@ -311,14 +313,14 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 {
-	LIGHT   tLightInfo = {};
+	LIGHT	tLightInfo = {};
 	ZeroMemory(&tLightInfo, sizeof(LIGHT));
 	tLightInfo.iLightType = (_uint)LIGHT_TYPE::LIGHT_DIRECTIONAL;
 	tLightInfo.tLightColor.vDiffuse = _vec4(0.5f, 0.5f, 0.5f, 0.f);
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(0.3f, 0.3f, 0.3f, 0.f);
 	//tLightInfo.vLightDir = _vec4(-1.f, -1.f, -1.f,0.f);
-	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
+	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f,0.f);
 	tLightInfo.vLightPos = _vec4(250.f, 50.f, 250.f, 1.f);
 	tLightInfo.fRange = 1.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
@@ -342,7 +344,7 @@ HRESULT CScene_Stage::Ready_Light(CManagement* pManagement)
 	tLightInfo.tLightColor.vSpecular = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.tLightColor.vAmbient = _vec4(1.f, 1.f, 1.f, 0.f);
 	tLightInfo.vLightDir = _vec4(1.f, -1.f, 0.f, 0.f);
-	tLightInfo.vLightPos = _vec4(900.f, 0.f, 450.f, 1.f);
+	tLightInfo.vLightPos = _vec4(750.f, 0.f, 100.f, 1.f);
 	tLightInfo.fRange = 100.f;
 	if (FAILED(pManagement->Add_LightInfo(tLightInfo)))
 		return E_FAIL;
@@ -592,6 +594,8 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar* pLayerTag, CManagement* pMana
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Mul", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Gold", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_Energe", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_LastTime", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr)))
 		return E_FAIL;	
@@ -714,6 +718,7 @@ HRESULT CScene_Stage::Ready_Layer_Flag(const _tchar* pLayerTag, CManagement* pMa
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead_Gage", (_uint)SCENEID::SCENE_STAGE, L"Layer_Flag_OnHead_UI", nullptr, (void*)&tFlag.iNum, tFlag.iNum)))
 		return E_FAIL;
 
+
 	return S_OK;
 }
 
@@ -788,6 +793,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 {
 	for (int i = 0; i < CL_NPC_TEAM2; ++i) // CL_TEST_NPCS
 	{
+		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();
 		tOrder.IsPlayer = false;
 		tOrder.iIdx = i;
@@ -833,7 +839,7 @@ HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pMan
 
 HRESULT CScene_Stage::Ready_Layer_Animals(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	ANIMALS tAnimals = ANIMALS::ANIMALS_DEER;
+	ANIMALS tAnimals = ANIMALS::ANIMALS_WOLF;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
 		return E_FAIL;
 	//tAnimals = ANIMALS::ANIMALS_WOLF;

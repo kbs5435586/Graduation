@@ -13,7 +13,6 @@ CFontMgr::CFontMgr()
 
 HRESULT CFontMgr::Ready_FontMgr(const char* pFilePath)
 {
-
 	ifstream fin;
 	fin.open(pFilePath);
 	if (fin.fail())

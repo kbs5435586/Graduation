@@ -29,8 +29,8 @@ HRESULT CAnimals::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_tInfo = INFO(1.f, 0.f, 0.f, 0.f);
-	//_vec3 vPos = { 500.f,0.f,500.f };
-	_vec3 vPos = { 900.f,0.f,500.f };
+	_vec3 vPos = { 120.f,0.f,120.f };
+	//_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
@@ -87,8 +87,8 @@ _int CAnimals::Update_GameObject(const _float& fTimeDelta)
 
 	if (m_IsDead)
 	{
-		//if(g_iGold<9)
-		//	g_iGold++;
+		if(g_iGold<9)
+			g_iGold++;
 		return DEAD_OBJ;
 	}
 

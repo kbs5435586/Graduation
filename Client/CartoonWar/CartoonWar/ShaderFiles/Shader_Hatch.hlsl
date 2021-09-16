@@ -112,9 +112,6 @@ VS_OUT	VS_Main(VS_IN vIn)
 	float4	vNormal = normalize(float4(vIn.vNormal,0.f));
 
 	float  diffuse = min(1.0, max(0, dot(normalize(-tLight[0].vLightDir.xyz), vNormal)));
-	//float  diffuse = min(1.0, max(0, dot(normalize(-vCamPos), vOut.vNormal)));
-
-
 	float  hatchFactor = diffuse * 6.f;
 	float3 weight0 = 0.0;
 	float3 weight1 = 0.0;
@@ -167,12 +164,12 @@ PS_OUT	PS_Main(VS_OUT vIn)
 		vViewNormal = normalize(mul(vTSNormal, matTBN));
 	}
 
-	float4 vHatvhTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight123.x;
-	float4 vHatvhTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight123.y;
-	float4 vHatvhTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight123.z;
-	float4 vHatvhTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight456.x;
-	float4 vHatvhTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight456.y;
-	float4 vHatvhTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV*5.f) * vIn.vWeight456.z;
+	float4 vHatvhTex0 = g_texture0.Sample(Sampler0, vIn.vTexUV*2.f) * vIn.vWeight123.x;
+	float4 vHatvhTex1 = g_texture1.Sample(Sampler0, vIn.vTexUV*2.f) * vIn.vWeight123.y;
+	float4 vHatvhTex2 = g_texture2.Sample(Sampler0, vIn.vTexUV*2.f) * vIn.vWeight123.z;
+	float4 vHatvhTex3 = g_texture3.Sample(Sampler0, vIn.vTexUV*2.f) * vIn.vWeight456.x;
+	float4 vHatvhTex4 = g_texture4.Sample(Sampler0, vIn.vTexUV*2.f) * vIn.vWeight456.y;
+	float4 vHatvhTex5 = g_texture5.Sample(Sampler0, vIn.vTexUV*2.f) * vIn.vWeight456.z;
 
 	float4 hatchColor = vHatvhTex0 + vHatvhTex1 + vHatvhTex2 + vHatvhTex3 + vHatvhTex4 + vHatvhTex5;
 
@@ -180,7 +177,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 
 	float4 vDiffuse = g_texture9.Sample(Sampler0, vIn.vTexUV);
 	//vOut.vDiffuseTex = hatchColor;
-	vOut.vDiffuseTex = vDiffuse*0.5f + hatchColor * 0.5f;
+	vOut.vDiffuseTex = hatchColor;
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vDepthTex = float4(fDepth, fDepth, fDepth, 1.f);

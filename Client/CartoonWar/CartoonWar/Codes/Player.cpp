@@ -47,6 +47,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 	m_pCollider_AABB->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 	m_pCollider_Attack->Clone_ColliderBox(m_pTransformCom, vColliderSize);
 
+	//_vec3 vPos = { 900.f, 0.f,150.f };
 	_vec3 vPos = { 75.f, 0.f,75.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_eCurTeam = TEAM::TEAM_RED;
@@ -1676,7 +1677,6 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 		server->send_end_pos_packet();
 	}
 }
-
 void CPlayer::Compute_Matrix_Z()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -1720,7 +1720,6 @@ void CPlayer::Compute_Matrix_Z()
 	m_matLeft = matLeft;
 	m_matRight = matRight;
 }
-
 void CPlayer::Compute_Matrix_X()
 {
 	_vec3		vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -1764,7 +1763,6 @@ void CPlayer::Compute_Matrix_X()
 	m_matLeft = matLeft;
 	m_matRight = matRight;
 }
-
 void CPlayer::Death(const _float& fTimeDelta)
 {
 	DeathMontion_Init();
@@ -1797,7 +1795,6 @@ void CPlayer::Death(const _float& fTimeDelta)
 		}
 	}
 }
-
 void CPlayer::DeathMontion_Init()
 {
 	m_iDeathMotion[0] = 100;
@@ -1851,7 +1848,6 @@ void CPlayer::DeathMontion_Init()
 		break;
 	}
 }
-
 void CPlayer::Attack(const _float& fTimeDelta)
 {
 	m_iAttackMotion[0] = 100;
@@ -1887,7 +1883,6 @@ void CPlayer::Attack(const _float& fTimeDelta)
 		break;
 	}
 }
-
 void CPlayer::Combat(const _float& fTimeDelta)
 {
 	if (m_IsCombat)
@@ -1900,7 +1895,6 @@ void CPlayer::Combat(const _float& fTimeDelta)
 		m_IsCombat = false;
 	}
 }
-
 void CPlayer::SetSpeed()
 {
 	m_fArrSpeed[(_uint)CLASS::CLASS_WORKER] = 10.f;
@@ -1931,7 +1925,6 @@ void CPlayer::SetSpeed()
 	m_fArrSpeedUP[(_uint)CLASS::CLASS_ARCHER] = 30.f;
 
 }
-
 void CPlayer::Resurrection()
 {
 	m_eCurClass = CLASS::CLASS_WORKER;
@@ -1946,12 +1939,10 @@ void CPlayer::Resurrection()
 	m_IsDeadMotion = false;
 	m_eCurState = STATE::STATE_IDLE;
 }
-
 void CPlayer::Play_Sound(const _float& fTimeDelta)
 {
 	if (m_ePreState != m_eCurState)
 	{
-	
 		if (m_IsSoundPause)
 		{
 			if (CManagement::GetInstance()->IsPlaying_Sound(CHANNEL_EFEECT, false))
@@ -2008,7 +1999,6 @@ void CPlayer::Play_Sound(const _float& fTimeDelta)
 	}
 
 }
-
 void CPlayer::Create_Particle(const _vec3& vPoistion)
 {
 	if (m_IsParticle)
@@ -2031,7 +2021,6 @@ void CPlayer::Create_Particle(const _vec3& vPoistion)
 		m_IsParticle = false;
 	}
 }
-
 void CPlayer::SkillClear()
 {
 	if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
@@ -2200,8 +2189,6 @@ void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 		}
 	}
 }
-
-
 //if (m_IsTeleport)
 //{
 //_bool IsTwo = dynamic_cast<CUI_Skill*>(pTemp)->GetIsTwo();
@@ -2229,8 +2216,6 @@ void CPlayer::Skill_CastTeleport(const _float& fTimeDelta, _float fY)
 //	dynamic_cast<CUI_Skill*>(pTemp)->SetIsTwo(true);
 //}
 //}
-
-
 //void CPlayer::Skill_Fly(const _float& fTimeDelta, _float fY)
 //{
 //	CGameObject* pTemp = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_UI", 22);
