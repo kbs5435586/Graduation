@@ -55,8 +55,9 @@
 #include "Dxgitype.h"
 #include "wincodec.h"
 
-#include "d3dx9.h"
 #include "d3d9.h"
+#include "d3dx9.h"
+#include "dxgi.h"
 
 #define DIRECTINPUT_VERSION 0x0800
 #include "dinput.h"

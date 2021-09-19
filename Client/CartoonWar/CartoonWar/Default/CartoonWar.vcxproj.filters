@@ -544,6 +544,9 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\09. BoneFire">
       <UniqueIdentifier>{a47344a5-8584-4362-9121-9848fa142843}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\97. UI\11. UI_Energe">
+      <UniqueIdentifier>{a8e013f8-2608-4d75-9573-662524072d2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -1002,7 +1005,6 @@
     <ClInclude Include="..\Headers\Map_Terrain.h">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\01. Map_Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_End.h">
       <Filter>02. GameObject\97. UI\92. UI_End</Filter>
     </ClInclude>
@@ -1021,6 +1023,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\BoneFire.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. BoneFire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Energe.h">
+      <Filter>02. GameObject\97. UI\11. UI_Energe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1468,6 +1473,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BoneFire.cpp">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\09. BoneFire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Energe.cpp">
+      <Filter>02. GameObject\97. UI\11. UI_Energe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

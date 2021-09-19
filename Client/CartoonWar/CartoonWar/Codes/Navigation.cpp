@@ -106,14 +106,12 @@ _bool CNavigation::Move_OnNavigation(const _vec3* vPos, const _vec3* vDirectionP
 	_bool	isIn = m_vecCell[m_iCurrentIdx]->Is_inCell(*vPos + *vDirectionPerSec, &eOutLine);
 	if (false == isIn)
 	{
-		// 이웃이 있으면
 		if (pNeighbor = m_vecCell[m_iCurrentIdx]->Get_Neighbor(NEIGHBOR(eOutLine)))
 		{
-			//	m_vecCell[m_iCurrentIdx]->Set_OnObject(false);
+
 			m_iCurrentIdx = pNeighbor->Get_CellIndex();
 			return true;
 		}
-		// 이웃이 없으면
 		else
 		{
 			pLine = m_vecCell[m_iCurrentIdx]->GetLine(eOutLine);

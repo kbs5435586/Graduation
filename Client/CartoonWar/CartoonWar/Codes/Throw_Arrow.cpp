@@ -239,9 +239,9 @@ void CThrow_Arrow::Render_Blur()
 		CDevice::GetInstance()->UpdateTable();
 		m_pMeshCom->Render_Mesh(i);
 	}
-	m_iBlurCnt++;
+	
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
-	if (m_iBlurCnt >= 100)
+	if (m_iBlurCnt >= 1.f)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_iBlurCnt = 0;

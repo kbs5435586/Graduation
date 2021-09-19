@@ -1465,7 +1465,7 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 			break;
 		case STATE::STATE_WALK:
 		{
-			/*if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
+			if (m_eCurClass == CLASS::CLASS_MMAGE || m_eCurClass == CLASS::CLASS_CAVALRY || m_eCurClass == CLASS(2))
 			{
 				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
 			}
@@ -1473,7 +1473,7 @@ void CNPC::Play_Sound(const _float& fTimeDelta)
 			else
 			{
 				CManagement::GetInstance()->Play_Sound(CHANNEL_EFEECT, SOUND_OBJECT, WALK, 0.2f, FMOD_LOOP_NORMAL);
-			}*/
+			}
 		}
 		break;
 		case STATE::STATE_RUN:

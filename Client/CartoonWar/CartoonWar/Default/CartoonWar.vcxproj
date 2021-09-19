@@ -288,6 +288,7 @@
     <ClInclude Include="..\Headers\UI_CharInterface.h" />
     <ClInclude Include="..\Headers\UI_Diffuse.h" />
     <ClInclude Include="..\Headers\UI_End.h" />
+    <ClInclude Include="..\Headers\UI_Energe.h" />
     <ClInclude Include="..\Headers\UI_GoldIcon.h" />
     <ClInclude Include="..\Headers\UI_LastTime.h" />
     <ClInclude Include="..\Headers\UI_LastTimeBar.h" />
@@ -443,6 +444,7 @@
     <ClCompile Include="..\Codes\UI_CharInterface.cpp" />
     <ClCompile Include="..\Codes\UI_Diffuse.cpp" />
     <ClCompile Include="..\Codes\UI_End.cpp" />
+    <ClCompile Include="..\Codes\UI_Energe.cpp" />
     <ClCompile Include="..\Codes\UI_Gold.cpp" />
     <ClCompile Include="..\Codes\UI_GoldIcon.cpp" />
     <ClCompile Include="..\Codes\UI_LastTime.cpp" />

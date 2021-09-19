@@ -24,11 +24,11 @@ HRESULT CUI_PointLight::Ready_GameObject(void* pArg)
 	if (FAILED(CreateInputLayout()))
 		return E_FAIL;
 
-	m_fX = 75.f;
-	m_fY = 375.f;
+	m_fX = 150.f;
+	m_fY = 750.f;
 
-	m_fSizeX = 150.f;
-	m_fSizeY = 150.f;
+	m_fSizeX = 300.f;
+	m_fSizeY = 300.f;
 	return S_OK;
 }
 
@@ -73,14 +73,14 @@ void CUI_PointLight::Render_GameObject()
 	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffset, CONST_REGISTER::b0);
 
 
-	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_BLUR)->Get_RTT(0)->pRtt->GetSRV().Get();
+	ComPtr<ID3D12DescriptorHeap>	pNormalTex = pManagement->Get_RTT((_uint)MRT::MRT_LIGHT)->Get_RTT(2)->pRtt->GetSRV().Get();
 	CDevice::GetInstance()->SetTextureToShader(pNormalTex.Get(), TEXTURE_REGISTER::t0);
 
 
 	CDevice::GetInstance()->UpdateTable();
 
 
-	m_pBufferCom->Render_VIBuffer();
+	//m_pBufferCom->Render_VIBuffer();
 	Safe_Release(pManagement);
 }
 
