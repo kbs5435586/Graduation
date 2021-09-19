@@ -160,7 +160,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 		if (fLen > 0.5f)
 		{
-			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+			if (m_IsRun && g_iPlayerIdx == m_iLayerIdx)
+				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta * 2.f);
+			else
+				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
 
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
@@ -1468,7 +1471,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- server->Get_Move_Cooltime());
-		if (move_time.count() >= 0.017) // ↑ 쿨타임 2초 계산해주는 식
+		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 			if (nullptr == pTerrainBuffer)
