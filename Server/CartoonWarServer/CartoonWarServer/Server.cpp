@@ -3413,7 +3413,7 @@ void Server::do_proj(int proj_id)
         }
         do_proj_collision(proj_id);
         if (ST_ACTIVE == g_clients[proj_id].m_status)
-            add_timer(proj_id, FUNC_PROJECTILE, FRAME_TIME);
+            add_timer(proj_id, FUNC_PROJECTILE, 30.f);
     }
     else // 투사체 유지시간 끝났을때
         delete_proj(proj_id);
