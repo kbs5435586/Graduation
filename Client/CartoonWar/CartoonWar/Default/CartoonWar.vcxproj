@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\BoneFire.h" />
     <ClInclude Include="..\Headers\Buffer_Cylinder.h" />
+    <ClInclude Include="..\Headers\EffectBox_Ver.h" />
     <ClInclude Include="..\Headers\FireWall.h" />
     <ClInclude Include="..\Headers\Map_Terrain.h" />
     <ClInclude Include="..\Headers\Animals.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="..\Headers\MapUser.h" />
     <ClInclude Include="..\Headers\Map_Camera.h" />
     <ClInclude Include="..\Headers\Mesh.h" />
+    <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MRT.h" />
     <ClInclude Include="..\Headers\MyRect.h" />
     <ClInclude Include="..\Headers\Navigation.h" />
@@ -363,6 +365,7 @@
     <ClCompile Include="..\Codes\Desc.cpp" />
     <ClCompile Include="..\Codes\Device.cpp" />
     <ClCompile Include="..\Codes\EffectBox.cpp" />
+    <ClCompile Include="..\Codes\EffectBox_Ver.cpp" />
     <ClCompile Include="..\Codes\EventMgr.cpp" />
     <ClCompile Include="..\Codes\FbxLoader.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
@@ -391,6 +394,7 @@
     <ClCompile Include="..\Codes\Map_Camera.cpp" />
     <ClCompile Include="..\Codes\Map_Terrain.cpp" />
     <ClCompile Include="..\Codes\Mesh.cpp" />
+    <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\MRT.cpp" />
     <ClCompile Include="..\Codes\MyRect.cpp" />
     <ClCompile Include="..\Codes\Navigation.cpp" />

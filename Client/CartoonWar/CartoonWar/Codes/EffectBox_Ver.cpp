@@ -1,21 +1,21 @@
 #include "framework.h"
-#include "EffectBox.h"
+#include "EffectBox_Ver.h"
 #include "Management.h"
 
-CEffectBox::CEffectBox()
+CEffectBox_Ver::CEffectBox_Ver()
 {
 }
 
-CEffectBox::CEffectBox(const CEffectBox& rhs)
+CEffectBox_Ver::CEffectBox_Ver(const CEffectBox_Ver& rhs)
 {
 }
 
-HRESULT CEffectBox::Ready_Prototype()
+HRESULT CEffectBox_Ver::Ready_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CEffectBox::Ready_GameObject(void* pArg)
+HRESULT CEffectBox_Ver::Ready_GameObject(void* pArg)
 {
 	if (nullptr == pArg)
 		return E_FAIL;
@@ -32,27 +32,27 @@ HRESULT CEffectBox::Ready_GameObject(void* pArg)
 
 	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
-	
-	//m_pTransformCom->BackWard(0.5f);
+
+	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
 	return S_OK;
 }
 
-_int CEffectBox::Update_GameObject(const _float& fTimeDelta)
+_int CEffectBox_Ver::Update_GameObject(const _float& fTimeDelta)
 {
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return _int();
-	
-	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
-	m_pTransformCom->Set_PositionY(fY +5.f);
 
-	m_pTransformCom->BackWard(fTimeDelta);
+	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+	m_pTransformCom->Set_PositionY(fY + 5.f);
+
+	m_pTransformCom->Go_Right(fTimeDelta);
 
 
 	return _int();
 }
 
-_int CEffectBox::LastUpdate_GameObject(const _float& fTimeDelta)
+_int CEffectBox_Ver::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
@@ -61,7 +61,7 @@ _int CEffectBox::LastUpdate_GameObject(const _float& fTimeDelta)
 	return _int();
 }
 
-void CEffectBox::Render_GameObject()
+void CEffectBox_Ver::Render_GameObject()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	if (nullptr == pManagement)
@@ -113,7 +113,7 @@ void CEffectBox::Render_GameObject()
 }
 
 
-HRESULT CEffectBox::CreateInputLayout()
+HRESULT CEffectBox_Ver::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
 	vector<D3D12_INPUT_ELEMENT_DESC>  vecDesc;
@@ -124,17 +124,17 @@ HRESULT CEffectBox::CreateInputLayout()
 	return S_OK;
 }
 
-CEffectBox* CEffectBox::Create()
+CEffectBox_Ver* CEffectBox_Ver::Create()
 {
-	CEffectBox* pInstance = new CEffectBox();
+	CEffectBox_Ver* pInstance = new CEffectBox_Ver();
 	if (FAILED(pInstance->Ready_Prototype()))
 		Safe_Release(pInstance);
 	return pInstance;
 }
 
-CGameObject* CEffectBox::Clone_GameObject(void* pArg, _uint iIdx)
+CGameObject* CEffectBox_Ver::Clone_GameObject(void* pArg, _uint iIdx)
 {
-	CEffectBox* pInstance = new CEffectBox();
+	CEffectBox_Ver* pInstance = new CEffectBox_Ver();
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
 	m_iLayerIdx = iIdx;
@@ -142,7 +142,7 @@ CGameObject* CEffectBox::Clone_GameObject(void* pArg, _uint iIdx)
 	return pInstance;
 }
 
-void CEffectBox::Free()
+void CEffectBox_Ver::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
@@ -155,7 +155,7 @@ void CEffectBox::Free()
 	CGameObject::Free();
 }
 
-HRESULT CEffectBox::Ready_Component()
+HRESULT CEffectBox_Ver::Ready_Component()
 {
 	CManagement* pManagement = CManagement::GetInstance();
 	pManagement->AddRef();

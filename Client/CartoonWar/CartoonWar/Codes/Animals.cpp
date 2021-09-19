@@ -71,7 +71,7 @@ _int CAnimals::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
-	//MeaningLess_Moving(fTimeDelta);
+	MeaningLess_Moving(fTimeDelta);
 	Set_State();
 
 	if (m_tInfo.fHP <= 0.f)
