@@ -26,7 +26,7 @@ HRESULT CEffectBox::Ready_GameObject(void* pArg)
 		return E_FAIL;
 	_matrix pTemp = *(_matrix*)pArg;
 	_matrix matWorld = m_pTransformCom->Get_Matrix();
-	pTemp._43 += 10.f;
+	pTemp._43 += 5.f;
 	matWorld *= pTemp;
 	m_pTransformCom->Set_Matrix(pTemp);
 
@@ -39,25 +39,57 @@ HRESULT CEffectBox::Ready_GameObject(void* pArg)
 
 _int CEffectBox::Update_GameObject(const _float& fTimeDelta)
 {
-	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+	/*CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
 		return _int();
 	
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY +5.f);
 
-	m_pTransformCom->BackWard(fTimeDelta);
+	m_pTransformCom->BackWard(fTimeDelta);*/
+	CServer_Manager* server = CServer_Manager::GetInstance();
+	if (nullptr == server)
+		return -1;
 
+	if (false == server->Get_Show(m_iLayerIdx, O_OBJECT))
+		return DEAD_OBJ;
+	m_IsShow = server->Get_Show(m_iLayerIdx, O_OBJECT);
+	if (m_IsShow)
+	{
+		CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
+		if (nullptr == pTerrainBuffer)
+			return _int();
+
+		_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
+		m_pTransformCom->Set_PositionY(fY + 5.f);
+
+		_matrix matTemp = server->Get_ServerMat(m_iLayerIdx, O_OBJECT);
+
+		_vec3   pPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+		_vec3   vPos = _vec3(matTemp._41, pPos.y, matTemp._43);
+		_vec3	calPos = { pPos.x, pPos.y, pPos.z };
+
+		_vec3   vLen = calPos - vPos;
+		_float   fLen = vLen.Length();
+
+		if (fLen > 1.f)
+		{
+			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+		}
+	}
 
 	return _int();
 }
 
 _int CEffectBox::LastUpdate_GameObject(const _float& fTimeDelta)
 {
-	if (nullptr == m_pRendererCom)
-		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHA, this)))
-		return -1;
+	if (m_IsShow)
+	{
+		if (nullptr == m_pRendererCom)
+			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHA, this)))
+			return -1;
+	}
 	return _int();
 }
 

@@ -826,7 +826,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 		//}
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 			return E_FAIL;
-	}*/
+	}
 	//GameObject_Monster
 	UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 	tInfo.iTemp = 0;

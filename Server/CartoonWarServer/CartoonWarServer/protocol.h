@@ -13,6 +13,8 @@ enum PLAYERS {
 	ENUM_PLAYER25, ENUM_PLAYER26, ENUM_PLAYER27, ENUM_PLAYER28, ENUM_PLAYER29, ENUM_PLAYER30, ENUM_PLAYER_END
 };
 
+enum ENUM_TYPE { TP_PLAYER, TP_NPC, TP_ARROW, TP_FIREBALL, TP_FIREBALL_VER, TP_DEFFEND, TP_ROCK, TP_TREE, TP_SKILL, TP_ANIMAL, TP_END };
+
 struct FormationInfo
 {
 	int id;
@@ -80,7 +82,7 @@ constexpr char CS_PACKET_CLASS_CHANGE = 9;
 constexpr char CS_PACKET_TROOP_CHANGE = 10;
 constexpr char CS_PACKET_TELEPORT = 11;
 constexpr char CS_PACKET_FIRE = 12;
-constexpr char CS_PACKET_ARROW = 13;
+constexpr char CS_PACKET_PROJECTILE = 13;
 constexpr char CS_PACKET_INVISIBLE = 14;
 constexpr char CS_PACKET_DEFFEND = 15;
 constexpr char CS_PACKET_TIME_END = 16;
@@ -105,7 +107,7 @@ constexpr char SC_PACKET_TIMEDELTA = 16;
 constexpr char SC_PACKET_GOLD = 17;
 constexpr char SC_PACKET_HP = 18;
 constexpr char SC_PACKET_DO_PARTICLE = 19;
-constexpr char SC_PACKET_ARROW = 20;
+constexpr char SC_PACKET_PROJECTILE = 20;
 constexpr char SC_PACKET_DEFFEND = 21;
 constexpr char SC_PACKET_REVIVE = 22;
 constexpr char SC_PACKET_NATURE_SCALE = 23;
@@ -224,12 +226,13 @@ struct sc_packet_hp
 	int hp;
 };
 
-struct sc_packet_arrow
+struct sc_packet_projectile
 {
 	char size;
 	char type;
+	int proj_type;
 	int shoot_id;
-	int arrow_id;
+	int proj_id;
 };
 
 struct sc_packet_deffend
@@ -247,11 +250,8 @@ constexpr unsigned char O_PLAYER = 0;
 constexpr unsigned char O_NPC = 1;
 constexpr unsigned char O_OBJECT = 2;
 constexpr unsigned char O_DEFFEND = 3;
-constexpr unsigned char O_ARROW = 4;
-constexpr unsigned char O_FIRE = 5;
-constexpr unsigned char O_TELE = 6;
-constexpr unsigned char O_TREE = 7;
-constexpr unsigned char O_ROCK = 8;
+constexpr unsigned char O_TREE = 4;
+constexpr unsigned char O_ROCK = 5;
 
 struct sc_packet_enter
 {
@@ -434,10 +434,11 @@ struct cs_packet_attack
 	char	type;
 };
 
-struct cs_packet_arrow
+struct cs_packet_projectile
 {
 	char	size;
 	char	type;
+	int		proj_type;
 };
 
 struct cs_packet_deffend

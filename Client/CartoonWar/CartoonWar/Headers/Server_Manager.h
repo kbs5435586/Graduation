@@ -59,7 +59,7 @@ public:
     void send_change_troop();
     void send_fire_packet(float mx, float mz);
     void send_teleport_packet(float mx, float mz);
-    void send_arrow_packet();
+    void send_projectile_packet(int type);
     void send_invisible_packet(bool isinvi);
     void send_deffend_packet();
     void send_time_end_packet();

@@ -1321,56 +1321,39 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				- server->Get_Attack_Cooltime());
 			if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
 			{
-				server->send_attack_packet();
+				if (m_eCurClass == CLASS::CLASS_ARCHER)
+				{
+					server->send_projectile_packet(TP_ARROW);
+					m_eCurState = STATE::STATE_ARROW;
+				}
+				else if (m_eCurClass == CLASS::CLASS_WORKER)
+				{
+					if (g_iGold >= DEFFEND_PRICE)
+					{
+						server->send_deffend_packet();
+					}
+					m_eCurState = STATE::STATE_ATTACK;
+					if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+						return;
+				}
+				else if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
+				{
+					server->send_projectile_packet(TP_FIREBALL);
+					server->send_projectile_packet(TP_FIREBALL_VER);
+					m_eCurState = STATE::STATE_ATTACK;
+				}
+				else
+				{
+					server->send_attack_packet();
+					m_eCurState = STATE::STATE_ATTACK;
+					if (g_IsFix)
+						if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+							return;
+				}
+
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
 				server->send_animation_packet(A_ATTACK);
 				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-			}
-
-			if (m_eCurClass == CLASS::CLASS_ARCHER)
-			{
-				/*CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;*/
-
-				CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
-
-				pOwnPlayer = nullptr;
-				matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox_Ver", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CEffectBox_Ver*>(pOwnPlayer)->GetOwnPlayer() = this;
-
-
-				server->send_arrow_packet();
-				m_eCurState = STATE::STATE_ARROW;
-			}
-			else if (m_eCurClass == CLASS::CLASS_WORKER)
-			{
-				if (g_iGold >= DEFFEND_PRICE)
-				{
-					server->send_deffend_packet();
-				}
-				m_eCurState = STATE::STATE_ATTACK;
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-					return;
-			}
-			else
-			{
-				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-				m_eCurState = STATE::STATE_ATTACK;
-				if(g_IsFix)
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-					return;
 			}
 
 			if (m_IsFire)
@@ -1485,7 +1468,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 		duration<double> move_time = duration_cast<duration<double>>(high_resolution_clock::now()
 			- server->Get_Move_Cooltime());
-		if (move_time.count() >= KEY_COOLTIME) // ↑ 쿨타임 2초 계산해주는 식
+		if (move_time.count() >= 0.017) // ↑ 쿨타임 2초 계산해주는 식
 		{
 			CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 			if (nullptr == pTerrainBuffer)

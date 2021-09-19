@@ -357,11 +357,11 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		g_iGold = my_packet->gold;
 	}
 	break;
-	case SC_PACKET_ARROW:
+	case SC_PACKET_PROJECTILE:
 	{
-		sc_packet_arrow* my_packet = reinterpret_cast<sc_packet_arrow*>(ptr);
+		sc_packet_projectile* my_packet = reinterpret_cast<sc_packet_projectile*>(ptr);
 		int recv_id = my_packet->shoot_id;
-		int arrow_idx = object_id_to_idx(my_packet->arrow_id);
+		int proj_idx = object_id_to_idx(my_packet->proj_id);
 ;
 		CTransform* pTransform = nullptr;
 		if (is_player(recv_id))
@@ -376,9 +376,23 @@ void CServer_Manager::ProcessPacket(char* ptr)
 				L"Layer_NPC", L"Com_Transform", npc_id);
 		}
 		_matrix matTemp = pTransform->Get_Matrix();
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp, arrow_idx)))
-			return;
-		m_objects[my_packet->arrow_id].showObject = true;
+
+		if (TP_ARROW == my_packet->proj_type)
+		{
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", nullptr, (void*)&matTemp, proj_idx)))
+				return;
+		}
+		else if (TP_FIREBALL == my_packet->proj_type)
+		{
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", nullptr, (void*)&matTemp, proj_idx)))
+				return;
+		}
+		else if (TP_FIREBALL_VER == my_packet->proj_type)
+		{
+			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox_Ver", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", nullptr, (void*)&matTemp, proj_idx)))
+				return;
+		}
+		m_objects[my_packet->proj_id].showObject = true;
 	}
 	break;
 	case SC_PACKET_DEFFEND:
@@ -417,41 +431,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		int recv_id = my_packet->id;
 		m_objects[recv_id].hp = my_packet->hp;
 		update_anim(recv_id, my_packet->anim);
-
-		/*CGameObject* pGameObject = managment->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", my_id);
-		pGameObject->
-		m_IsShow = pGameObject->GetIsShow();*/
-
-
-		//m_objects[recv_id].showObject = false;
-
-		//managment = CManagement::GetInstance();  // 플레이어의 죽는 애니메이션이 끝났을때 실행되게
-		//if (nullptr == managment)
-		//	return;
-		//managment->AddRef();
-
-		//CTransform* pTransform;
-		//if (0 == m_objects[my_id].hp)
-		//{
-		//	pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Player", L"Com_Transform", my_id);
-		//	_vec3 vPos = *pTransform->Get_StateInfo(CTransform::STATE_POSITION);
-		//	if (0 == my_id)
-		//	{
-		//		vPos.x = 50.f;
-		//		vPos.y = 0.f;
-		//		vPos.z = 90.f;
-		//	}
-		//	else
-		//	{
-		//		vPos.x = 90.f;
-		//		vPos.y = 0.f;
-		//		vPos.z = 30.f;
-		//		_vec3 pos = { 90.f, 0.f, 30.f };
-		//	}
-		//	pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-		//	send_position_packet(&vPos);
-		//}
-		//Safe_Release(managment);
 	}
 	break;
 	case SC_PACKET_FLAG_INFO:
@@ -470,20 +449,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		vPos.z = my_packet->p_z;
 
 		int iTemp = 0;
-
-		/*for (auto& iter : managment->Get_Layer((_uint)SCENEID::SCENE_STAGE, L"Layer_Rect")->Get_GameObjectLst())
-		{
-			dynamic_cast<CMyRect*>(iter)->m_iLayerIdx = iTemp;
-			iTemp++;
-		}*/
-
-		//pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//	L"Layer_Flag", L"Com_Transform", recv_id);
-		//pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-
-		//pTransform = (CTransform*)managment->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
-		//	L"Layer_Rect", L"Com_Transform", recv_id);
-		//pTransform->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	}
 	break;
 	case SC_PACKET_FLAG_BOOL:
@@ -689,17 +654,18 @@ void CServer_Manager::send_change_formation_packet()
 	send_packet(&l_packet);
 }
 
-void CServer_Manager::send_arrow_packet()
+void CServer_Manager::send_projectile_packet(int type)
 {
-	cs_packet_arrow l_packet;
+	cs_packet_projectile l_packet;
 	l_packet.size = sizeof(l_packet);
-	l_packet.type = CS_PACKET_ARROW;
+	l_packet.type = CS_PACKET_PROJECTILE;
+	l_packet.proj_type = type;
 	send_packet(&l_packet);
 }
 
 void CServer_Manager::send_deffend_packet()
 {
-	cs_packet_arrow l_packet;
+	cs_packet_deffend l_packet;
 	l_packet.size = sizeof(l_packet);
 	l_packet.type = CS_PACKET_DEFFEND;
 	send_packet(&l_packet);
