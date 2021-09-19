@@ -39,9 +39,6 @@
     <ClInclude Include="Server.h">
       <Filter>97. Server</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
-      <Filter>98. Header</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleMath.h">
       <Filter>98. Header</Filter>
     </ClInclude>
@@ -49,6 +46,9 @@
       <Filter>96. Transform</Filter>
     </ClInclude>
     <ClInclude Include="d3dmath.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
       <Filter>98. Header</Filter>
     </ClInclude>
   </ItemGroup>

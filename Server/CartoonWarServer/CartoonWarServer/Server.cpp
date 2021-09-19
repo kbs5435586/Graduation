@@ -104,14 +104,14 @@ int Server::init_projectile(int shoot_id, ENUM_TYPE type)
             }
             else if (TP_FIREBALL == type)
             {
-                g_clients[i].m_move_speed = 100.f;
+                g_clients[i].m_move_speed = 70.f;
                 g_clients[i].m_transform.SetUp_Speed(g_clients[i].m_move_speed, XMConvertToRadians(90.f));
                 g_clients[i].m_type = TP_FIREBALL;
             }
             else if (TP_FIREBALL_VER == type)
             {
                 g_clients[i].m_transform.SetUp_RotationY(XMConvertToRadians(90.f));
-                g_clients[i].m_move_speed = 100.f;
+                g_clients[i].m_move_speed = 70.f;
                 g_clients[i].m_transform.SetUp_Speed(g_clients[i].m_move_speed, XMConvertToRadians(90.f));
                 g_clients[i].m_type = TP_FIREBALL_VER;
             }
@@ -3427,7 +3427,7 @@ void Server::delete_proj(int proj_id)
     g_clients[proj_id].m_transform.Ready_Transform();
     for (int i = 0; i < NPC_START; ++i)
     {
-        if (ST_ACTIVE != g_clients[i].m_status)
+        if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
             continue;
         send_leave_packet(i, proj_id);
     }

@@ -31,7 +31,7 @@ HRESULT CEffectBox_Ver::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_Matrix(pTemp);
 
 	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->SetUp_Speed(70.f, XMConvertToRadians(90.f));
 
 	m_pTransformCom->SetUp_RotationY(XMConvertToRadians(90.f));
 	return S_OK;
