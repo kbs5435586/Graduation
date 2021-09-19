@@ -160,7 +160,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 		if (fLen > 0.5f)
 		{
-			if (m_IsRun && g_iPlayerIdx == m_iLayerIdx)
+			if (server->Get_isRun(m_iLayerIdx, O_PLAYER))
 				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta * 2.f);
 			else
 				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
@@ -1497,6 +1497,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide))
 			{
+				if(!m_IsRun)
+					server->send_run_packet(true);
 				server->send_move_packet(GO_FAST_FORWARD);
 				server->Set_Move_CoolTime(high_resolution_clock::now());
 			}
@@ -1549,6 +1551,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide))
 			{
+				if(m_IsRun)
+					server->send_run_packet(false);
 				server->send_move_packet(GO_FORWARD);
 				server->Set_Move_CoolTime(high_resolution_clock::now());
 			}

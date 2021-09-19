@@ -255,6 +255,12 @@ void CServer_Manager::ProcessPacket(char* ptr)
 		my_npc = my_packet->npc_size;
 	}
 	break;
+	case SC_PACKET_RUN:
+	{
+		sc_packet_run* my_packet = reinterpret_cast<sc_packet_run*>(ptr);
+		m_objects[my_packet->id].isRun = my_packet->isRun;
+	}
+	break;
 	case SC_PACKET_NATURE_SCALE:
 	{
 		sc_packet_nature_scale* my_packet = reinterpret_cast<sc_packet_nature_scale*>(ptr);
@@ -563,6 +569,16 @@ void CServer_Manager::send_move_packet(unsigned char dir)
 	m_packet.size = sizeof(m_packet);
 	m_packet.dir = dir;
 	//cout << "send move\n";
+	send_packet(&m_packet);
+}
+
+void CServer_Manager::send_run_packet(bool isrun)
+{
+	cs_packet_run m_packet;
+	m_packet.type = CS_PACKET_RUN;
+	m_packet.size = sizeof(m_packet);
+	m_packet.isRun = isrun;
+
 	send_packet(&m_packet);
 }
 
@@ -1139,6 +1155,16 @@ bool CServer_Manager::Get_isFirst(int id, char type)
 		return m_objects[npc_idx_to_id(id)].isFirst;
 	else if (type == O_OBJECT)
 		return m_objects[object_idx_to_id(id)].isFirst;
+}
+
+bool CServer_Manager::Get_isRun(int id, char type)
+{
+	if (type == O_PLAYER)
+		return m_objects[id].isRun;
+	else if (type == O_NPC)
+		return m_objects[npc_idx_to_id(id)].isRun;
+	else if (type == O_OBJECT)
+		return m_objects[object_idx_to_id(id)].isRun;
 }
 
 bool CServer_Manager::Get_isOnce(int id, char type)

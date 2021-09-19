@@ -421,7 +421,20 @@ void Server::process_packet(int user_id, char* buf)
     {
         cs_packet_change_formation* packet = reinterpret_cast<cs_packet_change_formation*>(buf);
         do_change_formation(user_id);
-
+    }
+    break;
+    case CS_PACKET_RUN:
+    {
+        cs_packet_run* packet = reinterpret_cast<cs_packet_run*>(buf);
+        bool isRun = packet->isRun;
+        for (int i = 0; i < NPC_START; ++i)
+        {
+            if (ST_ACTIVE != g_clients[i].m_status && ST_DEAD != g_clients[i].m_status)
+                continue;
+            if (!is_near(user_id, i))
+                continue;
+            send_run_packet(i, user_id, isRun);
+        }
     }
     break;
     case CS_PACKET_ATTACK:
@@ -1857,6 +1870,17 @@ void Server::send_hp_packet(int user_id, int other_id)
     packet.type = SC_PACKET_HP;
     packet.id = other_id;
     packet.hp = g_clients[other_id].m_hp;
+
+    send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
+}
+
+void Server::send_run_packet(int user_id, int other_id, bool isrun)
+{
+    sc_packet_run packet;
+    packet.size = sizeof(packet);
+    packet.type = SC_PACKET_RUN;
+    packet.id = other_id;
+    packet.isRun = isrun;
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
 }

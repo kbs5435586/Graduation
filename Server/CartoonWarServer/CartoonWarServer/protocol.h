@@ -87,6 +87,7 @@ constexpr char CS_PACKET_INVISIBLE = 14;
 constexpr char CS_PACKET_DEFFEND = 15;
 constexpr char CS_PACKET_TIME_END = 16;
 constexpr char CS_PACKET_END_POS = 17;
+constexpr char CS_PACKET_RUN = 18;
 
 constexpr char SC_PACKET_LOGIN_OK = 1;
 constexpr char SC_PACKET_MOVE = 2;
@@ -111,6 +112,7 @@ constexpr char SC_PACKET_PROJECTILE = 20;
 constexpr char SC_PACKET_DEFFEND = 21;
 constexpr char SC_PACKET_REVIVE = 22;
 constexpr char SC_PACKET_NATURE_SCALE = 23;
+constexpr char SC_PACKET_RUN = 24;
 
 #pragma pack(push ,1)
 
@@ -331,6 +333,14 @@ struct sc_packet_chat
 	char message[MAX_STR_LEN];
 };
 
+struct sc_packet_run
+{
+	char	size;
+	char	type;
+	int		id;
+	bool	isRun;
+};
+
 struct sc_packet_npc_size
 {
 	char			size;
@@ -417,6 +427,13 @@ struct cs_packet_move
 	char	type;
 	char	dir;
 	int move_time;
+};
+
+struct cs_packet_run
+{
+	char	size;
+	char	type;
+	bool	isRun;
 };
 
 constexpr unsigned char GO_UP = 0;
