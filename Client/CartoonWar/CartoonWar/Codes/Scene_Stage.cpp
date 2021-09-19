@@ -77,6 +77,7 @@
 #include "Flag.h"
 #include "Castle.h"
 #include "Teleport.h"
+#include "EffectBox_Ver.h"
 
 #include "Water.h"
 #include "Deffend.h"
@@ -246,7 +247,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox", CEffectBox::Create())))
 		return E_FAIL;
-
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_EffectBox_Ver", CEffectBox_Ver::Create())))
+		return E_FAIL;
 
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_TestMesh", CTestMesh::Create())))
 		return E_FAIL;

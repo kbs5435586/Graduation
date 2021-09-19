@@ -32,8 +32,13 @@ private:
 	HRESULT									Ready_Component();
 private:
 	CTransform*								m_pTransformCom = nullptr;
+	CTransform*								m_pTransformCom_Ver = nullptr;
+
 	CRenderer*								m_pRendererCom = nullptr;
+
 	CBuffer_RectTex*						m_pBufferCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom_Ver = nullptr;
+
 	CShader*								m_pShaderCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom[3] = { nullptr };
@@ -42,6 +47,6 @@ private:
 private:
 	POSSIZE									m_tPosizeInfo = {};
 private:
-		TEXINFO									m_tTexInfo = {};
+		TEXINFO								m_tTexInfo = {};
 };
 
