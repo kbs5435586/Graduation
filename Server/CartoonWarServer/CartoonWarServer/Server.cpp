@@ -148,6 +148,7 @@ void Server::do_move(int user_id, char direction)
 
         float angle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
         p.m_total_angle += angle;
+        p.m_isAttack = false;
     }
     break;
     case GO_RIGHT:
@@ -167,20 +168,72 @@ void Server::do_move(int user_id, char direction)
 
         float angle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
         p.m_total_angle += angle;
+        p.m_isAttack = false;
     }
     break;
     case GO_FORWARD:
         p.m_transform.BackWard(TIME_DELTA);
+        p.m_isAttack = false;
         break;
     case GO_FAST_FORWARD:
     {
-        p.m_transform.SetUp_Speed(p.m_move_speed * 2.f,p.m_rotate_speed);
+        if ((C_CAVALRY == p.m_class || C_FOUR == p.m_class) && !p.m_isAttack) // 처음 달리기 시작했을때
+        {
+            p.m_isAttack = true;
+            p.m_attacktime = high_resolution_clock::now();
+        }
+        else if ((C_CAVALRY == p.m_class || C_FOUR == p.m_class) && p.m_isAttack) // 달리고 있는 상태일때
+        {
+            duration<double> cooltime = high_resolution_clock::now() - p.m_attacktime;
+            if (cooltime > seconds(2)) // 달린지 2초 초과 되었을때
+            {
+                for (int i = 0; i < OBJECT_START; ++i)
+                {
+                    if (ST_ACTIVE != g_clients[i].m_status)
+                        continue;
+                    if (user_id == i)
+                        continue;
+                    if (g_clients[i].m_team == g_clients[user_id].m_team)
+                        continue;
+                    if (g_clients[i].m_isOBB)
+                        continue;
+                    if (dist_between(user_id, i) > 8.f)
+                        continue;
+                    if (check_obb_collision(user_id, i))
+                    {
+                        if (g_clients[user_id].m_isAttack)
+                        {
+                            g_clients[i].m_isOBB = true;
+                            g_clients[i].m_matAttackedTarget = g_clients[user_id].m_transform.Get_Matrix();
+                            g_clients[i].m_hp -= ATTACK_DAMAGE;
+                            if (g_clients[i].m_hp > 0)
+                            {
+                                for (int player = 0; player < NPC_START; ++player)
+                                {
+                                    if (!is_near(player, i))
+                                        continue;
+                                    send_do_particle_packet(player, i); // 남은 체력 브로드캐스팅
+                                    send_hp_packet(player, i);
+                                    send_animation_packet(player, i, A_HIT);
+                                }
+                            }
+                            else
+                            {
+                                do_dead(i);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        p.m_transform.SetUp_Speed(p.m_move_speed * 2.f, p.m_rotate_speed);
         p.m_transform.BackWard(TIME_DELTA);
         p.m_transform.SetUp_Speed(p.m_move_speed, p.m_rotate_speed);
     }
         break;
     case GO_BACK:
         p.m_transform.Go_Straight(TIME_DELTA);
+        p.m_isAttack = false;
         break;
     default:
         cout << "Unknown Direction From cs_move_packet !\n";
@@ -366,6 +419,8 @@ void Server::process_packet(int user_id, char* buf)
             if (!is_attackable(i, user_id))
                 continue;
             if (g_clients[i].m_team == g_clients[user_id].m_team)
+                continue;
+            if (g_clients[i].m_isOBB)
                 continue;
             if (dist_between(user_id, i) >= OBB_DIST)
                 continue;
@@ -2018,117 +2073,171 @@ void Server::do_attack(int npc_id)
                 n.m_attack_target = -1;
                 return;
             }
-            _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-            _vec3 t_look = *t_pos - *n_pos;
-            t_look = Vector3_::Normalize(t_look);
 
-            float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
-            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-            float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-            if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-                radian *= -1.f;
-
-            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-            if (NPCangle > 7.f || NPCangle < -7.f) // npc가 공격할 대상을 안바라볼때
+            if ((C_CAVALRY == n.m_class || C_FOUR == n.m_class) && n.m_isAttack) // 말 클래스인데 돌진중일때
             {
-                n.m_anim = A_WALK;
-                if (NPCangle > 7.f)
+                duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
+                if (cooltime < seconds(2))
                 {
-                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                    n.m_transform.SetUp_Speed(n.m_move_speed * 2.f, n.m_rotate_speed);
+                    n.m_anim = A_RUN;
+                    n.m_transform.BackWard(TIME_DELTA * 3.f);
+
+                    if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
+                        check_obb_collision(npc_id, n.m_attack_target)) // 돌진 중인 범위에 닿였을때
+                    {
+                        g_clients[n.m_attack_target].m_isOBB = true;
+                        g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                        g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+                        if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                        {
+                            for (int i = 0; i < NPC_START; ++i)
+                            {
+                                if (ST_ACTIVE != g_clients[i].m_status)
+                                    continue;
+                                if (!is_near(i, n.m_attack_target))
+                                    continue;
+                                send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                //send_animation_packet(i, n.m_attack_target, A_HIT);
+                            }
+                            g_clients[n.m_attack_target].m_anim = A_HIT;
+                        }
+                        else // 상대방이 죽었을때
+                        {
+                            do_dead(n.m_attack_target);
+                        }
+                        n.m_attack_target = -1;
+                    }
                 }
-                else if (NPCangle < -7.f)
+                else // 돌진 시간이 끝나면
                 {
-                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
+                    n.m_isAttack = false;
+                    n.m_transform.SetUp_Speed(n.m_move_speed, n.m_rotate_speed);
+                    n.m_anim = A_IDLE;
                 }
             }
-            else // npc가 공격할 대상을 바라볼때
+            else
             {
-                float dist = 0.f;
-                if (C_ARCHER == n.m_class) // 궁수의 공격패턴
-                {
-                    if (dist_between(n.m_id, n.m_attack_target) <= ARCHER_RADIUS)
-                    {
-                        duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
-                        if (cooltime >= seconds(2))
-                        {
-                            n.m_isAttack = true;
-                            if (n.m_isAttack)
-                            {
-                                n.m_attacktime = high_resolution_clock::now();
-                                if (ST_DEAD == g_clients[n.m_attack_target].m_status)
-                                {
-                                    n.m_attack_target = -1;
-                                    return;
-                                }
+                _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+                _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
+                _vec3 t_look = *t_pos - *n_pos;
+                t_look = Vector3_::Normalize(t_look);
 
-                                int arrow_id = init_arrow(n.m_id);
-                                if (-1 == arrow_id)
-                                {
-                                    cout << "no available arrow container\n";
-                                    return;
-                                }
-                                n.m_anim = A_ATTACK;
-                                n.m_attack_target = -1;
-                            }
-                        }
-                    }
-                    else // OBB 공격범위 밖일때
+                float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
+                float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
+
+                float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
+                if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
+                    radian *= -1.f;
+
+                float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
+
+                if (NPCangle > 7.f || NPCangle < -7.f) // npc가 공격할 대상을 안바라볼때
+                {
+                    n.m_anim = A_WALK;
+                    if (NPCangle > 7.f)
                     {
-                        n.m_anim = A_WALK;
-                        n.m_transform.BackWard(TIME_DELTA * 3.f);
+                        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
+                    }
+                    else if (NPCangle < -7.f)
+                    {
+                        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
                     }
                 }
-                else // 궁수 아닌 애의 공격패턴
+                else // npc가 공격할 대상을 바라볼때
                 {
-                    if (T_HORSE == n.m_troop)
-                        dist = 8.f;
-                    else
-                        dist = OBB_DIST;
-
-                    if (dist_between(n.m_id, n.m_attack_target) <= dist &&
-                        check_obb_collision(npc_id, n.m_attack_target))
+                    float dist = 0.f;
+                    if (C_ARCHER == n.m_class) // 궁수의 공격패턴
                     {
-                        duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
-                        if (cooltime >= seconds(1))
+                        if (dist_between(n.m_id, n.m_attack_target) <= ARCHER_RADIUS)
                         {
-                            n.m_isAttack = true;
-                            if (n.m_isAttack)
+                            duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
+                            if (cooltime >= seconds(2))
                             {
-                                g_clients[n.m_attack_target].m_isOBB = true;
-                                g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-                                n.m_isAttack = false;
-                                g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-                                n.m_attacktime = high_resolution_clock::now();
-                                if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                                n.m_isAttack = true;
+                                if (n.m_isAttack)
                                 {
-                                    for (int i = 0; i < NPC_START; ++i)
+                                    n.m_attacktime = high_resolution_clock::now();
+                                    if (ST_DEAD == g_clients[n.m_attack_target].m_status)
                                     {
-                                        if (ST_ACTIVE != g_clients[i].m_status)
-                                            continue;
-                                        if (!is_near(i, n.m_attack_target))
-                                            continue;
-                                        send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                        send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-                                        //send_animation_packet(i, n.m_attack_target, A_HIT);
+                                        n.m_attack_target = -1;
+                                        return;
                                     }
-                                    g_clients[n.m_attack_target].m_anim = A_HIT;
+
+                                    int arrow_id = init_arrow(n.m_id);
+                                    if (-1 == arrow_id)
+                                    {
+                                        cout << "no available arrow container\n";
+                                        return;
+                                    }
+                                    n.m_anim = A_ATTACK;
+                                    n.m_attack_target = -1;
                                 }
-                                else // 상대방이 죽었을때
-                                {
-                                    do_dead(n.m_attack_target);
-                                }
-                                n.m_attack_target = -1;
                             }
-                            n.m_anim = A_ATTACK;
+                        }
+                        else // OBB 공격범위 밖일때
+                        {
+                            n.m_anim = A_WALK;
+                            n.m_transform.BackWard(TIME_DELTA * 3.f);
                         }
                     }
-                    else // OBB 공격범위 밖일때
+                    else if (C_CAVALRY == n.m_class || C_FOUR == n.m_class)
                     {
-                        n.m_anim = A_WALK;
-                        n.m_transform.BackWard(TIME_DELTA * 3.f);
+                        if (!n.m_isAttack) // 돌진중이지 않을때
+                        {
+                            n.m_attacktime = high_resolution_clock::now();
+                            n.m_isAttack - true;
+                        }
+                    }
+                    /*  else if (C_MAGE == n.m_class || C_MMAGE == n.m_class)
+                      {
+                          dist = 8.f;
+                      }*/
+                    else // 궁수 아닌 애의 공격패턴
+                    {
+                        if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
+                            check_obb_collision(npc_id, n.m_attack_target))
+                        {
+                            duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
+                            if (cooltime >= seconds(1))
+                            {
+                                n.m_isAttack = true;
+                                if (n.m_isAttack)
+                                {
+                                    g_clients[n.m_attack_target].m_isOBB = true;
+                                    g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
+                                    n.m_isAttack = false;
+                                    g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
+                                    n.m_attacktime = high_resolution_clock::now();
+                                    if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
+                                    {
+                                        for (int i = 0; i < NPC_START; ++i)
+                                        {
+                                            if (ST_ACTIVE != g_clients[i].m_status)
+                                                continue;
+                                            if (!is_near(i, n.m_attack_target))
+                                                continue;
+                                            send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                            send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
+                                            //send_animation_packet(i, n.m_attack_target, A_HIT);
+                                        }
+                                        g_clients[n.m_attack_target].m_anim = A_HIT;
+                                    }
+                                    else // 상대방이 죽었을때
+                                    {
+                                        do_dead(n.m_attack_target);
+                                    }
+                                    n.m_attack_target = -1;
+                                }
+                                n.m_anim = A_ATTACK;
+                            }
+                        }
+                        else // OBB 공격범위 밖일때
+                        {
+                            n.m_anim = A_WALK;
+                            n.m_transform.BackWard(TIME_DELTA * 3.f);
+                        }
                     }
                 }
             }
