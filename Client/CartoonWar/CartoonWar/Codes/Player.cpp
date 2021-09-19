@@ -1279,13 +1279,13 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 				CGameObject* pOwnPlayer = nullptr;
 				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
 					return;
 				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
 
 				pOwnPlayer = nullptr;
 				matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox_Ver", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox_Ver", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
 					return;
 				dynamic_cast<CEffectBox_Ver*>(pOwnPlayer)->GetOwnPlayer() = this;
 
