@@ -69,7 +69,7 @@ HRESULT CPlayer::Ready_GameObject(void* pArg)
 
 	m_vColShpereSize = { 100.f,100.f,100.f };
 
-	m_eCurClass = CLASS::CLASS_ARCHER;
+	m_eCurClass = CLASS::CLASS_MMAGE;
 	m_iCurAnimIdx = 0;
 	m_iPreAnimIdx = 100;
 	 
@@ -1271,23 +1271,11 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_eCurClass == CLASS::CLASS_ARCHER)
 			{
-				/*CGameObject* pOwnPlayer = nullptr;
+				CGameObject* pOwnPlayer = nullptr;
 				_matrix matTemp = m_pTransformCom->Get_Matrix();
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_ThrowArrow", (_uint)SCENEID::SCENE_STAGE, L"Layer_Arrow", &pOwnPlayer, (void*)&matTemp)))
 					return;
-				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;*/
-
-				CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
-
-				pOwnPlayer = nullptr;
-				matTemp = m_pTransformCom->Get_Matrix();
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox_Ver", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CEffectBox_Ver*>(pOwnPlayer)->GetOwnPlayer() = this;
+				dynamic_cast<CThrow_Arrow*>(pOwnPlayer)->GetOwnPlayer() = this;
 
 
 				m_eCurState = STATE::STATE_ARROW;
@@ -1300,6 +1288,29 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				m_eCurState = STATE::STATE_ATTACK;
 				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
 					return;
+			}
+			else if (m_eCurClass == CLASS::CLASS_MAGE)
+			{
+				CGameObject* pOwnPlayer = nullptr;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				matTemp._42+= 5.f;
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
+					return;
+				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
+;
+				//STATE_MAGE
+				m_eCurState = STATE::STATE_MAGE;
+			}
+			else if (m_eCurClass == CLASS::CLASS_MMAGE)
+			{
+				CGameObject* pOwnPlayer = nullptr;
+				_matrix matTemp = m_pTransformCom->Get_Matrix();
+				matTemp._42 += 7.f;
+				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
+					return;
+				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
+				m_eCurState = STATE::STATE_MAGE;
+
 			}
 			else
 			{

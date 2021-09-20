@@ -4,6 +4,7 @@
 
 #define WINCX 1920
 #define WINCY 1080
+
 //#define WINCX 1200
 //#define WINCY 800
 

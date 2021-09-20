@@ -46,6 +46,13 @@ void CVIBuffer::Render_VIBuffer(D3D12_PRIMITIVE_TOPOLOGY eTopology)
 	CDevice::GetInstance()->GetCmdLst()->DrawIndexedInstanced(m_iNumIndices, 1, 0, 0, 0);
 }
 
+void CVIBuffer::Render_VIBuffer(_bool IsVertices)
+{
+	CDevice::GetInstance()->GetCmdLst()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	CDevice::GetInstance()->GetCmdLst()->IASetVertexBuffers(0, 1, &(m_tVertexBufferView));
+	CDevice::GetInstance()->GetCmdLst()->DrawInstanced(3, 1, 0, 0);
+}
+
 CComponent* CVIBuffer::Clone_Component(void* pArg)
 {
 	return nullptr;

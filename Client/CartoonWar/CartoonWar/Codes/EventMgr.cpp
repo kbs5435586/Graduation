@@ -6,6 +6,8 @@
 #include "Flag.h"
 #include "UI_OnHead_Gage.h"
 
+#include "Animals.h"
+
 _IMPLEMENT_SINGLETON(CEventMgr)
 CEventMgr::CEventMgr()
 {
@@ -19,6 +21,7 @@ HRESULT CEventMgr::Ready_EventMgr()
 void CEventMgr::Update_EventMgr()
 {
 	Access_Flag_Player();
+	Animal_Chase_Object();
 }
 
 void CEventMgr::Access_Flag_Player()
@@ -93,6 +96,71 @@ void CEventMgr::Access_Flag_NPC()
 
 			}
 		}
+	}
+}
+
+void CEventMgr::Animal_Chase_Object()
+{
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Animals"))
+	{
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Animals"))
+		{
+			if (iter0 == iter1)
+				continue;
+
+			if (dynamic_cast<CAnimals*>(iter0)->GetAnimales() == ANIMALS::ANIMALS_WOLF)
+			{
+				if (dynamic_cast<CAnimals*>(iter1)->GetAnimales() == ANIMALS::ANIMALS_DEER)
+				{
+					_vec3	vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+					_vec3	vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+					_vec3	vLen = vIter0Pos - vIter1Pos;
+					_float	fLen = vLen.Length();
+
+
+					if (fLen <= 30.f)
+					{
+						//Chase
+						dynamic_cast<CAnimals*>(iter0)->GetIsChase() = true;
+						dynamic_cast<CAnimals*>(iter0)->Chase_Pos(vIter1Pos);
+							
+					}
+
+				}
+
+			}
+
+
+			//else if (dynamic_cast<CAnimals*>(iter0)->GetAnimales() == ANIMALS::ANIMALS_DEER)
+			//{
+			//	if (dynamic_cast<CAnimals*>(iter1)->GetAnimales() == ANIMALS::ANIMALS_WOLF)
+			//	{
+			//		_vec3	vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+			//		_vec3	vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			//		_vec3	vLen = vIter0Pos - vIter1Pos;
+			//		_float	fLen = vLen.Length();
+
+
+			//		if (fLen <= 200.f)
+			//		{
+			//			//Chase
+			//			dynamic_cast<CAnimals*>(iter1)->GetIsChase() = true;
+			//			dynamic_cast<CAnimals*>(iter1)->Chase_Pos(vIter1Pos);
+
+
+			//		}
+			//	}
+			//}
+
+
+		}
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+		{
+
+		}
+
 	}
 }
 

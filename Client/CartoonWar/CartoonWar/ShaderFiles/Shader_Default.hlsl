@@ -15,15 +15,7 @@ struct VS_OUT
 	float4	vWorldPos			: TEXCOORD1;
 	float4  vProjPos			: TEXCOORD2;
 };
-struct PS_OUT
-{
-	float4	vDiffuseTex			: SV_TARGET0;
-	float4	vNormalTex			: SV_TARGET1;
-	float4	vShadeTex			: SV_TARGET2;
-	float4	vSpecularTex		: SV_TARGET3;
-	float4	vPointLightTex		: SV_TARGET5;
-	float4	vPositionTex		: SV_TARGET6;
-};
+
 VS_OUT	VS_Main(VS_IN vIn)
 {
 	VS_OUT	vOut;
@@ -39,23 +31,13 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 	return vOut;
 }
-PS_OUT	PS_Main(VS_OUT vIn) 
+float4	PS_Main(VS_OUT vIn)  : SV_TARGET
 {
-	PS_OUT vOut = (PS_OUT)0;
+	float	fAccTime = g_float_0;
+	float4	vOutColor;
 
-	AD_Light	tLight_Default = Calculate_Light_Upgrade(0, vIn.vNormal, vIn.vWorldPos);
-	AD_Light	tLight_Point = Calculate_Light_Upgrade(1, vIn.vNormal, vIn.vWorldPos);
+	vOutColor = float4(1.f, fAccTime/5.f, 0.f, 1.f);
 
-
-	vOut.vDiffuseTex = vIn.vColor;
-	vOut.vNormalTex  = vIn.vNormal;
-	vOut.vPositionTex = vIn.vWorldPos;
-
-
-	//vOut.vShadeTex = tLight_Point.vShade + tLight_Default.vShade;
-	//vOut.vSpecularTex = tLight_Point.vSpecular + tLight_Default.vSpecular;
-	//vOut.vPointLightTex = tLight_Point.vDiffuse;
-
-	return vOut;
+	return vOutColor;
 }
 

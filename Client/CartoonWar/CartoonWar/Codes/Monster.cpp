@@ -81,14 +81,14 @@ HRESULT CMonster::Ready_GameObject(void* pArg)
 	m_matOldWorld = m_pTransformCom->Get_Matrix();;
 	m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 
-	AttackInit();
+
 
 	return S_OK;
 }
 
 _int CMonster::Update_GameObject(const _float& fTimeDelta)
 {
-	int i = 0;
+	AttackInit();
 	Change_Class();
 	m_fEvolutiomTime += fTimeDelta;
 	if (m_fEvolutiomTime >= 85.f)
@@ -143,8 +143,13 @@ _int CMonster::Update_GameObject(const _float& fTimeDelta)
 	m_pPlayerTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 	Compute_Rotation_Direction();
-	_vec3 vTemp = *m_pPlayerTransform->Get_StateInfo(CTransform::STATE_POSITION) - *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	_vec3 vPlayerPos = *m_pPlayerTransform->Get_StateInfo(CTransform::STATE_POSITION);
+	vPlayerPos.y = 0.f;
+	_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	vThisPos.y = 0.f;
+	_vec3 vTemp = vPlayerPos - vThisPos;
 	_float fLength = vTemp.Length();
+
 	if (fLength <= 6.f)
 	{
 		Attack(fTimeDelta);
@@ -1410,9 +1415,9 @@ void CMonster::Attack(const _float& fTimeDelta)
 	else
 	{
 		if (m_eRotate == ROTATE_DIR::DIR_LEFT)
-			m_pTransformCom->Rotation_Y(-fTimeDelta);
-		else if (m_eRotate == ROTATE_DIR::DIR_RIGHT)
 			m_pTransformCom->Rotation_Y(fTimeDelta);
+		else if (m_eRotate == ROTATE_DIR::DIR_RIGHT)
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
 		m_IsOnce = false;
 		m_eCurState = STATE::STATE_WALK;
 	}
@@ -1638,13 +1643,14 @@ void CMonster::Compute_Rotation_Direction()
 	//	*m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
 
 	_vec3 vP_M = Vector3_::Subtract(*m_pPlayerTransform->Get_StateInfo(CTransform::STATE_POSITION), *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION));
+	vP_M.y = 0.f;
 	vP_M.Normalize();
 
 	_vec3 vTemp = *m_pTransformCom->Get_StateInfo(CTransform::STATE_LOOK);
+	vTemp.y = 0.f;
 	vTemp *= -1.f;
-	//D3DXVec3Normalize(&vThisTransformOutput, &vTemp);
 	vTemp.Normalize(vThisTransformOutput);
-	//m_fDot = D3DXVec3Dot(&vThisTransformOutput, &vP_M);
+
 	m_fDot = Vector3_::DotProduct(vThisTransformOutput, vP_M);
 
 	if (!m_IsRotateEnd)
@@ -1705,9 +1711,9 @@ void CMonster::Chase_Player(const _float& fTimeDelta, _float fLength)
 	else
 	{
 		if (m_eRotate == ROTATE_DIR::DIR_LEFT)
-			m_pTransformCom->Rotation_Y(-fTimeDelta);
-		else if (m_eRotate == ROTATE_DIR::DIR_RIGHT)
 			m_pTransformCom->Rotation_Y(fTimeDelta);
+		else if (m_eRotate == ROTATE_DIR::DIR_RIGHT)
+			m_pTransformCom->Rotation_Y(-fTimeDelta);
 
 	}
 

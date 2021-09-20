@@ -553,6 +553,9 @@
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\96. Particle\01. Particle_FireBall">
+      <UniqueIdentifier>{7e1e5698-f411-4bd0-81c1-53880ec5f166}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -1037,6 +1040,9 @@
     <ClInclude Include="..\Headers\EffectBox_Ver.h">
       <Filter>02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Particle_FireBall.h">
+      <Filter>02. GameObject\96. Particle\01. Particle_FireBall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CartoonWar.ico">
@@ -1493,6 +1499,9 @@
     <ClCompile Include="..\Codes\EffectBox_Ver.cpp">
       <Filter>02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Particle_FireBall.cpp">
+      <Filter>02. GameObject\96. Particle\01. Particle_FireBall</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Headers\SimpleMath.inl">
@@ -1641,6 +1650,9 @@
     </None>
     <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_FireBall.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

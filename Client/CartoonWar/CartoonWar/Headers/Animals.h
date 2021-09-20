@@ -36,6 +36,8 @@ private:
 	void									Set_Animation();
 	void									MeaningLess_Moving(const _float& fTimeDelta);
 	void									Set_State();
+public:
+	void									Chase_Pos(const _vec3& vPos);
 private:
 	void									Obb_Collision();
 	void									Hit_Object(_float& fCnt, _vec3 vStart, _vec3 vEnd, _vec3 vMid);
@@ -65,12 +67,17 @@ private:
 	_float									m_fEatTime = 0.f;
 	_bool									m_IsOnce = false;
 	_bool									m_IsDest = false;
+	_bool									m_IsChase = false;
 	_bool									m_IsEat = false;
 	_vec3									m_vDest = {};
 	_vec3									m_vOBB_Range = {};
+	_float									m_fTimeDelta = 0.f;
 private:
 	ANIMALS									m_eAnimals = ANIMALS::ANIMALS_END;
 	STATE									m_eCurState = STATE::STATE_END;
 	STATE									m_ePreState = STATE::STATE_END;
+public:
+	ANIMALS									GetAnimales() { return m_eAnimals; }
+	_bool&									GetIsChase() { return m_IsChase; }
 };
 

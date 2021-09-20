@@ -13,6 +13,7 @@ public:
 	virtual void				Render_VIBuffer();
 	virtual void				Render_VIBuffer(const _uint& iMaxParticleCnt);
 	virtual void				Render_VIBuffer(D3D12_PRIMITIVE_TOPOLOGY eTopology);
+	virtual void				Render_VIBuffer(_bool IsVertices);
 public:
 	virtual CComponent*			Clone_Component(void* pArg = nullptr) = 0;
 protected:

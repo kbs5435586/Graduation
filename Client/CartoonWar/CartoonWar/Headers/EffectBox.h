@@ -2,11 +2,12 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CBuffer_RectTex;
+class CBuffer_CubeCol;;
 class CShader;
 class CFrustum;
 class CTexture;
 class CPlayer;
+
 class CEffectBox :
     public CGameObject
 {
@@ -28,25 +29,23 @@ public:
 public:
 	CPlayer*&								GetOwnPlayer() { return m_pOwnPlayer; }
 private:
+	void									Create_Particle(const _vec3& vPoistion);
+private:
 	virtual void							Free();
 	HRESULT									Ready_Component();
 private:
 	CTransform*								m_pTransformCom = nullptr;
-	CTransform*								m_pTransformCom_Ver = nullptr;
-
 	CRenderer*								m_pRendererCom = nullptr;
-
-	CBuffer_RectTex*						m_pBufferCom = nullptr;
-	CBuffer_RectTex*						m_pBufferCom_Ver = nullptr;
-
+	CBuffer_CubeCol*							m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
+	CShader*								m_pShaderCom_Compute = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom[3] = { nullptr };
 private:
 	CPlayer*								m_pOwnPlayer = nullptr;
+	CGameObject*							m_pParticle = nullptr;
 private:
-	POSSIZE									m_tPosizeInfo = {};
-private:
-		TEXINFO								m_tTexInfo = {};
+	_float									m_fLifeTime = 0.f;
+	_float									m_fAccTime = 0.f;
 };
 

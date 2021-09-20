@@ -14,6 +14,8 @@ public:
     void                        Access_Flag_Player();
     void                        Access_Flag_NPC();
 public:
+    void                        Animal_Chase_Object();
+public:
     virtual void				Free();
 };
 

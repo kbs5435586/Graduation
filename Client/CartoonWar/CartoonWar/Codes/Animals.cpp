@@ -29,20 +29,24 @@ HRESULT CAnimals::Ready_GameObject(void* pArg)
 		return E_FAIL;
 
 	m_tInfo = INFO(1.f, 0.f, 0.f, 0.f);
-	_vec3 vPos = { 120.f,0.f,120.f };
-	//_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
-	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
+
 
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
 	if (m_eAnimals == ANIMALS::ANIMALS_DEER)
 	{ 
 		m_pTransformCom->Scaling(_vec3(0.1f, 0.1f, 0.1f));
 		m_vOBB_Range = { 40.f ,80.f,40.f };
+		_vec3 vPos = { 100.f,0.f,100.f };
+		//_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	}
 	else if (m_eAnimals == ANIMALS::ANIMALS_WOLF)
 	{
 		m_pTransformCom->Scaling(_vec3(2.f, 2.f, 2.f));
 		m_vOBB_Range = { 4.f ,8.f,4.f };
+		_vec3 vPos = { 120.f,0.f,120.f };
+		//_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
+		m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	}
 
 
@@ -63,6 +67,7 @@ HRESULT CAnimals::Ready_GameObject(void* pArg)
 
 _int CAnimals::Update_GameObject(const _float& fTimeDelta)
 {
+	m_fTimeDelta = fTimeDelta;
 	m_pColliderCom_OBB->Update_Collider(m_pTransformCom, m_vOBB_Range, m_eCurClass);
 	m_pColliderCom_AABB->Update_Collider(m_pTransformCom, m_vOBB_Range, m_eCurClass);
 	Obb_Collision();
@@ -71,8 +76,12 @@ _int CAnimals::Update_GameObject(const _float& fTimeDelta)
 		return -1;
 	_float		fY = pTerrainBuffer->Compute_HeightOnTerrain(m_pTransformCom);
 	m_pTransformCom->Set_PositionY(fY);
-	MeaningLess_Moving(fTimeDelta);
-	Set_State();
+	if (!m_IsChase)
+	{
+		MeaningLess_Moving(fTimeDelta);
+		Set_State();
+	}
+
 
 	if (m_tInfo.fHP <= 0.f)
 	{
@@ -610,6 +619,106 @@ void CAnimals::Set_State()
 	}
 	
 
+}
+
+void CAnimals::Chase_Pos(const _vec3& vPos_)
+{
+	if (!m_IsChase)
+		return;
+
+	_vec3 vTemp = vPos_;
+	vTemp.y = 0.f;
+	_vec3 vPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
+	vPos.y = 0.f;
+	_vec3	vLen = vPos - vTemp;
+	_float	fLen = vLen.Length();
+
+	_vec3	vLook = {};
+	vLen.Normalize(vLook);
+	if (m_eAnimals == ANIMALS::ANIMALS_WOLF)
+	{
+		vLook *= -1.f;
+		m_pTransformCom->SetLook(vLook);
+	}
+	else if (m_eAnimals == ANIMALS::ANIMALS_DEER)
+	{
+
+		m_pTransformCom->SetLook(vLook);
+	}
+
+
+	
+	if (fLen >= 50.f)
+	{
+		_vec3 vDirectionPerSec = (vLook * 5.f * m_fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->Go_ToTarget(&vTemp, m_fTimeDelta);
+			}
+			else
+			{
+				//m_pTransformCom->Go_There(vSlide);
+				//m_IsChase = false;
+			}
+		}
+		else
+		{
+			m_pTransformCom->Go_ToTarget(&vTemp, m_fTimeDelta);
+			m_IsSlide = false;
+		}
+		m_eCurState = STATE::STATE_RUN;
+	}
+	else if (fLen > 5.f)
+	{
+		_vec3 vDirectionPerSec = (vLook * 5.f * m_fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->Go_ToTarget(&vTemp, m_fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+		}
+		else
+		{
+			m_pTransformCom->Go_ToTarget(&vTemp, m_fTimeDelta);
+			m_IsSlide = false;
+		}
+		m_eCurState = STATE::STATE_WALK;
+	}
+	else if (fLen <= 2.f)
+	{
+		m_IsChase = false;
+	}
+	else if (fLen <= 5.f)
+	{
+		_vec3 vDirectionPerSec = (vLook * 5.f * m_fTimeDelta);
+		_vec3 vSlide = {};
+		if (!m_IsSlide)
+		{
+			if (m_pNaviCom->Move_OnNavigation(m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION), &vDirectionPerSec, &vSlide))
+			{
+				m_pTransformCom->Go_ToTarget(&vTemp, m_fTimeDelta);
+			}
+			else
+			{
+				m_pTransformCom->Go_There(vSlide);
+			}
+		}
+		else
+		{
+			m_pTransformCom->Go_ToTarget(&vTemp, m_fTimeDelta);
+			m_IsSlide = false;
+		}
+		m_eCurState = STATE::STATE_IDLE;
+	}
 }
 
 void CAnimals::Obb_Collision()

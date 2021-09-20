@@ -63,6 +63,7 @@
 //Particle
 #include "Particle_Default.h"
 #include "Particle_Run.h"
+#include "Particle_FireBall.h"
 
 #include "TestAnimMesh.h"
 #include "TestHatchMesh.h"
@@ -260,6 +261,8 @@ HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Monster", CMonster::Create())))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Particle_FireBall", CParticle_FireBall::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -278,8 +281,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+	//	return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -296,8 +299,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 	//	return E_FAIL;
 	
 
-	//if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
+		return E_FAIL;
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
@@ -787,12 +790,12 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 		return E_FAIL;
 
 	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	tInfo.iTemp = 0;
+	tInfo.iTemp = 1;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
 		return E_FAIL;
 
 	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	tInfo.iTemp = 0;
+	tInfo.iTemp = 2;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
 		return E_FAIL;
 	return S_OK;
@@ -813,9 +816,9 @@ HRESULT CScene_Stage::Ready_Layer_Animals(const _tchar* pLayerTag, CManagement* 
 	ANIMALS tAnimals = ANIMALS::ANIMALS_WOLF;
 	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
 		return E_FAIL;
-	//tAnimals = ANIMALS::ANIMALS_WOLF;
-	//if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
-	//	return E_FAIL;
+	tAnimals = ANIMALS::ANIMALS_DEER;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
+		return E_FAIL;
 
 	return S_OK;
 }
