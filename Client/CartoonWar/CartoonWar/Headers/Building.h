@@ -20,6 +20,7 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_Blur();
+	virtual void							Render_OutLine();
 private:
 	HRESULT									Ready_Component(const _tchar* pComTag);
 	virtual HRESULT							CreateInputLayout();
@@ -33,6 +34,7 @@ private:
 	CRenderer*								m_pRendererCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_OutLine = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
 	CMesh*									m_pMeshCom = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;

@@ -21,6 +21,7 @@ public:
 	virtual _int							Update_GameObject(const _float& fTimeDelta);
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
+	virtual void							Render_PostEffect();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -36,11 +37,11 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_CubeCol*							m_pBufferCom = nullptr;
+	CBuffer_CubeCol*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
-	CShader*								m_pShaderCom_Compute = nullptr;
+	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
-	CTexture*								m_pTextureCom[3] = { nullptr };
+	CTexture*								m_pTextureCom = { nullptr };
 private:
 	CPlayer*								m_pOwnPlayer = nullptr;
 	CGameObject*							m_pParticle = nullptr;

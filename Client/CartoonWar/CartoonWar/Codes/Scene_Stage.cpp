@@ -150,9 +150,9 @@ void CScene_Stage::Render_Scene()
 {
 
 }
-
 HRESULT CScene_Stage::Ready_Prototype_GameObject(CManagement* pManagement)
 {
+
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Debug", CDebug_Camera::Create())))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype_GameObject(L"GameObject_Camera_Light", CLight_Camera::Create())))
@@ -301,17 +301,15 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 
 	if (FAILED(Ready_Layer_Animals(L"Layer_Animals", pManagement)))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(L"Layer_Monster", pManagement)))
+		return E_FAIL;
+
 	//if (FAILED(Ready_Layer_Test(L"Ready_Layer_Test", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map_Camera(L"Layer_Map_Camera", pManagement)))
 	//	return E_FAIL;
 	//if (FAILED(Ready_Layer_Map(L"Layer_Map", pManagement)))
 	//	return E_FAIL;
-
-		
-	//if (FAILED(Ready_Layer_Bloom(L"Layer_Bloom", pManagement)))
-	//	return E_FAIL;
-
 	//if (FAILED(Ready_Layer_Test(L"Layer_Test", pManagement)))
 	//	return E_FAIL;
 	return S_OK;
@@ -737,12 +735,7 @@ HRESULT CScene_Stage::Ready_Layer_Test(const _tchar* pLayerTag, CManagement* pMa
 		return E_FAIL;
 	return S_OK;
 }
-HRESULT CScene_Stage::Ready_Layer_Bloom(const _tchar* pLayerTag, CManagement* pManagement)
-{
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Bloom", (_uint)SCENEID::SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-	return S_OK;
-}
+
 
 HRESULT CScene_Stage::Ready_Layer_Player(const _tchar* pLayerTag, CManagement* pManagement)
 {
@@ -771,7 +764,7 @@ HRESULT CScene_Stage::Ready_Layer_Inventory(const _tchar* pLayerTag, CManagement
 
 HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	/*for (int i = 0; i < 18; ++i)
+	for (int i = 0; i < 18; ++i)
 	{
 		UNIT tInfo = { SPECIES::SPECIES_HUMAN, COLOR::COLOR_RED };
 		ORDER tOrder = ORDER();
@@ -782,22 +775,8 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 
 		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_UI_OnHead", (_uint)SCENEID::SCENE_STAGE, L"Layer_UI_OnHead", nullptr, (void*)&tOrder)))
 			return E_FAIL;
-	}*/
-	//GameObject_Monster
-	UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	tInfo.iTemp = 0;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
-		return E_FAIL;
-
-	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	tInfo.iTemp = 1;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
-		return E_FAIL;
-
-	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
-	tInfo.iTemp = 2;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
-		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
@@ -813,13 +792,37 @@ HRESULT CScene_Stage::Ready_Layer_Map(const _tchar* pLayerTag, CManagement* pMan
 
 HRESULT CScene_Stage::Ready_Layer_Animals(const _tchar* pLayerTag, CManagement* pManagement)
 {
-	ANIMALS tAnimals = ANIMALS::ANIMALS_WOLF;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
-		return E_FAIL;
-	tAnimals = ANIMALS::ANIMALS_DEER;
-	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
+	for (int i = 0; i < 5; ++i)
+	{
+		ANIMALS tAnimals = ANIMALS::ANIMALS_WOLF;
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
+			return E_FAIL;
+		tAnimals = ANIMALS::ANIMALS_DEER;
+		if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Animals", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tAnimals)))
+			return E_FAIL;
+	}
+
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar* pLayerTag, CManagement* pManagement)
+{
+	//GameObject_Monster
+	UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	tInfo.iTemp = 0;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
 		return E_FAIL;
 
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	tInfo.iTemp = 1;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+		return E_FAIL;
+
+	tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+	tInfo.iTemp = 2;
+	if (FAILED(pManagement->Add_GameObjectToLayer(L"GameObject_Monster", (_uint)SCENEID::SCENE_STAGE, pLayerTag, nullptr, (void*)&tInfo)))
+		return E_FAIL;
 	return S_OK;
 }
 

@@ -46,7 +46,7 @@ HRESULT CMonster::Ready_GameObject(void* pArg)
 	}
 
 	//Compute_Matrix();
-	_vec3 vPos = { _float(rand() % 100) + 50.f,0.f,_float(rand() % 100) + 50.f };
+	_vec3 vPos = { _float(rand() % 750) + 50.f,0.f,_float(rand() % 750) + 50.f };
 	//_vec3 vPos = {170.f,0.f,170.f };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
 	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
@@ -143,6 +143,7 @@ _int CMonster::Update_GameObject(const _float& fTimeDelta)
 	m_pPlayerTransform = (CTransform*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE,
 		L"Layer_Player", L"Com_Transform", g_iPlayerIdx);
 	Compute_Rotation_Direction();
+
 	_vec3 vPlayerPos = *m_pPlayerTransform->Get_StateInfo(CTransform::STATE_POSITION);
 	vPlayerPos.y = 0.f;
 	_vec3 vThisPos = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
@@ -154,7 +155,7 @@ _int CMonster::Update_GameObject(const _float& fTimeDelta)
 	{
 		Attack(fTimeDelta);
 	}
-	else if (fLength <= 15.f)
+	else if (fLength <= 25.f)
 	{
 		Chase_Player(fTimeDelta, fLength);
 	}
@@ -229,6 +230,8 @@ _int CMonster::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsOldMatrix = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_OUTLINE, this)))
+			return -1;
 		if (fLen <= 250.f)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
@@ -254,13 +257,17 @@ _int CMonster::LastUpdate_GameObject(const _float& fTimeDelta)
 			m_IsOldMatrix = true;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 				return -1;
+
+			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_OUTLINE, this)))
+				return -1;
+
 			if (fLen <= 250.f)
 			{
 
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 					return -1;
 			}
-			if (fLen <= 30.f && pPlayer->GetIsRun())
+			if (fLen <= 150.f && pPlayer->GetIsRun())
 			{
 				m_iBlurCnt += fTimeDelta;
 				if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
@@ -476,6 +483,48 @@ void CMonster::Render_Blur()
 	Safe_Release(pManagement);
 }
 
+void CMonster::Render_OutLine()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pCurMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+		REP tRep = {};
+		tRep.m_arrInt[0] = 1;
+		tRep.m_arrInt[1] = m_pCurAnimCom->GetBones()->size();
+		tRep.m_arrInt[2] = g_DefferedRender;
+		tRep.m_arrFloat[0] = 1.f;
+
+		m_pShaderCom_OutLine->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+		m_pCurAnimCom->UpdateData(m_pCurMeshCom, m_pComputeShaderCom);
+		CDevice::GetInstance()->UpdateTable();
+		m_pCurMeshCom->Render_Mesh(i);
+	}
+
+
+	Safe_Release(pManagement);
+}
+
 HRESULT CMonster::CreateInputLayout()
 {
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc = {};
@@ -498,6 +547,8 @@ HRESULT CMonster::CreateInputLayout()
 	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_OutLine->Create_Shader(vecDesc, RS_TYPE::COUNTERCLOCK, DEPTH_STENCIL_TYPE::LESS_NO_WRITE)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -541,6 +592,7 @@ void CMonster::Free()
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pShaderCom_PostEffect);
+	Safe_Release(m_pShaderCom_OutLine);
 	Safe_Release(m_pShaderCom_Blur);
 	Safe_Release(m_pComputeShaderCom);
 	Safe_Release(m_pCollider_OBB);
@@ -688,8 +740,11 @@ HRESULT CMonster::Ready_Component()
 	NULL_CHECK_VAL(m_pShaderCom_Blur, E_FAIL);
 	if (FAILED(Add_Component(L"Com_BlurShader", m_pShaderCom_Blur)))
 		return E_FAIL;
-
-
+	//m_pShaderCom_OutLine
+	m_pShaderCom_OutLine = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_OutLine");
+	NULL_CHECK_VAL(m_pShaderCom_OutLine, E_FAIL);
+	if (FAILED(Add_Component(L"Com_OutLineShader", m_pShaderCom_OutLine)))
+		return E_FAIL;
 
 
 	m_pAnimCom[(_uint)CLASS::CLASS_WORKER] = (CAnimator*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Animation");
@@ -819,7 +874,7 @@ void CMonster::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(250, 300, 8.333f, 10.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(301, 321, 10.033f, 10.699f));
 			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_vOBB_Range[1] = { 50.f ,80.f,50.f };
 			m_iCombatMotion[0] = 0;
 			m_iCombatMotion[1] = 1;
 			m_iCombatMotion[2] = 2;
@@ -851,7 +906,7 @@ void CMonster::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
 			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_vOBB_Range[1] = { 50.f ,80.f,50.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -882,7 +937,7 @@ void CMonster::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 50.f ,80.f,50.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -914,7 +969,7 @@ void CMonster::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(356, 371, 11.866f, 12.366f));
 			m_vecAnimCtrl.push_back(AnimCtrl(372, 437, 12.400f, 14.566f));
 			m_vecAnimCtrl.push_back(AnimCtrl(438, 503, 14.600f, 16.766f));
-			m_vOBB_Range[0] = { 40.f ,80.f,40.f };
+			m_vOBB_Range[0] = { 50.f ,80.f,50.f };
 			m_vOBB_Range[1] = { 80.f ,80.f,80.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
@@ -947,7 +1002,7 @@ void CMonster::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(371, 420, 12.366f, 14.000f));
 			m_vecAnimCtrl.push_back(AnimCtrl(421, 370, 14.033f, 15.666f));
 			m_vOBB_Range[0] = { 10.f ,80.f,10.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_vOBB_Range[1] = { 50.f ,80.f,50.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -985,7 +1040,7 @@ void CMonster::Change_Class()
 			m_vecAnimCtrl.push_back(AnimCtrl(519, 559, 17.300f, 18.633f));
 			m_vecAnimCtrl.push_back(AnimCtrl(560, 620, 18.666f, 20.666f));
 			m_vOBB_Range[0] = { 20.f ,80.f,20.f };
-			m_vOBB_Range[1] = { 30.f ,80.f,30.f };
+			m_vOBB_Range[1] = { 50.f ,80.f,50.f };
 			m_iCombatMotion[0] = 4;
 			m_iCombatMotion[1] = 5;
 			m_iCombatMotion[2] = 3;
@@ -1410,7 +1465,8 @@ void CMonster::Attack(const _float& fTimeDelta)
 	{
 		m_IsRotateEnd = false;
 		m_IsOnce = false;
-		m_eCurState = STATE::STATE_ATTACK;
+		//m_eCurState = STATE::STATE_ATTACK;
+		//m_IsHit = true;
 	}
 	else
 	{

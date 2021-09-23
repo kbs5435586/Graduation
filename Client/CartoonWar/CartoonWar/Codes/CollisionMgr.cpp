@@ -27,6 +27,9 @@ void CCollisionMgr::Update_CollisionManager()
 	//AABB();
 	//Range();
 	//OBB();
+	//Deffend();
+	//Monster_Player_OR_NPC();
+	//Player_to_Monster_AttackCollision();
 }
 void CCollisionMgr::AABB()
 {
@@ -419,6 +422,56 @@ void CCollisionMgr::Player_to_Animals_AttackCollision()
 	}
 }
 
+void CCollisionMgr::Player_to_Monster_AttackCollision()
+{
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+	{
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Monster"))
+		{
+
+			_vec3 vIter0Pos = *dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vIter1Pos = *dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"))->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
+			_float fLen = vLenTemp.Length();
+			if (fLen >= 5.f)
+				continue;
+
+			if (dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_Attack"))
+				->Collision_OBB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_OBB"))))
+			{
+				if (iter0->GetIsHit())
+				{
+					(iter1)->GetIsBack() = true;
+					(iter1)->GetOBBCollision() = true;
+					iter1->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+					iter1->GetIsParticle() = true;
+					iter0->GetIsHit() = false;
+					iter1->GetInfo().fHP -= iter0->GetInfo().fAtt;
+				}
+				else if (iter1->GetIsHit())
+				{
+					if (iter0->GetInfo().fHP >= 0)
+					{
+						(iter0)->GetIsBack() = true;
+						(iter0)->GetOBBCollision() = true;
+						iter0->GetAttackedObject_Matrix() = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"))->Get_Matrix();
+						iter0->GetIsParticle() = true;
+						iter1->GetIsHit() = false;
+						//iter0->GetInfo().fHP -= iter1->GetInfo().fAtt;
+					}
+
+				}
+
+
+			}
+
+		}
+	}
+}
+
+
+
 //AABB
 void CCollisionMgr::Deffend()
 {
@@ -567,6 +620,52 @@ void CCollisionMgr::Player_Or_NPC_Animals()
 				->Collision_AABB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_AABB")), pIter0Transform, pIter1Transform);
 		}
 	}
+}
+void CCollisionMgr::Monster_Player_OR_NPC()
+{
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Player"))
+	{
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Monster"))
+		{
+			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
+			CTransform* pIter1Transform = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"));
+
+			_vec3 vIter0Pos = *pIter0Transform->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vIter1Pos = *pIter1Transform->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
+			_float fLen = vLenTemp.Length();
+
+			if (fLen >= 50.f)
+				continue;
+
+			dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_AABB"))
+				->Collision_AABB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_AABB")), pIter0Transform, pIter1Transform);
+		}
+	}
+	for (auto& iter0 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Animals"))
+	{
+		for (auto& iter1 : CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Monster"))
+		{
+			CTransform* pIter0Transform = dynamic_cast<CTransform*>(iter0->Get_ComponentPointer(L"Com_Transform"));
+			CTransform* pIter1Transform = dynamic_cast<CTransform*>(iter1->Get_ComponentPointer(L"Com_Transform"));
+
+			_vec3 vIter0Pos = *pIter0Transform->Get_StateInfo(CTransform::STATE_POSITION);
+			_vec3 vIter1Pos = *pIter1Transform->Get_StateInfo(CTransform::STATE_POSITION);
+
+			_vec3 vLenTemp = Vector3_::Subtract(vIter0Pos, vIter1Pos);
+			_float fLen = vLenTemp.Length();
+
+			if (fLen >= 50.f)
+				continue;
+
+			dynamic_cast<CCollider*>(iter0->Get_ComponentPointer(L"Com_Collider_AABB"))
+				->Collision_AABB(dynamic_cast<CCollider*>(iter1->Get_ComponentPointer(L"Com_Collider_AABB")), pIter0Transform, pIter1Transform);
+		}
+
+	}
+
+
 }
 void CCollisionMgr::Enviroment_to_Player_Or_NPC()
 {

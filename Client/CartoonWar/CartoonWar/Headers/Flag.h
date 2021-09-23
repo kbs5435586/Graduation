@@ -21,7 +21,8 @@ public:
 	virtual _int							LastUpdate_GameObject(const _float& fTimeDelta);
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
-	virtual void							Render_Blur();			
+	virtual void							Render_Blur();		
+	virtual void							Render_OutLine();
 public:
 	void									SetTeam();
 private:
@@ -39,6 +40,7 @@ private:
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+	CShader*								m_pShaderCom_OutLine = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;
 public:

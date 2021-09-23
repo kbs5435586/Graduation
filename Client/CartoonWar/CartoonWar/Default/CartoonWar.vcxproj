@@ -654,7 +654,7 @@
     <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Bloom.hlsl">
+    <None Include="..\ShaderFiles\Shader_OutLine.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_FireWall.hlsl">

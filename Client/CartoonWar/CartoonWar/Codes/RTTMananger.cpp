@@ -114,14 +114,15 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		m_vecMRT[(_uint)MRT::MRT_SHADOW] = pMRT;
 	}
 
-	m_pDsInvenTex = CRTT::CreateInven(L"DepthStencilTex"
-		, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D24_UNORM_S8_UINT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
-		, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-	if (m_pDsInvenTex == nullptr)
-		return E_FAIL;
 
 	// Inventory MRT
 	{
+		m_pDsInvenTex = CRTT::CreateInven(L"DepthStencilTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_D32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)
+			, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+		if (m_pDsInvenTex == nullptr)
+			return E_FAIL;
+
 		tRtt arrRT[3] = {};
 		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
 		arrRT[0].pRtt = CRTT::Create(L"DiffuseTargetTex"
@@ -145,7 +146,6 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			return E_FAIL;
 
 		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsInvenTex);
-		//m_vecMRT.push_back(pMRT);
 		m_vecMRT[(_uint)MRT::MRT_INVEN] = pMRT;
 	}
 
@@ -158,6 +158,19 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 			return E_FAIL;
 	}
 
+	//OutLine Tex 
+	{
+		tRtt arrRT[1] = {};
+		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
+		arrRT[0].pRtt = CRTT::Create(L"OutLineTargetTex"
+			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
+
+		CMRT* pMRT = CMRT::Create(1, arrRT, m_pDsTex);
+		m_vecMRT[(_uint)MRT::MRT_OUTLINE] = pMRT;
+	}
+
+
 	// Blur Tex
 	{
 		tRtt arrRT[2] = {};
@@ -168,39 +181,11 @@ HRESULT CRTTMananger::Ready_RTTMananger()
 		if (nullptr == arrRT[0].pRtt)
 			return E_FAIL;
 
-		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[1].pRtt = CRTT::Create(L"BlurTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
-		if (nullptr == arrRT[1].pRtt)
-			return E_FAIL;
 
-		CMRT* pMRT = CMRT::Create(2, arrRT, m_pDsTex);
+		CMRT* pMRT = CMRT::Create(1, arrRT, m_pDsTex);
 		m_vecMRT[(_uint)MRT::MRT_BLUR] = pMRT;
 	}
 
-	//Bloom Tex 
-	{
-		tRtt arrRT[3] = {};
-		arrRT[0].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[0].pRtt = CRTT::Create(L"BlurXTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClear_Color);
-
-
-		arrRT[1].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[1].pRtt = CRTT::Create(L"BlurYTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClear_Color);
-
-
-		arrRT[2].vClear_Color = { 0.f,0.f,0.f,1.f };
-		arrRT[2].pRtt = CRTT::Create(L"BlightTargetTex"
-			, (UINT)WINCX, (UINT)WINCY, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[2].vClear_Color);
-		CMRT* pMRT = CMRT::Create(3, arrRT, m_pDsTex);
-		m_vecMRT[(_uint)MRT::MRT_BLOOM] = pMRT;
-	}
 
 	return S_OK;
 }

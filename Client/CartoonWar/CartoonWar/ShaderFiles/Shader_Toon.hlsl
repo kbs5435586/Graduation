@@ -24,6 +24,7 @@ struct VS_OUT
 	float2	vTexUV		: TEXCOORD0;
 	float4  vWorldPos	: TEXCOORD1;
 	float4	vProjPos	: TEXCOORD2;
+	//float2	vOtherTex	: TEXCOORD3;
 };
 
 struct PS_OUT
@@ -43,13 +44,15 @@ VS_OUT	VS_Main(VS_IN vIn)
 
 	
 	vOut.vPosition = mul(float4(vIn.vPosition, 1.f), matWVP);
-	vOut.vProjPos = vOut.vPosition;
+	vOut.vProjPos = mul(float4(vIn.vPosition + vIn.vNormal * 1.f, 1.f), matWVP);
 	vOut.vWorldPos = mul(float4(vIn.vPosition, 1.f), matWV);
 	vOut.vNormal = normalize(mul(float4(vIn.vNormal, 0.f), matWV));
 	vOut.vTangent = normalize(mul(float4(vIn.vTangent, 0.f), matWV).xyz);
 	vOut.vBinormal = normalize(mul(float4(vIn.vBinormal, 0.f), matWV).xyz);
 
 	vOut.vTexUV = vIn.vTexUV;
+
+	
 	return vOut;
 }
 
@@ -71,7 +74,7 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vView = normalize(vCamPos - vPosition);
 	float	fRim = saturate(dot(vNormal, vView));
 
-	float	fDepth = vIn.vWorldPos.z/450.f;
+	float	fDepth = vIn.vProjPos.z/450.f;
 
 
 	if (fRim > 0.3f)
@@ -82,7 +85,8 @@ PS_OUT	PS_Main(VS_OUT vIn)
 	float4	vMtrlEmiv = float4(pow(1.f - fRim, fRimPower) * fRimColor, 1.f);
 
 
-	vOut.vDiffuseTex = vDiffuse * (vMtrlDif + vMtrlAmb + vMtrlEmiv);
+	vOut.vDiffuseTex = vDiffuse * (vMtrlDif + vMtrlAmb);
+	//vOut.vDiffuseTex = vDiffuse * (vMtrlDif + vMtrlAmb + vMtrlEmiv);
 	vOut.vNormalTex = vIn.vNormal;
 	vOut.vPositionTex = vIn.vWorldPos;
 	vOut.vDepthTex = float4(fDepth, fDepth, fDepth,1.f);

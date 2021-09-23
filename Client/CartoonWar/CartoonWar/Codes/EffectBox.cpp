@@ -27,10 +27,10 @@ HRESULT CEffectBox::Ready_GameObject(void* pArg)
 	_matrix pTemp = *(_matrix*)pArg;
 	m_pTransformCom->Set_Matrix(pTemp);
 
-	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
-	m_pTransformCom->SetUp_Speed(10.f, XMConvertToRadians(90.f));
+	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
+	m_pTransformCom->SetUp_Speed(60.f, XMConvertToRadians(90.f));
 	
-	//m_pTransformCom->BackWard(1.5f);
+	m_pTransformCom->BackWard(1.5f);
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE::STATE_POSITION));
 	return S_OK;
 }
@@ -40,21 +40,14 @@ _int CEffectBox::Update_GameObject(const _float& fTimeDelta)
 	m_fLifeTime += fTimeDelta;
 	m_fAccTime += fTimeDelta;
 
-
-	//dynamic_cast<CParticle_FireBall*>(m_pParticle)->GetPos() = *m_pTransformCom->Get_StateInfo(CTransform::STATE_POSITION);
-
-	// pGameObject = nullptr;
-
 	if (m_fLifeTime >= 10.f)
 	{
 		m_fLifeTime = 0.f;
 		return DEAD_OBJ;
 	}
-	//m_pTransformCom->Rotation_Z(fTimeDelta);
+
 	m_pTransformCom->BackWard(fTimeDelta);
 
-
-	list<CGameObject*>	lstGameObject = CManagement::GetInstance()->Get_GameObjectLst((_uint)SCENEID::SCENE_STAGE, L"Layer_Particle_FireBall");
 	CGameObject* pGameObject = CManagement::GetInstance()->Get_GameObject((_uint)SCENEID::SCENE_STAGE, L"Layer_Particle_FireBall", m_iLayerIdx);
 	if (nullptr == pGameObject)
 		return _int();
@@ -67,7 +60,9 @@ _int CEffectBox::LastUpdate_GameObject(const _float& fTimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return -1;
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
+	//if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this)))
+	//	return -1;
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_POST, this)))
 		return -1;
 	return _int();
 }
@@ -104,6 +99,35 @@ void CEffectBox::Render_GameObject()
 	Safe_Release(pManagement);
 }
 
+void CEffectBox::Render_PostEffect()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	MAINPASS tMainPass = {};
+	_matrix matWorld = m_pTransformCom->Get_Matrix();
+	_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+	_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+
+	m_pShaderCom_PostEffect->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+
+
+	_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+	CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+	ComPtr<ID3D12DescriptorHeap>	pPostEffectTex = CManagement::GetInstance()->GetPostEffectTex()->GetSRV().Get();
+	CDevice::GetInstance()->SetTextureToShader(pPostEffectTex.Get(), TEXTURE_REGISTER::t0);
+	CDevice::GetInstance()->UpdateTable();
+	m_pBufferCom->Render_VIBuffer();
+
+	Safe_Release(pManagement);
+}
+
 
 HRESULT CEffectBox::CreateInputLayout()
 {
@@ -113,6 +137,8 @@ HRESULT CEffectBox::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_PostEffect->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE, SHADER_TYPE::SHADER_POST_EFFECT)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -147,8 +173,8 @@ void CEffectBox::Create_Particle(const _vec3& vPoistion)
 		tParticleSet.fMaxLifeTime = 10.f;
 		tParticleSet.iMinLifeTime = 0.5f;
 
-		tParticleSet.fStartScale = 0.5f;
-		tParticleSet.fEndScale = 0.2f;
+		tParticleSet.fStartScale = 0.2f;
+		tParticleSet.fEndScale = 0.1f;
 
 		tParticleSet.fMaxSpeed = 30.f;
 		tParticleSet.fMinSpeed = 50.f;
@@ -166,7 +192,9 @@ void CEffectBox::Free()
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderCom_PostEffect);
 	Safe_Release(m_pFrustumCom);
+	Safe_Release(m_pTextureCom);
 	CGameObject::Free();
 }
 
@@ -195,6 +223,16 @@ HRESULT CEffectBox::Ready_Component()
 	if (FAILED(Add_Component(L"Com_Shader", m_pShaderCom)))
 		return E_FAIL;
 
+	m_pShaderCom_PostEffect = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_PostEffect_Buffer");
+	NULL_CHECK_VAL(m_pShaderCom_PostEffect, E_FAIL);
+	if (FAILED(Add_Component(L"Com_PostEffectShader", m_pShaderCom_PostEffect)))
+		return E_FAIL;
+
+
+	m_pTextureCom = (CTexture*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Hit");
+	NULL_CHECK_VAL(m_pTextureCom, E_FAIL);
+	if (FAILED(Add_Component(L"Com_TextureCom", m_pTextureCom)))
+		return E_FAIL;
 
 	m_pFrustumCom = (CFrustum*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Frustum");
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);

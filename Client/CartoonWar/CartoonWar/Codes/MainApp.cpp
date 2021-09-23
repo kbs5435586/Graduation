@@ -107,21 +107,21 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 		}
 	}
 
-	if (GetAsyncKeyState('O'))
-	{
-		g_iTotalTime = 300.f;
-	}
-	if (GetAsyncKeyState('P'))
-	{
-		if (g_DefferedRender == 0)
-		{
-			g_DefferedRender = 1;
-		}
-		else
-		{
-			g_DefferedRender = 0;
-		}
-	}
+	//if (GetAsyncKeyState('O'))
+	//{
+	//	g_iTotalTime = 300.f;
+	//}
+	//if (GetAsyncKeyState('P'))
+	//{
+	//	if (g_DefferedRender == 0)
+	//	{
+	//		g_DefferedRender = 1;
+	//	}
+	//	else
+	//	{
+	//		g_DefferedRender = 0;
+	//	}
+	//}
 	
 	m_fTimeAcc += fTimeDelta;
 	m_fTimeDelta = fTimeDelta;

@@ -22,6 +22,7 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_Blur();
+	virtual void							Render_OutLine();
 private:
 	void									Create_Particle(const _vec3& vPoistion);
 private:
@@ -42,6 +43,7 @@ private:
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
+	CShader*								m_pShaderCom_OutLine = nullptr;
 	CCollider*								m_pColliderCom_OBB = nullptr;
 	CCollider*								m_pColliderCom_AABB = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;

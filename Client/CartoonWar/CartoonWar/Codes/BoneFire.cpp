@@ -67,13 +67,15 @@ _int CBoneFire::LastUpdate_GameObject(const _float& fTimeDelta)
 		m_IsFrustum = true;
 		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
 			return -1;
+		if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_OUTLINE, this)))
+			return -1;
 		if (fLen <= 250.f)
 		{
 
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this)))
 				return -1;
 		}
-		if (fLen <= 30.f && pPlayer->GetIsRun())
+		if (fLen <= 150.f && pPlayer->GetIsRun())
 		{
 			m_iBlurCnt += fTimeDelta;
 			if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_BLUR, this)))
@@ -200,6 +202,45 @@ void CBoneFire::Render_Blur()
 	Safe_Release(pManagement);
 }
 
+void CBoneFire::Render_OutLine()
+{
+	CManagement* pManagement = CManagement::GetInstance();
+	if (nullptr == pManagement)
+		return;
+	pManagement->AddRef();
+
+
+	_uint iSubsetNum = m_pMeshCom->GetSubsetNum();
+	for (_uint i = 0; i < iSubsetNum; ++i)
+	{
+		MAINPASS tMainPass = {};
+		_matrix matWorld = m_pTransformCom->Get_Matrix();
+		_matrix matView = CCamera_Manager::GetInstance()->GetMatView();
+		_matrix matProj = CCamera_Manager::GetInstance()->GetMatProj();
+
+		REP tRep = {};
+		tRep.m_arrFloat[0] = 3.f;
+
+		m_pShaderCom_OutLine->SetUp_OnShader(matWorld, matView, matProj, tMainPass);
+
+		_uint iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b0)->SetData((void*)&tMainPass);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b0)->GetCBV().Get(), iOffeset, CONST_REGISTER::b0);
+
+		iOffeset = pManagement->GetConstantBuffer((_uint)CONST_REGISTER::b8)->SetData((void*)&tRep);
+		CDevice::GetInstance()->SetConstantBufferToShader(pManagement->GetConstantBuffer(
+			(_uint)CONST_REGISTER::b8)->GetCBV().Get(), iOffeset, CONST_REGISTER::b8);
+
+
+
+		CDevice::GetInstance()->UpdateTable();
+		m_pMeshCom->Render_Mesh(i);
+	}
+
+
+	Safe_Release(pManagement);
+}
+
 
 HRESULT CBoneFire::CreateInputLayout()
 {
@@ -221,6 +262,8 @@ HRESULT CBoneFire::CreateInputLayout()
 	if (FAILED(m_pShaderCom_Shadow->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_SHADOW)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom_Blur->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_BLUR)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom_OutLine->Create_Shader(vecDesc, RS_TYPE::COUNTERCLOCK, DEPTH_STENCIL_TYPE::LESS_NO_WRITE)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -252,6 +295,7 @@ void CBoneFire::Free()
 	Safe_Release(m_pShaderCom_Shadow);
 	Safe_Release(m_pFrustumCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pShaderCom_OutLine);
 	CGameObject::Free();
 }
 
@@ -299,7 +343,10 @@ HRESULT CBoneFire::Ready_Component()
 	NULL_CHECK_VAL(m_pFrustumCom, E_FAIL);
 	if (FAILED(Add_Component(L"Com_Frustum", m_pFrustumCom)))
 		return E_FAIL;
-
+	m_pShaderCom_OutLine = (CShader*)pManagement->Clone_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_OutLine");
+	NULL_CHECK_VAL(m_pShaderCom_OutLine, E_FAIL);
+	if (FAILED(Add_Component(L"Com_OutLineShader", m_pShaderCom_OutLine)))
+		return E_FAIL;
 	Safe_Release(pManagement);
 	return S_OK;
 }

@@ -197,6 +197,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     //    Safe_Release(server);
     //}
     //break;
+    case WM_CREATE:
+    {
+        int x, y, width, height;
+        RECT rtDesk, rtWindow;
+        GetWindowRect(GetDesktopWindow(), &rtDesk);
+        GetWindowRect(hWnd, &rtWindow);
+
+        width = rtWindow.right - rtWindow.left;
+        height = rtWindow.bottom - rtWindow.top;
+
+        x = (rtDesk.right - width) / 2;
+        y = (rtDesk.bottom - height) / 2;
+        x += 500;
+        MoveWindow(hWnd, x, y, width, height, TRUE);
+    }
+    break;
     case WM_KEYDOWN:
         switch (wParam)
         {

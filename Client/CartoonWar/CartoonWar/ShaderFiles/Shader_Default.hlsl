@@ -36,7 +36,7 @@ float4	PS_Main(VS_OUT vIn)  : SV_TARGET
 	float	fAccTime = g_float_0;
 	float4	vOutColor;
 
-	vOutColor = float4(1.f, fAccTime/5.f, 0.f, 1.f);
+	vOutColor = float4(1.f, 0.f, 0.f, 1.f);
 
 	return vOutColor;
 }
