@@ -2,7 +2,7 @@
 #include "GameObject.h"
 class CTransform;
 class CRenderer;
-class CBuffer_CubeCol;;
+class CBuffer_RectTex;;
 class CShader;
 class CFrustum;
 class CTexture;
@@ -37,16 +37,18 @@ private:
 private:
 	CTransform*								m_pTransformCom = nullptr;
 	CRenderer*								m_pRendererCom = nullptr;
-	CBuffer_CubeCol*						m_pBufferCom = nullptr;
+	CBuffer_RectTex*						m_pBufferCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_PostEffect = nullptr;
 	CFrustum*								m_pFrustumCom = nullptr;
-	CTexture*								m_pTextureCom = { nullptr };
+	CTexture*								m_pTextureCom[3] = { nullptr };
 private:
 	CPlayer*								m_pOwnPlayer = nullptr;
 	CGameObject*							m_pParticle = nullptr;
 private:
 	_float									m_fLifeTime = 0.f;
 	_float									m_fAccTime = 0.f;
+private:
+	TEXINFO									m_tTexInfo = {};
 };
 
