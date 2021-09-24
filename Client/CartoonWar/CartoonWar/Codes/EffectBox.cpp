@@ -30,7 +30,7 @@ HRESULT CEffectBox::Ready_GameObject(void* pArg)
 	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
 	m_pTransformCom->SetUp_Speed(70.f, XMConvertToRadians(90.f));
 	
-	m_pTransformCom->BackWard(1.5f);
+	//m_pTransformCom->BackWard(1.5f);
 	Create_Particle(*m_pTransformCom->Get_StateInfo(CTransform::STATE::STATE_POSITION));
 	return S_OK;
 }
