@@ -1356,45 +1356,46 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 					m_iCurAnimIdx = m_iAttackMotion[1];
 
 			}
-			else if (m_eCurClass == CLASS::CLASS_MAGE)
-			{
-				CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				matTemp._42+= 5.f;
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
-;
-				//STATE_MAGE
-				m_eCurState = STATE::STATE_MAGE;
+		else if (m_eCurClass == CLASS::CLASS_MAGE)
+		{
+			//CGameObject* pOwnPlayer = nullptr;
+			//_matrix matTemp = m_pTransformCom->Get_Matrix();
+			//matTemp._42+= 5.f;
+			//if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
+			//	return;
+			//dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
+			//
+			////STATE_MAGE
+			//m_eCurState = STATE::STATE_MAGE;
+			//
+			//
+			//_uint iRand = rand() % 2;
+			//if (iRand == 0)
+			//	m_iCurAnimIdx = 11;
+			//else
+			//	m_iCurAnimIdx = 11;
 
-
-				_uint iRand = rand() % 2;
-				if (iRand == 0)
-					m_iCurAnimIdx = 11;
-				else
-					m_iCurAnimIdx = 11;
-
-			}
-			else if (m_eCurClass == CLASS::CLASS_MMAGE)
-			{
-				CGameObject* pOwnPlayer = nullptr;
-				_matrix matTemp = m_pTransformCom->Get_Matrix();
-				matTemp._42 += 7.f;
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
-					return;
-				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
-				m_eCurState = STATE::STATE_MAGE;
-
-
-				_uint iRand = rand() % 2;
-				if (iRand == 0)
-					m_iCurAnimIdx = 7;
-				else
-					m_iCurAnimIdx = 7;
-
-
-			}
+				m_IsFire = true;
+		}
+//			else if (m_eCurClass == CLASS::CLASS_MMAGE)
+//			{
+//				CGameObject* pOwnPlayer = nullptr;
+//				_matrix matTemp = m_pTransformCom->Get_Matrix();
+//				matTemp._42 += 7.f;
+//				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", &pOwnPlayer, (void*)&matTemp)))
+//					return;
+//				dynamic_cast<CEffectBox*>(pOwnPlayer)->GetOwnPlayer() = this;
+//				m_eCurState = STATE::STATE_MAGE;
+//
+//
+//				_uint iRand = rand() % 2;
+//				if (iRand == 0)
+//					m_iCurAnimIdx = 7;
+//				else
+//					m_iCurAnimIdx = 7;
+//
+//
+//			}
 			else
 			{
 				_uint iRand = rand() % 2;
