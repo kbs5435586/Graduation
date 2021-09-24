@@ -1394,16 +1394,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				else if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 				{
 					server->send_projectile_packet(TP_FIREBALL);
-					server->send_projectile_packet(TP_FIREBALL_VER);
 					m_eCurState = STATE::STATE_ATTACK;
 				}
 				else
 				{
 					server->send_attack_packet();
 					m_eCurState = STATE::STATE_ATTACK;
-					if (g_IsFix)
-						if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", nullptr, m_pTransformCom)))
-							return;
 				}
 
 				server->Set_Attack_CoolTime(high_resolution_clock::now());

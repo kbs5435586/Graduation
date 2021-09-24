@@ -393,11 +393,6 @@ void CServer_Manager::ProcessPacket(char* ptr)
 			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", nullptr, (void*)&matTemp, proj_idx)))
 				return;
 		}
-		else if (TP_FIREBALL_VER == my_packet->proj_type)
-		{
-			if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox_Ver", (_uint)SCENEID::SCENE_STAGE, L"Layer_FireBall", nullptr, (void*)&matTemp, proj_idx)))
-				return;
-		}
 		m_objects[my_packet->proj_id].showObject = true;
 	}
 	break;
