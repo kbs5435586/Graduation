@@ -83,10 +83,11 @@ public:
 	void send_gold_packet(int user_id);
 	void send_hp_packet(int user_id, int other_id);
 	void send_do_particle_packet(int user_id, int other_id);
-	void send_arrow_packet(int arrow_id, int user_id, int other_id);
+	void send_projectile_packet(int proj_id, int user_id, int other_id, ENUM_TYPE type);
 	void send_deffend_packet(int deffend_id, int user_id, int other_id);
 	void send_revive_packet(int user_id, int other_id);
 	void send_nature_scale_packet(int user_id, int other_id);
+	void send_run_packet(int user_id, int other_id, bool isrun);
 
 	void set_formation(int user_id);
 	void set_starting_pos(int user_id);
@@ -104,9 +105,9 @@ public:
 	void do_fire_skill_damage(int id);
 	void do_aabb(int o_mv, int o_ht);
 
-	void do_arrow(int arrow_id);
-	void delete_arrow(int arrow_id);
-	void do_arrow_collision(int arrow_id);
+	void do_proj(int proj_id);
+	void delete_proj(int arrow_id);
+	void do_proj_collision(int proj_id);
 
 	void activate_npc(int npc_id, ENUM_FUNCTION op_type);
 	void finite_state_machine(int npc_id, ENUM_FUNCTION func_id);
@@ -142,7 +143,7 @@ public:
 	void initialize_objects(); // ∞¥√º √ ±‚»≠
 	void initialize_NPC(int player_id);
 	void initialize_nature();
-	int init_arrow(int shoot_id);
+	int init_projectile(int shoot_id, ENUM_TYPE type);
 
 	void cal_change_class_gold(int id, short m_class);
 };

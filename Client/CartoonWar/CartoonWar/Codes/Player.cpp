@@ -14,6 +14,8 @@
 //#include <iostream>
 
 #include "Throw_Arrow.h"
+#include "EffectBox.h"
+#include "EffectBox_Ver.h"
 CPlayer::CPlayer()
 	: CGameObject()
 {
@@ -158,7 +160,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 		if (fLen > 0.5f)
 		{
-			m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
+			if (server->Get_isRun(m_iLayerIdx, O_PLAYER))
+				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta * 2.f);
+			else
+				m_pTransformCom->Go_ToTarget(&vPos, fTimeDelta);
 		}
 
 		if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
@@ -1319,37 +1324,39 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				- server->Get_Attack_Cooltime());
 			if (cool_time.count() > 1.5) // ↑ 쿨타임 2초 계산해주는 식
 			{
-				server->send_attack_packet();
+				if (m_eCurClass == CLASS::CLASS_ARCHER)
+				{
+					server->send_projectile_packet(TP_ARROW);
+					m_eCurState = STATE::STATE_ARROW;
+				}
+				else if (m_eCurClass == CLASS::CLASS_WORKER)
+				{
+					if (g_iGold >= DEFFEND_PRICE)
+					{
+						server->send_deffend_packet();
+					}
+					m_eCurState = STATE::STATE_ATTACK;
+					if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+						return;
+				}
+				else if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
+				{
+					server->send_projectile_packet(TP_FIREBALL);
+					server->send_projectile_packet(TP_FIREBALL_VER);
+					m_eCurState = STATE::STATE_ATTACK;
+				}
+				else
+				{
+					server->send_attack_packet();
+					m_eCurState = STATE::STATE_ATTACK;
+					if (g_IsFix)
+						if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
+							return;
+				}
+
 				server->Set_Attack_CoolTime(high_resolution_clock::now());
 				server->send_animation_packet(A_ATTACK);
 				CManagement::GetInstance()->Play_Sound(CHANNEL_ATTACK, SOUND_OBJECT, ATTACK);
-			}
-
-			if (m_eCurClass == CLASS::CLASS_ARCHER)
-			{
-				server->send_arrow_packet();
-				m_eCurState = STATE::STATE_ARROW;
-			}
-			else if (m_eCurClass == CLASS::CLASS_WORKER)
-			{
-				if (g_iGold >= DEFFEND_PRICE)
-				{
-					server->send_deffend_packet();
-				}
-				m_eCurState = STATE::STATE_ATTACK;
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-					return;
-			}
-			else
-			{
-				//enum Sound_Character { SOUND_OBJECT, SOUND_BG, SOUND_END };
-				//enum SoundState { ATTACK, WALK, RUN, HIT, DIE, HITTED, BG_STAGE, SHOOT, BG, LOGO, END };
-				//enum SoundChannel { CHANNEL_ATTACK, CHANNEL_EFEECT, CHANNEL_BG, CHANNEL_FLASH, CHANNEL_KILL, CHANNEL_END };
-				//Play_Sound(SoundChannel eChannel, Sound_Character eCharacter, SoundState State, const _float& fVolume, FMOD_MODE eMode)
-				m_eCurState = STATE::STATE_ATTACK;
-				if(g_IsFix)
-				if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_EffectBox", (_uint)SCENEID::SCENE_STAGE, L"Layer_EffectBox", nullptr, m_pTransformCom)))
-					return;
 			}
 
 			if (m_IsFire)
@@ -1490,6 +1497,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide))
 			{
+				if(!m_IsRun)
+					server->send_run_packet(true);
 				server->send_move_packet(GO_FAST_FORWARD);
 				server->Set_Move_CoolTime(high_resolution_clock::now());
 			}
@@ -1542,6 +1551,8 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 
 			if (m_pNaviCom->Move_OnNavigation(&vPos, &vDirectionPerSec, &vSlide))
 			{
+				if(m_IsRun)
+					server->send_run_packet(false);
 				server->send_move_packet(GO_FORWARD);
 				server->Set_Move_CoolTime(high_resolution_clock::now());
 			}

@@ -325,12 +325,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\00. Hatch">
       <UniqueIdentifier>{79e45fc5-d449-400e-9806-303f5fc6b5eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99. Default">
-      <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99. Default\00. Setting">
-      <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\05. Flag">
       <UniqueIdentifier>{5560848d-c94a-4bb4-8a5b-eb93b35ae33c}</UniqueIdentifier>
     </Filter>
@@ -546,6 +540,18 @@
     </Filter>
     <Filter Include="02. GameObject\97. UI\11. UI_Energe">
       <UniqueIdentifier>{a8e013f8-2608-4d75-9573-662524072d2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\02. Monster">
+      <UniqueIdentifier>{79f8ba86-e8b8-4394-bfc7-4b4df6dc3f94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver">
+      <UniqueIdentifier>{a5800fad-4ba3-4003-a592-8bd970be70b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Default">
+      <UniqueIdentifier>{d34643b1-00c0-4b8d-af9d-cdfdc583e148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Default\00. Setting">
+      <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1011,11 +1017,9 @@
     <ClInclude Include="..\Headers\Bloom.h">
       <Filter>02. GameObject\97. UI\93. Bloom</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\Buffer_Cylinder.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\FireWall.h">
@@ -1026,6 +1030,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Energe.h">
       <Filter>02. GameObject\97. UI\11. UI_Energe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02. GameObject\01. Scene_Stage\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\EffectBox_Ver.h">
+      <Filter>02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1476,6 +1486,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Energe.cpp">
       <Filter>02. GameObject\97. UI\11. UI_Energe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Monster.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\EffectBox_Ver.cpp">
+      <Filter>02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

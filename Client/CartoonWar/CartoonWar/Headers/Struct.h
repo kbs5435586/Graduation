@@ -557,6 +557,7 @@ struct Session
 	unsigned char	anim_stat;
 	char			name[MAX_ID_LEN + 1];
 	bool			showObject = false;
+	bool			isRun = false;
 	bool			isFirst = false;
 	bool			isOnce = false;
 	bool			isInvisible = false;
@@ -625,6 +626,7 @@ typedef struct tagUint
 {
 	SPECIES		eSpecies;
 	COLOR		eColor;
+	int			iTemp;
 }UNIT;
 
 typedef struct tagOrder

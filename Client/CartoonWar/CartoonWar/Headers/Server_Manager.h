@@ -59,11 +59,12 @@ public:
     void send_change_troop();
     void send_fire_packet(float mx, float mz);
     void send_teleport_packet(float mx, float mz);
-    void send_arrow_packet();
+    void send_projectile_packet(int type);
     void send_invisible_packet(bool isinvi);
     void send_deffend_packet();
     void send_time_end_packet();
     void send_end_pos_packet();
+    void send_run_packet(bool isrun);
 
     void update_key_input();
     void update_anim(int id, unsigned char anim);
@@ -81,6 +82,7 @@ public:
     bool Get_Blue(int id);
     bool Get_Red(int id);
     bool Get_Connected();
+    bool Get_isRun(int id, char type);
     short Get_PlayerID();
     short Get_HP(int id, char type);
     int Get_PlayerClass(int id);
