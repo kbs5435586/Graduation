@@ -27,7 +27,7 @@ HRESULT CEffectBox::Ready_GameObject(void* pArg)
 	_matrix pTemp = *(_matrix*)pArg;
 	m_pTransformCom->Set_Matrix(pTemp);
 
-	m_pTransformCom->Scaling(5.f, 5.f, 5.f);
+	m_pTransformCom->Scaling(10.f, 10.f, 10.f);
 	m_pTransformCom->SetUp_Speed(70.f, XMConvertToRadians(90.f));
 	
 	//m_pTransformCom->BackWard(1.5f);
