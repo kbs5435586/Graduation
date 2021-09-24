@@ -59,6 +59,10 @@ void CGameObject::Render_Ref()
 {
 }
 
+void CGameObject::Render_OutLine()
+{
+}
+
 void CGameObject::Render_GameObject_Map()
 {
 }

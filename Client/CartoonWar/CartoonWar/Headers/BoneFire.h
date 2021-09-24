@@ -22,6 +22,7 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_Blur();
+	virtual void							Render_OutLine();
 
 private:
 	virtual HRESULT							CreateInputLayout();
@@ -40,6 +41,7 @@ private:
 	CShader*								m_pShaderCom_Shadow = nullptr;
 	CTexture*								m_pTextureCom =  nullptr ;
 	CFrustum*								m_pFrustumCom = nullptr;
+	CShader*								m_pShaderCom_OutLine = nullptr;
 };
 
 

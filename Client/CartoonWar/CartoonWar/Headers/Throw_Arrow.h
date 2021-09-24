@@ -23,6 +23,7 @@ public:
 	virtual void							Render_GameObject();
 	virtual void							Render_GameObject_Shadow();
 	virtual void							Render_Blur();
+	virtual void							Render_OutLine();
 private:
 	virtual HRESULT							CreateInputLayout();
 public:
@@ -42,6 +43,7 @@ private:
 	CMesh*									m_pMeshCom = nullptr;
 	CShader*								m_pShaderCom = nullptr;
 	CShader*								m_pShaderCom_Shadow = nullptr;
+	CShader*								m_pShaderCom_OutLine = nullptr;
 	CShader*								m_pShaderCom_Blur = nullptr;
 	CCollider*								m_pColliderCom = nullptr;
 	CTexture*								m_pTextureCom = nullptr;

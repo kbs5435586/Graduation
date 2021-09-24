@@ -1365,7 +1365,9 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_WaterNor",
 			CTexture::Create(L"../Bin/Resource/Texture/Water/WaterNormal%d.dds", 1, TEXTURE_TYPE::TEXTURE_TYPE_DDS))))
 			return E_FAIL;
-
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_CubeFire",
+			CTexture::Create(L"../Bin/Resource/Texture/Particle/FireCube%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG, true))))
+			return E_FAIL;
 	}
 
 	//PNGJPG
@@ -1380,7 +1382,10 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Texture(CManagement* pManagement)
 			CTexture::Create(L"../Bin/Resource/Texture/Particle/CartoonSmoke%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Hit",
-			CTexture::Create(L"../Bin/Resource/Texture/Particle/Particle%d.png", 1, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			CTexture::Create(L"../Bin/Resource/Texture/Particle/Particle%d.png", 3, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
+			return E_FAIL;
+		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Texture_Particle_Hit_Anim",
+			CTexture::Create(L"../Bin/Resource/Texture/Particle/%d.png", 4, TEXTURE_TYPE::TEXTURE_TYPE_PNG_JPG))))
 			return E_FAIL;
 
 		//
@@ -1596,8 +1601,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_UI_End",
 		CShader::Create(L"../ShaderFiles/Shader_UI_End.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Bloom",
-		CShader::Create(L"../ShaderFiles/Shader_Bloom.hlsl", "VS_Main", "PS_Main"))))
+	if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_OutLine",
+		CShader::Create(L"../ShaderFiles/Shader_OutLine.hlsl", "VS_Main", "PS_Main"))))
 		return E_FAIL;
 	//Compute_Shader_Compile
 	{
@@ -1633,6 +1638,8 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 			CShader::Create(L"../ShaderFiles/Shader_Animation.hlsl", "CS_Main"))))
 			return E_FAIL;
 
+
+
 	}
 
 	//Particle
@@ -1666,7 +1673,6 @@ HRESULT CScene_Logo::Ready_Add_Prototype_Shader(CManagement* pManagement)
 			CShader::Create(L"../ShaderFiles/Shader_Reflection.hlsl", "VS_Main", "PS_Main"))))
 			return E_FAIL;
 	}
-
 	//Tess
 	{
 		if (FAILED(pManagement->Add_Prototype_Component((_uint)SCENEID::SCENE_STATIC, L"Component_Shader_Terrain_Tess",

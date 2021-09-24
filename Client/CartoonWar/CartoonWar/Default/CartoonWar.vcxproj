@@ -241,6 +241,7 @@
     <ClInclude Include="..\Headers\Observer.h" />
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Particle_Default.h" />
+    <ClInclude Include="..\Headers\Particle_FireBall.h" />
     <ClInclude Include="..\Headers\Particle_Run.h" />
     <ClInclude Include="..\Headers\Picking.h" />
     <ClInclude Include="..\Headers\Player.h" />
@@ -402,6 +403,7 @@
     <ClCompile Include="..\Codes\Observer.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Particle_Default.cpp" />
+    <ClCompile Include="..\Codes\Particle_FireBall.cpp" />
     <ClCompile Include="..\Codes\Particle_Run.cpp" />
     <ClCompile Include="..\Codes\Picking.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
@@ -549,6 +551,9 @@
     <None Include="..\ShaderFiles\Compute\Shader_Compute_WoL_Blue.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_FireBall.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="..\ShaderFiles\Function.hlsl">
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
@@ -649,7 +654,7 @@
     <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\ShaderFiles\Shader_Bloom.hlsl">
+    <None Include="..\ShaderFiles\Shader_OutLine.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\ShaderFiles\Shader_FireWall.hlsl">

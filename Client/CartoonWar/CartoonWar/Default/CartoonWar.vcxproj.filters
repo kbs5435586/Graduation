@@ -34,21 +34,6 @@
     <Filter Include="97. Engine\01. Utility\01. GameObject">
       <UniqueIdentifier>{21e8396e-d106-462f-b516-1c575ff6d078}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component">
-      <UniqueIdentifier>{15cd2a68-8887-4c1e-8d7d-f8947cf46653}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component">
-      <UniqueIdentifier>{8eea262b-7946-4d5d-ac55-bc783a7f9508}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\01. Component_Manager">
-      <UniqueIdentifier>{5b71bb5b-882a-480f-8e2a-3611768d24eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\00. Transform">
-      <UniqueIdentifier>{4c1c87f5-a7c2-4930-9301-4cd2cced02b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\01. Renderer">
-      <UniqueIdentifier>{1ab92147-cf2b-49e5-bac5-db01d1a46647}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\03. Light">
       <UniqueIdentifier>{34b9cf73-b881-44dd-a003-2099ab71ec1b}</UniqueIdentifier>
     </Filter>
@@ -88,9 +73,6 @@
     <Filter Include="02. GameObject\99. BaseShape\00. Rect">
       <UniqueIdentifier>{6229278e-2ffc-4eda-84f7-05451a3b245f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\03. Shader">
-      <UniqueIdentifier>{18e071bb-6c3e-4bce-b96f-b8f46abee753}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\98. Camera">
       <UniqueIdentifier>{e2248989-39b2-4b0e-8760-19a3c4ce81e2}</UniqueIdentifier>
     </Filter>
@@ -103,9 +85,6 @@
     <Filter Include="97. Engine\00. System\04. Camera">
       <UniqueIdentifier>{a1d71011-493e-4701-975b-463cf58ba3c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\04. Texture">
-      <UniqueIdentifier>{c146bee5-b527-4e44-b4ed-d27d44e5a6e2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\00. Scene_Logo">
       <UniqueIdentifier>{98ecb91f-3121-4ff3-8b0a-54591eedf38d}</UniqueIdentifier>
     </Filter>
@@ -114,9 +93,6 @@
     </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage">
       <UniqueIdentifier>{e5920e3e-7b2b-4d62-a4aa-343c9358345f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\06. Frustum">
-      <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\04. Constant_Buffer">
       <UniqueIdentifier>{9543250d-65ad-47bc-9cd2-774d198ef8f0}</UniqueIdentifier>
@@ -138,15 +114,6 @@
     </Filter>
     <Filter Include="95. Loaders\01. TextureLoader">
       <UniqueIdentifier>{e004e0e9-42c1-421d-aa55-e6455d457338}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation">
-      <UniqueIdentifier>{5b8e89c8-a5fa-4806-a337-97edc872d1a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation\00. Cell">
-      <UniqueIdentifier>{0f407913-afe9-42ce-844d-85d7e155363d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line">
-      <UniqueIdentifier>{8953f098-e96a-4594-b98b-08975b3bbee5}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\06. KeyMananger">
       <UniqueIdentifier>{7fea3e37-35cb-433b-a7be-76d00d4ee7a3}</UniqueIdentifier>
@@ -178,17 +145,11 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\99. UI_Main">
       <UniqueIdentifier>{54249dab-acf5-4d20-8ecc-f5a08d829b8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\08. Collider">
-      <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. BaseShape\02. Cube">
       <UniqueIdentifier>{bcac5cea-114d-40d4-866e-61bfd00460c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. BaseShape\03. Cube_Texture">
       <UniqueIdentifier>{cade708d-35d1-451a-b7ae-892d84c2aa8f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\09. Observer">
-      <UniqueIdentifier>{750f9af0-9d7b-4a72-9092-c2934bbabc8e}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\07. ObserverManager">
       <UniqueIdentifier>{bf1f5867-e5e7-4ca6-a5b5-9701b69ce1e1}</UniqueIdentifier>
@@ -214,9 +175,6 @@
     <Filter Include="95. Loaders\00. FbxLoader">
       <UniqueIdentifier>{1d2a8cfd-33c9-48bf-addc-a759fdcbca13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\05. Mesh">
-      <UniqueIdentifier>{ff41a37a-4038-47ac-a58d-1bbd9e97d687}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. Engine\01. Utility\09. UAVManager">
       <UniqueIdentifier>{b9728a88-b093-4683-afcd-860f48e71848}</UniqueIdentifier>
     </Filter>
@@ -225,9 +183,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\09. UAVManager\01. UAVManager">
       <UniqueIdentifier>{4a5c22e6-04d9-4cde-9aeb-255a6b89ecc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\10. Particle">
-      <UniqueIdentifier>{00f11d05-5e56-44d1-b3af-1cde2783f419}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Engine\01. Utility\08. LoadManager">
       <UniqueIdentifier>{623aa108-42e7-4d8f-9c8b-c69b102cd648}</UniqueIdentifier>
@@ -256,39 +211,6 @@
     <Filter Include="02. GameObject\97. UI\99. UI_Deffered\03. UI_Shade">
       <UniqueIdentifier>{292d5338-8e61-4376-ad74-0628340d31ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\11. Animator">
-      <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer">
-      <UniqueIdentifier>{06fc3ebb-4243-49af-89ef-7394a6bb790c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol">
-      <UniqueIdentifier>{9e63f432-32a1-4574-9d6b-f2adbbbc16ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex">
-      <UniqueIdentifier>{d21c3bfa-fe43-46c0-8821-cd77faac6a34}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol">
-      <UniqueIdentifier>{8cc06ae5-cbca-45fd-afa5-311dc33b249c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex">
-      <UniqueIdentifier>{a7f9bfcd-d175-41c8-98fc-d6daaee3f99b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex">
-      <UniqueIdentifier>{9ea58e6e-34a7-4a9b-a0df-4181d7057194}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
-      <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
-      <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
-      <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
-      <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\04. Building">
       <UniqueIdentifier>{bd754442-48eb-40d5-9d17-e5d453ae2226}</UniqueIdentifier>
     </Filter>
@@ -315,9 +237,6 @@
     </Filter>
     <Filter Include="96. ShaderFiles\07. Light">
       <UniqueIdentifier>{43e77f45-f2db-4a40-a5d6-6d13a6211bb7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\08. Buffer_Circle">
-      <UniqueIdentifier>{88cab8c9-2f67-4a6e-af51-434ed5d0a85a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. BaseShape\04. Circle">
       <UniqueIdentifier>{cfe1359d-ccf7-4926-9d8d-e079b6d541ef}</UniqueIdentifier>
@@ -409,9 +328,6 @@
     <Filter Include="02. GameObject\01. Scene_Stage\99. Environment\06. Water">
       <UniqueIdentifier>{b0c1038e-5088-45ef-8ded-31915d159d86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor">
-      <UniqueIdentifier>{9e68e0b0-1d99-4dc9-8cba-704a58b8e83d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\98. Camera\02. Reflection_Camera">
       <UniqueIdentifier>{773764c8-a39c-4fd7-ad2a-73ead5481932}</UniqueIdentifier>
     </Filter>
@@ -423,9 +339,6 @@
     </Filter>
     <Filter Include="97. Engine\01. Utility\12. FontMgr\00. Font">
       <UniqueIdentifier>{7d8126fe-aa58-42b9-8e59-60e1a3cb3c9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. Engine\01. Utility\02. Component\00. Component\12. Picking">
-      <UniqueIdentifier>{1404fc5e-7bb4-4966-b744-af1fd36c8787}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\97. UI\07. UI_Aim">
       <UniqueIdentifier>{7843105d-83e0-4e99-934c-332f0fd3f17d}</UniqueIdentifier>
@@ -553,6 +466,96 @@
     <Filter Include="99. Default\00. Setting">
       <UniqueIdentifier>{db0c5d02-fad0-4aec-949d-b4a556049a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\96. Particle\01. Particle_FireBall">
+      <UniqueIdentifier>{7e1e5698-f411-4bd0-81c1-53880ec5f166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component">
+      <UniqueIdentifier>{15cd2a68-8887-4c1e-8d7d-f8947cf46653}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component">
+      <UniqueIdentifier>{8eea262b-7946-4d5d-ac55-bc783a7f9508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\00. Transform">
+      <UniqueIdentifier>{4c1c87f5-a7c2-4930-9301-4cd2cced02b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\01. Renderer">
+      <UniqueIdentifier>{1ab92147-cf2b-49e5-bac5-db01d1a46647}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\03. Shader">
+      <UniqueIdentifier>{18e071bb-6c3e-4bce-b96f-b8f46abee753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\04. Texture">
+      <UniqueIdentifier>{c146bee5-b527-4e44-b4ed-d27d44e5a6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\06. Frustum">
+      <UniqueIdentifier>{31d8354d-3688-4516-9ba8-7c5d16aa999f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation">
+      <UniqueIdentifier>{5b8e89c8-a5fa-4806-a337-97edc872d1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation\00. Cell">
+      <UniqueIdentifier>{0f407913-afe9-42ce-844d-85d7e155363d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation\01. Line">
+      <UniqueIdentifier>{8953f098-e96a-4594-b98b-08975b3bbee5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\08. Collider">
+      <UniqueIdentifier>{ff87aa2d-30c9-4e94-a1e7-cde46eb16b0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\09. Observer">
+      <UniqueIdentifier>{750f9af0-9d7b-4a72-9092-c2934bbabc8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\05. Mesh">
+      <UniqueIdentifier>{ff41a37a-4038-47ac-a58d-1bbd9e97d687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\10. Particle">
+      <UniqueIdentifier>{00f11d05-5e56-44d1-b3af-1cde2783f419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\11. Animator">
+      <UniqueIdentifier>{ac70dd14-5795-4618-8abe-230a6ad81455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer">
+      <UniqueIdentifier>{06fc3ebb-4243-49af-89ef-7394a6bb790c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol">
+      <UniqueIdentifier>{9e63f432-32a1-4574-9d6b-f2adbbbc16ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex">
+      <UniqueIdentifier>{d21c3bfa-fe43-46c0-8821-cd77faac6a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol">
+      <UniqueIdentifier>{8cc06ae5-cbca-45fd-afa5-311dc33b249c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex">
+      <UniqueIdentifier>{a7f9bfcd-d175-41c8-98fc-d6daaee3f99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex">
+      <UniqueIdentifier>{9ea58e6e-34a7-4a9b-a0df-4181d7057194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height">
+      <UniqueIdentifier>{f16d96be-e5b7-44ec-b577-df630ca50430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree">
+      <UniqueIdentifier>{2529ad28-09b6-423c-bace-06b3438f5a37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere">
+      <UniqueIdentifier>{a586f47f-3135-483f-839b-dc1cfc6ebf7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\07. Buffer_Point">
+      <UniqueIdentifier>{0fd3b47f-057c-41bd-af04-25b5c883a217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\08. Buffer_Circle">
+      <UniqueIdentifier>{88cab8c9-2f67-4a6e-af51-434ed5d0a85a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor">
+      <UniqueIdentifier>{9e68e0b0-1d99-4dc9-8cba-704a58b8e83d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\12. Picking">
+      <UniqueIdentifier>{1404fc5e-7bb4-4966-b744-af1fd36c8787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Engine\01. Utility\04. Constant_Buffer\02. Component\01. Component_Manager">
+      <UniqueIdentifier>{5b71bb5b-882a-480f-8e2a-3611768d24eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -616,16 +619,16 @@
       <Filter>97. Engine\01. Utility\00. Management</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Component.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Component_Manager.h">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component_Manager</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\01. Component_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Renderer.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\01. Renderer</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\01. Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Transform.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\00. Transform</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\00. Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Light.h">
       <Filter>97. Engine\01. Utility\03. Light\00. Light</Filter>
@@ -652,16 +655,16 @@
       <Filter>01. Scene\00. Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\VIBuffer.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_RectCol.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MyRect.h">
       <Filter>02. GameObject\99. BaseShape\00. Rect</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Shader.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\03. Shader</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\03. Shader</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Camera.h">
       <Filter>02. GameObject\98. Camera</Filter>
@@ -673,13 +676,13 @@
       <Filter>97. Engine\00. System\04. Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_RectTex.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Texture.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\04. Texture</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\04. Texture</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_CubeCol.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Cube.h">
       <Filter>02. GameObject\99. BaseShape\02. Cube</Filter>
@@ -694,16 +697,16 @@
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\03. SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_CubeTex.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Terrain.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Terrain.h">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Terrain_Height.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Terrain_Height.h">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\00. Terrain_Height</Filter>
@@ -712,7 +715,7 @@
       <Filter>98. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Frustum.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\06. Frustum</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\DirectXTex.h">
       <Filter>95. Loaders\01. TextureLoader</Filter>
@@ -730,13 +733,13 @@
       <Filter>97. Engine\01. Utility\05. RenderToTexture\01. RTT</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Navigation.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Cell.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\00. Cell</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation\00. Cell</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Line.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation\01. Line</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\KeyManager.h">
       <Filter>97. Engine\01. Utility\06. KeyMananger</Filter>
@@ -766,16 +769,16 @@
       <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\QuadTree.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Collider.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\08. Collider</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\08. Collider</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Sphere.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Observer.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\09. Observer</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\09. Observer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ObserverManager.h">
       <Filter>97. Engine\01. Utility\07. ObserverManager</Filter>
@@ -808,7 +811,7 @@
       <Filter>95. Loaders\00. FbxLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Mesh.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\05. Mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UAV.h">
       <Filter>97. Engine\01. Utility\09. UAVManager\00. UAV</Filter>
@@ -817,7 +820,7 @@
       <Filter>97. Engine\01. Utility\09. UAVManager\01. UAVManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Particle.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\10. Particle</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\10. Particle</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\StructedBuffer.h">
       <Filter>97. Engine\01. Utility\10. StructedBuffer</Filter>
@@ -826,10 +829,10 @@
       <Filter>02. GameObject\96. Particle\99. Particle_Default</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Animator.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\11. Animator</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\11. Animator</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Point.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\TestHatchMesh.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\97. TestHatchMesh</Filter>
@@ -856,7 +859,7 @@
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Circle.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\08. Buffer_Circle</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\08. Buffer_Circle</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Circle.h">
       <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
@@ -925,7 +928,7 @@
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Buffer_RectTexNor.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Reflection_Camera.h">
       <Filter>02. GameObject\98. Camera\02. Reflection_Camera</Filter>
@@ -940,7 +943,7 @@
       <Filter>97. Engine\01. Utility\12. FontMgr\00. Font</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Picking.h">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\12. Picking</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Aim.h">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
@@ -1020,8 +1023,6 @@
     <ClInclude Include="..\Headers\Buffer_Cylinder.h">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\NewFilter1</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Gold.h" />
-    <ClInclude Include="..\Headers\UI_Gold.h" />
     <ClInclude Include="..\Headers\FireWall.h">
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\08. FireWall</Filter>
     </ClInclude>
@@ -1036,6 +1037,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\EffectBox_Ver.h">
       <Filter>02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Particle_FireBall.h">
+      <Filter>02. GameObject\96. Particle\01. Particle_FireBall</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1083,16 +1087,16 @@
       <Filter>97. Engine\01. Utility\00. Management</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Component.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Component_Manager.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\01. Component_Manager</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\01. Component_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Renderer.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\01. Renderer</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\01. Renderer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Transform.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\00. Transform</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\00. Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Light.cpp">
       <Filter>97. Engine\01. Utility\03. Light\00. Light</Filter>
@@ -1119,16 +1123,16 @@
       <Filter>01. Scene\00. Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\VIBuffer.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_RectCol.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\00. Buffer_RectCol</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MyRect.cpp">
       <Filter>02. GameObject\99. BaseShape\00. Rect</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Shader.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\03. Shader</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\03. Shader</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Camera.cpp">
       <Filter>02. GameObject\98. Camera</Filter>
@@ -1140,13 +1144,13 @@
       <Filter>97. Engine\00. System\04. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_RectTex.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\01. Buffer_RectTex</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Texture.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\04. Texture</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\04. Texture</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_CubeCol.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\02. Buffer_CubeCol</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Cube.cpp">
       <Filter>02. GameObject\99. BaseShape\02. Cube</Filter>
@@ -1161,22 +1165,22 @@
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\03. SkyBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\03. Buffer_CubeTex</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\04. Buffer_Terrain_Tex</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain.cpp">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Terrain_Height.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain_Height.cpp">
       <Filter>02. GameObject\01. Scene_Stage\04. Terrain\00. Terrain_Height</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Frustum.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\06. Frustum</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\06. Frustum</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Constant_Buffer.cpp">
       <Filter>97. Engine\01. Utility\04. Constant_Buffer\00. Constant_Buffer</Filter>
@@ -1194,13 +1198,13 @@
       <Filter>99. Default\00. Setting</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Navigation.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Cell.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\00. Cell</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation\00. Cell</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Line.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\07. Navigation\01. Line</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\07. Navigation\01. Line</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\KeyManager.cpp">
       <Filter>97. Engine\01. Utility\06. KeyMananger</Filter>
@@ -1224,16 +1228,16 @@
       <Filter>02. GameObject\99. BaseShape\03. Cube_Texture</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\QuadTree.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\05. Buffer_Terrain_Height\00. QuadTree</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Collider.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\08. Collider</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\08. Collider</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\06. Buffer_Sphere</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Observer.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\09. Observer</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\09. Observer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ObserverManager.cpp">
       <Filter>97. Engine\01. Utility\07. ObserverManager</Filter>
@@ -1266,7 +1270,7 @@
       <Filter>95. Loaders\00. FbxLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Mesh.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\05. Mesh</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\05. Mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UAV.cpp">
       <Filter>97. Engine\01. Utility\09. UAVManager\00. UAV</Filter>
@@ -1275,7 +1279,7 @@
       <Filter>97. Engine\01. Utility\09. UAVManager\01. UAVManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Particle.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\10. Particle</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\10. Particle</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\StructedBuffer.cpp">
       <Filter>97. Engine\01. Utility\10. StructedBuffer</Filter>
@@ -1284,10 +1288,10 @@
       <Filter>02. GameObject\96. Particle\99. Particle_Default</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Animator.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\11. Animator</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\11. Animator</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Point.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\07. Buffer_Point</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestHatchMesh.cpp">
       <Filter>02. GameObject\01. Scene_Stage\98. Test\97. TestHatchMesh</Filter>
@@ -1311,7 +1315,7 @@
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\02. LowPoly</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Circle.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\08. Buffer_Circle</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\08. Buffer_Circle</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Circle.cpp">
       <Filter>02. GameObject\99. BaseShape\04. Circle</Filter>
@@ -1380,7 +1384,7 @@
       <Filter>02. GameObject\01. Scene_Stage\99. Environment\06. Water</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_RectTexNor.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\02. VIBuffer\09. Buffer_RectTexNor</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Reflection_Camera.cpp">
       <Filter>02. GameObject\98. Camera\02. Reflection_Camera</Filter>
@@ -1395,7 +1399,7 @@
       <Filter>97. Engine\01. Utility\12. FontMgr\00. Font</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Picking.cpp">
-      <Filter>97. Engine\01. Utility\02. Component\00. Component\12. Picking</Filter>
+      <Filter>97. Engine\01. Utility\04. Constant_Buffer\02. Component\00. Component\12. Picking</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Aim.cpp">
       <Filter>02. GameObject\97. UI\07. UI_Aim</Filter>
@@ -1492,6 +1496,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\EffectBox_Ver.cpp">
       <Filter>02. GameObject\01. Scene_Stage\97. Effect\02. EffectBox_Ver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Particle_FireBall.cpp">
+      <Filter>02. GameObject\96. Particle\01. Particle_FireBall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1633,14 +1640,17 @@
     <None Include="..\ShaderFiles\Shader_UI_End.hlsl">
       <Filter>96. ShaderFiles\09. UI</Filter>
     </None>
-    <None Include="..\ShaderFiles\Shader_Bloom.hlsl">
-      <Filter>96. ShaderFiles\08. Effect</Filter>
-    </None>
     <None Include="..\ShaderFiles\Shader_Font.hlsl">
       <Filter>96. ShaderFiles\03. Tool</Filter>
     </None>
     <None Include="..\ShaderFiles\Shader_FireWall.hlsl">
       <Filter>96. ShaderFiles\08. Effect</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Compute\Shader_Compute_FireBall.hlsl">
+      <Filter>96. ShaderFiles\99. Compute</Filter>
+    </None>
+    <None Include="..\ShaderFiles\Shader_OutLine.hlsl">
+      <Filter>96. ShaderFiles\05. Mesh</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

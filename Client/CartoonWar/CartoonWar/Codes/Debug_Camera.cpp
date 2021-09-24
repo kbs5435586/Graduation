@@ -30,7 +30,7 @@ HRESULT CDebug_Camera::Ready_GameObject(void* pArg)
 	if (FAILED(CCamera::Ready_GameObject()))
 		return E_FAIL;
 
-	m_pTransform->SetUp_Speed(200.f, XMConvertToRadians(90.f));
+	m_pTransform->SetUp_Speed(100.f, XMConvertToRadians(90.f));
 
 	m_ptMouse.x = static_cast<LONG>(WINCX) / 2;
 	m_ptMouse.y = static_cast<LONG>(WINCY) / 2;
@@ -398,6 +398,8 @@ _int CDebug_Camera::Update_GameObject(const _float& fTimeDelta)
 		m_matProj._34 = 1.f;
 		m_matProj._44 = 0.0f;
 	}
+
+
 
 	CBuffer_Terrain_Height* pTerrainBuffer = (CBuffer_Terrain_Height*)CManagement::GetInstance()->Get_ComponentPointer((_uint)SCENEID::SCENE_STAGE, L"Layer_Terrain", L"Com_Buffer");
 	if (nullptr == pTerrainBuffer)
