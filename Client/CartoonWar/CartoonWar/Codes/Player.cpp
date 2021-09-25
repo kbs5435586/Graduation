@@ -1393,9 +1393,12 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				}
 				else if (m_eCurClass == CLASS::CLASS_MAGE || m_eCurClass == CLASS::CLASS_MMAGE)
 				{
-					server->send_projectile_packet(TP_FIREBALL);
+					if (!m_IsFire)
+					{
+						server->send_projectile_packet(TP_FIREBALL);
+					}
 					m_eCurState = STATE::STATE_ATTACK;
-					m_IsFire = true;
+					//m_IsFire = true;
 				}
 				else
 				{
