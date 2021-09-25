@@ -284,8 +284,8 @@ HRESULT CScene_Stage::Ready_Layer(CManagement* pManagement)
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Light_Camera(L"Layer_Light_Camera", pManagement)))
 		return E_FAIL;
-	//if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_NPC(L"Layer_NPC", pManagement)))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Flag(L"Layer_Flag", pManagement)))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(L"Layer_UI", pManagement)))
@@ -792,7 +792,7 @@ HRESULT CScene_Stage::Ready_Layer_NPC(const _tchar* pLayerTag, CManagement* pMan
 {
 	for (int i = 0; i < CL_NPC_TEAM2; ++i) // CL_TEST_NPCS
 	{
-		UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
+		//UNIT tInfo = { SPECIES::SPECIES_UNDEAD, COLOR::COLOR_PURPLE };
 		ORDER tOrder = ORDER();
 		tOrder.IsPlayer = false;
 		tOrder.iIdx = i;
