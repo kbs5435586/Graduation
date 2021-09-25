@@ -59,7 +59,7 @@ _int CFireWall::Update_GameObject(const _float& fTimeDelta)
 	if (startCheck)
 	{
 		endTime += fTimeDelta;
-		if (endTime > 10.f)
+		if (endTime > 5.f)
 			m_IsDead = true;
 	}
 
