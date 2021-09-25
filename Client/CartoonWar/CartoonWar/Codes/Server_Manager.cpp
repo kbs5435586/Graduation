@@ -271,7 +271,7 @@ void CServer_Manager::ProcessPacket(char* ptr)
 	{
 		sc_packet_fire* my_packet = reinterpret_cast<sc_packet_fire*>(ptr);
 		XMFLOAT2 fTemp = { my_packet->x, my_packet->z };
-		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_Fire", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
+		if (FAILED(CManagement::GetInstance()->Add_GameObjectToLayer(L"GameObject_FireWall", (_uint)SCENEID::SCENE_STAGE, L"Layer_SkillFire", nullptr, (void*)&fTemp)))
 			return;
 	}
 	break;
