@@ -1395,6 +1395,7 @@ void CPlayer::Input_Key(const _float& fTimeDelta)
 				{
 					server->send_projectile_packet(TP_FIREBALL);
 					m_eCurState = STATE::STATE_ATTACK;
+					m_IsFire = true;
 				}
 				else
 				{

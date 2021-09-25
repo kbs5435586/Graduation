@@ -30,12 +30,12 @@ HRESULT CFireWall::Ready_GameObject(void* pArg)
 
 	_vec3 vPos = { (*(XMFLOAT2*)pArg).x,  0, (*(XMFLOAT2*)pArg).y };
 	m_pTransformCom->Set_StateInfo(CTransform::STATE_POSITION, &vPos);
-	if (!First)
-	{
-		m_pTransformCom->Scaling(1.f, 1.f, 1.f);
-		First = true;
-	}
-	else
+	//if (!First)
+	//{
+	//	m_pTransformCom->Scaling(1.f, 1.f, 1.f);
+	//	First = true;
+	//}
+	//else
 		m_pTransformCom->Scaling(25.f, 25.f, 25.f);
 	m_range = 50.f;
 
@@ -85,7 +85,7 @@ _int CFireWall::LastUpdate_GameObject(const _float& fTimeDelta)
 
 
 
-	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONEALPHA, this)))
+	if (FAILED(m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHA, this)))
 		return -1;
 
 
@@ -155,7 +155,7 @@ HRESULT CFireWall::CreateInputLayout()
 	vecDesc.push_back(D3D12_INPUT_ELEMENT_DESC{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 });
 
 
-	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS_NO_WRITE, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
+	if (FAILED(m_pShaderCom->Create_Shader(vecDesc, RS_TYPE::DEFAULT, DEPTH_STENCIL_TYPE::LESS, SHADER_TYPE::SHADER_FORWARD, BLEND_TYPE::ALPHABLEND)))
 		return E_FAIL;
 
 	return S_OK;
