@@ -188,6 +188,7 @@ void Server::do_move(int user_id, char direction)
     }
     break;
     case GO_FORWARD:
+        p.m_transform.SetUp_Speed(p.m_move_speed, p.m_rotate_speed);
         p.m_transform.BackWard(TIME_DELTA);
         p.m_isAttack = false;
         break;
@@ -251,6 +252,7 @@ void Server::do_move(int user_id, char direction)
     }
         break;
     case GO_BACK:
+        p.m_transform.SetUp_Speed(p.m_move_speed, p.m_rotate_speed);
         p.m_transform.Go_Straight(TIME_DELTA);
         p.m_isAttack = false;
         break;
@@ -764,17 +766,17 @@ void Server::update_npc_troop(int npc_id)
     if (C_CAVALRY == c.m_class)
         c.m_troop = T_HORSE;
     if (C_TWO == c.m_class)
-        c.m_troop = T_INFT;
+        c.m_troop = T_HORSE;
     if (C_INFANTRY == c.m_class)
         c.m_troop = T_INFT;
     if (C_FOUR == c.m_class)
-        c.m_troop = T_HORSE;
+        c.m_troop = T_INFT;
     if (C_SPEARMAN == c.m_class)
         c.m_troop = T_INFT;
     if (C_MAGE == c.m_class)
         c.m_troop = T_MAGE;
     if (C_MMAGE == c.m_class)
-        c.m_troop = T_HORSE;
+        c.m_troop = T_MAGE;
     if (C_ARCHER == c.m_class)
         c.m_troop = T_BOW;
 }
@@ -2792,13 +2794,14 @@ void Server::set_starting_pos(int user_id)
     if (0 == user_id)
     {
         g_clients[user_id].m_team = TEAM_RED;
-        pos = { 950.f, 0.f, 450.f };
+        pos = { 950.f, 0.f, 500.f };
+        //pos = { 500.f, 0.f, 500.f };
     }
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
-        //pos = { 500.f, 0.f, 500.f };
-        pos = { 950.f, 0.f, 550.f };
+        pos = { 500.f, 0.f, 500.f };
+        //pos = { 950.f, 0.f, 550.f };
     }
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     g_clients[user_id].m_vStartPos = pos;

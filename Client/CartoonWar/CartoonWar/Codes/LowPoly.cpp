@@ -170,7 +170,7 @@ void CLowPoly::Render_GameObject()
 	if (g_IsCollisionBox)
 		m_pCollider_AABB->Render_Collider();
 
-	if (m_iBlurCnt >= 0.1f)
+	if (m_iBlurCnt >= 0.5f)
 	{
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
 		m_matOldWorld = m_pTransformCom->Get_Matrix();

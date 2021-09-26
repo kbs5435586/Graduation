@@ -132,7 +132,7 @@ void CBuilding::Render_GameObject()
 	}
 
 
-	if (m_iBlurCnt >= 0.2f)
+	if (m_iBlurCnt >= 0.5f)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();

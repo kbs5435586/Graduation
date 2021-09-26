@@ -323,7 +323,7 @@ void CNPC::Render_GameObject()
 		m_pCollider_AABB->Render_Collider();
 	}
 
-	if (m_iBlurCnt >= 0.1f)
+	if (m_iBlurCnt >= 1.f)
 	{
 		m_matOldWorld = m_pTransformCom->Get_Matrix();
 		m_matOldView = CCamera_Manager::GetInstance()->GetMatView();
