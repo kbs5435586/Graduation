@@ -143,10 +143,6 @@ void Server::do_move(int user_id, char direction)
 
     switch (direction)
     {
-    case GO_UP:
-        break;
-    case GO_DOWN:
-        break;
     case GO_LEFT:
     {
         _vec3 oldLook = *p.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
@@ -276,7 +272,6 @@ void Server::do_move(int user_id, char direction)
 
     Update_Collider(user_id, p.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
     Update_Collider(user_id, p.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
-    //Obb_Collision(user_id);
 
     if (GO_LEFT != direction && GO_RIGHT != direction)
     {
@@ -313,7 +308,7 @@ void Server::do_move(int user_id, char direction)
     }
 
     // send_move_packet 해주는 부분
-    send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도
+    send_move_packet(user_id, user_id); // 나한테 내가 이동한거 알려주는 용도 // 시야처리
 
     for (auto new_vl : new_viewlist) // 움직인 이후의 시야 범위에 대하여
     {
@@ -497,7 +492,7 @@ void Server::process_packet(int user_id, char* buf)
         int proj_id = init_projectile(user_id, type);
         if (-1 == proj_id)
         {
-            cout << "no available projectile container\n";
+            //cout << "no available projectile container\n";
             break;
         }
     }
@@ -527,8 +522,6 @@ void Server::process_packet(int user_id, char* buf)
                 own = Temp.Get_Matrix();
                 g_clients[obj].m_transform.Set_Matrix(&own);
                 
-                //g_clients[obj].m_transform.SetUp_RotationY(XMConvertToRadians(-180.f));
-                //g_clients[obj].m_transform.SetUp_Speed(100.f, XMConvertToRadians(90.f));
                 g_clients[obj].m_col.aabb_size = { 250.f,250.f,250.f };
                 g_clients[obj].m_col.obb_size = { 250.f,250.f,250.f };
                 Ready_Collider_AABB_BOX(obj, g_clients[obj].m_col.aabb_size);
@@ -615,7 +608,6 @@ void Server::process_packet(int user_id, char* buf)
     case CS_PACKET_MOVE:
     {
         cs_packet_move* packet = reinterpret_cast<cs_packet_move*>(buf);
-        //cout << "recv move\n";
         do_move(user_id, packet->dir);
     }
     break;
@@ -699,7 +691,7 @@ void Server::send_flag_info_packet(int object_id, int user_id)
     packet.p_y = flags[object_id].pos.y;
     packet.p_z = flags[object_id].pos.z;
 
-    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    send_packet(user_id, &packet);
 }
 
 void Server::send_flag_bool_packet(int object_id, int user_id)
@@ -711,7 +703,7 @@ void Server::send_flag_bool_packet(int object_id, int user_id)
     packet.isBlue = flags[object_id].isBlue;
     packet.isRed = flags[object_id].isRed;
 
-    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    send_packet(user_id, &packet);
 }
 
 void Server::send_time_packet()
@@ -729,17 +721,7 @@ void Server::send_time_packet()
     }
 }
 
-void Server::send_time_delta(int user_id, float time)
-{
-    sc_packet_timedelta packet;
-    packet.size = sizeof(packet);
-    packet.type = SC_PACKET_TIMEDELTA;
-    packet.time = time;
-
-    send_packet(user_id, &packet);
-}
-
-void Server::send_packet(int user_id, void* packet)
+void Server::send_packet(int user_id, void* packet) // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
 {
     char* buf = reinterpret_cast<char*>(packet);
 
@@ -1358,14 +1340,16 @@ void Server::do_follow(int npc_id)
 
 void Server::do_change_formation(int player_id)
 {
+    /*
     if (F_SQUARE == g_clients[player_id].m_formation)
         g_clients[player_id].m_formation = F_PIRAMID;
     else if (F_PIRAMID == g_clients[player_id].m_formation)
         g_clients[player_id].m_formation = F_CIRCLE;
     else if (F_CIRCLE == g_clients[player_id].m_formation)
         g_clients[player_id].m_formation = F_FLOCK;
-    else  if (F_FLOCK == g_clients[player_id].m_formation)
+    else if (F_FLOCK == g_clients[player_id].m_formation)
         g_clients[player_id].m_formation = F_SQUARE;
+     */
 
     set_formation(player_id);
 }
@@ -1452,7 +1436,6 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
 
     Update_Collider(npc_id, n.m_col.aabb_size, COLLIDER_TYPE::COLLIDER_AABB);
     Update_Collider(npc_id, n.m_col.obb_size, COLLIDER_TYPE::COLLIDER_OBB);
-    //Obb_Collision(npc_id);
 
     for (auto& o : g_clients) // aabb 충돌체크
     {
@@ -1585,7 +1568,7 @@ void Server::send_move_packet(int user_id, int other_id)
     packet.p_z = pos._43;
 
     //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
-    send_packet(user_id, &packet); // 패킷 통채로 넣어주면 복사되서 날라가므로 메모리 늘어남, 성능 저하, 주소값 넣어줄것
+    send_packet(user_id, &packet);
 }
 
 void Server::send_gold_packet(int user_id)
@@ -2557,10 +2540,7 @@ void Server::do_revive(int id)
     g_clients[id].m_status = ST_ACTIVE;
     g_clients[id].m_cLock.unlock();
     g_clients[id].m_last_order = FUNC_END;
-    //g_clients[id].m_formation = F_SQUARE;
-    //g_clients[id].m_type = TP_PLAYER;
     g_clients[id].m_hp = SET_HP;
-    //g_clients[id].m_total_angle = -90.f; // 수정
     g_clients[id].m_LastAnim = A_IDLE;
     g_clients[id].m_anim = A_IDLE;
     g_clients[id].m_troop = T_ALL;
@@ -3141,41 +3121,12 @@ void Server::mainServer()
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
 
-    //thread AI_thread([this]() {this->do_AI(); });
-    //AI_thread.join();
-
     thread event_timer_thread([this]() {this->do_event_timer(); });
 
-   /* float total_check = 0.f;
-    high_resolution_clock::time_point check = high_resolution_clock::now();*/
     while (true)
     {
-       /* duration<double> sec = high_resolution_clock::now() - check;
-        if (sec >= seconds(1))
-        {
-            cout << total_check << endl;
-            check = high_resolution_clock::now();
-            total_check = 0.f;
-        }*/
         this_thread::sleep_for(1ms);
         TIME_DELTA = time_delta();
-        //for (int player_id = 0; player_id < NPC_START; ++player_id)
-        //{
-        //    if (ST_ACTIVE != g_clients[player_id].m_status && ST_DEAD != g_clients[player_id].m_status)
-        //        continue;
-
-        //    //send_time_delta(player_id, TIME_DELTA);
-        //    for (int other_id = 0; other_id < NPC_START; ++other_id)
-        //    {
-        //        if (ST_ACTIVE != g_clients[other_id].m_status && ST_DEAD != g_clients[other_id].m_status)
-        //            continue;
-        //        if (!is_near(player_id, other_id))
-        //            continue;
-        //        send_move_packet(player_id, other_id);
-        //    }
-        //}
-       
-        //total_check += TIME_DELTA;
     }
 
     for (auto& t : worker_threads)

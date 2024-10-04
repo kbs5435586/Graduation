@@ -79,7 +79,6 @@ public:
 	void send_invisible_packet(int user_id, int other_id, bool invi);
 	void send_fire_packet(int id, float mx, float mz);
 	void send_teleport_packet(int id, float mx, float mz, unsigned char m);
-	void send_time_delta(int user_id, float time);
 	void send_gold_packet(int user_id);
 	void send_hp_packet(int user_id, int other_id);
 	void send_do_particle_packet(int user_id, int other_id);
