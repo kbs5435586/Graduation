@@ -1491,8 +1491,6 @@ void Server::add_timer(int obj_id, ENUM_FUNCTION op_type, int duration)
     timer_lock.lock();
     event_type event{ obj_id, op_type, high_resolution_clock::now() + milliseconds(duration), 0 };
     timer_queue.push(event);
-    //timer_queue.emplace(obj_id, op_type, high_resolution_clock::now() + milliseconds(duration), 0);
-    // 메모리 복사 안일어나게 하려고 위에 방식대로 했는데 emplace가 인자를 인식을 못함, 인자 개수가 많아질수록 이런버그 발생
     timer_lock.unlock();
 }
 
@@ -1500,7 +1498,6 @@ void Server::do_event_timer()
 {
     while (true)
     {
-        //Sleep(1); // 윈도우에서만 가능함
         this_thread::sleep_for(1ms); // busy waiting 방지 겸 다른 쓰레드에서 cpu 양보, 1밀리초마다 검사해라, 계속 하고있지 말고
         while (true) // 실행 시간이 된게 있으면 계속 실행해주는 용
         {
@@ -1510,15 +1507,13 @@ void Server::do_event_timer()
                 timer_lock.unlock();
                 break; // 실행 시간이 안됐으면 루프 나가서 1초 쉬고옴
             }
-            if (timer_queue.top().wakeup_time > high_resolution_clock::now()) // 현재 시간이 일어날시간보다 적으면 아직 일어날때가 아니다
-                // 아직 큐에서 꺼낼때가 아니다           
+            if (timer_queue.top().wakeup_time > high_resolution_clock::now()) // 현재 시간이 일어날시간보다 적으면 아직 일어날때가 아니다       
             {
                 // 근데 [ < busy waiting ]이렇게 돌려버리면 : 조건이 성립할 때까지 반복문을 실행하며 기다리는 방법> 발생함
                 timer_lock.unlock();
                 break; // 실행 시간이 안됐으면 루프 나가서 1초 쉬고옴
             }
-            event_type event = timer_queue.top(); // 이렇게 하면 메모리 복사 일어남, 오버헤드 커짐, 그래서 큐의 자료형을 포인터로 받을것
-            // 그렇게 해서 발생하는 new 자체가 오버헤드 아니냐, 맞음, 그래서 free list 써서 재사용 해줘야함 -> 알아서 할것
+            event_type event = timer_queue.top();
             timer_queue.pop();
             timer_lock.unlock();
 
@@ -1567,7 +1562,6 @@ void Server::send_move_packet(int user_id, int other_id)
     packet.p_y = pos._42;
     packet.p_z = pos._43;
 
-    //packet.move_time = g_clients[mover].m_move_time; // 스트레스 테스트
     send_packet(user_id, &packet);
 }
 
@@ -1602,8 +1596,7 @@ void Server::enter_game(int user_id, char name[])
     g_clients[user_id].m_cLock.unlock();
     for (int nat = NATURE_START; nat <= MAX_NATURE; ++nat)
         send_nature_scale_packet(user_id, nat);
-    //for (int i = 0; i < 5; ++i)
-    //    send_flag_info_packet(i, user_id); // 새로 접속한 플레이어 초기화 정보 보내줌
+
     cout << "Player " << user_id << " login finish" << endl;
     for (int i = 0; i <= MAX_USER; ++i)
     {
@@ -1638,7 +1631,6 @@ void Server::enter_game(int user_id, char name[])
             {
                 count++;
             }
-
             if (StartGame_PlayerCount <= count)
             {
                 //add_timer(-1, FUNC_CHECK_FLAG, 100);// 게임 플레이 시간 돌리는 함수
@@ -1686,8 +1678,7 @@ void Server::initialize_NPC(int player_id)
         {
             g_clients[player_id].m_gold -= 1;
             send_gold_packet(player_id);
-            
-            //cout << npc_id << " is intit\n";
+
             g_clients[npc_id].m_socket = 0;
             g_clients[npc_id].m_id = npc_id;
             g_clients[npc_id].m_type = TP_NPC;
@@ -1754,9 +1745,7 @@ void Server::initialize_NPC(int player_id)
             break;
         }
         else
-        {
-            continue; // 여기 수정할것 (임시방편), 플레이어의 모든 npc active일때 더이상 추가 안되게 처리
-        }
+            continue;
     }
 }
 
@@ -1993,7 +1982,6 @@ void Server::send_leave_packet(int user_id, int other_id)
 void Server::do_animation(int user_id, unsigned char anim)
 {
     g_clients[user_id].m_LastAnim = anim;
-    //cout << user_id << "is " << g_clients[user_id].m_anim << endl;
     if (user_id < NPC_START) // 애니메이션 신호를 보내온 애가 플레이어면
     {
         g_clients[user_id].m_cLock.lock();
@@ -2314,189 +2302,6 @@ void Server::do_attack(int npc_id)
             }
         }
     }
-
-
-    //SESSION& n = g_clients[npc_id];
-    //_vec3 n_look = *n.m_transform.Get_StateInfo(CTransform::STATE_LOOK);
-    //n_look = -1.f * Vector3_::Normalize(n_look);
-    //_vec3 n_pos = *n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-
-    //if (!n.m_isOBB) // OBB 충돌당한 상태가 아닐때
-    //{
-    //    if (n.m_attack_target < 0) // 공격할 대상이 지정되지 않았을때
-    //    {
-    //        for (int i = 0; i < OBJECT_START; ++i) // 현재 주변에 적이 있나 확인
-    //        {
-    //            if (ST_ACTIVE != g_clients[i].m_status)
-    //                continue;
-    //            if (ST_DEAD == g_clients[i].m_status)
-    //                continue;
-    //            if (g_clients[i].m_team == n.m_team)
-    //                continue;
-    //            if (!is_attack_detect(i, n.m_id))
-    //                continue;
-
-    //            n.m_attack_target = i;
-    //            break;
-    //        }
-
-    //        if (n.m_attack_target >= 0)
-    //            return;
-    //        else // 주변에 적이 없으면 탐색 움직임 시작
-    //        {
-    //            _vec3 t_look = g_clients[npc_id].m_target_look;
-    //            t_look = -1.f * Vector3_::Normalize(t_look);
-
-    //            float PdotProduct = (n_look.x * t_look.x) + (n_look.y * t_look.y) + (n_look.z * t_look.z); // 내각
-    //            float radian = acosf(PdotProduct); // 내각 이용한 각도 추출
-
-    //            float PoutProduct = (t_look.x * n_look.z) - (t_look.z * n_look.x); // 앞에 x 벡터 기준 각도 차이
-    //            if (PoutProduct > 0) // 양수이면 n_look는 t_look로 부터 반시계
-    //                radian *= -1.f;
-
-    //            float NPCangle = radian * 180.f / PIE; // 현재 npc 위치가 플레이어 기준 몇도 차이나는지
-
-    //            if (NPCangle > 3.f || NPCangle < -3.f) // npc가 바라보는 방향이 플레이어랑 일치하지 않을때
-    //            {
-    //                n.m_transform.BackWard(TIME_DELTA * 3.f);
-    //                n.m_anim = A_WALK;
-    //                if (NPCangle > 3.f)
-    //                {
-    //                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-    //                }
-    //                else if (NPCangle < -3.f)
-    //                {
-    //                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-    //                }
-    //            }
-    //            else // npc가 바라보는 방향이 플레이어랑 일치할때
-    //            {
-    //                n.m_anim = A_WALK;
-    //                n.m_transform.BackWard(TIME_DELTA * 3.f);
-    //            }
-    //        }
-    //    }
-    //    else // 공격할 대상이 지정이 되었을때
-    //    {
-    //        if (ST_DEAD == g_clients[n.m_attack_target].m_status)
-    //        {
-    //            n.m_attack_target = -1;
-    //            return;
-    //        }
-    //        _vec3* t_pos = g_clients[n.m_attack_target].m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    //        _vec3* n_pos = n.m_transform.Get_StateInfo(CTransform::STATE_POSITION);
-    //        _vec3 t_look = *t_pos - *n_pos;
-    //        t_look = Vector3_::Normalize(t_look);
-
-
-    //        _vec3 vP_M = *t_pos - *n_pos; // 여기서 플레이어 룩값 넣기 , 목표치와의 차이 넣기
-    //        float m_iDestLength = Vector3_::Length(vP_M);
-    //        vP_M = Vector3_::Normalize(vP_M);
-
-    //        _vec3 vTemp = n_look;
-    //        //vTemp *= -1.f;
-    //        //D3DXVec3Normalize(&vTemp, &vTemp);
-    //        float m_fDot = Vector3_::DotProduct(vTemp, vP_M);
-    //        //m_fDot = D3DXVec3Dot(&vTemp, &vP_M);
-    //        if (!n.m_IsRotateEnd)
-    //        {
-    //            if (fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->x) > fabs(n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z))
-    //            {
-    //                if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->x <= t_pos->x)
-    //                {
-    //                    n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-    //                }
-    //                else
-    //                {
-    //                    n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-    //                }
-    //                _int i = 0;
-    //            }
-    //            else
-    //            {
-    //                if (n.m_transform.Get_StateInfo(CTransform::STATE_POSITION)->z <= t_pos->z)
-    //                {
-    //                    if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-    //                    {
-    //                        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-    //                    }
-    //                    else
-    //                    {
-    //                        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-    //                    }
-
-    //                }
-    //                else
-    //                {
-    //                    if (n.m_transform.Get_StateInfo(CTransform::STATE_LOOK)->z <= 0)
-    //                    {
-    //                        n.m_transform.Rotation_Y(TIME_DELTA * 3.f);
-    //                    }
-    //                    else
-    //                    {
-    //                        n.m_transform.Rotation_Y(-TIME_DELTA * 3.f);
-    //                    }
-    //                }
-    //                _int i = 0;
-    //            }
-    //            //n.m_IsRotateEnd = true;
-    //        }
-
-
-    //        _float fAngle = XMConvertToDegrees(m_fDot);
-    //        if (fAngle >= 56.f && fAngle <= 57.f) // 마주볼때
-    //        {
-    //            n.m_IsRotateEnd = true;
-    //            if (m_iDestLength >= 3.f) // 죽일 적 근처에 도달 못했을떄
-    //            {
-    //                n.m_transform.Go_ToTarget(t_pos, TIME_DELTA);
-    //                n.m_anim = A_WALK;
-    //            }
-    //            else // 죽일 적 근처에 도달했을떄
-    //            {
-    //                if (dist_between(n.m_id, n.m_attack_target) <= OBB_DIST &&
-    //                    check_obb_collision(npc_id, n.m_attack_target)) // 둘 사이 거리가 obb 가능한 거리일때
-    //                {
-    //                    duration<double> cooltime = high_resolution_clock::now() - n.m_attacktime;
-    //                    if (cooltime >= seconds(1)) // 공격 쿨타임이 돌았을때
-    //                    {
-    //                        n.m_isAttack = true;
-    //                        if (n.m_isAttack)
-    //                        {
-    //                            g_clients[n.m_attack_target].m_isOBB = true;
-    //                            g_clients[n.m_attack_target].m_matAttackedTarget = n.m_transform.Get_Matrix();
-    //                            n.m_isAttack = false;
-    //                            g_clients[n.m_attack_target].m_hp -= ATTACK_DAMAGE;
-    //                            n.m_attacktime = high_resolution_clock::now();
-    //                            if (g_clients[n.m_attack_target].m_hp > 0) // 상대방이 살아있을때
-    //                            {
-    //                                for (int i = 0; i < NPC_START; ++i)
-    //                                {
-    //                                    if (ST_ACTIVE != g_clients[i].m_status)
-    //                                        continue;
-    //                                    if (!is_near(i, n.m_attack_target))
-    //                                        continue;
-    //                                    send_do_particle_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-    //                                    send_hp_packet(i, n.m_attack_target); // 남은 체력 브로드캐스팅
-    //                                }
-    //                            }
-    //                            else // 상대방이 죽었을때
-    //                            {
-    //                                do_dead(n.m_attack_target);
-    //                                n.m_attack_target = -1;
-    //                            }
-    //                        }
-    //                        n.m_anim = A_ATTACK;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //        else // 안마주볼때
-    //        {
-    //            n.m_IsRotateEnd = false;
-    //        }
-    //    }
-    //}
 }
 
 void Server::do_dead(int id)
@@ -2504,7 +2309,6 @@ void Server::do_dead(int id)
     g_clients[id].m_cLock.lock();
     g_clients[id].m_status = ST_DEAD;
     g_clients[id].m_cLock.unlock();
-    //cout << id << " is dead\n";
     g_clients[id].m_hp = 0;
     for (int i = 0; i < NPC_START; ++i)
     {
@@ -2552,8 +2356,6 @@ void Server::do_revive(int id)
 
 void Server::disconnect(int user_id)
 {
-    //send_leave_packet(user_id, user_id); // 나 자신
-    //cout << user_id << "is disconnect\n";
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
@@ -2600,10 +2402,7 @@ bool Server::is_near(int a, int b)
         (a_pos->y - b_pos->y) +
         (a_pos->z - b_pos->z) *
         (a_pos->z - b_pos->z)) > VIEW_RADIUS)
-        // abs = 절대값
         return false;
-    // 이건 2D 게임이니까 모니터 기준으로 다 사각형이므로 사각형 기준으로 시야범위 계산
-    // 3D 게임은 루트(x-x의 제곱 + y-y의 제곱)> VIEW_RADIUS 이면 false로 처리해야함
     return true;
 }
 
@@ -2777,23 +2576,10 @@ void Server::set_starting_pos(int user_id)
     else
     {
         g_clients[user_id].m_team = TEAM_BLUE;
-        //pos = { 500.f, 0.f, 500.f };
         pos = { 950.f, 0.f, 550.f };
     }
     g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
     g_clients[user_id].m_vStartPos = pos;
-
-    //{ // 스트레스 테스트
-    //    _vec3 pos = { (float)(rand()%WORLD_HORIZONTAL), 0.f, (float)(rand() % WORLD_HORIZONTAL) };
-    //    g_clients[user_id].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &pos);
-    //}
-
-    //flags[0].pos = { 50.f, 0.2f, 50.f };
-    //flags[1].pos = { 100.f, 0.2f, 450.f };
-    //flags[2].pos = { 250.f, 0.2f, 250.f };
-    //flags[3].pos = { 450.f, 0.2f, 400.f };
-    //flags[4].pos = { 450.f, 0.2f, 100.f };
-    //곱하기 7.5배 / 맵사이즈  3750 - 3750
 }
 
 void Server::do_fire_skill_damage(int id)
@@ -2846,7 +2632,6 @@ void Server::worker_thread()
         ULONG_PTR key;
         WSAOVERLAPPED* over;
         GetQueuedCompletionStatus(g_iocp, &io_byte, &key, &over, INFINITE); // recv 결과 IOCP에 저장
-        // io_byte가 0인 경우 = 한 클라가 소켓을 종료했기 때문에 0바이트가 전송된다
         OverEx* overEx = reinterpret_cast<OverEx*>(over); // 임시 확장 오버랩 구조체에 IOCP에 저장된 값 대입
         int id = static_cast<int>(key); // 임시 아이디에 IOCP 키값(클라 id값) 대입
 
@@ -2876,12 +2661,10 @@ void Server::worker_thread()
 
         case FUNC_ACCEPT:
         {
-            // 현재는 한 쓰레드가 accept 끝나면 끝에 AcceptEx를 호출하게 해놔서 여러 쓰레드가 동시 접근 안함
             int user_id = -1;
             for (int i = 0; i <= MAX_USER; ++i)
             {
-                lock_guard <mutex> guardLock{ g_clients[i].m_cLock }; // 함수에서 lock 할때 편함
-                // 이 cLock를 락을 걸고 락가드가 속한 블록에서 빠져나갈때 unlock해주고 루프 돌때마다 unlock-lock 해줌
+                lock_guard <mutex> guardLock{ g_clients[i].m_cLock };
                 if (ST_FREE == g_clients[i].m_status) // 동접 객체 돌면서 새로 접속한애 id 부여
                 {
                     g_clients[i].m_status = ST_ALLOC;
@@ -2921,8 +2704,8 @@ void Server::worker_thread()
                 g_clients[user_id].m_owner_id = user_id;
                 g_clients[user_id].m_type = TP_PLAYER;
                 g_clients[user_id].m_hp = SET_HP;
-                g_clients[user_id].m_gold = 8; // 수정
-                g_clients[user_id].m_total_angle = -90.f; // 수정
+                g_clients[user_id].m_gold = 8;
+                g_clients[user_id].m_total_angle = -90.f;
                 g_clients[user_id].m_LastAnim = A_IDLE;
                 g_clients[user_id].m_anim = A_IDLE;
                 g_clients[user_id].m_troop = T_ALL;
@@ -2936,11 +2719,9 @@ void Server::worker_thread()
                 WSARecv(clientSocket, &g_clients[user_id].m_recv_over.wsabuf, 1, NULL,
                     &flags, &g_clients[user_id].m_recv_over.over, NULL); // 여기까지 하나의 클라 소켓 등록이랑 recv 호출이 끝났음
             }
-            // 여기서부터 새로운 클라 소켓 accept
             clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); // 새로 받을 클라 소켓 
             overEx->c_socket = clientSocket; // 새로 받을 클라니까 그 소켓 정보도 확장 오버랩에 넣어줘야함
             ZeroMemory(&overEx->over, sizeof(overEx->over)); // accept용 확장 오버랩 구조체 초기화
-            // accept가 완료된 다음에 다시 accept 받는 부분이므로 overEx 다시 사용해도됨, 중복해서 불릴 일 없음
             AcceptEx(listenSocket, clientSocket, overEx->io_buf, NULL,
                 sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &overEx->over);
         }
@@ -3003,7 +2784,6 @@ void Server::worker_thread()
         case FUNC_REVIVE:
             do_revive(id);
             send_npc_size_packet(id);
-            // 포문 해주기 전에 부활관련 데이터 처리 먼저
             for (int pl = 0; pl < NPC_START; ++pl)
             {
                 if (ST_ACTIVE != g_clients[pl].m_status && ST_DEAD != g_clients[pl].m_status) // 접속중이지 않은 유저 거른다
@@ -3104,14 +2884,12 @@ void Server::mainServer()
     ready_timer();
     isGameStart = false;
 
-    // 비동기 accept의 완료를 받아야함 -> iocp로 받아야함 -> 리슨 소캣을 등록해줘야함
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록
     SOCKET clientSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
     OverEx accept_over;
     ZeroMemory(&accept_over.over, sizeof(accept_over.over)); // accept용 확장 오버랩 구조체 초기화
     accept_over.function = FUNC_ACCEPT;
     accept_over.c_socket = clientSocket; // clientSocket을 worker_thread에 전달해줘야함
-    // accept에선 wsabuf 이용안하므로 초기화 할 필요 없음
     AcceptEx(listenSocket, clientSocket, accept_over.io_buf, NULL,
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
