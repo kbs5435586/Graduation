@@ -42,9 +42,9 @@ private:
 public:
     BOOL InitServer(HWND hWnd);
 
-    void ProcessPacket(char* ptr);
-    void process_data(char* net_buf, size_t io_byte);
     HRESULT EventManager();
+    void process_data(char* net_buf, size_t io_byte);
+    void ProcessPacket(char* ptr);
 
     void send_packet(void* packet);
     void send_move_packet(unsigned char dir);

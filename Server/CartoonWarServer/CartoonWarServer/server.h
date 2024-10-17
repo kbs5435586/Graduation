@@ -22,6 +22,7 @@ private:
 	HANDLE g_iocp;
 
 	int LISTEN_KEY = 999;
+	int CORE_AMOUNT = 4;
 
 	float NEAR_APPROACH = 0.5f;
 	int VIEW_RADIUS = 500; // 데이터 보내줄 시야 범위
@@ -57,8 +58,6 @@ private:
 public:
 	void mainServer(); // 메인 서버
 	void error_display(const char* msg, int err_no);
-	const float time_delta();
-	void ready_timer();
 
 	void recv_packet_construct(int user_id, int io_byte); // 수신한 패킷이 커서 짤려서 온 경우 재조립 함수
 	void process_packet(int user_id, char* buf); // 패킷 처리 루틴

@@ -22,32 +22,6 @@ void Server::error_display(const char* msg, int err_no)
     LocalFree(lpMsgBuf);
 }
 
-const float Server::time_delta()
-{
-	QueryPerformanceCounter(&m_frameTime);
-
-	float m_fTimeDelta = float(m_frameTime.QuadPart - m_lastTime.QuadPart) / m_CPUTick.QuadPart;
-
-	m_lastTime = m_frameTime;
-
-	if (m_frameTime.QuadPart - m_fixTime.QuadPart >= m_CPUTick.QuadPart)
-	{
-		QueryPerformanceFrequency(&m_CPUTick);
-		m_fixTime = m_frameTime;
-	}
-
-	return m_fTimeDelta;
-}
-
-void Server::ready_timer()
-{
-    QueryPerformanceCounter(&m_frameTime);
-    QueryPerformanceCounter(&m_fixTime);
-    QueryPerformanceCounter(&m_lastTime);
-    QueryPerformanceFrequency(&m_CPUTick);
-    TIME_DELTA = 0.f;
-}
-
 void Server::recv_packet_construct(int user_id, int io_byte)
 {
     int rest_byte = io_byte; // 이만큼 남았다, 이만큼 처리를 마저 해줘야한다
@@ -2881,7 +2855,6 @@ void Server::mainServer()
 
     g_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0); // 커널 객체 생성, IOCP 객체 선언
     initialize_objects(); // 오브젝트 정보들 초기화
-    ready_timer();
     isGameStart = false;
 
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(listenSocket), g_iocp, LISTEN_KEY, 0); // 리슨 소캣 iocp 객체에 등록
@@ -2894,18 +2867,13 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < 4; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < CORE_AMOUNT - 1; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
 
     thread event_timer_thread([this]() {this->do_event_timer(); });
-
-    while (true)
-    {
-        this_thread::sleep_for(1ms);
-        TIME_DELTA = time_delta();
-    }
+    event_timer_thread.join();
 
     for (auto& t : worker_threads)
     {
