@@ -24,7 +24,7 @@ enum class COLLIDER_TYPE
 struct OverEx // 확장 오버랩 구조체
 {
 	WSAOVERLAPPED over; // 오버랩 구조체
-	ENUM_FUNCTION function; // send, recv, accept 구별용
+	ENUM_FUNCTION function; // send, recv, accept 등등 구별용
 	char io_buf[MAX_BUF_SIZE]; // IOCP send-recv 버퍼
 	union
 	{
