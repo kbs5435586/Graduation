@@ -131,27 +131,6 @@ struct sc_packet_login_ok
 	short p_class;
 };
 
-constexpr unsigned short C_WORKER = 0;
-constexpr unsigned short C_CAVALRY = 1;
-constexpr unsigned short C_TWO = 2;
-constexpr unsigned short C_INFANTRY = 3;
-constexpr unsigned short C_FOUR = 4;
-constexpr unsigned short C_SPEARMAN = 5;
-constexpr unsigned short C_MAGE = 6;
-constexpr unsigned short C_MMAGE = 7;
-constexpr unsigned short C_ARCHER = 8;
-
-constexpr unsigned char T_INFT = 0;
-constexpr unsigned char T_HORSE = 1;
-constexpr unsigned char T_MAGE = 2;
-constexpr unsigned char T_BOW = 3;
-constexpr unsigned char T_ALL = 4;
-
-constexpr unsigned char F_SQUARE = 0;
-constexpr unsigned char F_PIRAMID = 1;
-constexpr unsigned char F_CIRCLE = 2;
-constexpr unsigned char F_FLOCK = 3;
-
 struct sc_packet_flag_info
 {
 	char size;
@@ -254,6 +233,27 @@ constexpr unsigned char O_OBJECT = 2;
 constexpr unsigned char O_DEFFEND = 3;
 constexpr unsigned char O_TREE = 4;
 constexpr unsigned char O_ROCK = 5;
+
+constexpr unsigned short C_WORKER = 0;
+constexpr unsigned short C_CAVALRY = 1;
+constexpr unsigned short C_TWO = 2;
+constexpr unsigned short C_INFANTRY = 3;
+constexpr unsigned short C_FOUR = 4;
+constexpr unsigned short C_SPEARMAN = 5;
+constexpr unsigned short C_MAGE = 6;
+constexpr unsigned short C_MMAGE = 7;
+constexpr unsigned short C_ARCHER = 8;
+
+constexpr unsigned char T_INFT = 0;
+constexpr unsigned char T_HORSE = 1;
+constexpr unsigned char T_MAGE = 2;
+constexpr unsigned char T_BOW = 3;
+constexpr unsigned char T_ALL = 4;
+
+constexpr unsigned char F_SQUARE = 0;
+constexpr unsigned char F_PIRAMID = 1;
+constexpr unsigned char F_CIRCLE = 2;
+constexpr unsigned char F_FLOCK = 3;
 
 struct sc_packet_enter
 {
