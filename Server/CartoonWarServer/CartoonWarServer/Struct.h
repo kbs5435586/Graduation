@@ -92,6 +92,7 @@ struct SESSION // 클라이언트 정보
 
 	// 공통
 	mutex m_cLock;
+	mutex m_vLock;
 	int m_id;
 	int m_count;
 	short m_hp;

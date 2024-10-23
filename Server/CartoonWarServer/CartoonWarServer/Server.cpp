@@ -65,9 +65,7 @@ int Server::init_projectile(int shoot_id, ENUM_TYPE type)
     {
         if (ST_ACTIVE != g_clients[i].m_status)
         {
-            g_clients[i].m_cLock.lock();
             g_clients[i].m_status = ST_ACTIVE;
-            g_clients[i].m_cLock.unlock();
             g_clients[i].m_transform.Scaling(SCALE.x, SCALE.y, SCALE.z);
             if (TP_ARROW == type)
             {
@@ -263,9 +261,9 @@ void Server::do_move(int user_id, char direction)
 
     set_formation(user_id);
 
-    g_clients[user_id].m_cLock.lock();
+    g_clients[user_id].m_vLock.lock();
     unordered_set<int> old_viewlist = g_clients[user_id].m_view_list;
-    g_clients[user_id].m_cLock.unlock();
+    g_clients[user_id].m_vLock.unlock();
     unordered_set<int> new_viewlist;
 
     for (auto& c : g_clients)
@@ -295,15 +293,15 @@ void Server::do_move(int user_id, char direction)
                 continue;
             }
 
-            g_clients[new_vl].m_cLock.lock();
+            g_clients[new_vl].m_vLock.lock();
             if (0 == g_clients[new_vl].m_view_list.count(user_id)) // 상대의 뷰리스트에 내가 없다면
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl].m_vLock.unlock();
                 send_enter_packet(new_vl, user_id); // 나의 입장 정보를 다른 객체들에게 전송
             }
             else
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl].m_vLock.unlock();
                 send_move_packet(new_vl, user_id); // 나의 움직임 정보를 다른 객체들에게 전송
             }
         }
@@ -312,15 +310,15 @@ void Server::do_move(int user_id, char direction)
             if (false == is_player(new_vl)) // npc에게 내 새로운 움직임을 보내줄 필요가 없음
                 continue;
 
-            g_clients[new_vl].m_cLock.lock();
+            g_clients[new_vl].m_vLock.lock();
             if (0 != g_clients[new_vl].m_view_list.count(user_id))
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl].m_vLock.unlock();
                 send_move_packet(new_vl, user_id);
             }
             else
             {
-                g_clients[new_vl].m_cLock.unlock();
+                g_clients[new_vl].m_vLock.unlock();
                 send_enter_packet(new_vl, user_id);
             }
         }
@@ -335,15 +333,15 @@ void Server::do_move(int user_id, char direction)
             if (false == is_player(old_vl)) // npc에게 내가 나갔다는거 안알려도 된다
                 continue;
 
-            g_clients[old_vl].m_cLock.lock();
+            g_clients[old_vl].m_vLock.lock();
             if (0 != g_clients[old_vl].m_view_list.count(user_id))
             {
-                g_clients[old_vl].m_cLock.unlock();
+                g_clients[old_vl].m_vLock.unlock();
                 send_leave_packet(old_vl, user_id); // 상대 객체에게 내가 나갔다 알림
             }
             else // 실수하기 쉬움, else에 뭐 없더라고 unlock 해줄것, 안그러면 조건 불만족시 락 안풀림
             {
-                g_clients[old_vl].m_cLock.unlock();
+                g_clients[old_vl].m_vLock.unlock();
             }
         }
     }
@@ -480,9 +478,7 @@ void Server::process_packet(int user_id, char* buf)
             {
                 g_clients[user_id].m_gold -= DEFFEND_PRICE;
                 send_gold_packet(user_id);
-                g_clients[obj].m_cLock.lock();
                 g_clients[obj].m_status = ST_ACTIVE;
-                g_clients[obj].m_cLock.unlock();
                 g_clients[obj].m_id = obj;
                 g_clients[obj].m_type = TP_DEFFEND;
                 g_clients[obj].m_hp = SET_HP;
@@ -537,9 +533,7 @@ void Server::process_packet(int user_id, char* buf)
         {
             if (ST_ACTIVE != g_clients[i].m_status)
             {
-                g_clients[i].m_cLock.lock();
                 g_clients[i].m_status = ST_ACTIVE;
-                g_clients[i].m_cLock.unlock();
                 _vec3 temp = { packet->x, 0.f,packet->z };
                 g_clients[i].m_transform.Set_StateInfo(CTransform::STATE_POSITION, &temp);
                 g_clients[i].m_team = g_clients[user_id].m_team;
@@ -1428,28 +1422,28 @@ void Server::finite_state_machine(int npc_id, ENUM_FUNCTION func_id)
             continue;
         if (true == is_near(i, npc_id))
         {
-            g_clients[i].m_cLock.lock();
+            g_clients[i].m_vLock.lock();
             if (0 != g_clients[i].m_view_list.count(npc_id))
             {
-                g_clients[i].m_cLock.unlock();
+                g_clients[i].m_vLock.unlock();
                 send_move_packet(i, npc_id);
             }
             else
             {
-                g_clients[i].m_cLock.unlock();
+                g_clients[i].m_vLock.unlock();
                 send_enter_packet(i, npc_id);
             }
         }
         else
         {
-            g_clients[i].m_cLock.lock();
+            g_clients[i].m_vLock.lock();
             if (0 != g_clients[i].m_view_list.count(npc_id))
             {
-                g_clients[i].m_cLock.unlock(); // 여기 아마 잘못했을거임
+                g_clients[i].m_vLock.unlock(); // 여기 아마 잘못했을거임
                 send_leave_packet(i, npc_id);
             }
             else
-                g_clients[i].m_cLock.unlock();
+                g_clients[i].m_vLock.unlock();
         }
     }
 
@@ -1659,8 +1653,8 @@ void Server::initialize_NPC(int player_id)
             g_clients[npc_id].m_owner_id = player_id;
             g_clients[npc_id].m_last_order = FUNC_NPC_FOLLOW;
             g_clients[npc_id].m_team = g_clients[player_id].m_team;
-            sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
             g_clients[npc_id].m_cLock.lock();
+            sprintf_s(g_clients[npc_id].m_name, "NPC %d", npc_id);
             g_clients[npc_id].m_status = ST_SLEEP;
             g_clients[npc_id].m_cLock.unlock();
             g_clients[npc_id].m_hp = SET_HP;
@@ -1776,9 +1770,9 @@ void Server::send_enter_packet(int user_id, int other_id)
 
     if (0 == g_clients[user_id].m_view_list.count(other_id))
     {
-        g_clients[user_id].m_cLock.lock();
+        g_clients[user_id].m_vLock.lock();
         g_clients[user_id].m_view_list.insert(other_id);
-        g_clients[user_id].m_cLock.unlock();
+        g_clients[user_id].m_vLock.unlock();
     }
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
@@ -1945,9 +1939,9 @@ void Server::send_leave_packet(int user_id, int other_id)
 
     if (is_player(user_id))
     {
-        g_clients[user_id].m_cLock.lock();
+        g_clients[user_id].m_vLock.lock();
         g_clients[user_id].m_view_list.erase(other_id);
-        g_clients[user_id].m_cLock.unlock();
+        g_clients[user_id].m_vLock.unlock();
     }
 
     send_packet(user_id, &packet); // 해당 유저에서 다른 플레이어 정보 전송
@@ -1958,9 +1952,9 @@ void Server::do_animation(int user_id, unsigned char anim)
     g_clients[user_id].m_LastAnim = anim;
     if (user_id < NPC_START) // 애니메이션 신호를 보내온 애가 플레이어면
     {
-        g_clients[user_id].m_cLock.lock();
+        g_clients[user_id].m_vLock.lock();
         unordered_set<int> copy_viewlist = g_clients[user_id].m_view_list;
-        g_clients[user_id].m_cLock.unlock();
+        g_clients[user_id].m_vLock.unlock();
         send_animation_packet(user_id, user_id, anim); // 임시
         for (auto cpy_vl : copy_viewlist) // 움직인 이후의 시야 범위에 대하여
         {
@@ -2280,9 +2274,7 @@ void Server::do_attack(int npc_id)
 
 void Server::do_dead(int id)
 {
-    g_clients[id].m_cLock.lock();
     g_clients[id].m_status = ST_DEAD;
-    g_clients[id].m_cLock.unlock();
     g_clients[id].m_hp = 0;
     for (int i = 0; i < NPC_START; ++i)
     {
@@ -2314,9 +2306,7 @@ void Server::do_dead(int id)
 
 void Server::do_revive(int id)
 {
-    g_clients[id].m_cLock.lock();
     g_clients[id].m_status = ST_ACTIVE;
-    g_clients[id].m_cLock.unlock();
     g_clients[id].m_last_order = FUNC_END;
     g_clients[id].m_hp = SET_HP;
     g_clients[id].m_LastAnim = A_IDLE;
@@ -2333,6 +2323,15 @@ void Server::disconnect(int user_id)
     g_clients[user_id].m_cLock.lock();
     g_clients[user_id].m_status = ST_ALLOC; // 여기서 free 해버리면 아랫과정 진행중에 다른 클라에 할당될수도 있음
     closesocket(g_clients[user_id].m_socket);
+    for (int i = MY_NPC_START_SERVER(user_id); i <= MY_NPC_END_SERVER(user_id); i++) // 나간 유저의 npc 유닛들
+    {
+        if (ST_ACTIVE == g_clients[i].m_status || ST_DEAD == g_clients[i].m_status)
+            g_clients[i].m_status = ST_SLEEP;
+    }
+    g_clients[user_id].m_boid.clear();
+    g_clients[user_id].m_boid.shrink_to_fit();
+    g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free
+    g_clients[user_id].m_cLock.unlock();
 
     for (int i = 0; i < NPC_START; ++i)
     {
@@ -2348,21 +2347,6 @@ void Server::disconnect(int user_id)
             }
         }
     }
-
-    for (int i = MY_NPC_START_SERVER(user_id); i <= MY_NPC_END_SERVER(user_id); i++)
-    {
-        if (ST_ACTIVE == g_clients[i].m_status || ST_DEAD == g_clients[i].m_status)
-        {
-            g_clients[i].m_cLock.lock();
-            g_clients[i].m_status = ST_SLEEP;
-            g_clients[i].m_cLock.unlock();
-        }
-    }
-
-    g_clients[user_id].m_boid.clear();
-    g_clients[user_id].m_boid.shrink_to_fit();
-    g_clients[user_id].m_status = ST_FREE; // 모든 처리가 끝내고 free해야함
-    g_clients[user_id].m_cLock.unlock();
 }
 
 bool Server::is_near(int a, int b)
@@ -2591,11 +2575,7 @@ void Server::do_fire_skill_damage(int id)
     if (f.m_count < FIRE_SKILL_TIME)
         add_timer(id, FUNC_DOT_DAMAGE, 1000);
     else
-    {
-        g_clients[id].m_cLock.lock();
         g_clients[id].m_status = ST_SLEEP;
-        g_clients[id].m_cLock.unlock();
-    }
 }
 
 void Server::worker_thread()
@@ -2605,11 +2585,11 @@ void Server::worker_thread()
         DWORD io_byte;
         ULONG_PTR key;
         WSAOVERLAPPED* over;
-        GetQueuedCompletionStatus(g_iocp, &io_byte, &key, &over, INFINITE); // recv 결과 IOCP에 저장
+        GetQueuedCompletionStatus(g_iocp, &io_byte, &key, &over, INFINITE); // 전달값 IOCP에 저장
         OverEx* overEx = reinterpret_cast<OverEx*>(over); // 임시 확장 오버랩 구조체에 IOCP에 저장된 값 대입
         int id = static_cast<int>(key); // 임시 아이디에 IOCP 키값(클라 id값) 대입
 
-        switch (overEx->function) // send, recv, accept 결정
+        switch (overEx->function) // send, recv, accept 등등 결정
         {
         case FUNC_RECV:
         {
@@ -2867,18 +2847,19 @@ void Server::mainServer()
         sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
     vector<thread> worker_threads;
-    for (int i = 0; i < CORE_AMOUNT - 1; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
+    for (int i = 0; i < CORE_AMOUNT; ++i) // 여기에 쿼드코어라서 4 넣었는데 본인 코어수만큼 넣어도 ㄱㅊ
     {
         worker_threads.emplace_back([this]() {this->worker_thread(); });
     }
 
     thread event_timer_thread([this]() {this->do_event_timer(); });
-    event_timer_thread.join();
-
+ 
     for (auto& t : worker_threads)
     {
         t.join();
     }
+    event_timer_thread.join();
+
     closesocket(listenSocket);
     WSACleanup();
 }
@@ -3118,9 +3099,7 @@ void Server::do_proj(int proj_id)
 
 void Server::delete_proj(int proj_id)
 {
-    g_clients[proj_id].m_cLock.lock();
     g_clients[proj_id].m_status = ST_SLEEP;
-    g_clients[proj_id].m_cLock.unlock();
     g_clients[proj_id].m_transform.Ready_Transform();
     for (int i = 0; i < NPC_START; ++i)
     {
